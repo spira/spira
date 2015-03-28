@@ -163,8 +163,6 @@ gulp.task('index', function(){
     };
 
 
-    console.log('files', files);
-
     return gulp.src(paths.src.base+'/index.html')
         .pipe(template(files))
         .pipe(gulp.dest(paths.dest.base))
