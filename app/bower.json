@@ -1,0 +1,18 @@
+{
+  "name": "larvae",
+  "version": "0.0.0",
+  "homepage": "https://github.com/xiphiaz/larvae",
+  "authors": [
+    "Zak Henry <zak.henry@gmail.com>"
+  ],
+  "description": "AngularJS seed app for connecting to RESTful API",
+  "main": "app.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
