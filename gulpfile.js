@@ -3,12 +3,14 @@ var gulp = require('gulp'),
     notify = require('gulp-notify'),
     del = require('del'),
     concat = require('gulp-concat'),
+    concatCss = require('gulp-concat-css'),
     uglify = require('gulp-uglify'),
     ngAnnotate = require('gulp-ng-annotate'),
     less = require('gulp-less'),
     sourcemaps = require('gulp-sourcemaps'),
     mainBowerFiles = require('main-bower-files'),
-    filter = require('gulp-filter')
+    filter = require('gulp-filter'),
+    browserSync = require('browser-sync')
 ;
 
 var paths = {
@@ -20,7 +22,7 @@ var paths = {
         get styles(){
             return this.base + '/styles/**/*.less'
         },
-        get images(){
+        get assets(){
             return this.base + '/assets/images/**/*'
         },
         get tests(){
@@ -34,6 +36,9 @@ var paths = {
         },
         get vendor(){
             return this.base + '/vendor'
+        },
+        get assets(){
+            return this.base + '/assets'
         }
     }
 };
@@ -48,7 +53,6 @@ gulp.task('scripts', ['clean'], function () {
 
         .pipe(ngAnnotate())
         .pipe(gulp.dest(paths.dest.base))
-        .pipe(notify("scripts task complete."))
     ;
 });
 
@@ -57,32 +61,27 @@ gulp.task('styles', ['clean'], function(){
         .pipe(watch(paths.src.styles))
         .pipe(sourcemaps.init())
         .pipe(less())
+        //.pipe(concatCss('app.css'))
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest(paths.dest.css))
-        .pipe(notify("styles task complete."))
+        //.on('end', function(){
+        //    browserSync.reload();
+        //})
     ;
 });
 
-gulp.task('images', ['clean'], function(){
-    return gulp.src(paths.src.images)
+
+gulp.task('assets', ['clean'], function(){
+    return gulp.src(paths.src.assets)
+        .pipe(gulp.dest(paths.dest.assets));
+});
+
+gulp.task('index', ['clean'], function(){
+    return gulp.src(paths.src.base+'/index.html')
         .pipe(gulp.dest(paths.dest.base));
 });
 
 gulp.task('bower', ['clean'], function(cb) {
-
-    //var bowerFiles = mainBowerFiles({
-    //    paths: {
-    //        bowerDirectory: 'app/bower_components',
-    //        bowerJson: 'app/bower.json'
-    //    }
-    //});
-    //
-    //return gulp.src(bowerFiles)
-    //    .pipe(sourcemaps.init())
-    //    .pipe(concat('vendorfiles.js'))
-    //    .pipe(sourcemaps.write('./maps'))
-    //    .pipe(gulp.dest(paths.dest.vendor))
-    //;
 
     var files = mainBowerFiles({
             paths: {
@@ -128,4 +127,10 @@ gulp.task('bower', ['clean'], function(cb) {
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['scripts', 'styles', 'images', 'bower']);
+gulp.task('default', ['scripts', 'styles', 'assets', 'bower', 'index']);
+
+gulp.task('browser-sync', function() {
+    browserSync({
+        proxy: "local.larvae.com"
+    });
+});

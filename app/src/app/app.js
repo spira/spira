@@ -1,5 +1,5 @@
 angular.module('app', [
-
+    'vendorModules'
 ])
     .config(function(){
 
