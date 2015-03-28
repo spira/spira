@@ -1,0 +1,14 @@
+#language: node_js
+#node_js:
+#  - "0.10"
+
+language: php
+   - "5.5"
+
+before_script:
+  - npm install --quiet -g grunt-cli bower
+  - npm install
+  - bower install
+  - gulp
+
+script: npm test
