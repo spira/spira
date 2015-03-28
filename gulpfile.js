@@ -35,8 +35,8 @@ var paths = {
     },
     dest: {
         base: 'app/build',
-        get appScripts(){
-            return this.base + '/app/**/*.js'
+        get scripts(){
+            return this.base+ '/js'
         },
         get appStyles(){
             return this.base + '/css/**/*.css'
@@ -61,7 +61,7 @@ gulp.task('scripts', [], function () {
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
         .pipe(ngAnnotate())
-        .pipe(gulp.dest(paths.dest.base))
+        .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
 
@@ -145,7 +145,7 @@ gulp.task('index', function(){
 
     var files = {
         scripts: {
-            app: globby.sync(paths.dest.appScripts).map(function(path){
+            app: globby.sync(paths.dest.scripts+'/**/*.js').map(function(path){
                 return path.replace('app/build/', '');
             }),
             vendor: vendorFiles.filter(minimatch.filter("*.js", {matchBase: true})).map(function(path){
@@ -162,7 +162,6 @@ gulp.task('index', function(){
         }
     };
 
-    console.log('paths.dest.appScripts', paths.dest.appScripts);
 
     console.log('files', files);
 
