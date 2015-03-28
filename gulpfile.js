@@ -10,7 +10,11 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     mainBowerFiles = require('main-bower-files'),
     filter = require('gulp-filter'),
-    browserSync = require('browser-sync')
+    browserSync = require('browser-sync'),
+    template = require('gulp-template'),
+    globby = require('globby'),
+    runSequence = require('run-sequence'),
+    minimatch = require('minimatch')
 ;
 
 var paths = {
@@ -31,6 +35,12 @@ var paths = {
     },
     dest: {
         base: 'app/build',
+        get appScripts(){
+            return this.base + '/app/**/*.js'
+        },
+        get appStyles(){
+            return this.base + '/css/**/*.css'
+        },
         get css(){
             return this.base + '/css'
         },
@@ -47,18 +57,17 @@ gulp.task('clean', function(cb) {
     del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', ['clean'], function () {
+gulp.task('scripts', [], function () {
     return gulp.src(paths.src.scripts)
-        .pipe(watch(paths.src.scripts))
-
+        //.pipe(watch(paths.src.scripts))
         .pipe(ngAnnotate())
         .pipe(gulp.dest(paths.dest.base))
     ;
 });
 
-gulp.task('styles', ['clean'], function(){
+gulp.task('styles', [], function(){
     return gulp.src(paths.src.styles)
-        .pipe(watch(paths.src.styles))
+        //.pipe(watch(paths.src.styles))
         .pipe(sourcemaps.init())
         .pipe(less())
         //.pipe(concatCss('app.css'))
@@ -71,17 +80,12 @@ gulp.task('styles', ['clean'], function(){
 });
 
 
-gulp.task('assets', ['clean'], function(){
+gulp.task('assets', [], function(){
     return gulp.src(paths.src.assets)
         .pipe(gulp.dest(paths.dest.assets));
 });
 
-gulp.task('index', ['clean'], function(){
-    return gulp.src(paths.src.base+'/index.html')
-        .pipe(gulp.dest(paths.dest.base));
-});
-
-gulp.task('bower', ['clean'], function(cb) {
+gulp.task('bower', [], function(cb) {
 
     var files = mainBowerFiles({
             paths: {
@@ -100,20 +104,20 @@ gulp.task('bower', ['clean'], function(cb) {
         return cb();
     }
 
-    gulp.src(files)
+    gulp.src(files, {base: 'app/bower_components'})
         //javascript
         .pipe(jsFilter)
-        .pipe(sourcemaps.init())
-        .pipe(concat('vendor.js'))
-        .pipe(sourcemaps.write('./maps'))
+        //.pipe(sourcemaps.init())
+        //.pipe(concat('vendor.js'))
+        //.pipe(sourcemaps.write('./maps'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/js'))
         .pipe(jsFilter.restore())
         //css
         .pipe(cssFilter)
-        .pipe(sourcemaps.init())
-        .pipe(concat('vendor.css'))
-        .pipe(sourcemaps.write('./maps'))
+        //.pipe(sourcemaps.init())
+        //.pipe(concat('vendor.css'))
+        //.pipe(sourcemaps.write('./maps'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/css'))
         .pipe(cssFilter.restore())
@@ -126,8 +130,58 @@ gulp.task('bower', ['clean'], function(cb) {
 
 });
 
+gulp.task('index', function(){
+
+    var vendorFiles = mainBowerFiles({
+        paths: {
+            bowerDirectory: 'app/bower_components',
+            bowerJson: 'app/bower.json'
+        }
+    });
+
+    vendorFiles = vendorFiles.map(function(path){
+       return path.replace(__dirname+'/app/bower_components/', '');
+    });
+
+    var files = {
+        scripts: {
+            app: globby.sync(paths.dest.appScripts).map(function(path){
+                return path.replace('app/build/', '');
+            }),
+            vendor: vendorFiles.filter(minimatch.filter("*.js", {matchBase: true})).map(function(path){
+                return 'vendor/js/'+path;
+            })
+        },
+        styles: {
+            app: globby.sync(paths.dest.appStyles).map(function(path){
+                return path.replace('app/build/', '');
+            }),
+            vendor: vendorFiles.filter(minimatch.filter("*.css", {matchBase: true})).map(function(path){
+                return 'vendor/css/'+path;
+            })
+        }
+    };
+
+    console.log('paths.dest.appScripts', paths.dest.appScripts);
+
+    console.log('files', files);
+
+    return gulp.src(paths.src.base+'/index.html')
+        .pipe(template(files))
+        .pipe(gulp.dest(paths.dest.base))
+    ;
+
+});
+
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', ['scripts', 'styles', 'assets', 'bower', 'index']);
+
+gulp.task('build', function (cb){
+    runSequence('clean',
+        ['scripts', 'styles', 'assets', 'bower', 'index'],
+        'index',
+        cb);
+});
 
 gulp.task('browser-sync', function() {
     browserSync({

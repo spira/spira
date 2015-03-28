@@ -7,11 +7,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="/assets/favicon.ico" />
 
-        <link rel="stylesheet" type="text/css" href="/vendor/css/vendor.css" />
-        <link rel="stylesheet" type="text/css" href="/css/app.css" />
+        <!-- compiled CSS -->
+        <% styles.vendor.forEach( function ( file ) { %>
+        <link rel="stylesheet" type="text/css" href="/<%= file %>" />
+        <% }); %>
+        <% styles.app.forEach( function ( file ) { %>
+        <link rel="stylesheet" type="text/css" href="/<%= file %>" />
+        <% }); %>
 
-        <script type="text/javascript" src="/vendor/js/vendor.js"></script>
-        <script type="text/javascript" src="/app/app.js"></script>
+        <!-- compiled JS -->
+        <% scripts.vendor.forEach( function ( file ) { %>
+        <script type="text/javascript" src="/<%= file %>"></script>
+        <% }); %>
+        <% scripts.app.forEach( function ( file ) { %>
+        <script type="text/javascript" src="/<%= file %>"></script>
+        <% }); %>
 
     </head>
     <body>

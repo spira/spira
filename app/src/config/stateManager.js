@@ -43,7 +43,6 @@ angular.module('stateManager', ['siteModules'])
 
     .run(function($rootScope){
 
-
     })
 
     .controller('stateManager.navigation.controller', function($scope, $state, $location, $rootScope) {
