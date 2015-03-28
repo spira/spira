@@ -1,4 +1,4 @@
 {
-  "directory": "bower_components",
+  "cwd": "./",
   "analytics": false
 }
