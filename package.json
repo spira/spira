@@ -27,11 +27,13 @@
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.2",
+    "gulp-filter": "^2.0.2",
     "gulp-less": "^3.0.2",
     "gulp-ng-annotate": "^0.5.2",
     "gulp-notify": "^2.2.0",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-uglify": "^1.1.0",
-    "gulp-watch": "^4.2.1"
+    "gulp-watch": "^4.2.1",
+    "main-bower-files": "^2.6.2"
   }
 }

@@ -1,11 +1,19 @@
-var foo = null;
+angular.module('app', [
+
+])
+    .config(function(){
+
+    })
+
+    .run(function() {
+        moment.locale('en-gb');
+    })
+
+    .controller('app.controller', function($scope) {
 
 
-var bar = foo;
+        $scope.test = 'hello world';
 
-//welfgklfgf
+    })
 
-
-//88
-
-var test5 = bar; //update
+;
