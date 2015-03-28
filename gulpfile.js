@@ -185,3 +185,10 @@ gulp.task('browser-sync', function() {
         proxy: "local.larvae.com"
     });
 });
+
+gulp.task('test', function(){
+
+    //@todo add testing!
+    return true;
+
+});
