@@ -1,5 +1,8 @@
 angular.module('app', [
-    'vendorModules'
+    'templates',
+    'vendorModules',
+    'commonModules',
+    'stateManager'
 ])
     .config(function(){
 
@@ -9,7 +12,7 @@ angular.module('app', [
         moment.locale('en-gb');
     })
 
-    .controller('app.controller', function($scope) {
+    .controller('AppCtrl', function($scope) {
 
 
         $scope.test = 'hello world';

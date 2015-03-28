@@ -14,7 +14,8 @@ var gulp = require('gulp'),
     template = require('gulp-template'),
     globby = require('globby'),
     runSequence = require('run-sequence'),
-    minimatch = require('minimatch')
+    minimatch = require('minimatch'),
+    templateCache = require('gulp-angular-templatecache')
 ;
 
 var paths = {
@@ -22,6 +23,9 @@ var paths = {
         base: 'app/src',
         get scripts(){
             return this.base + '/**/*.js'
+        },
+        get templates(){
+            return this.base + '/**/*.tpl.html'
         },
         get styles(){
             return this.base + '/styles/**/*.less'
@@ -65,6 +69,17 @@ gulp.task('scripts', [], function () {
     ;
 });
 
+gulp.task('templates', [], function(){
+    return gulp.src(paths.src.templates)
+        .pipe(templateCache({
+            root: "templates/",
+            standalone: true
+        }))
+        .pipe(concat('templates.js'))
+        .pipe(gulp.dest(paths.dest.scripts))
+    ;
+});
+
 gulp.task('styles', [], function(){
     return gulp.src(paths.src.styles)
         //.pipe(watch(paths.src.styles))
@@ -94,7 +109,7 @@ gulp.task('bower', [], function(cb) {
             }
         }),
         jsFilter = filter('**/*.js'),
-        cssFilter = filter('**/*.css'),
+        cssFilter = filter(['**/*.css', '**/*.css.map']),
         everythingElseFilter = filter([ '**/*.!{js,css}' ]),
         onError = function(cb){
             console.error(cb);
@@ -171,11 +186,11 @@ gulp.task('index', function(){
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['scripts', 'styles', 'assets', 'bower', 'index']);
+gulp.task('default', ['build']);
 
 gulp.task('build', function (cb){
     runSequence('clean',
-        ['scripts', 'styles', 'assets', 'bower', 'index'],
+        ['scripts', 'templates', 'styles', 'assets', 'bower'],
         'index',
         cb);
 });

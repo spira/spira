@@ -1,0 +1,34 @@
+
+<div class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" ng-click="nav.isCollapsed = !nav.isCollapsed">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <span class="subtitle">Larvae</span>
+            </a>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse" collapse="nav.isCollapsed">
+
+            <ul class="nav navbar-nav">
+
+                <li
+                        ng-repeat="navitem in navigation"
+                        ui-sref-active="active"
+                        >
+                    <a ui-sref="{{navitem.state}}" ng-if="!navitem.children"><i ng-if="!!navitem.icon" class="fa fa-{{navitem.icon}}">&nbsp;</i>{{navitem.title}}</a>
+                    <a href="#" class="dropdown-toggle" ng-if="!!navitem.children">{{navitem.title}} <b class="caret"></b></a>
+                    <ul class="dropdown-menu" ng-if="!!navitem.children" role="menu">
+                        <li ng-repeat="childNavItem in navitem.children" ui-sref-active="active">
+                            <a ui-sref="{{childNavItem.state}}"><i ng-if="!!childNavItem.icon" class="fa fa-{{childNavItem.icon}}">&nbsp;</i>{{childNavItem.title}}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>

@@ -1,5 +1,8 @@
-angular.module('stateManager', ['siteModules'])
-    .config(function($stateProvider, $locationProvider, $urlRouterProvider, $compileProvider) {
+angular.module('stateManager', [
+    'stateHelperServiceProvider',
+    'siteModules'
+])
+    .config(function($stateProvider, $locationProvider, $urlRouterProvider, $compileProvider, stateHelperServiceProvider) {
         $locationProvider.html5Mode(true);
 
         $urlRouterProvider.otherwise(function ($injector, $location) {
@@ -26,10 +29,10 @@ angular.module('stateManager', ['siteModules'])
                 abstract: true,
                 views: {
                     'app@': { // Points to the ui-view in the index.html
-                        templateUrl: 'app/_layouts/default.tpl.html'
+                        templateUrl: 'templates/app/_layouts/default.tpl.html'
                     },
                     'navigation@app.public': { // Points to the ui-view="navigation" in default.tpl.html
-                        templateUrl: 'app/_partials/navigation.tpl.html',
+                        templateUrl: 'templates/app/_partials/navigation.tpl.html',
                         controller: 'stateManager.navigation.controller'
                     }
                 },
@@ -38,6 +41,11 @@ angular.module('stateManager', ['siteModules'])
                 }
             })
         ;
+
+        // Loop through each sub-module state and register them
+        angular.forEach(stateHelperServiceProvider.getStates(), function(state) {
+            $stateProvider.state(state.name, state.options);
+        });
 
     })
 
