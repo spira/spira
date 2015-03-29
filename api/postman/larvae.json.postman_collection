@@ -1,0 +1,38 @@
+{
+	"id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
+	"name": "larvae",
+	"description": "",
+	"order": [
+		"c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee"
+	],
+	"folders": [],
+	"timestamp": 1427604086234,
+	"synced": false,
+	"owner": "",
+	"subscribed": false,
+	"remoteLink": "",
+	"public": false,
+	"write": true,
+	"requests": [
+		{
+			"id": "c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee",
+			"headers": "",
+			"url": "{{host}}",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1427604128680,
+			"name": "Get /",
+			"description": "",
+			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
+			"responses": [],
+			"synced": false
+		}
+	]
+}
