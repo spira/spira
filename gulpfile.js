@@ -266,20 +266,26 @@ gulp.task('test:api', function(){
 
 });
 
-gulp.task('test:postman', function(callback){
+gulp.task('test:postman', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
 
 
     var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/larvae.json.postman_collection", 'utf8'));
 
-// define Newman options
     var newmanOptions = {
         envJson: JSON5.parse(fs.readFileSync("./api/postman/larvae-travisci.postman_environment", "utf-8")), // environment file (in parsed json format)
-        asLibrary: true,                        // this makes sure the exit code is returned as an argument to the callback function
-        stopOnError: true
+        asLibrary: true,
+        stopOnError: false
     };
 
 
-    newman.execute(collectionJson, newmanOptions, callback);
+    newman.execute(collectionJson, newmanOptions, function(exitCode){
+
+        if (exitCode !== 0){
+            throw new Error("Postman tests failed!");
+        }
+
+        callback();
+    });
 
 });
 
