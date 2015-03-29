@@ -63,7 +63,7 @@ var paths = {
             return this.base + '/assets'
         },
         get coverage(){
-            return this.base + '/reports/**/*lcov.info'
+            return this.base + '/reports/**/clover.xml'
         }
     }
 };
@@ -258,7 +258,7 @@ gulp.task('test:api', function(){
     return gulp.src('api/phpunit.xml')
         .pipe(phpunit('./api/vendor/bin/phpunit', {
             notify: true,
-            coverageClover: './api/reports/coverage/clover.xml'
+            coverageClover: './api/reports/coverage/api/clover.xml'
         }))
         .on('error', function(err){
             notify.onError(testNotification('fail', 'phpunit'));
@@ -294,10 +294,10 @@ gulp.task('test:postman', function(callback){ //@todo fix postman not connecting
 
 gulp.task('test', ['test:app', 'test:api', 'test:postman']);
 
-gulp.task('coveralls', function(){
-    gulp.src(paths.dest.coverage)
-        .pipe(coveralls());
-});
+//gulp.task('coveralls', function(){
+//    gulp.src(paths.dest.coverage)
+//        .pipe(coveralls());
+//});
 
 
 function testNotification(status, pluginName, override) {

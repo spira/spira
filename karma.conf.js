@@ -25,11 +25,12 @@ module.exports = function(config) {
 
         coverageReporter: {
             // specify a common output directory
-            dir: 'app/build/reports/coverage',
+            dir: 'api/reports/coverage',
             reporters: [
                 // reporters not supporting the `file` property
-                {type: 'html', subdir: 'report-html'},
-                {type: 'lcov', subdir: 'report-lcov'}
+                //{type: 'html', subdir: 'report-html'},
+                //{type: 'lcov', subdir: 'report-lcov'},
+                {type: 'clover', subdir: 'app'}
             ]
         }
     });
