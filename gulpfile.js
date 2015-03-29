@@ -1,4 +1,5 @@
-var gulp = require('gulp'),
+var _ = require('lodash'),
+    gulp = require('gulp'),
     watch = require('gulp-watch'),
     notify = require('gulp-notify'),
     del = require('del'),
@@ -19,7 +20,7 @@ var gulp = require('gulp'),
     karma = require('gulp-karma'),
     addSrc = require('gulp-add-src'),
     coveralls = require('gulp-coveralls'),
-    _ = require('lodash')
+    phpunit = require('gulp-phpunit')
 ;
 
 var paths = {
@@ -223,7 +224,7 @@ gulp.task('browser-sync', function() {
     });
 });
 
-gulp.task('test', function(){
+gulp.task('test:app', function(){
 
     var files = getIndexFiles({
         devDeps: true
@@ -249,7 +250,33 @@ gulp.task('test', function(){
 
 });
 
+gulp.task('test:api', function(){
+
+    return gulp.src('api/phpunit.xml')
+        .pipe(phpunit('./api/vendor/bin/phpunit', {notify: true}))
+        .on('error', function(err){
+            notify.onError(testNotification('fail', 'phpunit'));
+            throw err;
+        })
+        .pipe(notify(testNotification('pass', 'phpunit')))
+    ;
+
+});
+
+gulp.task('test', ['test:app', 'test:api']);
+
 gulp.task('coveralls', function(){
     gulp.src(paths.dest.coverage)
         .pipe(coveralls());
 });
+
+
+function testNotification(status, pluginName, override) {
+    var options = {
+        title:   ( status == 'pass' ) ? 'Tests Passed' : 'Tests Failed',
+        message: ( status == 'pass' ) ? '\n\nAll tests have passed!\n\n' : '\n\nOne or more tests failed...\n\n',
+        icon:    __dirname + '/node_modules/gulp-' + pluginName +'/assets/test-' + status + '.png'
+    };
+    options = _.merge(options, override);
+    return options;
+}
