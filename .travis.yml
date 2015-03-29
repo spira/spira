@@ -9,6 +9,7 @@ before_script:
   - gulp
   - composer install --working-dir api
   - ./api/artisan serve --port 9000 &
+  - sleep 5 #give artisan serve some time to boot
 
 script:
   - npm test
