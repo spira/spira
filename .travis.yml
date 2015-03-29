@@ -3,13 +3,16 @@ php:
   - 5.5
 
 before_script:
-  - npm install --quiet -g gulp bower
+  - npm install --quiet -g gulp bower newman
   - npm install
   - bower install
   - gulp
   - composer install --working-dir api
+  - nohup api/artisan serve &
 
-script: npm test
+script:
+  - npm test
+  - newman -c api/postman/larvae.json.postman_collection -e api/postman/larvae-travisci.postman_environment
 
 after_script:
   - gulp coveralls
