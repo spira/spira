@@ -3,7 +3,8 @@
 	"name": "larvae",
 	"description": "",
 	"order": [
-		"c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee"
+		"c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee",
+		"a9c378ab-5520-42c5-0761-c55f240d7af5"
 	],
 	"folders": [],
 	"timestamp": 1427604086234,
@@ -15,9 +16,31 @@
 	"write": true,
 	"requests": [
 		{
+			"id": "a9c378ab-5520-42c5-0761-c55f240d7af5",
+			"headers": "",
+			"url": "{{host}}",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
+			"data": [],
+			"dataMode": "params",
+			"name": "Get all users",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1427619469365,
+			"version": 2,
+			"responses": [],
+			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"collectionOwner": 0,
+			"synced": false
+		},
+		{
 			"id": "c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee",
 			"headers": "",
-			"url": "{{host}}/",
+			"url": "{{host}}",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -27,7 +50,7 @@
 			"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1427604128680,
+			"time": 1427619455849,
 			"name": "Get /",
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",

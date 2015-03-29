@@ -21,7 +21,7 @@ Route::api('v1', function () {
 
     Route::group(['prefix' => 'users'], function () {
 
-        Route::get('/', 'Api\UserController@getAll');
+        Route::get('/', 'UserController@getAll');
 
     });
 
