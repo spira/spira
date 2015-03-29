@@ -1,8 +1,6 @@
 service_name: travis-ci
-repo_token: iJDBxflj9nJWTjojsIKj2N2bZ5qii0uQR
-
 
 # for php-coveralls
-src_dir: ./api/app
-coverage_clover: ./api/reports/coverage/clover.xml
-json_path: ./api/reports/coverage/coveralls-upload.json
+src_dir: app
+coverage_clover: reports/coverage/clover.xml
+json_path: reports/coverage/coveralls-upload.json

@@ -22,4 +22,4 @@ script:
 
 after_script:
   - gulp coveralls
-  - php ./api/vendor/bin/coveralls
+  - php ./api/vendor/bin/coveralls -c ../.coveralls.yml
