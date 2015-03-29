@@ -21,5 +21,4 @@ script:
   - gulp test
 
 after_script:
-  - gulp coveralls
-  - php ./api/vendor/bin/coveralls -c ../.coveralls.yml
+  - php ./api/vendor/bin/coveralls
