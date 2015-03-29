@@ -15,14 +15,17 @@ var gulp = require('gulp'),
     globby = require('globby'),
     runSequence = require('run-sequence'),
     minimatch = require('minimatch'),
-    templateCache = require('gulp-angular-templatecache')
+    templateCache = require('gulp-angular-templatecache'),
+    karma = require('gulp-karma'),
+    addSrc = require('gulp-add-src'),
+    _ = require('lodash')
 ;
 
 var paths = {
     src: {
         base: 'app/src',
         get scripts(){
-            return this.base + '/**/*.js'
+            return [this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
@@ -103,6 +106,7 @@ gulp.task('assets', [], function(){
 gulp.task('bower', [], function(cb) {
 
     var files = mainBowerFiles({
+            includeDev: true,
             paths: {
                 bowerDirectory: 'app/bower_components',
                 bowerJson: 'app/bower.json'
@@ -142,12 +146,18 @@ gulp.task('bower', [], function(cb) {
         .pipe(gulp.dest(paths.dest.vendor+'/assets'))
         .on('end', cb);
 
-
 });
 
-gulp.task('index', function(){
+var getIndexFiles = function(conf){
+
+    conf = conf || {};
+
+    var config = _.defaults(conf, {
+        devDeps: false //developer dependencies
+    });
 
     var vendorFiles = mainBowerFiles({
+        includeDev: config.devDeps,
         paths: {
             bowerDirectory: 'app/bower_components',
             bowerJson: 'app/bower.json'
@@ -155,7 +165,7 @@ gulp.task('index', function(){
     });
 
     vendorFiles = vendorFiles.map(function(path){
-       return path.replace(__dirname+'/app/bower_components/', '');
+        return path.replace(__dirname+'/app/bower_components/', '');
     });
 
     var files = {
@@ -176,6 +186,14 @@ gulp.task('index', function(){
             })
         }
     };
+
+    return files;
+
+};
+
+gulp.task('index', function(){
+
+    var files = getIndexFiles();
 
 
     return gulp.src(paths.src.base+'/index.html')
@@ -203,7 +221,26 @@ gulp.task('browser-sync', function() {
 
 gulp.task('test', function(){
 
-    //@todo add testing!
-    return true;
+    var files = getIndexFiles({
+        devDeps: true
+    });
+    var testFiles = files.scripts.vendor
+        .concat(files.scripts.app)
+        .map(function(path){
+            return 'app/build/'+path;
+        })
+        .concat(globby.sync(paths.src.tests))
+    ;
+
+
+    return gulp.src(testFiles)
+        .pipe(karma({
+            configFile: 'karma.conf.js',
+            action: 'run'
+        }))
+        .on('error', function(err) {
+            // Make sure failed tests cause gulp to exit non-zero
+            throw err;
+        });
 
 });
