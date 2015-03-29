@@ -2,18 +2,48 @@
 
 class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
-	/**
-	 * Creates the application.
-	 *
-	 * @return \Symfony\Component\HttpKernel\HttpKernelInterface
-	 */
-	public function createApplication()
-	{
-		$unitTesting = true;
+    /**
+     * Default preparation for each test
+     */
+    public function setUp()
+    {
+        parent::setUp();
 
-		$testEnvironment = 'testing';
+        $this->prepareForTests();
+    }
 
-		return require __DIR__.'/../../bootstrap/start.php';
-	}
+    /**
+     * Creates the application.
+     *
+     * @return Symfony\Component\HttpKernel\HttpKernelInterface
+     */
+    public function createApplication()
+    {
+        $unitTesting = true;
+
+        $environment = null;
+
+        $getenv = getenv('HTTP_ENVIRONMENT');
+        if (!empty($getenv)) {
+            $environment = getenv('HTTP_ENVIRONMENT');
+        }
+
+        if (empty($environment)) {
+            $environment = 'local';
+        }
+
+        $testEnvironment = $environment;
+
+        return require __DIR__.'/../../bootstrap/start.php';
+    }
+
+    /**
+     * Migrates the database and set the mailer to 'pretend'.
+     * This will cause the tests to run quickly.
+     */
+    private function prepareForTests()
+    {
+        Mail::pretend(true);
+    }
 
 }
