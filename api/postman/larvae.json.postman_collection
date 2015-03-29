@@ -17,7 +17,7 @@
 		{
 			"id": "c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee",
 			"headers": "",
-			"url": "{{host}}",
+			"url": "{{host}}/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
