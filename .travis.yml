@@ -7,7 +7,7 @@ before_script:
   - npm install
   - bower install
   - gulp
-  - composer install
+  - composer install --working-dir api
 
 script: npm test
 
