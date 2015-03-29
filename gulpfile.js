@@ -20,7 +20,10 @@ var _ = require('lodash'),
     karma = require('gulp-karma'),
     addSrc = require('gulp-add-src'),
     coveralls = require('gulp-coveralls'),
-    phpunit = require('gulp-phpunit')
+    phpunit = require('gulp-phpunit'),
+    newman = require('newman'),
+    fs = require('fs'),
+    JSON5 = require('json5')
 ;
 
 var paths = {
@@ -263,7 +266,24 @@ gulp.task('test:api', function(){
 
 });
 
-gulp.task('test', ['test:app', 'test:api']);
+gulp.task('test:postman', function(callback){
+
+
+    var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/larvae.json.postman_collection", 'utf8'));
+
+// define Newman options
+    var newmanOptions = {
+        envJson: JSON5.parse(fs.readFileSync("./api/postman/larvae-travisci.postman_environment", "utf-8")), // environment file (in parsed json format)
+        asLibrary: true,                        // this makes sure the exit code is returned as an argument to the callback function
+        stopOnError: true
+    };
+
+
+    newman.execute(collectionJson, newmanOptions, callback);
+
+});
+
+gulp.task('test', ['test:app', 'test:api', 'test:postman']);
 
 gulp.task('coveralls', function(){
     gulp.src(paths.dest.coverage)
