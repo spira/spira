@@ -10,5 +10,6 @@ before_script:
   - npm install
   - bower install
   - gulp
+  - gulp coveralls
 
 script: npm test
