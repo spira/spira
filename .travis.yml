@@ -10,10 +10,13 @@ before_script:
   - composer install --working-dir api
   - php -S localhost:8000 -t ./api/public &
   - sleep 5 #give server some time to boot
+  - netstat -ntlp | grep LISTEN # list listening ports
+  - wget http://localhost:8000
+  - cat index.html
 
 script:
   - npm test
-  - sudo newman -c ./api/postman/larvae.json.postman_collection -e ./api/postman/larvae-travisci.postman_environment
+  - newman -c ./api/postman/larvae.json.postman_collection -e ./api/postman/larvae-travisci.postman_environment
 
 after_script:
   - gulp coveralls
