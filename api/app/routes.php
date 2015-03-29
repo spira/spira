@@ -11,7 +11,18 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
+//Route::get('/', function()
+//{
+//	return View::make('hello');
+//});
+
+
+Route::api('v1', function () {
+
+    Route::group(['prefix' => 'users'], function () {
+
+        Route::get('/', 'Api\UserController@getAll');
+
+    });
+
 });
