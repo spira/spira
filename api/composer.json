@@ -10,7 +10,8 @@
     "require-dev": {
         "way/generators": "~2.1",
         "fzaninotto/faker": "~1.4",
-        "phpunit/phpunit": "4.5.*"
+        "phpunit/phpunit": "4.5.*",
+        "satooshi/php-coveralls": "dev-master"
     },
 	"autoload": {
 		"classmap": [

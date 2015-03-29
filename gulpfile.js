@@ -256,7 +256,10 @@ gulp.task('test:app', function(){
 gulp.task('test:api', function(){
 
     return gulp.src('api/phpunit.xml')
-        .pipe(phpunit('./api/vendor/bin/phpunit', {notify: true}))
+        .pipe(phpunit('./api/vendor/bin/phpunit', {
+            notify: true,
+            coverageClover: './api/reports/coverage/clover.xml'
+        }))
         .on('error', function(err){
             notify.onError(testNotification('fail', 'phpunit'));
             throw err;
