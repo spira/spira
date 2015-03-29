@@ -18,6 +18,7 @@ var gulp = require('gulp'),
     templateCache = require('gulp-angular-templatecache'),
     karma = require('gulp-karma'),
     addSrc = require('gulp-add-src'),
+    coveralls = require('gulp-coveralls'),
     _ = require('lodash')
 ;
 
@@ -56,6 +57,9 @@ var paths = {
         },
         get assets(){
             return this.base + '/assets'
+        },
+        get coverage(){
+            return this.base + '/reports/**/*lcov.info'
         }
     }
 };
@@ -243,4 +247,9 @@ gulp.task('test', function(){
             throw err;
         });
 
+});
+
+gulp.task('coveralls', function(){
+    gulp.src(paths.dest.coverage)
+        .pipe(coveralls());
 });
