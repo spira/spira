@@ -8,7 +8,7 @@ before_script:
   - bower install
   - gulp
   - composer install --working-dir api
-  - nohup ./api/artisan serve &
+  - ./api/artisan serve &
 
 script:
   - npm test
