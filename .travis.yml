@@ -2,17 +2,22 @@ language: php
 php:
   - 5.5
 
+services:
+  - mysql
+
 before_script:
+  - mysql -e 'create database larvae;'
   - npm install --quiet -g gulp bower newman
   - npm install
   - bower install
   - gulp
-  - composer install --working-dir api
+  - travis_retry composer self-update
+  - travis_retry composer install --prefer-source --no-interaction --dev --working-dir api
   - php -S localhost:8000 -t ./api/public &
   - sleep 5 #give server some time to boot
 
 script:
-  - npm test
+  - gulp test
 
 after_script:
   - gulp coveralls
