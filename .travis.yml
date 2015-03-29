@@ -13,8 +13,8 @@ before_script:
   - gulp
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev --working-dir api
-  - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 &
+  - php ./api/artisan migrate --seed --env=travis
+  - php ./api/artisan serve --port 8000 --env=travis &
   - sleep 5 #give server some time to boot
 
 script:
