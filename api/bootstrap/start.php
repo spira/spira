@@ -24,11 +24,23 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-$env = $app->detectEnvironment(array(
+$env = $app->detectEnvironment(function()
+    {
+        $hostname = trim(shell_exec('hostname'));
 
-	'local' => array('homestead'),
+        $environment = null;
 
-));
+        $getenv = getenv('HTTP_ENVIRONMENT');
+        if (!empty($getenv)) {
+            $environment = getenv('HTTP_ENVIRONMENT');
+        }
+
+        if (empty($environment)) {
+            $environment = 'local';
+        }
+
+        return $environment;
+    });
 
 /*
 |--------------------------------------------------------------------------

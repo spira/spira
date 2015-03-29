@@ -21,3 +21,5 @@
 * Controller
 * Model
 * Code coverage generation
+* Add JWT authentication
+* Disable sessions (completely)
