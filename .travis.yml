@@ -8,11 +8,11 @@ before_script:
   - bower install
   - gulp
   - composer install --working-dir api
-  - nohup api/artisan serve &
+  - nohup ./api/artisan serve &
 
 script:
   - npm test
-  - newman -c api/postman/larvae.json.postman_collection -e api/postman/larvae-travisci.postman_environment
+  - newman -c ./api/postman/larvae.json.postman_collection -e ./api/postman/larvae-travisci.postman_environment
 
 after_script:
   - gulp coveralls
