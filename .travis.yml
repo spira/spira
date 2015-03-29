@@ -10,7 +10,6 @@ before_script:
   - composer install --working-dir api
   - php -S localhost:8000 -t ./api/public &
   - sleep 5 #give server some time to boot
-  - netstat -ntlp | grep LISTEN # list listening ports
   - wget http://localhost:8000
   - cat index.html
 
