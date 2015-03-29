@@ -8,8 +8,8 @@ before_script:
   - bower install
   - gulp
   - composer install --working-dir api
-  - ./api/artisan serve --port 9000 &
-  - sleep 5 #give artisan serve some time to boot
+  - php -S localhost:8000 -t ./api/public &
+  - sleep 5 #give server some time to boot
 
 script:
   - npm test
