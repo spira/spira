@@ -1,3 +1,6 @@
 angular.module('commonModules', [
-    'stateHelperServiceProvider'
+    'stateHelperServiceProvider',
+    'apiService',
+    'siteProgressService',
+    'userService'
 ]);

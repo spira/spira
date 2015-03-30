@@ -9,6 +9,11 @@ angular.module('app.public.home', [])
                     templateUrl: 'templates/app/public/home/home.tpl.html'
                 }
             },
+            resolve: /*@ngInject*/{
+                allUsers: function(userService){
+                    return userService.getAllUsers();
+                }
+            },
             data: {
                 title: "Home",
                 role: 'public'
@@ -16,8 +21,10 @@ angular.module('app.public.home', [])
         });
     })
 
-    .controller('app.public.home.controller', function($scope) {
+    .controller('app.public.home.controller', function($scope, allUsers) {
 
+
+        $scope.users = allUsers;
 
     })
 

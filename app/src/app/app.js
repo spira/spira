@@ -4,6 +4,7 @@ angular.module('app', [
     'commonModules',
     'stateManager'
 ])
+    .constant('API_URL', '/api')
     .config(function(){
 
     })
