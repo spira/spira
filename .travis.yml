@@ -12,7 +12,8 @@ before_script:
   - bower install
   - gulp
   - travis_retry composer self-update
-  - travis_retry composer install --prefer-source --no-interaction --dev --working-dir api
+  - travis_retry composer install --prefer-source --no-interaction --working-dir api
+  - travis_retry composer install --prefer-source --no-interaction
   - php ./api/artisan migrate --seed --env=travis
   - php ./api/artisan serve --port 8000 --env=travis &
   - sleep 5 #give server some time to boot
