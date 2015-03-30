@@ -23,7 +23,8 @@ var _ = require('lodash'),
     phpunit = require('gulp-phpunit'),
     newman = require('newman'),
     fs = require('fs'),
-    JSON5 = require('json5')
+    JSON5 = require('json5'),
+    replace = require('gulp-replace')
 ;
 
 var paths = {
@@ -122,10 +123,11 @@ gulp.task('bower', [], function(cb) {
         }),
         jsFilter = filter('**/*.js'),
         cssFilter = filter(['**/*.css', '**/*.css.map']),
-        everythingElseFilter = filter([ '**/*.!{js,css}' ]),
+        everythingElseFilter = filter([ '**/*' ]), //@todo resolve why pattern '**/*.!{js,css}' does not work
         onError = function(cb){
             console.error(cb);
         };
+
 
     if (!files.length) {
         return cb();
@@ -145,6 +147,8 @@ gulp.task('bower', [], function(cb) {
         //.pipe(sourcemaps.init())
         //.pipe(concat('vendor.css'))
         //.pipe(sourcemaps.write('./maps'))
+
+        .pipe(replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/css'))
         .pipe(cssFilter.restore())
