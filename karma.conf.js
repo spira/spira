@@ -1,13 +1,11 @@
 module.exports = function(config) {
     config.set({
 
-        basePath: './',
-
         frameworks: ['jasmine'],
         plugins: ['karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage'],
 
         preprocessors: {
-            'app/build/js/**/*.js': ['coverage']
+            'app/src/**/*.js': ['coverage']
         },
 
         reporters: ['progress', 'coverage'],
@@ -21,15 +19,15 @@ module.exports = function(config) {
             'PhantomJS'
         ],
 
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
         coverageReporter: {
             // specify a common output directory
-            dir: 'api/reports/coverage',
+            dir: 'reports/coverage',
             reporters: [
                 // reporters not supporting the `file` property
                 //{type: 'html', subdir: 'report-html'},
-                //{type: 'lcov', subdir: 'report-lcov'},
+                {type: 'lcov', subdir: 'report-lcov'},
                 {type: 'clover', subdir: 'app'}
             ]
         }

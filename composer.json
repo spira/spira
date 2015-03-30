@@ -1,0 +1,14 @@
+{
+	"name": "xiphiaz/larvae",
+	"description": "Larvae coveralls requirements",
+	"keywords": ["framework", "laravel"],
+	"license": "MIT",
+	"require": {
+	},
+    "require-dev": {
+        "satooshi/php-coveralls": "dev-master"
+    },
+	"config": {
+		"preferred-install": "dist"
+	}
+}
