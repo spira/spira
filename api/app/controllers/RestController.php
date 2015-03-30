@@ -42,7 +42,7 @@ class RestController extends BaseController
             return $this->response->errorNotFound($entity . ' not found');
         }
 
-        return $this->response->item($resource, $this->transformer);
+        return $this->response->item($resource, new $this->transformer);
     }
 
 }
