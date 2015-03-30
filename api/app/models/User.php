@@ -2,12 +2,15 @@
 
 use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableTrait;
-use Illuminate\Auth\Reminders\RemindableInterface;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class User extends BaseModel implements UserInterface {
 
-	use UserTrait, RemindableTrait;
+	use UserTrait;
+
+
+    const PRIMARY_KEY = 'user_id';
+
+    protected $primaryKey = self::PRIMARY_KEY;
 
 	/**
 	 * The database table used by the model.

@@ -22,6 +22,7 @@ Route::api('v1', function () {
     Route::group(['prefix' => 'users'], function () {
 
         Route::get('/', 'UserController@getAll');
+        Route::get('/{id}', 'UserController@getOne');
 
     });
 

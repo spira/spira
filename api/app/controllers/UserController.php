@@ -1,9 +1,9 @@
 <?php
 
-class UserController extends BaseController
+class UserController extends RestController
 {
-    public function getAll()
-    {
-        return User::all();
-    }
+
+    public static $entity = 'User';
+
+
 }
