@@ -123,7 +123,7 @@ gulp.task('bower', [], function(cb) {
         }),
         jsFilter = filter('**/*.js'),
         cssFilter = filter(['**/*.css', '**/*.css.map']),
-        everythingElseFilter = filter([ '**/*' ]), //@todo resolve why pattern '**/*.!{js,css}' does not work
+        everythingElseFilter = filter(['**/*', '!**/*.css', '!**/*.js', '!**/*.map', '!**/*.less']),
         onError = function(cb){
             console.error(cb);
         };
@@ -177,7 +177,7 @@ var getIndexFiles = function(conf){
     });
 
     vendorFiles = vendorFiles.map(function(path){
-        return path.replace(__dirname+'/app/bower_components/', '');
+        return path.replace(/^.+bower_components\//i, '');
     });
 
     var files = {
