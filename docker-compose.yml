@@ -1,0 +1,25 @@
+
+data:  
+  image: nglume/docker-data:dev
+  volumes:
+    - /data:/data
+  privileged: true
+
+php:  
+  image: nglume/docker-phpfpm:dev
+  volumes_from:
+    - data
+#  links:
+#    - db:db
+  privileged: true
+
+web:  
+  image: nglume/docker-nginx:dev
+  volumes_from:
+    - data
+  links:
+    - php:fpm
+  ports:
+    - "80:80"
+    - "8080:8080"
+  privileged: true
