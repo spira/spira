@@ -22,7 +22,7 @@ Laravel + AngularJS project seed
 
 
 #### Container development
-* `docker push nglume/docker-phpfpm:dev` - publish a container back to dockerhub (feel free to halt the process after the first image uploads)
 * `docker build -t nglume/docker-phpfpm:dev .` - build an image, give it a tag
+* `docker push nglume/docker-phpfpm:dev` - publish a container back to dockerhub (feel free to halt the process after the first image uploads)
 
 
