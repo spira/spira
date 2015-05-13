@@ -1,6 +1,6 @@
 
 data:  
-  image: nglume/docker-data:dev
+  image: nglume/docker-data
   volumes:
     - /data:/data
   privileged: true
@@ -13,8 +13,11 @@ db:
   ports:
     - "5432:5432"
 
+redis:
+  image: redis
+
 php:  
-  image: nglume/docker-phpfpm:dev
+  image: nglume/docker-phpfpm
   volumes_from:
     - data
   links:
@@ -22,7 +25,7 @@ php:
   privileged: true
 
 web:  
-  image: nglume/docker-nginx:dev
+  image: nglume/docker-nginx
   volumes_from:
     - data
   links:
@@ -32,16 +35,19 @@ web:
     - "8080:8080"
   privileged: true
 
-composer:
-  image: nglume/docker-composer:dev
+
+phpcomposer:
+  image: nglume/docker-composer
   volumes_from:
     - data
   privileged: true
 
+
 artisan:
-  image: nglume/docker-artisan:dev
+  image: nglume/docker-artisan
   volumes_from:
     - data
   links:
     - db:db
+    - redis:redis
   privileged: true
