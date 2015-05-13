@@ -1,6 +1,6 @@
 {
-	"name": "xiphiaz/larvae",
-	"description": "API for the Larvae Angular + Laravel seed project",
+	"name": "nglume/nglume",
+	"description": "API for the NG-LUME Angular + Lumen seed project",
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {

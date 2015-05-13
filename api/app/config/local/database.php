@@ -19,17 +19,6 @@ return array(
 	*/
 
 	'connections' => array(
-//
-//		'mysql' => array(
-//			'driver'    => 'mysql',
-//			'host'      => 'localhost',
-//			'database'  => 'larvae',
-//			'username'  => 'larvae',
-//			'password'  => 'larvae',
-//			'charset'   => 'utf8',
-//			'collation' => 'utf8_unicode_ci',
-//			'prefix'    => '',
-//		),
 
 
         'pgsql' => array(

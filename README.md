@@ -1,5 +1,5 @@
-# Larvae [![Build Status](https://travis-ci.org/xiphiaz/larvae.svg?branch=master)](https://travis-ci.org/xiphiaz/larvae) [![Coverage Status](https://coveralls.io/repos/xiphiaz/larvae/badge.svg?branch=master)](https://coveralls.io/r/xiphiaz/larvae?branch=master)
-Laravel + AngularJS project seed
+# ng-lume [![Build Status](https://travis-ci.org/nglume/nglume.svg?branch=master)](https://travis-ci.org/nglume/nglume) [![Coverage Status](https://coveralls.io/repos/nglume/nglume/badge.svg?branch=master)](https://coveralls.io/r/nglume/nglume?branch=master)
+Lumen + AngularJS project seed with Docker
 
 
 

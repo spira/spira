@@ -1,6 +1,6 @@
 {
-	"name": "xiphiaz/larvae",
-	"description": "Larvae coveralls requirements",
+	"name": "nglume/nglume",
+	"description": "nglume coveralls requirements",
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {

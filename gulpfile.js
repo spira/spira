@@ -227,7 +227,7 @@ gulp.task('build', function (cb){
 
 gulp.task('browser-sync', function() {
     browserSync({
-        proxy: "local.larvae.com"
+        proxy: "local.app.nglume.io"
     });
 });
 
@@ -277,10 +277,10 @@ gulp.task('test:api', function(){
 gulp.task('test:postman', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
 
 
-    var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/larvae.json.postman_collection", 'utf8'));
+    var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
 
     var newmanOptions = {
-        envJson: JSON5.parse(fs.readFileSync("./api/postman/larvae-travisci.postman_environment", "utf-8")), // environment file (in parsed json format)
+        envJson: JSON5.parse(fs.readFileSync("./api/postman/nglume-travisci.postman_environment", "utf-8")), // environment file (in parsed json format)
         asLibrary: true,
         stopOnError: false
     };
