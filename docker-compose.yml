@@ -16,12 +16,17 @@ db:
 redis:
   image: redis
 
+queue:
+  image: nglume/docker-beanstalkd
+
 php:  
   image: nglume/docker-phpfpm
   volumes_from:
     - data
   links:
     - db:db
+    - redis:redis
+    - queue:queue
   privileged: true
 
 web:  
@@ -50,4 +55,5 @@ artisan:
   links:
     - db:db
     - redis:redis
+    - queue:queue
   privileged: true
