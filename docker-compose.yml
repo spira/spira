@@ -5,12 +5,20 @@ data:
     - /data:/data
   privileged: true
 
+db:
+  image: postgres
+  environment:
+    - POSTGRES_PASSWORD=nglume
+    - POSTGRES_USER=nglume
+  ports:
+    - "5432:5432"
+
 php:  
   image: nglume/docker-phpfpm:dev
   volumes_from:
     - data
-#  links:
-#    - db:db
+  links:
+    - db:db
   privileged: true
 
 web:  
@@ -22,4 +30,18 @@ web:
   ports:
     - "80:80"
     - "8080:8080"
+  privileged: true
+
+composer:
+  image: nglume/docker-composer:dev
+  volumes_from:
+    - data
+  privileged: true
+
+artisan:
+  image: nglume/docker-artisan:dev
+  volumes_from:
+    - data
+  links:
+    - db:db
   privileged: true

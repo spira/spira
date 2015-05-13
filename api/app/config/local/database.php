@@ -19,17 +19,29 @@ return array(
 	*/
 
 	'connections' => array(
+//
+//		'mysql' => array(
+//			'driver'    => 'mysql',
+//			'host'      => 'localhost',
+//			'database'  => 'larvae',
+//			'username'  => 'larvae',
+//			'password'  => 'larvae',
+//			'charset'   => 'utf8',
+//			'collation' => 'utf8_unicode_ci',
+//			'prefix'    => '',
+//		),
 
-		'mysql' => array(
-			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'larvae',
-			'username'  => 'larvae',
-			'password'  => 'larvae',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => '',
-		),
+
+        'pgsql' => array(
+            'driver'   => 'pgsql',
+            'host'     => getenv('DB_PORT_5432_TCP_ADDR'),
+            'database' => 'nglume',
+            'username' => 'nglume',
+            'password' => 'nglume',
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
+        ),
 
 	),
 
