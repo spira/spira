@@ -57,3 +57,17 @@ artisan:
     - redis:redis
     - queue:queue
   privileged: true
+
+ssh:
+  image: nglume/docker-ssh
+  volumes_from:
+      - data
+  privileged: false
+  ports:
+      - "42222:22"
+  links:
+      - db:db
+      - redis:redis
+      - queue:queue
+  environment:
+      - SSH_PASSWORD=nglume
