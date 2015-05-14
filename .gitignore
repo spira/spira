@@ -1,6 +1,7 @@
+
+
 # Logs
-logs
-*.log
+logs/*
 
 # Runtime data
 pids
@@ -28,3 +29,6 @@ node_modules
 
 nohup.out
 vendor
+
+#Placeholder file for making sure a directory is tracked
+!.gitkeep
