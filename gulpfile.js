@@ -177,7 +177,7 @@ var getIndexFiles = function(conf){
     });
 
     vendorFiles = vendorFiles.map(function(path){
-        return path.replace(/^.+bower_components\//i, '');
+        return path.replace(/\\/g, "\/").replace(/^.+bower_components\//i, '');
     });
 
     var files = {
