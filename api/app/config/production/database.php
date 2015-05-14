@@ -23,9 +23,9 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'larvae',
-			'username'  => 'larvae',
-			'password'  => 'larvae',
+			'database'  => 'nglume',
+			'username'  => 'nglume',
+			'password'  => 'nglume',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

@@ -1,0 +1,73 @@
+
+data:  
+  image: nglume/docker-data
+  volumes:
+    - /data:/data
+  privileged: true
+
+db:
+  image: postgres
+  environment:
+    - POSTGRES_PASSWORD=nglume
+    - POSTGRES_USER=nglume
+  ports:
+    - "5432:5432"
+
+redis:
+  image: redis
+
+queue:
+  image: nglume/docker-beanstalkd
+
+php:  
+  image: nglume/docker-phpfpm
+  volumes_from:
+    - data
+  links:
+    - db:db
+    - redis:redis
+    - queue:queue
+  privileged: true
+
+web:  
+  image: nglume/docker-nginx
+  volumes_from:
+    - data
+  links:
+    - php:fpm
+  ports:
+    - "80:80"
+    - "8080:8080"
+  privileged: true
+
+
+phpcomposer:
+  image: nglume/docker-composer
+  volumes_from:
+    - data
+  privileged: true
+
+
+artisan:
+  image: nglume/docker-artisan
+  volumes_from:
+    - data
+  links:
+    - db:db
+    - redis:redis
+    - queue:queue
+  privileged: true
+
+ssh:
+  image: nglume/docker-ssh
+  volumes_from:
+      - data
+  privileged: false
+  ports:
+      - "42222:22"
+  links:
+      - db:db
+      - redis:redis
+      - queue:queue
+  environment:
+      - SSH_PASSWORD=nglume
