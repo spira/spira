@@ -14,3 +14,9 @@
 $app->get('/', function() use ($app) {
     return $app->welcome();
 });
+
+$app->group(['prefix' => 'users'], function($app){
+
+    $app->get('/', 'App\Http\Controllers\UserController@getAll');
+
+});
