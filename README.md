@@ -46,7 +46,7 @@ You must either run the commands in your shell, or copy them to your .bashrc fil
 Try the one liner below (check the values are what you are wanting):
 
 ```
-sudo -- sh -c "printf '\n\n#nglume docker\n192.168.59.103\tlocal.api.nglume.io\n192.168.59.103\tlocal.app.nglume.io' >> /etc/hosts"
+sudo -- sh -c "printf '\n\n#nglume docker\n192.168.59.103\tlocal.nglume.io\n192.168.59.103\tlocal.api.nglume.io\n192.168.59.103\tlocal.app.nglume.io' >> /etc/hosts"
 ```
 
 ## Mount the shared folder on the vm at the location /data (this is important, the main docker-data container config relies on this location)
@@ -102,6 +102,16 @@ open -a "Google Chrome" http://local.app.nglume.io
 
 
 This initial build will take some time as all the containers need to be downloaded, however they are cached and each reboot pulls from cache.
+
+## SSH connection
+
+If you wish to connect to the container via SSH (eg to connect to the database from a client), you can use a connection made available in the ssh container.
+
+```
+$ ssh root@local.nglume.io -p 42222
+```
+
+Note that the port is 42222. This is to avoid collision with the connection to the boot2docker vm.
 
 ## Docker Notes
 ### Handy Commands
