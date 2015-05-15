@@ -24,7 +24,8 @@ var _ = require('lodash'),
     newman = require('newman'),
     fs = require('fs'),
     JSON5 = require('json5'),
-    replace = require('gulp-replace')
+    replace = require('gulp-replace'),
+    gutil = require('gulp-util')
 ;
 
 var paths = {
@@ -262,7 +263,7 @@ gulp.task('test:api', function(){
 
     return gulp.src('api/phpunit.xml')
         .pipe(phpunit('./api/vendor/bin/phpunit', {
-            notify: true,
+            notify: gutil.env.type !== 'ci',
             coverageClover: './reports/coverage/api/clover.xml'
         }))
         .on('error', function(err){
