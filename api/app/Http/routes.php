@@ -19,4 +19,6 @@ $app->group(['prefix' => 'users'], function($app){
 
     $app->get('/', 'App\Http\Controllers\UserController@getAll');
 
+    $app->get('/{id}', 'App\Http\Controllers\UserController@getOne');
+
 });
