@@ -3,6 +3,9 @@ data:
   image: nglume/docker-data
   volumes:
     - /data:/data
+  environment:
+    - API_PATH=/api
+    - API_DOTENV=.local.env
   privileged: true
 
 db:

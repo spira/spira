@@ -15,29 +15,26 @@ class UserStorySeeder extends Seeder {
 
     }
 
-    private function createUser($email = null, $seed = null){
+    private function createUser($overrides = [], $seed = null){
 
 
         $faker = $this->faker;
 
         if ($seed){
-
             $faker->seed($seed);
         }
 
-        if ($email == null){
-            $email = $faker->email;
-        }
-
-        $user = new User([
+        $userInfo = array_merge([
             'user_id' => $faker->uuid,
-            'email' => $email,
+            'email' => $faker->email,
             'password' => Hash::make('password'),
             'first_name' => $faker->firstName,
             'last_name' => $faker->lastName,
-            'phone' => $faker->phoneNumber,
-            'mobile' => $faker->phoneNumber,
-        ]);
+            'phone' => $faker->optional(0.5)->phoneNumber,
+            'mobile' => $faker->optional(0.5)->phoneNumber,
+        ], $overrides);
+
+        $user = new User($userInfo);
 
         $user->timestamps = true;
         $user->save();
@@ -52,7 +49,9 @@ class UserStorySeeder extends Seeder {
 	public function run()
 	{
 
-        $this->createUser('john.smith@example.com');
+        $this->createUser([
+            'email'=>'john.smith@example.com'
+        ]);
 
         foreach(range(0, 99) as $index){
 
