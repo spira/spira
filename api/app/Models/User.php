@@ -1,23 +1,22 @@
 <?php namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-class User extends Model {
+class User extends BaseModel {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'users';
+    public $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'reset_token'];
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'reset_token'];
 }
