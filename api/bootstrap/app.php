@@ -1,32 +1,9 @@
 <?php
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-
 require_once __DIR__.'/../vendor/autoload.php';
 
-$envFileFound = false;
-try {
-    Dotenv::load(__DIR__.'/../');
-    $envFileFound = true;
-}catch(InvalidArgumentException $e){
 
-    $tryEnvFiles = ['staging', 'qa', 'local'];
-
-    foreach ($tryEnvFiles as $env) {
-
-        try {
-            Dotenv::load(__DIR__ . '/../', '.env.' . $env);
-            $envFileFound = true;
-            break;
-        } catch (InvalidArgumentException $e) {
-        };
-    }
-
-}
-
-if (!$envFileFound){
-    throw new InvalidConfigurationException("Could not find a .env file or any environment specific .env files");
-}
+Dotenv::load(__DIR__.'/../');
 
 
 /*
