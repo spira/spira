@@ -15,6 +15,7 @@ before_script:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
+  - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed --env=travis
   - php ./api/artisan serve --port 8080 --env=travis &
   - sleep 5 #give server some time to boot
