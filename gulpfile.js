@@ -267,10 +267,12 @@ gulp.task('test:api', function(){
             coverageClover: './reports/coverage/api/clover.xml'
         }))
         .on('error', function(err){
-            notify.onError(testNotification('fail', 'phpunit'));
+            if (gutil.env.type !== 'ci'){
+                notify.onError(testNotification('fail', 'phpunit'));
+            }
             throw err;
         })
-        .pipe(notify(testNotification('pass', 'phpunit')))
+        .pipe(gutil.env.type !== 'ci' ? notify(testNotification('pass', 'phpunit')) : gutil.noop())
     ;
 
 });
