@@ -131,10 +131,12 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 * `boot2docker ssh 'sudo mount -t vboxsf -o "defaults,uid=33,gid=33,rw" nglume /data'` - mount volume on the host vm (the name must match the shared folder)
 * `boot2docker ssh 'ls -l /data'` - verify mounting in boot2docker
 * `VBoxManage modifyvm boot2docker-vm --natpf1 "api,tcp,,8080,,8080"` - open a port on the host vm
+* `VBoxManage modifyvm "boot2docker-vm" --natpf1 delete "xdebug"` - close opened port
 
 
 #### Container development
 * `docker build -t nglume/docker-phpfpm:latest .` - build an image, give it a tag
 * `docker push nglume/docker-phpfpm:latest` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
 
-
+## Deployment Notes
+* For security XDEBUG_ENABLED should NOT be set to true in production - the way xdebug is configured for docker allows for remote connection from any host.

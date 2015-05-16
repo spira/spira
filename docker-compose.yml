@@ -30,6 +30,8 @@ php:
     - db:db
     - redis:redis
     - queue:queue
+  environment:
+    - XDEBUG_ENABLED=true
   privileged: true
 
 web:  
