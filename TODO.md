@@ -7,6 +7,11 @@
 ## Gulpfile
 * Add file watchers to handle file changes
 * Add test runner watching for karma
+* Create docker container for running gulp commands, add rewrite to bashrc? and readme ie `docker-compose run gulp [gulp command]`
+* Add host-only gulp tasks (work out how to differentiate in gulpfile)
+** Add boot2docker tasks `gulp vm:[up|restart|down|init]`
+** Add docker-compose tasks `gulp containers:[up|restart|down|status|pull]`
+* Make php coverage reporting use docker container `docker-compose run --entrypoint /data/api/vendor/bin/phpunit php --coverage-clover=/data/reports/coverage/api/clover.xml --colors -c /data/api/phpunit.xml`
 
 ## APP
 * Migrate from bootstrap to foundation
@@ -15,7 +20,6 @@
 * Code coverage generation
 * Add JWT authentication
 * Disable sessions (completely)
-* Strip down api to use lumen
 * Add email
 * Add queue running (use email above)
 

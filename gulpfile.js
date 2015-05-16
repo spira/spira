@@ -1,5 +1,6 @@
 var _ = require('lodash'),
-    gulp = require('gulp'),
+    gulpCore = require('gulp'),
+    gulp = require('gulp-help')(gulpCore),
     watch = require('gulp-watch'),
     notify = require('gulp-notify'),
     del = require('del'),
@@ -69,11 +70,11 @@ var paths = {
     }
 };
 
-gulp.task('clean', function(cb) {
+gulp.task('clean', 'deletes all build files', function(cb) {
     del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', [], function () {
+gulp.task('scripts', 'processes javascript files', [], function () {
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
         .pipe(ngAnnotate())
@@ -81,7 +82,7 @@ gulp.task('scripts', [], function () {
     ;
 });
 
-gulp.task('templates', [], function(){
+gulp.task('templates', 'builds template files', [], function(){
     return gulp.src(paths.src.templates)
         .pipe(templateCache({
             root: "templates/",
@@ -92,7 +93,7 @@ gulp.task('templates', [], function(){
     ;
 });
 
-gulp.task('styles', [], function(){
+gulp.task('styles', 'compiles stylesheets', [], function(){
     return gulp.src(paths.src.styles)
         //.pipe(watch(paths.src.styles))
         .pipe(sourcemaps.init())
@@ -107,12 +108,12 @@ gulp.task('styles', [], function(){
 });
 
 
-gulp.task('assets', [], function(){
+gulp.task('assets', 'copies asset files', [], function(){
     return gulp.src(paths.src.assets)
         .pipe(gulp.dest(paths.dest.assets));
 });
 
-gulp.task('bower', [], function(cb) {
+gulp.task('bower', 'compiles frontend vendor files', [], function(cb) {
 
     var files = mainBowerFiles({
             includeDev: true,
@@ -203,7 +204,7 @@ var getIndexFiles = function(conf){
 
 };
 
-gulp.task('index', function(){
+gulp.task('index', 'processes index.html file', function(){
 
     var files = getIndexFiles();
 
@@ -216,22 +217,22 @@ gulp.task('index', function(){
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['build']);
+gulp.task('default', 'default task', ['build']);
 
-gulp.task('build', function (cb){
+gulp.task('build', 'runs build sequence for frontend', function (cb){
     runSequence('clean',
         ['scripts', 'templates', 'styles', 'assets', 'bower'],
         'index',
         cb);
 });
 
-gulp.task('browser-sync', function() {
+gulp.task('browser-sync', 'triggers browsersync reload [not yet working]', function() {
     browserSync({
         proxy: "local.app.nglume.io"
     });
 });
 
-gulp.task('test:app', function(){
+gulp.task('test:app',  'unit tests the frontend', function(){
 
     var files = getIndexFiles({
         devDeps: true
@@ -258,7 +259,7 @@ gulp.task('test:app', function(){
 
 });
 
-gulp.task('test:api', function(){
+gulp.task('test:api', 'unit tests the api', function(){
 
     return gulp.src('api/phpunit.xml')
         .pipe(phpunit('./api/vendor/bin/phpunit', {
@@ -274,7 +275,7 @@ gulp.task('test:api', function(){
 
 });
 
-gulp.task('test:postman', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
+gulp.task('test:postman', 'integration tests the api', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
 
 
     var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
@@ -297,9 +298,9 @@ gulp.task('test:postman', function(callback){ //@todo fix postman not connecting
 
 });
 
-gulp.task('test', ['test:app', 'test:api', 'test:postman']);
+gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:postman']);
 
-gulp.task('coveralls', function(){
+gulp.task('coveralls', 'generates code coverage for the frontend', function(){
     gulp.src(paths.dest.coverage)
         .pipe(coveralls());
 });
