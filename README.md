@@ -1,4 +1,6 @@
-# ng-lume [![Build Status](https://travis-ci.org/nglume/nglume.svg?branch=master)](https://travis-ci.org/nglume/nglume) [![Coverage Status](https://coveralls.io/repos/nglume/nglume/badge.svg?branch=master)](https://coveralls.io/r/nglume/nglume?branch=master)
+# ng-lume 
+[![Build Status](https://travis-ci.org/nglume/nglume.svg?branch=master)](https://travis-ci.org/nglume/nglume) [![Coverage Status](https://coveralls.io/repos/nglume/nglume/badge.svg?branch=master)](https://coveralls.io/r/nglume/nglume?branch=master)
+[![Dependency Status](https://gemnasium.com/nglume/nglume.svg)](https://gemnasium.com/nglume/nglume)
 Lumen + AngularJS project seed with Docker
 
 ## Docker setup
@@ -128,7 +130,8 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 * `boot2docker down` - stop docker host vm
 * `boot2docker ssh 'ls -l /data/vhosts/nginx/*.conf'` - execute a command in the host vm
 * `VBoxManage sharedfolder add boot2docker-vm --name nglume --hostpath ~/sites/nglume/nglume` - add a shared folder (path to your repo) to the host vm. The name is used for mounting the volume
-* `boot2docker ssh 'sudo mount -t vboxsf -o "defaults,uid=33,gid=33,rw" nglume /data'` - mount volume on the host vm (the name must match the shared folder)
+* `VBoxManage setextradata boot2docker-vm VBoxInternal2/SharedFoldersEnableSymlinksCreate/nglume 1` - allow symlinking within the shared volume
+* `boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 nglume /data'` - mount volume on the host vm (the name must match the shared folder)
 * `boot2docker ssh 'ls -l /data'` - verify mounting in boot2docker
 * `VBoxManage modifyvm boot2docker-vm --natpf1 "api,tcp,,8080,,8080"` - open a port on the host vm
 * `VBoxManage modifyvm "boot2docker-vm" --natpf1 delete "xdebug"` - close opened port
