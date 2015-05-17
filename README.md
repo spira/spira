@@ -1,7 +1,9 @@
 # ng-lume 
+Lumen + AngularJS project seed with Docker
+
 [![Build Status](https://travis-ci.org/nglume/nglume.svg?branch=master)](https://travis-ci.org/nglume/nglume) [![Coverage Status](https://coveralls.io/repos/nglume/nglume/badge.svg?branch=master)](https://coveralls.io/r/nglume/nglume?branch=master)
 [![Dependency Status](https://gemnasium.com/nglume/nglume.svg)](https://gemnasium.com/nglume/nglume)
-Lumen + AngularJS project seed with Docker
+
 
 ## Docker setup
 ## Install boot2docker.
