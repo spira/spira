@@ -30,6 +30,8 @@ php:
     - db:db
     - redis:redis
     - queue:queue
+  environment:
+    - XDEBUG_ENABLED=true
   privileged: true
 
 web:  
@@ -46,12 +48,23 @@ web:
   privileged: true
 
 
+npm:
+  image: nglume/docker-npm
+  volumes_from:
+    - data
+  privileged: true
+
+gulp:
+  image: nglume/docker-gulp
+  volumes_from:
+    - data
+  privileged: true
+
 phpcomposer:
   image: nglume/docker-composer
   volumes_from:
     - data
   privileged: true
-
 
 artisan:
   image: nglume/docker-artisan
