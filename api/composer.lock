@@ -4,38 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "75b4675e546f3fcf77ebb131b04364f4",
+    "hash": "8b857406bb090368e5093d7b8990d405",
     "packages": [
         {
             "name": "bosnadev/database",
-            "version": "0.10",
+            "version": "0.11",
             "source": {
                 "type": "git",
-                "url": "git@github.com:Bosnadev/Eloquently.git",
-                "reference": "69f6cd81ca219bbdea8edbfa2f11c01ab77516fc"
+                "url": "https://github.com/Bosnadev/Database.git",
+                "reference": "a578c837146cae5e329e14712778d8e1fdc40b6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bosnadev/Eloquently/zipball/69f6cd81ca219bbdea8edbfa2f11c01ab77516fc",
-                "reference": "69f6cd81ca219bbdea8edbfa2f11c01ab77516fc",
+                "url": "https://api.github.com/repos/Bosnadev/Database/zipball/a578c837146cae5e329e14712778d8e1fdc40b6a",
+                "reference": "a578c837146cae5e329e14712778d8e1fdc40b6a",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "5.*",
-                "php": ">=5.4.0",
-                "rhumsaa/uuid": "~2.8"
+                "illuminate/database": "~5.0",
+                "php": ">=5.4",
+                "ramsey/uuid": "~2.8"
+            },
+            "require-dev": {
+                "doctrine/dbal": "~2.5",
+                "mockery/mockery": "0.9.*",
+                "php": ">=5.4",
+                "phpunit/phpunit": "~4.5"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Bosnadev\\Database\\": "src/"
-                }
+                },
+                "classmap": [
+                    "tests/BaseTestCase.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "authors": [
                 {
                     "name": "Mirza Pasic",
                     "email": "mirza.pasic@edu.fit.ba"
+                },
+                {
+                    "name": "Peter Haza",
+                    "email": "peter.haza@gmail.com"
                 }
             ],
             "description": "Eloquent Extended, added some PostgreSql features",
@@ -46,7 +59,7 @@
                 "mysql",
                 "postgresql"
             ],
-            "time": "2015-02-16 20:43:00"
+            "time": "2015-05-05 14:43:15"
         },
         {
             "name": "danielstjules/stringy",
@@ -1679,7 +1692,7 @@
             "time": "2012-12-21 11:40:51"
         },
         {
-            "name": "rhumsaa/uuid",
+            "name": "ramsey/uuid",
             "version": "2.8.0",
             "source": {
                 "type": "git",
@@ -1742,7 +1755,6 @@
                 "identifier",
                 "uuid"
             ],
-            "abandoned": "ramsey/uuid",
             "time": "2014-11-09 18:42:56"
         },
         {
