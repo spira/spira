@@ -25,3 +25,8 @@
 
 ## Travis
 * Make travis use docker deployment ([not yet possible](http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/))
+
+## Docker
+* Configure gulp task to have php cli so it can run phpunit tests
+* Install phantomjs binary in gulp image so karma-phantomjs-launcher doesnt try to install it (currently failing)
+** Consider trying phantomjs 2.0
