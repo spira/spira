@@ -1,6 +1,7 @@
 var _ = require('lodash'),
     gulpCore = require('gulp'),
     gulp = require('gulp-help')(gulpCore),
+    bower = require('gulp-bower'),
     watch = require('gulp-watch'),
     notify = require('gulp-notify'),
     del = require('del'),
@@ -69,6 +70,12 @@ var paths = {
         }
     }
 };
+
+gulp.task('bower', function() {
+    return bower({ cwd: './app' })
+        //.pipe(gulp.dest('lib/'))
+    ;
+});
 
 gulp.task('clean', 'deletes all build files', function(cb) {
     del([paths.dest.base], cb);
