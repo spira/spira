@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use App\Models\User;
-use Database\Seeds\UserStorySeeder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
@@ -29,12 +28,9 @@ class TestController extends BaseController
 
     public function queue(){
 
-        $userSeeder = new UserStorySeeder();
+        Queue::push(function($job){
 
-        Queue::push(function($job) use ($userSeeder){
-
-            $userSeeder->createUser();
-
+            User::fakeUser();
 
             $job->delete();
         });

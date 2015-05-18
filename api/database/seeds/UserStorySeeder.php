@@ -1,5 +1,4 @@
-<?php namespace Database\Seeds;
-
+<?php
 
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
@@ -7,40 +6,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserStorySeeder extends Seeder {
-
-    private $faker;
-
-    public function __construct(){
-
-        $this->faker = Faker::create('au_AU');
-
-    }
-
-    public function createUser($overrides = [], $seed = null){
-
-
-        $faker = $this->faker;
-
-        if ($seed){
-            $faker->seed($seed);
-        }
-
-        $userInfo = array_merge([
-            'user_id' => $faker->uuid,
-            'email' => $faker->email,
-            'password' => Hash::make('password'),
-            'first_name' => $faker->firstName,
-            'last_name' => $faker->lastName,
-            'phone' => $faker->optional(0.5)->phoneNumber,
-            'mobile' => $faker->optional(0.5)->phoneNumber,
-        ], $overrides);
-
-        $user = new User($userInfo);
-
-        $user->timestamps = true;
-        $user->save();
-
-    }
 
 	/**
 	 * Run the database seeds.
@@ -50,17 +15,15 @@ class UserStorySeeder extends Seeder {
 	public function run()
 	{
 
-        $this->createUser([
+        User::fakeUser([
             'email'=>'john.smith@example.com'
         ]);
 
         foreach(range(0, 99) as $index){
 
-            $this->createUser();
+            User::fakeUser();
 
         }
-
-
 
 	}
 
