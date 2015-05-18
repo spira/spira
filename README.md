@@ -144,11 +144,14 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 * `boot2docker ssh 'ls -l /data'` - verify mounting in boot2docker
 * `VBoxManage modifyvm boot2docker-vm --natpf1 "api,tcp,,8080,,8080"` - open a port on the host vm
 * `VBoxManage modifyvm "boot2docker-vm" --natpf1 delete "xdebug"` - close opened port
+* `VBoxManage modifyvm boot2docker-vm --memory 4000` - allocate more ram to the machine (unit is MB)
+
 
 
 #### Container development
 * `docker build -t nglume/docker-phpfpm:latest .` - build an image, give it a tag
 * `docker push nglume/docker-phpfpm:latest` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
+* Getting resolve issues when building? Edit `/etc/resolve.conf` in boot2docker. (`boot2docker ssh` then `vi /etc/resolve.conf` to edit) and change the nameserver entry: `nameserver 8.8.8.8`
 
 ## Deployment Notes
 * For security XDEBUG_ENABLED should NOT be set to true in production - the way xdebug is configured for docker allows for remote connection from any host.

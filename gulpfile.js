@@ -1,6 +1,7 @@
 var _ = require('lodash'),
     gulpCore = require('gulp'),
     gulp = require('gulp-help')(gulpCore),
+    bower = require('gulp-bower'),
     watch = require('gulp-watch'),
     notify = require('gulp-notify'),
     del = require('del'),
@@ -70,6 +71,12 @@ var paths = {
     }
 };
 
+gulp.task('bower:install', 'installs bower dependencies', function() {
+
+    return bower({ cwd: './app', cmd: 'install'}, ['--allow-root']);
+
+});
+
 gulp.task('clean', 'deletes all build files', function(cb) {
     del([paths.dest.base], cb);
 });
@@ -113,7 +120,7 @@ gulp.task('assets', 'copies asset files', [], function(){
         .pipe(gulp.dest(paths.dest.assets));
 });
 
-gulp.task('bower', 'compiles frontend vendor files', [], function(cb) {
+gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
 
     var files = mainBowerFiles({
             includeDev: true,
@@ -221,7 +228,8 @@ gulp.task('default', 'default task', ['build']);
 
 gulp.task('build', 'runs build sequence for frontend', function (cb){
     runSequence('clean',
-        ['scripts', 'templates', 'styles', 'assets', 'bower'],
+        'bower:install',
+        ['scripts', 'templates', 'styles', 'assets', 'bower:build'],
         'index',
         cb);
 });
