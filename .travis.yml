@@ -12,10 +12,9 @@ before_install:
 before_script:
 
   - psql -c 'create database nglume;' -U postgres
-  - npm install --quiet -g gulp bower newman
+  - npm install --quiet -g gulp newman
   - npm install
-  - bower install
-  - gulp
+  - gulp bower  - gulp
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
