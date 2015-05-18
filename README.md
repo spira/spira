@@ -57,7 +57,7 @@ sudo -- sh -c "printf '\n\n#nglume docker\n192.168.59.103\tlocal.nglume.io\n192.
 
 ```sh
 $ boot2docker ssh 'sudo mkdir /data'
-$ boot2docker ssh 'sudo mount -t vboxsf -o "defaults,uid=33,gid=33,rw" nglume /data'
+$ boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 nglume /data'
 ```
 
 Verify the project files are mounted with 
@@ -73,6 +73,7 @@ $ boot2docker down
 $ VBoxManage modifyvm boot2docker-vm --natpf1 "web,tcp,,80,,80"
 $ VBoxManage modifyvm boot2docker-vm --natpf1 "api,tcp,,8080,,8080"
 $ VBoxManage modifyvm boot2docker-vm --natpf1 "dockerssh,tcp,,42222,,42222"
+$ VBoxManage modifyvm boot2docker-vm --natpf1 "mailcatcher,tcp,,1080,,1080"
 ```
 
 ## Start the vm and start all containers in background
@@ -86,6 +87,12 @@ $ docker-compose up -d
 
 ```sh
 $ docker-compose ps
+```
+
+## Grant webserver permissions for storage folder
+
+```sh
+$ chmod -R 777 api/storage/
 ```
 
 ## Build the database

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8b857406bb090368e5093d7b8990d405",
+    "hash": "9986de9ea728cce858f8cc308a71563f",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -845,6 +845,57 @@
             "time": "2015-04-15 16:28:41"
         },
         {
+            "name": "illuminate/mail",
+            "version": "v5.0.28",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/mail.git",
+                "reference": "1fd7184ae87b0fc1c4b17b481f8b64c0c945b2d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/mail/zipball/1fd7184ae87b0fc1c4b17b481f8b64c0c945b2d9",
+                "reference": "1fd7184ae87b0fc1c4b17b481f8b64c0c945b2d9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "5.0.*",
+                "illuminate/contracts": "5.0.*",
+                "illuminate/support": "5.0.*",
+                "php": ">=5.4.0",
+                "psr/log": "~1.0",
+                "swiftmailer/swiftmailer": "~5.1"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Required to use the SES mail driver (~2.4).",
+                "guzzlehttp/guzzle": "Required to use the Mailgun and Mandrill mail drivers (~5.0)."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Mail\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "The Illuminate Mail package.",
+            "homepage": "http://laravel.com",
+            "time": "2015-04-21 01:43:54"
+        },
+        {
             "name": "illuminate/pagination",
             "version": "v5.0.28",
             "source": {
@@ -1276,6 +1327,64 @@
             "time": "2014-11-20 16:49:30"
         },
         {
+            "name": "jeremeamia/SuperClosure",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeremeamia/super_closure.git",
+                "reference": "b712f39c671e5ead60c7ebfe662545456aade833"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/b712f39c671e5ead60c7ebfe662545456aade833",
+                "reference": "b712f39c671e5ead60c7ebfe662545456aade833",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "~1.0",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "~0.1.2",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SuperClosure\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Lindblom",
+                    "email": "jeremeamia@gmail.com",
+                    "homepage": "https://github.com/jeremeamia",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Serialize Closure objects, including their context and binding",
+            "homepage": "https://github.com/jeremeamia/super_closure",
+            "keywords": [
+                "closure",
+                "function",
+                "lambda",
+                "parser",
+                "serializable",
+                "serialize",
+                "tokenizer"
+            ],
+            "time": "2015-03-11 20:06:43"
+        },
+        {
             "name": "laravel/lumen-framework",
             "version": "v5.0.9",
             "source": {
@@ -1654,6 +1763,51 @@
             "time": "2015-02-26 15:33:07"
         },
         {
+            "name": "nikic/php-parser",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "dff239267fd1befa1cd40430c9ed12591aa720ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dff239267fd1befa1cd40430c9ed12591aa720ca",
+                "reference": "dff239267fd1befa1cd40430c9ed12591aa720ca",
+                "shasum": ""
+            },
+            "require": {
+                "ext-tokenizer": "*",
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "lib/bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov"
+                }
+            ],
+            "description": "A PHP parser written in PHP",
+            "keywords": [
+                "parser",
+                "php"
+            ],
+            "time": "2015-05-02 15:40:40"
+        },
+        {
             "name": "psr/log",
             "version": "1.0.0",
             "source": {
@@ -1756,6 +1910,58 @@
                 "uuid"
             ],
             "time": "2014-11-09 18:42:56"
+        },
+        {
+            "name": "swiftmailer/swiftmailer",
+            "version": "v5.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swiftmailer/swiftmailer.git",
+                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/31454f258f10329ae7c48763eb898a75c39e0a9f",
+                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.4-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "lib/swift_required.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Corbyn"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Swiftmailer, free feature-rich PHP mailer",
+            "homepage": "http://swiftmailer.org",
+            "keywords": [
+                "mail",
+                "mailer"
+            ],
+            "time": "2015-03-14 06:06:39"
         },
         {
             "name": "symfony/console",
