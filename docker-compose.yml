@@ -9,6 +9,7 @@ data:
   privileged: true
   links:
    - mailcatcher:mailcatcher
+   - queue:queue
 
 db:
   image: postgres

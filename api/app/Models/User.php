@@ -19,4 +19,6 @@ class User extends BaseModel {
      * @var array
      */
     protected $hidden = ['password', 'reset_token'];
+
+    protected $primaryKey = 'user_id';
 }

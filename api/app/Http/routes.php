@@ -26,6 +26,8 @@ $app->group(['prefix' => 'users'], function($app){
 
 $app->group(['prefix' => 'test'], function($app){
 
-    $app->get('/email', 'App\Http\Controllers\TestController@testEmail');
+    $app->get('/email', 'App\Http\Controllers\TestController@email');
+
+    $app->get('/queue', 'App\Http\Controllers\TestController@queue');
 
 });

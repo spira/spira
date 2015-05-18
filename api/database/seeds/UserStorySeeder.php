@@ -1,9 +1,10 @@
-<?php
+<?php namespace Database\Seeds;
 
 
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserStorySeeder extends Seeder {
 
@@ -15,7 +16,7 @@ class UserStorySeeder extends Seeder {
 
     }
 
-    private function createUser($overrides = [], $seed = null){
+    public function createUser($overrides = [], $seed = null){
 
 
         $faker = $this->faker;
