@@ -7,6 +7,8 @@ data:
     - API_PATH=/api
     - API_DOTENV=.local.env
   privileged: true
+  links:
+   - mailcatcher:mailcatcher
 
 db:
   image: postgres
@@ -22,6 +24,11 @@ redis:
 queue:
   image: nglume/docker-beanstalkd
 
+mailcatcher:
+  image: schickling/mailcatcher
+  ports:
+    - "1080:1080"
+
 php:  
   image: nglume/docker-phpfpm
   volumes_from:
@@ -30,7 +37,9 @@ php:
     - db:db
     - redis:redis
     - queue:queue
+    - mailcatcher:mailcatcher
   environment:
+    - API_PATH=/api
     - XDEBUG_ENABLED=true
   privileged: true
 

@@ -22,3 +22,10 @@ $app->group(['prefix' => 'users'], function($app){
     $app->get('/{id}', 'App\Http\Controllers\UserController@getOne');
 
 });
+
+
+$app->group(['prefix' => 'test'], function($app){
+
+    $app->get('/email', 'App\Http\Controllers\TestController@testEmail');
+
+});
