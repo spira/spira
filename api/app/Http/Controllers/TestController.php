@@ -43,5 +43,11 @@ class TestController extends BaseController
 
     }
 
+    public function internalException(){
+
+        throw new \RuntimeException("Something went wrong");
+
+    }
+
 
 }
