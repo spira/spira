@@ -291,7 +291,7 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
     var envFile = "./api/postman/nglume-local.postman_environment";
 
     if (process.env.TRAVIS){
-        envFile = "./api/postman/nglume-travis.postman_environment";
+        envFile = "./api/postman/nglume-travisci.postman_environment";
     }
 
     var environment = JSON5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
