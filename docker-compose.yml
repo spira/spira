@@ -25,6 +25,11 @@ redis:
 queue:
   image: nglume/docker-beanstalkd
 
+queuerunner:
+  image: nglume/docker-artisan-queue-runner
+  volumes_from:
+    - data
+
 mailcatcher:
   image: schickling/mailcatcher
   ports:

@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BaseController extends Controller
@@ -33,6 +34,39 @@ class BaseController extends Controller
         }
 
         return response()->json($resource);
+    }
+
+    public static function renderException($request, \Exception $e, $debug = false){
+
+        $message = $e->getMessage();
+        if (!$message){
+            $message = 'An error occurred';
+        }
+
+        $debugData = [
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => explode("\n", $e->getTraceAsString()),
+        ];
+
+        $response = [
+            'message' => $message,
+        ];
+
+        $statusCode = 500;
+
+        if ($e instanceof HttpExceptionInterface){
+            $statusCode = $e->getStatusCode();
+        }
+
+        if ($debug){
+            $response['debug'] = $debugData;
+        }
+
+        return response()->json($response, $statusCode);
     }
 
 }

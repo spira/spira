@@ -30,4 +30,6 @@ $app->group(['prefix' => 'test'], function($app){
 
     $app->get('/queue', 'App\Http\Controllers\TestController@queue');
 
+    $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
+
 });
