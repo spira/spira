@@ -73,6 +73,8 @@ gulp:
   image: nglume/docker-gulp
   volumes_from:
     - data
+  links:
+    - web:nginx
   privileged: true
 
 phpcomposer:
