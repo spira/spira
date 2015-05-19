@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Http\Request;
 
 class TestController extends BaseController
 {
@@ -10,11 +11,13 @@ class TestController extends BaseController
     public static $model = false;
 
 
-    public function email(){
+    public function email(Request $request){
 
-        $responseCode = Mail::send('emails.welcome', [], function($message)
+        $subject = $request->input('subject');
+
+        $responseCode = Mail::send('emails.welcome', [], function($message) use ($subject)
         {
-            $message->to('foo@example.com', 'John Smith')->subject('Welcome!');
+            $message->to('foo@example.com', 'John Smith')->subject($subject);
         });
 
         $message = [

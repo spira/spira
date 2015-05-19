@@ -75,6 +75,7 @@ gulp:
     - data
   links:
     - web:nginx
+    - mailcatcher:mailcatcher
   privileged: true
 
 phpcomposer:

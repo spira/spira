@@ -305,6 +305,13 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
 
     }
 
+    if (!!process.env.MAILCATCHER_PORT_1080_TCP){ //if we are executing from a docker container with mailcatcher connection
+
+        var mcHostEntry = _.find(environment.values, {'key':'mailcatcherHost'}); //find the host key entry
+        mcHostEntry.value = process.env.MAILCATCHER_PORT_1080_TCP_ADDR + ':1080'; //rewrite it to the mailcatcher container tcp address
+
+    }
+
     var newmanOptions = {
         envJson: environment,
         asLibrary: true,
