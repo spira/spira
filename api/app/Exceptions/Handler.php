@@ -1,5 +1,6 @@
 <?php namespace App\Exceptions;
 
+use App\Http\Controllers\BaseController;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 
@@ -36,7 +37,10 @@ class Handler extends ExceptionHandler {
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+
+        return BaseController::renderException($request, $e, env('APP_DEBUG', false));
+
+//        return parent::render($request, $e);
     }
 
 }

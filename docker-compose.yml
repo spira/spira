@@ -9,6 +9,7 @@ data:
   privileged: true
   links:
    - mailcatcher:mailcatcher
+   - queue:queue
 
 db:
   image: postgres
@@ -23,6 +24,11 @@ redis:
 
 queue:
   image: nglume/docker-beanstalkd
+
+queuerunner:
+  image: nglume/docker-artisan-queue-runner
+  volumes_from:
+    - data
 
 mailcatcher:
   image: schickling/mailcatcher
