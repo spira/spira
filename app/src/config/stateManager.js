@@ -60,6 +60,18 @@ angular.module('stateManager', [
                 title : 'Home',
                 state : 'app.public.home',
                 icon: 'home'
+            },
+            {
+                title : 'Sandbox',
+                state : 'app.public.sandbox',
+                icon: 'rocket',
+                children: [
+                    {
+                        title : 'Home',
+                        state : 'app.public.home',
+                        icon: 'home'
+                    }
+                ]
             }
         ];
 
