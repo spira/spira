@@ -288,14 +288,40 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
 
     var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
 
+    var envFile = "./api/postman/nglume-local.postman_environment";
+
+    if (process.env.TRAVIS){
+        envFile = "./api/postman/nglume-travisci.postman_environment";
+    }
+
+    var environment = JSON5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
+
+    if (!!process.env.NGINX_PORT_8080_TCP){ //if we are executing from a docker container
+
+        var hostEntry = _.find(environment.values, {'key':'host'}); //find the host key entry
+        hostEntry.value = process.env.NGINX_PORT_8080_TCP_ADDR + ':8080'; //rewrite it to the nginx container tcp address
+
+    }
+
+    if (!!process.env.MAILCATCHER_PORT_1080_TCP){ //if we are executing from a docker container with mailcatcher connection
+
+        var mcHostEntry = _.find(environment.values, {'key':'mailcatcherHost'}); //find the host key entry
+        mcHostEntry.value = process.env.MAILCATCHER_PORT_1080_TCP_ADDR + ':1080'; //rewrite it to the mailcatcher container tcp address
+
+    }
+
+    console.log('executing tests with environment', JSON5.stringify(environment));
+
     var newmanOptions = {
-        envJson: JSON5.parse(fs.readFileSync("./api/postman/nglume-travisci.postman_environment", "utf-8")), // environment file (in parsed json format)
+        envJson: environment,
         asLibrary: true,
-        stopOnError: false
+        stopOnError: false,
+        exitCode: true
     };
 
-
     newman.execute(collectionJson, newmanOptions, function(exitCode){
+
+        console.log('exit code', exitCode);
 
         if (exitCode !== 0){
             throw new Error("Postman tests failed!");

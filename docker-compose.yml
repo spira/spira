@@ -3,13 +3,7 @@ data:
   image: nglume/docker-data
   volumes:
     - /data:/data
-  environment:
-    - API_PATH=/api
-    - API_DOTENV=.local.env
   privileged: true
-  links:
-   - mailcatcher:mailcatcher
-   - queue:queue
 
 db:
   image: postgres
@@ -27,6 +21,8 @@ queue:
 
 queuerunner:
   image: nglume/docker-artisan-queue-runner
+  links:
+    - lumen
   volumes_from:
     - data
 
@@ -73,6 +69,9 @@ gulp:
   image: nglume/docker-gulp
   volumes_from:
     - data
+  links:
+    - web:nginx
+    - mailcatcher:mailcatcher
   privileged: true
 
 phpcomposer:
@@ -104,3 +103,15 @@ ssh:
       - queue:queue
   environment:
       - SSH_PASSWORD=nglume
+
+lumen:
+  image: nglume/docker-lumen
+  volumes_from:
+    - data
+  links:
+    - mailcatcher:mailcatcher
+    - queue:queue
+    - redis:redis
+  environment:
+    - API_PATH=/api
+    - API_DOTENV=.local.env

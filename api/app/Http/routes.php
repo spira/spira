@@ -26,10 +26,14 @@ $app->group(['prefix' => 'users'], function($app){
 
 $app->group(['prefix' => 'test'], function($app){
 
-    $app->get('/email', 'App\Http\Controllers\TestController@email');
+    $app->post('/email', 'App\Http\Controllers\TestController@email');
 
     $app->get('/queue', 'App\Http\Controllers\TestController@queue');
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
+    $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
+
+    $app->put('/cache/{key}', 'App\Http\Controllers\TestController@addToCache');
+    $app->get('/cache/{key}', 'App\Http\Controllers\TestController@getFromCache');
 
 });

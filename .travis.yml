@@ -22,6 +22,8 @@ before_script:
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed --env=travis
   - php ./api/artisan serve --port 8080 --env=travis &
+  - gem install mailcatcher
+  - mailcatcher
   - sleep 5 #give server some time to boot
 
 script:
