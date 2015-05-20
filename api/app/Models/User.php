@@ -15,7 +15,7 @@ class User extends BaseModel {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'reset_token'];
+    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'reset_token', 'phone', 'mobile'];
     /**
      * The attributes excluded from the model's JSON form.
      *
