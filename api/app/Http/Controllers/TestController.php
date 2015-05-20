@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\Request;
-use Rhumsaa\Uuid\Console\Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -79,9 +78,6 @@ class TestController extends BaseController
     }
 
     public function getFromCache($key){
-
-
-        phpinfo();
 
         if (!Cache::has($key)) {
             throw new NotFoundHttpException("Cache does not have key `$key` stored");
