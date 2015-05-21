@@ -7,5 +7,6 @@ angular.module('vendorModules', [
     'ui.inflector', //Module to Humanise strings (camelCased or pipe-case etc)
     'ui.validate', //Module to add custom validation to inputs
     'ngAnimate', //angular animate
-    'ngSanitize' //angular sanitise
+    'ngSanitize', //angular sanitise
+    'hljs' //syntax highlighted code blocks - https://github.com/pc035860/angular-highlightjs
 ]);

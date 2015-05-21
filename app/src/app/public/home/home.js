@@ -4,27 +4,23 @@ angular.module('app.public.home', [])
         stateHelperServiceProvider.addState('app.public.home', {
             url: '/',
             views: {
-                "main@app.public": { // Points to the ui-view="main" in modal-layout.tpl.html
+                "main@app.public": {
                     controller: 'app.public.home.controller',
                     templateUrl: 'templates/app/public/home/home.tpl.html'
                 }
             },
             resolve: /*@ngInject*/{
-                allUsers: function(userService){
-                    return userService.getAllUsers();
-                }
             },
             data: {
                 title: "Home",
-                role: 'public'
+                role: 'public',
+                icon: 'home'
             }
         });
     })
 
-    .controller('app.public.home.controller', function($scope, allUsers) {
+    .controller('app.public.home.controller', function($scope) {
 
-
-        $scope.users = allUsers;
 
     })
 

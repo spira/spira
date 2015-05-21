@@ -11,21 +11,23 @@
         <top-bar-section>
 
             <ul class="left">
-                <li ng-repeat-start="navitem in navigation" ui-sref-active="active" ng-if="!navitem.children">
-                    <a ui-sref="{{navitem.state}}">
-                        <i ng-if="!!navitem.icon" class="fa fa-{{navitem.icon}}">&nbsp;</i>{{navitem.title}}
+                <li ng-repeat-start="state in childStates" ui-sref-active="active" ng-if="true"> <!--@todo set if to check if has children -->
+                    <a ui-sref="{{state.name}}">
+                        <i ng-if="!!state.data.icon" class="fa fa-{{state.data.icon}}">&nbsp;</i>{{state.data.title}}
                     </a>
                 </li>
-                <li ng-repeat-end has-dropdown ng-if="!!navitem.children">
-                    <a ui-sref="{{navitem.state}}">
-                        <i ng-if="!!navitem.icon" class="fa fa-{{navitem.icon}}">&nbsp;</i>{{navitem.title}}
+
+                <li ng-repeat-end="state in childStates" ui-sref-active="active" ng-if="false"><!--@todo set if to check if has children -->
+                    <a ui-sref="{{state.name}}">
+                        <i ng-if="!!state.data.icon" class="fa fa-{{state.data.icon}}">&nbsp;</i>{{state.data.title}}
                     </a>
                     <ul top-bar-dropdown>
-                        <li ng-repeat="childNavItem in navitem.children" ui-sref-active="active">
-                            <a ui-sref="{{childNavItem.state}}"><i ng-if="!!childNavItem.icon" class="fa fa-{{childNavItem.icon}}">&nbsp;</i>{{childNavItem.title}}</a>
+                        <li ng-repeat="childState in state.children" ui-sref-active="active">
+                            <a ui-sref="{{childState.name}}"><i ng-if="!!childState.data.icon" class="fa fa-{{childState.data.icon}}">&nbsp;</i>{{childState.data.title}}</a>
                         </li>
                     </ul>
                 </li>
+
             </ul>
 
         </top-bar-section>

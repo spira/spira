@@ -9,8 +9,9 @@ angular.module('app', [
 
     })
 
-    .run(function() {
+    .run(function($rootScope) {
         moment.locale('en-gb');
+        $rootScope.$on("$stateChangeError", console.error.bind(console));
     })
 
     .controller('AppCtrl', function($scope) {
