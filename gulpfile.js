@@ -228,7 +228,7 @@ gulp.task('default', 'default task', ['build']);
 
 gulp.task('build', 'runs build sequence for frontend', function (cb){
     runSequence('clean',
-        'bower:install',
+        //'bower:install',
         ['scripts', 'templates', 'styles', 'assets', 'bower:build'],
         'index',
         cb);

@@ -53,17 +53,31 @@ angular.module('stateManager', [
 
     })
 
-    .controller('stateManager.navigation.controller', function($scope, $state, $location, $rootScope) {
+    .controller('stateManager.navigation.controller', function($scope, stateHelperService) {
 
         var navigation = [
             {
                 title : 'Home',
                 state : 'app.public.home',
                 icon: 'home'
+            },
+            {
+                title : 'Features',
+                state : 'app.public.features',
+                icon: 'rocket',
+                children: [
+                    {
+                        title : 'API',
+                        state : 'app.public.features.api',
+                        icon: 'cloud'
+                    }
+                ]
             }
         ];
 
         $scope.navigation = navigation;
+
+        $scope.childStates = stateHelperService.getChildStates('app.public');
 
     })
 ;
