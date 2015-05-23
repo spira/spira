@@ -11,7 +11,7 @@ angular.module('app', [
 
     .run(function($rootScope) {
         moment.locale('en-gb');
-        $rootScope.$on("$stateChangeError", console.error.bind(console));
+        $rootScope.$on("$stateChangeError", _.bind(console.error, console));
     })
 
     .controller('AppCtrl', function($scope) {

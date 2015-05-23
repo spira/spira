@@ -36,4 +36,6 @@ $app->group(['prefix' => 'test'], function($app){
     $app->put('/cache/{key}', 'App\Http\Controllers\TestController@addToCache');
     $app->get('/cache/{key}', 'App\Http\Controllers\TestController@getFromCache');
 
+    $app->post('/logs', 'App\Http\Controllers\TestController@postLogs');
+
 });

@@ -3,9 +3,11 @@
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\Request;
+use Rhumsaa\Uuid\Console\Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -89,6 +91,30 @@ class TestController extends BaseController
         ];
 
         return response()->json($response, 200);
+
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function postLogs(Request $request){
+
+
+        foreach ($request->json() as $log){
+
+            $logType = $log['type'];
+            $logMessage = $log['message'];
+
+
+            $logSuccess = Log::$logType($logMessage);
+
+            if (!$logSuccess){
+                throw new \RuntimeException('Could not post log');
+            }
+
+        }
+
+        return response(null, 204);
 
     }
 
