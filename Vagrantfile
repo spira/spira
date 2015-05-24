@@ -4,7 +4,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname="nglume-vagrant"
 
   config.vm.provision :docker
-  config.vm.provision :docker_compose, yml: "/vagrant/docker-compose.yml", run: "always"
+  config.vm.provision :docker_compose
 
 # webserver
   config.vm.network "forwarded_port", guest: 80, host: 80
@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "private_network", ip: "192.168.2.2"
 
 # mount folder everything 777 so lumen wont complain about permissions
-  config.vm.synced_folder "./", "/data", :mount_options => ["dmode=777,fmode=777"]
+  config.vm.synced_folder "./", "/data", type: "nfs"
 
 # vm 'physical' config
     config.vm.provider "virtualbox" do |vb|
