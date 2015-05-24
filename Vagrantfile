@@ -4,7 +4,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname="nglume-vagrant"
 
   config.vm.provision :docker
-  config.vm.provision :docker_compose
+  config.vm.provision :docker_compose, yml: "/data/docker-compose.yml", run: "always"
 
 # webserver
   config.vm.network "forwarded_port", guest: 80, host: 80
