@@ -1,3 +1,6 @@
+console.log("Loading plugins...");
+console.time("Plugins loaded");
+
 var _ = require('lodash'),
     gulpCore = require('gulp'),
     gulp = require('gulp-help')(gulpCore),
@@ -28,6 +31,8 @@ var _ = require('lodash'),
     JSON5 = require('json5'),
     replace = require('gulp-replace')
 ;
+
+console.timeEnd("Plugins loaded"); //end measuring
 
 var paths = {
     src: {
