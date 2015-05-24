@@ -112,6 +112,7 @@ lumen:
     - mailcatcher:mailcatcher
     - queue:queue
     - redis:redis
+    - db:db
   environment:
     - API_PATH=/api
     - API_DOTENV=.local.env

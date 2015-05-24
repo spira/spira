@@ -133,6 +133,7 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 * `docker-compose stop` - stop all containers
 * `docker-compose pull` - re-pull all containers from the registry (checking for updates)
 * `docker-compose run --entrypoint ls web /etc/nginx/sites-available` - run a specific command in container, not the standard entrypoint (process)
+* `docker inspect --format '{{ .NetworkSettings.IPAddress }}' data_db_1` - get IP address of a container
 
 #### boot2docker
 * `boot2docker up` - start docker host vm
