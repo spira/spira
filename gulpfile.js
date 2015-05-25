@@ -254,7 +254,7 @@ gulp.task('index', 'processes index.html file', function(){
 
 
     return gulp.src(paths.src.base+'/index.html')
-        .pipe(template(files))
+        .pipe(plugins.template(files))
         .pipe(gulp.dest(paths.dest.base))
     ;
 
