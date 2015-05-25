@@ -26,44 +26,7 @@ var gulpCore = require('gulp'),
     _ = require('lodash')
 ;
 
-//plugins.replace = require('replace');
-
 console.timeEnd("Core plugins loaded");
-/*
-console.time("Task plugins loaded");
-
-var
-    watch = require('gulp-watch'),
-    notify = require('gulp-notify'),
-    del = require('del'),
-    concat = require('gulp-concat'),
-    concatCss = require('gulp-concat-css'),
-    uglify = require('gulp-uglify'),
-    ngAnnotate = require('gulp-ng-annotate'),
-    less = require('gulp-less'),
-    sourcemaps = require('gulp-sourcemaps'),
-    mainBowerFiles = require('main-bower-files'),
-    filter = require('gulp-filter'),
-    browserSync = require('browser-sync'),
-    template = require('gulp-template'),
-    globby = require('globby'),
-    runSequence = require('run-sequence'),
-    minimatch = require('minimatch'),
-    templateCache = require('gulp-angular-templatecache'),
-    karma = require('gulp-karma'),
-    addSrc = require('gulp-add-src'),
-    coveralls = require('gulp-coveralls'),
-    phpunit = require('gulp-phpunit'),
-    newman = require('newman'),
-    fs = require('fs'),
-    JSON5 = require('json5'),
-    replace = require('gulp-replace')
-;
-
-console.timeEnd("Task plugins loaded");
-*/
-
-console.log('plugins', plugins.json5);
 
 
 var paths = {
