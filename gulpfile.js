@@ -245,7 +245,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
      * See `templates-watch` method above which does not work
      */
 
-    browserSync.watch(paths.dest.base+'**', function (event, file) {
+    browserSync.watch(paths.dest.base+'/**', function (event, file) {
         if (event === "change") {
             browserSync.reload();
         }
@@ -256,6 +256,10 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
     });
 
     gulp.watch(paths.src.templates, ['templates']);
+    gulp.watch(paths.src.scripts, ['scripts']);
+    gulp.watch(paths.src.styles, ['styles']);
+    gulp.watch(paths.src.assets, ['assets']);
+    gulp.watch(paths.src.base+'/index.html', ['index']);
 
 });
 
