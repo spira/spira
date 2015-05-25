@@ -8,7 +8,6 @@ var gulpCore = require('gulp'),
             'gulp-*',
             'gulp.*',
             'karma-*',
-            'browser-sync',
             'del',
             'globby',
             'lodash',
@@ -23,10 +22,13 @@ var gulpCore = require('gulp'),
         }
     }),
     gulp = plugins.help(gulpCore),
-    _ = require('lodash')
+    _ = require('lodash'),
+    browserSync = require('browser-sync').create()
 ;
 
 console.timeEnd("Core plugins loaded");
+
+console.log('browserSync', _.functions(browserSync));
 
 
 var paths = {
@@ -71,13 +73,13 @@ var paths = {
     }
 };
 
-gulp.task('bower:install', 'installs bower dependencies', function() {
+gulp.task('bower:install', 'installs bower dependencies', [],  function() {
 
     return plugins.bower({ cwd: './app', cmd: 'install'}, ['--allow-root']);
 
 });
 
-gulp.task('clean', 'deletes all build files', function(cb) {
+gulp.task('clean', 'deletes all build files', [], function(cb) {
     plugins.del([paths.dest.base], cb);
 });
 
@@ -89,6 +91,7 @@ gulp.task('scripts', 'processes javascript files', [], function () {
     ;
 });
 
+gulp.task('templates-watch', 'watches template files for changes [not working]', ['templates'], browserSync.reload);
 gulp.task('templates', 'builds template files', [], function(){
     return gulp.src(paths.src.templates)
         .pipe(plugins.templateCache({
@@ -211,7 +214,7 @@ var getIndexFiles = function(conf){
 
 };
 
-gulp.task('index', 'processes index.html file', function(){
+gulp.task('index', 'processes index.html file', [], function(){
 
     var files = getIndexFiles();
 
@@ -234,13 +237,29 @@ gulp.task('build', 'runs build sequence for frontend', function (cb){
         cb);
 });
 
-gulp.task('browser-sync', 'triggers browsersync reload [not yet working]', function() {
-    plugins.browserSync({
-        proxy: "local.app.nglume.io"
+gulp.task('watch', 'starts up browsersync server and runs task watchers', [], function() {
+
+    /**
+     * @todo resolve why this file watcher is required for browsersync to function
+     * It should be possible to just add a watch task that fires reload when task runs
+     * See `templates-watch` method above which does not work
+     */
+
+    browserSync.watch(paths.dest.base+'**', function (event, file) {
+        if (event === "change") {
+            browserSync.reload();
+        }
     });
+
+    browserSync.init({
+        proxy: "http://local.app.nglume.io"
+    });
+
+    gulp.watch(paths.src.templates, ['templates']);
+
 });
 
-gulp.task('test:app',  'unit tests the frontend', function(){
+gulp.task('test:app',  'unit tests the frontend', [], function(){
 
     var files = getIndexFiles({
         devDeps: true
@@ -267,7 +286,7 @@ gulp.task('test:app',  'unit tests the frontend', function(){
 
 });
 
-gulp.task('test:api', 'unit tests the api', function(){
+gulp.task('test:api', 'unit tests the api', [], function(){
 
     return gulp.src('api/phpunit.xml')
         .pipe(plugins.phpunit('./api/vendor/bin/phpunit', {
@@ -283,7 +302,7 @@ gulp.task('test:api', 'unit tests the api', function(){
 
 });
 
-gulp.task('test:postman', 'integration tests the api', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
+gulp.task('test:postman', 'integration tests the api', [], function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
 
 
     var fs = require('fs');
@@ -334,7 +353,7 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
 
 gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:postman']);
 
-gulp.task('coveralls', 'generates code coverage for the frontend', function(){
+gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
     gulp.src(paths.dest.coverage)
         .pipe(plugins.coveralls());
 });
