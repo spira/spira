@@ -3,8 +3,6 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.hostname="nglume-vagrant"
 
-  config.vm.provision :docker
-  config.vm.provision :docker_compose, yml: "/data/docker-compose.yml", run: "always"
 
 # webserver
   config.vm.network "forwarded_port", guest: 80, host: 80
@@ -27,7 +25,10 @@ Vagrant.configure(2) do |config|
 
     end
 
+# provision with docker
+  config.vm.provision :docker
+  config.vm.provision :docker_compose, yml: "/data/docker-compose.yml", run: "always"
 # Provision the box with boostrap file
-#  config.vm.provision :shell, path: "vagrant/bootstrap.sh"
+  config.vm.provision :shell, path: "vagrant/bootstrap.sh"
 
 end
