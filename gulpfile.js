@@ -1,10 +1,38 @@
-console.log("Loading plugins...");
-console.time("Plugins loaded");
+console.log("Loading core plugins...");
+console.time("Core plugins loaded");
 
-var _ = require('lodash'),
-    gulpCore = require('gulp'),
-    gulp = require('gulp-help')(gulpCore),
-    bower = require('gulp-bower'),
+var gulpCore = require('gulp'),
+    gulpLoadPlugins = require('gulp-load-plugins'),
+    plugins = gulpLoadPlugins({
+        pattern: [
+            'gulp-*',
+            'gulp.*',
+            'karma-*',
+            'browser-sync',
+            'del',
+            'globby',
+            'lodash',
+            'main-bower-files',
+            'minimatch',
+            'newman',
+            'run-sequence',
+            'json5'
+        ],
+        rename: {
+            'gulp-angular-templatecache': 'templateCache'
+        }
+    }),
+    gulp = plugins.help(gulpCore),
+    _ = require('lodash')
+;
+
+//plugins.replace = require('replace');
+
+console.timeEnd("Core plugins loaded");
+/*
+console.time("Task plugins loaded");
+
+var
     watch = require('gulp-watch'),
     notify = require('gulp-notify'),
     del = require('del'),
@@ -32,7 +60,11 @@ var _ = require('lodash'),
     replace = require('gulp-replace')
 ;
 
-console.timeEnd("Plugins loaded"); //end measuring
+console.timeEnd("Task plugins loaded");
+*/
+
+console.log('plugins', plugins.json5);
+
 
 var paths = {
     src: {
@@ -78,29 +110,29 @@ var paths = {
 
 gulp.task('bower:install', 'installs bower dependencies', function() {
 
-    return bower({ cwd: './app', cmd: 'install'}, ['--allow-root']);
+    return plugins.bower({ cwd: './app', cmd: 'install'}, ['--allow-root']);
 
 });
 
 gulp.task('clean', 'deletes all build files', function(cb) {
-    del([paths.dest.base], cb);
+    plugins.del([paths.dest.base], cb);
 });
 
 gulp.task('scripts', 'processes javascript files', [], function () {
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
-        .pipe(ngAnnotate())
+        .pipe(plugins.ngAnnotate())
         .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
 
 gulp.task('templates', 'builds template files', [], function(){
     return gulp.src(paths.src.templates)
-        .pipe(templateCache({
+        .pipe(plugins.templateCache({
             root: "templates/",
             standalone: true
         }))
-        .pipe(concat('templates.js'))
+        .pipe(plugins.concat('templates.js'))
         .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
@@ -108,10 +140,10 @@ gulp.task('templates', 'builds template files', [], function(){
 gulp.task('styles', 'compiles stylesheets', [], function(){
     return gulp.src(paths.src.styles)
         //.pipe(watch(paths.src.styles))
-        .pipe(sourcemaps.init())
-        .pipe(less())
+        .pipe(plugins.sourcemaps.init())
+        .pipe(plugins.less())
         //.pipe(concatCss('app.css'))
-        .pipe(sourcemaps.write('./maps'))
+        .pipe(plugins.sourcemaps.write('./maps'))
         .pipe(gulp.dest(paths.dest.css))
         //.on('end', function(){
         //    browserSync.reload();
@@ -127,16 +159,16 @@ gulp.task('assets', 'copies asset files', [], function(){
 
 gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
 
-    var files = mainBowerFiles({
+    var files = plugins.mainBowerFiles({
             includeDev: true,
             paths: {
                 bowerDirectory: 'app/bower_components',
                 bowerJson: 'app/bower.json'
             }
         }),
-        jsFilter = filter('**/*.js'),
-        cssFilter = filter(['**/*.css', '**/*.css.map']),
-        everythingElseFilter = filter(['**/*', '!**/*.css', '!**/*.js', '!**/*.map', '!**/*.less']),
+        jsFilter = plugins.filter('**/*.js'),
+        cssFilter = plugins.filter(['**/*.css', '**/*.css.map']),
+        everythingElseFilter = plugins.filter(['**/*', '!**/*.css', '!**/*.js', '!**/*.map', '!**/*.less']),
         onError = function(cb){
             console.error(cb);
         };
@@ -161,7 +193,7 @@ gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
         //.pipe(concat('vendor.css'))
         //.pipe(sourcemaps.write('./maps'))
 
-        .pipe(replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
+        .pipe(plugins.replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/css'))
         .pipe(cssFilter.restore())
@@ -181,7 +213,7 @@ var getIndexFiles = function(conf){
         devDeps: false //developer dependencies
     });
 
-    var vendorFiles = mainBowerFiles({
+    var vendorFiles = plugins.mainBowerFiles({
         includeDev: config.devDeps,
         paths: {
             bowerDirectory: 'app/bower_components',
@@ -195,18 +227,18 @@ var getIndexFiles = function(conf){
 
     var files = {
         scripts: {
-            app: globby.sync(paths.dest.scripts+'/**/*.js').map(function(path){
+            app: plugins.globby.sync(paths.dest.scripts+'/**/*.js').map(function(path){
                 return path.replace('app/build/', '');
             }),
-            vendor: vendorFiles.filter(minimatch.filter("*.js", {matchBase: true})).map(function(path){
+            vendor: vendorFiles.filter(plugins.minimatch.filter("*.js", {matchBase: true})).map(function(path){
                 return 'vendor/js/'+path;
             })
         },
         styles: {
-            app: globby.sync(paths.dest.appStyles).map(function(path){
+            app: plugins.globby.sync(paths.dest.appStyles).map(function(path){
                 return path.replace('app/build/', '');
             }),
-            vendor: vendorFiles.filter(minimatch.filter("*.css", {matchBase: true})).map(function(path){
+            vendor: vendorFiles.filter(plugins.minimatch.filter("*.css", {matchBase: true})).map(function(path){
                 return 'vendor/css/'+path;
             })
         }
@@ -232,7 +264,7 @@ gulp.task('index', 'processes index.html file', function(){
 gulp.task('default', 'default task', ['build']);
 
 gulp.task('build', 'runs build sequence for frontend', function (cb){
-    runSequence('clean',
+    plugins.runSequence('clean',
         //'bower:install',
         ['scripts', 'templates', 'styles', 'assets', 'bower:build'],
         'index',
@@ -240,7 +272,7 @@ gulp.task('build', 'runs build sequence for frontend', function (cb){
 });
 
 gulp.task('browser-sync', 'triggers browsersync reload [not yet working]', function() {
-    browserSync({
+    plugins.browserSync({
         proxy: "local.app.nglume.io"
     });
 });
@@ -254,14 +286,14 @@ gulp.task('test:app',  'unit tests the frontend', function(){
         .map(function(path){
             return 'app/build/'+path;
         })
-        .concat(globby.sync(paths.src.scripts))
-        .concat(globby.sync(paths.src.tests))
+        .concat(plugins.globby.sync(paths.src.scripts))
+        .concat(plugins.globby.sync(paths.src.tests))
     ;
 
     testFiles.push('app/build/js/templates.js');
 
     return gulp.src(testFiles)
-        .pipe(karma({
+        .pipe(plugins.karma({
             configFile: 'karma.conf.js',
             action: 'run'
         }))
@@ -275,15 +307,15 @@ gulp.task('test:app',  'unit tests the frontend', function(){
 gulp.task('test:api', 'unit tests the api', function(){
 
     return gulp.src('api/phpunit.xml')
-        .pipe(phpunit('./api/vendor/bin/phpunit', {
+        .pipe(plugins.phpunit('./api/vendor/bin/phpunit', {
             notify: true,
             coverageClover: './reports/coverage/api/clover.xml'
         }))
         .on('error', function(err){
-            notify.onError(testNotification('fail', 'phpunit'));
+            plugins.notify.onError(testNotification('fail', 'phpunit'));
             throw err;
         })
-        .pipe(notify(testNotification('pass', 'phpunit')))
+        .pipe(plugins.notify(testNotification('pass', 'phpunit')))
     ;
 
 });
@@ -291,7 +323,9 @@ gulp.task('test:api', 'unit tests the api', function(){
 gulp.task('test:postman', 'integration tests the api', function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
 
 
-    var collectionJson = JSON5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
+    var fs = require('fs');
+
+    var collectionJson = plugins.json5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
 
     var envFile = "./api/postman/nglume-local.postman_environment";
 
@@ -299,7 +333,7 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
         envFile = "./api/postman/nglume-travisci.postman_environment";
     }
 
-    var environment = JSON5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
+    var environment = plugins.json5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
 
     if (!!process.env.NGINX_PORT_8080_TCP){ //if we are executing from a docker container
 
@@ -315,8 +349,6 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
 
     }
 
-    console.log('executing tests with environment', JSON5.stringify(environment));
-
     var newmanOptions = {
         envJson: environment,
         asLibrary: true,
@@ -324,7 +356,7 @@ gulp.task('test:postman', 'integration tests the api', function(callback){ //@to
         exitCode: true
     };
 
-    newman.execute(collectionJson, newmanOptions, function(exitCode){
+    plugins.newman.execute(collectionJson, newmanOptions, function(exitCode){
 
         console.log('exit code', exitCode);
 
@@ -341,7 +373,7 @@ gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:
 
 gulp.task('coveralls', 'generates code coverage for the frontend', function(){
     gulp.src(paths.dest.coverage)
-        .pipe(coveralls());
+        .pipe(plugins.coveralls());
 });
 
 
