@@ -5,6 +5,24 @@ Lumen + AngularJS project seed with Docker
 [![Dependency Status](https://gemnasium.com/nglume/nglume.svg)](https://gemnasium.com/nglume/nglume)
 
 
+## Technologies integrated in this seed project
+* [Lumen](http://lumen.laravel.com/)
+ * [HHVM](http://hhvm.com/)
+ * [Xdebug](http://xdebug.org/)
+* [AngularJS](https://angularjs.org/) (1.x)
+* [Docker](https://www.docker.com/)
+ * [Vagrant](http://docs.vagrantup.com/v2/provisioning/docker.html)
+ * [Docker compose](https://docs.docker.com/compose/)
+* [Gulp](http://gulpjs.com/)
+ * [BrowserSync](http://www.browsersync.io/)
+ * [PhantomJS](http://phantomjs.org/)
+ * [Karma](http://karma-runner.github.io/)
+ * [Bower](http://bower.io/)
+* [Postman](https://www.getpostman.com/)
+ * [Newman](https://github.com/a85/Newman) 
+
+
+
 ## Docker setup
 
 You have two options - boot2docker and vagrant. Vagrant is the recommended setup, however you may already have boot2docker working and prefer it. Instructions for setup below.
