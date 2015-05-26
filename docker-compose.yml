@@ -32,7 +32,7 @@ mailcatcher:
     - "1080:1080"
 
 php:  
-  image: nglume/docker-phpfpm
+  image: nglume/docker-hhvm
   volumes_from:
     - data
   links:
@@ -50,7 +50,7 @@ web:
   volumes_from:
     - data
   links:
-    - php:fpm
+    - php:php
   ports:
     - "80:80"
     - "8080:8080"
