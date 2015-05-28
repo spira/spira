@@ -32,8 +32,8 @@ mailcatcher:
     - "1080:1080"
 
 php:  
-  image: nglume/docker-hhvm # @todo switch to hhvm when Predis works with hhvm
-#  image: nglume/docker-phpfpm
+#  image: nglume/docker-hhvm # @todo switch to hhvm when Predis works with hhvm
+  image: nglume/docker-phpfpm
   volumes_from:
     - data
   links:
