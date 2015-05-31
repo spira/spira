@@ -29,7 +29,7 @@ before_script:
   - curl http://localhost:8000/test/fatal-error # attempt to see if webserver is running
 
 script:
-  - gulp test
+  - gulp test:postman
 
 after_script:
   - php ./vendor/bin/coveralls
