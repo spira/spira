@@ -22,7 +22,8 @@ before_script:
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed --env=travis
-  - php ./api/artisan serve --port 8000 --env=travis --quiet 2>&1 >/dev/null &
+#  - php ./api/artisan serve --port 8000 --env=travis --quiet 2>&1 >/dev/null &
+  - php -S localhost:8000 ./api/public/index.php &
   - gem install mailcatcher
   - mailcatcher
   - sleep 5 #give server some time to boot
