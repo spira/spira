@@ -1,7 +1,7 @@
 Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
-  config.vm.hostname="nglume-vagrant"
+  config.vm.hostname="spira-vagrant"
 
 
 # webserver
@@ -14,7 +14,7 @@ Vagrant.configure(2) do |config|
 # vm static ip binding
   config.vm.network "private_network", ip: "192.168.2.2"
 
-# mount nglume fs
+# mount spira fs
   config.vm.synced_folder "./", "/data", type: "nfs"
 
 # mount docker image repos (if present)
