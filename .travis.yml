@@ -22,10 +22,11 @@ before_script:
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 &
+  - php ./api/artisan serve --port 8000 --quiet 2>&1 >/dev/null &
   - gem install mailcatcher
   - mailcatcher
   - sleep 5 #give server some time to boot
+  - curl http://localhost:8000 # attempt to see if webserver is running
 
 script:
   - gulp test
