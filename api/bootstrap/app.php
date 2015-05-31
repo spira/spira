@@ -17,7 +17,7 @@ Dotenv::load(__DIR__.'/../');
 |
 */
 
-$app = new \App\NglumeApplication(
+$app = new \App\SpiraApplication(
 	realpath(__DIR__.'/../')
 );
 
