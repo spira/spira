@@ -1,6 +1,6 @@
 
 data:  
-  image: nglume/docker-data
+  image: spira/docker-data
   volumes:
     - /data:/data
   privileged: true
@@ -8,8 +8,8 @@ data:
 db:
   image: postgres
   environment:
-    - POSTGRES_PASSWORD=nglume
-    - POSTGRES_USER=nglume
+    - POSTGRES_PASSWORD=spira
+    - POSTGRES_USER=spira
   ports:
     - "5432:5432"
 
@@ -17,10 +17,10 @@ redis:
   image: redis
 
 queue:
-  image: nglume/docker-beanstalkd
+  image: spira/docker-beanstalkd
 
 queuerunner:
-  image: nglume/docker-artisan-queue-runner
+  image: spira/docker-artisan-queue-runner
   links:
     - lumen
   volumes_from:
@@ -32,8 +32,8 @@ mailcatcher:
     - "1080:1080"
 
 php:  
-#  image: nglume/docker-hhvm # @todo switch to hhvm when Predis works with hhvm
-  image: nglume/docker-phpfpm
+#  image: spira/docker-hhvm # @todo switch to hhvm when Predis works with hhvm
+  image: spira/docker-phpfpm
   volumes_from:
     - data
   links:
@@ -47,7 +47,7 @@ php:
   privileged: true
 
 web:  
-  image: nglume/docker-nginx
+  image: spira/docker-nginx
   volumes_from:
     - data
   links:
@@ -61,13 +61,13 @@ web:
 
 
 npm:
-  image: nglume/docker-npm
+  image: spira/docker-npm
   volumes_from:
     - data
   privileged: true
 
 gulp:
-  image: nglume/docker-gulp
+  image: spira/docker-gulp
   volumes_from:
     - data
   links:
@@ -76,13 +76,13 @@ gulp:
   privileged: true
 
 phpcomposer:
-  image: nglume/docker-composer
+  image: spira/docker-composer
   volumes_from:
     - data
   privileged: true
 
 artisan:
-  image: nglume/docker-artisan
+  image: spira/docker-artisan
   volumes_from:
     - data
   links:
@@ -92,7 +92,7 @@ artisan:
   privileged: true
 
 ssh:
-  image: nglume/docker-ssh
+  image: spira/docker-ssh
   volumes_from:
       - data
   privileged: false
@@ -103,10 +103,10 @@ ssh:
       - redis:redis
       - queue:queue
   environment:
-      - SSH_PASSWORD=nglume
+      - SSH_PASSWORD=spira
 
 lumen:
-  image: nglume/docker-lumen
+  image: spira/docker-lumen
   volumes_from:
     - data
   links:

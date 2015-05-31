@@ -1,5 +1,5 @@
 {
-  "name": "nglume",
+  "name": "spira",
   "version": "0.0.0",
   "description": "Lumen and AngularJS RESTful Webapp seed",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nglume/nglume.git"
+    "url": "https://github.com/spira/spira.git"
   },
   "keywords": [
     "laravel",
@@ -20,9 +20,9 @@
   "author": "Zak Henry",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nglume/nglume/issues"
+    "url": "https://github.com/spira/spira/issues"
   },
-  "homepage": "https://github.com/nglume/nglume",
+  "homepage": "https://github.com/spira/spira",
   "devDependencies": {
     "bower": "^1.3.12",
     "browser-sync": "^2.7.4",

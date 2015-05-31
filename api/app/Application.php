@@ -3,7 +3,7 @@
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;
 
-class NglumeApplication extends Application
+class SpiraApplication extends Application
 {
 
     /**
