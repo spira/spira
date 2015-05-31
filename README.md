@@ -1,8 +1,8 @@
-# ng-lume 
+# Spira 
 Lumen + AngularJS project seed with Docker
 
-[![Build Status](https://travis-ci.org/nglume/nglume.svg?branch=master)](https://travis-ci.org/nglume/nglume) [![Coverage Status](https://coveralls.io/repos/nglume/nglume/badge.svg?branch=master)](https://coveralls.io/r/nglume/nglume?branch=master)
-[![Dependency Status](https://gemnasium.com/nglume/nglume.svg)](https://gemnasium.com/nglume/nglume)
+[![Build Status](https://travis-ci.org/spira/spira.svg?branch=master)](https://travis-ci.org/spira/spira) [![Coverage Status](https://coveralls.io/repos/spira/spira/badge.svg?branch=master)](https://coveralls.io/r/spira/spira?branch=master)
+[![Dependency Status](https://gemnasium.com/spira/spira.svg)](https://gemnasium.com/spira/spira)
 
 
 ## Technologies integrated in this seed project
@@ -45,7 +45,7 @@ vagrant up
 
 ### Add host entries to /etc/hosts
 ```
-sudo -- sh -c "printf '\n\n#nglume docker\n192.168.2.2\tlocal.nglume.io\n192.168.2.2\tlocal.api.nglume.io\n192.168.2.2\tlocal.app.nglume.io' >> /etc/hosts"
+sudo -- sh -c "printf '\n\n#spira docker\n192.168.2.2\tlocal.spira.io\n192.168.2.2\tlocal.api.spira.io\n192.168.2.2\tlocal.app.spira.io' >> /etc/hosts"
 ```
 
 ### Log into vagrant box
@@ -70,7 +70,7 @@ docker-compose run artisan migrate --seed
 MacOS command for the lazy:
 
 ```sh
-open -a "Google Chrome" http://local.app.nglume.io
+open -a "Google Chrome" http://local.app.spira.io
 ```
 
 ## boot2docker setup
@@ -94,7 +94,7 @@ $ boot2docker init
 Note that it is important for the containers to work to mount to the repo root (with this README as a child) as some of the containers rely on the folder structure 
 
 ```sh
-$ VBoxManage sharedfolder add boot2docker-vm --name nglume --hostpath /path/to/your/site/repo
+$ VBoxManage sharedfolder add boot2docker-vm --name spira --hostpath /path/to/your/site/repo
 ```
 ### Start boot2docker
 
@@ -117,14 +117,14 @@ You must either run the commands in your shell, or copy them to your .bashrc fil
 Try the one liner below (check the values are what you are wanting):
 
 ```
-sudo -- sh -c "printf '\n\n#nglume docker\n192.168.59.103\tlocal.nglume.io\n192.168.59.103\tlocal.api.nglume.io\n192.168.59.103\tlocal.app.nglume.io' >> /etc/hosts"
+sudo -- sh -c "printf '\n\n#spira docker\n192.168.59.103\tlocal.spira.io\n192.168.59.103\tlocal.api.spira.io\n192.168.59.103\tlocal.app.spira.io' >> /etc/hosts"
 ```
 
 ### Mount the shared folder on the vm at the location /data (this is important, the main docker-data container config relies on this location)
 
 ```sh
 $ boot2docker ssh 'sudo mkdir /data'
-$ boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 nglume /data'
+$ boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 spira /data'
 ```
 
 Verify the project files are mounted with 
@@ -175,7 +175,7 @@ All containers should have either exited 0 or be running
 MacOS command for the lazy:
 
 ```sh
-open -a "Google Chrome" http://local.app.nglume.io
+open -a "Google Chrome" http://local.app.spira.io
 ```
 
 
@@ -186,7 +186,7 @@ This initial build will take some time as all the containers need to be download
 If you wish to connect to the container via SSH (eg to connect to the database from a client), you can use a connection made available in the ssh container.
 
 ```
-$ ssh root@local.nglume.io -p 42222
+$ ssh root@local.spira.io -p 42222
 ```
 
 Note that the port is 42222. This is to avoid collision with the connection to the boot2docker vm.
@@ -211,9 +211,9 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 * `boot2docker up` - start docker host vm
 * `boot2docker down` - stop docker host vm
 * `boot2docker ssh 'ls -l /data/vhosts/nginx/*.conf'` - execute a command in the host vm
-* `VBoxManage sharedfolder add boot2docker-vm --name nglume --hostpath ~/sites/nglume/nglume` - add a shared folder (path to your repo) to the host vm. The name is used for mounting the volume
-* `VBoxManage setextradata boot2docker-vm VBoxInternal2/SharedFoldersEnableSymlinksCreate/nglume 1` - allow symlinking within the shared volume
-* `boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 nglume /data'` - mount volume on the host vm (the name must match the shared folder)
+* `VBoxManage sharedfolder add boot2docker-vm --name spira --hostpath ~/sites/spira/spira` - add a shared folder (path to your repo) to the host vm. The name is used for mounting the volume
+* `VBoxManage setextradata boot2docker-vm VBoxInternal2/SharedFoldersEnableSymlinksCreate/spira 1` - allow symlinking within the shared volume
+* `boot2docker ssh 'sudo mount -t vboxsf -o uid=1000,gid=50 spira /data'` - mount volume on the host vm (the name must match the shared folder)
 * `boot2docker ssh 'ls -l /data'` - verify mounting in boot2docker
 * `VBoxManage modifyvm boot2docker-vm --natpf1 "api,tcp,,8080,,8080"` - open a port on the host vm
 * `VBoxManage modifyvm "boot2docker-vm" --natpf1 delete "xdebug"` - close opened port
@@ -221,9 +221,9 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 
 
 
-#### Container development (not available from within the nglume vagrant box)
-* `docker build -t nglume/docker-phpfpm:latest .` - build an image, give it a tag
-* `docker push nglume/docker-phpfpm:latest` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
+#### Container development (not available from within the spira vagrant box)
+* `docker build -t spira/docker-phpfpm:latest .` - build an image, give it a tag
+* `docker push spira/docker-phpfpm:latest` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
 * `docker images -q --filter "dangling=true" | xargs docker rmi` - delete all images that are not current (free up some disk space)
 * Getting resolve issues when building? Edit `/etc/resolve.conf` in boot2docker. (`boot2docker ssh` then `vi /etc/resolve.conf` to edit) and change the nameserver entry: `nameserver 8.8.8.8`
 
