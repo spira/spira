@@ -223,7 +223,7 @@ Note that the port is 42222. This is to avoid collision with the connection to t
 
 #### Container development (not available from within the spira vagrant box)
 * `docker build -t spira/docker-phpfpm:latest .` - build an image, give it a tag
-* `docker push spira/docker-phpfpm:latest` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
+* `docker push spira/docker-phpfpm` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background)
 * `docker images -q --filter "dangling=true" | xargs docker rmi` - delete all images that are not current (free up some disk space)
 * Getting resolve issues when building? Edit `/etc/resolve.conf` in boot2docker. (`boot2docker ssh` then `vi /etc/resolve.conf` to edit) and change the nameserver entry: `nameserver 8.8.8.8`
 
