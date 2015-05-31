@@ -1,6 +1,6 @@
 {
-	"name": "nglume/nglume",
-	"description": "nglume coveralls requirements",
+	"name": "spira/spira",
+	"description": "spira coveralls requirements",
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {

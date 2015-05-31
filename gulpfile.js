@@ -252,7 +252,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
     });
 
     browserSync.init({
-        proxy: "http://local.app.nglume.io"
+        proxy: "http://local.app.spira.io"
     });
 
     gulp.watch(paths.src.templates, ['templates']);
@@ -311,12 +311,12 @@ gulp.task('test:postman', 'integration tests the api', [], function(callback){ /
 
     var fs = require('fs');
 
-    var collectionJson = plugins.json5.parse(fs.readFileSync("./api/postman/nglume.json.postman_collection", 'utf8'));
+    var collectionJson = plugins.json5.parse(fs.readFileSync("./api/postman/spira.json.postman_collection", 'utf8'));
 
-    var envFile = "./api/postman/nglume-local.postman_environment";
+    var envFile = "./api/postman/spira-local.postman_environment";
 
     if (process.env.TRAVIS){
-        envFile = "./api/postman/nglume-travisci.postman_environment";
+        envFile = "./api/postman/spira-travisci.postman_environment";
     }
 
     console.log('Using postman env file ', envFile);
