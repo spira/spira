@@ -14,8 +14,14 @@ Vagrant.configure(2) do |config|
 # vm static ip binding
   config.vm.network "private_network", ip: "192.168.2.2"
 
-# mount folder everything 777 so lumen wont complain about permissions
+# mount nglume fs
   config.vm.synced_folder "./", "/data", type: "nfs"
+
+# mount docker image repos (if present)
+  if File.directory?("../docker")
+    config.vm.synced_folder "../docker", "/docker", type: "nfs"
+  end
+
 
 # vm 'physical' config
     config.vm.provider "virtualbox" do |vb|

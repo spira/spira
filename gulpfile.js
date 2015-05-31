@@ -319,6 +319,8 @@ gulp.task('test:postman', 'integration tests the api', [], function(callback){ /
         envFile = "./api/postman/nglume-travisci.postman_environment";
     }
 
+    console.log('Using postman env file ', envFile);
+
     var environment = plugins.json5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
 
     if (!!process.env.NGINX_PORT_8080_TCP){ //if we are executing from a docker container
