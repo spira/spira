@@ -13,7 +13,12 @@ class NglumeApplication extends Application
      */
     protected function getMonologHandler()
     {
-        return new SyslogUdpHandler(env('LOG_UDP_HOST'), env('LOG_UDP_PORT'));
+
+        if (env('LOG_UDP_HOST')){
+            return new SyslogUdpHandler(env('LOG_UDP_HOST'), env('LOG_UDP_PORT'));
+        }
+
+        return parent::getMonologHandler();
     }
 
 

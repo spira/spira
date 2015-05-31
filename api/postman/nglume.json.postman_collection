@@ -249,17 +249,15 @@
 			"data": [],
 			"dataMode": "params",
 			"version": 2,
-			"tests": "if (false){ //When issue is resolved remove this http://stackoverflow.com/questions/13297320/prevent-xdebug-from-formatting-php-error-messages\n    tests[\"Status code is 500\"] = responseCode.code === 500;\n\n    \n    try {\n        var data = JSON.parse(responseBody);\n        tests[\"Error response has message\"] = !!data.message;\n        tests[\"Error message is not empty\"] = data.message.length > 0;\n    }catch(e){\n        tests[e.message] = false;\n    }\n\n}\n\n",
+			"tests": "\ntests[\"Status code is 500\"] = responseCode.code === 500;\n\n\ntry {\n    var data = JSON.parse(responseBody);\n    tests[\"Error response has message\"] = !!data.message;\n    tests[\"Error message is not empty\"] = data.message.length > 0;\n}catch(e){\n    tests[e.message] = false;\n}",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1432087684030,
+			"time": 1432626587875,
 			"name": "exception: fatal error",
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"synced": false,
-			"owner": 0,
-			"folder": "308d7d0f-e3cd-127d-5e62-5f32ad73139a"
+			"synced": false
 		},
 		{
 			"id": "7ff4e1cc-f0db-9e38-8e53-0531c836cca1",

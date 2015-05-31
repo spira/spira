@@ -21,6 +21,10 @@ $app = new \App\NglumeApplication(
 	realpath(__DIR__.'/../')
 );
 
+$hhvmfix = new App\Exceptions\HandleExceptionsFix;
+$hhvmfix->bootstrap($app);
+
+
  $app->withFacades();
 
  $app->withEloquent();
