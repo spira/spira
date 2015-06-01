@@ -22,6 +22,12 @@ Lumen + AngularJS project seed with Docker
  * [Newman](https://github.com/a85/Newman) 
 
 
+## General Setup
+Spira has a yeoman generator at https://github.com/spira/generator-spira wich you can install with the following command
+```
+npm install -g generator-spira
+```
+Note that currently the generator only aliases common functions needed to iteract with the docker containers, it will later be used for a 1 step install. (see https://github.com/spira/spira/issues/29 )
 
 ## Docker setup
 
