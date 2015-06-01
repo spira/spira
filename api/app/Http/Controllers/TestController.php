@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TestController extends BaseController
 {
 
-    public static $model = false;
+    public static $model = 'App\Models\TestEntity';
 
 
     public function email(Request $request){

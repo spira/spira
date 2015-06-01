@@ -1,9 +1,7 @@
 <?php
 
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class UserStorySeeder extends Seeder {
 

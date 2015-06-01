@@ -38,4 +38,9 @@ $app->group(['prefix' => 'test'], function($app){
 
     $app->post('/logs', 'App\Http\Controllers\TestController@postLogs');
 
+
+    $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
+
+    $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
+
 });
