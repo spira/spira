@@ -48,7 +48,7 @@ class TestEntity extends BaseModel {
             'integer' => $faker->numberBetween(0, 500),
             'decimal' => $faker->randomFloat(2, 0, 100),
             'boolean' => $faker->boolean(),
-            'nullable' => $faker->optional(0.5)->boolean(),
+            'nullable' => null,
             'text' => $faker->paragraph(3),
             'date' => $faker->date(),
             'multi_word_column_title' => true,
