@@ -42,6 +42,16 @@ virtualbox is free at [https://www.virtualbox.org/wiki/Downloads](https://www.vi
 ```sh
 vagrant up
 ```
+When vagrant boots it attempts to run all the containers. If they are not yet present, the containers will be pulled from the dockerhub repository.
+
+If the process fails at any point (it can happen the first time when pulling containers due to connectivity issues), run the following command to do a manual pull
+```
+vagrant ssh --command cd /data && docker-compose pull
+```
+Once all containers have pulled successfully, run the following command to re-attempt booting
+```
+vagrant ssh --command cd /data && docker-compose up -d
+```
 
 ### Add host entries to /etc/hosts
 ```
@@ -49,7 +59,7 @@ sudo -- sh -c "printf '\n\n#spira vagrant/docker\n192.168.2.2\tlocal.spira.io\n1
 ```
 
 ### Log into vagrant box
-On login you will see the output of `docker-compose ps` which gives you the status of all containers 
+On login you will see the output of `docker-compose ps` which gives you the status of all containers. 
 ```sh
 vagrant ssh
 ```
