@@ -45,7 +45,7 @@ vagrant up
 
 ### Add host entries to /etc/hosts
 ```
-sudo -- sh -c "printf '\n\n#spira docker\n192.168.2.2\tlocal.spira.io\n192.168.2.2\tlocal.api.spira.io\n192.168.2.2\tlocal.app.spira.io' >> /etc/hosts"
+sudo -- sh -c "printf '\n\n#spira vagrant/docker\n192.168.2.2\tlocal.spira.io\n192.168.2.2\tlocal.api.spira.io\n192.168.2.2\tlocal.app.spira.io' >> /etc/hosts"
 ```
 
 ### Log into vagrant box
