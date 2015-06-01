@@ -34,6 +34,12 @@ Vagrant is recommended as it supports NFS folder sharing in a simple way, wherea
 Vagrant manages provisioning of virtual machines
 See [http://docs.vagrantup.com/v2/installation](http://docs.vagrantup.com/v2/installation/)
 
+Install vagrant-docker-compose plugin to autoload plugins when vagrant boots
+
+```
+vagrant plugin install vagrant-docker-compose
+```
+
 ### Install virtualbox or vmware
 virtualbox & vmware are both virtual machine runners
 virtualbox is free at [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)

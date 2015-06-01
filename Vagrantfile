@@ -33,7 +33,8 @@ Vagrant.configure(2) do |config|
 
 # provision with docker
   config.vm.provision :docker
-  config.vm.provision :docker_compose, yml: "/data/docker-compose.yml", run: "always"
+  config.vm.provision :docker_compose
+
 # Provision the box with boostrap file
   config.vm.provision :shell, path: "vagrant/bootstrap.sh"
 
