@@ -1,5 +1,8 @@
 Vagrant.configure(2) do |config|
 
+  config.vm.define "spira" do |spira|
+  end
+
   config.vm.box = "ubuntu/trusty64"
   config.vm.hostname="spira-vagrant"
 
