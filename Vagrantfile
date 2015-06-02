@@ -28,6 +28,8 @@ Vagrant.configure(2) do |config|
 
         # memory
         vb.memory = "4096"
+        vb.gui = false
+        vb.name = "spira"
 
     end
 
