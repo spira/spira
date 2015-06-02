@@ -32,4 +32,4 @@ script:
   - gulp test
 
 after_script:
-  - php ./vendor/bin/coveralls
+  - php ./vendor/bin/coveralls -v
