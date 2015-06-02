@@ -25,12 +25,19 @@ Lumen + AngularJS project seed with Docker
 ## General Setup
 Spira has a yeoman generator at https://github.com/spira/generator-spira wich you can install with the following command
 ```
-npm install -g generator-spira
+$ npm install -g generator-spira
+$ cd /path/to/new/directory
+$ yo spira
 ```
-Note that currently the generator only aliases common functions needed to iteract with the docker containers, it will later be used for a 1 step install. (see https://github.com/spira/spira/issues/29 )
+
+From there follow the on screen prompts. Note you may have to enter your sudo password a few times during install:
+* To edit /etc/exports for NAT
+* To edit /etc/hosts for host resolving
+In addition due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
+
+Only if you want to install manually, follow the below instructions.
 
 ## Docker setup
-
 You have two options - boot2docker and vagrant. Vagrant is the recommended setup, however you may already have boot2docker working and prefer it. Instructions for setup below.
 Vagrant is recommended as it supports NFS folder sharing in a simple way, whereas boot2docker takes a significant amount more work to set up (outside of the instructions below).
 
