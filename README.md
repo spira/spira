@@ -4,7 +4,7 @@ Lumen + AngularJS project seed with Docker
 [![Build Status](https://travis-ci.org/spira/spira.svg?branch=master)](https://travis-ci.org/spira/spira) 
 [![Coverage Status](https://coveralls.io/repos/spira/spira/badge.svg?branch=master)](https://coveralls.io/r/spira/spira?branch=master)
 [![Dependency Status](https://gemnasium.com/spira/spira.svg)](https://gemnasium.com/spira/spira)
-
+[![Code Climate](https://codeclimate.com/github/spira/spira/badges/gpa.svg)](https://codeclimate.com/github/spira/spira)
 
 ## Technologies integrated in this seed project
 * [Lumen](http://lumen.laravel.com/)
