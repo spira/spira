@@ -107,6 +107,7 @@ ssh:
 
 lumen:
   image: spira/docker-lumen
+  working_dir: /data
   volumes_from:
     - data
   links:
