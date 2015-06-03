@@ -37,7 +37,6 @@ class BaseController extends Controller
         return $this->transformer->collection($entities, new BaseTransformer);
     }
 
-
     public function getOne($id)
     {
         $model = static::$model;
@@ -50,6 +49,11 @@ class BaseController extends Controller
         }
 
         return $this->transformer->item($resource, new BaseTransformer);
+    }
+
+    public function postOne(\Illuminate\Http\Request $request)
+    {
+        return $request->all();
     }
 
     public static function renderException($request, \Exception $e, $debug = false){
