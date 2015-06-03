@@ -72,4 +72,14 @@ class TestEntity extends BaseModel {
 
     }
 
+    /**
+     * Accessor to get date as an ISO 8601 string.
+     *
+     * @param  string  $date
+     * @return string
+     */
+    public function getDateAttribute($date)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d', $date)->toIso8601String();
+    }
 }
