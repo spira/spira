@@ -1,13 +1,32 @@
 <?php namespace App\Http\Controllers;
 
+use App\Services\Transformer;
+use App\Transformers\BaseTransformer;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BaseController extends Controller
 {
-
     public static $model;
+
+    /**
+     * Transformer for the response arrays.
+     *
+     * @var App\Services\Transformer
+     */
+    protected $transformer;
+
+    /**
+     * Assign dependencies.
+     *
+     * @param  App\Services\Transformer $transformer
+     * @return void
+     */
+    public function __construct(Transformer $transformer)
+    {
+        $this->transformer = $transformer;
+    }
 
     public function getAll()
     {
@@ -15,10 +34,7 @@ class BaseController extends Controller
 
         $entities = $model::all();
 
-        return response()->json($entities);
-
-//        $this->transformer = $entity.'Transformer';
-//        return $this->response->collection($entities, new $this->transformer);
+        return $this->transformer->collection($entities, new BaseTransformer);
     }
 
 
@@ -33,7 +49,7 @@ class BaseController extends Controller
             throw new NotFoundHttpException($model . ' not found');
         }
 
-        return response()->json($resource);
+        return $this->transformer->item($resource, new BaseTransformer);
     }
 
     public static function renderException($request, \Exception $e, $debug = false){
