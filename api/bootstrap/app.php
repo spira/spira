@@ -84,6 +84,7 @@ $app->singleton(
 |
 */
 
+$app->register('App\Providers\AppServiceProvider');
 $app->register('Bosnadev\Database\DatabaseServiceProvider');
 
 /*
