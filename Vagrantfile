@@ -1,5 +1,8 @@
 Vagrant.configure(2) do |config|
 
+  config.vm.define "spira" do |spira|
+  end
+
   config.vm.box = "ubuntu/trusty64"
   config.vm.hostname="spira-vagrant"
 
@@ -28,12 +31,15 @@ Vagrant.configure(2) do |config|
 
         # memory
         vb.memory = "4096"
+        vb.gui = false
+        vb.name = "spira"
 
     end
 
 # provision with docker
   config.vm.provision :docker
-  config.vm.provision :docker_compose, yml: "/data/docker-compose.yml", run: "always"
+  config.vm.provision :docker_compose
+
 # Provision the box with boostrap file
   config.vm.provision :shell, path: "vagrant/bootstrap.sh"
 
