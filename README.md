@@ -34,7 +34,8 @@ $ yo spira
 From there follow the on screen prompts. Note you may have to enter your sudo password a few times during install:
 * To edit /etc/exports for NAT
 * To edit /etc/hosts for host resolving
-In addition due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
+
+In addition, due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
 
 Only if you want to install manually, follow the below instructions.
 
