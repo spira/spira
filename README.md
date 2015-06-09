@@ -4,7 +4,7 @@ Lumen + AngularJS project seed with Docker
 [![Build Status](https://travis-ci.org/spira/spira.svg?branch=master)](https://travis-ci.org/spira/spira) 
 [![Coverage Status](https://coveralls.io/repos/spira/spira/badge.svg?branch=master)](https://coveralls.io/r/spira/spira?branch=master)
 [![Dependency Status](https://gemnasium.com/spira/spira.svg)](https://gemnasium.com/spira/spira)
-
+[![Code Climate](https://codeclimate.com/github/spira/spira/badges/gpa.svg)](https://codeclimate.com/github/spira/spira)
 
 ## Technologies integrated in this seed project
 * [Lumen](http://lumen.laravel.com/)
@@ -34,7 +34,8 @@ $ yo spira
 From there follow the on screen prompts. Note you may have to enter your sudo password a few times during install:
 * To edit /etc/exports for NAT
 * To edit /etc/hosts for host resolving
-In addition due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
+
+In addition, due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
 
 Only if you want to install manually, follow the below instructions.
 
