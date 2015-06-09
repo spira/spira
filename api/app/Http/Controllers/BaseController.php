@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Services\Transformer;
-use App\Transformers\BaseTransformer;
+use App\Http\Transformers\BaseTransformer;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
