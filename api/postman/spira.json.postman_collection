@@ -77,8 +77,7 @@
 			"write": true,
 			"order": [
 				"a9c378ab-5520-42c5-0761-c55f240d7af5",
-				"d4fa250b-2752-5b6d-21a7-38e9336062e8",
-				"6bf3edb9-d930-b406-3a54-399f4c5e943e"
+				"d4fa250b-2752-5b6d-21a7-38e9336062e8"
 			],
 			"collection_name": "spira",
 			"collection_owner": "51802",
@@ -239,33 +238,6 @@
 			"rawModeData": "[\n    {\n        \"type\": \"info\",\n        \"message\": \"test info log\"\n    },\n    {\n        \"type\": \"warning\",\n        \"message\": \"test warning log\"\n    },\n    {\n        \"type\": \"error\",\n        \"message\": \"test error log\"\n    }\n]",
 			"owner": "51802",
 			"folder": "7dcea7f4-0574-3e0d-3916-9c86f5483fff"
-		},
-		{
-			"id": "6bf3edb9-d930-b406-3a54-399f4c5e943e",
-			"headers": "",
-			"url": "{{host}}/test/entities",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "firstName",
-					"value": "Foobar",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "try {\n    \n    tests[\"Status code is 200\"] = responseCode.code === 200;\n    \n    var data = JSON.parse(responseBody);\n    tests[\"entity key is snake_case\"] = data.first_name === \"Foobar\";\n\n}catch(e){\n    tests[e.message] = false;\n}\n",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1433340828197,
-			"name": "Post camelCase convert to snake_case",
-			"description": "",
-			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"responses": [],
-			"synced": false
 		},
 		{
 			"id": "74efb82f-1e5d-aca2-81f6-4b321f3d2ee6",
