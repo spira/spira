@@ -12,24 +12,27 @@ class BaseModel extends Model
     }
 
     /**
-     * Accessor to get created_at as an ISO 8601 string.
+     * Cast an attribute to a native PHP type.
      *
-     * @param  string  $date
-     * @return string
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return mixed
      */
-    public function getCreatedAtAttribute($date)
+    protected function castAttribute($key, $value)
     {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->toIso8601String();
-    }
+        // Run the parent cast rules in the parent method
+        $value = parent::castAttribute($key, $value);
 
-    /**
-     * Accessor to get updated_at as an ISO 8601 string.
-     *
-     * @param  string  $date
-     * @return string
-     */
-    public function getUpdatedAtAttribute($date)
-    {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $date)->toIso8601String();
+        if (is_null($value)) return $value;
+
+        switch ($this->getCastType($key))
+        {
+            case 'date':
+                return \Carbon\Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
+            case 'datetime':
+                return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
+            default:
+                return $value;
+        }
     }
 }
