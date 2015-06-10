@@ -31,7 +31,12 @@ class TestEntity extends BaseModel {
      *
      * @var array
      */
-    protected $casts = ['decimal' => 'float'];
+    protected $casts = [
+        'decimal' => 'float',
+        'date' => 'date',
+        'created_at' => 'dateTime',
+        'updated_at' => 'dateTime'
+    ];
 
     /**
      * Generate fake user
@@ -70,16 +75,5 @@ class TestEntity extends BaseModel {
 
         return $testEntity;
 
-    }
-
-    /**
-     * Accessor to get date as an ISO 8601 string.
-     *
-     * @param  string  $date
-     * @return string
-     */
-    public function getDateAttribute($date)
-    {
-        return \Carbon\Carbon::createFromFormat('Y-m-d', $date)->toIso8601String();
     }
 }
