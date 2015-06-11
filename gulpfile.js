@@ -374,7 +374,14 @@ gulp.task('test:postman', 'integration tests the api', [], function(callback){ /
 
 });
 
-gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:postman']);
+gulp.task('test:cucumber', 'runs BDD integration tests', [], function() {
+    return gulp.src('features/*').pipe(plugins.cucumber({
+        'steps': 'features/steps/*.js',
+        'support': 'features/support/*.js'
+    }));
+});
+
+gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:postman', 'test:cucumber']);
 
 gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
     gulp.src(paths.dest.coverage)
