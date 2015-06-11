@@ -23,6 +23,11 @@ var World = function World(callback) {
     this.webdriver = webdriver;
     this.driver = driver;
 
+    this.baseUrl = 'http://local.app.spira.io';
+    if (process.env.TRAVIS){
+        this.baseUrl = 'http://127.0.0.1:8001';
+    }
+
     this.waitFor = function(cssLocator, timeout) {
         var waitTimeout = timeout || defaultTimeout;
         return driver.wait(function() {

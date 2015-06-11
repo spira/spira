@@ -11,7 +11,8 @@ module.exports = function() {
     });
 
     this.When(/^I go to the home page$/, function (next) {
-        this.driver.get('http://local.app.spira.io');
+
+        this.driver.get(this.baseUrl+'/');
 
         next();
 
