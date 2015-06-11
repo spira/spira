@@ -15,7 +15,6 @@ module.exports = function() {
         this.driver.get(this.baseUrl+'/');
 
         next();
-
     });
 
     this.Then(/^I should see "(.*)" as the page title$/, function (title, next) {
@@ -25,7 +24,6 @@ module.exports = function() {
             expect(pageTitle).to.equal(title);
 
             next();
-
         });
 
     });
@@ -36,6 +34,7 @@ module.exports = function() {
             .then(function(text) {
 
                 expect(text).to.equal(heading);
+
                 next();
             });
 
