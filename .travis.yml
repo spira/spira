@@ -12,7 +12,7 @@ before_install:
 before_script:
 
   - psql -c 'create database spira;' -U postgres
-  - npm install --quiet -g gulp newman
+  - npm install --quiet -g gulp newman http-server
   - npm install
   - gulp bower:install
   - gulp build
@@ -22,14 +22,15 @@ before_script:
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null &
+  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & #start api server
+  - http-server ./app/build/ -p 8001 2>&1 >/dev/null & #start webserver
   - gem install mailcatcher
-  - mailcatcher
+  - mailcatcher # start mailcatcher server
   - sleep 5 #give server some time to boot
-  - curl http://localhost:8000/test/fatal-error # attempt to see if webserver is running
 
 script:
   - gulp test
+  - ./node_modules/.bin/cucumber.js
 
 after_script:
   - php ./vendor/bin/coveralls -v
