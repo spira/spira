@@ -15,7 +15,7 @@ class TestValidator extends Validator
             'varchar' => 'required|string',
             'hash' => 'required|string',
             'integer' => 'required|integer',
-            'decimal' => 'required',
+            'decimal' => 'required|float',
             'boolean' => 'required|boolean',
             'text' => 'required|string',
             'date' => 'required|date',

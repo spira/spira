@@ -31,6 +31,8 @@ class Validator
     public function __construct()
     {
         $this->validator = \App::make('validator');
+
+        $this->registerValidateFloat();
     }
 
     /**
@@ -96,5 +98,18 @@ class Validator
     public function errors()
     {
         return $this->errors;
+    }
+
+    /**
+     * Register custom validation rule for float.
+     *
+     * @return void
+     */
+    protected function registerValidateFloat()
+    {
+        $this->validator->extend('float', function($attribute, $value, $parameters)
+        {
+            return is_float($value + 0);
+        });
     }
 }
