@@ -1,6 +1,6 @@
 language: php
 php:
-  - hhvm-nightly
+  - hhvm
 
 addons:
   postgresql: "9.3"
@@ -37,7 +37,7 @@ before_install:
   - PHP_INI_DIR=/etc/hhvm/
   # install hhvm-pgsql
   - cd /tmp
-  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.6.0
+  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.7.0
   - sudo hphpize
   - sudo cmake .
   - sudo make
