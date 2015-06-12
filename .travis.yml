@@ -40,13 +40,14 @@ before_install:
   - PHP_INI_DIR=/etc/hhvm/
   # install hhvm-pgsql
   - cd /tmp
-  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.6.0
-  - sudo hphpize
-  - sudo cmake .
-  - sudo make
-  - sudo mv pgsql.so /etc/hhvm/pgsql.so
-  - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
-#  - sudo ./hhvm-ext-install PocketRent/hhvm-pgsql
+#  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.6.0
+#  - sudo hphpize
+#  - sudo cmake .
+#  - sudo make
+#  - sudo mv pgsql.so /etc/hhvm/pgsql.so
+#  - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
+  - sudo ./hhvm-ext-install dstelter/hhvm-pgsql
+
 
 before_script:
 
