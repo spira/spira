@@ -8,8 +8,8 @@ addons:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin
-  - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install.sh
-  - sudo chmod 777 hhvm-ext-install.sh && ./hhvm-ext-install dstelter/hhvm-pgsql
+  - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
+  - sudo chmod 777 hhvm-ext-install && ./hhvm-ext-install dstelter/hhvm-pgsql
 
 before_script:
 
