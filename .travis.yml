@@ -39,7 +39,7 @@ before_install:
   - sudo chmod 777 hhvm-ext-install
   - PHP_INI_DIR=/etc/hhvm/
   # install hhvm-pgsql
-  - cd /tmp
+#  - cd /tmp
 #  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.6.0
 #  - sudo hphpize
 #  - sudo cmake .
