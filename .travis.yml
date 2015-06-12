@@ -16,37 +16,12 @@ before_install:
   # hhvm fix for hhvm 3.5.0
   - curl 'https://raw.githubusercontent.com/facebook/hhvm/573d6fc0d2745e96ee9775f31dc993919086fc7a/hphp/runtime/version.h' > /tmp/version.h
   - sudo cp /tmp/version.h /usr/include/hphp/runtime/version.h
-  # configure gcc & g++
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
-  - sudo update-alternatives --set gcc /usr/bin/gcc-4.8
-  # install glog
+
   - cd /tmp
-  - wget https://google-glog.googlecode.com/files/glog-0.3.3.tar.gz
-  - tar zxvf glog-0.3.3.tar.gz
-  - cd glog-0.3.3
-  - ./configure
-  - sudo make && sudo make install
-  # install jemalloc
-  - cd /tmp
-  - wget http://www.canonware.com/download/jemalloc/jemalloc-3.6.0.tar.bz2
-  - tar xjvf jemalloc-3.6.0.tar.bz2
-  - cd jemalloc-3.6.0
-  - sudo ./configure #--prefix=$CMAKE_PREFIX_PATH
-  - sudo make && sudo make install
-  # get hhvm-ext-install shell file
-  - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
-  - sudo chmod 777 hhvm-ext-install
-  - PHP_INI_DIR=/etc/hhvm/
-  # install hhvm-pgsql
-#  - cd /tmp
-#  - git clone https://github.com/PocketRent/hhvm-pgsql.git ./hhvm-pgsql && cd ./hhvm-pgsql && git checkout tags/3.6.0
-#  - sudo hphpize
-#  - sudo cmake .
-#  - sudo make
-#  - sudo mv pgsql.so /etc/hhvm/pgsql.so
-#  - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
-  - sudo ./hhvm-ext-install dstelter/hhvm-pgsql
+
+  - curl -o https://github.com/PocketRent/hhvm-pgsql/raw/releases/3.6.0/ubuntu/precise/pgsql.so
+  - sudo mv pgsql.so /etc/hhvm/pgsql.so
+  - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
 
 
 before_script:
