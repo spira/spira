@@ -10,12 +10,39 @@ use Illuminate\Http\Request;
 use Rhumsaa\Uuid\Console\Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Http\Validators\TestValidator;
 
 class TestController extends BaseController
 {
 
     public static $model = 'App\Models\TestEntity';
 
+    /**
+     * Validation service.
+     *
+     * @var App\Services\Validation\TestValidator
+     */
+    protected $validator;
+
+    /**
+     * Assign dependencies.
+     *
+     * @return void
+     */
+    public function __construct(TestValidator $validator)
+    {
+        $this->validator = $validator;
+
+        parent::__construct();
+    }
+
+    public function postOne(\Illuminate\Http\Request $request)
+    {
+        if (!$this->validator->with($request->all())->passes()) {
+            return 'failed';
+        }
+        return 'passed';
+    }
 
     public function email(Request $request){
 
