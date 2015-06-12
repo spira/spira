@@ -39,7 +39,7 @@ class TestController extends BaseController
     public function postOne(\Illuminate\Http\Request $request)
     {
         if (!$this->validator->with($request->all())->passes()) {
-            return 'failed';
+            return $this->validator->errors();
         }
         return 'passed';
     }

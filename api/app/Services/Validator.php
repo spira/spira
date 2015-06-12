@@ -52,7 +52,9 @@ class Validator
      */
     public function messages()
     {
-        return [];
+        return [
+            'float' => 'The :attribute must be a float.'
+        ];
     }
 
     /**
