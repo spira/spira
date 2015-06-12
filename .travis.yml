@@ -29,7 +29,7 @@ before_install:
   - wget http://www.canonware.com/download/jemalloc/jemalloc-3.6.0.tar.bz2
   - tar xjvf jemalloc-3.6.0.tar.bz2
   - cd jemalloc-3.6.0
-#  - sudo ./configure --prefix=$CMAKE_PREFIX_PATH
+  - sudo ./configure #--prefix=$CMAKE_PREFIX_PATH
   - sudo make && sudo make install
   # get hhvm-ext-install shell file
   - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
