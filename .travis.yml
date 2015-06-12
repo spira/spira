@@ -1,6 +1,6 @@
 language: php
 php:
-  - hhvm
+ - 5.5
 
 addons:
   postgresql: "9.3"
