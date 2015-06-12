@@ -16,11 +16,11 @@ before_install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
   - sudo update-alternatives --set gcc /usr/bin/gcc-4.8
-  - wget https://google-glog.googlecode.com/files/glog-0.3.3.tar.gz && \
-    tar zxvf glog-0.3.3.tar.gz && \
-    cd glog-0.3.3 && \
-    ./configure && \
-    make && make install
+  - wget https://google-glog.googlecode.com/files/glog-0.3.3.tar.gz
+  - tar zxvf glog-0.3.3.tar.gz
+  - cd glog-0.3.3
+  - ./configure
+  - make && make install
   - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
   - sudo chmod 777 hhvm-ext-install
   - PHP_INI_DIR=/etc/hhvm/
