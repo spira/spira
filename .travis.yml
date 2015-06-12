@@ -36,7 +36,7 @@ before_install:
   - sudo chmod 777 hhvm-ext-install
   - PHP_INI_DIR=/etc/hhvm/
   # install hhvm-pgsql
-  - sudo ./hhvm-ext-install dstelter/hhvm-pgsql
+  - sudo ./hhvm-ext-install PocketRent/hhvm-pgsql
 
 before_script:
 
