@@ -11,7 +11,7 @@ before_install:
   # hhvm postgres plugin build
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update
-  - sudo apt-get install hhvm-dev
+  - sudo apt-get install gcc-4.8 g++-4.8 hhvm-dev
   # hhvm fix for hhvm 3.5.0
   - curl 'https://raw.githubusercontent.com/facebook/hhvm/573d6fc0d2745e96ee9775f31dc993919086fc7a/hphp/runtime/version.h' > /tmp/version.h
   - sudo cp /tmp/version.h /usr/include/hphp/runtime/version.h
