@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\Services\Transformer;
 use App\Http\Transformers\BaseTransformer;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -20,12 +19,11 @@ class BaseController extends Controller
     /**
      * Assign dependencies.
      *
-     * @param  App\Services\Transformer $transformer
      * @return void
      */
-    public function __construct(Transformer $transformer)
+    public function __construct()
     {
-        $this->transformer = $transformer;
+        $this->transformer = \App::make('App\Services\Transformer');
     }
 
     public function getAll()
