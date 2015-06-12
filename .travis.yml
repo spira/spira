@@ -8,14 +8,14 @@ addons:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin
-  # hhvm fix for hhvm 3.5.0
-  - curl 'https://raw.githubusercontent.com/facebook/hhvm/573d6fc0d2745e96ee9775f31dc993919086fc7a/hphp/runtime/version.h' > /tmp/version.h
-  - sudo cp /tmp/version.h /usr/include/hphp/runtime/version.h
   # hhvm postgres plugin build
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo add-apt-repository ppa:boost-latest/ppa -y
   - sudo apt-get update
   - sudo apt-get install gcc-4.8 g++-4.8 hhvm-dev libboost1.55-all-dev libpq-dev
+  # hhvm fix for hhvm 3.5.0
+  - curl 'https://raw.githubusercontent.com/facebook/hhvm/573d6fc0d2745e96ee9775f31dc993919086fc7a/hphp/runtime/version.h' > /tmp/version.h
+  - sudo cp /tmp/version.h /usr/include/hphp/runtime/version.h
   # configure gcc & g++
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
