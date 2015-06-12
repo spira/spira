@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get install -y libnotify-bin hhvm-dev
   - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
   - sudo chmod 777 hhvm-ext-install
-  - PHP_INI_DIR /etc/hhvm/
+  - PHP_INI_DIR=/etc/hhvm/
   - sudo ./hhvm-ext-install dstelter/hhvm-pgsql
 
 before_script:
