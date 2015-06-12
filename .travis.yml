@@ -8,8 +8,8 @@ addons:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin
-  - travis_retry wget https://github.com/PocketRent/hhvm-pgsql/raw/releases/3.6.0/ubuntu/precise/pgsql.so && sudo mv ./pgsql.so /etc/hhvm/pgsql.so
-  - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
+  - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install.sh
+  - sudo chmod 777 hhvm-ext-install.sh && ./hhvm-ext-install dstelter/hhvm-pgsql
 
 before_script:
 
