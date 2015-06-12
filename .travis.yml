@@ -20,7 +20,7 @@ before_install:
   - tar zxvf glog-0.3.3.tar.gz
   - cd glog-0.3.3
   - ./configure
-  - make && make install
+  - sudo make && sudo make install
   - wget https://raw.githubusercontent.com/estebanmatias92/docker-hhvm/master/hhvm-ext-install
   - sudo chmod 777 hhvm-ext-install
   - PHP_INI_DIR=/etc/hhvm/
