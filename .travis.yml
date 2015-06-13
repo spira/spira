@@ -17,7 +17,7 @@ before_install:
   - sudo cp /tmp/version.h /usr/include/hphp/runtime/version.h
 
   - cd /tmp
-  - wget "https://github.com/PocketRent/hhvm-pgsql/raw/releases/3.3.0/ubuntu/precise/pgsql.so"
+  - wget "https://github.com/PocketRent/hhvm-pgsql/raw/releases/3.6.0/ubuntu/precise/pgsql.so"
   - sudo mv pgsql.so /etc/hhvm/pgsql.so
   - sudo -- sh -c "printf 'extension_dir = /etc/hhvm\nhhvm.extensions[pgsql] = pgsql.so' >> /etc/hhvm/php.ini"
   - sudo service hhvm restart
