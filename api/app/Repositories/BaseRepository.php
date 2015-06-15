@@ -39,6 +39,17 @@ abstract class BaseRepository
     abstract protected function model();
 
     /**
+     * Get all rows.
+     *
+     * @param  array  $columns
+     * @return mixed
+     */
+    public function all($columns = array('*'))
+    {
+        return $this->model->get($columns);
+    }
+
+    /**
      * Create and store a new instance of the model.
      *
      * @param  array  $data
@@ -47,6 +58,18 @@ abstract class BaseRepository
     public function create(array $data)
     {
         return $this->model->create($data);
+    }
+
+    /**
+     * Get model by id.
+     *
+     * @param  string  $id
+     * @param  array  $columns
+     * @return mixed
+     */
+    public function find($id, $columns = array('*'))
+    {
+        return $this->model->findOrFail($id, $columns);
     }
 
     /**
