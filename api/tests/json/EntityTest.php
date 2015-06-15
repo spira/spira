@@ -2,8 +2,6 @@
 
 class EntityTest extends TestCase
 {
-    use CrawlerTrait;
-
     // Hard coded now, should be seeded during setUp() if going this route.
     protected $first_entity_id = '04b26f6b-abdd-34b2-9721-adc72f184229';
 
