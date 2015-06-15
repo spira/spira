@@ -5,6 +5,7 @@ use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
+// use Illuminate\Container\Container as App;
 
 class BaseController extends Controller
 {
@@ -25,36 +26,31 @@ class BaseController extends Controller
     protected $repository;
 
     /**
-     * Assign dependencies.
+     * Validation service.
      *
-     * @return void
+     * @var App\Services\Validation\TestValidator
      */
-    public function __construct()
-    {
-        $this->transformer = \App::make('App\Services\Transformer');
-    }
+    protected $validator;
 
+    /**
+     * Get all entities.
+     *
+     * @return Response
+     */
     public function getAll()
     {
-        $model = static::$model;
-
-        $entities = $model::all();
-
-        return $this->transformer->collection($entities, new BaseTransformer);
+        return $this->transformer->collection($this->repository->all(), new BaseTransformer);
     }
 
+    /**
+     * Get one entity.
+     *
+     * @param  string  $id
+     * @return Response
+     */
     public function getOne($id)
     {
-        $model = static::$model;
-
-        $resource = $model::find($id);
-
-        if(! $resource) {
-
-            throw new NotFoundHttpException($model . ' not found');
-        }
-
-        return $this->transformer->item($resource, new BaseTransformer);
+        return $this->transformer->item($this->repository->find($id), new BaseTransformer);
     }
 
     /**
