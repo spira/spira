@@ -1,9 +1,12 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Bosnadev\Database\Traits\UuidTrait;
 
 class BaseModel extends Model
 {
+    use UuidTrait;
+
     public $incrementing = false;
 
     public static function getTableName()
