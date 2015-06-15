@@ -4,6 +4,7 @@ use App\Http\Transformers\BaseTransformer;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
@@ -15,6 +16,13 @@ class BaseController extends Controller
      * @var App\Services\Transformer
      */
     protected $transformer;
+
+    /**
+     * Model Repository.
+     *
+     * @var App\Repositories\BaseRepository
+     */
+    protected $repository;
 
     /**
      * Assign dependencies.
@@ -49,9 +57,15 @@ class BaseController extends Controller
         return $this->transformer->item($resource, new BaseTransformer);
     }
 
-    public function postOne(\Illuminate\Http\Request $request)
+    /**
+     * Post a new entity.
+     *
+     * @param  Request $request
+     * @return mixed
+     */
+    public function postOne(Request $request)
     {
-        return $request->all();
+        return $this->repository->create($request->all());
     }
 
     public static function renderException($request, \Exception $e, $debug = false){
