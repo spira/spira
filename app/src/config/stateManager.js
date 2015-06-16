@@ -53,31 +53,26 @@ angular.module('stateManager', [
 
     })
 
-    .controller('stateManager.navigation.controller', function($scope, stateHelperService) {
+    .controller('stateManager.navigation.controller', function($scope, stateHelperService, $window) {
 
-        var navigation = [
-            {
-                title : 'Home',
-                state : 'app.public.home',
-                icon: 'home'
-            },
-            {
-                title : 'Features',
-                state : 'app.public.features',
-                icon: 'rocket',
-                children: [
-                    {
-                        title : 'API',
-                        state : 'app.public.features.api',
-                        icon: 'cloud'
-                    }
-                ]
-            }
-        ];
+        var childStates = stateHelperService.getChildStates('app.public');
 
-        $scope.navigation = navigation;
+        //using the state.data.sortAfter key build a topology and sort it
+        var sortMap = _.reduce(childStates, function(t, state){
+            t.add(state.name, _.get(state, 'data.sortAfter', []));
+            return t;
+        }, new Toposort()).sort();
 
-        $scope.childStates = stateHelperService.getChildStates('app.public');
+        $scope.navigationStates = _.chain(sortMap)
+            .map(function(stateName){
+                return _.find(childStates, {name: stateName}); //find the state by name
+            })
+            .filter(function(state){
+                return _.get(state, 'data.navigation', false); //only return those that are marked as navigation
+            })
+            .reverse() //reverse the array
+            .value()
+        ;
 
     })
 ;
