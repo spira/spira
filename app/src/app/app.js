@@ -14,20 +14,20 @@ angular.module('app', [
         //;
 
         $mdThemingProvider.definePalette('amazingPaletteName', {
-            '50': 'ffebee',
-            '100': 'ffcdd2',
-            '200': 'ef9a9a',
-            '300': 'rgb(152, 185, 186)',
-            '400': 'rgb(152, 185, 186)',
-            '500': 'rgb(225, 60, 30)',
-            '600': 'e53935',
-            '700': 'd32f2f',
-            '800': 'rgb(152, 185, 186)',
-            '900': 'b71c1c',
-            'A100': 'ff8a80',
-            'A200': 'ff5252',
-            'A400': 'ff1744',
-            'A700': 'd50000',
+            '50': 'rgb(100, 100, 5)',
+            '100': 'rgb(100, 100, 10)',
+            '200': 'rgb(100, 100, 20)',
+            '300': 'rgb(100, 100, 30)',
+            '400': 'rgb(100, 100, 40)',
+            '500': 'rgb(100, 100, 50)',
+            '600': 'rgb(100, 100, 60)',
+            '700': 'rgb(100, 100, 70)',
+            '800': 'rgb(100, 100, 80)',
+            '900': 'rgb(100, 100, 90)',
+            'A100': 'rgb(100, 100, 110)',
+            'A200': 'rgb(100, 100, 120)',
+            'A400': 'rgb(100, 100, 140)',
+            'A700': 'rgb(100, 100, 170)',
             'contrastDefaultColor': 'light',    // whether, by default, text (contrast)
                                                 // on this palette should be dark or light
             'contrastDarkColors': ['50', '100', //hues which contrast should be 'dark' by default
