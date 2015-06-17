@@ -1,39 +1,67 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Transformers\BaseTransformer;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+// use Illuminate\Container\Container as App;
 
 class BaseController extends Controller
 {
-
     public static $model;
 
+    /**
+     * Transformer for the response arrays.
+     *
+     * @var App\Services\Transformer
+     */
+    protected $transformer;
+
+    /**
+     * Model Repository.
+     *
+     * @var App\Repositories\BaseRepository
+     */
+    protected $repository;
+
+    /**
+     * Validation service.
+     *
+     * @var App\Services\Validation\TestValidator
+     */
+    protected $validator;
+
+    /**
+     * Get all entities.
+     *
+     * @return Response
+     */
     public function getAll()
     {
-        $model = static::$model;
-
-        $entities = $model::all();
-
-        return response()->json($entities);
-
-//        $this->transformer = $entity.'Transformer';
-//        return $this->response->collection($entities, new $this->transformer);
+        return $this->transformer->collection($this->repository->all(), new BaseTransformer);
     }
 
-
+    /**
+     * Get one entity.
+     *
+     * @param  string  $id
+     * @return Response
+     */
     public function getOne($id)
     {
-        $model = static::$model;
+        return $this->transformer->item($this->repository->find($id), new BaseTransformer);
+    }
 
-        $resource = $model::find($id);
-
-        if(! $resource) {
-
-            throw new NotFoundHttpException($model . ' not found');
-        }
-
-        return response()->json($resource);
+    /**
+     * Post a new entity.
+     *
+     * @param  Request $request
+     * @return mixed
+     */
+    public function postOne(Request $request)
+    {
+        return $this->repository->create($request->all());
     }
 
     public static function renderException($request, \Exception $e, $debug = false){

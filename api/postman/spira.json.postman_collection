@@ -15,10 +15,10 @@
 				"7ff4e1cc-f0db-9e38-8e53-0531c836cca1"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -32,10 +32,10 @@
 				"74efb82f-1e5d-aca2-81f6-4b321f3d2ee6"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -48,10 +48,10 @@
 				"8813cc14-4e07-a927-6e39-21073955e99c"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -64,10 +64,10 @@
 				"99c5077d-9004-fbc7-c120-0104bcdac1f3"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -80,10 +80,10 @@
 				"d4fa250b-2752-5b6d-21a7-38e9336062e8"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -95,10 +95,10 @@
 				"3a6e444c-30bb-2524-dae0-5677ed596a07"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		},
 		{
@@ -112,21 +112,20 @@
 				"0c322cc3-9125-8836-7322-ea1572b234e2"
 			],
 			"collection_name": "spira",
-			"collection_owner": "15020",
+			"collection_owner": "51802",
 			"collection_id": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"collection": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
-			"owner": "15020",
+			"owner": "51802",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2"
 		}
 	],
 	"timestamp": 1427604086234,
-	"synced": false,
-	"owner": "15020",
-	"sharedWithTeam": false,
-	"subscribed": false,
+	"owner": "51802",
 	"remoteLink": "",
 	"public": false,
-	"write": true,
+	"createdAt": null,
+	"updatedAt": null,
+	"synced": false,
 	"requests": [
 		{
 			"id": "0c322cc3-9125-8836-7322-ea1572b234e2",
@@ -146,10 +145,9 @@
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"write": true,
 			"folder": "4e7dfff6-554b-6ea5-c05d-34669cc0e8ea",
 			"synced": false,
-			"owner": "15020"
+			"owner": "51802"
 		},
 		{
 			"id": "1879c8ee-70ff-7ed9-f654-f2fdda7a7f45",
@@ -170,7 +168,7 @@
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
 			"synced": false,
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "308d7d0f-e3cd-127d-5e62-5f32ad73139a"
 		},
 		{
@@ -192,7 +190,7 @@
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
 			"synced": false,
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "b3fdc7c9-ffe2-f612-ee21-9be07bc3aaac"
 		},
 		{
@@ -215,7 +213,7 @@
 			"responses": [],
 			"synced": false,
 			"rawModeData": "{\n    \"key\": \"cacheTest\",\n    \"value\": \"cacheValue\"\n}",
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "6d013cc2-4559-32f5-f65a-84b067667655"
 		},
 		{
@@ -238,7 +236,7 @@
 			"responses": [],
 			"synced": false,
 			"rawModeData": "[\n    {\n        \"type\": \"info\",\n        \"message\": \"test info log\"\n    },\n    {\n        \"type\": \"warning\",\n        \"message\": \"test warning log\"\n    },\n    {\n        \"type\": \"error\",\n        \"message\": \"test error log\"\n    }\n]",
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "7dcea7f4-0574-3e0d-3916-9c86f5483fff"
 		},
 		{
@@ -260,7 +258,7 @@
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
 			"synced": false,
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "308d7d0f-e3cd-127d-5e62-5f32ad73139a"
 		},
 		{
@@ -284,8 +282,7 @@
 			"synced": false,
 			"folder": "b3fdc7c9-ffe2-f612-ee21-9be07bc3aaac",
 			"isFromCollection": true,
-			"collectionRequestId": "7ff4e1cc-f0db-9e38-8e53-0531c836cca1",
-			"owner": "15020"
+			"owner": "51802"
 		},
 		{
 			"id": "8813cc14-4e07-a927-6e39-21073955e99c",
@@ -305,7 +302,9 @@
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"synced": false
+			"synced": false,
+			"owner": "51802",
+			"folder": "6d013cc2-4559-32f5-f65a-84b067667655"
 		},
 		{
 			"id": "906334b8-1ec9-3edf-064a-01180a0b5307",
@@ -327,7 +326,7 @@
 			"responses": [],
 			"synced": false,
 			"rawModeData": "{\n    \"subject\": \"Test Email\"\n}",
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "5f47950b-26f0-8421-d6e4-d251bfec3944"
 		},
 		{
@@ -350,7 +349,7 @@
 			"responses": [],
 			"synced": false,
 			"folder": "5f47950b-26f0-8421-d6e4-d251bfec3944",
-			"owner": "15020"
+			"owner": "51802"
 		},
 		{
 			"id": "a9c378ab-5520-42c5-0761-c55f240d7af5",
@@ -370,7 +369,9 @@
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"synced": false
+			"synced": false,
+			"owner": "51802",
+			"folder": "cfc6b181-c497-f3b7-f8b7-2bae9d31fd12"
 		},
 		{
 			"id": "c3bb4042-dd95-5a5f-d4c7-e9992d4c7eee",
@@ -391,7 +392,7 @@
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
 			"synced": false,
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "b3fdc7c9-ffe2-f612-ee21-9be07bc3aaac"
 		},
 		{
@@ -412,10 +413,9 @@
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"write": true,
 			"folder": "4e7dfff6-554b-6ea5-c05d-34669cc0e8ea",
 			"synced": false,
-			"owner": "15020"
+			"owner": "51802"
 		},
 		{
 			"id": "d4fa250b-2752-5b6d-21a7-38e9336062e8",
@@ -427,10 +427,10 @@
 			"data": [],
 			"dataMode": "params",
 			"version": 2,
-			"tests": "\ntry {\n    \n    var iso8601Regex = /^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$/;\n    \n    tests[\"Status code is 200\"] = responseCode.code === 200;\n    \n    var data = JSON.parse(responseBody);\n    tests[\"Response is object\"] = _.isObject(data);\n    \n    tests[\"Entity has UUID\"] = !!data.entity_id && _.isString(data.entity_id);\n    tests[\"UUID has 36 chars, 4 hyphens\"] = data.entity_id.length == 36 && (data.entity_id.match(/-/g) || []).length == 4;\n    \n    tests[\"Varchar column type is text\"] = _.isString(data.varchar);\n    tests[\"Hash column is a hash\"] = _.isString(data.hash);\n    tests[\"Integer column type is integer\"] = _.isNumber(data.integer) && _.parseInt(data.integer) === data.integer;\n    tests[\"Decimal column type is Decimal\"] = _.isNumber(data.decimal) && _.parseFloat(data.decimal) === data.decimal;\n    tests[\"Nullable column type is null\"] = _.isNull(data.nullable);\n    tests[\"Text column type is text\"] = _.isString(data.text);\n    tests[\"Date column type is a valid ISO8601 date\"] = iso8601Regex.test(data.date);\n    tests[\"Multi word colum is camel cased\"] = _.has(data, 'multiWordColumnTitle');\n    \n    tests[\"createdAt column is a valid ISO8601 date\"] = iso8601Regex.test(data.createdAt);\n    tests[\"updatedAt column is a valid ISO8601 date\"] = iso8601Regex.test(data.updatedAt);\n    \n    \n}catch(e){\n    tests[e.message] = false;\n}",
+			"tests": "\ntry {\n    \n    var iso8601Regex = /^([\\+-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d+(?!:))?)?(\\17[0-5]\\d([\\.,]\\d+)?)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$/;\n    \n    tests[\"Status code is 200\"] = responseCode.code === 200;\n    \n    var data = JSON.parse(responseBody);\n    tests[\"Response is object\"] = _.isObject(data);\n    \n    tests[\"Entity has UUID\"] = !!data.entityId && _.isString(data.entityId);\n    tests[\"UUID has 36 chars, 4 hyphens\"] = data.entityId.length == 36 && (data.entityId.match(/-/g) || []).length == 4;\n    \n    tests[\"Varchar column type is text\"] = _.isString(data.varchar);\n    tests[\"Hash column is a hash\"] = _.isString(data.hash);\n    tests[\"Integer column type is integer\"] = _.isNumber(data.integer) && _.parseInt(data.integer) === data.integer;\n    tests[\"Decimal column type is Decimal\"] = _.isNumber(data.decimal) && parseFloat(data.decimal) === data.decimal;\n    tests[\"Nullable column type is null\"] = _.isNull(data.nullable);\n    tests[\"Text column type is text\"] = _.isString(data.text);\n    tests[\"Date column type is a valid ISO8601 date\"] = iso8601Regex.test(data.date);\n    tests[\"Multi word colum is camel cased\"] = _.has(data, 'multiWordColumnTitle');\n    \n    tests[\"createdAt column is a valid ISO8601 date\"] = iso8601Regex.test(data.createdAt);\n    tests[\"updatedAt column is a valid ISO8601 date\"] = iso8601Regex.test(data.updatedAt);\n    \n    \n}catch(e){\n    tests[e.message] = false;\n}",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1433126796647,
+			"time": 1433338870167,
 			"name": "Get a test entity",
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
@@ -455,10 +455,9 @@
 			"description": "",
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
-			"write": true,
 			"folder": "4e7dfff6-554b-6ea5-c05d-34669cc0e8ea",
 			"synced": false,
-			"owner": "15020"
+			"owner": "51802"
 		},
 		{
 			"id": "fdf53645-7584-a5a6-b1a8-73c2fa3c0da0",
@@ -479,7 +478,7 @@
 			"collectionId": "a093d1bb-81a0-b81a-1bfe-40934481cde2",
 			"responses": [],
 			"synced": false,
-			"owner": "15020",
+			"owner": "51802",
 			"folder": "308d7d0f-e3cd-127d-5e62-5f32ad73139a"
 		}
 	]
