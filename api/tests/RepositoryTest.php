@@ -24,7 +24,7 @@ class RepositoryTest extends TestCase
     /**
      * Test TestEntity Repository.
      */
-    public function teastAll()
+    public function testAll()
     {
         $this->mock->shouldReceive('get')
             ->once()
@@ -36,7 +36,7 @@ class RepositoryTest extends TestCase
         $this->assertTrue(is_array($result));
     }
 
-    public function tesatCreate()
+    public function testCreate()
     {
         $this->mock->shouldReceive('create')
             ->once()
@@ -48,7 +48,7 @@ class RepositoryTest extends TestCase
         $this->assertTrue(is_object($result));
     }
 
-    public function teastFind()
+    public function testFind()
     {
         $this->mock->shouldReceive('findOrFail')
             ->once()
