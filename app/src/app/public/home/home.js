@@ -14,7 +14,8 @@ angular.module('app.public.home', [])
             data: {
                 title: "Home",
                 role: 'public',
-                icon: 'home'
+                icon: 'home',
+                navigation: true
             }
         });
     })
