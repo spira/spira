@@ -14,13 +14,6 @@ class RepositoryTest extends TestCase
         $this->repository = $this->app->make('App\Repositories\TestRepository');
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        m::close();
-    }
-
     /**
      * Test TestEntity Repository.
      */
