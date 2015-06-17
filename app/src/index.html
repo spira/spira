@@ -23,8 +23,11 @@
         <script type="text/javascript" src="/<%= file %>"></script>
         <% }); %>
 
+        <!-- remote stylesheets -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     </head>
-    <body>
-        <div class="page-container" ui-view="app"></div>
-    </body>
+
+    <body ui-view="app" layout="row"></body>
+
 </html>
