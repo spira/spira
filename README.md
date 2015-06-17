@@ -1,9 +1,10 @@
 # Spira 
 Lumen + AngularJS project seed with Docker
 
-[![Build Status](https://travis-ci.org/spira/spira.svg?branch=master)](https://travis-ci.org/spira/spira) [![Coverage Status](https://coveralls.io/repos/spira/spira/badge.svg?branch=master)](https://coveralls.io/r/spira/spira?branch=master)
+[![Build Status](https://travis-ci.org/spira/spira.svg?branch=master)](https://travis-ci.org/spira/spira) 
+[![Coverage Status](https://coveralls.io/repos/spira/spira/badge.svg?branch=master)](https://coveralls.io/r/spira/spira?branch=master)
 [![Dependency Status](https://gemnasium.com/spira/spira.svg)](https://gemnasium.com/spira/spira)
-
+[![Code Climate](https://codeclimate.com/github/spira/spira/badges/gpa.svg)](https://codeclimate.com/github/spira/spira)
 
 ## Technologies integrated in this seed project
 * [Lumen](http://lumen.laravel.com/)
@@ -22,9 +23,23 @@ Lumen + AngularJS project seed with Docker
  * [Newman](https://github.com/a85/Newman) 
 
 
+## General Setup
+Spira has a yeoman generator at https://github.com/spira/generator-spira which you can install with the following command
+```
+$ npm install -g generator-spira
+$ cd /path/to/new/directory
+$ yo spira
+```
+
+From there follow the on screen prompts. Note you may have to enter your sudo password a few times during install:
+* To edit /etc/exports for NAT
+* To edit /etc/hosts for host resolving
+
+In addition, due to rate limiting by github, part way through the composer install section you will have to add an authorise token from your github account. This is so github will allow the high rate of clones that composer needs.
+
+Only if you want to install manually, follow the below instructions.
 
 ## Docker setup
-
 You have two options - boot2docker and vagrant. Vagrant is the recommended setup, however you may already have boot2docker working and prefer it. Instructions for setup below.
 Vagrant is recommended as it supports NFS folder sharing in a simple way, whereas boot2docker takes a significant amount more work to set up (outside of the instructions below).
 
@@ -34,6 +49,12 @@ Vagrant is recommended as it supports NFS folder sharing in a simple way, wherea
 Vagrant manages provisioning of virtual machines
 See [http://docs.vagrantup.com/v2/installation](http://docs.vagrantup.com/v2/installation/)
 
+Install vagrant-docker-compose plugin to autoload plugins when vagrant boots
+
+```
+vagrant plugin install vagrant-docker-compose
+```
+
 ### Install virtualbox or vmware
 virtualbox & vmware are both virtual machine runners
 virtualbox is free at [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)
@@ -42,14 +63,24 @@ virtualbox is free at [https://www.virtualbox.org/wiki/Downloads](https://www.vi
 ```sh
 vagrant up
 ```
+When vagrant boots it attempts to run all the containers. If they are not yet present, the containers will be pulled from the dockerhub repository.
+
+If the process fails at any point (it can happen the first time when pulling containers due to connectivity issues), run the following command to do a manual pull
+```
+vagrant ssh --command cd /data && docker-compose pull
+```
+Once all containers have pulled successfully, run the following command to re-attempt booting
+```
+vagrant ssh --command cd /data && docker-compose up -d
+```
 
 ### Add host entries to /etc/hosts
 ```
-sudo -- sh -c "printf '\n\n#spira docker\n192.168.2.2\tlocal.spira.io\n192.168.2.2\tlocal.api.spira.io\n192.168.2.2\tlocal.app.spira.io' >> /etc/hosts"
+sudo -- sh -c "printf '\n\n#spira vagrant/docker\n192.168.2.2\tlocal.spira.io\n192.168.2.2\tlocal.api.spira.io\n192.168.2.2\tlocal.app.spira.io' >> /etc/hosts"
 ```
 
 ### Log into vagrant box
-On login you will see the output of `docker-compose ps` which gives you the status of all containers 
+On login you will see the output of `docker-compose ps` which gives you the status of all containers. 
 ```sh
 vagrant ssh
 ```
