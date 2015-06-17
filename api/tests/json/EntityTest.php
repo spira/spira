@@ -2,13 +2,15 @@
 
 class EntityTest extends TestCase
 {
-    // Hard coded now, should be seeded during setUp() if going this route.
-    protected $first_entity_id = '04b26f6b-abdd-34b2-9721-adc72f184229';
+    protected $entity;
 
-    // Note:
-    //
-    // If going this route, I'd think it's a good idea to migrate and seed
-    // the database as part of the test setUp().
+    public function setUp()
+    {
+        parent::setUp();
+
+        // Get an entry from the DB, to have an ID to use for getOne tests
+        $this->entity = App\Models\TestEntity::first();
+    }
 
     /**
      * Get all test entities.
@@ -28,7 +30,7 @@ class EntityTest extends TestCase
      */
     public function testGetOne()
     {
-        $this->get('/test/entities/'.$this->first_entity_id);
+        $this->get('/test/entities/'.$this->entity->entity_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
