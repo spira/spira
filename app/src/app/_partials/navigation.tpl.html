@@ -1,35 +1,8 @@
-
-<nav>
-    <top-bar>
-        <ul class="title-area">
-            <li class="name">
-                <a href="#">spira</a>
-            </li>
-            <li toggle-top-bar class="menu-icon"><a href="#">Menu</a></li>
-        </ul>
-
-        <top-bar-section>
-
-            <ul class="left">
-                <li ng-repeat-start="state in childStates" ui-sref-active="active" ng-if="true"> <!--@todo set if to check if has children -->
-                    <a ui-sref="{{state.name}}">
-                        <i ng-if="!!state.data.icon" class="fa fa-{{state.data.icon}}">&nbsp;</i>{{state.data.title}}
-                    </a>
-                </li>
-
-                <li ng-repeat-end="state in childStates" ui-sref-active="active" ng-if="false"><!--@todo set if to check if has children -->
-                    <a ui-sref="{{state.name}}">
-                        <i ng-if="!!state.data.icon" class="fa fa-{{state.data.icon}}">&nbsp;</i>{{state.data.title}}
-                    </a>
-                    <ul top-bar-dropdown>
-                        <li ng-repeat="childState in state.children" ui-sref-active="active">
-                            <a ui-sref="{{childState.name}}"><i ng-if="!!childState.data.icon" class="fa fa-{{childState.data.icon}}">&nbsp;</i>{{childState.data.title}}</a>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
-
-        </top-bar-section>
-    </top-bar>
-</nav>
+<md-list>
+    <md-list-item ng-repeat="state in navigationStates | orderBy:orderMenuItems" >
+        <md-button ng-click="toggleLeftNav()" ui-sref="{{state.name}}" ui-sref-active="selected">
+            <md-icon>{{state.data.icon}}</md-icon>
+            {{state.data.title}}
+        </md-button>
+    </md-list-item>
+</md-list>
