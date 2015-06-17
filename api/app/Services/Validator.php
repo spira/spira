@@ -1,7 +1,16 @@
 <?php namespace App\Services;
 
+use Illuminate\Container\Container as App;
+
 class Validator
 {
+    /**
+     * The application instance.
+     *
+     * @var Illuminate\Container\Container
+     */
+    protected $app;
+
     /**
      * Validator.
      *
@@ -26,11 +35,13 @@ class Validator
     /**
      * Assign dependencies.
      *
+     * @param  Illuminate\Container\Container  $app
      * @return  void
      */
-    public function __construct()
+    public function __construct(App $app)
     {
-        $this->validator = \App::make('validator');
+        $this->app = $app;
+        $this->validator = $this->app->make('validator');
 
         $this->registerValidateFloat();
     }
