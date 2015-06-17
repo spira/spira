@@ -1,6 +1,8 @@
 <?php
 
-class TestCase extends Laravel\Lumen\Testing\TestCase {
+class TestCase extends Laravel\Lumen\Testing\TestCase
+{
+    use AssertionTrait, CrawlerTrait;
 
     /**
      * Creates the application.
@@ -11,5 +13,4 @@ class TestCase extends Laravel\Lumen\Testing\TestCase {
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
-
 }
