@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
 // use Illuminate\Container\Container as App;
 
-class BaseController extends Controller
+abstract class BaseController extends Controller
 {
     public static $model;
 
