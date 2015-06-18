@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder {
 	{
 
         $this->call('UserStorySeeder');
+        $this->call('TestEntitySeeder');
 
         $this->command->info('User table seeded!');
 	}
