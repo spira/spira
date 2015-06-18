@@ -11,7 +11,6 @@ use Rhumsaa\Uuid\Console\Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use App\Services\Transformer;
 use App\Repositories\TestRepository;
 use App\Http\Validators\TestValidator;
 
@@ -22,14 +21,12 @@ class TestController extends BaseController
      *
      * @param  TestValidator $validator
      * @param  TestRepository  $repository
-     * @param  Transformer  $transformer
      * @return void
      */
-    public function __construct(TestValidator $validator, TestRepository $repository, Transformer $transformer)
+    public function __construct(TestValidator $validator, TestRepository $repository)
     {
         $this->validator = $validator;
         $this->repository = $repository;
-        $this->transformer = $transformer;
     }
 
     /**
