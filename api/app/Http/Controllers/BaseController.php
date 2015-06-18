@@ -1,22 +1,16 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Transformers\BaseTransformer;
+use App;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
-// use Illuminate\Container\Container as App;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 abstract class BaseController extends Controller
 {
     public static $model;
-
-    /**
-     * Transformer for the response arrays.
-     *
-     * @var App\Services\Transformer
-     */
-    protected $transformer;
 
     /**
      * Model Repository.
@@ -33,13 +27,46 @@ abstract class BaseController extends Controller
     protected $validator;
 
     /**
+     * Transformer to use for responses.
+     *
+     * @var string
+     */
+    protected $transformer = 'App\Http\Transformers\BaseTransformer';
+
+    /**
+     * Transform a collection for response.
+     *
+     * @param  Collection $collection
+     * @return array
+     */
+    protected function collection(Collection $collection)
+    {
+        $transformer = App::make('App\Services\Transformer');
+
+        return $transformer->collection($collection, new $this->transformer);
+    }
+
+    /**
+     * Transform an item for response.
+     *
+     * @param  Model  $item
+     * @return array
+     */
+    protected function item(Model $item)
+    {
+        $transformer = App::make('App\Services\Transformer');
+
+        return $transformer->item($item, new $this->transformer);
+    }
+
+    /**
      * Get all entities.
      *
      * @return Response
      */
     public function getAll()
     {
-        return $this->transformer->collection($this->repository->all(), new BaseTransformer);
+        return $this->collection($this->repository->all());
     }
 
     /**
@@ -50,7 +77,7 @@ abstract class BaseController extends Controller
      */
     public function getOne($id)
     {
-        return $this->transformer->item($this->repository->find($id), new BaseTransformer);
+        return $this->item($this->repository->find($id));
     }
 
     /**
