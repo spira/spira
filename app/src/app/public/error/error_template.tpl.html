@@ -1,0 +1,25 @@
+<div class="jumbotron">
+    <h1><md-icon>error</md-icon> Whoops <small>An error occurred</small> </h1>
+
+    <p>Please report this error, along with the debug output below.</p>
+
+    <md-button class="md-raised" ng-click="goBack()">
+        <md-icon>arrow_back</md-icon>
+        Take me back
+    </md-button>
+    <md-button class="md-raised md-primary" ng-click="reload()">
+        <md-icon>refresh</md-icon>
+        Reload
+    </md-button>
+
+    <h3>{{title}}</h3>
+
+    <div ng-if="!!url">
+        Attempting to access <code>{{url}}</code><span ng-if="!!method">with method <code>{{method}}</code></span>
+    </div>
+
+    <p ng-if="!!message">{{message}}</p>
+
+    <pre ng-if="!!details">{{details}}</pre>
+
+</div>

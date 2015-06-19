@@ -32,8 +32,8 @@ mailcatcher:
     - "1080:1080"
 
 php:  
-#  image: spira/docker-hhvm # @todo switch to hhvm when Predis works with hhvm
-  image: spira/docker-phpfpm
+  image: spira/docker-hhvm
+#  image: spira/docker-phpfpm
   volumes_from:
     - data
   links:
@@ -44,6 +44,7 @@ php:
   environment:
     - API_PATH=/api
     - XDEBUG_ENABLED=true
+    - REDIS_PORT=6379 #force the setting of REDIS_PORT to 6379 as the HHVM container overrides this value somehow. see https://github.com/nrk/predis/issues/254
   privileged: true
 
 web:  

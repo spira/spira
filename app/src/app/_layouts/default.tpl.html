@@ -1,4 +1,22 @@
-<div id="header-container" ui-view="navigation"></div>
-<div id="main-container" class="row">
-    <div ui-view="main"></div>
+<md-sidenav
+        class="site-sidenav md-sidenav-left md-whiteframe-z2"
+        md-component-id="left"
+        md-is-locked-open="$mdMedia('gt-sm')"
+        ui-view="navigation">
+</md-sidenav>
+
+<div flex layout="column"
+     tabIndex="-1"
+     role="main"
+     class="md-whiteframe-z2"
+ >
+
+    <md-toolbar layout="row" class="md-whiteframe-z1">
+        <md-button class="menu" hide-gt-sm ng-click="toggleLeftNav()" aria-label="Show Menu">
+            <md-icon>menu</md-icon>
+        </md-button>
+        <h1>Spira</h1>
+    </md-toolbar>
+
+    <md-content flex id="content" ui-view="main"></md-content>
 </div>
