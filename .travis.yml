@@ -1,6 +1,6 @@
 language: php
 php:
-  - 5.5
+ - 5.5
 
 addons:
   postgresql: "9.3"
@@ -12,19 +12,19 @@ before_install:
 before_script:
 
   - psql -c 'create database spira;' -U postgres
-  - npm install --quiet -g gulp newman http-server
-  - npm install
-  - gulp bower:install
-  - gulp build
+  - travis_retry npm install --no-spin --quiet -g gulp newman http-server
+  - travis_retry npm install --no-spin
+  - travis_retry gulp bower:install
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
+  - travis_retry gem install mailcatcher
+  - gulp build
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed
   - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & #start api server
   - http-server ./app/build/ -p 8001 2>&1 >/dev/null & #start webserver
-  - gem install mailcatcher
   - mailcatcher # start mailcatcher server
   - sleep 5 #give server some time to boot
 

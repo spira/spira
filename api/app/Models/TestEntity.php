@@ -27,6 +27,18 @@ class TestEntity extends BaseModel {
     protected $primaryKey = 'entity_id';
 
     /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'decimal' => 'float',
+        'date' => 'date',
+        'created_at' => 'dateTime',
+        'updated_at' => 'dateTime'
+    ];
+
+    /**
      * Generate fake user
      * @param array $overrides
      * @param null $seed
@@ -64,5 +76,4 @@ class TestEntity extends BaseModel {
         return $testEntity;
 
     }
-
 }
