@@ -55,7 +55,7 @@ class TestController extends BaseController
 
         $message = [
             'message' => "testing email",
-            'response_code' => $responseCode,
+            'responseCode' => $responseCode,
         ];
 
         return response()->json($message);
@@ -91,36 +91,6 @@ class TestController extends BaseController
 
     }
 
-    public function addToCache(Request $request, $key){
-
-        $requestKey = $request->input('key');
-        $requestValue = $request->input('value');
-
-        if ($key != $requestKey){
-            throw new BadRequestHttpException("Route parameter must match key value");
-        }
-
-        Cache::put($requestKey, $requestValue, Carbon::now()->addMinutes(1));
-
-        return response(null, 204);
-
-    }
-
-    public function getFromCache($key){
-
-        if (!Cache::has($key)) {
-            throw new NotFoundHttpException("Cache does not have key `$key` stored");
-        }
-
-        $response = [
-            'key' => $key,
-            'value' => Cache::get($key),
-        ];
-
-        return response()->json($response, 200);
-
-    }
-
     /**
      * @param Request $request
      */
@@ -131,7 +101,6 @@ class TestController extends BaseController
 
             $logType = $log['type'];
             $logMessage = $log['message'];
-
 
             $logSuccess = Log::$logType($logMessage);
 
