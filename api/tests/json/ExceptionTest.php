@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Client;
+
 class RestExceptionTest extends TestCase
 {
     protected $entity;
@@ -45,6 +47,30 @@ class RestExceptionTest extends TestCase
 
         $this->assertObjectHasAttribute('message', $object);
         $this->assertTrue(is_string($object->message), 'message attribute is text');
+
+    }
+
+    /**
+     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit
+     */
+    public function testFatalError()
+    {
+
+        $webhostIp = getenv('WEBSERVER_HOST');
+
+        $request = new Client([
+            'base_url' => 'http://'.$webhostIp.':8080'
+        ]);
+
+        $jsonResponse = $request->get('/test/fatal-error');
+
+        $object = json_decode($jsonResponse);
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('message', $object);
+        $this->assertTrue(is_string($object->message), 'message attribute is text');
+
 
     }
 
