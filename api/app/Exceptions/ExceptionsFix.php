@@ -13,6 +13,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 
+/**
+ * @codeCoverageIgnore
+ */
 class HandleExceptionsFix {
 
 
@@ -32,9 +35,11 @@ class HandleExceptionsFix {
 
         register_shutdown_function([$this, 'handleShutdown']);
 
-        if ( ! $app->environment('testing'))
-        {
-            ini_set('display_errors', 'Off');
+        ini_set('display_errors', 0);
+
+        if ('cli' !== php_sapi_name() && (!ini_get('log_errors') || ini_get('error_log'))) {
+            // CLI - display errors only if they're not already logged to STDERR
+            ini_set('display_errors', 1);
         }
     }
 

@@ -44,7 +44,6 @@ php:
   environment:
     - API_PATH=/api
     - XDEBUG_ENABLED=true
-    - REDIS_PORT=6379 #force the setting of REDIS_PORT to 6379 as the HHVM container overrides this value somehow. see https://github.com/nrk/predis/issues/254
   privileged: true
 
 web:  
@@ -116,6 +115,7 @@ lumen:
     - queue:queue
     - redis:redis
     - db:db
+    - web:web
   environment:
     - API_PATH=/api
     - API_DOTENV=.local.env
