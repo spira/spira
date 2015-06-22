@@ -1,39 +1,94 @@
 <?php namespace App\Http\Controllers;
 
+use App;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
-class BaseController extends Controller
+abstract class BaseController extends Controller
 {
-
     public static $model;
 
-    public function getAll()
+    /**
+     * Model Repository.
+     *
+     * @var App\Repositories\BaseRepository
+     */
+    protected $repository;
+
+    /**
+     * Validation service.
+     *
+     * @var App\Services\Validation\TestValidator
+     */
+    protected $validator;
+
+    /**
+     * Transformer to use for responses.
+     *
+     * @var string
+     */
+    protected $transformer = 'App\Http\Transformers\BaseTransformer';
+
+    /**
+     * Transform a collection for response.
+     *
+     * @param  Collection $collection
+     * @return array
+     */
+    protected function collection(Collection $collection)
     {
-        $model = static::$model;
+        $transformer = App::make('App\Services\Transformer');
 
-        $entities = $model::all();
-
-        return response()->json($entities);
-
-//        $this->transformer = $entity.'Transformer';
-//        return $this->response->collection($entities, new $this->transformer);
+        return $transformer->collection($collection, new $this->transformer);
     }
 
+    /**
+     * Transform an item for response.
+     *
+     * @param  Model  $item
+     * @return array
+     */
+    protected function item(Model $item)
+    {
+        $transformer = App::make('App\Services\Transformer');
 
+        return $transformer->item($item, new $this->transformer);
+    }
+
+    /**
+     * Get all entities.
+     *
+     * @return Response
+     */
+    public function getAll()
+    {
+        return $this->collection($this->repository->all());
+    }
+
+    /**
+     * Get one entity.
+     *
+     * @param  string  $id
+     * @return Response
+     */
     public function getOne($id)
     {
-        $model = static::$model;
+        return $this->item($this->repository->find($id));
+    }
 
-        $resource = $model::find($id);
-
-        if(! $resource) {
-
-            throw new NotFoundHttpException($model . ' not found');
-        }
-
-        return response()->json($resource);
+    /**
+     * Post a new entity.
+     *
+     * @param  Request $request
+     * @return mixed
+     */
+    public function postOne(Request $request)
+    {
+        return $this->repository->create($request->all());
     }
 
     public static function renderException($request, \Exception $e, $debug = false){
