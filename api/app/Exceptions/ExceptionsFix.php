@@ -13,6 +13,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 
+/**
+ * @codeCoverageIgnore
+ */
 class HandleExceptionsFix {
 
 
