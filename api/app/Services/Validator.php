@@ -44,6 +44,7 @@ class Validator
         $this->validator = $this->app->make('validator');
 
         $this->registerValidateFloat();
+        $this->registerValidateUuid();
     }
 
     /**
@@ -123,6 +124,19 @@ class Validator
         $this->validator->extend('float', function($attribute, $value, $parameters)
         {
             return is_float($value + 0);
+        });
+    }
+
+    /**
+     * Register custom validation rule for UUID strings.
+     *
+     * @return void
+     */
+    protected function registerValidateUuid()
+    {
+        $this->validator->extend('uuid', function($attribute, $value, $parameters)
+        {
+            return preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/', $value);
         });
     }
 }
