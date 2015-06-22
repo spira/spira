@@ -32,5 +32,5 @@ $app->group(['prefix' => 'test'], function($app){
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
     $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
-
+    $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
 });
