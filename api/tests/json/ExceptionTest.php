@@ -1,6 +1,7 @@
 <?php
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ServerException;
 
 class RestExceptionTest extends TestCase
 {
@@ -62,15 +63,21 @@ class RestExceptionTest extends TestCase
             'base_url' => 'http://'.$webhostIp.':8080'
         ]);
 
-        $jsonResponse = $request->get('/test/fatal-error');
 
-        $object = json_decode($jsonResponse);
+        try {
+            $request->get('/test/fatal-error');
+            $this->fail('Expected exception GuzzleHttp\Exception\ServerException not thrown');
+        } catch (ServerException $e) {
+            $response = $e->getResponse();
 
-        $this->assertTrue(is_object($object), 'Response is an object');
+            $object = json_decode($response->getBody());
 
-        $this->assertObjectHasAttribute('message', $object);
-        $this->assertTrue(is_string($object->message), 'message attribute is text');
+            $this->assertTrue(is_object($object), 'Response is an object');
 
+            $this->assertObjectHasAttribute('message', $object);
+            $this->assertTrue(is_string($object->message), 'message attribute is text');
+
+        }
 
     }
 
