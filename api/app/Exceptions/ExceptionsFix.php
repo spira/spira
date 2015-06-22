@@ -32,10 +32,7 @@ class HandleExceptionsFix {
 
         register_shutdown_function([$this, 'handleShutdown']);
 
-        if ( ! $app->environment('testing'))
-        {
-            ini_set('display_errors', 'Off');
-        }
+        ini_set('display_errors', 'Off');
     }
 
     public function handleError($level, $message, $file = '', $line = 0, $context = array())
