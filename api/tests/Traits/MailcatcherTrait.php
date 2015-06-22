@@ -13,7 +13,7 @@ trait MailcatcherTrait
      */
     private $mailcatcher;
 
-    public function setUpMailcatcherTrait()
+    public function __construct()
     {
         $this->mailcatcher = new Client([
             'base_url' => 'http://'.getenv('MAIL_HOST').':1080'
@@ -22,12 +22,18 @@ trait MailcatcherTrait
         $this->clearMessages();
     }
 
-    // api calls
+    /**
+     * Empty the inbox
+     */
     public function clearMessages()
     {
         $this->mailcatcher->delete('/messages');
     }
 
+    /**
+     * Get the latest email
+     * @return mixed
+     */
     public function getLastMessage()
     {
         $messages = $this->getMessages();
@@ -38,6 +44,10 @@ trait MailcatcherTrait
         return reset($messages);
     }
 
+    /**
+     * Get all emails
+     * @return mixed
+     */
     public function getMessages()
     {
         $jsonResponse = $this->mailcatcher->get('/messages');

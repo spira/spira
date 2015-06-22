@@ -10,8 +10,6 @@ class EmailTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->setUpMailcatcherTrait(); //@todo find a way to construct mailcatcher trait when used
     }
 
     /**
@@ -19,7 +17,6 @@ class EmailTest extends TestCase
      */
     public function testSendEmail()
     {
-
 
         $subject = 'Test Email';
 
