@@ -91,6 +91,18 @@ abstract class BaseController extends Controller
         return $this->repository->create($request->all());
     }
 
+    /**
+     * Put an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function putOne($id, Request $request)
+    {
+        return $this->repository->put($id, $request->all());
+    }
+
     public static function renderException($request, \Exception $e, $debug = false){
 
         $message = $e->getMessage();
