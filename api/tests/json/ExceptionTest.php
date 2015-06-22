@@ -57,10 +57,11 @@ class RestExceptionTest extends TestCase
     public function testFatalError()
     {
 
-        $webhostIp = getenv('WEBSERVER_HOST');
+        $webserverIp = getenv('WEBSERVER_HOST');
+        $webserverPort = getenv('WEBSERVER_PORT');
 
         $request = new Client([
-            'base_url' => 'http://'.$webhostIp.':8080'
+            "base_url" => "http://$webserverIp:$webserverPort"
         ]);
 
 
