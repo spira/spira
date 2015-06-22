@@ -32,7 +32,12 @@ class HandleExceptionsFix {
 
         register_shutdown_function([$this, 'handleShutdown']);
 
-        ini_set('display_errors', 'Off');
+        ini_set('display_errors', 0);
+
+        if ('cli' !== php_sapi_name() && (!ini_get('log_errors') || ini_get('error_log'))) {
+            // CLI - display errors only if they're not already logged to STDERR
+            ini_set('display_errors', 1);
+        }
     }
 
     public function handleError($level, $message, $file = '', $line = 0, $context = array())
