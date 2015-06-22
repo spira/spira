@@ -316,7 +316,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"version": 2,
-			"tests": "\ntry {\n    \n    tests[\"Status code is 200\"] = responseCode.code === 200;\n    \n    var data = JSON.parse(responseBody);\n    tests[\"Response code is 1\"] = data.response_code == 1;\n    \n    \n}catch(e){\n    tests[e.message] = false;\n}",
+			"tests": "\ntry {\n    \n    tests[\"Status code is 200\"] = responseCode.code === 200;\n    \n    var data = JSON.parse(responseBody);\n    tests[\"Response code is 1\"] = data.responseCode == 1;\n    \n    \n}catch(e){\n    tests[e.message] = false;\n}",
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"time": 1432010172487,
