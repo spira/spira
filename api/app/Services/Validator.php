@@ -2,7 +2,7 @@
 
 use Illuminate\Container\Container as App;
 
-class Validator
+abstract class Validator
 {
     /**
      * The application instance.
@@ -137,7 +137,7 @@ class Validator
     {
         $this->validator->extend('uuid', function($attribute, $value, $parameters)
         {
-            return preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/', $value);
+            return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
         });
     }
 }
