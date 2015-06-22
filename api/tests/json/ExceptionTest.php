@@ -66,8 +66,9 @@ class RestExceptionTest extends TestCase
 
 
         try {
-            $request->get('/test/fatal-error');
-            $this->fail('Expected exception GuzzleHttp\Exception\ServerException not thrown');
+            $response = $request->get('/test/fatal-error');
+            $statusCode = $response->getStatusCode();
+            $this->fail('Expected exception GuzzleHttp\Exception\ServerException not thrown. Status code was '.$statusCode);
         } catch (ServerException $e) {
             $response = $e->getResponse();
 
