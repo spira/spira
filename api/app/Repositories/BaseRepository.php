@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as App;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 abstract class BaseRepository
 {
@@ -39,7 +40,19 @@ abstract class BaseRepository
     abstract protected function model();
 
     /**
-     * Get all rows.
+     * Get an entity by id.
+     *
+     * @param  string  $id
+     * @param  array   $columns
+     * @return mixed
+     */
+    public function find($id, $columns = array('*'))
+    {
+        return $this->model->findOrFail($id, $columns);
+    }
+
+    /**
+     * Get all entities.
      *
      * @param  array  $columns
      * @return mixed
@@ -50,7 +63,7 @@ abstract class BaseRepository
     }
 
     /**
-     * Create and store a new instance of the model.
+     * Create and store a new instance of an entity.
      *
      * @param  array  $data
      * @return mixed
@@ -61,15 +74,109 @@ abstract class BaseRepository
     }
 
     /**
-     * Get model by id.
+     * Create and store a collection of new entities.
      *
-     * @param  string  $id
-     * @param  array  $columns
+     * @param  array  $models
      * @return mixed
      */
-    public function find($id, $columns = array('*'))
+    public function createMany(array $models)
     {
-        return $this->model->findOrFail($id, $columns);
+        foreach ($models as $model) {
+            $this->model->create($model);
+        }
+    }
+
+    /**
+     * Create or replace an entity by id.
+     *
+     * @param  string  $id
+     * @param  array   $data
+     * @return mixed
+     */
+    public function createOrReplace($id, array $data)
+    {
+        try {
+
+            $model = $this->find($id);
+
+        } catch (ModelNotFoundException $e) {
+
+            return $this->create(array_add($data, $this->model->getKeyName(), $id));
+        }
+
+        foreach ($model->attributes as $key => $value) {
+            if($value !== 0) {
+                $model->{$key} = null;
+            }
+        }
+
+        return $model->update($data);
+    }
+
+    /**
+     * Create or replace a colleciton of entities.
+     *
+     * @param  array  $entities
+     * @return void
+     */
+    public function createOrReplaceMany(array $entities)
+    {
+        foreach ($entities as $entity) {
+            $id = array_pull($entity, $this->model->getKeyName());
+
+            $this->put($id, $entity);
+        }
+    }
+
+    /**
+     * Update an entity by id.
+     *
+     * @param  string  $id
+     * @param  array   $data
+     * @return mixed
+     */
+    public function update($id, array $data)
+    {
+        $model = $this->find($id);
+
+        return $model->update($data);
+    }
+
+    /**
+     * Update a collection of entities.
+     *
+     * @param  array  $entities
+     * @return void
+     */
+    public function updateMany(array $entities)
+    {
+        foreach ($entities as $entity) {
+            $id = array_pull($entity, $this->model->getKeyName());
+
+            $this->patch($id, $entity);
+        }
+    }
+
+    /**
+     * Delete an entity by id.
+     *
+     * @param  string  $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        return $this->model->destroy($id);
+    }
+
+    /**
+     * Delete a collection of entities by their ids.
+     *
+     * @param  array  $ids
+     * @return mixed
+     */
+    public function deleteMany(array $ids)
+    {
+        return $this->model->destroy($ids);
     }
 
     /**
@@ -78,7 +185,7 @@ abstract class BaseRepository
      * @throws Exception
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function makeModel()
+    protected function makeModel()
     {
         $model = $this->app->make($this->model());
 
