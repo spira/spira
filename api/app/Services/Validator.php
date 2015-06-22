@@ -65,7 +65,8 @@ class Validator
     public function messages()
     {
         return [
-            'float' => 'The :attribute must be a float.'
+            'float' => 'The :attribute must be a float.',
+            'uuid' => 'The :attribute must be an UUID string.'
         ];
     }
 
