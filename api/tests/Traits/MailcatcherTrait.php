@@ -13,7 +13,7 @@ trait MailcatcherTrait
      */
     private $mailcatcher;
 
-    public function __construct()
+    public function bootMailcatcherTrait()
     {
         $this->mailcatcher = new Client([
             'base_url' => 'http://'.getenv('MAIL_HOST').':1080'
