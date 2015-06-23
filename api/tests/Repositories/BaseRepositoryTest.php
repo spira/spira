@@ -22,7 +22,7 @@ class BaseRepositoryTest extends TestCase
         $this->baseRepository->__construct($this->app);
     }
 
-    public function testBaseFind()
+    public function testFind()
     {
         $this->baseModel->shouldReceive('findOrFail')
             ->once()
@@ -33,7 +33,7 @@ class BaseRepositoryTest extends TestCase
         $this->assertTrue(is_object($result));
     }
 
-    public function testBaseAll()
+    public function testAll()
     {
         $this->baseModel->shouldReceive('get')
             ->once()
@@ -45,7 +45,7 @@ class BaseRepositoryTest extends TestCase
         $this->assertTrue(is_array($result));
     }
 
-    public function testBaseCreate()
+    public function testCreate()
     {
         $this->baseModel->shouldReceive('create')
             ->once()

@@ -77,7 +77,7 @@ abstract class BaseRepository
      * Create and store a collection of new entities.
      *
      * @param  array  $models
-     * @return mixed
+     * @return void
      */
     public function createMany(array $models)
     {
@@ -104,13 +104,15 @@ abstract class BaseRepository
             return $this->create(array_add($data, $this->model->getKeyName(), $id));
         }
 
-        foreach ($model->attributes as $key => $value) {
+        foreach ($model->getAttributes() as $key => $value) {
             if($value !== 0) {
-                $model->{$key} = null;
+                if (!in_array($key, ['created_at', 'updated_at'])) {
+                    $model->{$key} = null;
+                }
             }
         }
 
-        return $model->update($data);
+        return $model->update(array_add($data, $this->model->getKeyName(), $id));
     }
 
     /**
@@ -177,6 +179,16 @@ abstract class BaseRepository
     public function deleteMany(array $ids)
     {
         return $this->model->destroy($ids);
+    }
+
+    /**
+     * Get number of items in storage.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->model->count();
     }
 
     /**
