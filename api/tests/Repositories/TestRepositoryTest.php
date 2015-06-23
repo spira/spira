@@ -115,4 +115,83 @@ class TestRepositoryTest extends TestCase
         $this->assertEquals($updated->entity_id, $entity->entity_id);
         $this->assertNotEquals($updated->varchar, $entity->varchar);
     }
+
+    public function testCreateOrReplaceMany()
+    {
+        $rowCount = $this->repository->count();
+
+        $entities = factory(App\Models\TestEntity::class, 5)->make();
+
+        // Remove entity_ids, so we have clean new data to insert. And add hidden.
+        $entities = $entities->toArray();
+        $entities = array_map(function ($arr) {
+            unset($arr['entity_id']);
+            $arr['hidden'] = true;
+            return $arr;
+        }, $entities);
+
+        $this->repository->createOrReplaceMany($entities);
+
+        $this->assertEquals($rowCount + 5, $this->repository->count());
+    }
+
+    public function testUpdate()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $id = $entity->entity_id;
+
+        $data = ['varchar' => 'foo', 'text' => 'bar'];
+        $this->repository->update($id, $data);
+
+        $entity = $this->repository->find($id);
+
+        $this->assertEquals('foo', $entity->varchar);
+        $this->assertEquals('bar', $entity->text);
+    }
+
+    public function testUpdateMany()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $ids = $entities->lists('entity_id');
+
+        $entities = array_map(function ($id) {
+            return [
+                'entity_id' => $id,
+                'text' => 'foobar'
+            ];
+        }, $ids->toArray());
+
+        $this->repository->updateMany($entities);
+
+        $entity = $this->repository->find($ids->random());
+        $this->assertEquals('foobar', $entity->text);
+    }
+
+    public function testDelete()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $rowCount = $this->repository->count();
+        $id = $entity->entity_id;
+
+        $entity = $this->repository->find($id);
+
+        $this->assertEquals($id, $entity->entity_id);
+
+        $this->repository->delete($id);
+        $this->assertEquals($rowCount - 1, $this->repository->count());
+
+        $this->setExpectedException('Illuminate\Database\Eloquent\ModelNotFoundException');
+        $entity = $this->repository->find($id);
+    }
+
+    public function testDeleteMany()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $rowCount = $this->repository->count();
+        $ids = $entities->lists('entity_id')->toArray();
+
+        $this->repository->deleteMany($ids);
+
+        $this->assertEquals($rowCount - 5, $this->repository->count());
+    }
 }

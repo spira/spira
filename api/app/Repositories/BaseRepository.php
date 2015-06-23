@@ -126,7 +126,7 @@ abstract class BaseRepository
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
-            $this->put($id, $entity);
+            $this->createOrReplace($id, $entity);
         }
     }
 
@@ -155,7 +155,7 @@ abstract class BaseRepository
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
-            $this->patch($id, $entity);
+            $this->update($id, $entity);
         }
     }
 
