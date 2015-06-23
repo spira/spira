@@ -38,7 +38,7 @@ var myHooks = function () {
             }
             return true;
         }).then(function(){
-            driver.manage().deleteAllCookies();
+            return driver.manage().deleteAllCookies();
         }).then(function(){
             callback();
         });
