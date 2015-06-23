@@ -19,7 +19,8 @@ install:
   - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
   - export PATH=$PWD/travis-phantomjs:$PATH
 
-  - travis_retry npm install --no-spin --quiet -g gulp newman http-server
+  - psql -c 'create database spira;' -U postgres
+  - travis_retry npm install --no-spin --quiet -g gulp http-server
   - travis_retry npm install --no-spin
   - travis_retry gulp bower:install
   - travis_retry composer self-update
