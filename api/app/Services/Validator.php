@@ -50,12 +50,9 @@ abstract class Validator
     /**
      * Validation rules.
      *
-     * @return void
+     * @return array
      */
-    public function rules()
-    {
-        return [];
-    }
+    abstract public function rules();
 
     /**
      * Set custom messages for validator errors.
