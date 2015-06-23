@@ -50,7 +50,7 @@ module.exports = function() {
 
                 return driver.findElements({ css: '.navigation a'});
             }).then(function(links){
-                return driver.wait(until.elementIsVisible(links[0]), 1000);
+                return driver.wait(until.elementIsVisible(links[0]), 5000);
             }).then(function(){
                 next();
             });
@@ -66,8 +66,8 @@ module.exports = function() {
             expect(menuButtonPresent).to.be.true;
 
             //wait until the navigation has disappeared before trying to open the menu
-            return driver.findElement({css: 'md-list-item'}).then(function(el) {
-                return driver.wait(until.elementIsNotVisible(el), 1000);
+            return driver.findElement({css: '.navigation a'}).then(function(el) {
+                return driver.wait(until.elementIsNotVisible(el), 5000);
             });
 
         }).then(function(){
@@ -89,7 +89,7 @@ module.exports = function() {
 
                 var el = els[els.length-1]; //get last element
 
-                return driver.wait(until.elementIsVisible(el), 1000).then(function(){
+                return driver.wait(until.elementIsVisible(el), 5000).then(function(){
                     return el;
                 });
 
