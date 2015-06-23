@@ -1,9 +1,12 @@
 <?php
 
 use Mockery as m;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RepositoryTest extends TestCase
 {
+    use DatabaseTransactions;
+
     public function setUp()
     {
         parent::setUp();
