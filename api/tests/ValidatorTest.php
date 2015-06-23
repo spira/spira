@@ -48,6 +48,13 @@ class ValidatorTest extends TestCase
 
         $this->assertStringEndsWith('must be an UUID string.', $this->validator->errors()->get('uuid')[0]);
     }
+
+    public function testTestValidator()
+    {
+        $validator = $this->app->make('App\Http\Validators\TestValidator');
+
+        $this->assertTrue(is_array($validator->rules()));
+    }
 }
 
 class Validation extends App\Services\Validator
