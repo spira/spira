@@ -6,11 +6,28 @@ var webdriver = require('selenium-webdriver');
 
 var buildPhantomDriver = function() {
     return new webdriver.Builder().
-        withCapabilities(webdriver.Capabilities.chrome()).
-        build();
+        withCapabilities(webdriver.Capabilities.phantomjs())
+        .build();
+};
+var buildChromeDriver = function() {
+    return new webdriver.Builder().
+        withCapabilities(webdriver.Capabilities.chrome())
+        .build();
 };
 
-var driver = buildPhantomDriver();
+var driver;
+switch(process.env.WEBDRIVER_BROWSER){
+    case 'chrome':
+        console.log('using chrome driver');
+        driver = buildChromeDriver();
+        break;
+    case 'phantom':
+    case 'phantomjs':
+    default:
+        console.log('using phantom driver');
+        driver = buildPhantomDriver();
+        break;
+}
 
 var getDriver = function() {
     return driver;
