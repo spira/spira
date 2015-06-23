@@ -63,12 +63,10 @@ module.exports = function() {
         // Write code here that turns the phrase above into concrete actions
         next.pending();
 
-        //this.driver.findElement({ css: '.navigation a'})
-        //    //    .then(function(el){
-        //    //        return el.click();
-        //    //    }).then(function(){
-        //    //        next();
-        //    //    });
+        //return this.driver.findElement({ css: '.navigation a'})
+        //    .then(function(el){
+        //        return el.click();
+        //    });
     });
 
 
