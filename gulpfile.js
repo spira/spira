@@ -13,7 +13,6 @@ var gulpCore = require('gulp'),
             'lodash',
             'main-bower-files',
             'minimatch',
-            'newman',
             'run-sequence',
             'json5'
         ],
@@ -323,57 +322,6 @@ gulp.task('test:api', 'unit tests the api', [], function(){
 
 });
 
-gulp.task('test:postman', 'integration tests the api', [], function(callback){ //@todo fix postman not connecting with travis ci, or not returning exitcodes
-
-
-    var fs = require('fs');
-
-    var collectionJson = plugins.json5.parse(fs.readFileSync("./api/postman/spira.json.postman_collection", 'utf8'));
-
-    var envFile = "./api/postman/spira-local.postman_environment";
-
-    if (process.env.TRAVIS){
-        envFile = "./api/postman/spira-travisci.postman_environment";
-    }
-
-    console.log('Using postman env file ', envFile);
-
-    var environment = plugins.json5.parse(fs.readFileSync(envFile, "utf-8")); // environment file (in parsed json format)
-
-    if (!!process.env.NGINX_PORT_8080_TCP){ //if we are executing from a docker container
-
-        var hostEntry = _.find(environment.values, {'key':'host'}); //find the host key entry
-        hostEntry.value = process.env.NGINX_PORT_8080_TCP_ADDR + ':8080'; //rewrite it to the nginx container tcp address
-
-    }
-
-    if (!!process.env.MAILCATCHER_PORT_1080_TCP){ //if we are executing from a docker container with mailcatcher connection
-
-        var mcHostEntry = _.find(environment.values, {'key':'mailcatcherHost'}); //find the host key entry
-        mcHostEntry.value = process.env.MAILCATCHER_PORT_1080_TCP_ADDR + ':1080'; //rewrite it to the mailcatcher container tcp address
-
-    }
-
-    var newmanOptions = {
-        envJson: environment,
-        asLibrary: true,
-        stopOnError: false,
-        exitCode: true
-    };
-
-    plugins.newman.execute(collectionJson, newmanOptions, function(exitCode){
-
-        console.log('exit code', exitCode);
-
-        if (exitCode !== 0){
-            throw new Error("Postman tests failed!");
-        }
-
-        callback();
-    });
-
-});
-
 //@todo resolve why this task will not exit, when the base task `./node_modules/.bin/cucumber.js` exits 0 as expected
 gulp.task('test:cucumber', 'runs BDD integration tests', [], function() {
     return gulp.src('features/*')
@@ -383,7 +331,7 @@ gulp.task('test:cucumber', 'runs BDD integration tests', [], function() {
     }));
 });
 
-gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:postman']);
+gulp.task('test', 'executes all unit tests', ['test:app', 'test:api']);
 
 gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
     gulp.src(paths.dest.coverage)
