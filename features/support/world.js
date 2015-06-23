@@ -6,7 +6,7 @@ var webdriver = require('selenium-webdriver');
 
 var buildPhantomDriver = function() {
     return new webdriver.Builder().
-        withCapabilities(webdriver.Capabilities.phantomjs()).
+        withCapabilities(webdriver.Capabilities.chrome()).
         build();
 };
 
