@@ -7,7 +7,7 @@ class TestValidator extends Validator
     /**
      * Validation rules.
      *
-     * @return void
+     * @return array
      */
     public function rules()
     {
