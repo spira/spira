@@ -19,8 +19,6 @@ Lumen + AngularJS project seed with Docker
  * [PhantomJS](http://phantomjs.org/)
  * [Karma](http://karma-runner.github.io/)
  * [Bower](http://bower.io/)
-* [Postman](https://www.getpostman.com/)
- * [Newman](https://github.com/a85/Newman) 
 
 
 ## General Setup
