@@ -18,6 +18,7 @@ class TransformInputData
             // Handle snakecase conversion in sub arrays
             if (is_array($value)) {
                 $value = $this->renameKeys($value);
+                $request->offsetSet($key, $value);
             }
 
             // Find any potential camelCase keys in the 'root' array, and convert
@@ -40,19 +41,20 @@ class TransformInputData
      */
     protected function renameKeys(array $array)
     {
+        $newArray = [];
         foreach($array as $key => $value) {
 
             // Recursively check if the value is an array that needs parsing too
             $value = (is_array($value)) ? $this->renameKeys($value) : $value;
 
             // Convert camelCase to snake_case
-            if (!ctype_lower($key)) {
-                $array[snake_case($key)] = $value;
-                unset($array[$key]);
+            if (is_string($key) && !ctype_lower($key)) {
+                $newArray[snake_case($key)] = $value;
+            } else {
+                $newArray[$key] = $value;
             }
-
         }
 
-        return $array;
+        return $newArray;
     }
 }

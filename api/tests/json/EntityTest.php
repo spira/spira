@@ -19,6 +19,9 @@ class EntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\TestEntity::flushEventListeners();
         App\Models\TestEntity::boot();
+
+        // Get a repository instance, for assertions
+        $this->repository = $this->app->make('App\Repositories\TestRepository');
     }
 
     /**
@@ -97,5 +100,64 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('entityId', $object);
+    }
+
+    public function testPostOneInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        unset($entity['text']);
+
+        $this->post('/test/entities', $entity);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('text', $object);
+        $this->assertEquals('The text field is required.', $object->text[0]);
+    }
+
+    public function testPutOneNew()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        $id = (string) Uuid::uuid4();
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/test/entities/'.$id, $entity);
+        $this->assertEquals($rowCount + 1, $this->repository->count());
+    }
+
+    public function testPutOneNewInvalidId()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        $id = 'foobar';
+
+        $this->put('/test/entities/'.$id, $entity);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('entity_id', $object);
+        $this->assertEquals('The entity id must be an UUID string.', $object->entity_id[0]);
+    }
+
+    public function testPutManyNew()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->make();
+
+        $entities = array_map(function ($entity) {
+            return array_add($this->prepareEntity($entity), 'entity_id', (string) Uuid::uuid4());
+        }, $entities->all());
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/test/entities', ['data' => $entities]);
+
+        $this->assertEquals($rowCount + 5, $this->repository->count());
     }
 }

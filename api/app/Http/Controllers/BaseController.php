@@ -104,7 +104,7 @@ abstract class BaseController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        if (!$this->validator->with($request->all())->passes()) {
+        if (!$this->validator->put()->with(array_add($request->all(), 'entity_id', $id))->passes()) {
             return $this->validator->errors();
         }
 
@@ -119,7 +119,13 @@ abstract class BaseController extends Controller
      */
     public function putMany(Request $request)
     {
-        return $this->repository->createOrReplaceMany($request->all());
+        foreach ($request->data as $entity) {
+            if (!$this->validator->put()->with($entity)->passes()) {
+                return $this->validator->errors();
+            }
+        }
+
+        return $this->repository->createOrReplaceMany($request->data);
     }
 
     /**
