@@ -12,7 +12,7 @@
 */
 
 $app->get('/', function() use ($app) {
-    return $app->welcome();
+    return $app->apiaryDocumentation();
 });
 
 $app->group(['prefix' => 'users'], function($app){

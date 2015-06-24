@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Illuminate\Support\Facades\Storage;
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;
 
@@ -19,6 +20,41 @@ class SpiraApplication extends Application
         }
 
         return parent::getMonologHandler();
+    }
+
+
+    /**
+     * Get the HTML for the API documentation screen.
+     *
+     * @return string
+     */
+    public function apiaryDocumentation()
+    {
+
+        $contents = Storage::disk('global')->get('apiary/spira.tpl.apib');
+
+        $encoded = json_encode($contents);
+
+        $html = <<<EOT
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spira - API Documentation</title>
+</head>
+<body>
+  <script src="https://api.apiary.io/seeds/embed.js"></script>
+  <script>
+    var embed = new Apiary.Embed({
+      apiBlueprint: $encoded
+    });
+  </script>
+</body>
+</html>
+EOT;
+
+        return $html;
+
     }
 
 

@@ -121,7 +121,7 @@ abstract class BaseController extends Controller
             $response['debug'] = $debugData;
         }
 
-        return response()->json($response, $statusCode);
+        return response()->json($response, $statusCode, array(), JSON_PRETTY_PRINT);
     }
 
 }
