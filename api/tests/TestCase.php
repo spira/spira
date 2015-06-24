@@ -2,6 +2,7 @@
 
 /**
  * @todo  Remove this when Lumen has a patch released to fix Mockery in Laravel\Lumen\Testing\TestCase
+ * @link (Fixed here, will be in next release, https://github.com/laravel/lumen-framework/commit/38ac45d0e370a6249b38e4a8dc5642fdc0b18665)
  */
 use Mockery as Mockery;     // Remove this and tearDown() when next Lumen patch
                             // is released
@@ -59,6 +60,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      * When Lumen gets the next update, we can remove this.
      *
      * @todo  Remove this when Lumen has a patch released to fix Mockery in Laravel\Lumen\Testing\TestCase
+     * @link (Fixed here, will be in next release, https://github.com/laravel/lumen-framework/commit/38ac45d0e370a6249b38e4a8dc5642fdc0b18665)
      */
     public function tearDown()
     {

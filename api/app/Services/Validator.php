@@ -2,7 +2,7 @@
 
 use Illuminate\Container\Container as App;
 
-class Validator
+abstract class Validator
 {
     /**
      * The application instance.
@@ -44,17 +44,15 @@ class Validator
         $this->validator = $this->app->make('validator');
 
         $this->registerValidateFloat();
+        $this->registerValidateUuid();
     }
 
     /**
      * Validation rules.
      *
-     * @return void
+     * @return array
      */
-    public function rules()
-    {
-        return [];
-    }
+    abstract public function rules();
 
     /**
      * Set custom messages for validator errors.
@@ -64,7 +62,8 @@ class Validator
     public function messages()
     {
         return [
-            'float' => 'The :attribute must be a float.'
+            'float' => 'The :attribute must be a float.',
+            'uuid' => 'The :attribute must be an UUID string.'
         ];
     }
 
@@ -123,6 +122,19 @@ class Validator
         $this->validator->extend('float', function($attribute, $value, $parameters)
         {
             return is_float($value + 0);
+        });
+    }
+
+    /**
+     * Register custom validation rule for UUID strings.
+     *
+     * @return void
+     */
+    protected function registerValidateUuid()
+    {
+        $this->validator->extend('uuid', function($attribute, $value, $parameters)
+        {
+            return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
         });
     }
 }

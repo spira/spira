@@ -91,6 +91,74 @@ abstract class BaseController extends Controller
         return $this->repository->create($request->all());
     }
 
+    /**
+     * Put an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function putOne($id, Request $request)
+    {
+        return $this->repository->createOrReplace($id, $request->all());
+    }
+
+    /**
+     * Put many entites.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function putMany(Request $request)
+    {
+        return $this->repository->createOrReplaceMany($request->all());
+    }
+
+    /**
+     * Patch an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function patchOne($id, Request $request)
+    {
+        return $this->repository->update($id, $request->all());
+    }
+
+    /**
+     * Patch many entites.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function patchMany(Request $request)
+    {
+        return $this->repository->updateMany($request->all());
+    }
+
+    /**
+     * Delete an entity.
+     *
+     * @param  string   $id
+     * @return Response
+     */
+    public function deleteOne($id)
+    {
+        return $this->repository->delete($id);
+    }
+
+    /**
+     * Delete many entites.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function deleteMany(Request $request)
+    {
+        return $this->repository->deleteMany($request->all());
+    }
+
     public static function renderException($request, \Exception $e, $debug = false){
 
         $message = $e->getMessage();

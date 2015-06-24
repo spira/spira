@@ -32,5 +32,10 @@ $app->group(['prefix' => 'test'], function($app){
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
     $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
-
+    $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
+    $app->put('/entities', 'App\Http\Controllers\TestController@putMany');
+    $app->patch('/entities/{id}', 'App\Http\Controllers\TestController@patchOne');
+    $app->patch('/entities', 'App\Http\Controllers\TestController@patchMany');
+    $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
+    $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
