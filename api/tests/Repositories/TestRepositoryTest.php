@@ -24,13 +24,28 @@ class TestRepositoryTest extends TestCase
         $this->repository = $this->app->make('App\Repositories\TestRepository');
     }
 
+    /**
+     * Prepare an entity from the model factory for a testing scenario.
+     *
+     * @param  array $entity
+     * @return array
+     */
+    protected function prepareEntity($entity)
+    {
+        // The testentity factory generates an UUID for each entity already in
+        // the factory. When we test to create new entities where an UUID will
+        // be generated on creation, we want this to be removed from the data.
+        unset($entity['entity_id']);
+
+        return $entity;
+    }
+
     public function testFind()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
         $entity = $entities->random();
 
         $result = $this->repository->find($entity->entity_id);
-
         $this->assertTrue(is_object($result));
     }
 
@@ -46,7 +61,6 @@ class TestRepositoryTest extends TestCase
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
         $result = $this->repository->all();
-
         $this->assertTrue(is_array($result->toArray()));
         $this->assertGreaterThanOrEqual(5, $result->count());
     }
@@ -54,10 +68,7 @@ class TestRepositoryTest extends TestCase
     public function testCreate()
     {
         $entity = factory(App\Models\TestEntity::class)->make();
-
-        $data = $entity->toArray();
-        unset($data['entity_id']);
-        $data['hidden'] = true;
+        $data = $this->prepareEntity($entity->getAttributes());
 
         $result = $this->repository->create($data);
         $this->assertTrue(is_object($result));
@@ -68,17 +79,11 @@ class TestRepositoryTest extends TestCase
         $rowCount = $this->repository->count();
 
         $entities = factory(App\Models\TestEntity::class, 5)->make();
-
-        // Remove entity_ids, so we have clean new data to insert. And add hidden.
-        $entities = $entities->toArray();
-        $entities = array_map(function ($arr) {
-            unset($arr['entity_id']);
-            $arr['hidden'] = true;
-            return $arr;
-        }, $entities);
+        $entities = array_map(function ($entity) {
+            return $this->prepareEntity($entity->getAttributes());
+        }, $entities->all());
 
         $this->repository->createMany($entities);
-
         $this->assertEquals($rowCount + 5, $this->repository->count());
     }
 
@@ -87,30 +92,26 @@ class TestRepositoryTest extends TestCase
         $rowCount = $this->repository->count();
 
         $entity = factory(App\Models\TestEntity::class)->make();
-        $entity = $entity->toArray();
-        $entity['hidden'] = true;
+        $entity = $entity->getAttributes();
         $id = array_pull($entity, 'entity_id');
 
         $entity = $this->repository->createOrReplace($id, $entity);
-
         $this->assertEquals($rowCount + 1, $this->repository->count());
     }
 
     public function testCreateOrReplaceUpdate()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
-
-        $rowCount = $this->repository->count();
         $id = $entity->entity_id;
 
         $entityUpdate = factory(App\Models\TestEntity::class)->make();
-        $entityUpdate = $entityUpdate->toArray();
-        unset($entityUpdate['entity_id']);
-        $entityUpdate['hidden'] = true;
+        $entityUpdate = $this->prepareEntity($entityUpdate->getAttributes());
+
+        $rowCount = $this->repository->count();
 
         $this->repository->createOrReplace($id, $entityUpdate);
-        $updated = $this->repository->find($id);
 
+        $updated = $this->repository->find($id);
         $this->assertEquals($rowCount, $this->repository->count());
         $this->assertEquals($updated->entity_id, $entity->entity_id);
         $this->assertNotEquals($updated->varchar, $entity->varchar);
@@ -121,17 +122,11 @@ class TestRepositoryTest extends TestCase
         $rowCount = $this->repository->count();
 
         $entities = factory(App\Models\TestEntity::class, 5)->make();
-
-        // Remove entity_ids, so we have clean new data to insert. And add hidden.
-        $entities = $entities->toArray();
-        $entities = array_map(function ($arr) {
-            unset($arr['entity_id']);
-            $arr['hidden'] = true;
-            return $arr;
-        }, $entities);
+        $entities = array_map(function ($entity) {
+            return $this->prepareEntity($entity->getAttributes());
+        }, $entities->all());
 
         $this->repository->createOrReplaceMany($entities);
-
         $this->assertEquals($rowCount + 5, $this->repository->count());
     }
 
@@ -144,7 +139,6 @@ class TestRepositoryTest extends TestCase
         $this->repository->update($id, $data);
 
         $entity = $this->repository->find($id);
-
         $this->assertEquals('foo', $entity->varchar);
         $this->assertEquals('bar', $entity->text);
     }
@@ -174,7 +168,6 @@ class TestRepositoryTest extends TestCase
         $id = $entity->entity_id;
 
         $entity = $this->repository->find($id);
-
         $this->assertEquals($id, $entity->entity_id);
 
         $this->repository->delete($id);
