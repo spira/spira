@@ -1,7 +1,12 @@
 <?php
 
+use Rhumsaa\Uuid\Uuid;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class EntityTest extends TestCase
 {
+    use DatabaseTransactions;
+
     protected $entity;
 
     public function setUp()
