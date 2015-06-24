@@ -12,9 +12,13 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin
 
-before_script:
+install:
+  # Install phantomjs@2.0.0 (remove this when https://github.com/travis-ci/travis-ci/issues/3225 is resolved)
+  - mkdir travis-phantomjs
+  - travis_retry wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
+  - export PATH=$PWD/travis-phantomjs:$PATH
 
-  - psql -c 'create database spira;' -U postgres
   - travis_retry npm install --no-spin --quiet -g gulp http-server
   - travis_retry npm install --no-spin
   - travis_retry gulp bower:install
@@ -22,6 +26,10 @@ before_script:
   - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
   - travis_retry gem install mailcatcher
+
+before_script:
+
+  - psql -c 'create database spira;' -U postgres
   - gulp build
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
