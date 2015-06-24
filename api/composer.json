@@ -15,7 +15,8 @@
         "league/fractal": "0.12.*",
         "illuminate/redis": "5.1.*",
         "guzzlehttp/guzzle": "5.3.*",
-        "league/flysystem": "^1.0"
+        "league/flysystem": "^1.0",
+        "wpb/string-blade-compiler": "2.*@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
@@ -37,5 +38,12 @@
     },
     "config": {
         "preferred-install": "dist"
-    }
+    },
+    "repositories": [
+      {
+        "name": "wpb/string-blade-compiler",
+        "type": "git",
+        "url": "https://github.com/xiphiaz/StringBladeCompiler.git"
+      }
+    ]
 }

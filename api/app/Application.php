@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Storage;
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;
+use Wpb\StringBladeCompiler\Facades\StringView;
 
 class SpiraApplication extends Application
 {
@@ -33,7 +34,21 @@ class SpiraApplication extends Application
 
         $contents = Storage::disk('global')->get('apiary/spira.tpl.apib');
 
-        $encoded = json_encode($contents);
+        $compiledView = StringView::make(
+            array(
+                // this actual blade template
+                'template'  => $contents,
+                // this is the cache file key, converted to md5
+                'cache_key' => 'my_unique_cache_key',
+                // timestamp for when the template was last updated, 0 is always recompile
+                'updated_at' => 0
+            ),
+            array(
+                'token1'=> 'token one value'
+            )
+        );
+
+        $encoded = json_encode($compiledView->render());
 
         $html = <<<EOT
 <!DOCTYPE html>
@@ -52,6 +67,7 @@ class SpiraApplication extends Application
 </body>
 </html>
 EOT;
+
 
         return $html;
 
