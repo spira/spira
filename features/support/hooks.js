@@ -10,6 +10,7 @@ var myHooks = function () {
     var world = this;
 
     this.After(function(scenario, callback) {
+
         if(scenario.isFailed()) {
 
             var screenshotPath = "logs/integration_screenshots";
@@ -29,10 +30,19 @@ var myHooks = function () {
 
             });
         }
-        this.driver.manage().deleteAllCookies()
-            .then(function() {
-                callback();
-            });
+
+        driver.manage().logs().get('browser').then(function(logs){
+            if (logs.length > 0){
+                console.log('logs', logs);
+                return callback.fail("Webdriver browser console is not empty");
+            }
+            return true;
+        }).then(function(){
+            return driver.manage().deleteAllCookies();
+        }).then(function(){
+            callback();
+        });
+
     });
 
     this.registerHandler('AfterFeatures', function (event, callback) {

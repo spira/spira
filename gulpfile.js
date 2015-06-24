@@ -322,16 +322,7 @@ gulp.task('test:api', 'unit tests the api', [], function(){
 
 });
 
-//@todo resolve why this task will not exit, when the base task `./node_modules/.bin/cucumber.js` exits 0 as expected
-gulp.task('test:cucumber', 'runs BDD integration tests', [], function() {
-    return gulp.src('features/*')
-        .pipe(plugins.cucumber({
-        'steps': 'features/steps/*.js',
-        'support': 'features/support/*.js'
-    }));
-});
-
-gulp.task('test', 'executes all unit tests', ['test:app', 'test:api']);
+gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api']);
 
 gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
     gulp.src(paths.dest.coverage)

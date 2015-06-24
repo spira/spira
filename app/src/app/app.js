@@ -48,7 +48,7 @@ angular.module('app', [
 
         $scope.toggleLeftNav = function(){
             $mdSidenav('left').toggle();
-        }
+        };
 
     })
 
