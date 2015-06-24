@@ -88,7 +88,11 @@ abstract class BaseController extends Controller
      */
     public function postOne(Request $request)
     {
-        return $this->repository->create($request->all());
+        if (!$this->validator->with($request->all())->passes()) {
+            return $this->validator->errors();
+        }
+
+        return $this->item($this->repository->create($request->all()));
     }
 
     /**
@@ -100,6 +104,10 @@ abstract class BaseController extends Controller
      */
     public function putOne($id, Request $request)
     {
+        if (!$this->validator->with($request->all())->passes()) {
+            return $this->validator->errors();
+        }
+
         return $this->repository->createOrReplace($id, $request->all());
     }
 

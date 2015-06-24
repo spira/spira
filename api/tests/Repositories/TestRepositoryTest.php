@@ -1,6 +1,7 @@
 <?php
 
 use Mockery as m;
+use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TestRepositoryTest extends TestCase
@@ -22,22 +23,6 @@ class TestRepositoryTest extends TestCase
 
         // Get a repository instance
         $this->repository = $this->app->make('App\Repositories\TestRepository');
-    }
-
-    /**
-     * Prepare an entity from the model factory for a testing scenario.
-     *
-     * @param  array $entity
-     * @return array
-     */
-    protected function prepareEntity($entity)
-    {
-        // The testentity factory generates an UUID for each entity already in
-        // the factory. When we test to create new entities where an UUID will
-        // be generated on creation, we want this to be removed from the data.
-        unset($entity['entity_id']);
-
-        return $entity;
     }
 
     public function testFind()
@@ -68,7 +53,7 @@ class TestRepositoryTest extends TestCase
     public function testCreate()
     {
         $entity = factory(App\Models\TestEntity::class)->make();
-        $data = $this->prepareEntity($entity->getAttributes());
+        $data = $entity->getAttributes();
 
         $result = $this->repository->create($data);
         $this->assertTrue(is_object($result));
@@ -80,7 +65,7 @@ class TestRepositoryTest extends TestCase
 
         $entities = factory(App\Models\TestEntity::class, 5)->make();
         $entities = array_map(function ($entity) {
-            return $this->prepareEntity($entity->getAttributes());
+            return $entity->getAttributes();
         }, $entities->all());
 
         $this->repository->createMany($entities);
@@ -93,7 +78,7 @@ class TestRepositoryTest extends TestCase
 
         $entity = factory(App\Models\TestEntity::class)->make();
         $entity = $entity->getAttributes();
-        $id = array_pull($entity, 'entity_id');
+        $id = (string) Uuid::uuid4();
 
         $entity = $this->repository->createOrReplace($id, $entity);
         $this->assertEquals($rowCount + 1, $this->repository->count());
@@ -105,7 +90,7 @@ class TestRepositoryTest extends TestCase
         $id = $entity->entity_id;
 
         $entityUpdate = factory(App\Models\TestEntity::class)->make();
-        $entityUpdate = $this->prepareEntity($entityUpdate->getAttributes());
+        $entityUpdate = $entityUpdate->getAttributes();
 
         $rowCount = $this->repository->count();
 
@@ -123,7 +108,7 @@ class TestRepositoryTest extends TestCase
 
         $entities = factory(App\Models\TestEntity::class, 5)->make();
         $entities = array_map(function ($entity) {
-            return $this->prepareEntity($entity->getAttributes());
+            return array_add($entity->getAttributes(), 'entity_id', (string) Uuid::uuid4());
         }, $entities->all());
 
         $this->repository->createOrReplaceMany($entities);

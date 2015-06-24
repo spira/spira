@@ -7,19 +7,43 @@ class EntityTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected $entity;
-
     public function setUp()
     {
         parent::setUp();
 
-        // Get an entry from the DB, to have an ID to use for getOne tests
-        $this->entity = App\Models\TestEntity::first();
+        // Workaround for model event firing.
+        // The package Bosnadev\Database used for automatic UUID creation relies
+        // on model events (creating) to generate the UUID.
+        //
+        // Laravel/Lumen currently doesn't fire repeated model events during
+        // unit testing, see: https://github.com/laravel/framework/issues/1181
+        App\Models\TestEntity::flushEventListeners();
+        App\Models\TestEntity::boot();
     }
 
     /**
-     * Get all test entities.
+     * Prepare a factory generated entity to be sent as input data.
+     *
+     * @param  Arrayable  $entity
+     * @return array
      */
+    protected function prepareEntity($entity)
+    {
+        // We run the entity through the transformer to get the attributes named
+        // as if they came from the frontend.
+        $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
+        $entity = $transformer->transform($entity);
+
+        // As the hidden attribute is hidden when we get the array, we need to
+        // add it back so it's part of the request.
+        $entity['hidden'] = true;
+
+        // And get a reformatted date
+        $entity['date'] = Carbon\Carbon::createFromFormat('Y-m-d', substr($entity['date'], 0, 10))->toDateString();
+
+        return $entity;
+    }
+
     public function testGetAll()
     {
         $this->get('/test/entities');
@@ -30,12 +54,11 @@ class EntityTest extends TestCase
         $this->assertJsonMultipleEntries();
     }
 
-    /**
-     * Get a test entity.
-     */
     public function testGetOne()
     {
-        $this->get('/test/entities/'.$this->entity->entity_id);
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $this->get('/test/entities/'.$entity->entity_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -59,5 +82,20 @@ class EntityTest extends TestCase
 
         $this->assertValidIso8601Date($object->createdAt, 'createdAt column is a valid ISO8601 date');
         $this->assertValidIso8601Date($object->updatedAt, 'updatedAt column is a valid ISO8601 date');
+
+        $this->assertObjectNotHasAttribute('hidden', $object, 'Hidden is not hidden.');
+    }
+
+    public function testPostOneValid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+
+        $this->post('/test/entities', $this->prepareEntity($entity));
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('entityId', $object);
     }
 }

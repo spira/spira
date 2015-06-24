@@ -19,7 +19,8 @@ class TestValidator extends Validator
             'boolean' => 'required|boolean',
             'text' => 'required|string',
             'date' => 'required|date',
-            'multi_word_column_title' => 'required|string'
+            'multi_word_column_title' => 'required|boolean',
+            'hidden' => 'required|boolean'
         ];
     }
 }
