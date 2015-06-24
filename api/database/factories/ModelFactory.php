@@ -23,7 +23,7 @@ $factory->define(App\User::class, function ($faker) {
 $factory->define(App\Models\TestEntity::class, function ($faker) {
     return [
         'varchar' => $faker->word,
-        'hash' => Hash::make($faker->randomDigitNotNull),
+        'hash' => Hash::make($faker->word),
         'integer' => $faker->numberBetween(0, 500),
         'decimal' => $faker->randomFloat(2, 0, 100),
         'boolean' => $faker->boolean(),

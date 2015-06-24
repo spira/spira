@@ -35,17 +35,15 @@ class SpiraApplication extends Application
         $contents = Storage::disk('global')->get('apiary/spira.tpl.apib');
 
         $compiledView = StringView::make(
-            array(
+            [
                 // this actual blade template
                 'template'  => $contents,
                 // this is the cache file key, converted to md5
-                'cache_key' => 'my_unique_cache_key',
+                'cache_key' => 'apiary/spira.tpl.apib',
                 // timestamp for when the template was last updated, 0 is always recompile
                 'updated_at' => 0
-            ),
-            array(
-                'token1'=> 'token one value'
-            )
+            ],
+            []
         );
 
         $encoded = json_encode($compiledView->render());

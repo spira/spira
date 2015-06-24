@@ -13,8 +13,6 @@ Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.
 * Protocol: http
 * Port: 8080
 
-Blade variable substitution test: {{ $token1 }}
-
 # Spira API Root [/]
 
 This route provides this documentation!
@@ -35,36 +33,7 @@ The properties of the test entities cover the different column types. These are 
 
     + Body
 
-        [
-            {
-                "entityId": "c061c86e-a4c9-351b-a6d5-8739bf293303",
-                "varchar": "necessitatibus",
-                "hash": "$2y$10$d.RSwUigQvN.EZApp0MeD.adDv5Xek2aYqulHqwjkXmu09sVK.l7m",
-                "integer": 83,
-                "decimal": 19.57,
-                "boolean": false,
-                "nullable": null,
-                "text": "Nemo eveniet quas odit quas cupiditate nihil quisquam. Voluptas dolorum et rerum vero magnam. Repellendus est aliquam deleniti aut adipisci eveniet. Cupiditate commodi cupiditate excepturi.",
-                "date": "2003-09-22T00:00:00+0000",
-                "multiWordColumnTitle": true,
-                "createdAt": "2015-06-19T00:45:38+0000",
-                "updatedAt": "2015-06-19T00:45:38+0000"
-            },
-            {
-                "entityId": "72fde151-699d-3144-932c-51c7d005e7f3",
-                "varchar": "consequatur",
-                "hash": "$2y$10$LHJFYXiTluO1NuC.MjtZyuTgK15.SYaPyaA0ES4JPavYQMLY2jEZq",
-                "integer": 303,
-                "decimal": 67.26,
-                "boolean": true,
-                "nullable": null,
-                "text": "Nemo voluptates sed reiciendis quam. Voluptatum repellendus enim et et velit labore est. Suscipit provident fuga doloremque ut.",
-                "date": "1984-04-06T00:00:00+0000",
-                "multiWordColumnTitle": true,
-                "createdAt": "2015-06-19T00:45:38+0000",
-                "updatedAt": "2015-06-19T00:45:38+0000"
-            }
-        ]
+        {!! json_encode(factory(\App\Models\TestEntity::class, 2)->make(), JSON_PRETTY_PRINT) !!}
 
 ## Test Entity [/test/entities/{entityId}]
 
@@ -79,18 +48,5 @@ The properties of the test entities cover the different column types. These are 
 
     + Body
 
-            {
-                "entityId": "c061c86e-a4c9-351b-a6d5-8739bf293303",
-                "varchar": "necessitatibus",
-                "hash": "$2y$10$d.RSwUigQvN.EZApp0MeD.adDv5Xek2aYqulHqwjkXmu09sVK.l7m",
-                "integer": 83,
-                "decimal": 19.57,
-                "boolean": false,
-                "nullable": null,
-                "text": "Nemo eveniet quas odit quas cupiditate nihil quisquam. Voluptas dolorum et rerum vero magnam. Repellendus est aliquam deleniti aut adipisci eveniet. Cupiditate commodi cupiditate excepturi.",
-                "date": "2003-09-22T00:00:00+0000",
-                "multiWordColumnTitle": true,
-                "createdAt": "2015-06-19T00:45:38+0000",
-                "updatedAt": "2015-06-19T00:45:38+0000"
-            }
+        {!! json_encode(factory(\App\Models\TestEntity::class, 1)->make(), JSON_PRETTY_PRINT) !!}
             
