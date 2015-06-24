@@ -1,6 +1,7 @@
 FORMAT: 1A
+HOST: http://local.api.spira.io:8080/
 
-# spira
+# Spira API
 
 Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.laravel.com) 
 
@@ -16,173 +17,78 @@ Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.
 
 This route provides this documentation!
 
-# Group Test Entities [/test]
+# Group Test
+The test path is for all tests for the spira core, included are some specific tests for checking functionality of the base system such as exceptions.
+
+## Test Entities [/test/entities]
 Test entities are provided as an example to cover most of the bases of what is required for a REST api. It includes
  both unit and integration tests to verify functionality.
  
-Also included in test entities are some specific tests for checking functionality of the base system such as exceptions
+The properties of the test entities cover the different column types. These are used to verify the typecasting & formatting for integers, dates etc.
 
-## Retrieve the Entry Point [GET]
-
-+ Response 200 (application/json)
-
-        {
-            "questions_url": "/questions"
-        }
-
-## Group Question
-
-Resources related to questions in the API.
-
-## Question [/questions/{question_id}]
-
-A Question object has the following attributes:
-
-+ question
-+ published_at - An ISO8601 date when the question was published.
-+ url
-+ choices - An array of Choice objects.
-
-+ Parameters
-    + question_id: 1 (required, number) - ID of the Question in form of an integer
-
-### View a Questions Detail [GET]
-
-+ Response 200 (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "published_at": "2014-11-11T08:40:51.620Z",
-            "url": "/questions/1",
-            "choices": [
-                {
-                    "choice": "Swift",
-                    "url": "/questions/1/choices/1",
-                    "votes": 2048
-                }, {
-                    "choice": "Python",
-                    "url": "/questions/1/choices/2",
-                    "votes": 1024
-                }, {
-                    "choice": "Objective-C",
-                    "url": "/questions/1/choices/3",
-                    "votes": 512
-                }, {
-                    "choice": "Ruby",
-                    "url": "/questions/1/choices/4",
-                    "votes": 256
-                }
-            ]
-        }
-
-## Choice [/questions/{question_id}/choices/{choice_id}]
-
-+ Parameters
-    + question_id: 1 (required, number) - ID of the Question in form of an integer
-    + choice_id: 1 (required, number) - ID of the Choice in form of an integer
-
-### Vote on a Choice [POST]
-
-This action allows you to vote on a question's choice.
-
-+ Response 201
-
-    + Headers
-
-            Location: /questions/1
-
-## Questions Collection [/questions{?page}]
-
-+ Parameters
-    + page: 1 (optional, number) - The page of questions to return
-
-### List All Questions [GET]
-
+### Retrieve all test entities [GET]
 + Response 200 (application/json)
 
     + Headers
-
-            Link: </questions?page=2>; rel="next"
 
     + Body
 
-            [
-                {
-                    "question": "Favourite programming language?",
-                    "published_at": "2014-11-11T08:40:51.620Z",
-                    "url": "/questions/1",
-                    "choices": [
-                        {
-                            "choice": "Swift",
-                            "url": "/questions/1/choices/1",
-                            "votes": 2048
-                        }, {
-                            "choice": "Python",
-                            "url": "/questions/1/choices/2",
-                            "votes": 1024
-                        }, {
-                            "choice": "Objective-C",
-                            "url": "/questions/1/choices/3",
-                            "votes": 512
-                        }, {
-                            "choice": "Ruby",
-                            "url": "/questions/1/choices/4",
-                            "votes": 256
-                        }
-                    ]
-                }
-            ]
+        [
+            {
+                "entityId": "c061c86e-a4c9-351b-a6d5-8739bf293303",
+                "varchar": "necessitatibus",
+                "hash": "$2y$10$d.RSwUigQvN.EZApp0MeD.adDv5Xek2aYqulHqwjkXmu09sVK.l7m",
+                "integer": 83,
+                "decimal": 19.57,
+                "boolean": false,
+                "nullable": null,
+                "text": "Nemo eveniet quas odit quas cupiditate nihil quisquam. Voluptas dolorum et rerum vero magnam. Repellendus est aliquam deleniti aut adipisci eveniet. Cupiditate commodi cupiditate excepturi.",
+                "date": "2003-09-22T00:00:00+0000",
+                "multiWordColumnTitle": true,
+                "createdAt": "2015-06-19T00:45:38+0000",
+                "updatedAt": "2015-06-19T00:45:38+0000"
+            },
+            {
+                "entityId": "72fde151-699d-3144-932c-51c7d005e7f3",
+                "varchar": "consequatur",
+                "hash": "$2y$10$LHJFYXiTluO1NuC.MjtZyuTgK15.SYaPyaA0ES4JPavYQMLY2jEZq",
+                "integer": 303,
+                "decimal": 67.26,
+                "boolean": true,
+                "nullable": null,
+                "text": "Nemo voluptates sed reiciendis quam. Voluptatum repellendus enim et et velit labore est. Suscipit provident fuga doloremque ut.",
+                "date": "1984-04-06T00:00:00+0000",
+                "multiWordColumnTitle": true,
+                "createdAt": "2015-06-19T00:45:38+0000",
+                "updatedAt": "2015-06-19T00:45:38+0000"
+            }
+        ]
 
-### Create a New Question [POST]
+## Test Entity [/test/entities/{entityId}]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
++ Parameters
+    + entityId (required, uuid, `c061c86e-a4c9-351b-a6d5-8739bf293303`) ... Unique `id` of the test entity to perform action with.
+    
 
-+ question (string) - The question
-+ choices (array[string]) - A collection of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
+### Retrieve a test entity [GET]
++ Response 200 (application/json)
 
     + Headers
-
-            Location: /questions/2
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2014-11-11T08:40:51.620Z",
-                "url": "/questions/2",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "url": "/questions/2/choices/1",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "url": "/questions/2/choices/2",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "url": "/questions/2/choices/3",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "url": "/questions/2/choices/4",
-                        "votes": 0
-                    }
-                ]
+                "entityId": "c061c86e-a4c9-351b-a6d5-8739bf293303",
+                "varchar": "necessitatibus",
+                "hash": "$2y$10$d.RSwUigQvN.EZApp0MeD.adDv5Xek2aYqulHqwjkXmu09sVK.l7m",
+                "integer": 83,
+                "decimal": 19.57,
+                "boolean": false,
+                "nullable": null,
+                "text": "Nemo eveniet quas odit quas cupiditate nihil quisquam. Voluptas dolorum et rerum vero magnam. Repellendus est aliquam deleniti aut adipisci eveniet. Cupiditate commodi cupiditate excepturi.",
+                "date": "2003-09-22T00:00:00+0000",
+                "multiWordColumnTitle": true,
+                "createdAt": "2015-06-19T00:45:38+0000",
+                "updatedAt": "2015-06-19T00:45:38+0000"
             }
+            
