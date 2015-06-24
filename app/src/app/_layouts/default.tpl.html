@@ -1,5 +1,5 @@
 <md-sidenav
-        class="site-sidenav md-sidenav-left md-whiteframe-z2"
+        class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
         md-component-id="left"
         md-is-locked-open="$mdMedia('gt-sm')"
         ui-view="navigation">
@@ -12,7 +12,7 @@
  >
 
     <md-toolbar layout="row" class="md-whiteframe-z1">
-        <md-button class="menu" hide-gt-sm ng-click="toggleLeftNav()" aria-label="Show Menu">
+        <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="toggleLeftNav()" aria-label="Show Menu">
             <md-icon>menu</md-icon>
         </md-button>
         <h1>Spira</h1>
