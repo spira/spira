@@ -42,4 +42,29 @@ class TestValidator extends Validator
 
         return $this;
     }
+
+    /**
+     * Modify the rules for patch operations.
+     *
+     * @return $this
+     */
+    public function patch()
+    {
+        $this->rules = array_only($this->rules, array_keys($this->data));
+        $this->rules = array_add($this->rules, 'entity_id', 'required|uuid|exists:test_entities,entity_id');
+
+        return $this;
+    }
+
+    /**
+     * Modify the rules for delete operations.
+     *
+     * @return $this
+     */
+    public function delete()
+    {
+        $this->rules = ['entity_id' => 'required|uuid|exists:test_entities,entity_id'];
+
+        return $this;
+    }
 }
