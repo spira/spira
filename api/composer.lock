@@ -3075,7 +3075,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/xiphiaz/StringBladeCompiler.git",
-                "reference": "76e60b0b47994cca5532e8a3b22d4cb8b307327d"
+                "reference": "2553dbc57ca379ff9e57b5546ce98af16149a03c"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -3101,7 +3101,7 @@
                 "compiler",
                 "laravel"
             ],
-            "time": "2015-06-24 06:16:00"
+            "time": "2015-06-24 06:29:21"
         }
     ],
     "packages-dev": [
