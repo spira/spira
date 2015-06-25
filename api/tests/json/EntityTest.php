@@ -100,7 +100,8 @@ class EntityTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertObjectHasAttribute('entityId', $object);
+        $this->assertTrue(is_array($object));
+        $this->assertStringStartsWith('http', $object[0]);
     }
 
     public function testPostOneInvalid()
@@ -129,8 +130,12 @@ class EntityTest extends TestCase
 
         $this->put('/test/entities/'.$id, $entity);
 
+        $object = json_decode($this->response->getContent());
+
         $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 1, $this->repository->count());
+        $this->assertTrue(is_array($object));
+        $this->assertStringStartsWith('http', $object[0]);
     }
 
     public function testPutOneNewInvalidId()
@@ -162,8 +167,13 @@ class EntityTest extends TestCase
 
         $this->put('/test/entities', ['data' => $entities]);
 
+        $object = json_decode($this->response->getContent());
+
         $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 5, $this->repository->count());
+        $this->assertTrue(is_array($object));
+        $this->assertCount(5, $object);
+        $this->assertStringStartsWith('http', $object[0]);
     }
 
     public function testPutManyNewInvalidId()

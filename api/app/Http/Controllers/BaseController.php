@@ -66,7 +66,7 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return response($this->item($this->repository->create($request->all())), 201);
+        return response($this->repository->create($request->all()), 201);
     }
 
     /**

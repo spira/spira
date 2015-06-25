@@ -66,11 +66,13 @@ abstract class BaseRepository
      * Create and store a new instance of an entity.
      *
      * @param  array  $data
-     * @return mixed
+     * @return array
      */
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $entity = $this->model->create($data);
+
+        return [$entity->self];
     }
 
     /**
@@ -95,7 +97,7 @@ abstract class BaseRepository
      *
      * @param  string  $id
      * @param  array   $data
-     * @return mixed
+     * @return array
      */
     public function createOrReplace($id, array $data)
     {
@@ -105,7 +107,9 @@ abstract class BaseRepository
 
         } catch (ModelNotFoundException $e) {
 
-            return $this->create(array_add($data, $this->model->getKeyName(), $id));
+            $link = $this->create(array_add($data, $this->model->getKeyName(), $id));
+
+            return [$link[0]];
         }
 
         foreach ($model->getAttributes() as $key => $value) {
@@ -116,26 +120,33 @@ abstract class BaseRepository
             }
         }
 
-        return $model->update(array_add($data, $this->model->getKeyName(), $id));
+        $model->update(array_add($data, $this->model->getKeyName(), $id));
+
+        return [$model->self];
     }
 
     /**
      * Create or replace a colleciton of entities.
      *
      * @param  array  $entities
-     * @return void
+     * @return array
      */
     public function createOrReplaceMany(array $entities)
     {
         $this->app->db->beginTransaction();
 
+        $links = [];
+
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
-            $this->createOrReplace($id, $entity);
+            $link = $this->createOrReplace($id, $entity);
+            array_push($links, $link[0]);
         }
 
         $this->app->db->commit();
+
+        return $links;
     }
 
     /**
