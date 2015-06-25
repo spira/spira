@@ -106,7 +106,7 @@ abstract class Validator
      */
     public function id($id)
     {
-        $this->data = array_add($this->data, $this->getKey(), $id);
+        $this->data[$this->getKey()] = $id;
 
         return $this;
     }
