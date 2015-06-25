@@ -9,7 +9,7 @@ use Mockery as Mockery;     // Remove this and tearDown() when next Lumen patch
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-    use AssertionTrait;
+    use AssertionsTrait;
 
     /**
      * Setup the test environment.

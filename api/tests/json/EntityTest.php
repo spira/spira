@@ -95,10 +95,11 @@ class EntityTest extends TestCase
 
         $this->post('/test/entities', $this->prepareEntity($entity));
 
-        $this->assertResponseOk();
         $this->shouldReturnJson();
 
         $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(201);
         $this->assertObjectHasAttribute('entityId', $object);
     }
 
@@ -127,6 +128,8 @@ class EntityTest extends TestCase
         $rowCount = $this->repository->count();
 
         $this->put('/test/entities/'.$id, $entity);
+
+        $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 1, $this->repository->count());
     }
 
@@ -142,6 +145,7 @@ class EntityTest extends TestCase
         $this->shouldReturnJson();
 
         $object = json_decode($this->response->getContent());
+
         $this->assertObjectHasAttribute('entity_id', $object);
         $this->assertEquals('The entity id must be an UUID string.', $object->entity_id[0]);
     }
@@ -158,6 +162,7 @@ class EntityTest extends TestCase
 
         $this->put('/test/entities', ['data' => $entities]);
 
+        $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 5, $this->repository->count());
     }
 
@@ -186,6 +191,9 @@ class EntityTest extends TestCase
         $this->patch('/test/entities/'.$entity->entity_id, ['varchar' => 'foobar']);
 
         $entity = $this->repository->find($entity->entity_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $entity->varchar);
     }
 
@@ -214,6 +222,9 @@ class EntityTest extends TestCase
         $this->patch('/test/entities', ['data' => $data]);
 
         $entity = $this->repository->find($entities->random()->entity_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $entity->varchar);
     }
 
@@ -242,6 +253,8 @@ class EntityTest extends TestCase
 
         $this->delete('/test/entities/'.$entity->entity_id);
 
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, $this->repository->count());
     }
 
@@ -267,6 +280,8 @@ class EntityTest extends TestCase
 
         $this->delete('/test/entities', ['data' => $ids]);
 
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 5, $this->repository->count());
     }
 

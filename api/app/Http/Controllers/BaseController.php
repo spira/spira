@@ -66,7 +66,7 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return $this->item($this->repository->create($request->all()));
+        return response($this->item($this->repository->create($request->all())), 201);
     }
 
     /**
@@ -82,7 +82,7 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return $this->repository->createOrReplace($id, $request->all());
+        return response($this->repository->createOrReplace($id, $request->all()), 201);
     }
 
     /**
@@ -99,7 +99,7 @@ abstract class BaseController extends Controller
             }
         }
 
-        return $this->repository->createOrReplaceMany($request->data);
+        return response($this->repository->createOrReplaceMany($request->data), 201);
     }
 
     /**
@@ -115,7 +115,9 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return (string) $this->repository->update($id, $request->all());
+        $this->repository->update($id, $request->all());
+
+        return response(null, 204);
     }
 
     /**
@@ -131,7 +133,10 @@ abstract class BaseController extends Controller
                 return $this->validator->errors();
             }
         }
-        return (string) $this->repository->updateMany($request->data);
+
+        $this->repository->updateMany($request->data);
+
+        return response(null, 204);
     }
 
     /**
@@ -146,7 +151,9 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return $this->repository->delete($id);
+        $this->repository->delete($id);
+
+        return response(null, 204);
     }
 
     /**
@@ -162,7 +169,10 @@ abstract class BaseController extends Controller
                 return $this->validator->errors();
             }
         }
-        return $this->repository->deleteMany($request->data);
+
+        $this->repository->deleteMany($request->data);
+
+        return response(null, 204);
     }
 
     /**
