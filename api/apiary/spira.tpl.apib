@@ -1,6 +1,9 @@
 FORMAT: 1A
 HOST: http://local.api.spira.io:8080/
 
+{{-- Inject the model factory so entities be declared with factories --}}
+@inject('factory', 'App\Services\ModelFactory')
+
 # Spira API
 
 Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.laravel.com) 
@@ -33,7 +36,7 @@ The properties of the test entities cover the different column types. These are 
 
     + Body
 
-        {!! json_encode(factory(\App\Models\TestEntity::class, 2)->make(), JSON_PRETTY_PRINT) !!}
+        {!! $factory->json(\App\Models\TestEntity::class, 2) !!}
 
 ## Test Entity [/test/entities/{entityId}]
 
@@ -48,5 +51,5 @@ The properties of the test entities cover the different column types. These are 
 
     + Body
 
-        {!! json_encode(factory(\App\Models\TestEntity::class, 1)->make(), JSON_PRETTY_PRINT) !!}
+        {!! $factory->json(\App\Models\TestEntity::class) !!}
             
