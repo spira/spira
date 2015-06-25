@@ -70,6 +70,9 @@ class EntityTest extends TestCase
 
         $this->assertTrue(is_object($object), 'Response is an object');
 
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
         $this->assertObjectHasAttribute('entityId', $object);
         $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->entityId);
         $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
