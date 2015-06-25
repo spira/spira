@@ -59,6 +59,11 @@ class ValidatorTest extends TestCase
 
 class Validation extends App\Services\Validator
 {
+    protected function model()
+    {
+        return;
+    }
+
     public function rules()
     {
         return [
