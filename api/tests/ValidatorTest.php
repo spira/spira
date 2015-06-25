@@ -55,6 +55,15 @@ class ValidatorTest extends TestCase
 
         $this->assertTrue(is_array($validator->rules()));
     }
+
+    public function testIdOverwrite()
+    {
+        $this->setExpectedException('Illuminate\Http\Exception\HttpResponseException');
+
+        $validator = $this->app->make('App\Http\Validators\TestValidator');
+
+        $validator->with(['entity_id' => 'foo'])->id('foobar');
+    }
 }
 
 class Validation extends App\Services\Validator

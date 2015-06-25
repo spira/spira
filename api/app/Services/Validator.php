@@ -106,6 +106,15 @@ abstract class Validator
      */
     public function id($id)
     {
+        // If the data already has an ID set, don't allow to override it, but
+        // instead thrown a validation exception.
+        if (array_key_exists($this->getKey(), $this->data)) {
+
+            throw new HttpResponseException(
+                response([$this->getKey() => 'The existing ID should not be overwritten.'], 422)
+            );
+        }
+
         $this->data[$this->getKey()] = $id;
 
         return $this;

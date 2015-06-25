@@ -141,6 +141,24 @@ class EntityTest extends TestCase
         $this->assertStringStartsWith('http', $object[0]);
     }
 
+    public function testPutOneCollidingIds()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        $id = (string) Uuid::uuid4();
+        $entity['entityId'] = (string) Uuid::uuid4();
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/test/entities/'.$id, $entity);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(422);
+        $this->assertTrue(is_object($object));
+        $this->assertEquals('The existing ID should not be overwritten.', $object->entity_id);
+    }
+
     public function testPutOneNewInvalidId()
     {
         $entity = factory(App\Models\TestEntity::class)->make();
