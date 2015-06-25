@@ -81,9 +81,13 @@ abstract class BaseRepository
      */
     public function createMany(array $models)
     {
+        $this->app->db->beginTransaction();
+
         foreach ($models as $model) {
             $this->model->create($model);
         }
+
+        $this->app->db->commit();
     }
 
     /**
@@ -123,11 +127,15 @@ abstract class BaseRepository
      */
     public function createOrReplaceMany(array $entities)
     {
+        $this->app->db->beginTransaction();
+
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
             $this->createOrReplace($id, $entity);
         }
+
+        $this->app->db->commit();
     }
 
     /**
@@ -152,11 +160,15 @@ abstract class BaseRepository
      */
     public function updateMany(array $entities)
     {
+        $this->app->db->beginTransaction();
+
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
             $this->update($id, $entity);
         }
+
+        $this->app->db->commit();
     }
 
     /**
@@ -174,11 +186,15 @@ abstract class BaseRepository
      * Delete a collection of entities by their ids.
      *
      * @param  array  $ids
-     * @return mixed
+     * @return void
      */
     public function deleteMany(array $ids)
     {
-        return $this->model->destroy($ids);
+        $this->app->db->beginTransaction();
+
+        $this->model->destroy($ids);
+
+        $this->app->db->commit();
     }
 
     /**
