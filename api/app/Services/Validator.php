@@ -33,6 +33,13 @@ abstract class Validator
     protected $errors = [];
 
     /**
+     * Validation rules.
+     *
+     * @var array
+     */
+    protected $rules = [];
+
+    /**
      * Assign dependencies.
      *
      * @param  Illuminate\Container\Container  $app
@@ -48,11 +55,21 @@ abstract class Validator
     }
 
     /**
+     * Model being validated.
+     *
+     * @var string
+     */
+    abstract protected function model();
+
+    /**
      * Validation rules.
      *
      * @return array
      */
-    abstract public function rules();
+    public function rules()
+    {
+        return $this->rules;
+    }
 
     /**
      * Set custom messages for validator errors.
@@ -103,6 +120,43 @@ abstract class Validator
     }
 
     /**
+     * Modify the rules for put operations.
+     *
+     * @return $this
+     */
+    public function put()
+    {
+        $this->rules = array_add($this->rules, $this->getKey(), 'required|uuid');
+
+        return $this;
+    }
+
+    /**
+     * Modify the rules for patch operations.
+     *
+     * @return $this
+     */
+    public function patch()
+    {
+        $this->rules = array_only($this->rules, array_keys($this->data));
+        $this->rules = array_add($this->rules, $this->getKey(), 'required|uuid|exists:'.$this->getTable().','.$this->getKey());
+
+        return $this;
+    }
+
+    /**
+     * Modify the rules for delete operations.
+     *
+     * @return $this
+     */
+    public function delete()
+    {
+        $this->rules = [$this->getKey() => 'required|uuid|exists:'.$this->getTable().','.$this->getKey()];
+
+        return $this;
+    }
+
+    /**
      * Retrieve validation errors.
      *
      * @return array
@@ -110,6 +164,28 @@ abstract class Validator
     public function errors()
     {
         return $this->errors;
+    }
+
+    /**
+     * Get the table name for the model being validated.
+     *
+     * @return string
+     */
+    protected function getTable()
+    {
+        $model = $this->model();
+        return with(new $model())->getTable();
+    }
+
+    /**
+     * Get the primary key name for the model being validated.
+     *
+     * @return string
+     */
+    protected function getKey()
+    {
+        $model = $this->model();
+        return with(new $model())->getKeyName();
     }
 
     /**

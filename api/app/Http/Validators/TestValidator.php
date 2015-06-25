@@ -22,49 +22,12 @@ class TestValidator extends Validator
     ];
 
     /**
-     * Validation rules.
+     * Model being validated.
      *
-     * @return array
+     * @var string
      */
-    public function rules()
+    protected function model()
     {
-        return $this->rules;
-    }
-
-    /**
-     * Modify the rules for put operations.
-     *
-     * @return $this
-     */
-    public function put()
-    {
-        $this->rules = array_add($this->rules, 'entity_id', 'required|uuid');
-
-        return $this;
-    }
-
-    /**
-     * Modify the rules for patch operations.
-     *
-     * @return $this
-     */
-    public function patch()
-    {
-        $this->rules = array_only($this->rules, array_keys($this->data));
-        $this->rules = array_add($this->rules, 'entity_id', 'required|uuid|exists:test_entities,entity_id');
-
-        return $this;
-    }
-
-    /**
-     * Modify the rules for delete operations.
-     *
-     * @return $this
-     */
-    public function delete()
-    {
-        $this->rules = ['entity_id' => 'required|uuid|exists:test_entities,entity_id'];
-
-        return $this;
+        return 'App\Models\TestEntity';
     }
 }
