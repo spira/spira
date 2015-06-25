@@ -59,4 +59,18 @@ class BaseRepositoryTest extends TestCase
 
         $this->assertTrue(is_array($result));
     }
+
+    public function testCreateOrReplaceOverrideId()
+    {
+        $this->setExpectedException('Exception');
+
+        $result = $this->baseRepository->createOrReplace('foo', ['id' => 'bar']);
+    }
+
+    public function testUpdateOverrideId()
+    {
+        $this->setExpectedException('Exception');
+
+        $result = $this->baseRepository->update('foo', ['id' => 'bar']);
+    }
 }
