@@ -1,6 +1,6 @@
 <?php namespace App\Repositories;
 
-use Exception;
+use App\Exceptions\FatalErrorException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -96,7 +96,7 @@ abstract class BaseRepository
     /**
      * Create or replace an entity by id.
      *
-     * @throws \Exception
+     * @throws App\Exceptions\FatalException
      * @param  string  $id
      * @param  array   $data
      * @return array
@@ -107,7 +107,7 @@ abstract class BaseRepository
 
         // Make sure the data does not contain a different id for the entity.
         if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
-            throw new Exception('Attempt to override entity ID value.');
+            throw new FatalErrorException('Attempt to override entity ID value.');
         }
 
         try {
@@ -161,6 +161,7 @@ abstract class BaseRepository
     /**
      * Update an entity by id.
      *
+     * @throws App\Exceptions\FatalException
      * @param  string  $id
      * @param  array   $data
      * @return mixed
@@ -170,7 +171,7 @@ abstract class BaseRepository
         // Make sure the data does not contain a different id for the entity.
         $keyName = $this->model->getKeyName();
         if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
-            throw new Exception('Attempt to override entity ID value.');
+            throw new FatalErrorException('Attempt to override entity ID value.');
         }
 
         $model = $this->find($id);
