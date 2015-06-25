@@ -1,6 +1,8 @@
 <?php namespace App\Services;
 
+use App\Http\Transformers\BaseTransformer;
 use Illuminate\Container\Container;
+use Illuminate\Support\Facades\App;
 
 class ModelFactory
 {
@@ -34,7 +36,6 @@ class ModelFactory
 
         return $factoryInstance->times($count)->make($overrides);
     }
-
     /**
      * Get a model factory entity as a json string
      * @param $factoryName
@@ -47,7 +48,14 @@ class ModelFactory
 
         $entity = $this->make($factoryName, $count, $overrides);
 
-        return json_encode($entity->toArray(), JSON_PRETTY_PRINT);
+
+        $transformerService = App::make('App\Services\Transformer');
+
+        $entityType = ($count > 1) ? 'collection' : 'item';
+
+        $transformedEntity = $transformerService->{$entityType}($entity, new BaseTransformer);
+
+        return json_encode($transformedEntity, JSON_PRETTY_PRINT);
     }
 
 }
