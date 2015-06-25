@@ -19,6 +19,9 @@ class BaseRepositoryTest extends TestCase
             ->once()
             ->andReturn('App\Models\BaseModel');
 
+        $this->baseModel->shouldReceive('entityRoute')
+            ->andReturn('/base-model');
+
         $this->baseRepository->__construct($this->app);
     }
 
@@ -54,6 +57,6 @@ class BaseRepositoryTest extends TestCase
 
         $result = $this->baseRepository->create(['foo' => 'bar']);
 
-        $this->assertTrue(is_object($result));
+        $this->assertTrue(is_array($result));
     }
 }

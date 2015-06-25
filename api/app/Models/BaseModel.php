@@ -3,11 +3,36 @@
 use Illuminate\Database\Eloquent\Model;
 use Bosnadev\Database\Traits\UuidTrait;
 
-class BaseModel extends Model
+abstract class BaseModel extends Model
 {
     use UuidTrait;
 
     public $incrementing = false;
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['self'];
+
+    /**
+     * Get the access route for the entity.
+     *
+     * @return string
+     */
+    abstract public function entityRoute();
+
+    /**
+     * Get the user's first name.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getSelfAttribute()
+    {
+        return url($this->entityRoute().'/'.$this->{$this->primaryKey});
+    }
 
     public static function getTableName()
     {

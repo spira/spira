@@ -3,7 +3,7 @@
 /**
  * Additional assertions not offered by Lumen's TestCase or PHPUnit.
  */
-trait AssertionTrait
+trait AssertionsTrait
 {
     /**
      * Assert the response is a JSON array.
@@ -34,6 +34,18 @@ trait AssertionTrait
     }
 
     /**
+     * Assert that the client response has no content.
+     *
+     * @return void
+     */
+    public function assertResponseHasNoContent()
+    {
+        $actual = $this->response->getContent();
+
+        return $this->assertEmpty($this->response->getContent(), "Expected no content, got {$actual}.");
+    }
+
+    /**
      * Assert the date is a valid ISO 8601 date.
      *
      * @param  string $date
@@ -52,7 +64,7 @@ trait AssertionTrait
      * @param  string  $date
      * @return bool
      */
-    public function checkValidIso8601Date($date)
+    protected function checkValidIso8601Date($date)
     {
         // 2007-03-25T00:00:00+0000
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{4})$/', $date, $parts) == true) {

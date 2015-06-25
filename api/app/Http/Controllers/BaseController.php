@@ -34,32 +34,6 @@ abstract class BaseController extends Controller
     protected $transformer = 'App\Http\Transformers\BaseTransformer';
 
     /**
-     * Transform a collection for response.
-     *
-     * @param  Collection $collection
-     * @return array
-     */
-    protected function collection(Collection $collection)
-    {
-        $transformer = App::make('App\Services\Transformer');
-
-        return $transformer->collection($collection, new $this->transformer);
-    }
-
-    /**
-     * Transform an item for response.
-     *
-     * @param  Model  $item
-     * @return array
-     */
-    protected function item(Model $item)
-    {
-        $transformer = App::make('App\Services\Transformer');
-
-        return $transformer->item($item, new $this->transformer);
-    }
-
-    /**
      * Get all entities.
      *
      * @return Response
@@ -92,7 +66,7 @@ abstract class BaseController extends Controller
             return $this->validator->errors();
         }
 
-        return $this->item($this->repository->create($request->all()));
+        return response($this->repository->create($request->all()), 201);
     }
 
     /**
@@ -104,11 +78,11 @@ abstract class BaseController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        if (!$this->validator->with($request->all())->passes()) {
+        if (!$this->validator->put()->with(array_add($request->all(), 'entity_id', $id))->passes()) {
             return $this->validator->errors();
         }
 
-        return $this->repository->createOrReplace($id, $request->all());
+        return response($this->repository->createOrReplace($id, $request->all()), 201);
     }
 
     /**
@@ -119,7 +93,13 @@ abstract class BaseController extends Controller
      */
     public function putMany(Request $request)
     {
-        return $this->repository->createOrReplaceMany($request->all());
+        foreach ($request->data as $entity) {
+            if (!$this->validator->put()->with($entity)->passes()) {
+                return $this->validator->errors();
+            }
+        }
+
+        return response($this->repository->createOrReplaceMany($request->data), 201);
     }
 
     /**
@@ -131,7 +111,13 @@ abstract class BaseController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        return $this->repository->update($id, $request->all());
+        if (!$this->validator->with(array_add($request->all(), 'entity_id', $id))->patch()->passes()) {
+            return $this->validator->errors();
+        }
+
+        $this->repository->update($id, $request->all());
+
+        return response(null, 204);
     }
 
     /**
@@ -142,7 +128,15 @@ abstract class BaseController extends Controller
      */
     public function patchMany(Request $request)
     {
-        return $this->repository->updateMany($request->all());
+        foreach ($request->data as $entity) {
+            if (!$this->validator->with($entity)->patch()->passes()) {
+                return $this->validator->errors();
+            }
+        }
+
+        $this->repository->updateMany($request->data);
+
+        return response(null, 204);
     }
 
     /**
@@ -153,7 +147,13 @@ abstract class BaseController extends Controller
      */
     public function deleteOne($id)
     {
-        return $this->repository->delete($id);
+        if (!$this->validator->delete()->with(['entity_id' => $id])->passes()) {
+            return $this->validator->errors();
+        }
+
+        $this->repository->delete($id);
+
+        return response(null, 204);
     }
 
     /**
@@ -164,7 +164,41 @@ abstract class BaseController extends Controller
      */
     public function deleteMany(Request $request)
     {
-        return $this->repository->deleteMany($request->all());
+        foreach ($request->data as $id) {
+            if (!$this->validator->delete()->with(['entity_id' => $id])->passes()) {
+                return $this->validator->errors();
+            }
+        }
+
+        $this->repository->deleteMany($request->data);
+
+        return response(null, 204);
+    }
+
+    /**
+     * Transform an item for response.
+     *
+     * @param  Model  $item
+     * @return array
+     */
+    protected function item(Model $item)
+    {
+        $transformer = App::make('App\Services\Transformer');
+
+        return $transformer->item($item, new $this->transformer);
+    }
+
+    /**
+     * Transform a collection for response.
+     *
+     * @param  Collection $collection
+     * @return array
+     */
+    protected function collection(Collection $collection)
+    {
+        $transformer = App::make('App\Services\Transformer');
+
+        return $transformer->collection($collection, new $this->transformer);
     }
 
     public static function renderException($request, \Exception $e, $debug = false){

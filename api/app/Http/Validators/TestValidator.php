@@ -7,20 +7,27 @@ class TestValidator extends Validator
     /**
      * Validation rules.
      *
-     * @return array
+     * @var array
      */
-    public function rules()
+    protected $rules = [
+        'varchar' => 'required|string',
+        'hash' => 'required|string',
+        'integer' => 'required|integer',
+        'decimal' => 'required|float',
+        'boolean' => 'required|boolean',
+        'text' => 'required|string',
+        'date' => 'required|date',
+        'multi_word_column_title' => 'required|boolean',
+        'hidden' => 'required|boolean'
+    ];
+
+    /**
+     * Model being validated.
+     *
+     * @var string
+     */
+    protected function model()
     {
-        return [
-            'varchar' => 'required|string',
-            'hash' => 'required|string',
-            'integer' => 'required|integer',
-            'decimal' => 'required|float',
-            'boolean' => 'required|boolean',
-            'text' => 'required|string',
-            'date' => 'required|date',
-            'multi_word_column_title' => 'required|boolean',
-            'hidden' => 'required|boolean'
-        ];
+        return 'App\Models\TestEntity';
     }
 }

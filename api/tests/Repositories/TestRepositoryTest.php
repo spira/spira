@@ -56,7 +56,7 @@ class TestRepositoryTest extends TestCase
         $data = $entity->getAttributes();
 
         $result = $this->repository->create($data);
-        $this->assertTrue(is_object($result));
+        $this->assertTrue(is_array($result));
     }
 
     public function testCreateMany()

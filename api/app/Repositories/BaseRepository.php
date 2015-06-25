@@ -66,11 +66,13 @@ abstract class BaseRepository
      * Create and store a new instance of an entity.
      *
      * @param  array  $data
-     * @return mixed
+     * @return array
      */
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $entity = $this->model->create($data);
+
+        return [$entity->self];
     }
 
     /**
@@ -81,9 +83,13 @@ abstract class BaseRepository
      */
     public function createMany(array $models)
     {
+        $this->app->db->beginTransaction();
+
         foreach ($models as $model) {
             $this->model->create($model);
         }
+
+        $this->app->db->commit();
     }
 
     /**
@@ -91,7 +97,7 @@ abstract class BaseRepository
      *
      * @param  string  $id
      * @param  array   $data
-     * @return mixed
+     * @return array
      */
     public function createOrReplace($id, array $data)
     {
@@ -101,7 +107,9 @@ abstract class BaseRepository
 
         } catch (ModelNotFoundException $e) {
 
-            return $this->create(array_add($data, $this->model->getKeyName(), $id));
+            $link = $this->create(array_add($data, $this->model->getKeyName(), $id));
+
+            return [$link[0]];
         }
 
         foreach ($model->getAttributes() as $key => $value) {
@@ -112,22 +120,33 @@ abstract class BaseRepository
             }
         }
 
-        return $model->update(array_add($data, $this->model->getKeyName(), $id));
+        $model->update(array_add($data, $this->model->getKeyName(), $id));
+
+        return [$model->self];
     }
 
     /**
      * Create or replace a colleciton of entities.
      *
      * @param  array  $entities
-     * @return void
+     * @return array
      */
     public function createOrReplaceMany(array $entities)
     {
+        $this->app->db->beginTransaction();
+
+        $links = [];
+
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
-            $this->createOrReplace($id, $entity);
+            $link = $this->createOrReplace($id, $entity);
+            array_push($links, $link[0]);
         }
+
+        $this->app->db->commit();
+
+        return $links;
     }
 
     /**
@@ -152,11 +171,15 @@ abstract class BaseRepository
      */
     public function updateMany(array $entities)
     {
+        $this->app->db->beginTransaction();
+
         foreach ($entities as $entity) {
             $id = array_pull($entity, $this->model->getKeyName());
 
             $this->update($id, $entity);
         }
+
+        $this->app->db->commit();
     }
 
     /**
@@ -174,11 +197,15 @@ abstract class BaseRepository
      * Delete a collection of entities by their ids.
      *
      * @param  array  $ids
-     * @return mixed
+     * @return void
      */
     public function deleteMany(array $ids)
     {
-        return $this->model->destroy($ids);
+        $this->app->db->beginTransaction();
+
+        $this->model->destroy($ids);
+
+        $this->app->db->commit();
     }
 
     /**
