@@ -89,7 +89,10 @@ class TestRepositoryTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $id = $entity->entity_id;
 
-        $entityUpdate = factory(App\Models\TestEntity::class)->make();
+        $entityUpdate = factory(App\Models\TestEntity::class)->make([
+            'entity_id' => $id //set the entity id of the model to be updated to the original id
+        ]);
+
         $entityUpdate = $entityUpdate->getAttributes();
 
         $rowCount = $this->repository->count();
