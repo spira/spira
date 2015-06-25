@@ -39,6 +39,16 @@ class TestEntity extends BaseModel {
     ];
 
     /**
+     * Get the access route for the entity.
+     *
+     * @return string
+     */
+    public function entityRoute()
+    {
+        return '/test/entities';
+    }
+
+    /**
      * Generate fake user
      * @param array $overrides
      * @param null $seed
