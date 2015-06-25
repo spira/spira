@@ -112,10 +112,10 @@ class EntityTest extends TestCase
 
         $this->post('/test/entities', $entity);
 
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-
         $object = json_decode($this->response->getContent());
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
         $this->assertObjectHasAttribute('text', $object);
         $this->assertEquals('The text field is required.', $object->text[0]);
     }
@@ -146,11 +146,10 @@ class EntityTest extends TestCase
 
         $this->put('/test/entities/'.$id, $entity);
 
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-
         $object = json_decode($this->response->getContent());
 
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
         $this->assertObjectHasAttribute('entity_id', $object);
         $this->assertEquals('The entity id must be an UUID string.', $object->entity_id[0]);
     }

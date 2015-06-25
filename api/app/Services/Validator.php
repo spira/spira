@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use Illuminate\Container\Container as App;
+use Illuminate\Http\Exception\HttpResponseException;
 
 abstract class Validator
 {
@@ -95,6 +96,38 @@ abstract class Validator
         $this->data = $data;
 
         return $this;
+    }
+
+    /**
+     * Add id to the data array to validate.
+     *
+     * @param  string  $id
+     * @return $this
+     */
+    public function id($id)
+    {
+        $this->data = array_add($this->data, $this->getKey(), $id);
+
+        return $this;
+    }
+
+    /**
+     * Validate the current data.
+     *
+     * @throws \Illuminate\Http\Exception\HttpResponseException
+     * @return void
+     */
+    public function validate()
+    {
+        $method = strtolower($this->app->request->method());
+        if (method_exists($this, $method)) {
+            $this->{$method}();
+        }
+
+        if (!$this->passes()) {
+
+            throw new HttpResponseException(response($this->errors, 422));
+        }
     }
 
     /**

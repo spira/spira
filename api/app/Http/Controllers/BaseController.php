@@ -62,9 +62,7 @@ abstract class BaseController extends Controller
      */
     public function postOne(Request $request)
     {
-        if (!$this->validator->with($request->all())->passes()) {
-            return $this->validator->errors();
-        }
+        $this->validator->with($request->all())->validate();
 
         return response($this->repository->create($request->all()), 201);
     }
@@ -78,9 +76,7 @@ abstract class BaseController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        if (!$this->validator->put()->with(array_add($request->all(), 'entity_id', $id))->passes()) {
-            return $this->validator->errors();
-        }
+        $this->validator->with($request->all())->id($id)->validate();
 
         return response($this->repository->createOrReplace($id, $request->all()), 201);
     }
@@ -94,9 +90,7 @@ abstract class BaseController extends Controller
     public function putMany(Request $request)
     {
         foreach ($request->data as $entity) {
-            if (!$this->validator->put()->with($entity)->passes()) {
-                return $this->validator->errors();
-            }
+            $this->validator->with($entity)->validate();
         }
 
         return response($this->repository->createOrReplaceMany($request->data), 201);
@@ -111,9 +105,7 @@ abstract class BaseController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        if (!$this->validator->with(array_add($request->all(), 'entity_id', $id))->patch()->passes()) {
-            return $this->validator->errors();
-        }
+        $this->validator->with($request->all())->id($id)->validate();
 
         $this->repository->update($id, $request->all());
 
@@ -129,9 +121,7 @@ abstract class BaseController extends Controller
     public function patchMany(Request $request)
     {
         foreach ($request->data as $entity) {
-            if (!$this->validator->with($entity)->patch()->passes()) {
-                return $this->validator->errors();
-            }
+            $this->validator->with($entity)->validate();
         }
 
         $this->repository->updateMany($request->data);
@@ -147,9 +137,7 @@ abstract class BaseController extends Controller
      */
     public function deleteOne($id)
     {
-        if (!$this->validator->delete()->with(['entity_id' => $id])->passes()) {
-            return $this->validator->errors();
-        }
+        $this->validator->id($id)->validate();
 
         $this->repository->delete($id);
 
@@ -165,9 +153,7 @@ abstract class BaseController extends Controller
     public function deleteMany(Request $request)
     {
         foreach ($request->data as $id) {
-            if (!$this->validator->delete()->with(['entity_id' => $id])->passes()) {
-                return $this->validator->errors();
-            }
+            $this->validator->id($id)->validate();
         }
 
         $this->repository->deleteMany($request->data);
