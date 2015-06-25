@@ -49,9 +49,9 @@ class ValidatorTest extends TestCase
         $this->assertStringEndsWith('must be an UUID string.', $this->validator->errors()->get('uuid')[0]);
     }
 
-    public function testTestValidator()
+    public function testTestEntityValidator()
     {
-        $validator = $this->app->make('App\Http\Validators\TestValidator');
+        $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
         $this->assertTrue(is_array($validator->rules()));
     }
@@ -60,7 +60,7 @@ class ValidatorTest extends TestCase
     {
         $this->setExpectedException('Illuminate\Http\Exception\HttpResponseException');
 
-        $validator = $this->app->make('App\Http\Validators\TestValidator');
+        $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
         $validator->with(['entity_id' => 'foo'])->id('foobar');
     }

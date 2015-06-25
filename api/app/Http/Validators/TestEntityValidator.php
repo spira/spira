@@ -2,7 +2,7 @@
 
 use App\Services\Validator;
 
-class TestValidator extends Validator
+class TestEntityValidator extends Validator
 {
     /**
      * Validation rules.
