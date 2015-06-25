@@ -22,6 +22,7 @@ $factory->define(App\User::class, function ($faker) {
 
 $factory->define(App\Models\TestEntity::class, function ($faker) {
     return [
+        'entity_id' => $faker->uuid,
         'varchar' => $faker->word,
         'hash' => Hash::make($faker->word),
         'integer' => $faker->numberBetween(0, 500),
