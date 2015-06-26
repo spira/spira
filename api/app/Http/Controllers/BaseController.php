@@ -153,7 +153,7 @@ abstract class BaseController extends Controller
     public function deleteMany(Request $request)
     {
         foreach ($request->data as $id) {
-            $this->validator->id($id)->validate();
+            $this->validator->with([])->id($id)->validate();
         }
 
         $this->repository->deleteMany($request->data);

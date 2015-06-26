@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Exceptions\FatalErrorException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -95,19 +96,27 @@ abstract class BaseRepository
     /**
      * Create or replace an entity by id.
      *
+     * @throws App\Exceptions\FatalException
      * @param  string  $id
      * @param  array   $data
      * @return array
      */
     public function createOrReplace($id, array $data)
     {
+        $keyName = $this->model->getKeyName();
+
+        // Make sure the data does not contain a different id for the entity.
+        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
+            throw new FatalErrorException('Attempt to override entity ID value.');
+        }
+
         try {
 
             $model = $this->find($id);
 
         } catch (ModelNotFoundException $e) {
 
-            $link = $this->create(array_add($data, $this->model->getKeyName(), $id));
+            $link = $this->create(array_add($data, $keyName, $id));
 
             return [$link[0]];
         }
@@ -120,7 +129,7 @@ abstract class BaseRepository
             }
         }
 
-        $model->update(array_add($data, $this->model->getKeyName(), $id));
+        $model->update(array_add($data, $keyName, $id));
 
         return [$model->self];
     }
@@ -152,12 +161,19 @@ abstract class BaseRepository
     /**
      * Update an entity by id.
      *
+     * @throws App\Exceptions\FatalException
      * @param  string  $id
      * @param  array   $data
      * @return mixed
      */
     public function update($id, array $data)
     {
+        // Make sure the data does not contain a different id for the entity.
+        $keyName = $this->model->getKeyName();
+        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
+            throw new FatalErrorException('Attempt to override entity ID value.');
+        }
+
         $model = $this->find($id);
 
         return $model->update($data);
