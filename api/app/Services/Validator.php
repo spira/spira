@@ -118,11 +118,11 @@ abstract class Validator
         // instead thrown a validation exception.
         if (array_key_exists($this->getKey(), $this->data)) {
 
-            $error = new MessageBag;
+            $this->errors = new MessageBag;
+            $this->errors->add($this->getKey(), 'The existing ID should not be overwritten.');
+            $this->failed = [$this->getKey() => ['mismatch_id' => []]];
 
-            throw new ValidationException(
-                $error->add($this->getKey(), 'The existing ID should not be overwritten.')
-            );
+            throw new ValidationException($this->formattedErrors());
         }
 
         $this->data[$this->getKey()] = $id;
@@ -146,7 +146,6 @@ abstract class Validator
         if (!$this->passes()) {
 
             throw new ValidationException($this->formattedErrors());
-            throw new ValidationException($this->errors);
         }
     }
 
@@ -251,20 +250,18 @@ abstract class Validator
     {
         $messages = $this->errors->toArray();
         $types = $this->failed;
-
         $formatted = [];
+
         foreach($messages as $key => $value) {
 
             $combined = array_combine(array_keys($types[$key]), $value);
 
-            $combined = array_map( function($key) use ($combined) {
+            $formatted[$key] = array_map( function($key) use ($combined) {
                 return [
                     'type' => strtolower($key),
                     'message' => $combined[$key]
                 ];
             }, array_keys($combined));
-
-            $formatted[$key] = $combined;
         }
 
         $errors = new MessageBag;
