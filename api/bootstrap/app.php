@@ -87,7 +87,6 @@ $app->middleware([
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
-$app->register(Wpb\StringBladeCompiler\StringBladeCompilerServiceProvider::class);
 
 
 /*
