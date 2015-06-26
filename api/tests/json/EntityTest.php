@@ -156,7 +156,7 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(422);
         $this->assertTrue(is_object($object));
-        $this->assertEquals('The existing ID should not be overwritten.', $object->entity_id);
+        $this->assertEquals('The existing ID should not be overwritten.', $object->entity_id[0]);
     }
 
     public function testPutOneNewInvalidId()

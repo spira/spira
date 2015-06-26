@@ -1,7 +1,8 @@
 <?php namespace App\Services;
 
 use Illuminate\Container\Container as App;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Support\MessageBag;
+use App\Exceptions\ValidationException;
 
 abstract class Validator
 {
@@ -110,8 +111,10 @@ abstract class Validator
         // instead thrown a validation exception.
         if (array_key_exists($this->getKey(), $this->data)) {
 
-            throw new HttpResponseException(
-                response([$this->getKey() => 'The existing ID should not be overwritten.'], 422)
+            $error = new MessageBag;
+
+            throw new ValidationException(
+                $error->add($this->getKey(), 'The existing ID should not be overwritten.')
             );
         }
 
@@ -135,7 +138,7 @@ abstract class Validator
 
         if (!$this->passes()) {
 
-            throw new HttpResponseException(response($this->errors, 422));
+            throw new ValidationException($this->errors);
         }
     }
 
