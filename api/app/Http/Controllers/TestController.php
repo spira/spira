@@ -6,16 +6,16 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\Request;
 use App\Repositories\TestRepository;
-use App\Http\Validators\TestValidator;
+use App\Http\Validators\TestEntityValidator;
 
 class TestController extends BaseController
 {
     /**
      * Assign dependencies.
-     * @param TestValidator $validator
+     * @param TestEntityValidator $validator
      * @param TestRepository $repository
      */
-    public function __construct(TestValidator $validator, TestRepository $repository)
+    public function __construct(TestEntityValidator $validator, TestRepository $repository)
     {
         $this->validator = $validator;
         $this->repository = $repository;
