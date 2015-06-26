@@ -13,11 +13,7 @@ class TestEntitySeeder extends Seeder {
 	public function run()
 	{
 
-        foreach(range(0, 20) as $index){
-
-            TestEntity::fakeTestEntity();
-
-        }
+        factory(App\Models\TestEntity::class, 20)->create();
 
 	}
 
