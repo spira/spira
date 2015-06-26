@@ -48,42 +48,4 @@ class TestEntity extends BaseModel {
         return '/test/entities';
     }
 
-    /**
-     * Generate fake user
-     * @param array $overrides
-     * @param null $seed
-     * @return TestEntity
-     */
-    public static function fakeTestEntity($overrides = [], $seed = null){
-
-        $faker = Faker::create('au_AU');;
-
-        if ($seed){
-            $faker->seed($seed);
-        }
-
-        $testEntityInfo = array_merge([
-
-            'entity_id' => $faker->uuid,
-            'varchar' => $faker->word,
-            'hash' => Hash::make($faker->randomDigitNotNull),
-            'integer' => $faker->numberBetween(0, 500),
-            'decimal' => $faker->randomFloat(2, 0, 100),
-            'boolean' => $faker->boolean(),
-            'nullable' => null,
-            'text' => $faker->paragraph(3),
-            'date' => $faker->date(),
-            'multi_word_column_title' => true,
-            'hidden' => $faker->boolean()
-
-        ], $overrides);
-
-        $testEntity = new TestEntity($testEntityInfo);
-
-        $testEntity->timestamps = true;
-        $testEntity->save();
-
-        return $testEntity;
-
-    }
 }
