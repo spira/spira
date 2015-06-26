@@ -207,14 +207,14 @@ abstract class BaseController extends Controller
             'message' => $message,
         ];
 
-        if (method_exists($e, 'getResponse')) {
-            $response = $e->getResponse();
-        }
-
         $statusCode = 500;
 
         if ($e instanceof HttpExceptionInterface){
             $statusCode = $e->getStatusCode();
+
+            if (method_exists($e, 'getResponse')) {
+                $response = $e->getResponse();
+            }
         }
 
         if ($debug){

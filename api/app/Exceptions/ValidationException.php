@@ -2,8 +2,9 @@
 
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-class ValidationException extends HttpException
+class ValidationException extends HttpException implements HttpExceptionInterface
 {
 
     /**
