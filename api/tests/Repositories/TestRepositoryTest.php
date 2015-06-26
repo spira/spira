@@ -77,8 +77,8 @@ class TestRepositoryTest extends TestCase
         $rowCount = $this->repository->count();
 
         $entity = factory(App\Models\TestEntity::class)->make();
+        $id = $entity->entity_id;
         $entity = $entity->getAttributes();
-        $id = (string) Uuid::uuid4();
 
         $entity = $this->repository->createOrReplace($id, $entity);
         $this->assertEquals($rowCount + 1, $this->repository->count());

@@ -126,8 +126,8 @@ class EntityTest extends TestCase
     public function testPutOneNew()
     {
         $entity = factory(App\Models\TestEntity::class)->make();
+        $id = $entity->entity_id;
         $entity = $this->prepareEntity($entity);
-        $id = (string) Uuid::uuid4();
 
         $rowCount = $this->repository->count();
 
@@ -156,14 +156,16 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(422);
         $this->assertTrue(is_object($object));
-        $this->assertEquals('The existing ID should not be overwritten.', $object->invalid->entityId[0]->message);
+        $this->assertEquals('The url id does not match the json entity id.', $object->invalid->entityId[0]->message);
     }
 
     public function testPutOneNewInvalidId()
     {
-        $entity = factory(App\Models\TestEntity::class)->make();
-        $entity = $this->prepareEntity($entity);
         $id = 'foobar';
+        $entity = factory(App\Models\TestEntity::class)->make([
+            'entity_id' => $id
+        ]);
+        $entity = $this->prepareEntity($entity);
 
         $this->put('/test/entities/'.$id, $entity);
 
