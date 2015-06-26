@@ -1,9 +1,7 @@
 <?php namespace App;
 
-use Illuminate\Support\Facades\Storage;
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;
-use Wpb\StringBladeCompiler\Facades\StringView;
 
 class SpiraApplication extends Application
 {
