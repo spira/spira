@@ -156,7 +156,7 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(422);
         $this->assertTrue(is_object($object));
-        $this->assertEquals('The existing ID should not be overwritten.', $object->invalid->entity_id[0]);
+        $this->assertEquals('The existing ID should not be overwritten.', $object->invalid->entityId[0]->message);
     }
 
     public function testPutOneNewInvalidId()
@@ -171,8 +171,8 @@ class EntityTest extends TestCase
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entity_id[0]->message);
+        $this->assertObjectHasAttribute('entityId', $object->invalid);
+        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
     }
 
     public function testPutManyNew()
@@ -209,8 +209,10 @@ class EntityTest extends TestCase
         $this->put('/test/entities', ['data' => $entities]);
 
         $object = json_decode($this->response->getContent());
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entity_id[0]->message);
+
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }
 
@@ -234,8 +236,8 @@ class EntityTest extends TestCase
         $this->patch('/test/entities/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
         $object = json_decode($this->response->getContent());
 
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entity_id[0]->message);
+        $this->assertObjectHasAttribute('entityId', $object->invalid);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
     }
 
     public function testPatchMany()
@@ -272,8 +274,8 @@ class EntityTest extends TestCase
         $this->patch('/test/entities', ['data' => $data]);
         $object = json_decode($this->response->getContent());
 
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entity_id[0]->message);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
     }
 
     public function testDeleteOne()
@@ -297,8 +299,8 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
 
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entity_id[0]->message);
+        $this->assertObjectHasAttribute('entityId', $object->invalid);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }
 
@@ -324,8 +326,8 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
 
-        $this->assertObjectHasAttribute('entity_id', $object->invalid);
-        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entity_id[0]->message);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }
 }

@@ -89,9 +89,7 @@ abstract class BaseController extends Controller
      */
     public function putMany(Request $request)
     {
-        foreach ($request->data as $entity) {
-            $this->validator->with($entity)->validate();
-        }
+        $this->validator->with($request->data)->validateMany();
 
         return response($this->repository->createOrReplaceMany($request->data), 201);
     }
@@ -120,9 +118,7 @@ abstract class BaseController extends Controller
      */
     public function patchMany(Request $request)
     {
-        foreach ($request->data as $entity) {
-            $this->validator->with($entity)->validate();
-        }
+        $this->validator->with($request->data)->validateMany();
 
         $this->repository->updateMany($request->data);
 
@@ -152,9 +148,7 @@ abstract class BaseController extends Controller
      */
     public function deleteMany(Request $request)
     {
-        foreach ($request->data as $id) {
-            $this->validator->with([])->id($id)->validate();
-        }
+        $this->validator->with($request->data)->validateMany();
 
         $this->repository->deleteMany($request->data);
 
@@ -211,6 +205,10 @@ abstract class BaseController extends Controller
 
         if ($e instanceof HttpExceptionInterface){
             $statusCode = $e->getStatusCode();
+
+            if (method_exists($e, 'getResponse')) {
+                $response = $e->getResponse();
+            }
         }
 
         if ($debug){

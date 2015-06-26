@@ -49,6 +49,13 @@ abstract class Validator
     protected $rules = [];
 
     /**
+     * Transformer to use for formatting.
+     *
+     * @var string
+     */
+    protected $transformer = 'App\Http\Transformers\BaseTransformer';
+
+    /**
      * Assign dependencies.
      *
      * @param  Illuminate\Container\Container  $app
@@ -109,6 +116,7 @@ abstract class Validator
     /**
      * Add id to the data array to validate.
      *
+     * @throws  App\Exceptions\ValidationException
      * @param  string  $id
      * @return $this
      */
@@ -118,11 +126,11 @@ abstract class Validator
         // instead thrown a validation exception.
         if (array_key_exists($this->getKey(), $this->data)) {
 
-            $error = new MessageBag;
+            $this->errors = new MessageBag;
+            $this->errors->add($this->getKey(), 'The existing ID should not be overwritten.');
+            $this->failed = [$this->getKey() => ['mismatch_id' => []]];
 
-            throw new ValidationException(
-                $error->add($this->getKey(), 'The existing ID should not be overwritten.')
-            );
+            throw new ValidationException($this->formattedErrors());
         }
 
         $this->data[$this->getKey()] = $id;
@@ -133,7 +141,7 @@ abstract class Validator
     /**
      * Validate the current data.
      *
-     * @throws \Illuminate\Http\Exception\HttpResponseException
+     * @throws App\Exceptions\ValidationException
      * @return void
      */
     public function validate()
@@ -146,7 +154,43 @@ abstract class Validator
         if (!$this->passes()) {
 
             throw new ValidationException($this->formattedErrors());
-            throw new ValidationException($this->errors);
+        }
+    }
+
+    /**
+     * Validates an array of entities.
+     *
+     * @throws App\Exceptions\ValidationException
+     * @return void
+     */
+    public function validateMany()
+    {
+        $entities = $this->data;
+        $errors = [];
+
+        foreach ($entities as $entity) {
+            if (strtolower($this->app->request->method()) == 'delete') {
+                $this->data = [];
+                $this->id($entity);
+            } else {
+                $this->data = $entity;
+            }
+
+            try {
+                $this->validate();
+
+            } catch (ValidationException $e) {
+
+                array_push($errors, $this->formattedErrors()->toArray());
+                continue;
+            }
+
+            array_push($errors, null);
+        }
+
+        if (!empty(array_filter($errors))) {
+
+            throw new ValidationException(new MessageBag($errors));
         }
     }
 
@@ -251,26 +295,28 @@ abstract class Validator
     {
         $messages = $this->errors->toArray();
         $types = $this->failed;
-
         $formatted = [];
+
         foreach($messages as $key => $value) {
 
             $combined = array_combine(array_keys($types[$key]), $value);
 
-            $combined = array_map( function($key) use ($combined) {
+            $formatted[$key] = array_map( function($key) use ($combined) {
                 return [
                     'type' => strtolower($key),
                     'message' => $combined[$key]
                 ];
             }, array_keys($combined));
-
-            $formatted[$key] = $combined;
         }
 
-        $errors = new MessageBag;
-        $errors->merge($formatted);
+        // Transform the messages with the current transformer
+        $transformer = $this->app->make('App\Services\Transformer');
+        $transformed = $transformer->item(
+            new MessageBag($formatted),
+            new $this->transformer
+        );
 
-        return $errors;
+        return new MessageBag($transformed);
     }
 
     /**
