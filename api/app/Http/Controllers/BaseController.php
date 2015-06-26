@@ -207,7 +207,7 @@ abstract class BaseController extends Controller
             'message' => $message,
         ];
 
-        if ($e instanceof App\Exceptions\ValidationException) {
+        if (method_exists($e, 'getResponse')) {
             $response = $e->getResponse();
         }
 
