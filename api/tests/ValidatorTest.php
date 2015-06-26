@@ -58,11 +58,48 @@ class ValidatorTest extends TestCase
 
     public function testIdOverwrite()
     {
-        $this->setExpectedException('Illuminate\Http\Exception\HttpResponseException');
+        $this->setExpectedException('App\Exceptions\ValidationException');
 
         $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
         $validator->with(['entity_id' => 'foo'])->id('foobar');
+    }
+
+    public function testIdOverwriteExceptionResponse() {
+        try {
+            $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
+
+            $validator->with(['entity_id' => 'foo'])->id('foobar');
+        }
+
+        catch (App\Exceptions\ValidationException $expected) {
+            $messages = $expected->getResponse()['invalid']->toArray();
+
+            $this->assertArrayHasKey('entityId', $messages);
+            $this->assertEquals('mismatch_id', $messages['entityId'][0]['type']);
+            $this->assertEquals(422, $expected->getStatusCode());
+            return;
+        }
+
+        $this->fail('An expected exception has not been raised.');
+    }
+
+    public function testCamelCaseTransform() {
+        try {
+            $data = ['multi_word_column_title' => 0.12];
+
+            $this->validator->with($data)->validate();
+        }
+
+        catch (App\Exceptions\ValidationException $expected) {
+            $messages = $expected->getResponse()['invalid']->toArray();
+
+            $this->assertArrayHasKey('multiWordColumnTitle', $messages);
+            $this->assertEquals(422, $expected->getStatusCode());
+            return;
+        }
+
+        $this->fail('An expected exception has not been raised.');
     }
 }
 
@@ -77,7 +114,8 @@ class Validation extends App\Services\Validator
     {
         return [
             'float' => 'float',
-            'uuid' => 'uuid'
+            'uuid' => 'uuid',
+            'multi_word_column_title' => 'string',
         ];
     }
 }
