@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7f20ab7dc10455bab0d7e33a0da03f1a",
+    "hash": "b1e402b4e858e7d425226a35ea40d4a2",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -3068,40 +3068,6 @@
                 "environment"
             ],
             "time": "2015-05-30 15:59:26"
-        },
-        {
-            "name": "wpb/string-blade-compiler",
-            "version": "2.0.x-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/xiphiaz/StringBladeCompiler.git",
-                "reference": "2553dbc57ca379ff9e57b5546ce98af16149a03c"
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Wpb\\StringBladeCompiler\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Terre Porter",
-                    "email": "tporter@webpage-builders.com"
-                }
-            ],
-            "description": "Render Blade templates from string",
-            "keywords": [
-                "blade",
-                "compiler",
-                "laravel"
-            ],
-            "time": "2015-06-24 06:29:21"
         }
     ],
     "packages-dev": [
@@ -4220,9 +4186,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "wpb/string-blade-compiler": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

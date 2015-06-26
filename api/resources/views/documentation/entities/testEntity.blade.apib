@@ -1,0 +1,32 @@
+# Group Test
+The test path is for all tests for the spira core, included are some specific tests for checking functionality of the base system such as exceptions.
+
+## Test Entities [/test/entities]
+Test entities are provided as an example to cover most of the bases of what is required for a REST api. It includes
+ both unit and integration tests to verify functionality.
+
+The properties of the test entities cover the different column types. These are used to verify the typecasting & formatting for integers, dates etc.
+
+### Retrieve all test entities [GET]
++ Response 200 (application/json)
+
+    + Headers
+
+    + Body
+
+        {!! $factory->json(\App\Models\TestEntity::class, 2) !!}
+
+## Test Entity [/test/entities/{entityId}]
+
++ Parameters
+    + entityId (required, uuid, `c061c86e-a4c9-351b-a6d5-8739bf293303`) ... Unique `id` of the test entity to perform action with.
+
+
+### Retrieve a test entity [GET]
++ Response 200 (application/json)
+
+    + Headers
+
+    + Body
+
+        {!! $factory->json(\App\Models\TestEntity::class) !!}
