@@ -21,6 +21,7 @@ class ValidationException extends HttpResponseException
     public function __construct(MessageBag $errors)
     {
         $this->errors = $errors;
+
     }
 
     /**
@@ -31,7 +32,7 @@ class ValidationException extends HttpResponseException
     public function getResponse()
     {
         return response([
-            'message' => 'foobar',
+            'message' => 'There was an issue with the validation of provided entity',
             'invalid' => $this->errors,
             'debug' => 'foobar'
 

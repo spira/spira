@@ -64,6 +64,44 @@ class ValidatorTest extends TestCase
 
         $validator->with(['entity_id' => 'foo'])->id('foobar');
     }
+
+    public function testIdOverwriteExceptionResponse() {
+        try {
+            $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
+
+            $validator->with(['entity_id' => 'foo'])->id('foobar');
+        }
+
+        catch (App\Exceptions\ValidationException $expected) {
+            $object = json_decode($expected->getResponse()->getContent());
+
+            $this->assertEquals('There was an issue with the validation of provided entity', $object->message);
+            $this->assertObjectHasAttribute('entityId', $object->invalid);
+            $this->assertEquals('mismatch_id', $object->invalid->entityId[0]->type);
+            $this->assertEquals(422, $expected->getResponse()->getStatusCode());
+            return;
+        }
+
+        $this->fail('An expected exception has not been raised.');
+    }
+
+    public function testCamelCaseTransform() {
+        try {
+            $data = ['multi_word_column_title' => 0.12];
+
+            $this->validator->with($data)->validate();
+        }
+
+        catch (App\Exceptions\ValidationException $expected) {
+            $object = json_decode($expected->getResponse()->getContent());
+
+            $this->assertObjectHasAttribute('multiWordColumnTitle', $object->invalid);
+            $this->assertEquals(422, $expected->getResponse()->getStatusCode());
+            return;
+        }
+
+        $this->fail('An expected exception has not been raised.');
+    }
 }
 
 class Validation extends App\Services\Validator
@@ -77,7 +115,8 @@ class Validation extends App\Services\Validator
     {
         return [
             'float' => 'float',
-            'uuid' => 'uuid'
+            'uuid' => 'uuid',
+            'multi_word_column_title' => 'string',
         ];
     }
 }

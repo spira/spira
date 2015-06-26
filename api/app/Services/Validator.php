@@ -49,6 +49,13 @@ abstract class Validator
     protected $rules = [];
 
     /**
+     * Transformer to use for formatting.
+     *
+     * @var string
+     */
+    protected $transformer = 'App\Http\Transformers\BaseTransformer';
+
+    /**
      * Assign dependencies.
      *
      * @param  Illuminate\Container\Container  $app
@@ -264,10 +271,14 @@ abstract class Validator
             }, array_keys($combined));
         }
 
-        $errors = new MessageBag;
-        $errors->merge($formatted);
+        // Transform the messages with the current transformer
+        $transformer = $this->app->make('App\Services\Transformer');
+        $transformed = $transformer->item(
+            new MessageBag($formatted),
+            new $this->transformer
+        );
 
-        return $errors;
+        return new MessageBag($transformed);
     }
 
     /**
