@@ -38,7 +38,9 @@
     "config": {
         "preferred-install": "dist"
     },
-    "post-install-cmd": [
-        "npm install"
-    ]
+    "scripts": {
+        "post-install-cmd": [
+            "npm install"
+        ]
+    }
 }
