@@ -58,7 +58,7 @@ class ValidatorTest extends TestCase
 
     public function testIdOverwrite()
     {
-        $this->setExpectedException('Illuminate\Http\Exception\HttpResponseException');
+        $this->setExpectedException('App\Exceptions\ValidationException');
 
         $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
