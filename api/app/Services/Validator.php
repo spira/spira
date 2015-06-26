@@ -1,8 +1,8 @@
 <?php namespace App\Services;
 
-use Illuminate\Container\Container as App;
-use Illuminate\Support\MessageBag;
 use App\Exceptions\ValidationException;
+use Illuminate\Support\MessageBag;
+use Illuminate\Container\Container as App;
 
 abstract class Validator
 {
@@ -28,11 +28,18 @@ abstract class Validator
     protected $data = [];
 
     /**
-     * Validation errors.
+     * Validation error messages.
      *
      * @var array
      */
     protected $errors = [];
+
+    /**
+     * Validation failed rules.
+     *
+     * @var array
+     */
+    protected $failed = [];
 
     /**
      * Validation rules.
@@ -138,6 +145,7 @@ abstract class Validator
 
         if (!$this->passes()) {
 
+            throw new ValidationException($this->formattedErrors());
             throw new ValidationException($this->errors);
         }
     }
@@ -157,6 +165,7 @@ abstract class Validator
 
         if ($validator->fails()) {
             $this->errors = $validator->messages();
+            $this->failed = $validator->failed();
 
             return false;
         }
@@ -231,6 +240,37 @@ abstract class Validator
     {
         $model = $this->model();
         return with(new $model())->getKeyName();
+    }
+
+    /**
+     * Reformat and combined the failed and messages arrays.
+     *
+     * @return \Illuminate\Support\MessageBag
+     */
+    protected function formattedErrors()
+    {
+        $messages = $this->errors->toArray();
+        $types = $this->failed;
+
+        $formatted = [];
+        foreach($messages as $key => $value) {
+
+            $combined = array_combine(array_keys($types[$key]), $value);
+
+            $combined = array_map( function($key) use ($combined) {
+                return [
+                    'type' => strtolower($key),
+                    'message' => $combined[$key]
+                ];
+            }, array_keys($combined));
+
+            $formatted[$key] = $combined;
+        }
+
+        $errors = new MessageBag;
+        $errors->merge($formatted);
+
+        return $errors;
     }
 
     /**

@@ -24,12 +24,17 @@ class ValidationException extends HttpResponseException
     }
 
     /**
-     * Get the response instance.
+     * Return the response instance.
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getResponse()
     {
-        return response($this->errors, 422);
+        return response([
+            'message' => 'foobar',
+            'invalid' => $this->errors,
+            'debug' => 'foobar'
+
+        ], 422);
     }
 }
