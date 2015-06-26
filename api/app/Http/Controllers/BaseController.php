@@ -207,6 +207,10 @@ abstract class BaseController extends Controller
             'message' => $message,
         ];
 
+        if ($e instanceof App\Exceptions\ValidationException) {
+            $response = $e->getResponse();
+        }
+
         $statusCode = 500;
 
         if ($e instanceof HttpExceptionInterface){

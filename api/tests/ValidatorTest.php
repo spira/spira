@@ -73,12 +73,11 @@ class ValidatorTest extends TestCase
         }
 
         catch (App\Exceptions\ValidationException $expected) {
-            $object = json_decode($expected->getResponse()->getContent());
+            $messages = $expected->getResponse()['invalid']->toArray();
 
-            $this->assertEquals('There was an issue with the validation of provided entity', $object->message);
-            $this->assertObjectHasAttribute('entityId', $object->invalid);
-            $this->assertEquals('mismatch_id', $object->invalid->entityId[0]->type);
-            $this->assertEquals(422, $expected->getResponse()->getStatusCode());
+            $this->assertArrayHasKey('entityId', $messages);
+            $this->assertEquals('mismatch_id', $messages['entityId'][0]['type']);
+            $this->assertEquals(422, $expected->getStatusCode());
             return;
         }
 
@@ -93,10 +92,10 @@ class ValidatorTest extends TestCase
         }
 
         catch (App\Exceptions\ValidationException $expected) {
-            $object = json_decode($expected->getResponse()->getContent());
+            $messages = $expected->getResponse()['invalid']->toArray();
 
-            $this->assertObjectHasAttribute('multiWordColumnTitle', $object->invalid);
-            $this->assertEquals(422, $expected->getResponse()->getStatusCode());
+            $this->assertArrayHasKey('multiWordColumnTitle', $messages);
+            $this->assertEquals(422, $expected->getStatusCode());
             return;
         }
 

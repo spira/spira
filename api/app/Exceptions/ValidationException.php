@@ -1,10 +1,11 @@
 <?php namespace App\Exceptions;
 
 use Illuminate\Support\MessageBag;
-use Illuminate\Http\Exception\HttpResponseException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ValidationException extends HttpResponseException
+class ValidationException extends HttpException
 {
+
     /**
      * The validation error messages.
      *
@@ -21,21 +22,28 @@ class ValidationException extends HttpResponseException
     public function __construct(MessageBag $errors)
     {
         $this->errors = $errors;
+    }
 
+    /**
+     * Returns the status code.
+     *
+     * @return int An HTTP response status code
+     */
+    public function getStatusCode()
+    {
+        return 422;
     }
 
     /**
      * Return the response instance.
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
     public function getResponse()
     {
-        return response([
+        return [
             'message' => 'There was an issue with the validation of provided entity',
             'invalid' => $this->errors,
-            'debug' => 'foobar'
-
-        ], 422);
+        ];
     }
 }
