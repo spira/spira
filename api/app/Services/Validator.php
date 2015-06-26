@@ -116,6 +116,7 @@ abstract class Validator
     /**
      * Add id to the data array to validate.
      *
+     * @throws  App\Exceptions\ValidationException
      * @param  string  $id
      * @return $this
      */
@@ -140,7 +141,7 @@ abstract class Validator
     /**
      * Validate the current data.
      *
-     * @throws \Illuminate\Http\Exception\HttpResponseException
+     * @throws App\Exceptions\ValidationException
      * @return void
      */
     public function validate()
@@ -153,6 +154,43 @@ abstract class Validator
         if (!$this->passes()) {
 
             throw new ValidationException($this->formattedErrors());
+        }
+    }
+
+    /**
+     * Validates an array of entities.
+     *
+     * @throws App\Exceptions\ValidationException
+     * @return void
+     */
+    public function validateMany()
+    {
+        $entities = $this->data;
+        $errors = [];
+
+        foreach ($entities as $entity) {
+            if (strtolower($this->app->request->method()) == 'delete') {
+                $this->data = [];
+                $this->id($entity);
+            } else {
+                $this->data = $entity;
+            }
+
+            try {
+                $this->validate();
+
+            } catch (ValidationException $e) {
+
+                array_push($errors, $this->formattedErrors()->toArray());
+                continue;
+            }
+
+            array_push($errors, null);
+        }
+
+        if (!empty(array_filter($errors))) {
+
+            throw new ValidationException(new MessageBag($errors));
         }
     }
 
