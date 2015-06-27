@@ -190,7 +190,12 @@ abstract class Validator
 
         if (!empty(array_filter($errors))) {
 
-            throw new ValidationException(new MessageBag($errors));
+            // Use merge instead of passing the errors to the MessageBag
+            // constructor, to preserve nulls
+            $errorBag = new MessageBag();
+            $errorBag->merge($errors);
+
+            throw new ValidationException($errorBag);
         }
     }
 
