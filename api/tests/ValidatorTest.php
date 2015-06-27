@@ -65,7 +65,8 @@ class ValidatorTest extends TestCase
         $validator->with(['entity_id' => 'foo'])->id('foobar');
     }
 
-    public function testIdOverwriteExceptionResponse() {
+    public function testIdOverwriteExceptionResponse()
+    {
         try {
             $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
@@ -84,7 +85,8 @@ class ValidatorTest extends TestCase
         $this->fail('An expected exception has not been raised.');
     }
 
-    public function testCamelCaseTransform() {
+    public function testCamelCaseTransform()
+    {
         try {
             $data = ['multi_word_column_title' => 0.12];
 
@@ -99,6 +101,35 @@ class ValidatorTest extends TestCase
             return;
         }
 
+        $this->fail('An expected exception has not been raised.');
+    }
+
+    public function testValidateMany()
+    {
+        $data = [['float' => 0.12], ['float' => 0.13], ['float' => 0.14]];
+
+        $this->assertNull($this->validator->with($data)->validateMany());
+    }
+
+    public function testValidateManyFails()
+    {
+        try {
+            $data = [['float' => 0.12], ['float' => 'foobar'], ['float' => 0.14]];
+
+            $this->validator->with($data)->validateMany();
+        }
+
+        catch (App\Exceptions\ValidationException $expected) {
+
+            $messages = $expected->getResponse()['invalid']->toArray();
+
+            $this->assertTrue(is_array($messages));
+            $this->assertNull($messages[0]);
+            $this->assertTrue(is_array($messages[1]));
+            $this->assertArrayHasKey('float', $messages[1]);
+            $this->assertNull($messages[2]);
+            return;
+        }
         $this->fail('An expected exception has not been raised.');
     }
 }
