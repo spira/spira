@@ -59,51 +59,17 @@ web:
       - NGINX_VHOSTS=vhosts/nginx/*.local.conf
   privileged: true
 
-
-npm:
-  image: spira/docker-npm
+devtools:
+  image: spira/docker-dev-tools
   volumes_from:
     - data
   privileged: true
-
-gulp:
-  image: spira/docker-gulp
-  volumes_from:
-    - data
   links:
     - web:nginx
     - mailcatcher:mailcatcher
-  privileged: true
-
-phpcomposer:
-  image: spira/docker-composer
-  volumes_from:
-    - data
-  privileged: true
-
-artisan:
-  image: spira/docker-artisan
-  volumes_from:
-    - data
-  links:
     - db:db
     - redis:redis
     - queue:queue
-  privileged: true
-
-ssh:
-  image: spira/docker-ssh
-  volumes_from:
-      - data
-  privileged: false
-  ports:
-      - "42222:22"
-  links:
-      - db:db
-      - redis:redis
-      - queue:queue
-  environment:
-      - SSH_PASSWORD=spira
 
 lumen:
   image: spira/docker-lumen
