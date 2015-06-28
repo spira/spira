@@ -2,18 +2,37 @@
 
 use App\Models\TestEntity;
 use Illuminate\Support\Facades\Queue;
+use Pheanstalk\Pheanstalk;
 
 class QueueTest extends TestCase
 {
 
+    protected $pheanstalk;
 
-    /**
-     * Test the connection to the queue runner
-     */
-    public function testQueue()
+    public function setUp()
     {
 
-        $userCountBefore = TestEntity::count();
+        $this->pheanstalk = new Pheanstalk(env('BEANSTALKD_HOST'));
+
+
+    }
+
+    /**
+     * Test queue is listening
+     * @group failing
+     */
+    public function testQueueConnection()
+    {
+        $this->assertTrue($this->pheanstalk->getConnection()->isServiceListening());
+    }
+
+
+    /**
+     * Test adding to the queue
+     * @group failing
+     */
+    public function testQueueAdd()
+    {
 
         Queue::push(function($job){
 
@@ -22,11 +41,14 @@ class QueueTest extends TestCase
             $job->delete();
         });
 
-        sleep(5); //wait for the queue process to run @todo find a way to halt until the runner has been processed rather than guessing
+        $job = $this->pheanstalk
+            ->watch('default')
+            ->reserve();
 
-        $userCountAfter = TestEntity::count();
+        $data = $job->getData();
+        $decoded = json_decode($data);
 
-        $this->assertNotEquals($userCountAfter, $userCountBefore, 'User count has changed');
+        $this->assertEquals("IlluminateQueueClosure", $decoded->job);
 
 
     }

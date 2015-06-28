@@ -1,5 +1,5 @@
 
-data:  
+data:
   image: spira/docker-data
   volumes:
     - /data:/data
@@ -60,7 +60,8 @@ web:
   privileged: true
 
 devtools:
-  image: spira/docker-dev-tools
+  image: spira/docker-dev-tools:latest
+#  image: spira/docker-dev-tools:phantomjs-1.9.8
   volumes_from:
     - data
   privileged: true
