@@ -324,11 +324,16 @@ class EntityTest extends TestCase
         $entities = factory(App\Models\TestEntity::class, 5)->create();
         $rowCount = $this->repository->count();
 
-        $this->delete('/test/entities', ['data' => [(string) Uuid::uuid4()]]);
+        $ids = [(string) Uuid::uuid4(), $entities->random()->entity_id, (string) Uuid::uuid4()];
+
+        $this->delete('/test/entities', ['data' => $ids]);
 
         $object = json_decode($this->response->getContent());
 
+        $this->assertTrue(is_array($object->invalid));
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertNull($object->invalid[1]);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[2]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }
