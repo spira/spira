@@ -85,8 +85,9 @@ $app->middleware([
 |
 */
 
-$app->register('App\Providers\AppServiceProvider');
-$app->register('Bosnadev\Database\DatabaseServiceProvider');
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(Bosnadev\Database\DatabaseServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------

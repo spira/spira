@@ -1,0 +1,24 @@
+FORMAT: 1A
+HOST: {{ $apiUrl }}/
+
+{{-- Inject the model factory so entities be declared with factories --}}
+@inject('factory', 'App\Services\ModelFactory')
+
+
+# Spira API
+
+Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.laravel.com) 
+
+## Current status
+* Hostname:
+    * Local: local.api.spira.io
+    * Production: (Not implemented)
+* Encryption: none
+* Protocol: http
+* Port: 8080
+
+# Spira API Root [/]
+
+This route provides this documentation!
+
+@include('documentation.entities.testEntity')

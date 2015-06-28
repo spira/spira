@@ -5,13 +5,6 @@ use GuzzleHttp\Exception\ServerException;
 
 class RestExceptionTest extends TestCase
 {
-    protected $entity;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-    }
 
     /**
      * Invalid route test
