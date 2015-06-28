@@ -12,16 +12,11 @@ class UserStorySeeder extends Seeder {
 	 */
 	public function run()
 	{
-
-        User::fakeUser([
+        factory(App\Models\User::class)->create([
             'email'=>'john.smith@example.com'
         ]);
 
-        foreach(range(0, 99) as $index){
-
-            User::fakeUser();
-
-        }
+        factory(App\Models\User::class, 99)->create();
 
 	}
 

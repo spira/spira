@@ -77,8 +77,8 @@ class TestRepositoryTest extends TestCase
         $rowCount = $this->repository->count();
 
         $entity = factory(App\Models\TestEntity::class)->make();
+        $id = $entity->entity_id;
         $entity = $entity->getAttributes();
-        $id = (string) Uuid::uuid4();
 
         $entity = $this->repository->createOrReplace($id, $entity);
         $this->assertEquals($rowCount + 1, $this->repository->count());
@@ -89,7 +89,9 @@ class TestRepositoryTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $id = $entity->entity_id;
 
-        $entityUpdate = factory(App\Models\TestEntity::class)->make();
+        $entityUpdate = factory(App\Models\TestEntity::class)->make([
+            'entity_id' => $id //make sure the id doesn't change
+        ]);
         $entityUpdate = $entityUpdate->getAttributes();
 
         $rowCount = $this->repository->count();

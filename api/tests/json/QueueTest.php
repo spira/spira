@@ -17,7 +17,7 @@ class QueueTest extends TestCase
 
         Queue::push(function($job){
 
-            TestEntity::fakeTestEntity();
+            factory(App\Models\TestEntity::class)->create();
 
             $job->delete();
         });

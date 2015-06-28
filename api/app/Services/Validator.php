@@ -122,12 +122,14 @@ abstract class Validator
      */
     public function id($id)
     {
-        // If the data already has an ID set, don't allow to override it, but
-        // instead thrown a validation exception.
-        if (array_key_exists($this->getKey(), $this->data)) {
+        /**
+         * If the entity id does not match the url id, the client is likely trying
+         * to mistakenly overwrite the entity at the url with an incorrect entity.
+         */
+        if (array_key_exists($this->getKey(), $this->data) && $this->data[$this->getKey()] !== $id) {
 
             $this->errors = new MessageBag;
-            $this->errors->add($this->getKey(), 'The existing ID should not be overwritten.');
+            $this->errors->add($this->getKey(), 'The url id does not match the json entity id.');
             $this->failed = [$this->getKey() => ['mismatch_id' => []]];
 
             throw new ValidationException($this->formattedErrors());
