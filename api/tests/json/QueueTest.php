@@ -12,14 +12,13 @@ class QueueTest extends TestCase
     public function setUp()
     {
 
+        parent::setUp();
         $this->pheanstalk = new Pheanstalk(env('BEANSTALKD_HOST'));
-
 
     }
 
     /**
      * Test queue is listening
-     * @group failing
      */
     public function testQueueConnection()
     {
@@ -29,7 +28,6 @@ class QueueTest extends TestCase
 
     /**
      * Test adding to the queue
-     * @group failing
      */
     public function testQueueAdd()
     {
