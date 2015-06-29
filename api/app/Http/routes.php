@@ -11,8 +11,24 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 $app->get('/', function() use ($app) {
-    return $app->welcome();
+
+    return view('documentation.layouts.master', [
+        'apibUrl' => '/documentation.apib'
+    ]);
+
+});
+
+$app->get('/documentation.apib', function(Request $request) use ($app) {
+
+    $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
+
+    return view('documentation.apiary', [
+        'apiUrl' => $request->root()
+    ]);
+
 });
 
 $app->group(['prefix' => 'users'], function($app){
