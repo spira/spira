@@ -35,37 +35,4 @@ class User extends BaseModel {
         return '/users';
     }
 
-    /**
-     * Generate fake user
-     * @param array $overrides
-     * @param null $seed
-     * @return User
-     */
-    public static function fakeUser($overrides = [], $seed = null){
-
-        $faker = Faker::create('au_AU');;
-
-        if ($seed){
-            $faker->seed($seed);
-        }
-
-        $userInfo = array_merge([
-            'user_id' => $faker->uuid,
-            'email' => $faker->email,
-            'password' => Hash::make('password'),
-            'first_name' => $faker->firstName,
-            'last_name' => $faker->lastName,
-            'phone' => $faker->optional(0.5)->phoneNumber,
-            'mobile' => $faker->optional(0.5)->phoneNumber,
-        ], $overrides);
-
-        $user = new User($userInfo);
-
-        $user->timestamps = true;
-        $user->save();
-
-        return $user;
-
-    }
-
 }

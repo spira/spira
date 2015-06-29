@@ -11,6 +11,8 @@
 |
 */
 
+use Carbon\Carbon;
+
 $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
@@ -36,5 +38,26 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
         'date' => $faker->date(),
         'multi_word_column_title' => true,
         'hidden' => $faker->boolean()
+    ];
+});
+
+
+
+
+$factory->define(App\Models\AuthToken::class, function (Faker\Generator $faker) use ($factory) {
+    $hostname = env('APP_HOSTNAME', 'localhost');
+
+    $user = $factory->raw(App\Models\User::class);
+
+    $now = new Carbon();
+    return [
+        'iss' => $hostname,
+        'aud' => str_replace($hostname, '.api', ''),
+        'sub' => $user['user_id'],
+        'nbf' => $now->toDateTimeString(),
+        'iat' => $now->toDateTimeString(),
+        'exp' => $now->addHour(1)->toDateTimeString(),
+        'jti' => $faker->regexify('[A-Za-z0-9]{8}'),
+        '#user' => $user,
     ];
 });

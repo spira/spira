@@ -1,27 +1,36 @@
 <?php namespace App\Models;
 
-class TestEntity extends BaseModel {
+/**
+ * Class AuthToken
+ * @package App\Models
+ *
+ * Note this model does not have an associated database table as it is an abstract
+ * data model with generated token data. It needs to extend eloquent as it needs to
+ * join on the User model
+ *
+ */
+class AuthToken extends BaseModel {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    public $table = 'test_entities';
+    public $table = false;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['entity_id', 'varchar', 'hash', 'integer', 'decimal', 'boolean', 'nullable', 'text', 'date', 'multi_word_column_title', 'hidden'];
+    protected $fillable = [];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['hidden'];
+    protected $hidden = [];
 
-    protected $primaryKey = 'entity_id';
+    protected $primaryKey = 'id';
 
     /**
      * The attributes that should be casted to native types.
@@ -29,10 +38,9 @@ class TestEntity extends BaseModel {
      * @var array
      */
     protected $casts = [
-        'decimal' => 'float',
-        'date' => 'date',
-        'created_at' => 'dateTime',
-        'updated_at' => 'dateTime'
+        'nbf' => 'dateTime',
+        'iat' => 'dateTime',
+        'exp' => 'dateTime',
     ];
 
     /**
@@ -42,7 +50,9 @@ class TestEntity extends BaseModel {
      */
     public function entityRoute()
     {
-        return '/test/entities';
+        return '/auth/jwt/login';
     }
+
+    public $appends = []; //don't show _self in model
 
 }

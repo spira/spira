@@ -1,0 +1,18 @@
+# Group Auth
+This covers all of the authentication needs including password login, token login and token refreshing 
+
+## Login [/auth/jwt/login]
+Test entities are provided as an example to cover most of the bases of what is required for a REST api. It includes
+ both unit and integration tests to verify functionality.
+
+The properties of the test entities cover the different column types. These are used to verify the typecasting & formatting for integers, dates etc.
+
+### Get new login token [GET]
++ Response 200 (application/json)
+
+    + Headers
+        
+    + Body
+
+        {!! $factory->json(\App\Models\AuthToken::class) !!}
+
