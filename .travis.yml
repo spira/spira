@@ -10,7 +10,7 @@ services:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libnotify-bin
+  - sudo apt-get install -y libnotify-bin beanstalkd
 
 install:
   # Install phantomjs@2.0.0 (remove this when https://github.com/travis-ci/travis-ci/issues/3225 is resolved)
@@ -34,10 +34,11 @@ before_script:
   - composer dumpautoload -o --working-dir api
   - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & #start api server
-  - http-server ./app/build/ -p 8001 2>&1 >/dev/null & #start webserver
+  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
+  - http-server ./app/build/ -p 8001 2>&1 >/dev/null & # start webserver
   - mailcatcher # start mailcatcher server
-  - sleep 5 #give server some time to boot
+  - beanstalkd -d -l 127.0.0.1 -p 11300 # start queue listener
+  - sleep 5 # give server some time to boot
 
 script:
   - gulp test
