@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Support\Arrayable;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
@@ -21,7 +21,7 @@ class Transformer
     /**
      * Initialize the transform manager.
      *
-     * @param  SerializerAbstract $serializer
+     * @param  SerializerAbstract  $serializer
      * @return void
      */
     public function __construct(SerializerAbstract $serializer)
@@ -33,7 +33,7 @@ class Transformer
     /**
      * Parse Include String.
      *
-     * @param array|string $includes Array or csv string of resources to include
+     * @param  array|string  $includes
      *
      * @return $this
      */
@@ -75,12 +75,12 @@ class Transformer
     /**
      * Create paginated transformed data from a collection.
      *
-     * @param  Paginator  $paginator
+     * @param  LengthAwarePaginator  $paginator
      * @param  League\Fractal\TransformerAbstract  $transformer
      * @param  string  $resourceKey
      * @return array
      */
-    public function paginatedCollection(Paginator $paginator, $transformer = null, $resourceKey = null)
+    public function paginatedCollection(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
     {
         $paginator->appends(\Request::query());
 
@@ -99,9 +99,9 @@ class Transformer
      */
     protected function getTransformer($transformer = null)
     {
-        return $transformer ?: function($data) {
+        return $transformer ?: function ($data) {
 
-            if($data instanceof ArrayableInterface) {
+            if ($data instanceof Arrayable) {
                 return $data->toArray();
             }
 

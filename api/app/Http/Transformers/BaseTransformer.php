@@ -22,6 +22,12 @@ class BaseTransformer extends TransformerAbstract
             }
         }
 
+        // Rename self to _self
+        if (array_key_exists('self', $array)) {
+            $array = ['_self' => $array['self']] + $array;
+            unset($array['self']);
+        }
+
         return $array;
     }
 

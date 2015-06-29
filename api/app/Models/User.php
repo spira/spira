@@ -26,6 +26,16 @@ class User extends BaseModel {
     protected $primaryKey = 'user_id';
 
     /**
+     * Get the access route for the entity.
+     *
+     * @return string
+     */
+    public function entityRoute()
+    {
+        return '/users';
+    }
+
+    /**
      * Generate fake user
      * @param array $overrides
      * @param null $seed

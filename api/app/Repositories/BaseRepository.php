@@ -1,7 +1,9 @@
 <?php namespace App\Repositories;
 
+use App\Exceptions\FatalErrorException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as App;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 abstract class BaseRepository
 {
@@ -39,7 +41,19 @@ abstract class BaseRepository
     abstract protected function model();
 
     /**
-     * Get all rows.
+     * Get an entity by id.
+     *
+     * @param  string  $id
+     * @param  array   $columns
+     * @return mixed
+     */
+    public function find($id, $columns = array('*'))
+    {
+        return $this->model->findOrFail($id, $columns);
+    }
+
+    /**
+     * Get all entities.
      *
      * @param  array  $columns
      * @return mixed
@@ -50,26 +64,174 @@ abstract class BaseRepository
     }
 
     /**
-     * Create and store a new instance of the model.
+     * Create and store a new instance of an entity.
      *
      * @param  array  $data
-     * @return mixed
+     * @return array
      */
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $entity = $this->model->create($data);
+
+        return [$entity->self];
     }
 
     /**
-     * Get model by id.
+     * Create and store a collection of new entities.
      *
+     * @param  array  $models
+     * @return void
+     */
+    public function createMany(array $models)
+    {
+        $this->app->db->beginTransaction();
+
+        foreach ($models as $model) {
+            $this->model->create($model);
+        }
+
+        $this->app->db->commit();
+    }
+
+    /**
+     * Create or replace an entity by id.
+     *
+     * @throws App\Exceptions\FatalException
      * @param  string  $id
-     * @param  array  $columns
+     * @param  array   $data
+     * @return array
+     */
+    public function createOrReplace($id, array $data)
+    {
+        $keyName = $this->model->getKeyName();
+
+        // Make sure the data does not contain a different id for the entity.
+        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
+            throw new FatalErrorException('Attempt to override entity ID value.');
+        }
+
+        try {
+
+            $model = $this->find($id);
+
+        } catch (ModelNotFoundException $e) {
+
+            $link = $this->create(array_add($data, $keyName, $id));
+
+            return [$link[0]];
+        }
+
+        foreach ($model->getAttributes() as $key => $value) {
+            if($value !== 0) {
+                if (!in_array($key, ['created_at', 'updated_at'])) {
+                    $model->{$key} = null;
+                }
+            }
+        }
+
+        $model->update(array_add($data, $keyName, $id));
+
+        return [$model->self];
+    }
+
+    /**
+     * Create or replace a colleciton of entities.
+     *
+     * @param  array  $entities
+     * @return array
+     */
+    public function createOrReplaceMany(array $entities)
+    {
+        $this->app->db->beginTransaction();
+
+        $links = [];
+
+        foreach ($entities as $entity) {
+            $id = array_pull($entity, $this->model->getKeyName());
+
+            $link = $this->createOrReplace($id, $entity);
+            array_push($links, $link[0]);
+        }
+
+        $this->app->db->commit();
+
+        return $links;
+    }
+
+    /**
+     * Update an entity by id.
+     *
+     * @throws App\Exceptions\FatalException
+     * @param  string  $id
+     * @param  array   $data
      * @return mixed
      */
-    public function find($id, $columns = array('*'))
+    public function update($id, array $data)
     {
-        return $this->model->findOrFail($id, $columns);
+        // Make sure the data does not contain a different id for the entity.
+        $keyName = $this->model->getKeyName();
+        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
+            throw new FatalErrorException('Attempt to override entity ID value.');
+        }
+
+        $model = $this->find($id);
+
+        return $model->update($data);
+    }
+
+    /**
+     * Update a collection of entities.
+     *
+     * @param  array  $entities
+     * @return void
+     */
+    public function updateMany(array $entities)
+    {
+        $this->app->db->beginTransaction();
+
+        foreach ($entities as $entity) {
+            $id = array_pull($entity, $this->model->getKeyName());
+
+            $this->update($id, $entity);
+        }
+
+        $this->app->db->commit();
+    }
+
+    /**
+     * Delete an entity by id.
+     *
+     * @param  string  $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        return $this->model->destroy($id);
+    }
+
+    /**
+     * Delete a collection of entities by their ids.
+     *
+     * @param  array  $ids
+     * @return void
+     */
+    public function deleteMany(array $ids)
+    {
+        $this->app->db->beginTransaction();
+
+        $this->model->destroy($ids);
+
+        $this->app->db->commit();
+    }
+
+    /**
+     * Get number of items in storage.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->model->count();
     }
 
     /**
@@ -78,7 +240,7 @@ abstract class BaseRepository
      * @throws Exception
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function makeModel()
+    protected function makeModel()
     {
         $model = $this->app->make($this->model());
 
