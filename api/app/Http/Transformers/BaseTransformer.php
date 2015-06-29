@@ -24,8 +24,7 @@ class BaseTransformer extends TransformerAbstract
 
         // Rename self to _self
         if (array_key_exists('self', $array)) {
-            $array = ['_self' => $array['self']] + $array;
-            unset($array['self']);
+            $array = ['_self' => array_pull($array, 'self')] + $array;
         }
 
         return $array;
