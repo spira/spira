@@ -86,11 +86,14 @@ class TestRepositoryTest extends TestCase
 
     public function testCreateOrReplaceUpdate()
     {
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(App\Models\TestEntity::class)->create([
+            'varchar' => 'foobar',
+        ]);
         $id = $entity->entity_id;
 
         $entityUpdate = factory(App\Models\TestEntity::class)->make([
-            'entity_id' => $id //make sure the id doesn't change
+            'entity_id' => $id, //make sure the id doesn't change
+            'varchar' => 'foobaz',
         ]);
         $entityUpdate = $entityUpdate->getAttributes();
 
