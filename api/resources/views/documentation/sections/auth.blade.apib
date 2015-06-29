@@ -14,5 +14,5 @@ The properties of the test entities cover the different column types. These are 
         
     + Body
 
-        {!! $factory->json(\App\Models\AuthToken::class) !!}
+        {!! $factory->json([\App\Models\AuthToken::class, 'token']) !!}
 

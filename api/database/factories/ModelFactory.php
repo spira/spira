@@ -11,6 +11,7 @@
 |
 */
 
+use App\Services\ModelFactory;
 use Carbon\Carbon;
 
 $factory->define(App\Models\User::class, function ($faker) {
@@ -42,9 +43,10 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
 });
 
 
-
-
-$factory->define(App\Models\AuthToken::class, function (Faker\Generator $faker) use ($factory) {
+/**
+ * The body for the json web token
+ */
+$factory->defineAs(App\Models\AuthToken::class, 'body', function (Faker\Generator $faker) use ($factory) {
     $hostname = env('APP_HOSTNAME', 'localhost');
 
     $user = $factory->raw(App\Models\User::class);
@@ -52,7 +54,7 @@ $factory->define(App\Models\AuthToken::class, function (Faker\Generator $faker) 
     $now = new Carbon();
     return [
         'iss' => $hostname,
-        'aud' => str_replace($hostname, '.api', ''),
+        'aud' => str_replace('.api', '', $hostname),
         'sub' => $user['user_id'],
         'nbf' => $now->toDateTimeString(),
         'iat' => $now->toDateTimeString(),
@@ -60,4 +62,29 @@ $factory->define(App\Models\AuthToken::class, function (Faker\Generator $faker) 
         'jti' => $faker->regexify('[A-Za-z0-9]{8}'),
         '#user' => $user,
     ];
+});
+
+/**
+ * This is the json web token response. It relies on the App\Models\AuthToken::class 'body' factory above
+ */
+$factory->defineAs(App\Models\AuthToken::class, 'token', function (Faker\Generator $faker) use ($factory) {
+
+    $factoryTransformer = new ModelFactory;
+
+    $body = $factoryTransformer->json([App\Models\AuthToken::class, 'body']);
+
+    $header = [
+        'alg' => "RS256",
+        'typ' => "JWT",
+    ];
+
+    $signature = $faker->regexify('[A-Za-z0-9]{30}'); //note the signature is not a true encoding of the auth certificate.
+
+    $token = base64_encode(json_encode($header)) .".". base64_encode($body) .".". $signature;
+
+    return [
+        'token' => $token,
+        'decoded_token_body' => json_decode($body),
+    ];
+
 });

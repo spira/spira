@@ -55,4 +55,17 @@ class AuthToken extends BaseModel {
 
     public $appends = []; //don't show _self in model
 
+    public function getToken($tokenBody){
+
+        $header = [
+            'alg' => "HS256",
+            'typ' => "JWT"
+        ];
+
+        $token = json_encode($header) . $tokenBody;
+
+
+
+    }
+
 }
