@@ -1,0 +1,21 @@
+{
+  "name": "spira-api",
+  "version": "0.0.0",
+  "description": "Lumen RESTful API",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spira/spira.git"
+  },
+  "keywords": [
+    "laravel",
+    "lumen",
+    "rest",
+    "api"
+  ],
+  "author": "Zak Henry",
+  "license": "MIT",
+  "devDependencies": {
+    "api-blueprint-validator": "^0.1.3"
+  }
+}
