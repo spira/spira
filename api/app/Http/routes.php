@@ -26,7 +26,8 @@ $app->get('/documentation.apib', function(Request $request) use ($app) {
     $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
     return view('documentation.apiary', [
-        'apiUrl' => $request->root()
+        'apiUrl' => $request->root(),
+        'faker' => Faker\Factory::create(),
     ]);
 
 });
