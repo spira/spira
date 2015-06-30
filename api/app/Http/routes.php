@@ -56,3 +56,8 @@ $app->group(['prefix' => 'test'], function($app){
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
+
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
+{
+    $app->get('jwt/login', 'AuthController@login');
+});
