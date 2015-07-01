@@ -38,9 +38,9 @@ class AuthToken extends BaseModel {
      * @var array
      */
     protected $casts = [
-        'nbf' => 'dateTime',
-        'iat' => 'dateTime',
-        'exp' => 'dateTime',
+        'nbf' => 'integer',
+        'iat' => 'integer',
+        'exp' => 'integer',
     ];
 
     /**
