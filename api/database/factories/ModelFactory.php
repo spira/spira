@@ -50,6 +50,7 @@ $factory->defineAs(App\Models\AuthToken::class, 'body', function (Faker\Generato
     $hostname = env('APP_HOSTNAME', 'localhost');
 
     $user = $factory->raw(App\Models\User::class);
+    unset($user['password']);
 
     $now = new Carbon();
     return [
