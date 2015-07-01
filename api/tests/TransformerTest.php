@@ -54,6 +54,19 @@ class TransformerTest extends TestCase
         $this->assertArrayHasKey('_self', $this->service->item($data, new $this->transformer));
     }
 
+    public function testItemWithNestedSelfKey()
+    {
+        $data = m::mock('Illuminate\Contracts\Support\Arrayable');
+        $data->shouldReceive('toArray')
+            ->once()
+            ->andReturn(['self' => 'foobar', 'foo' => ['self' => 'foobar']]);
+
+        $data = $this->service->item($data, new $this->transformer);
+
+        $this->assertArrayHasKey('_self', $data);
+        $this->assertArrayHasKey('_self', $data['foo']);
+    }
+
     /**
      * Testing Transformer Service.
      */

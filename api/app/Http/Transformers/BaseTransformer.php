@@ -30,11 +30,8 @@ class BaseTransformer extends TransformerAbstract
             }
         }
 
-
         // Rename self to _self
-        if (array_key_exists('self', $array)) {
-            $array = ['_self' => array_pull($array, 'self')] + $array;
-        }
+        $array = $this->renameSelfKey($array);
 
         return $array;
     }
@@ -82,6 +79,24 @@ class BaseTransformer extends TransformerAbstract
             }
         }
 
+        // Update potential self keys
+        $newArray = $this->renameSelfKey($newArray);
+
         return $newArray;
+    }
+
+    /**
+     * Renames the key self to _self if it exists.
+     *
+     * @param  array  $array
+     * @return $array
+     */
+    protected function renameSelfKey(array $array)
+    {
+        if (array_key_exists('self', $array)) {
+            $array = ['_self' => array_pull($array, 'self')] + $array;
+        }
+
+        return $array;
     }
 }
