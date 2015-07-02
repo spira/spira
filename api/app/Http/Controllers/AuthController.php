@@ -7,7 +7,7 @@ use Tymon\JWTAuth\JWTAuth;
 use Tymon\JWTAuth\JWTManager;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     /**
      * JWT Auth
@@ -50,6 +50,6 @@ class AuthController extends Controller
         }
 
         // all good so return the token
-        return response(new AuthToken($token, $this->jwtAuth));
+        return $this->item(new AuthToken($token, $this->jwtAuth));
     }
 }

@@ -89,6 +89,9 @@ class AuthToken extends BaseModel
         // Set the host attributes
         $body['iss'] = $body['aud'] = Request::getHttpHost();
 
+        // Get the user data
+        $body['#user'] = $this->jwtAuth->toUser($this->token)->toArray();
+
         return $body;
     }
 
