@@ -1,5 +1,7 @@
 <?php namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * Class AuthToken
  * @package App\Models
@@ -9,19 +11,21 @@
  * join on the User model
  *
  */
-class AuthToken extends BaseModel {
+class AuthToken extends BaseModel
+{
     /**
      * The database table used by the model.
      *
      * @var string
      */
     public $table = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['token'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -63,9 +67,5 @@ class AuthToken extends BaseModel {
         ];
 
         $token = json_encode($header) . $tokenBody;
-
-
-
     }
-
 }
