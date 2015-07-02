@@ -33,7 +33,7 @@ class AuthToken extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['token', 'iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti'];
+    protected $fillable = ['token', 'decoded_token_body'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -50,9 +50,9 @@ class AuthToken extends BaseModel
      * @var array
      */
     protected $casts = [
-        // 'nbf' => 'dateTime',
-        // 'iat' => 'dateTime',
-        // 'exp' => 'dateTime',
+        'nbf' => 'dateTime',
+        'iat' => 'dateTime',
+        'exp' => 'dateTime',
     ];
 
     /**
@@ -65,36 +65,31 @@ class AuthToken extends BaseModel
     public function __construct($token, JWTAuth $jwtAuth)
     {
         $this->jwtAuth = $jwtAuth;
+        $decoded_token_body = [];
 
+        parent::__construct(compact('token', 'decoded_token_body'));
+    }
+
+    /**
+     * Get the decoded token body attribute.
+     *
+     * @return array
+     */
+    public function getDecodedTokenBodyAttribute()
+    {
         // Prepare the attributes, and attribute order
-        $attr = array_fill_keys(
-            ['iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti'],
+        $body = array_fill_keys(
+            ['iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti', '#user'],
             null
         );
-        parent::__construct(compact('token') + $attr);
 
-        // Set initial attribute values
-        $this->fill($jwtAuth->getPayload($token)->toArray());
-    }
+        $payload = $this->jwtAuth->getPayload($this->token)->toArray();
+        $body = array_merge($body, $payload);
 
-    /**
-     * Get the ISS attribute.
-     *
-     * @return string
-     */
-    public function getIssAttribute()
-    {
-        return Request::getHttpHost();
-    }
+        // Set the host attributes
+        $body['iss'] = $body['aud'] = Request::getHttpHost();
 
-    /**
-     * Get the AUD attribute.
-     *
-     * @return string
-     */
-    public function getAudAttribute()
-    {
-        return Request::getHttpHost();
+        return $body;
     }
 
     /**
