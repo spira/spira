@@ -2,8 +2,13 @@
 
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends BaseModel {
+class User extends BaseModel implements AuthenticatableContract
+{
+    use Authenticatable;
+
     /**
      * The database table used by the model.
      *
