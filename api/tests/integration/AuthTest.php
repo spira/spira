@@ -26,8 +26,6 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        // $this->setExpectedException('App\Exceptions\ValidationException');
-
         $user = factory(App\Models\User::class)->create();
 
         $this->get('/auth/jwt/login', [
@@ -36,5 +34,18 @@ class AuthTest extends TestCase
         ]);
 
         $this->assertResponseStatus('401');
+    }
+
+    public function testFailedTokenEncoding()
+    {
+        $user = factory(App\Models\User::class)->create();
+        $this->app->config->set('jwt.algo', 'foobar');
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW'   => 'password',
+        ]);
+
+        $this->assertResponseStatus('500');
     }
 }

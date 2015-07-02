@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use RuntimeException;
 use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class AuthController extends BaseController
             }
         } catch (JWTException $e) {
             // Something went wrong whilst attempting to encode the token
-            return response()->json(['error' => 'could_not_create_token'], 500);
+            throw new RuntimeException('Token could not be encoded.');
         }
 
         // All good so return the token
