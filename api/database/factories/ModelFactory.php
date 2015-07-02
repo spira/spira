@@ -57,9 +57,9 @@ $factory->defineAs(App\Models\AuthToken::class, 'body', function (Faker\Generato
         'iss' => $hostname,
         'aud' => str_replace('.api', '', $hostname),
         'sub' => $user['user_id'],
-        'nbf' => $now->toDateTimeString(),
-        'iat' => $now->toDateTimeString(),
-        'exp' => $now->addHour(1)->toDateTimeString(),
+        'nbf' => $now->timestamp,
+        'iat' => $now->timestamp,
+        'exp' => $now->addHour(1)->timestamp,
         'jti' => $faker->regexify('[A-Za-z0-9]{8}'),
         '#user' => $user,
     ];
