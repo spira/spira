@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\AuthToken;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Tymon\JWTAuth\JWTAuth;
+use Tymon\JWTAuth\JWTManager;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -38,7 +41,7 @@ class AuthController extends Controller
 
         try {
             // attempt to verify the credentials and create a token for the user
-            if (! $token = $this->jwtAuth->attempt($credentials)) {
+            if (!$token = $this->jwtAuth->attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } catch (JWTException $e) {
@@ -47,6 +50,6 @@ class AuthController extends Controller
         }
 
         // all good so return the token
-        return response()->json(compact('token'));
+        return response(new AuthToken($token, $this->jwtAuth));
     }
 }

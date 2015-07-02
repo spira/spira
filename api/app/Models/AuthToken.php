@@ -1,7 +1,8 @@
 <?php namespace App\Models;
 
+use Request;
+use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class AuthToken
  * @package App\Models
@@ -14,6 +15,13 @@ use Illuminate\Database\Eloquent\Model;
 class AuthToken extends BaseModel
 {
     /**
+     * JWT Auth
+     *
+     * @var Tymon\JWTAuth\JWTAuth
+     */
+    protected $jwtAuth;
+
+    /**
      * The database table used by the model.
      *
      * @var string
@@ -25,7 +33,7 @@ class AuthToken extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['token'];
+    protected $fillable = ['token', 'iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -42,10 +50,52 @@ class AuthToken extends BaseModel
      * @var array
      */
     protected $casts = [
-        'nbf' => 'dateTime',
-        'iat' => 'dateTime',
-        'exp' => 'dateTime',
+        // 'nbf' => 'dateTime',
+        // 'iat' => 'dateTime',
+        // 'exp' => 'dateTime',
     ];
+
+    /**
+     * Assign dependencies and initialize attributes.
+     *
+     * @param  string  $token
+     * @param  JWTAuth  $jwtAuth
+     * @return void
+     */
+    public function __construct($token, JWTAuth $jwtAuth)
+    {
+        $this->jwtAuth = $jwtAuth;
+
+        // Prepare the attributes, and attribute order
+        $attr = array_fill_keys(
+            ['iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti'],
+            null
+        );
+        parent::__construct(compact('token') + $attr);
+
+        // Set initial attribute values
+        $this->fill($jwtAuth->getPayload($token)->toArray());
+    }
+
+    /**
+     * Get the ISS attribute.
+     *
+     * @return string
+     */
+    public function getIssAttribute()
+    {
+        return Request::getHttpHost();
+    }
+
+    /**
+     * Get the AUD attribute.
+     *
+     * @return string
+     */
+    public function getAudAttribute()
+    {
+        return Request::getHttpHost();
+    }
 
     /**
      * Get the access route for the entity.
