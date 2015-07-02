@@ -18,6 +18,13 @@ class AuthController extends BaseController
     protected $jwtAuth;
 
     /**
+     * Transformer to use for responses.
+     *
+     * @var string
+     */
+    protected $transformer = 'App\Http\Transformers\AuthTransformer';
+
+    /**
      * Assign dependencies.
      *
      * @param  JWTAuth  $jwtAuth
