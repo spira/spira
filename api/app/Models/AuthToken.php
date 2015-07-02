@@ -104,11 +104,12 @@ class AuthToken extends Model
     /**
      * Get the user attribute.
      *
+     * @param  mixed  $attr
      * @return array
      */
-    public function getUserAttribute()
+    public function getUserAttribute($attr)
     {
-        return $this->jwtAuth->toUser($this->token)->toArray();
+        return $attr ?: $this->jwtAuth->toUser($this->token)->toArray();
     }
 
     /**
