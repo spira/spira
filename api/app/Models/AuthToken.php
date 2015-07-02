@@ -3,16 +3,15 @@
 use Request;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Database\Eloquent\Model;
+
 /**
  * Class AuthToken
  * @package App\Models
  *
  * Note this model does not have an associated database table as it is an abstract
- * data model with generated token data. It needs to extend eloquent as it needs to
- * join on the User model
- *
+ * data model with generated token data.
  */
-class AuthToken extends BaseModel
+class AuthToken extends Model
 {
     /**
      * JWT Auth
@@ -22,27 +21,25 @@ class AuthToken extends BaseModel
     protected $jwtAuth;
 
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    public $table = false;
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['token', 'decoded_token_body'];
+    protected $fillable = ['token', 'iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti', 'user'];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * The attributes that should be visible in arrays.
      *
      * @var array
      */
-    protected $hidden = [];
+    protected $visible = ['token', 'decoded_token_body'];
 
-    protected $primaryKey = 'id';
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    public $appends = ['decoded_token_body'];
 
     /**
      * The attributes that should be casted to native types.
@@ -56,18 +53,35 @@ class AuthToken extends BaseModel
     ];
 
     /**
-     * Assign dependencies and initialize attributes.
+     * Create a new Eloquent model instance.
      *
-     * @param  string  $token
-     * @param  JWTAuth  $jwtAuth
+     * @param  array  $attributes
      * @return void
      */
-    public function __construct($token, JWTAuth $jwtAuth)
+    public function __construct(array $attributes = [])
     {
-        $this->jwtAuth = $jwtAuth;
-        $decoded_token_body = [];
+        $this->jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
 
-        parent::__construct(compact('token', 'decoded_token_body'));
+        $attributes = $attributes + $this->claimsToAttributes($attributes['token']);
+
+        parent::__construct($attributes);
+    }
+
+    /**
+     * Convert the payload claims to model attributes.
+     *
+     * @param  string $token
+     * @return array
+     */
+    protected function claimsToAttributes($token)
+    {
+        // Prepare the attributes, and attribute order
+        $body = array_fill_keys(array_except($this->fillable, 'token'), null);
+
+        $payload = $this->jwtAuth->getPayload($token)->toArray();
+        $body = array_merge($body, $payload);
+
+        return $body;
     }
 
     /**
@@ -77,35 +91,45 @@ class AuthToken extends BaseModel
      */
     public function getDecodedTokenBodyAttribute()
     {
-        // Prepare the attributes, and attribute order
-        $body = array_fill_keys(
-            ['iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti', '#user'],
-            null
-        );
+        foreach (array_keys(array_except($this->getAttributes(), ['token', 'user'])) as $key) {
+            $body[$key] = $this->getAttribute($key);
+        }
 
-        $payload = $this->jwtAuth->getPayload($this->token)->toArray();
-        $body = array_merge($body, $payload);
-
-        // Set the host attributes
-        $body['iss'] = $body['aud'] = Request::getHttpHost();
-
-        // Get the user data
-        $body['#user'] = $this->jwtAuth->toUser($this->token)->toArray();
+        // Map the user key with #
+        $body['#user'] = $this->user;
 
         return $body;
     }
 
     /**
-     * Get the access route for the entity.
+     * Get the user attribute.
+     *
+     * @return array
+     */
+    public function getUserAttribute()
+    {
+        return $this->jwtAuth->toUser($this->token)->toArray();
+    }
+
+    /**
+     * Get the AUD attribute.
      *
      * @return string
      */
-    public function entityRoute()
+    public function getAudAttribute()
     {
-        return '/auth/jwt/login';
+        return Request::getHttpHost();
     }
 
-    public $appends = []; //don't show _self in model
+    /**
+     * Get the ISS attribute.
+     *
+     * @return string
+     */
+    public function getIssAttribute()
+    {
+        return Request::getHttpHost();
+    }
 
     public function getToken($tokenBody){
 

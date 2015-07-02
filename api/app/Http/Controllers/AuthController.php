@@ -4,7 +4,6 @@ use RuntimeException;
 use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
-use Illuminate\Support\MessageBag;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -16,13 +15,6 @@ class AuthController extends BaseController
      * @var Tymon\JWTAuth\JWTAuth
      */
     protected $jwtAuth;
-
-    /**
-     * Transformer to use for responses.
-     *
-     * @var string
-     */
-    protected $transformer = 'App\Http\Transformers\AuthTransformer';
 
     /**
      * Assign dependencies.
@@ -60,6 +52,6 @@ class AuthController extends BaseController
         }
 
         // All good so return the token
-        return $this->item(new AuthToken($token, $this->jwtAuth));
+        return $this->item(new AuthToken(compact('token')));
     }
 }
