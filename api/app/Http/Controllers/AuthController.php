@@ -1,10 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\Models\AuthToken;
-use Illuminate\Http\Request;
-use Laravel\Lumen\Routing\Controller;
 use Tymon\JWTAuth\JWTAuth;
-use Tymon\JWTAuth\JWTManager;
+use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
+use App\Exceptions\ValidationException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends BaseController
@@ -20,6 +20,7 @@ class AuthController extends BaseController
      * Assign dependencies.
      *
      * @param  JWTAuth  $jwtAuth
+     * @return void
      */
     public function __construct(JWTAuth $jwtAuth)
     {
@@ -40,16 +41,22 @@ class AuthController extends BaseController
         ];
 
         try {
-            // attempt to verify the credentials and create a token for the user
+            // Attempt to verify the credentials and create a token for the user
             if (!$token = $this->jwtAuth->attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+
+                throw new ValidationException(new MessageBag([
+                    'credentials' => [
+                        'type' => 'invalid',
+                        'message' => 'The credentials are not valid.'
+                    ]
+                ]));
             }
         } catch (JWTException $e) {
-            // something went wrong whilst attempting to encode the token
+            // Something went wrong whilst attempting to encode the token
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        // all good so return the token
+        // All good so return the token
         return $this->item(new AuthToken($token, $this->jwtAuth));
     }
 }
