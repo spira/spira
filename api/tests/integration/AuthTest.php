@@ -23,4 +23,18 @@ class AuthTest extends TestCase
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['#user']);
     }
+
+    public function testFailedLogin()
+    {
+        // $this->setExpectedException('App\Exceptions\ValidationException');
+
+        $user = factory(App\Models\User::class)->create();
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW'   => 'foobar',
+        ]);
+
+        $this->assertResponseStatus('401');
+    }
 }

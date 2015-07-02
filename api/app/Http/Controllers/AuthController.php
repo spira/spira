@@ -4,7 +4,7 @@ use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
-use App\Exceptions\ValidationException;
+use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends BaseController
@@ -44,12 +44,7 @@ class AuthController extends BaseController
             // Attempt to verify the credentials and create a token for the user
             if (!$token = $this->jwtAuth->attempt($credentials)) {
 
-                throw new ValidationException(new MessageBag([
-                    'credentials' => [
-                        'type' => 'invalid',
-                        'message' => 'The credentials are not valid.'
-                    ]
-                ]));
+                throw new UnauthorizedException;
             }
         } catch (JWTException $e) {
             // Something went wrong whilst attempting to encode the token
