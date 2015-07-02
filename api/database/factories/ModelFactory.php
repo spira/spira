@@ -49,7 +49,7 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
 $factory->defineAs(App\Models\AuthToken::class, 'body', function (Faker\Generator $faker) use ($factory) {
     $hostname = env('APP_HOSTNAME', 'localhost');
 
-    $user = $factory->raw(App\Models\User::class);
+    $user = $factory->make(App\Models\User::class)->toArray();
     unset($user['password']);
 
     $now = new Carbon();
