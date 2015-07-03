@@ -60,9 +60,9 @@ class ModelFactoryTest extends TestCase
 
 
     /**
-     * Test that call can restrict the columns returned
+     * Test that call can restrict the columns returned for a single entity
      */
-    public function testPropertyLimitWhitelist()
+    public function testPropertyLimitWhitelistEntity()
     {
 
         $retrieveOnly = ['firstName', 'lastName'];
@@ -76,9 +76,25 @@ class ModelFactoryTest extends TestCase
     }
 
     /**
-     * Test that call can restrict the columns returned by blacklist
+     * Test that call can restrict the columns returned for a group of entities
      */
-    public function testPropertyLimitBlacklist()
+    public function testPropertyLimitWhitelistCollection()
+    {
+
+        $retrieveOnly = ['firstName', 'lastName'];
+
+        $serviceJson = $this->modelFactory->json(App\Models\User::class, 2, [], $retrieveOnly);
+
+        $decoded = json_decode($serviceJson, true);
+
+        $this->assertEquals($retrieveOnly, array_keys($decoded[0]));
+
+    }
+
+    /**
+     * Test that call can restrict the columns returned by blacklist for a single entity
+     */
+    public function testPropertyLimitBlacklistEntity()
     {
 
         $dontRetrieve = ['firstName'];
@@ -88,6 +104,22 @@ class ModelFactoryTest extends TestCase
         $decoded = json_decode($serviceJson, true);
 
         $this->assertArrayNotHasKey($dontRetrieve[0], array_keys($decoded));
+
+    }
+
+    /**
+     * Test that call can restrict the columns returned by blacklist for a group of entities
+     */
+    public function testPropertyLimitBlacklistCollection()
+    {
+
+        $dontRetrieve = ['firstName'];
+
+        $serviceJson = $this->modelFactory->json(App\Models\User::class, 2, [], $dontRetrieve, true);
+
+        $decoded = json_decode($serviceJson, true);
+
+        $this->assertArrayNotHasKey($dontRetrieve[0], array_keys($decoded[0]));
 
     }
 }
