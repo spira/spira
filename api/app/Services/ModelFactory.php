@@ -68,12 +68,10 @@ class ModelFactory
 
                 case 'item':
                 default:
-                    $transformedEntity = $blacklistProperties ? array_except($entity, $properties) : array_only($entity, $properties);
+                    $transformedEntity = $blacklistProperties ? array_except($transformedEntity, $properties) : array_only($transformedEntity, $properties);
             }
 
-            dd($properties, $transformedEntity);
         }
-
 
 
 
