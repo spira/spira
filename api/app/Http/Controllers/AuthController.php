@@ -6,6 +6,7 @@ use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class AuthController extends BaseController
 {
@@ -41,17 +42,44 @@ class AuthController extends BaseController
         ];
 
         try {
-            // Attempt to verify the credentials and create a token for the user
             if (!$token = $this->jwtAuth->attempt($credentials)) {
 
                 throw new UnauthorizedException;
             }
         } catch (JWTException $e) {
-            // Something went wrong whilst attempting to encode the token
             throw new RuntimeException('Token could not be encoded.');
         }
 
-        // All good so return the token
+        return $this->item(new AuthToken(compact('token')));
+    }
+
+    /**
+     * Refresh a login token.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function refresh(Request $request)
+    {
+        if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
+            throw new RuntimeException('Token not provided.');
+        }
+
+        try {
+            $user = $this->jwtAuth->authenticate((string) $token);
+        }
+        catch (TokenExpiredException $e) {
+            throw new UnauthorizedException;
+        }
+        catch (JWTException $e) {
+            throw new RuntimeException('Token is invalid.');
+        }
+
+        if (!$user) {
+            throw new RuntimeException('The user does not exist.');
+        }
+
+        $token = $this->jwtAuth->refresh($token);
         return $this->item(new AuthToken(compact('token')));
     }
 }

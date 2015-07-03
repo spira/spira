@@ -39,7 +39,7 @@ class AuthToken extends Model
      *
      * @var array
      */
-    public $appends = ['decoded_token_body'];
+    protected $appends = ['decoded_token_body'];
 
     /**
      * The attributes that should be casted to native types.
@@ -130,15 +130,5 @@ class AuthToken extends Model
     public function getIssAttribute()
     {
         return Request::getHttpHost();
-    }
-
-    public function getToken($tokenBody){
-
-        $header = [
-            'alg' => "HS256",
-            'typ' => "JWT"
-        ];
-
-        $token = json_encode($header) . $tokenBody;
     }
 }

@@ -1,10 +1,34 @@
 <?php
 
+use Tymon\JWTAuth\Token;
+use Tymon\JWTAuth\Payload;
+use Tymon\JWTAuth\Claims\Issuer;
+use Tymon\JWTAuth\Claims\IssuedAt;
+use Tymon\JWTAuth\Claims\Expiration;
+use Tymon\JWTAuth\Claims\NotBefore;
+use Tymon\JWTAuth\Claims\Audience;
+use Tymon\JWTAuth\Claims\Subject;
+use Tymon\JWTAuth\Claims\JwtId;
+use Tymon\JWTAuth\Claims\Custom;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AuthTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function callRefreshToken($token)
+    {
+        $this->get('/auth/jwt/refresh', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+    }
+
+    protected function assertRuntimeError($message)
+    {
+        $body = json_decode($this->response->getContent());
+        $this->assertResponseStatus(500);
+        $this->assertContains($message, $body->message);
+    }
 
     public function testLogin()
     {
@@ -33,7 +57,7 @@ class AuthTest extends TestCase
             'PHP_AUTH_PW'   => 'foobar',
         ]);
 
-        $this->assertResponseStatus('401');
+        $this->assertResponseStatus(401);
     }
 
     public function testFailedTokenEncoding()
@@ -46,6 +70,71 @@ class AuthTest extends TestCase
             'PHP_AUTH_PW'   => 'password',
         ]);
 
-        $this->assertResponseStatus('500');
+        $this->assertResponseStatus(500);
+    }
+
+    public function testRefresh()
+    {
+        $user = factory(App\Models\User::class)->create();
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $token = $jwtAuth->fromUser($user);
+
+        $this->callRefreshToken($token);
+
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseOk();
+
+        $this->assertNotEquals($token, $object->token);
+    }
+
+    public function testRefreshExpiredToken()
+    {
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+
+        $claims = [
+            new Subject(1),
+            new Issuer('http://foo.bar'),
+            new Expiration(123 - 3600),
+            new NotBefore(123),
+            new IssuedAt(123),
+            new JwtId('foo')
+        ];
+
+        $this->validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
+        $this->validator->shouldReceive('setRefreshFlow->check');
+        $payload = new Payload($claims, $this->validator, true);
+
+        $token = $jwtAuth->encode($payload);
+
+        $this->callRefreshToken($token);
+
+        $this->assertResponseStatus(401);
+    }
+
+    public function testRefreshInvalidToken()
+    {
+        $token = 'foo.bar.baz';
+
+        $this->callRefreshToken($token);
+
+        $this->assertRuntimeError('invalid');
+    }
+
+    public function testRefreshMissingToken()
+    {
+        $this->get('/auth/jwt/refresh');
+
+        $this->assertRuntimeError('not provided');
+    }
+
+    public function testRefreshMissingUser()
+    {
+        $user = factory(App\Models\User::class)->make();
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $token = $jwtAuth->fromUser($user);
+
+        $this->callRefreshToken($token);
+
+        $this->assertRuntimeError('not exist');
     }
 }

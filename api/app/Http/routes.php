@@ -60,4 +60,5 @@ $app->group(['prefix' => 'test'], function($app){
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
 {
     $app->get('jwt/login', 'AuthController@login');
+    $app->get('jwt/refresh', 'AuthController@refresh');
 });
