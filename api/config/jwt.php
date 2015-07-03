@@ -12,8 +12,8 @@ return [
     */
 
     'secret' => [
-        'public' => '/home/vagrant/Code/spira/spira/api/storage/app/keys/public.pem',
-        'private' => '/home/vagrant/Code/spira/spira/api/storage/app/keys/private.pem'
+        'public' => storage_path('app/keys/public.pem'),
+        'private' => storage_path('app/keys/private.pem')
     ],
 
     /*
