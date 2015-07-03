@@ -14,7 +14,7 @@ abstract class BaseModel extends Model
      *
      * @var array
      */
-    protected $appends = ['self'];
+    public $appends = ['self'];
 
     /**
      * Get the access route for the entity.

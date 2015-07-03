@@ -2,6 +2,7 @@
 
 /**
  * Class ModelFactoryTest
+ * @group test
  */
 class ModelFactoryTest extends TestCase
 {
