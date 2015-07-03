@@ -26,7 +26,8 @@ $app->get('/documentation.apib', function(Request $request) use ($app) {
     $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
     return view('documentation.apiary', [
-        'apiUrl' => $request->root()
+        'apiUrl' => $request->root(),
+        'faker' => Faker\Factory::create(),
     ]);
 
 });
@@ -54,4 +55,9 @@ $app->group(['prefix' => 'test'], function($app){
     $app->patch('/entities', 'App\Http\Controllers\TestController@patchMany');
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
+});
+
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
+{
+    $app->get('jwt/login', 'AuthController@login');
 });

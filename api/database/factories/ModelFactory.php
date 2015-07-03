@@ -11,6 +11,8 @@
 |
 */
 
+use Carbon\Carbon;
+
 $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
@@ -37,4 +39,28 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
         'multi_word_column_title' => true,
         'hidden' => $faker->boolean()
     ];
+});
+
+$factory->define(App\Models\AuthToken::class, function ($faker) {
+
+    $hostname = env('APP_HOSTNAME', 'localhost');
+
+    $user = factory(App\Models\User::class)->make();
+    $now = new Carbon();
+
+    $body = [
+        'iss' => $hostname,
+        'aud' => str_replace('.api', '', $hostname),
+        'sub' => $user->user_id,
+        'nbf' => $now->timestamp,
+        'iat' => $now->timestamp,
+        'exp' => $now->addHour(1)->timestamp,
+        'jti' => $faker->regexify('[A-Za-z0-9]{8}'),
+        'user' => $user->toArray()
+    ];
+
+    $jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
+    $token = $jwtAuth->fromUser($user);
+
+    return compact('token') + $body;
 });
