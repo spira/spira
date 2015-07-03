@@ -60,9 +60,22 @@ Every visitor to the site is a user variant, they have the same entity priority 
 
 + Request
     + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
     + Body
 
             {!! $factory->json(\App\Models\User::class,1,[],['user_id', 'email','firstName']) !!}
 
 + Response 204
 
+### Delete user entity [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 204
