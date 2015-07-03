@@ -4,21 +4,21 @@ use Crypt_RSA;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
-class GenerateCertificateCommand extends Command
+class GenerateKeysCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'spira:generate-cert';
+    protected $signature = 'spira:generate-keys';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate a RSA keypair for the application.';
+    protected $description = 'Generate RSA key pair for the application.';
 
     /**
      * Filesystem.
@@ -43,7 +43,7 @@ class GenerateCertificateCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
     public function handle()
     {
@@ -56,5 +56,7 @@ class GenerateCertificateCommand extends Command
 
         $this->file->put(storage_path('app/keys/private.pem'), $privatekey);
         $this->file->put(storage_path('app/keys/public.pem'), $publickey);
+
+        return 0;
     }
 }

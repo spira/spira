@@ -42,7 +42,7 @@
     "scripts": {
         "post-install-cmd": [
             "npm install",
-            "php artisan spira:generate-cert"
+            "php artisan spira:generate-keys"
         ]
     }
 }
