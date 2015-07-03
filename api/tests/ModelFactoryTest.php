@@ -2,6 +2,7 @@
 
 /**
  * Class ModelFactoryTest
+ * @group mf
  */
 class ModelFactoryTest extends TestCase
 {
@@ -15,13 +16,6 @@ class ModelFactoryTest extends TestCase
         $this->modelFactory = $this->app->make('App\Services\ModelFactory');
     }
 
-    /**
-     * @group failing
-     */
-    public function testNewSyntax()
-    {
-
-        $normalFactory = factory(\App\Models\User::class)->make()->toArray();
 
 //        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class, 'admin')
 //            ->customize(['first_name'=>'zak'])
@@ -32,8 +26,6 @@ class ModelFactoryTest extends TestCase
 //            ->transform(App\Http\Transformers\BaseTransformer::class)
 //            ->json();
 
-    }
-
     /**
      * Verify that the factories produce the same structured objects (values will be different)
      */
@@ -41,7 +33,7 @@ class ModelFactoryTest extends TestCase
     {
         $normalFactory = factory(\App\Models\User::class)->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->make(\App\Models\User::class)->toArray();
+        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class)->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
@@ -54,7 +46,7 @@ class ModelFactoryTest extends TestCase
     {
         $normalFactory = factory(App\Models\User::class, 'admin')->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->make([\App\Models\User::class, 'admin'])->toArray();
+        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class, 'admin')->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
@@ -84,13 +76,14 @@ class ModelFactoryTest extends TestCase
     public function testPropertyLimitWhitelistEntity()
     {
 
-        $retrieveOnly = ['firstName', 'lastName'];
+        $retrieveOnly = ['first_name', 'last_name'];
 
-        $serviceJson = $this->modelFactory->json(App\Models\User::class, 1, [], $retrieveOnly);
+        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+            ->showOnly($retrieveOnly)
+            ->toArray()
+        ;
 
-        $decoded = json_decode($serviceJson, true);
-
-        $this->assertEquals($retrieveOnly, array_keys($decoded));
+        $this->assertEquals($retrieveOnly, array_keys($serviceModel));
 
     }
 
@@ -100,45 +93,36 @@ class ModelFactoryTest extends TestCase
     public function testPropertyLimitWhitelistCollection()
     {
 
-        $retrieveOnly = ['firstName', 'lastName'];
+        $retrieveOnly = ['first_name', 'last_name'];
 
-        $serviceJson = $this->modelFactory->json(App\Models\User::class, 2, [], $retrieveOnly);
+        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+            ->count(2)
+            ->showOnly($retrieveOnly)
+            ->toArray()
+        ;
 
-        $decoded = json_decode($serviceJson, true);
-
-        $this->assertEquals($retrieveOnly, array_keys($decoded[0]));
-
-    }
-
-    /**
-     * Test that call can restrict the columns returned by blacklist for a single entity
-     */
-    public function testPropertyLimitBlacklistEntity()
-    {
-
-        $dontRetrieve = ['firstName'];
-
-        $serviceJson = $this->modelFactory->json(App\Models\User::class, 1, [], $dontRetrieve, true);
-
-        $decoded = json_decode($serviceJson, true);
-
-        $this->assertArrayNotHasKey($dontRetrieve[0], array_keys($decoded));
+        $this->assertEquals($retrieveOnly, array_keys($serviceModel[0]));
 
     }
 
     /**
-     * Test that call can restrict the columns returned by blacklist for a group of entities
+     * Test that call can make a normally hidden column visible
      */
-    public function testPropertyLimitBlacklistCollection()
+    public function testHiddenPropertyShowing()
     {
 
-        $dontRetrieve = ['firstName'];
+        $showProperty = 'password';
 
-        $serviceJson = $this->modelFactory->json(App\Models\User::class, 2, [], $dontRetrieve, true);
+        $user = new \App\Models\User();
+        $this->assertContains($showProperty, $user->getHidden());
 
-        $decoded = json_decode($serviceJson, true);
+        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+            ->makeVisible([$showProperty])
+            ->toArray()
+        ;
 
-        $this->assertArrayNotHasKey($dontRetrieve[0], array_keys($decoded[0]));
+        $this->assertArrayHasKey($showProperty, $serviceModel);
 
     }
+
 }
