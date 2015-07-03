@@ -16,6 +16,25 @@ class ModelFactoryTest extends TestCase
     }
 
     /**
+     * @group failing
+     */
+    public function testNewSyntax()
+    {
+
+        $normalFactory = factory(\App\Models\User::class)->make()->toArray();
+
+//        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class, 'admin')
+//            ->customize(['first_name'=>'zak'])
+//            ->append(['password' => 'mypass'])
+//            ->makeVisible(['password'])
+//            ->showOnly(['password', 'first_name', 'last_name', 'email'])
+//            ->count(2)
+//            ->transform(App\Http\Transformers\BaseTransformer::class)
+//            ->json();
+
+    }
+
+    /**
      * Verify that the factories produce the same structured objects (values will be different)
      */
     public function testMakeModel()

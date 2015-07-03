@@ -41,7 +41,7 @@ Every visitor to the site is a user variant, they have the same entity priority 
             {!! $factory->json(\App\Models\User::class) !!}
 
 
-### Create (register) user entity [PUT]
+### Create/Register user entity [PUT]
 * Note that for this entity replacement of entity is *not* permitted
 #### Restrictions
 * Allowed - [all]
@@ -50,7 +50,10 @@ Every visitor to the site is a user variant, they have the same entity priority 
     + Headers
     + Body
 
-            {!! $factory->json(\App\Models\User::class) !!}
+            {!! $factory->get(\App\Models\User::class)
+                ->showOnly(['first_name', 'last_name'])
+                ->makeVisible(['password'])
+                ->json(); !!}
 
 + Response 204
 
