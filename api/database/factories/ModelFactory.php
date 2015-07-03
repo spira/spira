@@ -20,7 +20,14 @@ $factory->define(App\Models\User::class, function ($faker) {
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
+        'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
+});
+
+$factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($factory) {
+    $user = $factory->raw(App\Models\User::class);
+
+    return array_merge($user, ['userType' => App\Models\User::USER_TYPE_ADMIN]);
 });
 
 $factory->define(App\Models\TestEntity::class, function ($faker) {

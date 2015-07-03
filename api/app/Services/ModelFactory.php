@@ -2,11 +2,14 @@
 
 use App\Http\Transformers\BaseTransformer;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\App;
 
 class ModelFactory
 {
 
+    protected $transformerService;
     protected $factory;
 
     /**
@@ -15,47 +18,201 @@ class ModelFactory
     public function __construct()
     {
         $this->factory = Container::getInstance()->make('Illuminate\Database\Eloquent\Factory');
+        $this->transformerService = App::make('App\Services\Transformer');
     }
 
     /**
-     * Get a model factory entity. e.g. $factory->make(\App\Models\User::class, 1, ['email'=>'joe.bloggs@example.com'])
-     * @param $factoryName
-     * @param int $count
-     * @param array $overrides
+     * Get a factory instance
+     * @param $factoryClass
+     * @param $definedName
+     * @return ModelFactoryInstance
+     */
+    public function get($factoryClass, $definedName = 'default')
+    {
+        $instance = $this->factory->of($factoryClass, $definedName);
+        return new ModelFactoryInstance($instance, $this->transformerService);
+    }
+
+    /**
+     * @param $factoryClass
+     * @param bool $definedName
+     * @return ModelFactoryInstance
+     */
+    public function json($factoryClass, $definedName = 'default')
+    {
+        return $this->get($factoryClass, $definedName)->json();
+    }
+
+    public function make($factoryClass, $definedName = 'default')
+    {
+        return $this->get($factoryClass, $definedName)->modified();
+    }
+
+}
+
+class ModelFactoryInstance implements Arrayable, Jsonable
+{
+
+    private $transformerService;
+    private $factoryInstance;
+    private $customizations = [];
+    private $entityCount = 1;
+    private $transformer;
+    private $makeVisible;
+    private $showOnly;
+    private $entityType;
+
+
+    /**
+     * New model instance
+     * @param $factoryInstance
+     * @param $transformerService
+     * @param bool $json
+     */
+    public function __construct($factoryInstance, $transformerService)
+    {
+        $this->factoryInstance = $factoryInstance;
+        $this->transformerService = $transformerService;
+    }
+
+
+    public function count($number)
+    {
+        $this->entityCount = $number;
+        return $this;
+    }
+
+    public function customize($customizations)
+    {
+        $this->customizations = $customizations;
+        return $this;
+    }
+
+    public function makeVisible($makeVisible)
+    {
+        $this->makeVisible = $makeVisible;
+        return $this;
+    }
+
+    public function showOnly($showOnly)
+    {
+        $this->showOnly = $showOnly;
+
+        return $this;
+    }
+
+    public function setTransformer($transformerName)
+    {
+        $this->transformer = new $transformerName;
+        return $this;
+    }
+
+    /**
+     * Get the built entities
      * @return mixed
      */
-    public function make($factoryName, $count = 1, $overrides = [])
+    private function built()
     {
+        $entity = $this->factoryInstance
+            ->times($this->entityCount)
+            ->make($this->customizations)
+        ;
 
-        $factoryInstance = null;
-        if (is_array($factoryName)){
-            $factoryInstance = $this->factory->of($factoryName[0], $factoryName[1]);
-        }else{
-            $factoryInstance = $this->factory->of($factoryName);
+        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
+
+        return $entity;
+    }
+
+    /**
+     * Modify an entity
+     * @param $entity
+     */
+    private function modifyEntity($entity)
+    {
+        if ($this->showOnly) {
+            $attributes = $entity->getAttributes();
+            $appends = $entity->appends;
+            $newHidden = array_diff(array_merge(array_keys($attributes), $appends), $this->showOnly);
+            $entity->setHidden($newHidden);
         }
 
-        return $factoryInstance->times($count)->make($overrides);
+        if ($this->makeVisible) {
+            $hidden = $entity->getHidden();
+
+            $newHidden = array_diff($hidden, $this->makeVisible);
+
+            $entity->setHidden($newHidden);
+        }
+
+        return $entity;
     }
+
     /**
-     * Get a model factory entity as a json string
-     * @param $factoryName
-     * @param int $count
-     * @param array $overrides
+     * Get the modified entity[ies]
+     * @return mixed
+     */
+    public function modified()
+    {
+        $entity = $this->built();
+        switch ($this->entityType) {
+            case 'item':
+                $entity = $this->modifyEntity($entity);
+                break;
+            case 'collection':
+                $entity = $entity->each(
+                    function ($singleEntity) {
+                        return $this->modifyEntity($singleEntity);
+                    }
+                );
+                break;
+        }
+        return $entity;
+    }
+
+    public function transformed(){
+        $entity = $this->modified();
+
+        if (!$this->transformer) {
+            $this->transformer = new BaseTransformer();
+        }
+
+        $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);
+        return $transformedEntity;
+    }
+
+
+    /**
+     * Get the built & modified entity[ies]
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return $this->modified()->toArray();
+    }
+
+    /**
+     * Get the JSON encoded string of the (built, modified, transformed) entity[ies]
+     * @param int $options
      * @return string
      */
-    public function json($factoryName, $count = 1, $overrides = [])
+    public function json($options = JSON_PRETTY_PRINT)
     {
 
-        $entity = $this->make($factoryName, $count, $overrides);
+        $transformed = $this->transformed();
 
+        $jsonEncoded = json_encode($transformed, $options);
 
-        $transformerService = App::make('App\Services\Transformer');
+        return str_replace("\n", "\n            ", $jsonEncoded); //cheap trick to make sure the 12 deep indentation requirement of apiary is preserved
 
-        $entityType = ($count > 1) ? 'collection' : 'item';
-
-        $transformedEntity = $transformerService->{$entityType}($entity, new BaseTransformer);
-
-        return json_encode($transformedEntity, JSON_PRETTY_PRINT);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toJson($options = 0)
+    {
+        return $this->json($options);
+    }
+
 
 }
