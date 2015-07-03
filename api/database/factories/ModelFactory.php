@@ -64,3 +64,7 @@ $factory->define(App\Models\AuthToken::class, function ($faker) {
 
     return compact('token') + $body;
 });
+
+//$factory->defineAs(App\Models\AuthToken::class, 'expired', function($faker){
+//    $tokenModel = factory(App\Models\User::class)->make([]);
+//})

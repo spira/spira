@@ -17,6 +17,14 @@ Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.
 * Protocol: http
 * Port: 8080
 
+## Restrictions
+Each endpoint may have restrictions. These are defined as a cascading whitelist.
+e.g. the following definiton means everyone is denied _except_ admins
+```
+* Denied - [all]
+* Allowed - [admin]
+```
+
 # Spira API Root [/]
 
 This route provides this documentation!
@@ -24,3 +32,5 @@ This route provides this documentation!
 @include('documentation.sections.testEntity')
 
 @include('documentation.sections.auth')
+
+@include('documentation.sections.user')
