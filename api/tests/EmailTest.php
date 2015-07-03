@@ -2,15 +2,12 @@
 
 use Illuminate\Support\Facades\Mail;
 
-
+/**
+ * Class EmailTest
+ */
 class EmailTest extends TestCase
 {
     use MailcatcherTrait;
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
 
     /**
      * Test smtp connection to mailcatcher is working
@@ -33,6 +30,16 @@ class EmailTest extends TestCase
 
         $this->assertEquals($subject, $message->subject);
 
+    }
+
+    /**
+     * Assert that the mailbox is empty
+     * @expectedException PHPUnit_Framework_AssertionFailedError
+     */
+    public function testEmptyMailbox()
+    {
+        $this->clearMessages();
+        $this->getLastMessage();
     }
 
 }

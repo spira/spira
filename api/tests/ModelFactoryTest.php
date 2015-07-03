@@ -2,7 +2,6 @@
 
 /**
  * Class ModelFactoryTest
- * @group mf
  */
 class ModelFactoryTest extends TestCase
 {
@@ -16,15 +15,6 @@ class ModelFactoryTest extends TestCase
         $this->modelFactory = $this->app->make('App\Services\ModelFactory');
     }
 
-
-//        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class, 'admin')
-//            ->customize(['first_name'=>'zak'])
-//            ->append(['password' => 'mypass'])
-//            ->makeVisible(['password'])
-//            ->showOnly(['password', 'first_name', 'last_name', 'email'])
-//            ->count(2)
-//            ->transform(App\Http\Transformers\BaseTransformer::class)
-//            ->json();
 
     /**
      * Verify that the factories produce the same structured objects (values will be different)
@@ -156,6 +146,15 @@ class ModelFactoryTest extends TestCase
 
         $this->assertJson($serviceCreatedFactoryJson);
         $this->assertEquals($collection, json_decode($serviceCreatedFactoryJson, true));
+    }
+
+    public function testModelFactoryInstanceArrayableAndJsonable()
+    {
+        $serviceCreatedFactoryInstance = $this->modelFactory->get(\App\Models\User::class);
+
+        $this->assertInstanceOf(Illuminate\Contracts\Support\Arrayable::class, $serviceCreatedFactoryInstance);
+        $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
+        $this->assertJson($serviceCreatedFactoryInstance->toJson());
     }
 
 }
