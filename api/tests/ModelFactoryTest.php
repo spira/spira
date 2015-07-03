@@ -125,4 +125,37 @@ class ModelFactoryTest extends TestCase
 
     }
 
+    /**
+     * Test that the $factory->make() method returns eloquent models
+     */
+    public function testFactoryMakesEloquent(){
+
+        $entity = $this->modelFactory->make(App\Models\User::class);
+
+        $this->assertInstanceOf(Illuminate\Database\Eloquent\Model::class, $entity);
+
+    }
+
+    public function testModelFactoryFullChain()
+    {
+        $fixture = [
+            'firstName' => 'zak',
+            'password' => 'mypass',
+            'userType' => 'admin',
+        ];
+
+        $collection = [$fixture, $fixture];
+
+        $serviceCreatedFactoryJson = $this->modelFactory->get(\App\Models\User::class, 'admin')
+            ->customize(['first_name'=>'zak', 'password' => 'mypass'])
+            ->makeVisible(['password'])
+            ->showOnly(['password', 'first_name', 'userType'])
+            ->count(2)
+            ->setTransformer(App\Http\Transformers\BaseTransformer::class)
+            ->json();
+
+        $this->assertJson($serviceCreatedFactoryJson);
+        $this->assertEquals($collection, json_decode($serviceCreatedFactoryJson, true));
+    }
+
 }
