@@ -9,6 +9,10 @@ class User extends BaseModel implements AuthenticatableContract
 {
     use Authenticatable;
 
+    const USER_TYPE_ADMIN = 'admin';
+    const USER_TYPE_PUBLIC = 'public';
+    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_PUBLIC];
+
     /**
      * The database table used by the model.
      *

@@ -62,6 +62,7 @@ Note that for this entity replacement of entity is *not* permitted
     + Headers
     + Body
 
-            {!! $factory->json(\App\Models\User::class,1,[],['email','firstName']) !!}
+            {!! $factory->json(\App\Models\User::class,1,[],['user_id', 'email','firstName']) !!}
 
 + Response 204
+
