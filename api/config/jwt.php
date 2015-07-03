@@ -7,12 +7,14 @@ return [
     | JWT Authentication Secret
     |--------------------------------------------------------------------------
     |
-    | Don't forget to set this, as it will be used to sign your tokens.
-    | A helper command is provided for this: `php artisan jwt:generate`
+    | The paths to the RSA keypair used to sign tokens.
     |
     */
 
-    'secret' => env('JWT_SECRET', 'changeme'),
+    'secret' => [
+        'public' => '/home/vagrant/Code/spira/spira/api/storage/app/keys/public.pem',
+        'private' => '/home/vagrant/Code/spira/spira/api/storage/app/keys/private.pem'
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +54,7 @@ return [
     |
     */
 
-    'algo' => 'HS256',
+    'algo' => 'RS256',
 
     /*
     |--------------------------------------------------------------------------
@@ -135,7 +137,7 @@ return [
         |
         */
 
-        'jwt' => 'Tymon\JWTAuth\Providers\JWT\NamshiAdapter',
+        'jwt' => 'App\Extensions\JWTAuth\NamshiAdapter',
 
         /*
         |--------------------------------------------------------------------------
