@@ -27,9 +27,9 @@ class ModelFactory
      * @param $definedName
      * @return ModelFactoryInstance
      */
-    public function get($factoryClass, $definedName = false)
+    public function get($factoryClass, $definedName = 'default')
     {
-        $instance = $this->getFactoryInstance($factoryClass, $definedName);
+        $instance = $this->factory->of($factoryClass, $definedName);
         return new ModelFactoryInstance($instance, $this->transformerService);
     }
 
@@ -38,18 +38,14 @@ class ModelFactory
      * @param bool $definedName
      * @return ModelFactoryInstance
      */
-    public function json($factoryClass, $definedName = false)
+    public function json($factoryClass, $definedName = 'default')
     {
         return $this->get($factoryClass, $definedName)->json();
     }
 
-    private function getFactoryInstance($factoryClass, $definedName = false)
+    public function make($factoryClass, $definedName = 'default')
     {
-        if ($definedName){
-            return $this->factory->of($factoryClass, $definedName);
-        }else{
-            return $this->factory->of($factoryClass);
-        }
+        return $this->get($factoryClass, $definedName)->modified();
     }
 
 }
@@ -101,6 +97,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function showOnly($showOnly)
     {
         $this->showOnly = $showOnly;
+
         return $this;
     }
 
@@ -173,7 +170,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     public function transformed(){
-        $entity = $this->built();
+        $entity = $this->modified();
 
         if (!$this->transformer) {
             $this->transformer = new BaseTransformer();
