@@ -74,8 +74,9 @@ class ModelFactory
         }
 
 
+        $jsonEncoded = json_encode($transformedEntity, JSON_PRETTY_PRINT);
 
-        return json_encode($transformedEntity, JSON_PRETTY_PRINT);
+        return str_replace("\n", "\n            ", $jsonEncoded); //cheap trick to make sure the 12 deep indentation requirement of apiary is preserved
     }
 
 }
