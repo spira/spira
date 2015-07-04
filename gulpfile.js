@@ -34,7 +34,7 @@ var paths = {
     src: {
         base: 'app/src',
         get scripts(){
-            return [this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
+            return [this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
@@ -83,9 +83,22 @@ gulp.task('clean', 'deletes all build files', [], function(cb) {
 });
 
 gulp.task('scripts', 'processes javascript files', [], function () {
+
+    var tsFilter = plugins.filter('**/*.ts');
+    var jsFilter = plugins.filter('**/*.js');
+
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
+        .pipe(tsFilter)
+        .pipe(plugins.tsc({
+            sourceMap:true,
+            keepTree: true,
+            target: "ES5"
+        }))
+        .pipe(tsFilter.restore())
+        .pipe(jsFilter)
         .pipe(plugins.ngAnnotate())
+        .pipe(jsFilter.restore())
         .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
