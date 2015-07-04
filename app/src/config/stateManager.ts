@@ -7,7 +7,7 @@ module app.stateManager {
         options: ng.ui.IState
     }
 
-    export class StateManagerConfig {
+    class StateManagerConfig {
 
         static $inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', '$compileProvider', 'stateHelperServiceProvider'];
         constructor(private $stateProvider, private $locationProvider, private $urlRouterProvider, private $compileProvider, private stateHelperServiceProvider){
@@ -67,7 +67,7 @@ module app.stateManager {
 
     }
 
-    export class NavigationController {
+    class NavigationController {
 
         static $inject = ['$scope', 'stateHelperService', '$window'];
         constructor(private $scope, private stateHelperService, private $window) {
@@ -99,7 +99,7 @@ module app.stateManager {
         'stateHelperServiceProvider',
         'siteModules'
     ])
-    .config(app.stateManager.StateManagerConfig)
-    .controller('stateManager.navigation.controller', app.stateManager.NavigationController);
+    .config(StateManagerConfig)
+    .controller('stateManager.navigation.controller', NavigationController);
 
 }

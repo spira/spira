@@ -287,14 +287,16 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
     });
 
     var testFiles = files.scripts.vendor
+        .concat(files.scripts.app)
         .map(function(path){
             return 'app/build/'+path;
         })
-        .concat(plugins.globby.sync(paths.src.scripts))
         .concat(plugins.globby.sync(paths.src.tests))
     ;
 
     testFiles.push('app/build/js/templates.js');
+
+    console.log('test', testFiles);
 
     return gulp.src(testFiles)
         .pipe(plugins.karma({
