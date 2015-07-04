@@ -89,6 +89,12 @@ gulp.task('scripts', 'processes javascript files', [], function () {
 
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
+        .pipe(jsFilter)
+        .pipe(plugins.sourcemaps.init())
+        .pipe(plugins.ngAnnotate())
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: '../../app/src/'}))
+        .pipe(jsFilter.restore())
+
         .pipe(tsFilter)
         .pipe(plugins.tsc({
             sourceMap:true,
@@ -96,9 +102,7 @@ gulp.task('scripts', 'processes javascript files', [], function () {
             target: "ES5"
         }))
         .pipe(tsFilter.restore())
-        .pipe(jsFilter)
-        .pipe(plugins.ngAnnotate())
-        .pipe(jsFilter.restore())
+
         .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
