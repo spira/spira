@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Support\Str;
+
 $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
@@ -50,4 +52,17 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
     $testEntity = $factory->raw(App\Models\TestEntity::class);
 
     return array_merge($testEntity, ['varchar' => 'custom']);
+});
+
+$factory->define(App\Models\Article::class, function ($faker) {
+
+    return [
+        'article_id' => $faker->uuid,
+        'title' => $faker->sentence,
+        'content' => $content = implode("\n\n", $faker->paragraphs(3)),
+        'excerpt' => Str::words($content, 30),
+        'permalink' => $faker->slug,
+        'first_published' => $faker->optional(0.9)->dateTimeThisDecade(),
+    ];
+
 });

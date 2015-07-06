@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Bosnadev\Database\Traits\UuidTrait;
 
@@ -58,6 +59,9 @@ abstract class BaseModel extends Model
             case 'date':
                 return \Carbon\Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
             case 'datetime':
+                if ($value instanceof \DateTime){
+                    return \Carbon\Carbon::createFromTimestamp($value->getTimestamp())->toIso8601String();
+                }
                 return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
             default:
                 return $value;
