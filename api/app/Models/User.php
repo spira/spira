@@ -1,13 +1,15 @@
 <?php namespace App\Models;
 
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 class User extends BaseModel implements AuthenticatableContract
 {
     use Authenticatable;
+
+    const USER_TYPE_ADMIN = 'admin';
+    const USER_TYPE_PUBLIC = 'public';
+    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_PUBLIC];
 
     /**
      * The database table used by the model.
