@@ -30,4 +30,20 @@ class UserRepository extends BaseRepository
 
         return $user;
     }
+
+    /**
+     * Make a single use login token for a user.
+     *
+     * @param  string  $id
+     * @return string
+     */
+    public function makeLoginToken($id)
+    {
+        $user = $this->find($id);
+
+        $user->login_token = hash_hmac('sha256', str_random(40), str_random(40));
+        $user->save();
+
+        return $user->login_token;
+    }
 }

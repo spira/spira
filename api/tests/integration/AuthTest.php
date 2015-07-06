@@ -190,4 +190,16 @@ class AuthTest extends TestCase
 
         $this->assertResponseStatus(401);
     }
+
+    public function testMakeLoginToken()
+    {
+        $repo = $this->app->make('App\Repositories\UserRepository');
+        $user = factory(App\Models\User::class)->create();
+
+        $token = $repo->makeLoginToken($user->user_id);
+
+        $user = $repo->find($user->user_id);
+
+        $this->assertEquals($token, $user->login_token);
+    }
 }
