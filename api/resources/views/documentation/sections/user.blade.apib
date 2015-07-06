@@ -52,8 +52,8 @@ Every visitor to the site is a user variant, they have the same entity priority 
 
             {!!
                 $factory->get(\App\Models\User::class)
-                    ->makeVisible(['password'])
                     ->showOnly(['userId', 'email', 'firstName', 'lastName'])
+                    ->append('#credentials', $factory->get(\App\Models\UserCredentials::class)->makeVisible(['password'])->toArray())
                     ->json();
             !!}
 

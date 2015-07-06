@@ -17,12 +17,18 @@ $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
         'email' => $faker->email,
-        'password' => Hash::make('password'),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+    ];
+});
+
+$factory->define(App\Models\UserCredentials::class, function ($faker) {
+    return [
+        'user_credential_id' => $faker->uuid,
+        'password' => Hash::make('password')
     ];
 });
 
