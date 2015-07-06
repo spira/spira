@@ -31,7 +31,7 @@ class UserCredentials extends BaseModel
      */
     public function entityRoute()
     {
-        return '/user/{userId}/credentials'; //@todo make this route match work
+        return '/user/{userId}/user-credentials'; //@todo make this route match work
     }
 
 }

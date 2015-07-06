@@ -3,6 +3,10 @@ Every visitor to the site is a user variant, they have the same entity priority 
  (logged in) user. Their roles, permissions and access levels are handled independently, but linked to their account.
 
 ## User collection [/users]
+Users are the entities that represent any real human within the system. They can be admins, paying members or even just
+public people with a membership. The user entity does not contain login information - this is stored in related models
+e.g. the `UserCredentials` model stores their password if they choose to use a password (they could otherwise authenticate
+with a third party through OAuth)
 
 ### Get all users [GET]
 #### Restrictions
@@ -45,6 +49,11 @@ Every visitor to the site is a user variant, they have the same entity priority 
 * Note that for this entity replacement of entity is *not* permitted
 #### Restrictions
 * Allowed - [all]
+Note that in this request, a child `#userCredentials` object is provided. This represents an associated model that must
+be created when the user is first registered.
+
+The request *must* provide at least one authentication method when the user is created. In this example we use standard
+password credentials - social signin is described later in this document (@todo).
 
 + Request
     + Headers
@@ -53,7 +62,11 @@ Every visitor to the site is a user variant, they have the same entity priority 
             {!!
                 $factory->get(\App\Models\User::class)
                     ->showOnly(['userId', 'email', 'firstName', 'lastName'])
-                    ->append('#credentials', $factory->get(\App\Models\UserCredentials::class)->makeVisible(['password'])->toArray())
+                    ->append('#userCredentials',
+                        $factory->get(\App\Models\UserCredentials::class)
+                            ->makeVisible(['password'])
+                            ->toArray()
+                        )
                     ->json();
             !!}
 
@@ -70,11 +83,7 @@ Every visitor to the site is a user variant, they have the same entity priority 
 
     + Body
 
-            {!!
-                $factory->get(\App\Models\User::class)
-                    ->showOnly(['user_id', 'first_name'])
-                    ->json()
-            !!}
+            {!! $factory->json(\App\Models\User::class) !!}
 
 + Response 204
 

@@ -43,6 +43,7 @@ $factory->define(App\Models\User::class, function ($faker) {
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
+        'timezone_identifier' => $faker->randomElement(array_pluck(\App\Models\Timezones::getTimezones(), 'timezone_identifier')),
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
 });

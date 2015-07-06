@@ -1,0 +1,21 @@
+# Group Timezones
+
+## All timezones [/timezones]
+Users can set their timezone which is used for monitoring when (for example), a post should be visible to a user or
+when a user should have a daily email dispatched.
+have their emails dispatched.
+
+### Get all timezones [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Request
+    + Headers
+
++ Response 200 (application/json)
+
+    + Body
+
+            {!! json_encode(array_slice(\App\Models\Timezones::getTimezones(), 0, 5)) !!}
+
+
