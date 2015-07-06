@@ -1,10 +1,14 @@
 <?php namespace App\Services;
+
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
+
 class ModelFactory
 {
+
     protected $transformerService;
     protected $factory;
+
     /**
      * Initialise the factory
      */
@@ -13,6 +17,7 @@ class ModelFactory
         $this->factory = Container::getInstance()->make('Illuminate\Database\Eloquent\Factory');
         $this->transformerService = App::make('App\Services\Transformer');
     }
+
     /**
      * Get a factory instance
      * @param $factoryClass
@@ -24,6 +29,7 @@ class ModelFactory
         $instance = $this->factory->of($factoryClass, $definedName);
         return new ModelFactoryInstance($instance, $this->transformerService);
     }
+
     /**
      * Shorthand get a json string of the entity
      * @param $factoryClass
@@ -34,6 +40,7 @@ class ModelFactory
     {
         return $this->get($factoryClass, $definedName)->json();
     }
+
     /**
      * Shorthand get the eloquent entity
      * @param $factoryClass
@@ -44,4 +51,5 @@ class ModelFactory
     {
         return $this->get($factoryClass, $definedName)->modified();
     }
+
 }

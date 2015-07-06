@@ -21,9 +21,9 @@ class ModelFactoryTest extends TestCase
      */
     public function testMakeModel()
     {
-        $normalFactory = factory(\App\Models\User::class)->make()->toArray();
+        $normalFactory = factory(\App\Models\TestEntity::class)->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class)->toArray();
+        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\TestEntity::class)->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
@@ -34,13 +34,13 @@ class ModelFactoryTest extends TestCase
      */
     public function testMakeNamedModel()
     {
-        $normalFactory = factory(App\Models\User::class, 'admin')->make()->toArray();
+        $normalFactory = factory(App\Models\TestEntity::class, 'custom')->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\User::class, 'admin')->toArray();
+        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\TestEntity::class, 'custom')->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
-        $this->assertEquals($normalFactory['userType'], $serviceCreatedFactory['userType']);
+        $this->assertEquals($normalFactory['varchar'], $serviceCreatedFactory['varchar']);
     }
 
     /**
@@ -48,13 +48,13 @@ class ModelFactoryTest extends TestCase
      */
     public function testJsonModel()
     {
-        $serviceJson = $this->modelFactory->json(App\Models\User::class);
+        $serviceJson = $this->modelFactory->json(App\Models\TestEntity::class);
 
         $this->assertJson($serviceJson);
 
         $decoded = json_decode($serviceJson, true);
 
-        $this->assertArrayHasKey('userType', $decoded); //assert that keys have been camel cased by transfomer
+        $this->assertArrayHasKey('multiWordColumnTitle', $decoded); //assert that keys have been camel cased by transfomer
         $this->assertArrayHasKey('_self', $decoded);
 
     }
@@ -66,9 +66,9 @@ class ModelFactoryTest extends TestCase
     public function testPropertyLimitWhitelistEntity()
     {
 
-        $retrieveOnly = ['first_name', 'last_name'];
+        $retrieveOnly = ['varchar', 'hash'];
 
-        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->showOnly($retrieveOnly)
             ->toArray()
         ;
@@ -83,9 +83,9 @@ class ModelFactoryTest extends TestCase
     public function testPropertyLimitWhitelistCollection()
     {
 
-        $retrieveOnly = ['first_name', 'last_name'];
+        $retrieveOnly = ['varchar', 'hash'];
 
-        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->count(2)
             ->showOnly($retrieveOnly)
             ->toArray()
@@ -101,12 +101,12 @@ class ModelFactoryTest extends TestCase
     public function testHiddenPropertyShowing()
     {
 
-        $showProperty = 'password';
+        $showProperty = 'hidden';
 
-        $user = new \App\Models\User();
+        $user = new \App\Models\TestEntity();
         $this->assertContains($showProperty, $user->getHidden());
 
-        $serviceModel = $this->modelFactory->get(App\Models\User::class)
+        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->makeVisible([$showProperty])
             ->toArray()
         ;
@@ -120,7 +120,7 @@ class ModelFactoryTest extends TestCase
      */
     public function testFactoryMakesEloquent(){
 
-        $entity = $this->modelFactory->make(App\Models\User::class);
+        $entity = $this->modelFactory->make(App\Models\TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Database\Eloquent\Model::class, $entity);
 
@@ -129,17 +129,21 @@ class ModelFactoryTest extends TestCase
     public function testModelFactoryFullChain()
     {
         $fixture = [
-            'firstName' => 'zak',
-            'password' => 'mypass',
-            'userType' => 'admin',
+            'varchar' => 'fixed-varchar',
+            'multiWordColumnTitle' => 'fixed-value',
+            'hidden' => false,
+            '#appends' => [
+                'some' => 'value'
+            ]
         ];
 
         $collection = [$fixture, $fixture];
 
-        $serviceCreatedFactoryJson = $this->modelFactory->get(\App\Models\User::class, 'admin')
-            ->customize(['first_name'=>'zak', 'password' => 'mypass'])
-            ->makeVisible(['password'])
-            ->showOnly(['password', 'first_name', 'userType'])
+        $serviceCreatedFactoryJson = $this->modelFactory->get(\App\Models\TestEntity::class, 'custom')
+            ->customize(['varchar'=>$fixture['varchar'], 'multi_word_column_title' => $fixture['multiWordColumnTitle'], 'hidden' => false])
+            ->makeVisible(['hidden'])
+            ->showOnly(['varchar', 'multi_word_column_title', 'hidden'])
+            ->append('#appends', $fixture['#appends'])
             ->count(2)
             ->setTransformer(App\Http\Transformers\BaseTransformer::class)
             ->json();
@@ -150,7 +154,7 @@ class ModelFactoryTest extends TestCase
 
     public function testModelFactoryInstanceArrayableAndJsonable()
     {
-        $serviceCreatedFactoryInstance = $this->modelFactory->get(\App\Models\User::class);
+        $serviceCreatedFactoryInstance = $this->modelFactory->get(\App\Models\TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Contracts\Support\Arrayable::class, $serviceCreatedFactoryInstance);
         $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
