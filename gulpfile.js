@@ -282,7 +282,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
 
 
 gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
-    plugins.runSequence('test:karma', 'test:fixcloverpaths', cb);
+    plugins.runSequence('build', 'test:karma', cb);
 });
 
 gulp.task('test:karma',  'unit test the frontend', [], function(){
@@ -313,17 +313,6 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
             throw err;
         });
 
-});
-
-gulp.task('test:fixcloverpaths', 'Fixes clover relative paths', [], function(){
-
-    return gulp.src('reports/coverage/app/clover.xml')
-        .pipe(plugins.replace('path="./', 'path="'+ __dirname+'/'))
-        .pipe(gulp.dest('reports/coverage/app'))
-        .on('error', function(err) {
-            // Make sure failed tests cause gulp to exit non-zero
-            throw err;
-        });
 });
 
 gulp.task('test:api', 'unit tests the api', [], function(){
