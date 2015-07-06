@@ -4,8 +4,10 @@ use RuntimeException;
 use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
+use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Exceptions\UnprocessableEntityException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class AuthController extends BaseController
@@ -44,10 +46,10 @@ class AuthController extends BaseController
         try {
             if (!$token = $this->jwtAuth->attempt($credentials)) {
 
-                throw new UnauthorizedException;
+                throw new UnauthorizedException('Credentials failed.');
             }
         } catch (JWTException $e) {
-            throw new RuntimeException('Token could not be encoded.');
+            throw new RuntimeException($e->getMessage());
         }
 
         return $this->item(new AuthToken(['token' => $token]));
@@ -62,17 +64,17 @@ class AuthController extends BaseController
     public function refresh(Request $request)
     {
         if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
-            throw new RuntimeException('Token not provided.');
+            throw new BadRequestException('Token not provided.');
         }
 
         try {
             $user = $this->jwtAuth->authenticate((string) $token);
         }
         catch (TokenExpiredException $e) {
-            throw new UnauthorizedException;
+            throw new UnauthorizedException('Token expired.');
         }
         catch (JWTException $e) {
-            throw new RuntimeException('Token is invalid.');
+            throw new UnprocessableEntityException($e->getMessage());
         }
 
         if (!$user) {
@@ -93,14 +95,14 @@ class AuthController extends BaseController
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
-            throw new RuntimeException('Single use token not provided.');
+            throw new BadRequestException('Single use token not provided.');
         }
 
         $token = trim(str_ireplace('token', '', $header));
 
-        // If we found user, it was an expired or invalid token. No access granted
+        // If we didn't find the user, it was an expired/invalid token. No access granted
         if (!$user = $user->findByLoginToken($token)) {
-            throw new UnauthorizedException;
+            throw new UnauthorizedException('Token invalid.');
         }
 
         $token = $this->jwtAuth->fromUser($user);

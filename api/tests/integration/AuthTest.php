@@ -23,11 +23,12 @@ class AuthTest extends TestCase
         ]);
     }
 
-    protected function assertRuntimeError($message)
+    protected function assertException($message, $statusCode, $exception)
     {
         $body = json_decode($this->response->getContent());
-        $this->assertResponseStatus(500);
+        $this->assertResponseStatus($statusCode);
         $this->assertContains($message, $body->message);
+        $this->assertContains($exception, $body->debug->exception);
     }
 
     public function testLogin()
@@ -57,7 +58,9 @@ class AuthTest extends TestCase
             'PHP_AUTH_PW'   => 'foobar',
         ]);
 
+        $body = json_decode($this->response->getContent());
         $this->assertResponseStatus(401);
+        $this->assertContains('failed', $body->message);
     }
 
     public function testFailedTokenEncoding()
@@ -70,7 +73,7 @@ class AuthTest extends TestCase
             'PHP_AUTH_PW'   => 'password',
         ]);
 
-        $this->assertResponseStatus(500);
+        $this->assertException('token', 500, 'RuntimeException');
     }
 
     public function testRefresh()
@@ -108,7 +111,9 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
+        $body = json_decode($this->response->getContent());
         $this->assertResponseStatus(401);
+        $this->assertContains('expired', $body->message);
     }
 
     public function testRefreshInvalidToken()
@@ -117,14 +122,14 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertRuntimeError('invalid');
+        $this->assertException('invalid', 422, 'UnprocessableEntityException');
     }
 
     public function testRefreshMissingToken()
     {
         $this->get('/auth/jwt/refresh');
 
-        $this->assertRuntimeError('not provided');
+        $this->assertException('not provided', 400, 'BadRequestException');
     }
 
     public function testRefreshMissingUser()
@@ -135,7 +140,7 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertRuntimeError('not exist');
+        $this->assertException('not exist', 500, 'RuntimeException');
     }
 
     public function testToken()
@@ -158,7 +163,7 @@ class AuthTest extends TestCase
     {
         $this->get('/auth/jwt/token');
 
-        $this->assertRuntimeError('not provided.');
+        $this->assertException('not provided', 400, 'BadRequestException');
     }
 
     public function testInvalidToken()
@@ -171,7 +176,7 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(401);
     }
 
-    public function testTokenInvalidated()
+    public function testTokenInvalid()
     {
         $token = 'foobar';
         $user = factory(App\Models\User::class)->make();
@@ -188,7 +193,7 @@ class AuthTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token
         ]);
 
-        $this->assertResponseStatus(401);
+        $this->assertException('invalid', 401, 'UnauthorizedException');
     }
 
     public function testMakeLoginToken()

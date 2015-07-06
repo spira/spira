@@ -4,8 +4,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UnauthorizedException extends HttpException
 {
-    public function __construct()
+    /**
+     * Create a new Unauthorized exception instance.
+     *
+     * @param  string  $message
+     * @return void
+     */
+    public function __construct($message = 'Unauthorized.')
     {
-        parent::__construct(401, 'Unauthorized.');
+        parent::__construct(401, $message);
     }
 }
