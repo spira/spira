@@ -1,8 +1,7 @@
 <?php
 
 /**
- * Class ModelFactoryTestDrop
- * @group failing
+ * Class ModelFactoryTest
  */
 class ModelFactoryTest extends TestCase
 {
