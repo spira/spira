@@ -45,3 +45,9 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
         'hidden' => $faker->boolean()
     ];
 });
+
+$factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use ($factory) {
+    $testEntity = $factory->raw(App\Models\TestEntity::class);
+
+    return array_merge($testEntity, ['varchar' => 'custom']);
+});
