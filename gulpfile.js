@@ -92,13 +92,13 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
         .pipe(jsFilter)
         .pipe(plugins.sourcemaps.init())
         .pipe(plugins.ngAnnotate())
-        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: '../../../src/'}))
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
         .pipe(jsFilter.restore())
 
         .pipe(tsFilter)
         .pipe(plugins.tsc({
             sourceMap:true,
-            sourceRoot: '../../../src/',
+            sourceRoot: __dirname+'/app/src/',
             keepTree: true,
             target: "ES5"
         }))

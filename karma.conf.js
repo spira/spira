@@ -19,7 +19,7 @@ module.exports = function(config) {
             'PhantomJS'
         ],
 
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_INFO,
 
         coverageReporter: {
             // specify a common output directory
