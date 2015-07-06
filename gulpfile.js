@@ -34,7 +34,7 @@ var paths = {
     src: {
         base: 'app/src',
         get scripts(){
-            return [this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
+            return [this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
@@ -82,10 +82,28 @@ gulp.task('clean', 'deletes all build files', [], function(cb) {
     plugins.del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', 'processes javascript files', [], function () {
+gulp.task('scripts', 'processes javascript & typescript files', [], function () {
+
+    var tsFilter = plugins.filter('**/*.ts');
+    var jsFilter = plugins.filter('**/*.js');
+
     return gulp.src(paths.src.scripts)
         //.pipe(watch(paths.src.scripts))
+        .pipe(jsFilter)
+        .pipe(plugins.sourcemaps.init())
         .pipe(plugins.ngAnnotate())
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+        .pipe(jsFilter.restore())
+
+        .pipe(tsFilter)
+        .pipe(plugins.tsc({
+            sourceMap:true,
+            sourceRoot: __dirname+'/app/src/',
+            keepTree: true,
+            target: "ES5"
+        }))
+        .pipe(tsFilter.restore())
+
         .pipe(gulp.dest(paths.dest.scripts))
     ;
 });
@@ -264,7 +282,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
 
 
 gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
-    plugins.runSequence('test:karma', 'test:fixcloverpaths', cb);
+    plugins.runSequence('build', 'test:karma', cb);
 });
 
 gulp.task('test:karma',  'unit test the frontend', [], function(){
@@ -274,14 +292,16 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
     });
 
     var testFiles = files.scripts.vendor
+        .concat(files.scripts.app)
         .map(function(path){
             return 'app/build/'+path;
         })
-        .concat(plugins.globby.sync(paths.src.scripts))
         .concat(plugins.globby.sync(paths.src.tests))
     ;
 
     testFiles.push('app/build/js/templates.js');
+
+    console.log('test', testFiles);
 
     return gulp.src(testFiles)
         .pipe(plugins.karma({
@@ -293,17 +313,6 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
             throw err;
         });
 
-});
-
-gulp.task('test:fixcloverpaths', 'Fixes clover relative paths', [], function(){
-
-    return gulp.src('reports/coverage/app/clover.xml')
-        .pipe(plugins.replace('path="./', 'path="'+ __dirname+'/'))
-        .pipe(gulp.dest('reports/coverage/app'))
-        .on('error', function(err) {
-            // Make sure failed tests cause gulp to exit non-zero
-            throw err;
-        });
 });
 
 gulp.task('test:api', 'unit tests the api', [], function(){
