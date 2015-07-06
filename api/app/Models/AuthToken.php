@@ -119,7 +119,7 @@ class AuthToken extends Model
      */
     public function getAudAttribute()
     {
-        return Request::getHttpHost();
+        return str_replace('api.', '', Request::getHttpHost());
     }
 
     /**
