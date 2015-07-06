@@ -146,13 +146,14 @@ class AuthTest extends TestCase
     public function testToken()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->make();
-        $user->login_token = $token;
-        $user->save();
+        $user = factory(App\Models\User::class)->create();
+        Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token
         ]);
+
+        var_dump($this->response->getContent());
 
         $array = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
@@ -179,9 +180,8 @@ class AuthTest extends TestCase
     public function testTokenInvalid()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->make();
-        $user->login_token = $token;
-        $user->save();
+        $user = factory(App\Models\User::class)->create();
+        Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token
@@ -203,8 +203,8 @@ class AuthTest extends TestCase
 
         $token = $repo->makeLoginToken($user->user_id);
 
-        $user = $repo->find($user->user_id);
+        $id = Cache::pull('login_token_'.$token);
 
-        $this->assertEquals($token, $user->login_token);
+        $this->assertEquals($id, $user->user_id);
     }
 }

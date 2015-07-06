@@ -1,7 +1,17 @@
 <?php namespace App\Repositories;
 
+use Cache;
+use Illuminate\Container\Container as App;
+
 class UserRepository extends BaseRepository
 {
+    /**
+     * Login token time to live in minutes.
+     *
+     * @var integer
+     */
+    protected $login_token_ttl = 1440;
+
     /**
      * Model name.
      *
@@ -20,15 +30,10 @@ class UserRepository extends BaseRepository
      */
     public function findByLoginToken($token)
     {
-        $user = $this->model->loginToken($token)->first();
-
-        // If we found a user, erase the token so it can't be used again
-        if ($user) {
-            $user->login_token = null;
-            $user->save();
+        if ($id = Cache::pull('login_token_'.$token)) {
+            $user = $this->find($id);
+            return $user;
         }
-
-        return $user;
     }
 
     /**
@@ -41,9 +46,9 @@ class UserRepository extends BaseRepository
     {
         $user = $this->find($id);
 
-        $user->login_token = hash_hmac('sha256', str_random(40), str_random(40));
-        $user->save();
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        Cache::put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
-        return $user->login_token;
+        return $token;
     }
 }
