@@ -53,7 +53,7 @@ trait AssertionsTrait
      */
     public function assertValidIso8601Date($date)
     {
-        $this->assertTrue($this->checkValidIso8601Date($date), 'Valid ISO 8601 date');
+        $this->assertTrue($this->checkValidIso8601Date($date), 'Valid ISO8601 date');
 
         return $this;
     }
@@ -61,21 +61,23 @@ trait AssertionsTrait
     /**
      * Validate a string that is is a valid ISO 8601 date.
      *
-     * @param  string  $date
+     * @param  string  $dateStr
      * @return bool
      */
-    protected function checkValidIso8601Date($date)
+    protected function checkValidIso8601Date($dateStr)
     {
-        // 2007-03-25T00:00:00+0000
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{4})$/', $date, $parts) == true) {
-            $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
 
-            $input_time = strtotime($date);
-            if ($input_time === false) return false;
+        //regex via http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+        $iso8601Regex = '/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/';
+        if(preg_match($iso8601Regex, $dateStr)){
 
-            return $input_time == $time;
-        } else {
-            return false;
+            try {
+                new \Carbon\Carbon($dateStr);
+                return true;
+            }catch(\Exception $e){
+                return false;
+            }
         }
+        return false;
     }
 }
