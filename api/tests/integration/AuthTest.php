@@ -137,4 +137,37 @@ class AuthTest extends TestCase
 
         $this->assertRuntimeError('not exist');
     }
+
+    public function testToken()
+    {
+        $token = 'foobar';
+        $user = factory(App\Models\User::class)->make();
+        $user->login_token = $token;
+        $user->save();
+
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertResponseOk();
+        $this->assertArrayHasKey('token', $array);
+    }
+
+    public function testMissingToken()
+    {
+        $this->get('/auth/jwt/token');
+
+        $this->assertRuntimeError('not provided.');
+    }
+
+    public function testInvalidToken()
+    {
+        $token = 'invalid';
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token
+        ]);
+
+        $this->assertResponseStatus(401);
+    }
 }

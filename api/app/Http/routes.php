@@ -61,4 +61,5 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
 {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');
+    $app->get('jwt/token', 'AuthController@token');
 });

@@ -82,4 +82,28 @@ class AuthController extends BaseController
         $token = $this->jwtAuth->refresh($token);
         return $this->item(new AuthToken(['token' => $token]));
     }
+
+    /**
+     * Login with a single use token.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function token(Request $request, \App\Repositories\UserRepository $user)
+    {
+        $header = $request->headers->get('authorization');
+        if (! starts_with(strtolower($header), 'token')) {
+            throw new RuntimeException('Single use token not provided.');
+        }
+
+        $token = trim(str_ireplace('token', '', $header));
+
+        // If we found user, it was an expired or invalid token. No access granted
+        if (!$user = $user->findByLoginToken($token)) {
+            throw new UnauthorizedException;
+        }
+
+        $token = $this->jwtAuth->fromUser($user);
+        return $this->item(new AuthToken(['token' => $token]));
+    }
 }
