@@ -43,4 +43,15 @@ class User extends BaseModel implements AuthenticatableContract
         return '/users';
     }
 
+    /**
+     * Scope a query to find a user by login_token.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string                                 $token
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeLoginToken($query, $token)
+    {
+        return $query->where('login_token', $token);
+    }
 }
