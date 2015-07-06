@@ -170,4 +170,24 @@ class AuthTest extends TestCase
 
         $this->assertResponseStatus(401);
     }
+
+    public function testTokenInvalidated()
+    {
+        $token = 'foobar';
+        $user = factory(App\Models\User::class)->make();
+        $user->login_token = $token;
+        $user->save();
+
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token
+        ]);
+
+        $this->assertResponseOk();
+
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token
+        ]);
+
+        $this->assertResponseStatus(401);
+    }
 }
