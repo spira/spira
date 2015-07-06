@@ -50,7 +50,7 @@ class AuthController extends BaseController
             throw new RuntimeException('Token could not be encoded.');
         }
 
-        return $this->item(new AuthToken(compact('token')));
+        return $this->item(new AuthToken(['token' => $token]));
     }
 
     /**
@@ -80,6 +80,6 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->refresh($token);
-        return $this->item(new AuthToken(compact('token')));
+        return $this->item(new AuthToken(['token' => $token]));
     }
 }
