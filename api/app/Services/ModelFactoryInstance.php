@@ -15,6 +15,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $makeVisible;
     private $showOnly;
     private $entityType;
+    private $appends = [];
 
 
     /**
@@ -73,6 +74,27 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         return $this;
     }
 
+    /**
+     * Add properties to the returned entity
+     * @param $key
+     * @param $value
+     * @return $this
+     */
+    public function append($key, $value)
+    {
+        $this->appends[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Make the model factory use a custom transformer
+     * eg
+     * $factory->get(\App\Models\UserCredentials::class)
+     *      ->setTransformer(\App\Http\Transformers\UserTransformer::class)
+     *      ->toArray();
+     * @param $transformerName
+     * @return $this
+     */
     public function setTransformer($transformerName)
     {
         $this->transformer = new $transformerName;
@@ -114,6 +136,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $newHidden = array_diff($hidden, $this->makeVisible);
 
             $entity->setHidden($newHidden);
+        }
+
+        if (!empty($this->appends)){
+            foreach ($this->appends as $appendKey => $appendValue) {
+                $entity->{$appendKey} = $appendValue;
+            }
         }
 
         return $entity;
