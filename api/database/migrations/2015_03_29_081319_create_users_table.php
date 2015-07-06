@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration {
 	{
         $modelClass = static::MODEL;
 
-        Schema::create($modelClass::getTableName(), function(Blueprint $table)
+        Schema::create($modelClass::getTableName(), function(Blueprint $table) use ($modelClass)
             {
                 $table->uuid('user_id');
                 $table->string('email', 255)->unique();
@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration {
                 $table->string('last_name', 45)->nullable();
                 $table->string('phone', 45)->nullable();
                 $table->string('mobile', 45)->nullable();
+                $table->enum('user_type', $modelClass::$userTypes);
 
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();

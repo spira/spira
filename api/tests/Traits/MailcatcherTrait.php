@@ -38,7 +38,7 @@ trait MailcatcherTrait
     {
         $messages = $this->getMessages();
         if (empty($messages)) {
-            $this->fail("No messages received");
+            return $this->fail("No messages received");
         }
         // messages are in descending order
         return reset($messages);
