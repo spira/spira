@@ -35,7 +35,9 @@ Vagrant.configure(2) do |config|
         vb.name = "spira"
 
     end
-
+    
+# provision apt update
+  config.vm.provision :shell, inline: "apt-get update"
 # provision with docker
   config.vm.provision :docker
   config.vm.provision :docker_compose
