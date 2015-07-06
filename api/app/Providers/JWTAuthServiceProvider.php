@@ -13,8 +13,6 @@ class JWTAuthServiceProvider extends ServiceProvider
         $this->app->configure('jwt');
 
         $this->bootBindings();
-
-        $this->commands('tymon.jwt.generate');
     }
 
     /**
