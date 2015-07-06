@@ -82,7 +82,7 @@ gulp.task('clean', 'deletes all build files', [], function(cb) {
     plugins.del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', 'processes javascript files', [], function () {
+gulp.task('scripts', 'processes javascript & typescript files', [], function () {
 
     var tsFilter = plugins.filter('**/*.ts');
     var jsFilter = plugins.filter('**/*.js');
@@ -92,12 +92,13 @@ gulp.task('scripts', 'processes javascript files', [], function () {
         .pipe(jsFilter)
         .pipe(plugins.sourcemaps.init())
         .pipe(plugins.ngAnnotate())
-        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: '../../app/src/'}))
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: '../../../src/'}))
         .pipe(jsFilter.restore())
 
         .pipe(tsFilter)
         .pipe(plugins.tsc({
             sourceMap:true,
+            sourceRoot: '../../../src/',
             keepTree: true,
             target: "ES5"
         }))
