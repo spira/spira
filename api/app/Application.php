@@ -18,7 +18,9 @@ class SpiraApplication extends Application
             return new SyslogUdpHandler(env('LOG_UDP_HOST'), env('LOG_UDP_PORT'));
         }
 
+        // @codeCoverageIgnoreStart
         return parent::getMonologHandler();
+        // @codeCoverageIgnoreEnd
     }
 
 
