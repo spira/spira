@@ -35,5 +35,6 @@ build/Release
 nohup.out
 vendor
 
+.idea
 #Placeholder file for making sure a directory is tracked
 !.gitkeep
