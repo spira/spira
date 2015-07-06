@@ -98,7 +98,7 @@ class AuthController extends BaseController
             throw new BadRequestException('Single use token not provided.');
         }
 
-        $token = trim(str_ireplace('token', '', $header));
+        $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
         if (!$user = $user->findByLoginToken($token)) {
