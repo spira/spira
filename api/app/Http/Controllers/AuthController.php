@@ -4,6 +4,7 @@ use RuntimeException;
 use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -89,9 +90,10 @@ class AuthController extends BaseController
      * Login with a single use token.
      *
      * @param  Request  $request
+     * @param  \App\Repositories\UserRepository  $user
      * @return Response
      */
-    public function token(Request $request, \App\Repositories\UserRepository $user)
+    public function token(Request $request, UserRepository $user)
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
