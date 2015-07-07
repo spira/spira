@@ -10,6 +10,7 @@ use Tymon\JWTAuth\Claims\Audience;
 use Tymon\JWTAuth\Claims\Subject;
 use Tymon\JWTAuth\Claims\JwtId;
 use Tymon\JWTAuth\Claims\Custom;
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AuthTest extends TestCase
@@ -97,9 +98,14 @@ class AuthTest extends TestCase
         $token = $jwtAuth->fromUser($user);
 
         $options = ['headers' => ['authorization' => 'Bearer '.$token]];
-
-        $client = new GuzzleHttp\Client();
-        $res = $client->get($this->prepareUrlForRequest('/auth/jwt/refresh'), $options);
+        $client = new Client([
+            'base_url' => sprintf(
+                'http://%s:%s',
+                getenv('WEBSERVER_HOST'),
+                getenv('WEBSERVER_PORT')
+            )
+        ]);
+        $res = $client->get('/auth/jwt/refresh', $options);
 
         $array = $res->json();
         $this->assertEquals(200, $res->getStatusCode());
