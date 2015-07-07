@@ -11,7 +11,7 @@ class GenerateKeysCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'spira:generate-keys';
+    protected $signature = 'auth:generate-keys';
 
     /**
      * The console command description.
