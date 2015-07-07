@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
+use App\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\UnprocessableEntityException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -74,7 +75,7 @@ class AuthController extends BaseController
         catch (TokenExpiredException $e) {
             throw new UnauthorizedException('Token expired.', 401, $e);
         }
-        catch (JWTException $e) {
+        catch (TokenInvalidException $e) {
             throw new UnprocessableEntityException($e->getMessage(), 422, $e);
         }
 
