@@ -7,7 +7,6 @@ addons:
 
 services:
   - redis-server
-  - memcached
 
 before_install:
   - sudo apt-get update -qq
