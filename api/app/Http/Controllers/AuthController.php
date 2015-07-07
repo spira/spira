@@ -50,7 +50,7 @@ class AuthController extends BaseController
                 throw new UnauthorizedException('Credentials failed.');
             }
         } catch (JWTException $e) {
-            throw new RuntimeException($e->getMessage());
+            throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
         return $this->item(new AuthToken(['token' => $token]));
@@ -75,7 +75,7 @@ class AuthController extends BaseController
             throw new UnauthorizedException('Token expired.');
         }
         catch (JWTException $e) {
-            throw new UnprocessableEntityException($e->getMessage());
+            throw new UnprocessableEntityException($e->getMessage(), $e);
         }
 
         if (!$user) {
