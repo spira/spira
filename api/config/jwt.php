@@ -7,12 +7,14 @@ return [
     | JWT Authentication Secret
     |--------------------------------------------------------------------------
     |
-    | Don't forget to set this, as it will be used to sign your tokens.
-    | A helper command is provided for this: `php artisan jwt:generate`
+    | The paths to the RSA keypair used to sign tokens.
     |
     */
 
-    'secret' => env('JWT_SECRET', 'changeme'),
+    'secret' => [
+        'public' => storage_path('app/keys/public.pem'),
+        'private' => storage_path('app/keys/private.pem')
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -28,20 +30,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Refresh time to live
-    |--------------------------------------------------------------------------
-    |
-    | Specify the length of time (in minutes) that the token can be refreshed
-    | within. I.E. The user can refresh their token within a 2 week window of
-    | the original token being created until they must re-authenticate.
-    | Defaults to 2 weeks
-    |
-    */
-
-    'refresh_ttl' => 20160,
-
-    /*
-    |--------------------------------------------------------------------------
     | JWT hashing algorithm
     |--------------------------------------------------------------------------
     |
@@ -52,7 +40,7 @@ return [
     |
     */
 
-    'algo' => 'HS256',
+    'algo' => 'RS256',
 
     /*
     |--------------------------------------------------------------------------
@@ -105,6 +93,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Refresh time to live (Deprecated)
+    |--------------------------------------------------------------------------
+    |
+    | This parameter is used by the JWT package, but not actually used by the
+    | Spira application. So changing this value will have no affect on the
+    | the application behaviour.
+    */
+
+    'refresh_ttl' => 20160,
+
+    /*
+    |--------------------------------------------------------------------------
     | Providers
     |--------------------------------------------------------------------------
     |
@@ -135,7 +135,7 @@ return [
         |
         */
 
-        'jwt' => 'Tymon\JWTAuth\Providers\JWT\NamshiAdapter',
+        'jwt' => 'App\Extensions\JWTAuth\NamshiAdapter',
 
         /*
         |--------------------------------------------------------------------------

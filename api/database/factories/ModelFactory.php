@@ -35,6 +35,7 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
     return array_merge($testEntity, ['varchar' => 'custom']);
 });
 
+
 $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
@@ -84,4 +85,3 @@ $factory->define(App\Models\AuthToken::class, function ($faker) {
 
     return compact('token') + $body;
 });
-

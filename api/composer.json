@@ -41,7 +41,8 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "npm install"
+            "npm install",
+            "php artisan spira:generate-keys"
         ]
     }
 }

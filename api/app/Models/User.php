@@ -1,7 +1,5 @@
 <?php namespace App\Models;
 
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
