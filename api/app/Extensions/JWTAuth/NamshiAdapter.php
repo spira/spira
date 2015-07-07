@@ -5,7 +5,7 @@ use Namshi\JOSE\JWS;
 use Tymon\JWTAuth\Providers\JWT\JWTProvider;
 use Tymon\JWTAuth\Providers\JWT\JWTInterface;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use App\Exceptions\TokenInvalidException;
 
 /**
  * The provided NamshiAdapter in the package can not handle RSA keys, which
@@ -63,7 +63,7 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
         try {
             $jws = JWS::load($token);
         } catch (Exception $e) {
-            throw new TokenInvalidException('Could not decode token: ' . $e->getMessage());
+            throw new TokenInvalidException('Could not decode token: ' . $e->getMessage(), 500, $e);
         }
 
         if (! $jws->verify($this->secret['public'], $this->algo)) {

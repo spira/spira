@@ -151,7 +151,7 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertException('Signature could not', 422, 'UnprocessableEntityException');
+        $this->assertException('Signature could not', 422, 'TokenInvalidException');
     }
 
     public function testRefreshInvalidToken()
@@ -160,7 +160,7 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertException('invalid', 422, 'UnprocessableEntityException');
+        $this->assertException('invalid', 422, 'TokenInvalidException');
     }
 
     public function testRefreshMissingToken()
