@@ -90,6 +90,22 @@ class AuthTest extends TestCase
         $this->assertNotEquals($token, $object->token);
     }
 
+    public function testRefreshPlainHeader()
+    {
+        $user = App\Models\User::first();
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $token = $jwtAuth->fromUser($user);
+
+        $options = ['headers' => ['authorization' => 'Bearer '.$token]];
+
+        $client = new GuzzleHttp\Client();
+        $res = $client->get($this->prepareUrlForRequest('/auth/jwt/refresh'), $options);
+
+        $array = $res->json();
+        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertNotEquals($token, $array['token']);
+    }
+
     public function testRefreshExpiredToken()
     {
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
@@ -152,8 +168,6 @@ class AuthTest extends TestCase
         $this->get('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token
         ]);
-
-        var_dump($this->response->getContent());
 
         $array = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
