@@ -48,14 +48,14 @@ class GenerateKeysCommand extends Command
     public function handle()
     {
         $rsa = new Crypt_RSA();
-        extract($rsa->createKey());
+        $keys = $rsa->createKey();
 
         if (!$this->file->exists(storage_path('app/keys'))) {
             $this->file->makeDirectory(storage_path('app/keys'));
         }
 
-        $this->file->put(storage_path('app/keys/private.pem'), $privatekey);
-        $this->file->put(storage_path('app/keys/public.pem'), $publickey);
+        $this->file->put(storage_path('app/keys/private.pem'), $keys['privatekey']);
+        $this->file->put(storage_path('app/keys/public.pem'), $keys['publickey']);
 
         return 0;
     }
