@@ -138,6 +138,22 @@ class AuthTest extends TestCase
         $this->assertContains('expired', $body->message);
     }
 
+    public function testRefreshInvalidTokenSignature()
+    {
+        $user = factory(App\Models\User::class)->create();
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $token = $jwtAuth->fromUser($user);
+
+        // Replace the signature with an invalid string
+        $segments = explode('.', $token);
+        $segments[2] = 'foobar';
+        $token = implode('.', $segments);
+
+        $this->callRefreshToken($token);
+
+        $this->assertException('Signature could not', 422, 'UnprocessableEntityException');
+    }
+
     public function testRefreshInvalidToken()
     {
         $token = 'foo.bar.baz';
