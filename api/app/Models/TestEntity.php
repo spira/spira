@@ -1,8 +1,5 @@
 <?php namespace App\Models;
 
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
-
 class TestEntity extends BaseModel {
     /**
      * The database table used by the model.

@@ -15,17 +15,23 @@ class BaseTransformer extends TransformerAbstract
     {
         $array = $object->toArray();
 
-        // Transform array keys to camelCase
         foreach ($array as $key => $value) {
-            if (str_contains($key, '_')) {
+
+            // Handle snakecase conversion in sub arrays
+            if (is_array($value)) {
+                $value = $this->renameKeys($value);
+                $array[$key] = $value;
+            }
+
+            // Find any potential snake_case keys in the 'root' array, and
+            // convert them to camelCase
+            if (is_string($key) && str_contains($key, '_')) {
                 $array = $this->renameArrayKey($array, $key, camel_case($key));
             }
         }
 
         // Rename self to _self
-        if (array_key_exists('self', $array)) {
-            $array = ['_self' => array_pull($array, 'self')] + $array;
-        }
+        $array = $this->renameSelfKey($array);
 
         return $array;
     }
@@ -46,6 +52,49 @@ class BaseTransformer extends TransformerAbstract
         if ($index !== false) {
             $keys[$index] = $to;
             $array = array_combine($keys, $array);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Recursively rename keys in nested arrays.
+     *
+     * @param  array  $array
+     * @return array
+     */
+    protected function renameKeys(array $array)
+    {
+        $newArray = [];
+        foreach($array as $key => $value) {
+
+            // Recursively check if the value is an array that needs parsing too
+            $value = (is_array($value)) ? $this->renameKeys($value) : $value;
+
+            // Convert snake_case to camelCase
+            if (is_string($key) && str_contains($key, '_')) {
+                $newArray[camel_case($key)] = $value;
+            } else {
+                $newArray[$key] = $value;
+            }
+        }
+
+        // Update potential self keys
+        $newArray = $this->renameSelfKey($newArray);
+
+        return $newArray;
+    }
+
+    /**
+     * Renames the key self to _self if it exists.
+     *
+     * @param  array  $array
+     * @return $array
+     */
+    protected function renameSelfKey(array $array)
+    {
+        if (array_key_exists('self', $array)) {
+            $array = ['_self' => array_pull($array, 'self')] + $array;
         }
 
         return $array;
