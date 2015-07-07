@@ -75,7 +75,7 @@ class AuthController extends BaseController
             throw new UnauthorizedException('Token expired.', 401, $e);
         }
         catch (JWTException $e) {
-            throw new UnprocessableEntityException($e->getMessage(), $e);
+            throw new UnprocessableEntityException($e->getMessage(), 422, $e);
         }
 
         if (!$user) {
