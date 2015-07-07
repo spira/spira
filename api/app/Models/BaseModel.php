@@ -9,30 +9,6 @@ abstract class BaseModel extends Model
 
     public $incrementing = false;
 
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    public $appends = ['self'];
-
-    /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    abstract public function entityRoute();
-
-    /**
-     * Get the user's first name.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getSelfAttribute()
-    {
-        return url($this->entityRoute().'/'.$this->{$this->primaryKey});
-    }
 
     public static function getTableName()
     {

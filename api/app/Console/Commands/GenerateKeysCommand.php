@@ -23,15 +23,13 @@ class GenerateKeysCommand extends Command
     /**
      * Filesystem.
      *
-     * @var Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $file;
 
     /**
      * Create a new command instance.
-     *
-     * @param  Illuminate\Filesystem\Filesystem  $file
-     * @return void
+     * @param  Filesystem $file
      */
     public function __construct(Filesystem $file)
     {

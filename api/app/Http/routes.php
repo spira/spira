@@ -12,6 +12,7 @@
 */
 
 use Illuminate\Http\Request;
+use Laravel\Lumen\Application;
 
 $app->get('/', function() use ($app) {
 
@@ -32,21 +33,20 @@ $app->get('/documentation.apib', function(Request $request) use ($app) {
 
 });
 
-$app->group(['prefix' => 'users'], function($app){
+$app->group(['prefix' => 'users'], function(Application $app){
 
     $app->get('/', 'App\Http\Controllers\UserController@getAll');
-
     $app->get('/{id}', 'App\Http\Controllers\UserController@getOne');
 
 });
 
 
-$app->group(['prefix' => 'test'], function($app){
+$app->group(['prefix' => 'test'], function(Application $app){
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
-    $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
+    $app->get('/entities', ['as'=>'stuff','uses'=>'App\Http\Controllers\TestController@getAll']);
     $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
@@ -57,7 +57,7 @@ $app->group(['prefix' => 'test'], function($app){
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
 
-$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app)
 {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');

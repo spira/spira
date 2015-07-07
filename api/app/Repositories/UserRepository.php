@@ -1,7 +1,6 @@
 <?php namespace App\Repositories;
 
-use Cache;
-use Illuminate\Container\Container as App;
+use Illuminate\Support\Facades\Cache;
 
 class UserRepository extends BaseRepository
 {

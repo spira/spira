@@ -17,7 +17,7 @@ class AuthController extends BaseController
     /**
      * JWT Auth
      *
-     * @var Tymon\JWTAuth\JWTAuth
+     * @var JWTAuth
      */
     protected $jwtAuth;
 
@@ -25,7 +25,6 @@ class AuthController extends BaseController
      * Assign dependencies.
      *
      * @param  JWTAuth  $jwtAuth
-     * @return void
      */
     public function __construct(JWTAuth $jwtAuth)
     {
@@ -97,11 +96,11 @@ class AuthController extends BaseController
     public function token(Request $request, UserRepository $user)
     {
         $header = $request->headers->get('authorization');
-        if (! starts_with(strtolower($header), 'token')) {
+        if (! starts_with(mb_strtolower($header), 'token')) {
             throw new BadRequestException('Single use token not provided.');
         }
 
-        $token = trim(substr($header, 5));
+        $token = trim(mb_substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
         if (!$user = $user->findByLoginToken($token)) {

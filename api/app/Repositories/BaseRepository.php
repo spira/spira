@@ -1,51 +1,55 @@
 <?php namespace App\Repositories;
 
-use App\Exceptions\FatalErrorException;
+use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 abstract class BaseRepository
 {
     /**
-     * The application instance.
-     *
-     * @var Illuminate\Container\Container
-     */
-    protected $app;
-
-    /**
      * Eloquent Model
      *
-     * @var Illuminate\Database\Eloquent\Model
+     * @var Model
      */
     protected $model;
+    /**
+     * @var ConnectionResolverInterface
+     */
+    protected $connectionResolver;
+
+    /**
+     * Name of the connection for the repo
+     * @var string
+     */
+    protected $connectionName;
+
+    /**
+     * @var string
+     */
+    private $modelClassName;
+
 
     /**
      * Assign dependencies.
-     *
-     * @param  Illuminate\Container\Container  $app
-     * @return void
+     * @param ConnectionResolverInterface $connectionResolver
+     * @throws \Exception
      */
-    public function __construct(App $app)
+    public function __construct(ConnectionResolverInterface $connectionResolver)
     {
-        $this->app = $app;
-        $this->makeModel();
+        $this->model = $this->getModel();
+        $this->connectionResolver = $connectionResolver;
     }
 
-    /**
-     * Model name.
-     *
-     * @return string
-     */
-    abstract protected function model();
 
     /**
      * Get an entity by id.
      *
      * @param  string  $id
      * @param  array   $columns
-     * @return mixed
+     * @return Model
+     * @throws ModelNotFoundException
      */
     public function find($id, $columns = array('*'))
     {
@@ -56,7 +60,7 @@ abstract class BaseRepository
      * Get all entities.
      *
      * @param  array  $columns
-     * @return mixed
+     * @return Collection
      */
     public function all($columns = array('*'))
     {
@@ -64,169 +68,100 @@ abstract class BaseRepository
     }
 
     /**
-     * Create and store a new instance of an entity.
-     *
-     * @param  array  $data
-     * @return array
+     * @param Model $model
+     * @return bool|Model
+     * @throws RepositoryException
      */
-    public function create(array $data)
+    public function save(Model $model)
     {
-        $entity = $this->model->create($data);
+        $modelClassName = $this->getModelClassName();
+        if (!($model instanceof $modelClassName)){
+            throw new RepositoryException('provided model is not instance of '.$modelClassName);
+        }
+        /** @var Model $model */
 
-        return [$entity->self];
+        if ($model->save()){
+            return $model;
+        }
+
+        return false;
     }
 
     /**
-     * Create and store a collection of new entities.
-     *
-     * @param  array  $models
-     * @return void
+     * @param Model[] $models
+     * @return Model[]
+     * @throws \Exception some general exception
+     * @throws RepositoryException
      */
-    public function createMany(array $models)
+    public function saveMany(array $models)
     {
-        $this->app->db->beginTransaction();
+        $this->getConnection()->beginTransaction();
 
-        foreach ($models as $model) {
-            $this->model->create($model);
-        }
-
-        $this->app->db->commit();
-    }
-
-    /**
-     * Create or replace an entity by id.
-     *
-     * @throws App\Exceptions\FatalException
-     * @param  string  $id
-     * @param  array   $data
-     * @return array
-     */
-    public function createOrReplace($id, array $data)
-    {
-        $keyName = $this->model->getKeyName();
-
-        // Make sure the data does not contain a different id for the entity.
-        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
-            throw new FatalErrorException('Attempt to override entity ID value.');
-        }
-
-        try {
-
-            $model = $this->find($id);
-
-        } catch (ModelNotFoundException $e) {
-
-            $link = $this->create(array_add($data, $keyName, $id));
-
-            return [$link[0]];
-        }
-
-        foreach ($model->getAttributes() as $key => $value) {
-            if($value !== 0) {
-                if (!in_array($key, ['created_at', 'updated_at'])) {
-                    $model->{$key} = null;
+        try{
+            foreach ($models as $model)
+            {
+                if (!$this->save($model)){
+                    throw new RepositoryException('Massive assignment failed as model with id '.$model->getQueueableId().' couldn\'t be saved');
                 }
             }
+        }catch (\Exception $e){
+            $this->getConnection()->rollBack();
+            throw $e;
         }
 
-        $model->update(array_add($data, $keyName, $id));
-
-        return [$model->self];
+        $this->getConnection()->commit();
+        return $models;
     }
 
-    /**
-     * Create or replace a colleciton of entities.
-     *
-     * @param  array  $entities
-     * @return array
-     */
-    public function createOrReplaceMany(array $entities)
-    {
-        $this->app->db->beginTransaction();
-
-        $links = [];
-
-        foreach ($entities as $entity) {
-            $id = array_pull($entity, $this->model->getKeyName());
-
-            $link = $this->createOrReplace($id, $entity);
-            array_push($links, $link[0]);
-        }
-
-        $this->app->db->commit();
-
-        return $links;
-    }
-
-    /**
-     * Update an entity by id.
-     *
-     * @throws App\Exceptions\FatalException
-     * @param  string  $id
-     * @param  array   $data
-     * @return mixed
-     */
-    public function update($id, array $data)
-    {
-        // Make sure the data does not contain a different id for the entity.
-        $keyName = $this->model->getKeyName();
-        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
-            throw new FatalErrorException('Attempt to override entity ID value.');
-        }
-
-        $model = $this->find($id);
-
-        return $model->update($data);
-    }
-
-    /**
-     * Update a collection of entities.
-     *
-     * @param  array  $entities
-     * @return void
-     */
-    public function updateMany(array $entities)
-    {
-        $this->app->db->beginTransaction();
-
-        foreach ($entities as $entity) {
-            $id = array_pull($entity, $this->model->getKeyName());
-
-            $this->update($id, $entity);
-        }
-
-        $this->app->db->commit();
-    }
 
     /**
      * Delete an entity by id.
      *
-     * @param  string  $id
-     * @return mixed
+     * @param Model $model
+     * @return bool
+     * @throws RepositoryException
      */
-    public function delete($id)
+    public function delete(Model $model)
     {
-        return $this->model->destroy($id);
+        $modelClassName = $this->getModelClassName();
+        if (!($model instanceof $modelClassName)){
+            throw new RepositoryException('provided model is not instance of '.$modelClassName);
+        }
+
+        /** @var Model $model */
+
+        return $model->delete();
     }
 
     /**
-     * Delete a collection of entities by their ids.
+     * Delete a collection of entities.
      *
-     * @param  array  $ids
-     * @return void
+     * @param  Model[] $models
+     * @throws \Exception
+     * @return bool
      */
-    public function deleteMany(array $ids)
+    public function deleteMany(array $models)
     {
-        $this->app->db->beginTransaction();
+        $this->getConnection()->beginTransaction();
 
-        $this->model->destroy($ids);
+        try{
+            foreach ($models as $model)
+            {
+                if (!$this->delete($model)){
+                    throw new RepositoryException('Massive deletion failed as model with id '.$model->getQueueableId().' couldn\'t be deleted');
+                }
+            }
+        }catch (\Exception $e){
+            $this->getConnection()->rollBack();
+            throw $e;
+        }
 
-        $this->app->db->commit();
+        $this->getConnection()->commit();
+        return true;
     }
 
     /**
      * Get number of items in storage.
-     *
      * @return int
      */
     public function count()
@@ -235,18 +170,46 @@ abstract class BaseRepository
     }
 
     /**
-     * Get an instance of the model for the repository.
-     *
-     * @throws Exception
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Get new model instance.
+     * @return Model
+     * @throws \Exception
      */
-    protected function makeModel()
+    public function getModel()
     {
-        $model = $this->app->make($this->model());
+        $model = $this->model();
 
-        if (!$model instanceof Model)
-            throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+        if (!$model instanceof Model){
+            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+        }
 
-        return $this->model = $model;
+        return $model;
     }
+
+
+    /**
+     * @return Connection
+     */
+    protected function getConnection()
+    {
+        return $this->connectionResolver->connection($this->connectionName);
+    }
+
+    /**
+     * @return string
+     */
+    private function getModelClassName()
+    {
+        if (is_null($this->modelClassName)){
+            $this->modelClassName = get_class($this->model);
+        }
+
+        return $this->modelClassName;
+    }
+
+    /**
+     * Model name.
+     *
+     * @return Model
+     */
+    abstract protected function model();
 }

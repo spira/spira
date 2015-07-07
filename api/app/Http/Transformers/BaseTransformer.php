@@ -8,7 +8,7 @@ class BaseTransformer extends TransformerAbstract
     /**
      * Turn the object into a format adjusted array.
      *
-     * @param  Illuminate\Contracts\Support\Arrayable $object
+     * @param  Arrayable $object
      * @return array
      */
     public function transform(Arrayable $object)

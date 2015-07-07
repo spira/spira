@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App;
+use App\Services\Validator;
 use Laravel\Lumen\Routing\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +23,7 @@ abstract class BaseController extends Controller
     /**
      * Validation service.
      *
-     * @var App\Services\Validation\TestValidator
+     * @var Validator
      */
     protected $validator;
 
@@ -35,7 +37,7 @@ abstract class BaseController extends Controller
     /**
      * Get all entities.
      *
-     * @return Response
+     * @return array
      */
     public function getAll()
     {
@@ -46,7 +48,7 @@ abstract class BaseController extends Controller
      * Get one entity.
      *
      * @param  string  $id
-     * @return Response
+     * @return array
      */
     public function getOne($id)
     {
@@ -62,8 +64,9 @@ abstract class BaseController extends Controller
     public function postOne(Request $request)
     {
         $this->validator->with($request->all())->validate();
-
-        return response($this->repository->create($request->all()), 201);
+        $model = $this->repository->getModel();
+        $model->fill($request->all());
+        return response($this->repository->save($model), 201);
     }
 
     /**
@@ -81,7 +84,7 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Put many entites.
+     * Put many entities.
      *
      * @param  Request  $request
      * @return Response

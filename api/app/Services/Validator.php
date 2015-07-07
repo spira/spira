@@ -9,7 +9,7 @@ abstract class Validator
     /**
      * The application instance.
      *
-     * @var Illuminate\Container\Container
+     * @var App
      */
     protected $app;
 
@@ -58,8 +58,7 @@ abstract class Validator
     /**
      * Assign dependencies.
      *
-     * @param  Illuminate\Container\Container  $app
-     * @return  void
+     * @param  App  $app
      */
     public function __construct(App $app)
     {

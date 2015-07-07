@@ -1,5 +1,7 @@
 <?php namespace App\Repositories;
 
+use App\Models\TestEntity;
+
 class TestRepository extends BaseRepository
 {
     /**
@@ -9,6 +11,6 @@ class TestRepository extends BaseRepository
      */
     protected function model()
     {
-        return 'App\Models\TestEntity';
+        return new TestEntity();
     }
 }
