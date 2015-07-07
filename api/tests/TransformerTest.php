@@ -27,6 +27,46 @@ class TransformerTest extends TestCase
         $this->assertArrayHasKey('fooBar', $this->service->item($data, new $this->transformer));
     }
 
+    public function testItemNestedData()
+    {
+        $data = m::mock('Illuminate\Contracts\Support\Arrayable');
+        $data->shouldReceive('toArray')
+            ->once()
+            ->andReturn([
+                'foo_bar' => 'foobar',
+                'nested_data' => ['foo_bar' => true, 'foo' => true, 'bar_foo' => true]
+            ]);
+
+        $data = $this->service->item($data, new $this->transformer);
+
+        $this->assertArrayHasKey('fooBar', $data['nestedData']);
+        $this->assertArrayHasKey('barFoo', $data['nestedData']);
+        $this->assertArrayNotHasKey('foo_bar', $data['nestedData']);
+    }
+
+    public function testItemWithSelfKey()
+    {
+        $data = m::mock('Illuminate\Contracts\Support\Arrayable');
+        $data->shouldReceive('toArray')
+            ->once()
+            ->andReturn(['self' => 'foobar']);
+
+        $this->assertArrayHasKey('_self', $this->service->item($data, new $this->transformer));
+    }
+
+    public function testItemWithNestedSelfKey()
+    {
+        $data = m::mock('Illuminate\Contracts\Support\Arrayable');
+        $data->shouldReceive('toArray')
+            ->once()
+            ->andReturn(['self' => 'foobar', 'foo' => ['self' => 'foobar']]);
+
+        $data = $this->service->item($data, new $this->transformer);
+
+        $this->assertArrayHasKey('_self', $data);
+        $this->assertArrayHasKey('_self', $data['foo']);
+    }
+
     /**
      * Testing Transformer Service.
      */

@@ -1,6 +1,11 @@
 <?php namespace App\Models;
 
-class User extends BaseModel {
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+
+class User extends BaseModel implements AuthenticatableContract
+{
+    use Authenticatable;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_PUBLIC = 'public';
@@ -17,13 +22,14 @@ class User extends BaseModel {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'reset_token', 'phone', 'mobile'];
+    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'mobile'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'reset_token'];
+    protected $hidden = ['password'];
 
     protected $primaryKey = 'user_id';
 
@@ -36,5 +42,4 @@ class User extends BaseModel {
     {
         return '/users';
     }
-
 }
