@@ -30,20 +30,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Refresh time to live
-    |--------------------------------------------------------------------------
-    |
-    | Specify the length of time (in minutes) that the token can be refreshed
-    | within. I.E. The user can refresh their token within a 2 week window of
-    | the original token being created until they must re-authenticate.
-    | Defaults to 2 weeks
-    |
-    */
-
-    'refresh_ttl' => 20160,
-
-    /*
-    |--------------------------------------------------------------------------
     | JWT hashing algorithm
     |--------------------------------------------------------------------------
     |
@@ -104,6 +90,18 @@ return [
     */
 
     'blacklist_enabled' => env('JWT_BLACKLIST_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Refresh time to live (Deprecated)
+    |--------------------------------------------------------------------------
+    |
+    | This parameter is used by the JWT package, but not actually used by the
+    | Spira application. So changing this value will have no affect on the
+    | the application behaviour.
+    */
+
+    'refresh_ttl' => 20160,
 
     /*
     |--------------------------------------------------------------------------
