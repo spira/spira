@@ -1,0 +1,49 @@
+# Group Auth
+This covers all of the authentication needs including password login, token login and token refreshing.
+Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html) for authentication of
+ all requests (that require authentication). JWT is used because authentication can be verified without a call to the
+ database which makes for excellent performance.
+
+## Login [/auth/jwt/login]
+ A JWT is retrieved by issuing a GET request for a new token, the username
+ and password are provided as an `Authorization: Basic` header
+
+### Get new login token [GET]
++ Request
+    + Headers
+
+            Authorization: Basic {{ base64_encode($faker->email . ':' . $faker->password ) }}
+
++ Response 200 (application/json)
+
+    + Body
+
+        {!! $factory->json(\App\Models\AuthToken::class) !!}
+
+## Refresh Token [/auth/jwt/refresh]
+*Before* tokens expire they can be renewed with a get request with the current valid token as an `Authorization: Bearer`
+ header
+
+### Refresh token [GET]
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 200
+
+        {!! $factory->json(\App\Models\AuthToken::class) !!}
+
+## Token Login [/auth/jwt/token]
+Sometimes a user receives a token in a link by email that is exchanged with an auth token. Tokens are _always_ single
+ use - a subsequent request with the same token must fail
+
+### Login with token [GET]
++ Request
+    + Headers
+
+            Authorization: Token {!! $faker->regexify('[A-Za-z0-9]{30}'); !!}
+
++ Response 200
+
+        {!! $factory->json(\App\Models\AuthToken::class) !!}
