@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class IlluminateModelTransformer extends BaseTransformer implements ItemTransformerInterface, CollectionTransformerInterface
 {
+    public static $badRoutes = [];
     /**
      * Turn the object into a format adjusted array.
      *
@@ -41,7 +42,13 @@ class IlluminateModelTransformer extends BaseTransformer implements ItemTransfor
             }
         }
 
-        $array['_self'] = route(get_class($object),['id'=>$object->getQueueableId()]);
+        if (!isset(static::$badRoutes[get_class($object)])){
+            try{
+                $array['_self'] = route(get_class($object),['id'=>$object->getQueueableId()]);
+            }catch (\InvalidArgumentException $e){
+                static::$badRoutes[get_class($object)] = true;
+            }
+        }
 
         return $array;
     }

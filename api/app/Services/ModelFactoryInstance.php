@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\Http\Transformers\BaseTransformer;
+use App\Http\Transformers\IlluminateModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -177,7 +178,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         $entity = $this->modified();
 
         if (!$this->transformer) {
-            $this->transformer = new BaseTransformer();
+            $this->transformer = new IlluminateModelTransformer($this->transformerService);
         }
 
         $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);
