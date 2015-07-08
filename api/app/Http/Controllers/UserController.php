@@ -1,9 +1,16 @@
 <?php namespace App\Http\Controllers;
 
+use App\Repositories\UserRepository as Repository;
 
 class UserController extends BaseController
 {
-
-    public static $model = 'App\Models\User';
-
+    /**
+     * Assign dependencies.
+     *
+     * @param  Repository  $repository
+     */
+    public function __construct(Repository $repository)
+    {
+        $this->repository = $repository;
+    }
 }
