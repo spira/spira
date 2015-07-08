@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateUserCredentialsTable extends Migration
 {
-    const MODEL = 'App\Models\UserCredentials';
+    const MODEL = 'App\Models\UserCredential';
 
     /**
      * Run the migrations.

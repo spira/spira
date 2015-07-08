@@ -55,7 +55,7 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
     return array_merge($user, ['userType' => App\Models\User::USER_TYPE_ADMIN]);
 });
 
-$factory->define(App\Models\UserCredentials::class, function ($faker) {
+$factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
         'user_credential_id' => $faker->uuid,
         'password' => Hash::make('password')

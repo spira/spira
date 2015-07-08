@@ -1,20 +1,14 @@
 <?php namespace App\Models;
 
-class UserCredentials extends BaseModel
+class UserCredential extends BaseModel
 {
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    public $table = 'user_credentials';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['user_credential_id', 'password'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
