@@ -6,6 +6,13 @@ class UserTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+    }
+
     protected function assertException($message, $statusCode, $exception)
     {
         $body = json_decode($this->response->getContent());
@@ -14,14 +21,19 @@ class UserTest extends TestCase
         $this->assertContains($exception, $body->debug->exception);
     }
 
-    public function testGetAllAdminUser()
+    protected function createUser($type = 'admin')
     {
         $user = factory(App\Models\User::class)->make();
-        $user->user_type = 'admin';
+        $user->user_type = $type;
         $user->save();
 
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        return $user;
+    }
+
+    public function testGetAllByAdminUser()
+    {
+        $user = $this->createUser();
+        $token = $this->jwtAuth->fromUser($user);
 
         $this->get('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -33,19 +45,58 @@ class UserTest extends TestCase
         $this->assertJsonMultipleEntries();
     }
 
-    public function testGetAllPublicUser()
+    public function testGetAllByPublicUser()
     {
-        $user = factory(App\Models\User::class)->make();
-        $user->user_type = 'public';
-        $user->save();
-
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $user = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
 
         $this->get('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGetOneByAdminUser()
+    {
+        $user = $this->createUser();
+        $userToGet = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
+    public function testGetOneByPublicUser()
+    {
+        $user = $this->createUser('public');
+        $userToGet = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGetOneBySelfUser()
+    {
+        $user = $this->createUser('public');
+        $userToGet = $user;
+        $token = $this->jwtAuth->fromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
     }
 }

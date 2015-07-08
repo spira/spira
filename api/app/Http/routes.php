@@ -34,8 +34,8 @@ $app->get('/documentation.apib', function(Request $request) use ($app) {
 
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function($app)
 {
-    $app->get('/', ['middleware' => 'auth', 'uses' => 'UserController@getAll']);
-    $app->get('/{id}', 'UserController@getOne');
+    $app->get('/', ['middleware' => 'auth:admin', 'uses' => 'UserController@getAll']);
+    $app->get('/{id}', ['middleware' => 'auth:admin,self', 'uses' => 'UserController@getOne']);
 });
 
 

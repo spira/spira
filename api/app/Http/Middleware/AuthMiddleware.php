@@ -34,10 +34,22 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        // Get possible x amount of parameters passed to the middleware
+        $userTypes = array_slice(func_get_args(), 2);
+
         $token = $this->jwtAuth->getTokenFromRequest($request);
         $user = $this->jwtAuth->getUser($token);
 
-        if ($user->user_type !== 'admin') {
+        // Check the restriction types
+        if (in_array('admin', $userTypes) and $user->user_type == 'admin') {
+            $allowed = true;
+        }
+
+        if (in_array('self', $userTypes) and in_array($user->user_id, $request->segments())) {
+            $allowed = true;
+        }
+
+        if (!isset($allowed)) {
             throw new ForbiddenException;
         }
 
