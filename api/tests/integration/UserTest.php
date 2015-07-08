@@ -46,6 +46,6 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
-        $this->assertException('Denied', 401, 'UnauthorizedException');
+        $this->assertException('Denied', 403, 'ForbiddenException');
     }
 }

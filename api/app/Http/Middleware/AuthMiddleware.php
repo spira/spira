@@ -3,7 +3,7 @@
 use Closure;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
-use App\Exceptions\UnauthorizedException;
+use App\Exceptions\ForbiddenException;
 
 class AuthMiddleware
 {
@@ -54,8 +54,7 @@ class AuthMiddleware
         }
 
         if ($user->user_type !== 'admin') {
-            // @todo Replace with a 403 Forbidden Exception
-            throw new UnauthorizedException('Denied.', 401);
+            throw new ForbiddenException;
         }
 
         return $next($request);
