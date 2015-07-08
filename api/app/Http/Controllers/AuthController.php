@@ -7,10 +7,7 @@ use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
-use App\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Exceptions\UnprocessableEntityException;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class AuthController extends BaseController
 {
@@ -65,23 +62,10 @@ class AuthController extends BaseController
      */
     public function refresh(Request $request)
     {
-        if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
-            throw new BadRequestException('Token not provided.');
-        }
+        $token = $this->jwtAuth->getTokenFromRequest($request);
 
-        try {
-            $user = $this->jwtAuth->authenticate((string) $token);
-        }
-        catch (TokenExpiredException $e) {
-            throw new UnauthorizedException('Token expired.', 401, $e);
-        }
-        catch (TokenInvalidException $e) {
-            throw new UnprocessableEntityException($e->getMessage(), 422, $e);
-        }
-
-        if (!$user) {
-            throw new RuntimeException('The user does not exist.');
-        }
+        // Get the user to make sure the token is fully valid
+        $this->jwtAuth->getUser($token);
 
         $token = $this->jwtAuth->refresh($token);
         return $this->item(new AuthToken(['token' => $token]));

@@ -34,24 +34,8 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // @todo Consolidate this retrieve/verify token code with the controller refresh() method.
-        if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
-            throw new BadRequestException('Token not provided.');
-        }
-
-        try {
-            $user = $this->jwtAuth->authenticate((string) $token);
-        }
-        catch (TokenExpiredException $e) {
-            throw new UnauthorizedException('Token expired.', 401, $e);
-        }
-        catch (TokenInvalidException $e) {
-            throw new UnprocessableEntityException($e->getMessage(), 422, $e);
-        }
-
-        if (!$user) {
-            throw new RuntimeException('The user does not exist.');
-        }
+        $token = $this->jwtAuth->getTokenFromRequest($request);
+        $user = $this->jwtAuth->getUser($token);
 
         if ($user->user_type !== 'admin') {
             throw new ForbiddenException;
