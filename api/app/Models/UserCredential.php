@@ -19,6 +19,13 @@ class UserCredential extends BaseModel
     protected $primaryKey = 'user_credential_id';
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * Get the access route for the entity.
      *
      * @return string

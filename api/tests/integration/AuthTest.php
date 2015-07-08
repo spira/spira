@@ -35,6 +35,9 @@ class AuthTest extends TestCase
     public function testLogin()
     {
         $user = factory(App\Models\User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -67,6 +70,10 @@ class AuthTest extends TestCase
     public function testFailedTokenEncoding()
     {
         $user = factory(App\Models\User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
         $this->app->config->set('jwt.algo', 'foobar');
 
         $this->get('/auth/jwt/login', [

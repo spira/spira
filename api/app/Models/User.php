@@ -60,4 +60,14 @@ class User extends BaseModel implements AuthenticatableContract
     {
         return $this->hasOne('App\Models\UserCredential');
     }
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->userCredentials ? $this->userCredentials->password : false;
+    }
 }
