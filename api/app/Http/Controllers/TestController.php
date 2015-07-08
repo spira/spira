@@ -1,10 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\Models\TestEntity;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Http\Request;
 use App\Repositories\TestRepository;
 use App\Http\Validators\TestEntityValidator;
 
@@ -26,7 +21,6 @@ class TestController extends BaseController
      */
     public function internalException()
     {
-
         throw new \RuntimeException("Something went wrong");
     }
 
@@ -36,7 +30,6 @@ class TestController extends BaseController
      */
     public function fatalError()
     {
-
         call_to_non_existent_function();
     }
 
