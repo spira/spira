@@ -14,6 +14,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $transformer;
     private $makeVisible;
     private $showOnly;
+    private $hide;
     private $entityType;
     private $appends = [];
 
@@ -45,7 +46,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * @param $customizations
      * @return $this
      */
-    public function customize($customizations)
+    public function customize(array $customizations)
     {
         $this->customizations = $customizations;
         return $this;
@@ -70,6 +71,19 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function showOnly($showOnly)
     {
         $this->showOnly = $showOnly;
+
+        return $this;
+    }
+
+    /**
+     * Hide attributes the factory instance returns.
+     *
+     * @param  array  $hide
+     * @return $this
+     */
+    public function hide(array $hide)
+    {
+        $this->hide = $hide;
 
         return $this;
     }
@@ -134,6 +148,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $hidden = $entity->getHidden();
 
             $newHidden = array_diff($hidden, $this->makeVisible);
+
+            $entity->setHidden($newHidden);
+        }
+
+        if ($this->hide) {
+            $hidden = $entity->getHidden();
+
+            $newHidden = array_merge($hidden, $this->hide);
 
             $entity->setHidden($newHidden);
         }
