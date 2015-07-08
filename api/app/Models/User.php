@@ -51,4 +51,13 @@ class User extends BaseModel implements AuthenticatableContract
         return '/users';
     }
 
+    /**
+     * Get the credentials associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function userCredentials()
+    {
+        return $this->hasOne('App\Models\UserCredential');
+    }
 }
