@@ -15,7 +15,7 @@ class ModelFactory
     public function __construct()
     {
         $this->factory = Container::getInstance()->make('Illuminate\Database\Eloquent\Factory');
-        $this->transformerService = App::make('App\Services\Transformer');
+        $this->transformerService = App::make(TransformerService::class);
     }
 
     /**
