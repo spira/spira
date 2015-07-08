@@ -89,7 +89,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Make the model factory use a custom transformer
      * eg
-     * $factory->get(\App\Models\UserCredentials::class)
+     * $factory->get(\App\Models\UserCredential::class)
      *      ->setTransformer(\App\Http\Transformers\UserTransformer::class)
      *      ->toArray();
      * @param $transformerName
