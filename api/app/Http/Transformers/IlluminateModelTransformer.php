@@ -8,8 +8,7 @@
 
 namespace App\Http\Transformers;
 
-
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 
 class IlluminateModelTransformer extends BaseTransformer implements ItemTransformerInterface, CollectionTransformerInterface
 {
@@ -21,8 +20,8 @@ class IlluminateModelTransformer extends BaseTransformer implements ItemTransfor
      */
     public function transform($object)
     {
-        if (!($object instanceof Arrayable)){
-            throw new \InvalidArgumentException('Must be Arrayable');
+        if (!($object instanceof Model)){
+            throw new \InvalidArgumentException('Must be '.Model::class);
         }
 
         $array = $object->toArray();
@@ -41,6 +40,8 @@ class IlluminateModelTransformer extends BaseTransformer implements ItemTransfor
                 $array = $this->renameArrayKey($array, $key, camel_case($key));
             }
         }
+
+        $array['_self'] = route(get_class($object),['id'=>$object->getQueueableId()]);
 
         return $array;
     }

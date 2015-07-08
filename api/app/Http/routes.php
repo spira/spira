@@ -46,8 +46,8 @@ $app->group(['prefix' => 'test'], function(Application $app){
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
-    $app->get('/entities', ['as'=>'stuff','uses'=>'App\Http\Controllers\TestController@getAll']);
-    $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
+    $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
+    $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
     $app->put('/entities', 'App\Http\Controllers\TestController@putMany');
