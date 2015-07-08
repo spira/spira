@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration {
                 $table->string('last_name', 45)->nullable();
                 $table->string('phone', 45)->nullable();
                 $table->string('mobile', 45)->nullable();
+                $table->string('timezone_identifier', 40)->nullable();
                 $table->enum('user_type', $modelClass::$userTypes);
 
                 $table->dateTime('created_at');
