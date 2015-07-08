@@ -2,7 +2,7 @@
 
 use Closure;
 
-class TransformInputData
+class TransformInputDataMiddleware
 {
     /**
      * Handle an incoming request.
