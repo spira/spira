@@ -9,7 +9,7 @@ use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\SerializerAbstract;
 use League\Fractal\TransformerAbstract;
 
-class Transformer
+class TransformerService
 {
     /**
      * Fractal manager.
@@ -21,25 +21,15 @@ class Transformer
     /**
      * Initialize the transform manager.
      *
-     * @param  SerializerAbstract  $serializer
+     * @param  SerializerAbstract $serializer
+     * @param Manager $manager
      */
-    public function __construct(SerializerAbstract $serializer)
+    public function __construct(SerializerAbstract $serializer, Manager $manager)
     {
-        $this->manager = new Manager();
+        $this->manager = $manager;
         $this->manager->setSerializer($serializer);
     }
 
-    /**
-     * Parse Include String.
-     *
-     * @param  array|string  $includes
-     *
-     * @return $this
-     */
-    public function parseIncludes($includes)
-    {
-        $this->manager->parseIncludes($includes);
-    }
 
     /**
      * Create transformed data from a collection.
@@ -52,7 +42,6 @@ class Transformer
     public function collection($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Collection($data, $this->getTransformer($transformer), $resourceKey);
-
         return $this->manager->createData($resource)->toArray()['data'];
     }
 
@@ -67,7 +56,6 @@ class Transformer
     public function item($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
-
         return $this->manager->createData($resource)->toArray();
     }
 

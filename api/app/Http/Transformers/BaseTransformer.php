@@ -1,102 +1,31 @@
 <?php namespace App\Http\Transformers;
 
+use App\Services\TransformerService;
 use League\Fractal\TransformerAbstract;
-use Illuminate\Contracts\Support\Arrayable;
 
-class BaseTransformer extends TransformerAbstract
+abstract class BaseTransformer extends TransformerAbstract
 {
     /**
-     * Turn the object into a format adjusted array.
-     *
-     * @param  Arrayable $object
-     * @return array
+     * @var TransformerService
      */
-    public function transform(Arrayable $object)
+    private $service;
+
+    public function __construct(TransformerService $service)
     {
-        $array = $object->toArray();
-
-        foreach ($array as $key => $value) {
-
-            // Handle snakecase conversion in sub arrays
-            if (is_array($value)) {
-                $value = $this->renameKeys($value);
-                $array[$key] = $value;
-            }
-
-            // Find any potential snake_case keys in the 'root' array, and
-            // convert them to camelCase
-            if (is_string($key) && str_contains($key, '_')) {
-                $array = $this->renameArrayKey($array, $key, camel_case($key));
-            }
-        }
-
-        // Rename self to _self
-        $array = $this->renameSelfKey($array);
-
-        return $array;
+        $this->service = $service;
     }
 
     /**
-     * Rename an array key while preserving array order.
-     *
-     * @param  array   $array
-     * @param  string  $from
-     * @param  string  $to
-     * @return array
+     * @param $object
+     * @return mixed
      */
-    protected function renameArrayKey(array $array, $from, $to)
-    {
-        $keys = array_keys($array);
-        $index = array_search($from, $keys);
-
-        if ($index !== false) {
-            $keys[$index] = $to;
-            $array = array_combine($keys, $array);
-        }
-
-        return $array;
-    }
+    abstract public function transform($object);
 
     /**
-     * Recursively rename keys in nested arrays.
-     *
-     * @param  array  $array
-     * @return array
+     * @return TransformerService
      */
-    protected function renameKeys(array $array)
+    public function getService()
     {
-        $newArray = [];
-        foreach($array as $key => $value) {
-
-            // Recursively check if the value is an array that needs parsing too
-            $value = (is_array($value)) ? $this->renameKeys($value) : $value;
-
-            // Convert snake_case to camelCase
-            if (is_string($key) && str_contains($key, '_')) {
-                $newArray[camel_case($key)] = $value;
-            } else {
-                $newArray[$key] = $value;
-            }
-        }
-
-        // Update potential self keys
-        $newArray = $this->renameSelfKey($newArray);
-
-        return $newArray;
-    }
-
-    /**
-     * Renames the key self to _self if it exists.
-     *
-     * @param  array  $array
-     * @return $array
-     */
-    protected function renameSelfKey(array $array)
-    {
-        if (array_key_exists('self', $array)) {
-            $array = ['_self' => array_pull($array, 'self')] + $array;
-        }
-
-        return $array;
+        return $this->service;
     }
 }

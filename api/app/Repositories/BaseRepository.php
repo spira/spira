@@ -69,7 +69,7 @@ abstract class BaseRepository
 
     /**
      * @param Model $model
-     * @return bool|Model
+     * @return false|Model
      * @throws RepositoryException
      */
     public function save(Model $model)
@@ -179,7 +179,7 @@ abstract class BaseRepository
         $model = $this->model();
 
         if (!$model instanceof Model){
-            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".Model::class);
         }
 
         return $model;

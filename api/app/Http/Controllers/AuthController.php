@@ -2,6 +2,7 @@
 
 use RuntimeException;
 use App\Models\AuthToken;
+use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
@@ -83,7 +84,7 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->refresh($token);
-        return $this->item(new AuthToken(['token' => $token]));
+        return response($this->item(new AuthToken(['token' => $token])));
     }
 
     /**
@@ -96,11 +97,11 @@ class AuthController extends BaseController
     public function token(Request $request, UserRepository $user)
     {
         $header = $request->headers->get('authorization');
-        if (! starts_with(mb_strtolower($header), 'token')) {
+        if (! starts_with(strtolower($header), 'token')) {
             throw new BadRequestException('Single use token not provided.');
         }
 
-        $token = trim(mb_substr($header, 5));
+        $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
         if (!$user = $user->findByLoginToken($token)) {
@@ -108,6 +109,6 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->fromUser($user);
-        return $this->item(new AuthToken(['token' => $token]));
+        return response($this->item(new AuthToken(['token' => $token])));
     }
 }

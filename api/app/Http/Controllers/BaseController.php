@@ -1,13 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App;
+use App\Http\Transformers\CollectionTransformerInterface;
+use App\Http\Transformers\ItemTransformerInterface;
 use App\Services\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
 
 abstract class BaseController extends Controller
 {
@@ -27,46 +27,42 @@ abstract class BaseController extends Controller
      */
     protected $validator;
 
-    /**
-     * Transformer to use for responses.
-     *
-     * @var string
-     */
-    protected $transformer = 'App\Http\Transformers\BaseTransformer';
 
     /**
      * Get all entities.
      *
-     * @return array
+     * @param CollectionTransformerInterface $transformer
+     * @return Response
      */
-    public function getAll()
+    public function getAll(CollectionTransformerInterface $transformer)
     {
-        return $this->collection($this->repository->all());
+        return response($transformer->transformCollection($this->repository->all()));
     }
 
     /**
      * Get one entity.
      *
-     * @param  string  $id
-     * @return array
+     * @param ItemTransformerInterface $transformer
+     * @param  string $id
+     * @return Response
      */
-    public function getOne($id)
+    public function getOne(ItemTransformerInterface $transformer,$id)
     {
-        return $this->item($this->repository->find($id));
+        return response($transformer->transformItem($this->repository->find($id)));
     }
 
     /**
      * Post a new entity.
      *
      * @param  Request $request
-     * @return mixed
+     * @return Response
      */
     public function postOne(Request $request)
     {
         $this->validator->with($request->all())->validate();
         $model = $this->repository->getModel();
         $model->fill($request->all());
-        return response($this->repository->save($model), 201);
+        return response((bool)$this->repository->save($model), 201);
     }
 
     /**
@@ -79,8 +75,13 @@ abstract class BaseController extends Controller
     public function putOne($id, Request $request)
     {
         $this->validator->with($request->all())->id($id)->validate();
-
-        return response($this->repository->createOrReplace($id, $request->all()), 201);
+        try{
+            $model = $this->repository->find($id);
+        }catch (ModelNotFoundException $e){
+            $model = $this->repository->getModel();
+        }
+        $model->fill($request->all());
+        return response((bool)$this->repository->save($model), 201);
     }
 
     /**
@@ -107,7 +108,9 @@ abstract class BaseController extends Controller
     {
         $this->validator->with($request->all())->id($id)->validate();
 
-        $this->repository->update($id, $request->all());
+        $model = $this->repository->find($id);
+        $model->fill($request->all());
+        $this->repository->save($model);
 
         return response(null, 204);
     }
@@ -136,8 +139,8 @@ abstract class BaseController extends Controller
     public function deleteOne($id)
     {
         $this->validator->id($id)->validate();
-
-        $this->repository->delete($id);
+        $model = $this->repository->find($id);
+        $this->repository->delete($model);
 
         return response(null, 204);
     }
@@ -156,68 +159,4 @@ abstract class BaseController extends Controller
 
         return response(null, 204);
     }
-
-    /**
-     * Transform an item for response.
-     *
-     * @param  Model  $item
-     * @return array
-     */
-    protected function item(Model $item)
-    {
-        $transformer = App::make('App\Services\Transformer');
-
-        return $transformer->item($item, new $this->transformer);
-    }
-
-    /**
-     * Transform a collection for response.
-     *
-     * @param  Collection $collection
-     * @return array
-     */
-    protected function collection(Collection $collection)
-    {
-        $transformer = App::make('App\Services\Transformer');
-
-        return $transformer->collection($collection, new $this->transformer);
-    }
-
-    public static function renderException($request, \Exception $e, $debug = false){
-
-        $message = $e->getMessage();
-        if (!$message){
-            $message = 'An error occurred';
-        }
-
-        $debugData = [
-            'exception' => get_class($e),
-            'message' => $e->getMessage(),
-            'code' => $e->getCode(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => explode("\n", $e->getTraceAsString()),
-        ];
-
-        $response = [
-            'message' => $message,
-        ];
-
-        $statusCode = 500;
-
-        if ($e instanceof HttpExceptionInterface){
-            $statusCode = $e->getStatusCode();
-
-            if (method_exists($e, 'getResponse')) {
-                $response = $e->getResponse();
-            }
-        }
-
-        if ($debug){
-            $response['debug'] = $debugData;
-        }
-
-        return response()->json($response, $statusCode, array(), JSON_PRETTY_PRINT);
-    }
-
 }

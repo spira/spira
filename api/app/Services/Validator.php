@@ -115,7 +115,7 @@ abstract class Validator
     /**
      * Add id to the data array to validate.
      *
-     * @throws  App\Exceptions\ValidationException
+     * @throws  ValidationException
      * @param  string  $id
      * @return $this
      */
@@ -142,7 +142,7 @@ abstract class Validator
     /**
      * Validate the current data.
      *
-     * @throws App\Exceptions\ValidationException
+     * @throws ValidationException
      * @return void
      */
     public function validate()
@@ -161,7 +161,7 @@ abstract class Validator
     /**
      * Validates an array of entities.
      *
-     * @throws App\Exceptions\ValidationException
+     * @throws ValidationException
      * @return void
      */
     public function validateMany()
