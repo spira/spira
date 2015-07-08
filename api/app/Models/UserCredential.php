@@ -1,7 +1,16 @@
 <?php namespace App\Models;
 
+use Hash;
+
 class UserCredential extends BaseModel
 {
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'user_credential_id';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -16,14 +25,23 @@ class UserCredential extends BaseModel
      */
     protected $hidden = ['password'];
 
-    protected $primaryKey = 'user_credential_id';
-
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
     public $timestamps = false;
+
+    /**
+     * Encrypt the user's password.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
 
     /**
      * Get the access route for the entity.
@@ -34,5 +52,4 @@ class UserCredential extends BaseModel
     {
         return '/user/{userId}/user-credentials'; //@todo make this route match work
     }
-
 }

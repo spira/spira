@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
@@ -98,5 +99,30 @@ class UserTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
+    }
+
+    public function testPutOne()
+    {
+        $factory = $this->app->make('App\Services\ModelFactory');
+        $user = $factory->get(\App\Models\User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->append('#userCredential',
+                $factory->get(\App\Models\UserCredential::class)
+                    ->hide(['self'])
+                    ->makeVisible(['password'])
+                    ->customize(['password' => 'password'])
+                    ->toArray()
+                );
+
+        $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
+        $user = $transformer->transform($user);
+
+        $this->put('/users/'.$user['userId'], $user);
+
+        $createdUser = User::find($user['userId']);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
 }

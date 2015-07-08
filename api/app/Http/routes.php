@@ -36,6 +36,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
 {
     $app->get('/', ['middleware' => 'auth:admin', 'uses' => 'UserController@getAll']);
     $app->get('/{id}', ['middleware' => 'auth:admin,self', 'uses' => 'UserController@getOne']);
+    $app->put('/{id}', ['uses' => 'UserController@putOne']);
 });
 
 

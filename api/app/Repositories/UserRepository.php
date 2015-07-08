@@ -51,4 +51,27 @@ class UserRepository extends BaseRepository
 
         return $token;
     }
+
+    /**
+     * Create or replace an entity by id.
+     *
+     * @param  string  $id
+     * @param  array   $data
+     * @return array
+     */
+    public function createOrReplace($id, array $data)
+    {
+        // Extract the credentials
+        $credential = array_pull($data, '#user_credential');
+
+        // Set new users to public
+        $data['user_type'] = 'public';
+
+        $self = parent::createOrreplace($id, $data);
+
+        // Create the credentials
+        $this->find($id)->userCredential()->create($credential);
+
+        return $self;
+    }
 }

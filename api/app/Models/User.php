@@ -17,6 +17,14 @@ class User extends BaseModel implements AuthenticatableContract
      * @var string
      */
     public $table = 'users';
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'user_id';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -27,19 +35,11 @@ class User extends BaseModel implements AuthenticatableContract
         'first_name',
         'last_name',
         'email',
-        'reset_token',
         'phone',
         'mobile',
-        'timezone_identifier'
+        'timezone_identifier',
+        'user_type'
     ];
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = ['reset_token'];
-
-    protected $primaryKey = 'user_id';
 
     /**
      * Get the access route for the entity.
@@ -56,7 +56,7 @@ class User extends BaseModel implements AuthenticatableContract
      *
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
-    public function userCredentials()
+    public function userCredential()
     {
         return $this->hasOne('App\Models\UserCredential');
     }
@@ -68,6 +68,6 @@ class User extends BaseModel implements AuthenticatableContract
      */
     public function getAuthPassword()
     {
-        return $this->userCredentials ? $this->userCredentials->password : false;
+        return $this->userCredential ? $this->userCredential->password : false;
     }
 }
