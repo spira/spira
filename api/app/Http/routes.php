@@ -41,6 +41,11 @@ $app->group(['prefix' => 'users'], function($app){
 });
 
 
+$app->group(['prefix' => 'articles'], function($app){
+    $app->get('/', 'App\Http\Controllers\TestController@getAll');
+    $app->get('/{id}', 'App\Http\Controllers\TestController@getOne');
+});
+
 $app->group(['prefix' => 'test'], function($app){
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
