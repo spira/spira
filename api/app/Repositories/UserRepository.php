@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class UserRepository extends BaseRepository
@@ -18,7 +19,7 @@ class UserRepository extends BaseRepository
      */
     protected function model()
     {
-        return 'App\Models\User';
+        return new User();
     }
 
     /**

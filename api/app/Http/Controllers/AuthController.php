@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Transformers\ItemTransformerInterface;
 use RuntimeException;
 use App\Models\AuthToken;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,10 +36,11 @@ class AuthController extends BaseController
     /**
      * Get a login token.
      *
-     * @param  Request  $request
+     * @param  Request $request
+     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function login(Request $request)
+    public function login(Request $request, ItemTransformerInterface $transformer)
     {
         $credentials = [
             'email' => $request->getUser(),
@@ -54,16 +56,17 @@ class AuthController extends BaseController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->item(new AuthToken(['token' => $token]));
+        return response($transformer->transformItem(new AuthToken(['token' => $token])));
     }
 
     /**
      * Refresh a login token.
      *
-     * @param  Request  $request
+     * @param  Request $request
+     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function refresh(Request $request)
+    public function refresh(Request $request, ItemTransformerInterface $transformer)
     {
         if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
             throw new BadRequestException('Token not provided.');
@@ -84,17 +87,18 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->refresh($token);
-        return response($this->item(new AuthToken(['token' => $token])));
+        return response($transformer->transformItem(new AuthToken(['token' => $token])));
     }
 
     /**
      * Login with a single use token.
      *
-     * @param  Request  $request
-     * @param  \App\Repositories\UserRepository  $user
+     * @param  Request $request
+     * @param  UserRepository $user
+     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function token(Request $request, UserRepository $user)
+    public function token(Request $request, UserRepository $user, ItemTransformerInterface $transformer)
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
@@ -109,6 +113,6 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->fromUser($user);
-        return response($this->item(new AuthToken(['token' => $token])));
+        return response($transformer->transformItem(new AuthToken(['token' => $token])));
     }
 }

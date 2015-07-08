@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
-use App;
 use App\Http\Transformers\CollectionTransformerInterface;
 use App\Http\Transformers\ItemTransformerInterface;
+use App\Repositories\BaseRepository;
 use App\Services\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Routing\Controller;
@@ -11,12 +11,10 @@ use Illuminate\Http\Request;
 
 abstract class BaseController extends Controller
 {
-    public static $model;
-
     /**
      * Model Repository.
      *
-     * @var App\Repositories\BaseRepository
+     * @var BaseRepository
      */
     protected $repository;
 
