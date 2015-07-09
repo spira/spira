@@ -32,6 +32,8 @@ $app->get('/documentation.apib', function(Request $request) use ($app) {
 
 });
 
+$app->get('timezones', function() { return App\Models\Timezones::getTimezones(); });
+
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function($app)
 {
     $app->get('/', ['middleware' => 'auth:admin', 'uses' => 'UserController@getAll']);
