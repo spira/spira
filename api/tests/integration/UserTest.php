@@ -126,6 +126,68 @@ class UserTest extends TestCase
         $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
 
+    public function testPatchOneByAdminUser()
+    {
+        $user = $this->createUser('admin');
+        $userToUpdate = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+
+        $update = [
+            'userId' => $userToUpdate->user_id,
+            'email' => 'foo@bar.com',
+            'firstName' => 'foobar'
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedUser = User::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foobar', $updatedUser->first_name);
+        $this->assertEquals('foo@bar.com', $updatedUser->email);
+    }
+
+    public function testPatchOneByPublicUser()
+    {
+        $user = $this->createUser('public');
+        $userToUpdate = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+
+        $this->patch('/users/'.$userToUpdate->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+
+    public function testPatchOneBySelfUser()
+    {
+        $user = $this->createUser('public');
+        $userToUpdate = $user;
+        $token = $this->jwtAuth->fromUser($user);
+
+        $update = [
+            'userId' => $userToUpdate->user_id,
+            'email' => 'foo@bar.com',
+            'firstName' => 'foobar'
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedUser = User::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foobar', $updatedUser->first_name);
+        $this->assertEquals('foo@bar.com', $updatedUser->email);
+    }
+
     public function testDeleteOneByAdminUser()
     {
         $user = $this->createUser('admin');
