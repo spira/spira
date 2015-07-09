@@ -35,7 +35,7 @@ angular.module('app', [
             'contrastLightColors': undefined    // could also specify this if default was 'dark'
         });
         $mdThemingProvider.theme('default')
-            .primaryPalette('amazingPaletteName')
+            .primaryPalette('amazingPaletteName');
 
     })
 

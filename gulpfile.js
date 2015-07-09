@@ -14,7 +14,8 @@ var gulpCore = require('gulp'),
             'main-bower-files',
             'minimatch',
             'run-sequence',
-            'json5'
+            'json5',
+            'merge2'
         ],
         rename: {
             'gulp-angular-templatecache': 'templateCache'
@@ -32,9 +33,10 @@ console.log('browserSync', _.functions(browserSync));
 
 var paths = {
     src: {
+        tsd: 'app/typings/**/*.d.ts',
         base: 'app/src',
         get scripts(){
-            return [this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
+            return ['app/bower_components/**/*.d.ts', 'app/typings/**/*.d.ts',  this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
@@ -87,25 +89,50 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
     var tsFilter = plugins.filter('**/*.ts');
     var jsFilter = plugins.filter('**/*.js');
 
-    return gulp.src(paths.src.scripts)
-        //.pipe(watch(paths.src.scripts))
-        .pipe(jsFilter)
+    var tsResult = gulp.src(paths.src.scripts)
         .pipe(plugins.sourcemaps.init())
+        .pipe(jsFilter)
         .pipe(plugins.ngAnnotate())
-        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
         .pipe(jsFilter.restore())
 
         .pipe(tsFilter)
-        .pipe(plugins.tsc({
-            sourceMap:true,
-            sourceRoot: __dirname+'/app/src/',
-            keepTree: true,
-            target: "ES5"
-        }))
-        .pipe(tsFilter.restore())
+        .pipe(plugins.typescript({
+            target: "ES5",
+            noExternalResolve: true,
+            typescript: require('typescript'),
+            declarationFiles: true
+        }, undefined, plugins.typescript.reporter.longReporter()));
 
-        .pipe(gulp.dest(paths.dest.scripts))
-    ;
+    return plugins.merge2([
+        tsResult.dts
+            .pipe(plugins.replace('<reference path="typings', '<reference path="../typings'))
+            .pipe(gulp.dest(paths.dest.scripts)),
+
+        tsResult.js
+            .pipe(tsFilter.restore())
+            .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+            .pipe(gulp.dest(paths.dest.scripts))
+    ]);
+
+    //return gulp.src(paths.src.scripts)
+    //    //.pipe(watch(paths.src.scripts))
+    //    .pipe(jsFilter)
+    //    .pipe(plugins.sourcemaps.init())
+    //    .pipe(plugins.ngAnnotate())
+    //    .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+    //    .pipe(jsFilter.restore())
+    //
+    //    .pipe(tsFilter)
+    //    .pipe(plugins.tsc({
+    //        sourceMap:true,
+    //        sourceRoot: __dirname+'/app/src/',
+    //        keepTree: true,
+    //        target: "ES5"
+    //    }))
+    //    .pipe(tsFilter.restore())
+    //
+    //    .pipe(gulp.dest(paths.dest.scripts))
+    //;
 });
 
 gulp.task('templates-watch', 'watches template files for changes [not working]', ['templates'], browserSync.reload);
