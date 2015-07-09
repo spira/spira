@@ -19,6 +19,8 @@ install:
   - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
   - export PATH=$PWD/travis-phantomjs:$PATH
 
+  - cp ./api/.travis.env ./api/.env
+
   - travis_retry npm install --no-spin --quiet -g gulp http-server
   - travis_retry npm install --no-spin
   - travis_retry gulp bower:install
@@ -31,8 +33,6 @@ before_script:
 
   - psql -c 'create database spira;' -U postgres
   - gulp build
-  - composer dumpautoload -o --working-dir api
-  - cp ./api/.travis.env ./api/.env
   - php ./api/artisan migrate --seed
   - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
   - http-server ./app/build/ -p 8001 2>&1 >/dev/null & # start webserver

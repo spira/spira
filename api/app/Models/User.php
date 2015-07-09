@@ -1,9 +1,16 @@
 <?php namespace App\Models;
 
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends BaseModel {
+class User extends BaseModel implements AuthenticatableContract
+{
+    use Authenticatable;
+
+    const USER_TYPE_ADMIN = 'admin';
+    const USER_TYPE_PUBLIC = 'public';
+    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_PUBLIC];
+
     /**
      * The database table used by the model.
      *
@@ -15,13 +22,14 @@ class User extends BaseModel {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'reset_token', 'phone', 'mobile'];
+    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'mobile'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'reset_token'];
+    protected $hidden = ['password'];
 
     protected $primaryKey = 'user_id';
 
@@ -34,38 +42,4 @@ class User extends BaseModel {
     {
         return '/users';
     }
-
-    /**
-     * Generate fake user
-     * @param array $overrides
-     * @param null $seed
-     * @return User
-     */
-    public static function fakeUser($overrides = [], $seed = null){
-
-        $faker = Faker::create('au_AU');;
-
-        if ($seed){
-            $faker->seed($seed);
-        }
-
-        $userInfo = array_merge([
-            'user_id' => $faker->uuid,
-            'email' => $faker->email,
-            'password' => Hash::make('password'),
-            'first_name' => $faker->firstName,
-            'last_name' => $faker->lastName,
-            'phone' => $faker->optional(0.5)->phoneNumber,
-            'mobile' => $faker->optional(0.5)->phoneNumber,
-        ], $overrides);
-
-        $user = new User($userInfo);
-
-        $user->timestamps = true;
-        $user->save();
-
-        return $user;
-
-    }
-
 }

@@ -19,6 +19,11 @@ Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.
 
 # Spira API Root [/]
 
-This route provides this documentation!
+# Group Spira API Root
+You're looking at it! This route provides this documentation, it is configured at `spira/api/resources/views/documentation/`
+You can use both `$factory` and `$faker`. Note that `$factory` is a custom model factory service which allows more
+flexibility than the base laravel `factory()` methods.
 
 @include('documentation.sections.testEntity')
+
+@include('documentation.sections.auth')
