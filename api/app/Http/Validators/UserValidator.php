@@ -16,7 +16,8 @@ class UserValidator extends Validator
         'phone' => 'string',
         'mobile' => 'string',
         'timezone_identifier' => 'timezone',
-        'user_type' => 'string|in:public,admin'
+        'user_type' => 'string|in:public,admin',
+        '#user_credential.password' => 'min:6'
     ];
 
     /**
