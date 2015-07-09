@@ -58,7 +58,7 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
 $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
         'user_credential_id' => $faker->uuid,
-        'password' => Hash::make('password')
+        'password' => 'password'
     ];
 });
 
