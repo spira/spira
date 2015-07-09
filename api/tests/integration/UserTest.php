@@ -125,4 +125,35 @@ class UserTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
+
+    public function testDeleteOneByAdminUser()
+    {
+        $user = $this->createUser('admin');
+        $userToDelete = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+        $rowCount = User::count();
+
+        $this->delete('/users/'.$userToDelete->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($rowCount - 1, User::count());
+    }
+
+    public function testDeleteOneByPublicUser()
+    {
+        $user = $this->createUser('public');
+        $userToDelete = $this->createUser('public');
+        $token = $this->jwtAuth->fromUser($user);
+        $rowCount = User::count();
+
+        $this->delete('/users/'.$userToDelete->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(403);
+        $this->assertEquals($rowCount, User::count());
+    }
 }
