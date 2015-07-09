@@ -136,9 +136,7 @@ class EntityTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount + 1, $this->repository->count());
-        $this->assertTrue(is_array($object));
-        $this->assertStringStartsWith('http', $object[0]);
+        $this->assertResponseHasNoContent();
     }
 
     public function testPutOneCollidingIds()
