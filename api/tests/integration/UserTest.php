@@ -117,6 +117,19 @@ class UserTest extends TestCase
         $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
 
+    public function testPutOneAlreadyExisting()
+    {
+        $user = factory(App\Models\User::class)->create();
+        $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
+        $user = array_except($transformer->transform($user), ['_self', 'userType']);
+        $user['#userCredential'] = ['password' => 'password'];
+
+        $this->put('/users/'.$user['userId'], $user);
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
+    }
+
     public function testPatchOneByAdminUser()
     {
         $user = $this->createUser('admin');
@@ -153,7 +166,6 @@ class UserTest extends TestCase
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
-
 
     public function testPatchOneBySelfUser()
     {
