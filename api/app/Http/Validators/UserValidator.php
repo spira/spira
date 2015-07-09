@@ -10,7 +10,7 @@ class UserValidator extends Validator
      * @var array
      */
     protected $rules = [
-        'email' => 'required|string|email',
+        'email' => 'required|email',
         'first_name' => 'string',
         'last_name' => 'string',
         'phone' => 'string',
@@ -27,5 +27,20 @@ class UserValidator extends Validator
     protected function model()
     {
         return 'App\Models\User';
+    }
+
+    /**
+     * Modify the rules for put operations.
+     *
+     * In the case of users, replacement of the entity with a put operation is
+     * not permitted, so the rules is modified according to that.
+     *
+     * @return $this
+     */
+    public function put()
+    {
+        $this->rules = array_add($this->rules, $this->getKey(), 'required|uuid|unique:'.$this->getTable().','.$this->getKey());
+
+        return $this;
     }
 }

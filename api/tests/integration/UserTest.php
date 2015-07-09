@@ -103,19 +103,10 @@ class UserTest extends TestCase
 
     public function testPutOne()
     {
-        $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(\App\Models\User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
-            ->append('#userCredential',
-                $factory->get(\App\Models\UserCredential::class)
-                    ->hide(['self'])
-                    ->makeVisible(['password'])
-                    ->customize(['password' => 'password'])
-                    ->toArray()
-                );
-
+        $user = factory(App\Models\User::class)->make();
         $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
-        $user = $transformer->transform($user);
+        $user = array_except($transformer->transform($user), ['_self', 'userType']);
+        $user['#userCredential'] = ['password' => 'password'];
 
         $this->put('/users/'.$user['userId'], $user);
 
