@@ -67,7 +67,7 @@ class UserRepository extends BaseRepository
         // Set new users to public
         $data['user_type'] = 'public';
 
-        $self = parent::createOrreplace($id, $data);
+        $self = parent::createOrReplace($id, $data);
 
         // Create the credentials
         $this->find($id)->userCredential()->create($credential);

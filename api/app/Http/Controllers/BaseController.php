@@ -77,7 +77,9 @@ abstract class BaseController extends Controller
     {
         $this->validator->with($request->all())->id($id)->validate();
 
-        return response($this->repository->createOrReplace($id, $request->all()), 201);
+        $result = $this->repository->createOrReplace($id, $request->all());
+
+        return response(null, $result['code']);
     }
 
     /**

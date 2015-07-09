@@ -18,17 +18,4 @@ class UserController extends BaseController
         $this->repository = $repository;
         $this->validator = $validator;
     }
-
-    /**
-     * Put an entity.
-     *
-     * @param  string   $id
-     * @param  Request  $request
-     * @return Response
-     */
-    public function putOne($id, Request $request)
-    {
-        parent::putOne($id, $request);
-        return response(null, 204);
-    }
 }

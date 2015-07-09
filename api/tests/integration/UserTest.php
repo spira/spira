@@ -120,7 +120,7 @@ class UserTest extends TestCase
         $this->put('/users/'.$user['userId'], $user);
 
         $createdUser = User::find($user['userId']);
-        $this->assertResponseStatus(204);
+        $this->assertResponseStatus(201);
         $this->assertResponseHasNoContent();
         $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
