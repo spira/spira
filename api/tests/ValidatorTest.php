@@ -1,6 +1,5 @@
 <?php
 
-use Mockery as m;
 use Rhumsaa\Uuid\Uuid;
 
 class ValidatorTest extends TestCase
@@ -71,14 +70,13 @@ class ValidatorTest extends TestCase
             $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
 
             $validator->with(['entity_id' => 'foo'])->id('foobar');
-        }
-
-        catch (App\Exceptions\ValidationException $expected) {
+        } catch (App\Exceptions\ValidationException $expected) {
             $messages = $expected->getResponse()['invalid']->toArray();
 
             $this->assertArrayHasKey('entityId', $messages);
             $this->assertEquals('mismatch_id', $messages['entityId'][0]['type']);
             $this->assertEquals(422, $expected->getStatusCode());
+
             return;
         }
 
@@ -91,13 +89,12 @@ class ValidatorTest extends TestCase
             $data = ['multi_word_column_title' => 0.12];
 
             $this->validator->with($data)->validate();
-        }
-
-        catch (App\Exceptions\ValidationException $expected) {
+        } catch (App\Exceptions\ValidationException $expected) {
             $messages = $expected->getResponse()['invalid']->toArray();
 
             $this->assertArrayHasKey('multiWordColumnTitle', $messages);
             $this->assertEquals(422, $expected->getStatusCode());
+
             return;
         }
 
@@ -117,10 +114,7 @@ class ValidatorTest extends TestCase
             $data = [['float' => 0.12], ['float' => 'foobar'], ['float' => 0.14]];
 
             $this->validator->with($data)->validateMany();
-        }
-
-        catch (App\Exceptions\ValidationException $expected) {
-
+        } catch (App\Exceptions\ValidationException $expected) {
             $messages = $expected->getResponse()['invalid']->toArray();
 
             $this->assertTrue(is_array($messages));
@@ -128,6 +122,7 @@ class ValidatorTest extends TestCase
             $this->assertTrue(is_array($messages[1]));
             $this->assertArrayHasKey('float', $messages[1]);
             $this->assertNull($messages[2]);
+
             return;
         }
         $this->fail('An expected exception has not been raised.');
@@ -144,8 +139,8 @@ class Validation extends App\Services\Validator
     public function rules()
     {
         return [
-            'float' => 'float',
-            'uuid' => 'uuid',
+            'float'                   => 'float',
+            'uuid'                    => 'uuid',
             'multi_word_column_title' => 'string',
         ];
     }

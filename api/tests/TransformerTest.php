@@ -1,7 +1,7 @@
 <?php
 
-use Mockery as m;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Mockery as m;
 
 class TransformerTest extends TestCase
 {
@@ -24,7 +24,7 @@ class TransformerTest extends TestCase
             ->once()
             ->andReturn(['foo_bar' => 'foobar']);
 
-        $this->assertArrayHasKey('fooBar', $this->service->item($data, new $this->transformer));
+        $this->assertArrayHasKey('fooBar', $this->service->item($data, new $this->transformer()));
     }
 
     public function testItemNestedData()
@@ -33,11 +33,11 @@ class TransformerTest extends TestCase
         $data->shouldReceive('toArray')
             ->once()
             ->andReturn([
-                'foo_bar' => 'foobar',
-                'nested_data' => ['foo_bar' => true, 'foo' => true, 'bar_foo' => true]
+                'foo_bar'     => 'foobar',
+                'nested_data' => ['foo_bar' => true, 'foo' => true, 'bar_foo' => true],
             ]);
 
-        $data = $this->service->item($data, new $this->transformer);
+        $data = $this->service->item($data, new $this->transformer());
 
         $this->assertArrayHasKey('fooBar', $data['nestedData']);
         $this->assertArrayHasKey('barFoo', $data['nestedData']);
@@ -51,7 +51,7 @@ class TransformerTest extends TestCase
             ->once()
             ->andReturn(['self' => 'foobar']);
 
-        $this->assertArrayHasKey('_self', $this->service->item($data, new $this->transformer));
+        $this->assertArrayHasKey('_self', $this->service->item($data, new $this->transformer()));
     }
 
     public function testItemWithNestedSelfKey()
@@ -61,7 +61,7 @@ class TransformerTest extends TestCase
             ->once()
             ->andReturn(['self' => 'foobar', 'foo' => ['self' => 'foobar']]);
 
-        $data = $this->service->item($data, new $this->transformer);
+        $data = $this->service->item($data, new $this->transformer());
 
         $this->assertArrayHasKey('_self', $data);
         $this->assertArrayHasKey('_self', $data['foo']);
