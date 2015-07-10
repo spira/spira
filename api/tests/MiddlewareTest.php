@@ -9,15 +9,15 @@ class MiddlewareTest extends TestCase
      */
     public function testTransformInputData()
     {
-        $mw = new App\Http\Middleware\TransformInputData;
+        $mw = new App\Http\Middleware\TransformInputData();
 
         // Create a request object to test
-        $request = new Illuminate\Http\Request;
+        $request = new Illuminate\Http\Request();
         $request->offsetSet('firstName', 'foo');
         $request->offsetSet('lastname', 'bar');
 
         // And a next closure
-        $next = function($request) { return $request; };
+        $next = function ($request) { return $request; };
 
         // Execute
         $request = $mw->handle($request, $next);
@@ -30,16 +30,16 @@ class MiddlewareTest extends TestCase
 
     public function testTransformInputDataNested()
     {
-        $mw = new App\Http\Middleware\TransformInputData;
+        $mw = new App\Http\Middleware\TransformInputData();
 
         // Create a request object to test
-        $request = new Illuminate\Http\Request;
+        $request = new Illuminate\Http\Request();
         $request->offsetSet('firstName', 'foo');
         $request->offsetSet('lastname', 'bar');
         $request->offsetSet('nestedArray', ['fooBar' => 'bar', 'foo' => 'bar', 'oneMore' => ['andThis' => true]]);
 
         // And a next closure
-        $next = function($request) { return $request; };
+        $next = function ($request) { return $request; };
 
         // Execute
         $request = $mw->handle($request, $next);
