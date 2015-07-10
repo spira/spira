@@ -13,26 +13,26 @@
 
 use Illuminate\Http\Request;
 
-$app->get('/', function() use ($app) {
+$app->get('/', function () use ($app) {
 
     return view('documentation.layouts.master', [
-        'apibUrl' => '/documentation.apib'
+        'apibUrl' => '/documentation.apib',
     ]);
 
 });
 
-$app->get('/documentation.apib', function(Request $request) use ($app) {
+$app->get('/documentation.apib', function (Request $request) use ($app) {
 
     $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
     return view('documentation.apiary', [
         'apiUrl' => $request->root(),
-        'faker' => Faker\Factory::create(),
+        'faker'  => Faker\Factory::create(),
     ]);
 
 });
 
-$app->group(['prefix' => 'users'], function($app){
+$app->group(['prefix' => 'users'], function ($app) {
 
     $app->get('/', 'App\Http\Controllers\UserController@getAll');
 
@@ -40,8 +40,7 @@ $app->group(['prefix' => 'users'], function($app){
 
 });
 
-
-$app->group(['prefix' => 'test'], function($app){
+$app->group(['prefix' => 'test'], function ($app) {
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
@@ -57,8 +56,7 @@ $app->group(['prefix' => 'test'], function($app){
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
 
-$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
-{
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app) {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');
     $app->get('jwt/token', 'AuthController@token');

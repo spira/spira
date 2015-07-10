@@ -1,4 +1,6 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+namespace App\Http\Middleware;
 
 use Closure;
 
@@ -7,8 +9,9 @@ class TransformInputData
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -27,7 +30,6 @@ class TransformInputData
                 $request->offsetSet(snake_case($key), $value);
                 $request->offsetUnset($key);
             }
-
         }
 
         return $next($request);
@@ -36,13 +38,14 @@ class TransformInputData
     /**
      * Recursively rename keys in nested arrays.
      *
-     * @param  array  $array
+     * @param array $array
+     *
      * @return array
      */
     protected function renameKeys(array $array)
     {
         $newArray = [];
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
 
             // Recursively check if the value is an array that needs parsing too
             $value = (is_array($value)) ? $this->renameKeys($value) : $value;

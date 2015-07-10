@@ -1,6 +1,9 @@
-<?php namespace App\Models;
+<?php
 
-class TestEntity extends BaseModel {
+namespace App\Models;
+
+class TestEntity extends BaseModel
+{
     /**
      * The database table used by the model.
      *
@@ -29,10 +32,10 @@ class TestEntity extends BaseModel {
      * @var array
      */
     protected $casts = [
-        'decimal' => 'float',
-        'date' => 'date',
+        'decimal'    => 'float',
+        'date'       => 'date',
         'created_at' => 'dateTime',
-        'updated_at' => 'dateTime'
+        'updated_at' => 'dateTime',
     ];
 
     /**
@@ -44,5 +47,4 @@ class TestEntity extends BaseModel {
     {
         return '/test/entities';
     }
-
 }
