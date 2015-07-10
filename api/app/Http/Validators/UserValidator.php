@@ -1,6 +1,8 @@
 <?php namespace App\Http\Validators;
 
+use App\Models\User;
 use App\Services\Validator;
+use Illuminate\Container\Container as App;
 
 class UserValidator extends Validator
 {
@@ -15,9 +17,7 @@ class UserValidator extends Validator
         'last_name' => 'string',
         'phone' => 'string',
         'mobile' => 'string',
-        'timezone_identifier' => 'timezone',
-        'user_type' => 'string|in:public,admin',
-        '#user_credential.password' => 'min:6'
+        'timezone_identifier' => 'timezone'
     ];
 
     /**
@@ -28,6 +28,38 @@ class UserValidator extends Validator
     protected function model()
     {
         return 'App\Models\User';
+    }
+
+    /**
+     * Dynamically adjust the rules array during construction.
+     *
+     * @param  App  $app
+     * @return void
+     */
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+
+        // Get the possible user types and add them to the rules array
+        $types = implode(',', User::$userTypes);
+        $this->rules = array_merge($this->rules, ['user_type' => 'string|in:'.$types]);
+    }
+
+    /**
+     * Validation rules.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+
+        // var_dump($thi)
+
+        // 'user_type' => 'string|in:public,admin'
+
+        var_dump($this->rules);
+
+        return $this->rules;
     }
 
     /**
