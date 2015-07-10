@@ -15,8 +15,7 @@ class CreateUserCredentialsTable extends Migration
     public function up()
     {
         $modelClass = static::MODEL;
-        Schema::create($modelClass::getTableName(), function(Blueprint $table) use ($modelClass)
-        {
+        Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
             $table->uuid('user_credential_id');
 
             $table->uuid('user_id');

@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Token;
 use Tymon\JWTAuth\JWTAuth as JWTAuthBase;
-
 use RuntimeException;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
@@ -42,11 +41,9 @@ class JWTAuth extends JWTAuthBase
     {
         try {
             $user = $this->authenticate((string) $token);
-        }
-        catch (TokenExpiredException $e) {
+        } catch (TokenExpiredException $e) {
             throw new UnauthorizedException('Token expired.', 401, $e);
-        }
-        catch (TokenInvalidException $e) {
+        } catch (TokenInvalidException $e) {
             throw new UnprocessableEntityException($e->getMessage(), 422, $e);
         }
 

@@ -11,19 +11,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Timezones extends Model
 {
-
-
     public static function getTimezones()
     {
-
-
         $allTimezones = \DateTimeZone::listIdentifiers();
 
         $timezones = [];
         $now = time();
 
         foreach ($allTimezones as $timezoneIdentifier) {
-
             $dateTimeZone = new \DateTimeZone($timezoneIdentifier);
 
             //Read the current transition to get if the timezone is currently in DST
@@ -49,5 +44,4 @@ class Timezones extends Model
 
         return ($offset >= 0 ? '+':'-') . $hoursFormatted;
     }
-
 }
