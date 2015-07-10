@@ -37,8 +37,7 @@ class AuthMiddleware
         // Get possible x amount of parameters passed to the middleware
         $userTypes = array_slice(func_get_args(), 2);
 
-        $token = $this->jwtAuth->getTokenFromRequest($request);
-        $user = $this->jwtAuth->getUser($token);
+        $user = $this->jwtAuth->getUser($request);
 
         // Check the restriction types
         if (in_array('admin', $userTypes) and $user->user_type == 'admin') {

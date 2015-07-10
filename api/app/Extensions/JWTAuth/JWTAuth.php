@@ -29,7 +29,7 @@ class JWTAuth extends JWTAuthBase
     }
 
     /**
-     * Get the user from the token, with validation checking.
+     * Get the user from the request token.
      *
      * @param  Token  $token
      * @throws UnauthorizedException
@@ -37,8 +37,10 @@ class JWTAuth extends JWTAuthBase
      * @throws RuntimeException
      * @return \App\Model\User
      */
-    public function getUser(Token $token)
+    public function getUser(Request $request)
     {
+        $token = $this->getTokenFromRequest($request);
+
         try {
             $user = $this->authenticate((string) $token);
         } catch (TokenExpiredException $e) {
