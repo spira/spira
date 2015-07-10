@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Services;
+namespace App\Services;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;

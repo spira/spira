@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Services;
+namespace App\Services;
 
 use App\Http\Transformers\BaseTransformer;
 use Illuminate\Contracts\Support\Arrayable;
