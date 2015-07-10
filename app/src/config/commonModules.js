@@ -3,7 +3,6 @@ angular.module('commonModules', [
     'stateHelperServiceProvider',
 
     //services
-    'apiService',
     'siteProgressService',
     'userService',
 

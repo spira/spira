@@ -41,6 +41,8 @@ module app.public.sandbox {
 
             $scope.callApi = this.callApi;
 
+            console.log('ngRestAdapter uuid', ngRestAdapter.uuid());
+
         }
 
         private callApi(apiEndpoint):void {
@@ -49,6 +51,7 @@ module app.public.sandbox {
                 .then((result) => {
                     this.$scope.apiResult = result;
                 })
+            ;
 
         }
     }

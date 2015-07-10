@@ -1,5 +1,5 @@
 angular.module('userService', [])
-    .factory('userService', function (apiService) {
+    .factory('userService', function (ngRestAdapter) {
 
 
         // Private methods, namespaced for code clarity
@@ -7,7 +7,7 @@ angular.module('userService', [])
 
             _getAllUsers: function(){
 
-                return apiService.get('/users').then(function(res){
+                return ngRestAdapter.get('/users').then(function(res){
                     return res.data;
                 }).catch(function(err){
                     console.error(err);

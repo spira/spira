@@ -37,10 +37,11 @@ var paths = {
         base: 'app/src',
         get scripts(){
             return [
-                'app/bower_components/**/*.d.ts',
-                'app/typings/**/*.d.ts',
-                this.base + '/**/*.ts', this.base + '/**/*.js',
-                '!'+this.base + '/**/*.spec.js'
+                //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
+                'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
+                'app/typings/**/*.d.ts', //get the local typings files
+                this.base + '/**/*.ts', this.base + '/**/*.js', //match all javascript and typescript files
+                '!'+this.base + '/**/*.spec.js', '!'+this.base + '/**/*.spec.ts' //ignore all spec files
             ]
         },
         get templates(){
@@ -93,8 +94,14 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
 
     var tsFilter = plugins.filter('**/*.ts');
     var jsFilter = plugins.filter('**/*.js');
+    var tsdFilter = plugins.filter('**/*.d.ts');
 
     var tsResult = gulp.src(paths.src.scripts)
+        //remove the typings references from tsd files @todo remove when tsd recursive resolution is complete https://github.com/DefinitelyTyped/tsd/issues/150
+        .pipe(tsdFilter)
+        .pipe(plugins.replace('/// <reference path="../typings/tsd.d.ts" />', ''))
+        .pipe(tsdFilter.restore())
+
         .pipe(plugins.sourcemaps.init())
         .pipe(jsFilter)
         .pipe(plugins.ngAnnotate())
@@ -110,7 +117,7 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
 
     return plugins.merge2([
         tsResult.dts
-            .pipe(plugins.replace('<reference path="typings', '<reference path="../typings'))
+            //.pipe(plugins.replace('<reference path="typings', '<reference path="../typings'))
             .pipe(gulp.dest(paths.dest.scripts)),
 
         tsResult.js
@@ -118,26 +125,6 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
             .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
             .pipe(gulp.dest(paths.dest.scripts))
     ]);
-
-    //return gulp.src(paths.src.scripts)
-    //    //.pipe(watch(paths.src.scripts))
-    //    .pipe(jsFilter)
-    //    .pipe(plugins.sourcemaps.init())
-    //    .pipe(plugins.ngAnnotate())
-    //    .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
-    //    .pipe(jsFilter.restore())
-    //
-    //    .pipe(tsFilter)
-    //    .pipe(plugins.tsc({
-    //        sourceMap:true,
-    //        sourceRoot: __dirname+'/app/src/',
-    //        keepTree: true,
-    //        target: "ES5"
-    //    }))
-    //    .pipe(tsFilter.restore())
-    //
-    //    .pipe(gulp.dest(paths.dest.scripts))
-    //;
 });
 
 gulp.task('templates-watch', 'watches template files for changes [not working]', ['templates'], browserSync.reload);
@@ -196,17 +183,11 @@ gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
     gulp.src(files, {base: 'app/bower_components'})
         //javascript
         .pipe(jsFilter)
-        //.pipe(sourcemaps.init())
-        //.pipe(concat('vendor.js'))
-        //.pipe(sourcemaps.write('./maps'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/js'))
         .pipe(jsFilter.restore())
         //css
         .pipe(cssFilter)
-        //.pipe(sourcemaps.init())
-        //.pipe(concat('vendor.css'))
-        //.pipe(sourcemaps.write('./maps'))
 
         .pipe(plugins.replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
         .on('error', onError)
