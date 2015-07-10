@@ -36,7 +36,12 @@ var paths = {
         tsd: 'app/typings/**/*.d.ts',
         base: 'app/src',
         get scripts(){
-            return ['app/bower_components/**/*.d.ts', 'app/typings/**/*.d.ts',  this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
+            return [
+                'app/bower_components/**/*.d.ts',
+                'app/typings/**/*.d.ts',
+                this.base + '/**/*.ts', this.base + '/**/*.js',
+                '!'+this.base + '/**/*.spec.js'
+            ]
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
