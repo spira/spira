@@ -1,7 +1,9 @@
-<?php namespace App\Models;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+namespace app\Models;
+
 use Bosnadev\Database\Traits\UuidTrait;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseModel extends Model
 {
@@ -26,7 +28,8 @@ abstract class BaseModel extends Model
     /**
      * Get the user's first name.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return string
      */
     public function getSelfAttribute()
@@ -36,14 +39,15 @@ abstract class BaseModel extends Model
 
     public static function getTableName()
     {
-        return with(new static)->getTable();
+        return with(new static())->getTable();
     }
 
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function castAttribute($key, $value)
@@ -51,10 +55,11 @@ abstract class BaseModel extends Model
         // Run the parent cast rules in the parent method
         $value = parent::castAttribute($key, $value);
 
-        if (is_null($value)) return $value;
+        if (is_null($value)) {
+            return $value;
+        }
 
-        switch ($this->getCastType($key))
-        {
+        switch ($this->getCastType($key)) {
             case 'date':
                 return \Carbon\Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
             case 'datetime':

@@ -1,11 +1,13 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace app\Http\Controllers;
 
 use App;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
 
 abstract class BaseController extends Controller
 {
@@ -45,7 +47,8 @@ abstract class BaseController extends Controller
     /**
      * Get one entity.
      *
-     * @param  string  $id
+     * @param string $id
+     *
      * @return Response
      */
     public function getOne($id)
@@ -56,7 +59,8 @@ abstract class BaseController extends Controller
     /**
      * Post a new entity.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return mixed
      */
     public function postOne(Request $request)
@@ -69,8 +73,9 @@ abstract class BaseController extends Controller
     /**
      * Put an entity.
      *
-     * @param  string   $id
-     * @param  Request  $request
+     * @param string  $id
+     * @param Request $request
+     *
      * @return Response
      */
     public function putOne($id, Request $request)
@@ -83,7 +88,8 @@ abstract class BaseController extends Controller
     /**
      * Put many entites.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function putMany(Request $request)
@@ -96,8 +102,9 @@ abstract class BaseController extends Controller
     /**
      * Patch an entity.
      *
-     * @param  string   $id
-     * @param  Request  $request
+     * @param string  $id
+     * @param Request $request
+     *
      * @return Response
      */
     public function patchOne($id, Request $request)
@@ -112,7 +119,8 @@ abstract class BaseController extends Controller
     /**
      * Patch many entites.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function patchMany(Request $request)
@@ -127,7 +135,8 @@ abstract class BaseController extends Controller
     /**
      * Delete an entity.
      *
-     * @param  string   $id
+     * @param string $id
+     *
      * @return Response
      */
     public function deleteOne($id)
@@ -142,7 +151,8 @@ abstract class BaseController extends Controller
     /**
      * Delete many entites.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function deleteMany(Request $request)
@@ -157,43 +167,45 @@ abstract class BaseController extends Controller
     /**
      * Transform an item for response.
      *
-     * @param  Model  $item
+     * @param Model $item
+     *
      * @return array
      */
     protected function item(Model $item)
     {
         $transformer = App::make('App\Services\Transformer');
 
-        return $transformer->item($item, new $this->transformer);
+        return $transformer->item($item, new $this->transformer());
     }
 
     /**
      * Transform a collection for response.
      *
-     * @param  Collection $collection
+     * @param Collection $collection
+     *
      * @return array
      */
     protected function collection(Collection $collection)
     {
         $transformer = App::make('App\Services\Transformer');
 
-        return $transformer->collection($collection, new $this->transformer);
+        return $transformer->collection($collection, new $this->transformer());
     }
 
-    public static function renderException($request, \Exception $e, $debug = false){
-
+    public static function renderException($request, \Exception $e, $debug = false)
+    {
         $message = $e->getMessage();
-        if (!$message){
+        if (!$message) {
             $message = 'An error occurred';
         }
 
         $debugData = [
             'exception' => get_class($e),
-            'message' => $e->getMessage(),
-            'code' => $e->getCode(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => explode("\n", $e->getTraceAsString()),
+            'message'   => $e->getMessage(),
+            'code'      => $e->getCode(),
+            'file'      => $e->getFile(),
+            'line'      => $e->getLine(),
+            'trace'     => explode("\n", $e->getTraceAsString()),
         ];
 
         $response = [
@@ -202,7 +214,7 @@ abstract class BaseController extends Controller
 
         $statusCode = 500;
 
-        if ($e instanceof HttpExceptionInterface){
+        if ($e instanceof HttpExceptionInterface) {
             $statusCode = $e->getStatusCode();
 
             if (method_exists($e, 'getResponse')) {
@@ -210,11 +222,10 @@ abstract class BaseController extends Controller
             }
         }
 
-        if ($debug){
+        if ($debug) {
             $response['debug'] = $debugData;
         }
 
-        return response()->json($response, $statusCode, array(), JSON_PRETTY_PRINT);
+        return response()->json($response, $statusCode, [], JSON_PRETTY_PRINT);
     }
-
 }

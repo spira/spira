@@ -1,11 +1,12 @@
-<?php namespace App\Console;
+<?php
+
+namespace app\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-
     /**
      * The Artisan commands provided by your application.
      *
@@ -13,13 +14,14 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\ApiaryValidateCommand',
-        'App\Console\Commands\GenerateKeysCommand'
+        'App\Console\Commands\GenerateKeysCommand',
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     *
      * @return void
      */
     protected function schedule(Schedule $schedule)

@@ -1,4 +1,6 @@
-<?php namespace App\Console\Commands;
+<?php
+
+namespace app\Console\Commands;
 
 use Crypt_RSA;
 use Illuminate\Console\Command;
@@ -30,7 +32,8 @@ class GenerateKeysCommand extends Command
     /**
      * Create a new command instance.
      *
-     * @param  Illuminate\Filesystem\Filesystem  $file
+     * @param Illuminate\Filesystem\Filesystem $file
+     *
      * @return void
      */
     public function __construct(Filesystem $file)

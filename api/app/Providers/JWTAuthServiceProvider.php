@@ -1,4 +1,6 @@
-<?php namespace App\Providers;
+<?php
+
+namespace app\Providers;
 
 use App\Extensions\JWTAuth\PayloadFactory;
 use Tymon\JWTAuth\Providers\JWTAuthServiceProvider as ServiceProvider;
@@ -16,7 +18,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the Payload Factory
+     * Register the bindings for the Payload Factory.
      */
     protected function registerPayloadFactory()
     {
@@ -26,5 +28,4 @@ class JWTAuthServiceProvider extends ServiceProvider
             return $factory->setTTL($this->config('ttl'));
         });
     }
-
 }

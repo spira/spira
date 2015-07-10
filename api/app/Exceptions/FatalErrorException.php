@@ -1,4 +1,6 @@
-<?php namespace App\Exceptions;
+<?php
+
+namespace app\Exceptions;
 
 use RuntimeException;
 

@@ -1,8 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+namespace app\Services;
 
 use App\Exceptions\ValidationException;
-use Illuminate\Support\MessageBag;
 use Illuminate\Container\Container as App;
+use Illuminate\Support\MessageBag;
 
 abstract class Validator
 {
@@ -58,8 +60,9 @@ abstract class Validator
     /**
      * Assign dependencies.
      *
-     * @param  Illuminate\Container\Container  $app
-     * @return  void
+     * @param Illuminate\Container\Container $app
+     *
+     * @return void
      */
     public function __construct(App $app)
     {
@@ -96,14 +99,15 @@ abstract class Validator
     {
         return [
             'float' => 'The :attribute must be a float.',
-            'uuid' => 'The :attribute must be an UUID string.'
+            'uuid'  => 'The :attribute must be an UUID string.',
         ];
     }
 
     /**
      * Add data to validate against.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return $this
      */
     public function with(array $data)
@@ -116,19 +120,20 @@ abstract class Validator
     /**
      * Add id to the data array to validate.
      *
-     * @throws  App\Exceptions\ValidationException
-     * @param  string  $id
+     * @param string $id
+     *
+     * @throws App\Exceptions\ValidationException
+     *
      * @return $this
      */
     public function id($id)
     {
-        /**
+        /*
          * If the entity id does not match the url id, the client is likely trying
          * to mistakenly overwrite the entity at the url with an incorrect entity.
          */
         if (array_key_exists($this->getKey(), $this->data) && $this->data[$this->getKey()] !== $id) {
-
-            $this->errors = new MessageBag;
+            $this->errors = new MessageBag();
             $this->errors->add($this->getKey(), 'The url id does not match the json entity id.');
             $this->failed = [$this->getKey() => ['mismatch_id' => []]];
 
@@ -144,6 +149,7 @@ abstract class Validator
      * Validate the current data.
      *
      * @throws App\Exceptions\ValidationException
+     *
      * @return void
      */
     public function validate()
@@ -154,7 +160,6 @@ abstract class Validator
         }
 
         if (!$this->passes()) {
-
             throw new ValidationException($this->formattedErrors());
         }
     }
@@ -163,6 +168,7 @@ abstract class Validator
      * Validates an array of entities.
      *
      * @throws App\Exceptions\ValidationException
+     *
      * @return void
      */
     public function validateMany()
@@ -180,9 +186,7 @@ abstract class Validator
 
             try {
                 $this->validate();
-
             } catch (ValidationException $e) {
-
                 array_push($errors, $this->formattedErrors()->toArray());
                 continue;
             }
@@ -279,6 +283,7 @@ abstract class Validator
     protected function getTable()
     {
         $model = $this->model();
+
         return with(new $model())->getTable();
     }
 
@@ -290,6 +295,7 @@ abstract class Validator
     protected function getKey()
     {
         $model = $this->model();
+
         return with(new $model())->getKeyName();
     }
 
@@ -304,14 +310,13 @@ abstract class Validator
         $types = $this->failed;
         $formatted = [];
 
-        foreach($messages as $key => $value) {
-
+        foreach ($messages as $key => $value) {
             $combined = array_combine(array_keys($types[$key]), $value);
 
-            $formatted[$key] = array_map( function($key) use ($combined) {
+            $formatted[$key] = array_map(function ($key) use ($combined) {
                 return [
-                    'type' => strtolower($key),
-                    'message' => $combined[$key]
+                    'type'    => strtolower($key),
+                    'message' => $combined[$key],
                 ];
             }, array_keys($combined));
         }
@@ -320,7 +325,7 @@ abstract class Validator
         $transformer = $this->app->make('App\Services\Transformer');
         $transformed = $transformer->item(
             new MessageBag($formatted),
-            new $this->transformer
+            new $this->transformer()
         );
 
         return new MessageBag($transformed);
@@ -333,8 +338,7 @@ abstract class Validator
      */
     protected function registerValidateFloat()
     {
-        $this->validator->extend('float', function($attribute, $value, $parameters)
-        {
+        $this->validator->extend('float', function ($attribute, $value, $parameters) {
             return is_float($value + 0);
         });
     }
@@ -346,8 +350,7 @@ abstract class Validator
      */
     protected function registerValidateUuid()
     {
-        $this->validator->extend('uuid', function($attribute, $value, $parameters)
-        {
+        $this->validator->extend('uuid', function ($attribute, $value, $parameters) {
             return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
         });
     }

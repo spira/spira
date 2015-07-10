@@ -1,11 +1,12 @@
-<?php namespace App\Exceptions;
+<?php
+
+namespace app\Exceptions;
 
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidationException extends HttpException
 {
-
     /**
      * The validation error messages.
      *
@@ -17,6 +18,7 @@ class ValidationException extends HttpException
      * Create a new validation exception instance.
      *
      * @param  \Illuminate\Support\MessageBag
+     *
      * @return void
      */
     public function __construct(MessageBag $errors)

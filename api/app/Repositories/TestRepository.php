@@ -1,4 +1,6 @@
-<?php namespace App\Repositories;
+<?php
+
+namespace app\Repositories;
 
 class TestRepository extends BaseRepository
 {

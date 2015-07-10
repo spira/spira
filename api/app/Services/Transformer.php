@@ -1,7 +1,9 @@
-<?php namespace App\Services;
+<?php
 
-use Illuminate\Pagination\LengthAwarePaginator;
+namespace app\Services;
+
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
@@ -21,7 +23,8 @@ class Transformer
     /**
      * Initialize the transform manager.
      *
-     * @param  SerializerAbstract  $serializer
+     * @param SerializerAbstract $serializer
+     *
      * @return void
      */
     public function __construct(SerializerAbstract $serializer)
@@ -33,7 +36,7 @@ class Transformer
     /**
      * Parse Include String.
      *
-     * @param  array|string  $includes
+     * @param array|string $includes
      *
      * @return $this
      */
@@ -45,9 +48,10 @@ class Transformer
     /**
      * Create transformed data from a collection.
      *
-     * @param  object  $data
-     * @param  League\Fractal\TransformerAbstract  $transformer
-     * @param  string  $resourceKey
+     * @param object                             $data
+     * @param League\Fractal\TransformerAbstract $transformer
+     * @param string                             $resourceKey
+     *
      * @return array
      */
     public function collection($data, $transformer = null, $resourceKey = null)
@@ -60,9 +64,10 @@ class Transformer
     /**
      * Create transformed data from an item.
      *
-     * @param  object  $data
-     * @param  League\Fractal\TransformerAbstract  $transformer
-     * @param  string  $resourceKey
+     * @param object                             $data
+     * @param League\Fractal\TransformerAbstract $transformer
+     * @param string                             $resourceKey
+     *
      * @return array
      */
     public function item($data, $transformer = null, $resourceKey = null)
@@ -75,9 +80,10 @@ class Transformer
     /**
      * Create paginated transformed data from a collection.
      *
-     * @param  LengthAwarePaginator  $paginator
-     * @param  League\Fractal\TransformerAbstract  $transformer
-     * @param  string  $resourceKey
+     * @param LengthAwarePaginator               $paginator
+     * @param League\Fractal\TransformerAbstract $transformer
+     * @param string                             $resourceKey
+     *
      * @return array
      */
     public function paginatedCollection(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
@@ -94,7 +100,8 @@ class Transformer
     /**
      * Get the transformer to use.
      *
-     * @param  TransformerAbstract  $transformer
+     * @param TransformerAbstract $transformer
+     *
      * @return TransformerAbstract|callback
      */
     protected function getTransformer($transformer = null)

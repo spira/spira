@@ -1,7 +1,6 @@
 <?php
 
 use Mockery as m;
-use App\Console\Commands\GenerateKeysCommand;
 
 class CommandTest extends TestCase
 {
