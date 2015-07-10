@@ -1,8 +1,10 @@
-<?php namespace App\Repositories;
+<?php
+
+namespace App\Repositories;
 
 use App\Exceptions\FatalErrorException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as App;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 abstract class BaseRepository
@@ -15,7 +17,7 @@ abstract class BaseRepository
     protected $app;
 
     /**
-     * Eloquent Model
+     * Eloquent Model.
      *
      * @var Illuminate\Database\Eloquent\Model
      */
@@ -24,7 +26,8 @@ abstract class BaseRepository
     /**
      * Assign dependencies.
      *
-     * @param  Illuminate\Container\Container  $app
+     * @param Illuminate\Container\Container $app
+     *
      * @return void
      */
     public function __construct(App $app)
@@ -43,11 +46,12 @@ abstract class BaseRepository
     /**
      * Get an entity by id.
      *
-     * @param  string  $id
-     * @param  array   $columns
+     * @param string $id
+     * @param array  $columns
+     *
      * @return mixed
      */
-    public function find($id, $columns = array('*'))
+    public function find($id, $columns = ['*'])
     {
         return $this->model->findOrFail($id, $columns);
     }
@@ -55,10 +59,11 @@ abstract class BaseRepository
     /**
      * Get all entities.
      *
-     * @param  array  $columns
+     * @param array $columns
+     *
      * @return mixed
      */
-    public function all($columns = array('*'))
+    public function all($columns = ['*'])
     {
         return $this->model->get($columns);
     }
@@ -66,7 +71,8 @@ abstract class BaseRepository
     /**
      * Create and store a new instance of an entity.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return array
      */
     public function create(array $data)
@@ -79,7 +85,8 @@ abstract class BaseRepository
     /**
      * Create and store a collection of new entities.
      *
-     * @param  array  $models
+     * @param array $models
+     *
      * @return void
      */
     public function createMany(array $models)
@@ -96,9 +103,11 @@ abstract class BaseRepository
     /**
      * Create or replace an entity by id.
      *
+     * @param string $id
+     * @param array  $data
+     *
      * @throws App\Exceptions\FatalException
-     * @param  string  $id
-     * @param  array   $data
+     *
      * @return array
      */
     public function createOrReplace($id, array $data)
@@ -111,18 +120,15 @@ abstract class BaseRepository
         }
 
         try {
-
             $model = $this->find($id);
-
         } catch (ModelNotFoundException $e) {
-
             $link = $this->create(array_add($data, $keyName, $id));
 
             return ['self' => $link[0], 'code' => 201];
         }
 
         foreach ($model->getAttributes() as $key => $value) {
-            if($value !== 0) {
+            if ($value !== 0) {
                 if (!in_array($key, ['created_at', 'updated_at'])) {
                     $model->{$key} = null;
                 }
@@ -137,7 +143,8 @@ abstract class BaseRepository
     /**
      * Create or replace a colleciton of entities.
      *
-     * @param  array  $entities
+     * @param array $entities
+     *
      * @return array
      */
     public function createOrReplaceMany(array $entities)
@@ -161,9 +168,11 @@ abstract class BaseRepository
     /**
      * Update an entity by id.
      *
+     * @param string $id
+     * @param array  $data
+     *
      * @throws App\Exceptions\FatalException
-     * @param  string  $id
-     * @param  array   $data
+     *
      * @return mixed
      */
     public function update($id, array $data)
@@ -182,7 +191,8 @@ abstract class BaseRepository
     /**
      * Update a collection of entities.
      *
-     * @param  array  $entities
+     * @param array $entities
+     *
      * @return void
      */
     public function updateMany(array $entities)
@@ -201,7 +211,8 @@ abstract class BaseRepository
     /**
      * Delete an entity by id.
      *
-     * @param  string  $id
+     * @param string $id
+     *
      * @return mixed
      */
     public function delete($id)
@@ -212,7 +223,8 @@ abstract class BaseRepository
     /**
      * Delete a collection of entities by their ids.
      *
-     * @param  array  $ids
+     * @param array $ids
+     *
      * @return void
      */
     public function deleteMany(array $ids)
@@ -238,14 +250,16 @@ abstract class BaseRepository
      * Get an instance of the model for the repository.
      *
      * @throws Exception
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function makeModel()
     {
         $model = $this->app->make($this->model());
 
-        if (!$model instanceof Model)
+        if (!$model instanceof Model) {
             throw new \Exception("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
+        }
 
         return $this->model = $model;
     }

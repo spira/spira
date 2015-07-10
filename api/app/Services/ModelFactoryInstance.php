@@ -1,4 +1,6 @@
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 use App\Http\Transformers\BaseTransformer;
 use Illuminate\Contracts\Support\Arrayable;
@@ -6,7 +8,6 @@ use Illuminate\Contracts\Support\Jsonable;
 
 class ModelFactoryInstance implements Arrayable, Jsonable
 {
-
     private $transformerService;
     private $factoryInstance;
     private $customizations = [];
@@ -18,9 +19,9 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $entityType;
     private $appends = [];
 
-
     /**
-     * New model instance
+     * New model instance.
+     *
      * @param $factoryInstance
      * @param $transformerService
      */
@@ -31,41 +32,52 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Set number of entities to create (not required, default is 1)
+     * Set number of entities to create (not required, default is 1).
+     *
      * @param $number
+     *
      * @return $this
      */
     public function count($number)
     {
         $this->entityCount = $number;
+
         return $this;
     }
 
     /**
-     * Set custom value overrides for the entity
+     * Set custom value overrides for the entity.
+     *
      * @param $customizations
+     *
      * @return $this
      */
     public function customize(array $customizations)
     {
         $this->customizations = $customizations;
+
         return $this;
     }
 
     /**
-     * Make otherwise hidden parameters visible
+     * Make otherwise hidden parameters visible.
+     *
      * @param $makeVisible
+     *
      * @return $this
      */
     public function makeVisible($makeVisible)
     {
         $this->makeVisible = $makeVisible;
+
         return $this;
     }
 
     /**
-     * Limit what properties the factory instance returns
+     * Limit what properties the factory instance returns.
+     *
      * @param $showOnly
+     *
      * @return $this
      */
     public function showOnly($showOnly)
@@ -90,13 +102,16 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
     /**
      * Add properties to the returned entity
+     *
      * @param $key
      * @param $value
+     *
      * @return $this
      */
     public function append($key, $value)
     {
         $this->appends[$key] = $value;
+
         return $this;
     }
 
@@ -105,26 +120,29 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * eg
      * $factory->get(\App\Models\UserCredential::class)
      *      ->setTransformer(\App\Http\Transformers\UserTransformer::class)
-     *      ->toArray();
+     *      ->toArray();.
+     *
      * @param $transformerName
+     *
      * @return $this
      */
     public function setTransformer($transformerName)
     {
-        $this->transformer = new $transformerName;
+        $this->transformer = new $transformerName();
+
         return $this;
     }
 
     /**
-     * Get the built entities
+     * Get the built entities.
+     *
      * @return mixed
      */
     private function built()
     {
         $entity = $this->factoryInstance
             ->times($this->entityCount)
-            ->make($this->customizations)
-        ;
+            ->make($this->customizations);
 
         $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
 
@@ -132,7 +150,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Modify an entity
+     * Modify an entity.
+     *
      * @param $entity
      */
     private function modifyEntity($entity)
@@ -160,7 +179,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity->setHidden($newHidden);
         }
 
-        if (!empty($this->appends)){
+        if (!empty($this->appends)) {
             foreach ($this->appends as $appendKey => $appendValue) {
                 $entity->{$appendKey} = $appendValue;
             }
@@ -170,7 +189,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Get the modified entity[ies]
+     * Get the modified entity[ies].
+     *
      * @return mixed
      */
     public function modified()
@@ -188,14 +208,17 @@ class ModelFactoryInstance implements Arrayable, Jsonable
                 );
                 break;
         }
+
         return $entity;
     }
 
     /**
-     * Get the transformed entity[ies]
+     * Get the transformed entity[ies].
+     *
      * @return mixed
      */
-    public function transformed(){
+    public function transformed()
+    {
         $entity = $this->modified();
 
         if (!$this->transformer) {
@@ -203,9 +226,9 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         }
 
         $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);
+
         return $transformedEntity;
     }
-
 
     /**
      * Get the built & modified entity[ies]
@@ -217,19 +240,19 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Get the JSON encoded string of the (built, modified, transformed) entity[ies]
+     * Get the JSON encoded string of the (built, modified, transformed) entity[ies].
+     *
      * @param int $options
+     *
      * @return string
      */
     public function json($options = JSON_PRETTY_PRINT)
     {
-
         $transformed = $this->transformed();
 
         $jsonEncoded = json_encode($transformed, $options);
 
         return str_replace("\n", "\n            ", $jsonEncoded); //cheap trick to make sure the 12 deep indentation requirement of apiary is preserved
-
     }
 
     /**
@@ -239,6 +262,4 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         return $this->json($options);
     }
-
-
 }

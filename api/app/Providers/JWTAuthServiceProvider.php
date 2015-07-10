@@ -1,4 +1,6 @@
-<?php namespace App\Providers;
+<?php
+
+namespace App\Providers;
 
 use App\Extensions\JWTAuth\JWTAuth;
 use App\Extensions\JWTAuth\PayloadFactory;
@@ -17,7 +19,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the Payload Factory
+     * Register the bindings for the Payload Factory.
      */
     protected function registerPayloadFactory()
     {

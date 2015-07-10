@@ -4,21 +4,20 @@ use Bosnadev\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration {
-
+class CreateUsersTable extends Migration
+{
     const TABLE_NAME = 'users';
     const MODEL = 'App\Models\User';
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
         $modelClass = static::MODEL;
 
-        Schema::create($modelClass::getTableName(), function(Blueprint $table) use ($modelClass)
-            {
+        Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
                 $table->uuid('user_id');
                 $table->string('email', 255)->unique();
                 $table->string('first_name', 45)->nullable();
@@ -34,7 +33,7 @@ class CreateUsersTable extends Migration {
                 $table->primary('user_id');
             }
         );
-	}
+    }
 
     /**
      * Reverse the migrations.
@@ -45,5 +44,4 @@ class CreateUsersTable extends Migration {
     {
         Schema::drop(static::TABLE_NAME);
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace App\Repositories;
+<?php
+
+namespace App\Repositories;
 
 use Cache;
 use Illuminate\Container\Container as App;
@@ -8,7 +10,7 @@ class UserRepository extends BaseRepository
     /**
      * Login token time to live in minutes.
      *
-     * @var integer
+     * @var int
      */
     protected $login_token_ttl = 1440;
 
@@ -25,13 +27,15 @@ class UserRepository extends BaseRepository
     /**
      * Get a user by single use login token.
      *
-     * @param  string  $token
+     * @param string $token
+     *
      * @return mixed
      */
     public function findByLoginToken($token)
     {
         if ($id = Cache::pull('login_token_'.$token)) {
             $user = $this->find($id);
+
             return $user;
         }
     }
@@ -39,7 +43,8 @@ class UserRepository extends BaseRepository
     /**
      * Make a single use login token for a user.
      *
-     * @param  string  $id
+     * @param string $id
+     *
      * @return string
      */
     public function makeLoginToken($id)

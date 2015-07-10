@@ -1,4 +1,6 @@
-<?php namespace App\Extensions\JWTAuth;
+<?php
+
+namespace App\Extensions\JWTAuth;
 
 use Tymon\JWTAuth\PayloadFactory as PayloadFactoryBase;
 

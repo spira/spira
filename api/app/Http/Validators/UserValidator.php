@@ -52,13 +52,6 @@ class UserValidator extends Validator
      */
     public function rules()
     {
-
-        // var_dump($thi)
-
-        // 'user_type' => 'string|in:public,admin'
-
-        var_dump($this->rules);
-
         return $this->rules;
     }
 

@@ -1,17 +1,15 @@
 <?php
 
-use Tymon\JWTAuth\Token;
-use Tymon\JWTAuth\Payload;
-use Tymon\JWTAuth\Claims\Issuer;
-use Tymon\JWTAuth\Claims\IssuedAt;
-use Tymon\JWTAuth\Claims\Expiration;
-use Tymon\JWTAuth\Claims\NotBefore;
-use Tymon\JWTAuth\Claims\Audience;
-use Tymon\JWTAuth\Claims\Subject;
-use Tymon\JWTAuth\Claims\JwtId;
-use Tymon\JWTAuth\Claims\Custom;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tymon\JWTAuth\Claims\Expiration;
+use Tymon\JWTAuth\Claims\IssuedAt;
+use Tymon\JWTAuth\Claims\Issuer;
+use Tymon\JWTAuth\Claims\JwtId;
+use Tymon\JWTAuth\Claims\NotBefore;
+use Tymon\JWTAuth\Claims\Subject;
+use Tymon\JWTAuth\Payload;
+use Tymon\JWTAuth\Token;
 
 class AuthTest extends TestCase
 {
@@ -20,7 +18,7 @@ class AuthTest extends TestCase
     protected function callRefreshToken($token)
     {
         $this->get('/auth/jwt/refresh', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
     }
 
@@ -110,7 +108,7 @@ class AuthTest extends TestCase
                 'http://%s:%s',
                 getenv('WEBSERVER_HOST'),
                 getenv('WEBSERVER_PORT')
-            )
+            ),
         ]);
         $res = $client->get('/auth/jwt/refresh', $options);
 
@@ -129,7 +127,7 @@ class AuthTest extends TestCase
             new Expiration(123 - 3600),
             new NotBefore(123),
             new IssuedAt(123),
-            new JwtId('foo')
+            new JwtId('foo'),
         ];
 
         $this->validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
@@ -195,7 +193,7 @@ class AuthTest extends TestCase
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -214,7 +212,7 @@ class AuthTest extends TestCase
     {
         $token = 'invalid';
         $this->get('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertResponseStatus(401);
@@ -227,13 +225,13 @@ class AuthTest extends TestCase
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertResponseOk();
 
         $this->get('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertException('invalid', 401, 'UnauthorizedException');
