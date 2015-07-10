@@ -1,19 +1,17 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use App\Models\TestEntity;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Http\Request;
-use App\Repositories\TestRepository;
+namespace App\Http\Controllers;
+
 use App\Http\Validators\TestEntityValidator;
+use App\Repositories\TestRepository;
 
 class TestController extends BaseController
 {
     /**
      * Assign dependencies.
+     *
      * @param TestEntityValidator $validator
-     * @param TestRepository $repository
+     * @param TestRepository      $repository
      */
     public function __construct(TestEntityValidator $validator, TestRepository $repository)
     {
@@ -22,23 +20,20 @@ class TestController extends BaseController
     }
 
     /**
-     * Test a standard internal exception
+     * Test a standard internal exception.
      */
     public function internalException()
     {
-
-        throw new \RuntimeException("Something went wrong");
+        throw new \RuntimeException('Something went wrong');
     }
 
     /**
-     * Test a fatal exception (has to be tested with guzzle to stop phpunit halting)
+     * Test a fatal exception (has to be tested with guzzle to stop phpunit halting).
+     *
      * @codeCoverageIgnore
      */
     public function fatalError()
     {
-
         call_to_non_existent_function();
     }
-
-
 }
