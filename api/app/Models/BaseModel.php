@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Models;
+namespace App\Models;
 
 use Bosnadev\Database\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Model;
