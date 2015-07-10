@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Extensions\JWTAuth;
+namespace App\Extensions\JWTAuth;
 
 use App\Exceptions\TokenInvalidException;
 use Exception;

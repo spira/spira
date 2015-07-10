@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Transformers;
+namespace App\Http\Transformers;
 
 use Illuminate\Contracts\Support\Arrayable;
 use League\Fractal\TransformerAbstract;

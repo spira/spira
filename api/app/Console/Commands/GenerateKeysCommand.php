@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Console\Commands;
+namespace App\Console\Commands;
 
 use Crypt_RSA;
 use Illuminate\Console\Command;

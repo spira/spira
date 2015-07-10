@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Exceptions;
+namespace App\Exceptions;
 
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpException;

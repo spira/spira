@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Exceptions;
+namespace App\Exceptions;
 
 /*
  * Exceptions fix added care of

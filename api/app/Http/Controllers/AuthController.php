@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers;
+namespace App\Http\Controllers;
 
 use App\Exceptions\BadRequestException;
 use App\Exceptions\TokenInvalidException;

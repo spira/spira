@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Repositories;
+namespace App\Repositories;
 
 use App\Exceptions\FatalErrorException;
 use Illuminate\Container\Container as App;

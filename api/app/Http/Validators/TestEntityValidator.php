@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Validators;
+namespace App\Http\Validators;
 
 use App\Services\Validator;
 

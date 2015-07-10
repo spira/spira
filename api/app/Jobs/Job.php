@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Jobs;
+namespace App\Jobs;
 
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
