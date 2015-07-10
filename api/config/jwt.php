@@ -12,8 +12,8 @@ return [
     */
 
     'secret' => [
-        'public' => storage_path('app/keys/public.pem'),
-        'private' => storage_path('app/keys/private.pem')
+        'public'  => storage_path('app/keys/public.pem'),
+        'private' => storage_path('app/keys/private.pem'),
     ],
 
     /*
@@ -161,8 +161,8 @@ return [
 
         'storage' => function ($app) {
             return new Tymon\JWTAuth\Providers\Storage\IlluminateCacheAdapter($app['cache']);
-        }
+        },
 
-    ]
+    ],
 
 ];

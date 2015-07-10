@@ -1,7 +1,7 @@
 <?php
 
-use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Rhumsaa\Uuid\Uuid;
 
 class EntityTest extends TestCase
 {
@@ -27,7 +27,8 @@ class EntityTest extends TestCase
     /**
      * Prepare a factory generated entity to be sent as input data.
      *
-     * @param  Arrayable  $entity
+     * @param Arrayable $entity
+     *
      * @return array
      */
     protected function prepareEntity($entity)
@@ -163,7 +164,7 @@ class EntityTest extends TestCase
     {
         $id = 'foobar';
         $entity = factory(App\Models\TestEntity::class)->make([
-            'entity_id' => $id
+            'entity_id' => $id,
         ]);
         $entity = $this->prepareEntity($entity);
 
@@ -249,7 +250,7 @@ class EntityTest extends TestCase
         $data = array_map(function ($entity) {
             return [
                 'entity_id' => $entity->entity_id,
-                'varchar' => 'foobar'
+                'varchar'   => 'foobar',
             ];
         }, $entities->all());
 
@@ -269,7 +270,7 @@ class EntityTest extends TestCase
         $data = array_map(function ($entity) {
             return [
                 'entity_id' => (string) Uuid::uuid4(),
-                'varchar' => 'foobar'
+                'varchar'   => 'foobar',
             ];
         }, $entities->all());
 

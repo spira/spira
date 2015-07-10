@@ -1,16 +1,14 @@
 <?php
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class CacheTest extends TestCase
 {
-
     private static $cacheKey = 'foo';
     private static $cacheValue = 'bar';
 
     /**
-     * Add key-value pair to the cache
+     * Add key-value pair to the cache.
      */
     public function setUp()
     {
@@ -20,7 +18,7 @@ class CacheTest extends TestCase
     }
 
     /**
-     * Test Cache facade connection to the cache driver
+     * Test Cache facade connection to the cache driver.
      *
      * @return void
      */
@@ -30,20 +28,19 @@ class CacheTest extends TestCase
     }
 
     /**
-     * Test cache key has value
+     * Test cache key has value.
      *
      * @return void
      */
     public function testCacheHasVaue()
     {
-
         $retrievedKey = Cache::get(self::$cacheKey);
 
         $this->assertEquals(self::$cacheValue, $retrievedKey, 'Cache has correct value for key');
     }
 
     /**
-     * Test cache key can be deleted
+     * Test cache key can be deleted.
      *
      * @return void
      */
@@ -53,6 +50,4 @@ class CacheTest extends TestCase
 
         $this->assertFalse(Cache::has(self::$cacheKey), 'Cache does not have key any more');
     }
-
-
 }

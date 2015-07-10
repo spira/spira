@@ -5,9 +5,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class DocumentationTest extends TestCase
 {
-
     /**
-     * Index page (Apiary documentation) test
+     * Index page (Apiary documentation) test.
      */
     public function testIndexPage()
     {
@@ -23,16 +22,13 @@ class DocumentationTest extends TestCase
         $this->get('/documentation.apib');
 
         $this->assertResponseOk();
-        $this->see("FORMAT: 1A"); //see apiary format is present
-
+        $this->see('FORMAT: 1A'); //see apiary format is present
     }
 
     public function testDocumentationIsValid()
     {
-
         $exitCode = Artisan::call('apiary:validate');
 
         $this->assertEquals(0, $exitCode);
     }
-
 }

@@ -1,8 +1,7 @@
 <?php
 
-use Mockery as m;
-use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Rhumsaa\Uuid\Uuid;
 
 class TestRepositoryTest extends TestCase
 {
@@ -93,7 +92,7 @@ class TestRepositoryTest extends TestCase
 
         $entityUpdate = factory(App\Models\TestEntity::class)->make([
             'entity_id' => $id, //make sure the id doesn't change
-            'varchar' => 'foobaz',
+            'varchar'   => 'foobaz',
         ]);
         $entityUpdate = $entityUpdate->getAttributes();
 
@@ -141,7 +140,7 @@ class TestRepositoryTest extends TestCase
         $entities = array_map(function ($id) {
             return [
                 'entity_id' => $id,
-                'text' => 'foobar'
+                'text'      => 'foobar',
             ];
         }, $ids->toArray());
 

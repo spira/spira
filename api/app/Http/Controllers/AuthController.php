@@ -1,21 +1,23 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use RuntimeException;
-use App\Models\AuthToken;
-use Tymon\JWTAuth\JWTAuth;
-use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
+namespace App\Http\Controllers;
+
 use App\Exceptions\BadRequestException;
-use App\Exceptions\UnauthorizedException;
 use App\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Exceptions\UnauthorizedException;
 use App\Exceptions\UnprocessableEntityException;
+use App\Models\AuthToken;
+use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
+use RuntimeException;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends BaseController
 {
     /**
-     * JWT Auth
+     * JWT Auth.
      *
      * @var Tymon\JWTAuth\JWTAuth
      */
@@ -24,7 +26,8 @@ class AuthController extends BaseController
     /**
      * Assign dependencies.
      *
-     * @param  JWTAuth  $jwtAuth
+     * @param JWTAuth $jwtAuth
+     *
      * @return void
      */
     public function __construct(JWTAuth $jwtAuth)
@@ -35,19 +38,19 @@ class AuthController extends BaseController
     /**
      * Get a login token.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function login(Request $request)
     {
         $credentials = [
-            'email' => $request->getUser(),
-            'password' => $request->getPassword()
+            'email'    => $request->getUser(),
+            'password' => $request->getPassword(),
         ];
 
         try {
             if (!$token = $this->jwtAuth->attempt($credentials)) {
-
                 throw new UnauthorizedException('Credentials failed.');
             }
         } catch (JWTException $e) {
@@ -60,7 +63,8 @@ class AuthController extends BaseController
     /**
      * Refresh a login token.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function refresh(Request $request)
@@ -71,11 +75,9 @@ class AuthController extends BaseController
 
         try {
             $user = $this->jwtAuth->authenticate((string) $token);
-        }
-        catch (TokenExpiredException $e) {
+        } catch (TokenExpiredException $e) {
             throw new UnauthorizedException('Token expired.', 401, $e);
-        }
-        catch (TokenInvalidException $e) {
+        } catch (TokenInvalidException $e) {
             throw new UnprocessableEntityException($e->getMessage(), 422, $e);
         }
 
@@ -84,20 +86,22 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->refresh($token);
+
         return $this->item(new AuthToken(['token' => $token]));
     }
 
     /**
      * Login with a single use token.
      *
-     * @param  Request  $request
-     * @param  \App\Repositories\UserRepository  $user
+     * @param Request                          $request
+     * @param \App\Repositories\UserRepository $user
+     *
      * @return Response
      */
     public function token(Request $request, UserRepository $user)
     {
         $header = $request->headers->get('authorization');
-        if (! starts_with(strtolower($header), 'token')) {
+        if (!starts_with(strtolower($header), 'token')) {
             throw new BadRequestException('Single use token not provided.');
         }
 
@@ -109,6 +113,7 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->fromUser($user);
+
         return $this->item(new AuthToken(['token' => $token]));
     }
 }

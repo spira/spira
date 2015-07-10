@@ -1,14 +1,17 @@
-<?php namespace App\Http\Transformers;
+<?php
 
-use League\Fractal\TransformerAbstract;
+namespace App\Http\Transformers;
+
 use Illuminate\Contracts\Support\Arrayable;
+use League\Fractal\TransformerAbstract;
 
 class BaseTransformer extends TransformerAbstract
 {
     /**
      * Turn the object into a format adjusted array.
      *
-     * @param  Illuminate\Contracts\Support\Arrayable $object
+     * @param Illuminate\Contracts\Support\Arrayable $object
+     *
      * @return array
      */
     public function transform(Arrayable $object)
@@ -39,9 +42,10 @@ class BaseTransformer extends TransformerAbstract
     /**
      * Rename an array key while preserving array order.
      *
-     * @param  array   $array
-     * @param  string  $from
-     * @param  string  $to
+     * @param array  $array
+     * @param string $from
+     * @param string $to
+     *
      * @return array
      */
     protected function renameArrayKey(array $array, $from, $to)
@@ -60,13 +64,14 @@ class BaseTransformer extends TransformerAbstract
     /**
      * Recursively rename keys in nested arrays.
      *
-     * @param  array  $array
+     * @param array $array
+     *
      * @return array
      */
     protected function renameKeys(array $array)
     {
         $newArray = [];
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
 
             // Recursively check if the value is an array that needs parsing too
             $value = (is_array($value)) ? $this->renameKeys($value) : $value;
@@ -88,7 +93,8 @@ class BaseTransformer extends TransformerAbstract
     /**
      * Renames the key self to _self if it exists.
      *
-     * @param  array  $array
+     * @param array $array
+     *
      * @return $array
      */
     protected function renameSelfKey(array $array)
