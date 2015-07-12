@@ -69,7 +69,7 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'auth' => 'App\Http\Middleware\AuthMiddleware',
+    'permission' => 'App\Http\Middleware\PermissionMiddleware',
 ]);
 
 /*
@@ -84,6 +84,7 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\LockServiceProvider::class);
 $app->register(App\Providers\JWTAuthServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 
