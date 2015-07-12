@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -11,11 +12,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Timezones extends Model
 {
+    /**
+     * Get the collection of available timezones.
+     *
+     * @return Collection
+     */
     public static function getTimezones()
     {
         $allTimezones = \DateTimeZone::listIdentifiers();
 
-        $timezones = [];
+        $timezones = new Collection();
         $now = time();
 
         foreach ($allTimezones as $timezoneIdentifier) {
@@ -24,12 +30,12 @@ class Timezones extends Model
             //Read the current transition to get if the timezone is currently in DST
             $transitions = $dateTimeZone->getTransitions($now, $now);
 
-            $timezones[] = [
+            $timezones->push(new Collection([
                 'timezone_identifier' => $dateTimeZone->getName(),
                 'offset' => $offset = $dateTimeZone->getOffset(new \DateTime()),
                 'is_dst' => $transitions[0]['isdst'], //only use the first transition
                 'display_offset' => self::getDisplayOffset($offset),
-            ];
+            ]));
         }
 
         return $timezones;
