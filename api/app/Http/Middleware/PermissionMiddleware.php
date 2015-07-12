@@ -1,6 +1,7 @@
 <?php namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Exceptions\ForbiddenException;
@@ -20,19 +21,19 @@ class PermissionMiddleware
      *
      * @var Manager
      */
-    protected $lockManager;
+    protected $lock;
 
     /**
      * Assign dependencies.
      *
      * @param  JWTAuth  $jwtAuth
-     * @param  Manager  $lockmanager
+     * @param  Manager  $lock
      * @return void
      */
-    public function __construct(JWTAuth $jwtAuth, Manager $lockManager)
+    public function __construct(JWTAuth $jwtAuth, Manager $lock)
     {
         $this->jwtAuth = $jwtAuth;
-        $this->lockManager = $lockManager;
+        $this->lock = $lock;
 
         $this->assignPermissions();
     }
@@ -49,7 +50,7 @@ class PermissionMiddleware
     public function handle(Request $request, Closure $next, $action, $resource)
     {
         $user = $this->jwtAuth->getUser($request);
-        $lock = $this->lockManager->makeCallerLockAware($user);
+        $lock = $this->lock->makeCallerLockAware($user);
 
         if (!$user->can($action, $resource)) {
             throw new ForbiddenException;
@@ -65,15 +66,19 @@ class PermissionMiddleware
      */
     protected function assignPermissions()
     {
-        $this->lockManager->setRole(['public', 'admin'], 'guest');
+        $this->lock->setRole(User::$userTypes, 'guest');
 
-        $this->lockManager->role('admin')->allow('readAll', 'users');
-        $this->lockManager->role('admin')->allow('readOne', 'users');
-        $this->lockManager->role('admin')->allow('update', 'users');
-        $this->lockManager->role('admin')->allow('delete', 'users');
-
-        $selfCondition = \App::make('App\Http\Permissions\SelfCondition');
-        $this->lockManager->role('public')->allow('readOne', 'users', null, $selfCondition);
-        $this->lockManager->role('public')->allow('update', 'users', null, $selfCondition);
+        foreach (User::$permissions as $role => $resources) {
+            foreach ($resources as $resource => $actions) {
+                foreach ($actions as $action) {
+                    if (is_array($action)) {
+                        $condition = \App::make('App\Http\Permissions\\'.$action[1]);
+                        $this->lock->role($role)->allow($action[0], $resource, null, $condition);
+                    } else {
+                        $this->lock->role($role)->allow($action, $resource);
+                    }
+                }
+            }
+        }
     }
 }
