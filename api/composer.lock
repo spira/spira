@@ -4,8 +4,66 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "15d723712fe73fd778db62cc737a37cb",
+    "hash": "8f5f5281861c7bf0b0fa88cedb75aa42",
     "packages": [
+        {
+            "name": "beatswitch/lock",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BeatSwitch/lock.git",
+                "reference": "5f909f497b2d03135882beb41e735fb27bb7be85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BeatSwitch/lock/zipball/5f909f497b2d03135882beb41e735fb27bb7be85",
+                "reference": "5f909f497b2d03135882beb41e735fb27bb7be85",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.1",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "BeatSwitch\\Lock\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dries Vints",
+                    "email": "dries.vints@gmail.com",
+                    "homepage": "http://driesvints.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "BeatSwitch",
+                    "email": "hello@beatswitch.com",
+                    "homepage": "https://www.beatswitch.com"
+                }
+            ],
+            "description": "A flexible, driver based Acl package for PHP 5.4+",
+            "homepage": "https://github.com/BeatSwitch/lock",
+            "keywords": [
+                "acl",
+                "asserts",
+                "beatswitch",
+                "conditions",
+                "drivers",
+                "permissions",
+                "roles",
+                "security"
+            ],
+            "time": "2014-12-17 17:35:43"
+        },
         {
             "name": "bosnadev/database",
             "version": "0.11",
@@ -1598,16 +1656,16 @@
         },
         {
             "name": "laravel/lumen-framework",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/lumen-framework.git",
-                "reference": "4a6e2d1f0626404f2fd3dd2a08930159a8a20b30"
+                "reference": "f5d6c5e9fd43abf2d3904607c95dc2864c761945"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/4a6e2d1f0626404f2fd3dd2a08930159a8a20b30",
-                "reference": "4a6e2d1f0626404f2fd3dd2a08930159a8a20b30",
+                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/f5d6c5e9fd43abf2d3904607c95dc2864c761945",
+                "reference": "f5d6c5e9fd43abf2d3904607c95dc2864c761945",
                 "shasum": ""
             },
             "require": {
@@ -1679,35 +1737,31 @@
                 "laravel",
                 "lumen"
             ],
-            "time": "2015-06-23 14:13:37"
+            "time": "2015-07-12 02:19:42"
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.4",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "56862959b45131ad33e5a7727a25db19f2cf090b"
+                "reference": "b58431785768abbb4f00c10e66a065095a0693ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/56862959b45131ad33e5a7727a25db19f2cf090b",
-                "reference": "56862959b45131ad33e5a7727a25db19f2cf090b",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/b58431785768abbb4f00c10e66a065095a0693ef",
+                "reference": "b58431785768abbb4f00c10e66a065095a0693ef",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
                 "php": ">=5.4.0"
             },
             "require-dev": {
                 "ext-fileinfo": "*",
-                "league/phpunit-coverage-listener": "~1.1",
                 "mockery/mockery": "~0.9",
-                "phpspec/phpspec": "~2.0",
+                "phpspec/phpspec": "^2.2",
                 "phpspec/prophecy-phpunit": "~1.0",
-                "phpunit/phpunit": "~4.1",
-                "predis/predis": "~1.0",
-                "tedivm/stash": "~0.12.0"
+                "phpunit/phpunit": "~4.1"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -1721,8 +1775,7 @@
                 "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
                 "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
                 "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
-                "predis/predis": "Allows you to use Predis for caching"
+                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter"
             },
             "type": "library",
             "extra": {
@@ -1745,10 +1798,11 @@
                     "email": "info@frenky.net"
                 }
             ],
-            "description": "Many filesystems, one API.",
+            "description": "Filesystem abstraction: Many filesystems, one API.",
             "keywords": [
                 "Cloud Files",
                 "WebDAV",
+                "abstraction",
                 "aws",
                 "cloud",
                 "copy.com",
@@ -1756,6 +1810,7 @@
                 "file systems",
                 "files",
                 "filesystem",
+                "filesystems",
                 "ftp",
                 "rackspace",
                 "remote",
@@ -1763,7 +1818,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-06-07 21:27:37"
+            "time": "2015-07-11 14:58:06"
         },
         {
             "name": "league/fractal",

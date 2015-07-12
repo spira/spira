@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use BeatSwitch\Lock\LockAware;
+use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends BaseModel implements AuthenticatableContract
+class User extends BaseModel implements AuthenticatableContract, Caller
 {
-    use Authenticatable;
+    use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_PUBLIC = 'public';
@@ -71,5 +73,35 @@ class User extends BaseModel implements AuthenticatableContract
     public function getAuthPassword()
     {
         return $this->userCredential ? $this->userCredential->password : false;
+    }
+
+    /**
+     * The type of caller for lock permission.
+     *
+     * @return string
+     */
+    public function getCallerType()
+    {
+        return 'users';
+    }
+
+    /**
+     * The unique ID to identify the caller with for lock permission.
+     *
+     * @return string
+     */
+    public function getCallerId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * The caller's roles for lock permission.
+     *
+     * @return array
+     */
+    public function getCallerRoles()
+    {
+        return [$this->user_type];
     }
 }
