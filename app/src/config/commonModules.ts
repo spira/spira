@@ -10,7 +10,6 @@ module config.commonModules {
         'common.services.userService',
 
         //directives
-        'highlightDirective'
     ]);
 
 }
