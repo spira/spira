@@ -16,20 +16,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
     /**
-     * Detines permissions for the user types.
-     *
-     * @var array
-     */
-    public static $permissions = [
-        self::USER_TYPE_ADMIN => [
-            'users' => ['readAll', 'readOne', 'update', 'delete']
-        ],
-        self::USER_TYPE_GUEST => [
-            'users' => [['readOne', 'SelfCondition'], ['update', 'SelfCondition']]
-        ],
-    ];
-
-    /**
      * The database table used by the model.
      *
      * @var string

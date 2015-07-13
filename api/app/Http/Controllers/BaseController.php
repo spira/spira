@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Exceptions\ForbiddenException;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -26,6 +27,20 @@ abstract class BaseController extends Controller
      * @var App\Services\Validation\TestValidator
      */
     protected $validator;
+
+    /**
+     * Permission Lock Manager.
+     *
+     * @var Manager
+     */
+    protected $lock;
+
+    /**
+     * JWT Auth.
+     *
+     * @var Tymon\JWTAuth\JWTAuth
+     */
+    protected $jwtAuth;
 
     /**
      * Transformer to use for responses.
@@ -192,6 +207,24 @@ abstract class BaseController extends Controller
         $transformer = App::make('App\Services\Transformer');
 
         return $transformer->collection($collection, new $this->transformer());
+    }
+
+    /**
+     * Check if the user has a certain permission.
+     *
+     * @throws ForbiddenException
+     * @param  string  $action
+     * @param  string  $resource
+     * @return void
+     */
+    protected function checkPermission($action, $resource)
+    {
+        $user = $this->jwtAuth->getUser();
+        $lock = $this->lock->makeCallerLockAware($user);
+
+        if (!$user->can($action, $resource)) {
+            throw new ForbiddenException;
+        }
     }
 
     public static function renderException($request, \Exception $e, $debug = false)
