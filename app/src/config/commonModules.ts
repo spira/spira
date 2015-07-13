@@ -2,12 +2,12 @@ module config.commonModules {
 
     export const namespace = 'config.commonModules';
 
-    angular.module('commonModules', [
+    angular.module(namespace, [
         //service providers
-        'stateHelperServiceProvider',
+        'common.providers.stateHelperServiceProvider',
 
         //services
-        'userService',
+        'common.services.userService',
 
         //directives
         'highlightDirective'

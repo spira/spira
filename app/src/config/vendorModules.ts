@@ -2,7 +2,7 @@ module config.vendorModules {
 
     export const namespace = 'config.vendorModules';
 
-    angular.module('vendorModules', [
+    angular.module(namespace, [
         'ngMessages', //nice validation messages
         'ngMaterial', //angular material
         'ui.router', // Handles state changes and routing of the site

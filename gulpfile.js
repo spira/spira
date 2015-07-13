@@ -23,7 +23,10 @@ var gulpCore = require('gulp'),
     }),
     gulp = plugins.help(gulpCore),
     _ = require('lodash'),
-    browserSync = require('browser-sync').create()
+    browserSync = require('browser-sync').create(),
+    path = require('path'),
+    bowerJson = require('./app/bower.json'),
+    packageJson = require('./package.json')
 ;
 
 console.timeEnd("Core plugins loaded");
@@ -112,7 +115,8 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
             target: "ES5",
             noExternalResolve: true,
             typescript: require('typescript'),
-            declarationFiles: true
+            declarationFiles: true,
+            sortOutput: true
         }, undefined, plugins.typescript.reporter.longReporter()));
 
     return plugins.merge2([

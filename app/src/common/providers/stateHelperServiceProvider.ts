@@ -1,4 +1,6 @@
-module common.services {
+module common.providers {
+
+    export const namespace = 'common.providers';
 
     export class StateHelperServiceProvider implements ng.IServiceProvider {
 
@@ -45,7 +47,7 @@ module common.services {
 
     }
 
-    angular.module('stateHelperServiceProvider', [])
+    angular.module(namespace + '.stateHelperServiceProvider', [])
         .provider('stateHelperService', StateHelperServiceProvider)
     ;
 

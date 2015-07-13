@@ -24,7 +24,7 @@ module common.services {
 
     }
 
-    angular.module('userService', [])
+    angular.module(namespace+'.userService', [])
         .service('userService', UserService);
 
 }

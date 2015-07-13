@@ -75,9 +75,10 @@ module app {
 
     angular.module(namespace, [
             'templates',
-            'vendorModules',
-            'commonModules',
-            'stateManager'
+            'config.vendorModules',
+            'config.commonModules',
+            'config.stateManager',
+            'app.partials.navigation'
         ])
         .config(AppConfig)
         .run(AppInit)
