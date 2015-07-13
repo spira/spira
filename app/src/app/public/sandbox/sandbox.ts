@@ -1,6 +1,6 @@
 ///<reference path="../../../global.d.ts" />
 
-module app.public.sandbox {
+module app.guest.sandbox {
 
     const namespace = 'app.public.sandbox';
 
@@ -34,7 +34,7 @@ module app.public.sandbox {
 
     }
 
-    export interface IScope extends ng.IScope
+    interface IScope extends ng.IScope
     {
         callApi(apiEndpoint:string):void;
         apiResult: any;
@@ -54,7 +54,7 @@ module app.public.sandbox {
         public callApi(apiEndpoint):void {
 
             this.ngRestAdapter
-                .skipInterceptor()
+                //.skipInterceptor()
                 .get(apiEndpoint)
                 .then((result) => {
                     this.$scope.apiResult = result;
