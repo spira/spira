@@ -16,6 +16,4 @@ have their emails dispatched.
 
     + Body
 
-            {!! json_encode(array_slice(\App\Models\Timezones::getTimezones(), 0, 5)) !!}
-
-
+        {!! \App\Models\Timezones::getTimezones()->slice(0, 5)->toJson() !!}
