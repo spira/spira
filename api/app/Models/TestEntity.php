@@ -1,5 +1,12 @@
 <?php namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Class TestEntity
+ *
+ * @property Collection $testMany
+ */
 class TestEntity extends BaseModel {
     /**
      * The database table used by the model.
@@ -35,14 +42,35 @@ class TestEntity extends BaseModel {
         'updated_at' => 'dateTime'
     ];
 
-    /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    public function entityRoute()
+    public function addSecondTest(SecondTestEntity $entity)
     {
-        return '/test/entities';
+        $this->testMany->add($entity);
+        return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getValidationRules()
+    {
+        return [
+            'varchar' => 'required|string',
+            'hash'    => 'required|string',
+            'integer' => 'required|integer',
+            'decimal' => 'required',
+            'boolean' => 'required|boolean',
+            'text'    => 'required|string',
+            'date'    => 'required|date',
+            'multi_word_column_title' => 'required|boolean',
+            'hidden'  => 'required|boolean'
+        ];
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function testMany()
+    {
+        return $this->belongsToMany('App\Models\SecondTestEntity', 'test_many_many', 'test_id', 'test_second_id');
+    }
 }
