@@ -69,8 +69,8 @@ class UserRepository extends BaseRepository
         // Extract the credentials
         $credential = array_pull($data, '#user_credential');
 
-        // Set new users to public
-        $data['user_type'] = 'public';
+        // Set new users to guest
+        $data['user_type'] = 'guest';
 
         $self = parent::createOrReplace($id, $data);
 

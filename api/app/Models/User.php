@@ -12,8 +12,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller
     use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
-    const USER_TYPE_PUBLIC = 'public';
-    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_PUBLIC];
+    const USER_TYPE_GUEST = 'guest';
+    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
     /**
      * Detines permissions for the user types.
@@ -24,7 +24,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller
         self::USER_TYPE_ADMIN => [
             'users' => ['readAll', 'readOne', 'update', 'delete']
         ],
-        self::USER_TYPE_PUBLIC => [
+        self::USER_TYPE_GUEST => [
             'users' => [['readOne', 'SelfCondition'], ['update', 'SelfCondition']]
         ],
     ];
@@ -78,6 +78,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller
     {
         return $this->hasOne('App\Models\UserCredential');
     }
+
+
 
     /**
      * Get the password for the user.

@@ -66,7 +66,7 @@ class PermissionMiddleware
      */
     protected function assignPermissions()
     {
-        $this->lock->setRole(User::$userTypes, 'guest');
+        $this->lock->setRole(User::$userTypes);
 
         foreach (User::$permissions as $role => $resources) {
             foreach ($resources as $resource => $actions) {

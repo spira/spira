@@ -46,9 +46,9 @@ class UserTest extends TestCase
         $this->assertJsonMultipleEntries();
     }
 
-    public function testGetAllByPublicUser()
+    public function testGetAllByGuestUser()
     {
-        $user = $this->createUser('public');
+        $user = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
 
         $this->get('/users', [
@@ -61,7 +61,7 @@ class UserTest extends TestCase
     public function testGetOneByAdminUser()
     {
         $user = $this->createUser();
-        $userToGet = $this->createUser('public');
+        $userToGet = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
@@ -73,10 +73,10 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
-    public function testGetOneByPublicUser()
+    public function testGetOneByGuestUser()
     {
-        $user = $this->createUser('public');
-        $userToGet = $this->createUser('public');
+        $user = $this->createUser('guest');
+        $userToGet = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
@@ -88,7 +88,7 @@ class UserTest extends TestCase
 
     public function testGetOneBySelfUser()
     {
-        $user = $this->createUser('public');
+        $user = $this->createUser('guest');
         $userToGet = $user;
         $token = $this->jwtAuth->fromUser($user);
 
@@ -141,7 +141,7 @@ class UserTest extends TestCase
     public function testPatchOneByAdminUser()
     {
         $user = $this->createUser('admin');
-        $userToUpdate = $this->createUser('public');
+        $userToUpdate = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
 
         $update = [
@@ -162,10 +162,10 @@ class UserTest extends TestCase
         $this->assertEquals('foo@bar.com', $updatedUser->email);
     }
 
-    public function testPatchOneByPublicUser()
+    public function testPatchOneByGuestUser()
     {
-        $user = $this->createUser('public');
-        $userToUpdate = $this->createUser('public');
+        $user = $this->createUser('guest');
+        $userToUpdate = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
 
         $this->patch('/users/'.$userToUpdate->user_id, [], [
@@ -177,7 +177,7 @@ class UserTest extends TestCase
 
     public function testPatchOneBySelfUser()
     {
-        $user = $this->createUser('public');
+        $user = $this->createUser('guest');
         $userToUpdate = $user;
         $token = $this->jwtAuth->fromUser($user);
 
@@ -202,7 +202,7 @@ class UserTest extends TestCase
     public function testDeleteOneByAdminUser()
     {
         $user = $this->createUser('admin');
-        $userToDelete = $this->createUser('public');
+        $userToDelete = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
         $rowCount = User::count();
 
@@ -215,10 +215,10 @@ class UserTest extends TestCase
         $this->assertEquals($rowCount - 1, User::count());
     }
 
-    public function testDeleteOneByPublicUser()
+    public function testDeleteOneByGuestUser()
     {
-        $user = $this->createUser('public');
-        $userToDelete = $this->createUser('public');
+        $user = $this->createUser('guest');
+        $userToDelete = $this->createUser('guest');
         $token = $this->jwtAuth->fromUser($user);
         $rowCount = User::count();
 
