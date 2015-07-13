@@ -56,7 +56,6 @@ module app.guest.error {
 
         private errorInterceptorHandler = (requestConfig: ng.IRequestConfig, responseObject: ng.IHttpPromiseCallbackArg<any>) => {
 
-            console.log('responseObject', responseObject);
             let params:IErrorStateParams = {
                 title: responseObject.statusText,
                 details: this.$filter('json')(responseObject),
