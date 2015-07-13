@@ -7,7 +7,7 @@ module app.guest.articles.post {
         static $inject = ['stateHelperServiceProvider'];
         constructor(private stateHelperServiceProvider){
 
-            let state:IState = {
+            let state:global.IState = {
                 url: '/{stub}',
                 views: {
                     'main@app.guest': {

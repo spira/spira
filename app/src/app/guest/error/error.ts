@@ -8,7 +8,7 @@ module app.guest.error {
 
         constructor(private stateHelperServiceProvider) {
 
-            let state:IState = {
+            let state:global.IState = {
                 views: {
                     "main@app.guest": {
                         controller: namespace+'.controller',

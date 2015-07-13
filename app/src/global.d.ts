@@ -2,7 +2,7 @@
 
 ///<reference path="../typings/tsd.d.ts" />
 
-declare module app {
+declare module global {
 
     export interface IState extends ng.ui.IState{
         data: {

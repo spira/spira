@@ -9,7 +9,7 @@ module app.guest.sandbox {
         static $inject = ['stateHelperServiceProvider'];
         constructor(private stateHelperServiceProvider){
 
-            let state:IState = {
+            let state:global.IState = {
                 url: '/sandbox',
                 views: {
                     "main@app.guest": {
@@ -47,8 +47,6 @@ module app.guest.sandbox {
         constructor(private $scope : IScope, private ngRestAdapter:NgRestAdapter.NgRestAdapterService) {
 
             $scope.callApi = _.bind(this.callApi, this); //bind method to scope
-
-            console.log('ngRestAdapter uuid', ngRestAdapter.uuid());
 
         }
 

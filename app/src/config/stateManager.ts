@@ -1,6 +1,8 @@
 ///<reference path="../../typings/tsd.d.ts" />
 
-module app.config.stateManager {
+module config.stateManager {
+
+    export const namespace = 'config.stateManager';
 
     class StateManagerConfig {
 
@@ -41,7 +43,7 @@ module app.config.stateManager {
             ;
 
             // Loop through each sub-module state and register them
-            angular.forEach(stateHelperServiceProvider.getStates(), (state:IStateDefinition) => {
+            angular.forEach(stateHelperServiceProvider.getStates(), (state:global.IStateDefinition) => {
                 $stateProvider.state(state.name, state.options);
             });
         }
