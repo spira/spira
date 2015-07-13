@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -48,7 +49,7 @@ abstract class BaseRepository
      *
      * @param  string  $id
      * @param  array   $columns
-     * @return Model
+     * @return BaseModel
      * @throws ModelNotFoundException
      */
     public function find($id, $columns = array('*'))
@@ -68,23 +69,31 @@ abstract class BaseRepository
     }
 
     /**
-     * @param Model $model
-     * @return false|Model
+     * @param BaseModel $model
+     * @return BaseModel|false
      * @throws RepositoryException
+     * @throws \Exception
      */
-    public function save(Model $model)
+    public function save(BaseModel $model)
     {
         $modelClassName = $this->getModelClassName();
         if (!($model instanceof $modelClassName)){
             throw new RepositoryException('provided model is not instance of '.$modelClassName);
         }
         /** @var Model $model */
+        $this->getConnection()->beginTransaction();
 
-        if ($model->save()){
-            return $model;
+        try{
+            if (!$model->push()){
+                throw new RepositoryException('couldn\'t save model');
+            }
+        }catch (\Exception $e){
+            $this->getConnection()->rollBack();
+            throw $e;
         }
 
-        return false;
+        $this->getConnection()->commit();
+        return $model;
     }
 
     /**
@@ -117,11 +126,11 @@ abstract class BaseRepository
     /**
      * Delete an entity by id.
      *
-     * @param Model $model
+     * @param BaseModel $model
      * @return bool
      * @throws RepositoryException
      */
-    public function delete(Model $model)
+    public function delete(BaseModel $model)
     {
         $modelClassName = $this->getModelClassName();
         if (!($model instanceof $modelClassName)){
@@ -136,7 +145,7 @@ abstract class BaseRepository
     /**
      * Delete a collection of entities.
      *
-     * @param  Model[] $models
+     * @param  BaseModel[] $models
      * @throws \Exception
      * @return bool
      */
@@ -170,16 +179,15 @@ abstract class BaseRepository
     }
 
     /**
-     * Get new model instance.
-     * @return Model
-     * @throws \Exception
+     * @return BaseModel
+     * @throws RepositoryException
      */
     public function getModel()
     {
         $model = $this->model();
 
-        if (!$model instanceof Model){
-            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".Model::class);
+        if (!$model instanceof BaseModel){
+            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".BaseModel::class);
         }
 
         return $model;
@@ -209,7 +217,7 @@ abstract class BaseRepository
     /**
      * Model name.
      *
-     * @return Model
+     * @return BaseModel
      */
     abstract protected function model();
 }

@@ -3,7 +3,6 @@
 use App\Http\Transformers\CollectionTransformerInterface;
 use App\Http\Transformers\ItemTransformerInterface;
 use App\Repositories\BaseRepository;
-use App\Services\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,14 +16,6 @@ abstract class BaseController extends Controller
      * @var BaseRepository
      */
     protected $repository;
-
-    /**
-     * Validation service.
-     *
-     * @var Validator
-     */
-    protected $validator;
-
 
     /**
      * Get all entities.
@@ -57,7 +48,6 @@ abstract class BaseController extends Controller
      */
     public function postOne(Request $request)
     {
-        $this->validator->with($request->all())->validate();
         $model = $this->repository->getModel();
         $model->fill($request->all());
         return response((bool)$this->repository->save($model), 201);
@@ -72,7 +62,6 @@ abstract class BaseController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        $this->validator->with($request->all())->id($id)->validate();
         try{
             $model = $this->repository->find($id);
         }catch (ModelNotFoundException $e){
@@ -90,8 +79,6 @@ abstract class BaseController extends Controller
      */
     public function putMany(Request $request)
     {
-        $this->validator->with($request->data)->validateMany();
-
         return response($this->repository->createOrReplaceMany($request->data), 201);
     }
 
@@ -104,8 +91,6 @@ abstract class BaseController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        $this->validator->with($request->all())->id($id)->validate();
-
         $model = $this->repository->find($id);
         $model->fill($request->all());
         $this->repository->save($model);
@@ -121,10 +106,7 @@ abstract class BaseController extends Controller
      */
     public function patchMany(Request $request)
     {
-        $this->validator->with($request->data)->validateMany();
-
         $this->repository->updateMany($request->data);
-
         return response(null, 204);
     }
 
@@ -136,7 +118,6 @@ abstract class BaseController extends Controller
      */
     public function deleteOne($id)
     {
-        $this->validator->id($id)->validate();
         $model = $this->repository->find($id);
         $this->repository->delete($model);
 
@@ -151,10 +132,7 @@ abstract class BaseController extends Controller
      */
     public function deleteMany(Request $request)
     {
-        $this->validator->with($request->data)->validateMany();
-
         $this->repository->deleteMany($request->data);
-
         return response(null, 204);
     }
 }

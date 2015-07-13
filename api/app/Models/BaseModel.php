@@ -1,7 +1,11 @@
 <?php namespace App\Models;
 
+use App\Exceptions\ValidationException;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Bosnadev\Database\Traits\UuidTrait;
+use Illuminate\Support\MessageBag;
+use Illuminate\Validation\Factory as Validator;
 
 abstract class BaseModel extends Model
 {
@@ -9,10 +13,41 @@ abstract class BaseModel extends Model
 
     public $incrementing = false;
 
+    /**
+     * @var Validator
+     */
+    protected $validator;
+
+    /**
+     * @var MessageBag|null
+     */
+    protected $errors;
+
+    /**
+     * @return array
+     */
+    abstract public function getValidationRules();
+
+    protected function getValidator()
+    {
+        if (is_null($this->validator)){
+            $this->validator = \App::make('validator');
+        }
+
+        return $this->validator;
+    }
 
     public static function getTableName()
     {
         return with(new static)->getTable();
+    }
+
+    /**
+     * @return MessageBag|null
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
@@ -32,11 +67,36 @@ abstract class BaseModel extends Model
         switch ($this->getCastType($key))
         {
             case 'date':
-                return \Carbon\Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
             case 'datetime':
-                return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
             default:
                 return $value;
         }
     }
+
+    /**
+     * Listen for save event
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function(BaseModel $model)
+        {
+            return $model->validate();
+        });
+    }
+
+    public function validate()
+    {
+        $validation = $this->getValidator()->make($this->attributes,$this->getValidationRules());
+        $this->errors = [];
+        if ($validation->fails()){
+            $this->errors = $validation->messages();
+            throw new ValidationException($this->getErrors());
+        }
+
+        return true;
+    }
+
 }

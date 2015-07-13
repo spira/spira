@@ -7,12 +7,10 @@ class TestController extends BaseController
 {
     /**
      * Assign dependencies.
-     * @param TestEntityValidator $validator
      * @param TestRepository $repository
      */
-    public function __construct(TestEntityValidator $validator, TestRepository $repository)
+    public function __construct(TestRepository $repository)
     {
-        $this->validator = $validator;
         $this->repository = $repository;
     }
 
