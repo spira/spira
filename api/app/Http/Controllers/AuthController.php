@@ -66,10 +66,10 @@ class AuthController extends BaseController
      */
     public function refresh(Request $request)
     {
-        $token = $this->jwtAuth->getTokenFromRequest($request);
+        $token = $this->jwtAuth->getTokenFromRequest();
 
         // Get the user to make sure the token is fully valid
-        $this->jwtAuth->getUser($request);
+        $this->jwtAuth->getUser();
 
         $token = $this->jwtAuth->refresh($token);
         return $this->item(new AuthToken(['token' => $token]));

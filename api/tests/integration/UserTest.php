@@ -10,16 +10,6 @@ class UserTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-    }
-
-    protected function assertException($message, $statusCode, $exception)
-    {
-        $body = json_decode($this->response->getContent());
-        $this->assertResponseStatus($statusCode);
-        $this->assertContains($message, $body->message);
-        $this->assertContains($exception, $body->debug->exception);
     }
 
     protected function createUser($type = 'admin')
@@ -34,7 +24,7 @@ class UserTest extends TestCase
     public function testGetAllByAdminUser()
     {
         $user = $this->createUser();
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -49,7 +39,7 @@ class UserTest extends TestCase
     public function testGetAllByGuestUser()
     {
         $user = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -62,7 +52,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser();
         $userToGet = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -77,7 +67,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('guest');
         $userToGet = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -90,7 +80,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('guest');
         $userToGet = $user;
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -142,7 +132,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('admin');
         $userToUpdate = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $update = [
             'userId' => $userToUpdate->user_id,
@@ -166,7 +156,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('guest');
         $userToUpdate = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->patch('/users/'.$userToUpdate->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
@@ -179,7 +169,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('guest');
         $userToUpdate = $user;
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $update = [
             'userId' => $userToUpdate->user_id,
@@ -203,7 +193,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('admin');
         $userToDelete = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
         $rowCount = User::count();
 
         $this->delete('/users/'.$userToDelete->user_id, [], [
@@ -219,7 +209,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser('guest');
         $userToDelete = $this->createUser('guest');
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
         $rowCount = User::count();
 
         $this->delete('/users/'.$userToDelete->user_id, [], [

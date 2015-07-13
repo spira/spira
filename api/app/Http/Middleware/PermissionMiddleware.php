@@ -49,7 +49,7 @@ class PermissionMiddleware
      */
     public function handle(Request $request, Closure $next, $action, $resource)
     {
-        $user = $this->jwtAuth->getUser($request);
+        $user = $this->jwtAuth->getUser();
         $lock = $this->lock->makeCallerLockAware($user);
 
         if (!$user->can($action, $resource)) {

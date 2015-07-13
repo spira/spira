@@ -49,7 +49,7 @@ class SelfCondition implements Condition
      */
     public function assert(Lock $lock, Permission $permission, $action, Resource $resource = null)
     {
-        $user = $this->jwtAuth->getUser($this->request);
+        $user = $this->jwtAuth->getUser();
 
         return $user->user_id == last($this->request->segments());
     }

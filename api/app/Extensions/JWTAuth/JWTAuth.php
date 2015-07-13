@@ -1,6 +1,5 @@
 <?php namespace App\Extensions\JWTAuth;
 
-use Illuminate\Http\Request;
 use Tymon\JWTAuth\Token;
 use Tymon\JWTAuth\JWTAuth as JWTAuthBase;
 use RuntimeException;
@@ -15,13 +14,12 @@ class JWTAuth extends JWTAuthBase
     /**
      * Get the token contained within the current request.
      *
-     * @param  Request  $request
      * @throws BadRequestException
      * @return Token
      */
-    public function getTokenFromRequest(Request $request)
+    public function getTokenFromRequest()
     {
-        if (!$token = $this->setRequest($request)->getToken()) {
+        if (!$token = $this->setRequest($this->request)->getToken()) {
             throw new BadRequestException('Token not provided.');
         }
 
@@ -31,15 +29,14 @@ class JWTAuth extends JWTAuthBase
     /**
      * Get the user from the request token.
      *
-     * @param  Token  $token
      * @throws UnauthorizedException
      * @throws UnprocessableEntityException
      * @throws RuntimeException
      * @return \App\Model\User
      */
-    public function getUser(Request $request)
+    public function getUser()
     {
-        $token = $this->getTokenFromRequest($request);
+        $token = $this->getTokenFromRequest();
 
         try {
             $user = $this->authenticate((string) $token);
