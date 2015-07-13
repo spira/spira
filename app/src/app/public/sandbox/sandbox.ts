@@ -34,18 +34,24 @@ module app.public.sandbox {
 
     }
 
+    export interface IScope extends ng.IScope
+    {
+        callApi(apiEndpoint:string):void;
+        apiResult: any;
+    }
+
     class SandboxController {
 
         static $inject = ['$scope', 'ngRestAdapter'];
-        constructor(private $scope, private ngRestAdapter:NgRestAdapter.NgRestAdapterService) {
+        constructor(private $scope : IScope, private ngRestAdapter:NgRestAdapter.NgRestAdapterService) {
 
-            $scope.callApi = this.callApi;
+            $scope.callApi = _.bind(this.callApi, this); //bind method to scope
 
             console.log('ngRestAdapter uuid', ngRestAdapter.uuid());
 
         }
 
-        private callApi(apiEndpoint):void {
+        public callApi(apiEndpoint):void {
 
             this.ngRestAdapter.get(apiEndpoint)
                 .then((result) => {
