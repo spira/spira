@@ -1,6 +1,6 @@
 module app.guest.error {
 
-    const namespace = 'app.public.error';
+    export const namespace = 'app.guest.error';
 
     class ErrorConfig {
 
@@ -10,9 +10,9 @@ module app.guest.error {
 
             let state:IState = {
                 views: {
-                    "main@app.public": {
-                        controller: 'app.public.error.controller',
-                        templateUrl: 'templates/app/public/error/error_template.tpl.html'
+                    "main@app.guest": {
+                        controller: namespace+'.controller',
+                        templateUrl: 'templates/app/guest/error/error_template.tpl.html'
                     }
                 },
                 params: {
@@ -68,7 +68,7 @@ module app.guest.error {
                 params.message = responseObject.data.message;
             }
 
-            this.$state.transitionTo('app.public.error', params);
+            this.$state.transitionTo('app.guest.error', params);
 
         }
 

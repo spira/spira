@@ -1,6 +1,6 @@
 ///<reference path="../../typings/tsd.d.ts" />
 
-module app.stateManager {
+module app.config.stateManager {
 
     class StateManagerConfig {
 
@@ -23,13 +23,13 @@ module app.stateManager {
             ;
             // Create state for Default Layout
             $stateProvider
-                .state('app.public', {
+                .state('app.guest', {
                     abstract: true,
                     views: {
                         'app@': { // Points to the ui-view in the index.html
                             templateUrl: 'templates/app/_layouts/default.tpl.html'
                         },
-                        'navigation@app.public': { // Points to the ui-view="navigation" in default.tpl.html
+                        'navigation@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
                             templateUrl: 'templates/app/_partials/navigation.tpl.html',
                             controller: 'stateManager.navigation.controller'
                         }
@@ -52,7 +52,7 @@ module app.stateManager {
             $urlRouterProvider.otherwise(function ($injector, $location) {
                 var $state = $injector.get('$state');
 
-                $state.go('app.public.error', {
+                $state.go(app.guest.error.namespace, {
                     title: "Page not found",
                     message: 'Could not find a state associated with url "' + $location.$$url + '"',
                     url: $location.$$absUrl
@@ -67,7 +67,7 @@ module app.stateManager {
         static $inject = ['$scope', 'stateHelperService', '$window'];
         constructor(private $scope, private stateHelperService, private $window) {
 
-            var childStates = stateHelperService.getChildStates('app.public');
+            var childStates = stateHelperService.getChildStates(app.guest.namespace);
 
             //using the state.data.sortAfter key build a topology and sort it
             var sortMap = _.reduce(childStates, function(t, state:ng.ui.IState){

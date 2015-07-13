@@ -2,7 +2,7 @@
 
 module app.guest.sandbox {
 
-    const namespace = 'app.public.sandbox';
+    export const namespace = 'app.guest.sandbox';
 
     class SandboxConfig {
 
@@ -12,9 +12,9 @@ module app.guest.sandbox {
             let state:IState = {
                 url: '/sandbox',
                 views: {
-                    "main@app.public": {
+                    "main@app.guest": {
                         controller: namespace+'.controller',
-                        templateUrl: 'templates/app/public/sandbox/sandbox.tpl.html'
+                        templateUrl: 'templates/app/guest/sandbox/sandbox.tpl.html'
                     }
                 },
                 resolve: /*@ngInject*/{
@@ -23,8 +23,9 @@ module app.guest.sandbox {
                 data: {
                     title: "Sandbox",
                     role: 'public',
-                    icon: 'home',
-                    navigation: true
+                    icon: 'extension',
+                    navigation: true,
+                    sortAfter: app.guest.articles.namespace,
                 }
             };
 
