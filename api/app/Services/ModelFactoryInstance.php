@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use App\Http\Transformers\BaseTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -144,9 +145,19 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             ->times($this->entityCount)
             ->make($this->customizations);
 
-        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
+        $this->setEntityType();
 
         return $entity;
+    }
+
+    /**
+     * Set if the entity is a single item or a collection.
+     *
+     * @return void
+     */
+    protected function setEntityType()
+    {
+        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
     }
 
     /**
@@ -219,7 +230,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function transformed()
     {
-        $entity = $this->modified();
+        if ($this->factoryInstance instanceof Collection) {
+            $entity = $this->factoryInstance->slice(0, $this->entityCount);
+            $this->setEntityType();
+        } else {
+            $entity = $this->modified();
+        }
 
         if (!$this->transformer) {
             $this->transformer = new BaseTransformer();
