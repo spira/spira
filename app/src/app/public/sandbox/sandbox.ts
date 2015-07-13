@@ -9,7 +9,7 @@ module app.public.sandbox {
         static $inject = ['stateHelperServiceProvider'];
         constructor(private stateHelperServiceProvider){
 
-            let state:ng.ui.IState = {
+            let state:IState = {
                 url: '/sandbox',
                 views: {
                     "main@app.public": {
@@ -53,7 +53,9 @@ module app.public.sandbox {
 
         public callApi(apiEndpoint):void {
 
-            this.ngRestAdapter.get(apiEndpoint)
+            this.ngRestAdapter
+                .skipInterceptor()
+                .get(apiEndpoint)
                 .then((result) => {
                     this.$scope.apiResult = result;
                 })

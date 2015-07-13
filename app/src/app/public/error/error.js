@@ -21,72 +21,68 @@ angular.module('app.public.error', [])
             }
         });
 
-        $httpProvider.interceptors.push('errorInterceptor');
-
     })
 
-    .factory('errorInterceptor',function($q, $rootScope, $injector) {
-        return {
-            'responseError': function(response) {
+    //.factory('errorInterceptor',function($q, $rootScope, $injector) {
+    //    return {
+    //        'responseError': function(response) {
+    //
+    //            var $state = $injector.get('$state'),
+    //                $filter = $injector.get('$filter'),
+    //                errors = {
+    //                    400: {
+    //                        title: '400 - Bad Request',
+    //                        url: 'bad-request'
+    //                    },
+    //                    403: {
+    //                        title: '403 - Access Forbidden',
+    //                        url: 'forbidden'
+    //                    },
+    //                    404: {
+    //                        title: '404 - Not Found',
+    //                        url: 'not-found'
+    //                    },
+    //                    412: {
+    //                        title: '412 - Precondition failed',
+    //                        url: 'precondition-failed'
+    //                    },
+    //                    500: {
+    //                        title: '500 - Internal Server Error',
+    //                        url: 'internal-server-error'
+    //                    },
+    //                    502: {
+    //                        title: '502 - Proxy Error',
+    //                        url: 'proxy-server-error'
+    //                    },
+    //                    0: {
+    //                        title: 'CORS Error - API Not Accepting Request',
+    //                        url: 'cors-error'
+    //                    }
+    //                };
+    //
+    //            if (response.status in errors && !response.config.skipInterceptor) {
+    //
+    //                var params = {
+    //                    errorType: errors[response.status].url,
+    //                    title: errors[response.status].title,
+    //                    details: $filter('json')(response),
+    //                    url: response.config.url,
+    //                    method: response.config.method
+    //                };
+    //
+    //                if (response.data && response.data.message){
+    //                    params.message = response.data.message;
+    //                }
+    //
+    //                $state.transitionTo('app.public.error', params);
+    //            }
+    //
+    //            return $q.reject(response);
+    //        }
+    //    };
+    //})
 
-                var $state = $injector.get('$state'),
-                    $filter = $injector.get('$filter'),
-                    errors = {
-                        400: {
-                            title: '400 - Bad Request',
-                            url: 'bad-request'
-                        },
-                        403: {
-                            title: '403 - Access Forbidden',
-                            url: 'forbidden'
-                        },
-                        404: {
-                            title: '404 - Not Found',
-                            url: 'not-found'
-                        },
-                        412: {
-                            title: '412 - Precondition failed',
-                            url: 'precondition-failed'
-                        },
-                        500: {
-                            title: '500 - Internal Server Error',
-                            url: 'internal-server-error'
-                        },
-                        502: {
-                            title: '502 - Proxy Error',
-                            url: 'proxy-server-error'
-                        },
-                        0: {
-                            title: 'CORS Error - API Not Accepting Request',
-                            url: 'cors-error'
-                        }
-                    };
-
-                if (response.status in errors && !response.config.skipInterceptor) {
-
-                    var params = {
-                        errorType: errors[response.status].url,
-                        title: errors[response.status].title,
-                        details: $filter('json')(response),
-                        url: response.config.url,
-                        method: response.config.method
-                    };
-
-                    if (response.data && response.data.message){
-                        params.message = response.data.message;
-                    }
-
-                    $state.transitionTo('app.public.error', params);
-                }
-
-                return $q.reject(response);
-            }
-        };
-    })
-
-    .controller('app.public.error.controller', function($rootScope, $scope, titleService, $stateParams, $state, $window, $filter) {
-
-        titleService.setTitle($stateParams.title);
+    .controller('app.public.error.controller', function($rootScope, $scope, $stateParams, $state, $window, $filter) {
 
         $scope.title = $stateParams.title;
         $scope.message = $stateParams.message;

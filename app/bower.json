@@ -32,7 +32,7 @@
     "highlightjs": "~8.5.0",
     "angular-material": "~0.10.0",
     "toposort": "~0.3.1",
-    "angular-rest-adapter": "1.0.5",
+    "angular-rest-adapter": "1.0.7",
     "angular-http-progress": "~0.1.2"
   },
   "devDependencies": {

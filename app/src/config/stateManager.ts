@@ -2,11 +2,6 @@
 
 module app.stateManager {
 
-    export interface IState {
-        name: string;
-        options: ng.ui.IState
-    }
-
     class StateManagerConfig {
 
         static $inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', '$compileProvider', 'stateHelperServiceProvider'];
@@ -46,7 +41,7 @@ module app.stateManager {
             ;
 
             // Loop through each sub-module state and register them
-            angular.forEach(stateHelperServiceProvider.getStates(), (state:app.stateManager.IState) => {
+            angular.forEach(stateHelperServiceProvider.getStates(), (state:IStateDefinition) => {
                 $stateProvider.state(state.name, state.options);
             });
         }
