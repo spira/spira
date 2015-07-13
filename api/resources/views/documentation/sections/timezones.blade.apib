@@ -16,4 +16,4 @@ have their emails dispatched.
 
     + Body
 
-        {!! \App\Models\Timezones::getTimezones()->slice(0, 5)->toJson() !!}
+        {!! $factory->get(\App\Models\Timezones::getTimezones())->count(5)->toJson() !!}
