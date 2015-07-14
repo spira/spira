@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use BeatSwitch\Lock\Callers\SimpleCaller;
 use BeatSwitch\Lock\Drivers\ArrayDriver;
-use BeatSwitch\Lock\Manager;
+use App\Extensions\Lock\Manager;
 use Illuminate\Support\ServiceProvider;
 
 class LockServiceProvider extends ServiceProvider
@@ -32,7 +32,7 @@ class LockServiceProvider extends ServiceProvider
             return new Manager($this->getDriver());
         });
 
-        $this->app->alias('lock.manager', 'BeatSwitch\Lock\Manager');
+        $this->app->alias('lock.manager', 'App\Extensions\Lock\Manager');
     }
 
     /**

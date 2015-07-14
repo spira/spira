@@ -4,10 +4,11 @@ namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
+use App\Extensions\Lock\UserOwnership;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends BaseModel implements AuthenticatableContract, Caller
+class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
 
@@ -105,5 +106,17 @@ class User extends BaseModel implements AuthenticatableContract, Caller
     public function getCallerRoles()
     {
         return [$this->user_type];
+    }
+
+    /**
+     * Check if the user is owns the entity.
+     *
+     * @param  \App\Models\User  $user
+     * @param  string            $entityId
+     * @return bool
+     */
+    public static function userIsOwner($user, $entityId)
+    {
+        return $user->user_id == $entityId;
     }
 }
