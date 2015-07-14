@@ -1,14 +1,13 @@
 module.exports = function(config) {
     config.set({
 
-        frameworks: ['jasmine'],
-        plugins: ['karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage'],
+        frameworks: ['chai-as-promised', 'mocha', 'sinon', 'sinon-chai'],
 
         preprocessors: {
-            'app/build/js/**/*.js': ['coverage']
+            'app/build/**/*.js': ['coverage']
         },
 
-        reporters: ['progress', 'coverage'],
+        reporters: ['mocha', 'coverage'],
 
         port: 9018,
         runnerPort: 9100,
@@ -19,7 +18,14 @@ module.exports = function(config) {
             'PhantomJS'
         ],
 
-        logLevel: config.LOG_INFO,
+        client: {
+            captureConsole: true,
+            mocha: {
+                bail: true
+            }
+        },
+
+        logLevel: config.LOG_DEBUG,
 
         coverageReporter: {
             // specify a common output directory

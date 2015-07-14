@@ -57,13 +57,21 @@ var paths = {
             return this.base + '/assets/images/**/*'
         },
         get tests(){
-            return this.base + '/**/*.spec.js'
+            return [
+                //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
+                'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
+                'app/typings/**/*.d.ts', //get the local typings files
+                this.base + '/**/*.spec.ts'
+            ]
         }
     },
     dest: {
         base: 'app/build',
         get scripts(){
             return this.base+ '/js'
+        },
+        get tests(){
+            return this.base+ '/tests'
         },
         get appStyles(){
             return this.base + '/css/**/*.css'
@@ -93,7 +101,7 @@ gulp.task('clean', 'deletes all build files', [], function(cb) {
     plugins.del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', 'processes javascript & typescript files', [], function () {
+gulp.task('scripts:app', 'processes javascript & typescript files', [], function () {
 
     var tsFilter = plugins.filter('**/*.ts');
     var jsFilter = plugins.filter('**/*.js');
@@ -129,6 +137,32 @@ gulp.task('scripts', 'processes javascript & typescript files', [], function () 
             .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
             .pipe(gulp.dest(paths.dest.scripts))
     ]);
+});
+
+gulp.task('scripts:test', 'processes javascript & typescript tests', [], function () {
+
+    var tsdFilter = plugins.filter('**/*.d.ts');
+
+    var tsResult = gulp.src(paths.src.tests)
+        //remove the typings references from tsd files @todo remove when tsd recursive resolution is complete https://github.com/DefinitelyTyped/tsd/issues/150
+        .pipe(tsdFilter)
+        .pipe(plugins.replace('/// <reference path="../typings/tsd.d.ts" />', ''))
+        .pipe(tsdFilter.restore())
+
+        .pipe(plugins.sourcemaps.init())
+
+        .pipe(plugins.typescript({
+            target: "ES5",
+            noExternalResolve: true,
+            typescript: require('typescript'),
+            declarationFiles: false
+        }, undefined, plugins.typescript.reporter.longReporter()))
+    ;
+
+    return tsResult.js
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+        .pipe(gulp.dest(paths.dest.tests))
+    ;
 });
 
 gulp.task('templates-watch', 'watches template files for changes [not working]', ['templates'], browserSync.reload);
@@ -266,7 +300,7 @@ gulp.task('default', 'default task', ['build']);
 gulp.task('build', 'runs build sequence for frontend', function (cb){
     plugins.runSequence('clean',
         //'bower:install',
-        ['scripts', 'templates', 'styles', 'assets', 'bower:build'],
+        ['scripts:app', 'templates', 'styles', 'assets', 'bower:build'],
         'index',
         cb);
 });
@@ -290,7 +324,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
     });
 
     gulp.watch(paths.src.templates, ['templates']);
-    gulp.watch(paths.src.scripts, ['scripts']);
+    gulp.watch(paths.src.scripts, ['scripts:app']);
     gulp.watch(paths.src.styles, ['styles']);
     gulp.watch(paths.src.assets, ['assets']);
     gulp.watch(paths.src.base+'/index.html', ['index']);
@@ -299,7 +333,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
 
 
 gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
-    plugins.runSequence('build', 'test:karma', cb);
+    plugins.runSequence('build', 'scripts:test', 'test:karma', cb);
 });
 
 gulp.task('test:karma',  'unit test the frontend', [], function(){
@@ -313,7 +347,7 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
         .map(function(path){
             return 'app/build/'+path;
         })
-        .concat(plugins.globby.sync(paths.src.tests))
+        .concat(plugins.globby.sync(paths.dest.tests+'/**/*.js'))
     ;
 
     testFiles.push('app/build/js/templates.js');
