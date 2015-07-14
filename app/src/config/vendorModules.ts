@@ -13,7 +13,7 @@ module config.vendorModules {
         'ngAnimate', //angular animate
         'ngSanitize', //angular sanitise
         'hljs', //syntax highlighted code blocks - https://github.com/pc035860/angular-highlightjs
-        //'ngHttpProgress', //http request progress meter - https://github.com/spira/angular-http-progress
+        'ngHttpProgress', //http request progress meter - https://github.com/spira/angular-http-progress
         'ngRestAdapter', // api helper methods - https://github.com/spira/angular-rest-adapter
         //'ngJwtAuth', // json web token authentication - https://github.com/spira/angular-jwt-auth
     ]);

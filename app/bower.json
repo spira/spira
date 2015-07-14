@@ -32,8 +32,8 @@
     "highlightjs": "~8.5.0",
     "angular-material": "~0.10.0",
     "toposort": "~0.3.1",
-    "angular-rest-adapter": "1.0.10",
-    "angular-http-progress": "~0.1.2"
+    "angular-rest-adapter": "~1",
+    "angular-http-progress": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.3",
