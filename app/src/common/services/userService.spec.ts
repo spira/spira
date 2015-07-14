@@ -71,7 +71,7 @@ describe('UserService', () => {
 
         });
 
-        it.skip('should reject the promise getting users fails', () => {
+        it('should reject the promise getting users fails', () => {
 
             $httpBackend.expectGET('/api/users').respond(500);
 

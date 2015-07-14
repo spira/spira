@@ -8,8 +8,8 @@ module common.services {
 
     class UserService {
 
-        static $inject:string[] = ['ngRestAdapter'];
-        constructor(private ngRestAdapter: NgRestAdapter.INgRestAdapterService) {
+        static $inject:string[] = ['ngRestAdapter', '$q'];
+        constructor(private ngRestAdapter: NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
         }
 
@@ -18,9 +18,6 @@ module common.services {
             return this.ngRestAdapter.get('/users')
                 .then((res) => {
                     return res.data;
-                })
-                .catch((err) => {
-                    console.error(err);
                 })
             ;
 
