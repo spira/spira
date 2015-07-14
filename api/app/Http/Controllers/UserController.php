@@ -49,12 +49,7 @@ class UserController extends BaseController
         $user = $this->jwtAuth->user();
         $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
 
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readAll');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readOne');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('update');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('delete');
-
-        $this->lock->role(User::USER_TYPE_GUEST)->allow('readOne', null, null, [$owner]);
-        $this->lock->role(User::USER_TYPE_GUEST)->allow('update', null, null, [$owner]);
+        $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
+        $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
     }
 }

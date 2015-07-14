@@ -7,10 +7,23 @@ trait LockTrait
     /**
      * Give the subject permission to do something.
      *
-     * @param string|array $action
-     * @param string|\BeatSwitch\Lock\Resources\Resource $resource
-     * @param int $resourceId
-     * @param \BeatSwitch\Lock\Permissions\Condition|\BeatSwitch\Lock\Permissions\Condition[]|\Closure $conditions
+     * @param  string|array  $action
+     * @param  array         $conditions
+     * @return void
+     */
+    public function permit($action, array $conditions = [])
+    {
+        $this->allow($action, null, null, $conditions);
+    }
+
+    /**
+     * Give the subject permission to do something.
+     *
+     * @param  string|array  $action
+     * @param  string|\BeatSwitch\Lock\Resources\Resource $resource
+     * @param  int           $resourceId
+     * @param  array         $conditions
+     * @return void
      */
     public function allow($action, $resource = null, $resourceId = null, $conditions = [])
     {
