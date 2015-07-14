@@ -31,10 +31,10 @@ class UserController extends BaseController
 
         $this->assignPermissions($request);
 
-        $this->middleware('permission:readAll,users', ['only' => 'getAll']);
-        $this->middleware('permission:readOne,users', ['only' => 'getOne']);
-        $this->middleware('permission:update,users', ['only' => 'patchOne']);
-        $this->middleware('permission:delete,users', ['only' => 'deleteOne']);
+        $this->middleware('permission:readAll', ['only' => 'getAll']);
+        $this->middleware('permission:readOne', ['only' => 'getOne']);
+        $this->middleware('permission:update', ['only' => 'patchOne']);
+        $this->middleware('permission:delete', ['only' => 'deleteOne']);
     }
 
     /**
@@ -49,12 +49,12 @@ class UserController extends BaseController
         $user = $this->jwtAuth->user();
         $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
 
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readAll', 'users');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readOne', 'users');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('update', 'users');
-        $this->lock->role(User::USER_TYPE_ADMIN)->allow('delete', 'users');
+        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readAll');
+        $this->lock->role(User::USER_TYPE_ADMIN)->allow('readOne');
+        $this->lock->role(User::USER_TYPE_ADMIN)->allow('update');
+        $this->lock->role(User::USER_TYPE_ADMIN)->allow('delete');
 
-        $this->lock->role(User::USER_TYPE_GUEST)->allow('readOne', 'users', null, [$owner]);
-        $this->lock->role(User::USER_TYPE_GUEST)->allow('update', 'users', null, [$owner]);
+        $this->lock->role(User::USER_TYPE_GUEST)->allow('readOne', null, null, [$owner]);
+        $this->lock->role(User::USER_TYPE_GUEST)->allow('update', null, null, [$owner]);
     }
 }
