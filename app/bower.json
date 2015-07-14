@@ -24,7 +24,6 @@
     "angular-ui-router": "~0.2.15",
     "angular-ui-utils": "~0.2.3",
     "angular-highlightjs": "~0.4.1",
-    "ngprogress": "~1.0.7",
     "jquery": "~2.1.3",
     "moment": "~2.10",
     "lodash": "~3.9",
@@ -32,10 +31,13 @@
     "font-awesome": "~4.3.0",
     "highlightjs": "~8.5.0",
     "angular-material": "~0.10.0",
-    "toposort": "~0.3.1"
+    "toposort": "~0.3.1",
+    "angular-rest-adapter": "~1",
+    "angular-http-progress": "*"
   },
   "devDependencies": {
-    "angular-mocks": "~1.3"
+    "angular-mocks": "~1.3",
+    "chance": "~0.7.6"
   },
   "resolutions": {
     "angular": "~1.3"
