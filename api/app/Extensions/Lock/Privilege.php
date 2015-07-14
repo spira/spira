@@ -16,7 +16,10 @@ class Privilege extends BasePrivilege
     protected function resolveConditions(Lock $lock, $action, $resource)
     {
         foreach ($this->conditions as $condition) {
-            if (!$condition[0]::userIsOwner($condition[1], $condition[2])) {
+            $class = array_shift($condition);
+            $method = array_shift($condition);
+
+            if (!call_user_func_array([$class, $method], $condition)) {
                 return false;
             }
         }

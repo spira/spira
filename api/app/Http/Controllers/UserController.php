@@ -19,16 +19,17 @@ class UserController extends BaseController
      * @param  Validator   $validator
      * @param  Lock        $lock
      * @param  JWTAuth     $jwtAuth
+     * @param  Request     $request
      * @return void
      */
-    public function __construct(Repository $repository, Validator $validator, Manager $lock, JWTAuth $jwtAuth)
+    public function __construct(Repository $repository, Validator $validator, Manager $lock, JWTAuth $jwtAuth, Request $request)
     {
         $this->repository = $repository;
         $this->validator = $validator;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
 
-        $this->assignPermissions();
+        $this->assignPermissions($request);
 
         $this->middleware('permission:readAll,users', ['only' => 'getAll']);
         $this->middleware('permission:readOne,users', ['only' => 'getOne']);
@@ -39,9 +40,10 @@ class UserController extends BaseController
     /**
      * Assign permissions to be used in the controller.
      *
+     * @param  Request  $request
      * @return void
      */
-    public function assignPermissions()
+    public function assignPermissions(Request $request)
     {
         $this->lock->setRole(User::$userTypes);
 
@@ -51,7 +53,7 @@ class UserController extends BaseController
             $user = null;
         }
 
-        $owner = [User::class, $user, last(\Request::segments())];
+        $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
 
         $this->lock->role(User::USER_TYPE_ADMIN)->allow('readAll', 'users');
         $this->lock->role(User::USER_TYPE_ADMIN)->allow('readOne', 'users');
