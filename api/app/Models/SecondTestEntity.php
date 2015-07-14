@@ -24,4 +24,9 @@ class SecondTestEntity extends BaseModel
     {
         return [];
     }
+
+    public function testMany()
+    {
+        return $this->hasMany(TestEntity::class,'entity_id','check_entity_id');
+    }
 }
