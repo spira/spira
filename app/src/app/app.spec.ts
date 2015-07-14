@@ -1,3 +1,7 @@
+///<reference path="../global.d.ts" />
+
+let expect:Chai.ExpectStatic = chai.expect;
+
 describe('Bootstrap', () => {
 
     describe('isCurrentUrl', () => {

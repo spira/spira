@@ -61,6 +61,7 @@ var paths = {
                 //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
                 'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
                 'app/typings/**/*.d.ts', //get the local typings files
+                this.base + '/**/*.d.ts',
                 this.base + '/**/*.spec.ts'
             ]
         }
@@ -351,8 +352,6 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
     ;
 
     testFiles.push('app/build/js/templates.js');
-
-    console.log('test', testFiles);
 
     return gulp.src(testFiles)
         .pipe(plugins.karma({

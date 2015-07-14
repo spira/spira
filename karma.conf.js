@@ -25,7 +25,7 @@ module.exports = function(config) {
             }
         },
 
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_INFO,
 
         coverageReporter: {
             // specify a common output directory
