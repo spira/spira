@@ -8,7 +8,6 @@
 
 namespace Spira\Repository\Collection;
 
-
 use Spira\Repository\Model\BaseModel;
 
 class Collection extends \Illuminate\Database\Eloquent\Collection

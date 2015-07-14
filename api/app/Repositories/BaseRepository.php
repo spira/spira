@@ -6,6 +6,7 @@ use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Traversable;
 
 abstract class BaseRepository
 {
@@ -102,8 +103,12 @@ abstract class BaseRepository
      * @throws \Exception some general exception
      * @throws RepositoryException
      */
-    public function saveMany(array $models)
+    public function saveMany($models)
     {
+        if (!is_array($models) && !($models instanceof Traversable)){
+            throw new RepositoryException('Models must be either an array or Collection with Traversable');
+        }
+
         $this->getConnection()->beginTransaction();
 
         try{
@@ -149,8 +154,12 @@ abstract class BaseRepository
      * @throws \Exception
      * @return bool
      */
-    public function deleteMany(array $models)
+    public function deleteMany($models)
     {
+        if (!is_array($models) && !($models instanceof Traversable)){
+            throw new RepositoryException('Models must be either an array or Collection with Traversable');
+        }
+
         $this->getConnection()->beginTransaction();
 
         try{

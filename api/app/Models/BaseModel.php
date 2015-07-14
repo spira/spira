@@ -7,7 +7,7 @@ use Bosnadev\Database\Traits\UuidTrait;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Validator;
 
-abstract class BaseModel extends Model
+abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 {
     use UuidTrait;
 
