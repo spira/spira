@@ -18,6 +18,7 @@ class UserController extends BaseController
      * @param  Repository  $repository
      * @param  Validator   $validator
      * @param  Lock        $lock
+     * @param  JWTAuth     $jwtAuth
      * @return void
      */
     public function __construct(Repository $repository, Validator $validator, Manager $lock, JWTAuth $jwtAuth)
@@ -28,6 +29,11 @@ class UserController extends BaseController
         $this->jwtAuth = $jwtAuth;
 
         $this->assignPermissions();
+
+        $this->middleware('permission:readAll,users', ['only' => 'getAll']);
+        $this->middleware('permission:readOne,users', ['only' => 'getOne']);
+        $this->middleware('permission:update,users', ['only' => 'patchOne']);
+        $this->middleware('permission:delete,users', ['only' => 'deleteOne']);
     }
 
     /**
@@ -54,60 +60,5 @@ class UserController extends BaseController
 
         $this->lock->role(User::USER_TYPE_GUEST)->allow('readOne', 'users', null, [$owner]);
         $this->lock->role(User::USER_TYPE_GUEST)->allow('update', 'users', null, [$owner]);
-    }
-
-    /**
-     * Get all entities.
-     *
-     * @return Response
-     */
-    public function getAll()
-    {
-        $this->checkPermission('readAll', 'users');
-
-        return parent::getAll();
-    }
-
-    /**
-     * Get one entity.
-     *
-     * @param string $id
-     *
-     * @return Response
-     */
-    public function getOne($id)
-    {
-        $this->checkPermission('readOne', 'users');
-
-        return parent::getOne($id);
-    }
-
-    /**
-     * Patch an entity.
-     *
-     * @param string  $id
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function patchOne($id, Request $request)
-    {
-        $this->checkPermission('update', 'users');
-
-        return parent::patchOne($id, $request);
-    }
-
-    /**
-     * Delete an entity.
-     *
-     * @param string $id
-     *
-     * @return Response
-     */
-    public function deleteOne($id)
-    {
-        $this->checkPermission('delete', 'users');
-
-        return parent::deleteOne($id);
     }
 }

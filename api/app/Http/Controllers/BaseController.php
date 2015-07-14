@@ -209,24 +209,6 @@ abstract class BaseController extends Controller
         return $transformer->collection($collection, new $this->transformer());
     }
 
-    /**
-     * Check if the user has a certain permission.
-     *
-     * @throws ForbiddenException
-     * @param  string  $action
-     * @param  string  $resource
-     * @return void
-     */
-    protected function checkPermission($action, $resource)
-    {
-        $user = $this->jwtAuth->getUser();
-        $lock = $this->lock->makeCallerLockAware($user);
-
-        if (!$user->can($action, $resource)) {
-            throw new ForbiddenException;
-        }
-    }
-
     public static function renderException($request, \Exception $e, $debug = false)
     {
         $message = $e->getMessage();
