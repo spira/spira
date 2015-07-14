@@ -61,8 +61,9 @@ var paths = {
                 //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
                 'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
                 'app/typings/**/*.d.ts', //get the local typings files
-                this.base + '/**/*.d.ts',
-                this.base + '/**/*.spec.ts'
+                this.base + '/**/*.d.ts', //get the source definitions
+                paths.dest.base + '/**/*.d.ts', //get the built definintions
+                this.base + '/**/*.spec.ts' //get all test specifications
             ]
         }
     },
@@ -131,6 +132,7 @@ gulp.task('scripts:app', 'processes javascript & typescript files', [], function
     return plugins.merge2([
         tsResult.dts
             //.pipe(plugins.replace('<reference path="typings', '<reference path="../typings'))
+            .pipe(plugins.concat('declarations.d.ts'))
             .pipe(gulp.dest(paths.dest.scripts)),
 
         tsResult.js

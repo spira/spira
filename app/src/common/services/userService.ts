@@ -2,6 +2,10 @@ module common.services {
 
     export const namespace = 'common.services';
 
+    export interface IUserService {
+        getAllUsers():ng.IPromise<Object>;
+    }
+
     class UserService {
 
         static $inject:string[] = ['ngRestAdapter'];

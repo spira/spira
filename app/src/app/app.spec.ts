@@ -1,4 +1,4 @@
-///<reference path="../global.d.ts" />
+///<reference path="../../src/global.d.ts" />
 
 let expect:Chai.ExpectStatic = chai.expect;
 
