@@ -1,8 +1,9 @@
 <?php namespace App\Extensions\JWTAuth;
 
+use Exception;
+use RuntimeException;
 use Tymon\JWTAuth\Token;
 use Tymon\JWTAuth\JWTAuth as JWTAuthBase;
-use RuntimeException;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use App\Exceptions\TokenInvalidException;
@@ -48,6 +49,22 @@ class JWTAuth extends JWTAuthBase
 
         if (!$user) {
             throw new RuntimeException('The user does not exist.');
+        }
+
+        return $user;
+    }
+
+    /**
+     * Helper to get current user with null if none instead of exceptions.
+     *
+     * @return \App\Models\User|null
+     */
+    public function user()
+    {
+        try {
+            $user = $this->getUser();
+        } catch (Exception $e) {
+            $user = null;
         }
 
         return $user;

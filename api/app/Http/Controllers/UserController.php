@@ -46,13 +46,7 @@ class UserController extends BaseController
     public function assignPermissions(Request $request)
     {
         $this->lock->setRole(User::$userTypes);
-
-        try {
-            $user = $this->jwtAuth->getUser();
-        } catch (\Exception $e) {
-            $user = null;
-        }
-
+        $user = $this->jwtAuth->user();
         $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
 
         $this->lock->role(User::USER_TYPE_ADMIN)->allow('readAll', 'users');
