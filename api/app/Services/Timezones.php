@@ -1,52 +1,50 @@
-<?php namespace App\Models;
+<?php namespace App\Services;
 
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Timezones
- * @package App\Models
- *
- * Note this model does not have an associated database table as it is an abstract
- * data model with generated token data.
- */
-class Timezones extends Model
+class Timezones
 {
     /**
-     * Get the collection of available timezones.
+     * Get all timezones.
      *
      * @return Collection
      */
-    public static function getTimezones()
+    public function all()
     {
-        $allTimezones = \DateTimeZone::listIdentifiers();
+        $allTimezones = DateTimeZone::listIdentifiers();
 
         $timezones = new Collection();
         $now = time();
 
         foreach ($allTimezones as $timezoneIdentifier) {
-            $dateTimeZone = new \DateTimeZone($timezoneIdentifier);
+            $dateTimeZone = new DateTimeZone($timezoneIdentifier);
 
             //Read the current transition to get if the timezone is currently in DST
             $transitions = $dateTimeZone->getTransitions($now, $now);
 
             $timezones->push(new Collection([
                 'timezone_identifier' => $dateTimeZone->getName(),
-                'offset' => $offset = $dateTimeZone->getOffset(new \DateTime()),
+                'offset' => $offset = $dateTimeZone->getOffset(new DateTime()),
                 'is_dst' => $transitions[0]['isdst'], //only use the first transition
-                'display_offset' => self::getDisplayOffset($offset),
+                'display_offset' => $this->formatDisplayOffset($offset),
             ]));
         }
-
         return $timezones;
     }
 
-    private static function getDisplayOffset($offset)
+    /**
+     * Format the time offset for display.
+     *
+     * @param  int  $offset
+     * @return string
+     */
+    protected function formatDisplayOffset($offset)
     {
-        $inital = new \DateTime();
+        $inital = new DateTime();
         $inital->setTimestamp(abs($offset));
         $hoursFormatted = $inital->format('H:i');
-
 
         return ($offset >= 0 ? '+':'-') . $hoursFormatted;
     }

@@ -1,9 +1,20 @@
 <?php namespace App\Http\Controllers;
 
-use App\Models\Timezones;
+use App\Services\Timezones;
 
 class TimezoneController extends BaseController
 {
+    /**
+     * Assign dependencies.
+     *
+     * @param  Timezones  $timezones
+     * @return void
+     */
+    public function __construct(Timezones $timezones)
+    {
+        $this->timezones = $timezones;
+    }
+
     /**
      * Get all entities.
      *
@@ -11,6 +22,6 @@ class TimezoneController extends BaseController
      */
     public function getAll()
     {
-        return $this->collection(Timezones::getTimezones());
+        return $this->collection($this->timezones->all());
     }
 }
