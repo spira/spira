@@ -36,7 +36,8 @@ module app.guest {
         'app.guest.home',
         'app.guest.articles',
         'app.guest.sandbox',
-        'app.guest.error'
+        'app.guest.error',
+        'app.guest.login',
     ])
     .config(GuestConfig);
 
