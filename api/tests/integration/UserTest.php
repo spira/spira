@@ -14,10 +14,7 @@ class UserTest extends TestCase
 
     protected function createUser($type = 'admin')
     {
-        $user = factory(App\Models\User::class)->make();
-        $user->user_type = $type;
-        $user->save();
-
+        $user = factory(App\Models\User::class)->create(['user_type' => $type]);
         return $user;
     }
 
