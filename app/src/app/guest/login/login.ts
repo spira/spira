@@ -20,24 +20,55 @@ module app.guest.login {
 
     class LoginInit {
 
-        static $inject = ['ngJwtAuthService'];
+        static $inject = ['ngJwtAuthService', '$mdDialog'];
         constructor(
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+            private $mdDialog:ng.material.IDialogService
         ) {
 
-            ngJwtAuthService.init(); //initialise the auth service (kicks off the timers etc)
+            ngJwtAuthService
+                .registerCredentialPromiseFactory(function(existingUser){
+
+                    let dialogConfig:ng.material.IDialogOptions = {
+                        templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
+                        controller: namespace+'.controller',
+                        clickOutsideToClose: true,
+                    };
+
+                    return $mdDialog.show(dialogConfig);
+                })
+                .init(); //initialise the auth service (kicks off the timers etc)
         }
 
     }
 
     interface IScope extends ng.IScope
     {
+        login(username:string, password:string):void;
+        cancelLoginDialog():void;
     }
 
     class LoginController {
 
-        static $inject = ['$scope'];
-        constructor(private $scope : IScope) {
+        static $inject = ['$scope', '$mdDialog'];
+        constructor(
+            private $scope : IScope,
+            private $mdDialog:ng.material.IDialogService
+        ) {
+
+            $scope.login = function (username, password) {
+
+                let credentials:NgJwtAuth.ICredentials = {
+                    username: username,
+                    password: password,
+                };
+
+                $mdDialog.hide(credentials);
+            };
+
+            $scope.cancelLoginDialog = () => {
+                $mdDialog.cancel();
+            }
 
         }
 
