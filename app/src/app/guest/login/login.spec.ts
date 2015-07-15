@@ -35,40 +35,59 @@ describe('Login', () => {
 
         });
 
-        it('should resolve the dialog when login credentials are passed', () => {
+        describe('dialog interactions', () => {
 
-            sinon.spy($mdDialog, 'hide');
+            beforeEach(() => {
 
-            let creds = {
-                username: 'foo',
-                password: 'bar',
-            };
+                sinon.spy($mdDialog, 'hide');
+                sinon.spy($mdDialog, 'cancel');
+                sinon.spy($mdDialog, 'show');
 
-            (<any>$scope).login(creds.username, creds.password);
+            });
 
-            expect($mdDialog.hide).to.have.been.calledWith(creds);
+            afterEach(() => {
+
+                (<any>$mdDialog).hide.restore();
+                (<any>$mdDialog).cancel.restore();
+                (<any>$mdDialog).show.restore();
+
+            });
+
+            it('should resolve the dialog when login credentials are passed', () => {
+
+
+                let creds = {
+                    username: 'foo',
+                    password: 'bar',
+                };
+
+                (<any>$scope).login(creds.username, creds.password);
+
+                expect($mdDialog.hide).to.have.been.calledWith(creds);
+
+            });
+
+            it('should cancel dialog when requested', () => {
+
+
+                (<any>$scope).cancelLoginDialog();
+
+                expect($mdDialog.cancel).to.have.been.called;
+
+            });
+
+            it('should show the login dialog when prompted', () => {
+
+
+                authService.getPromisedUser(); //@todo change this to a promptLogin() method (not yet implemented in package)
+
+                expect($mdDialog.show).to.have.been.called;
+
+            });
 
         });
 
-        it('should cancel dialog when requested', () => {
 
-            sinon.spy($mdDialog, 'cancel');
-
-            (<any>$scope).cancelLoginDialog();
-
-            expect($mdDialog.cancel).to.have.been.called;
-
-        });
-
-        it('should show the login dialog when prompted', () => {
-
-            sinon.spy($mdDialog, 'show');
-
-            authService.getPromisedUser(); //@todo change this to a promptLogin() method (not yet implemented in package)
-
-            expect($mdDialog.show).to.have.been.called;
-
-        });
 
 
     });
