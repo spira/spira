@@ -66,16 +66,13 @@ class TestEntity extends BaseModel {
         ];
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function testMany()
-    {
-        return $this->belongsToMany('App\Models\SecondTestEntity', 'test_many_many', 'test_id', 'test_second_id');
-    }
-
     public function testOne()
     {
         return $this->hasOne(SecondTestEntity::class,'check_entity_id','entity_id');
+    }
+
+    public function testMany()
+    {
+        return $this->hasMany(SecondTestEntity::class,'check_entity_id','entity_id');
     }
 }
