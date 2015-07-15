@@ -8,9 +8,11 @@
 
 namespace App\Http\Transformers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Spira\Responder\Contract\TransformerInterface;
 
-class IlluminateModelTransformer extends BaseTransformer implements ItemTransformerInterface, CollectionTransformerInterface
+class IlluminateModelTransformer extends BaseTransformer implements TransformerInterface
 {
     public static $badRoutes = [];
     /**
@@ -105,7 +107,10 @@ class IlluminateModelTransformer extends BaseTransformer implements ItemTransfor
      */
     public function transformCollection($collection)
     {
-        return $this->getService()->collection($collection, $this);
+        if ($collection instanceof Collection){
+            $collection = $collection->all();
+        }
+        return json_encode($this->getService()->collection(($collection instanceof Collection)?$collection->all():$collection, $this));
     }
 
     /**
@@ -114,6 +119,6 @@ class IlluminateModelTransformer extends BaseTransformer implements ItemTransfor
      */
     public function transformItem($item)
     {
-        return $this->getService()->item($item, $this);
+        return json_encode($this->getService()->item($item, $this));
     }
 }

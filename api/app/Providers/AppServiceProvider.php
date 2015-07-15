@@ -1,10 +1,11 @@
 <?php namespace App\Providers;
 
-use App\Http\Transformers\CollectionTransformerInterface;
 use App\Http\Transformers\IlluminateModelTransformer;
-use App\Http\Transformers\ItemTransformerInterface;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\ServiceProvider;
+use Spira\Responder\Contract\ApiResponderInterface;
+use Spira\Responder\Contract\TransformerInterface;
+use Spira\Responder\Responder\ApiResponder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,8 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind('League\Fractal\Serializer\SerializerAbstract', 'League\Fractal\Serializer\ArraySerializer');
         $this->app->bind(ConnectionResolverInterface::class, 'db');
-        $this->app->bind(CollectionTransformerInterface::class, IlluminateModelTransformer::class);
-        $this->app->bind(ItemTransformerInterface::class, IlluminateModelTransformer::class);
-
+        $this->app->bind(TransformerInterface::class, IlluminateModelTransformer::class);
+        $this->app->bind(ApiResponderInterface::class, ApiResponder::class);
     }
 }

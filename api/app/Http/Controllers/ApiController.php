@@ -1,14 +1,20 @@
-<?php namespace App\Http\Controllers;
+<?php
+/**
+ * Created by PhpStorm.
+ * User: redjik
+ * Date: 16.07.15
+ * Time: 0:37
+ */
 
-use App\Http\Transformers\CollectionTransformerInterface;
-use App\Http\Transformers\ItemTransformerInterface;
+namespace App\Http\Controllers;
+
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Laravel\Lumen\Routing\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Spira\Responder\Responder\ApiResponder;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class BaseController extends Controller
+abstract class ApiController
 {
     /**
      * Model Repository.
@@ -18,26 +24,29 @@ abstract class BaseController extends Controller
     protected $repository;
 
     /**
+     * @var ApiResponder
+     */
+    protected $responder;
+
+    /**
      * Get all entities.
      *
-     * @param CollectionTransformerInterface $transformer
      * @return Response
      */
-    public function getAll(CollectionTransformerInterface $transformer)
+    public function getAll()
     {
-        return response($transformer->transformCollection($this->repository->all()));
+        return $this->responder->collection($this->repository->all());
     }
 
     /**
      * Get one entity.
      *
-     * @param ItemTransformerInterface $transformer
      * @param  string $id
      * @return Response
      */
-    public function getOne(ItemTransformerInterface $transformer,$id)
+    public function getOne($id)
     {
-        return response($transformer->transformItem($this->repository->find($id)));
+        return $this->responder->item($this->repository->find($id));
     }
 
     /**
@@ -50,7 +59,8 @@ abstract class BaseController extends Controller
     {
         $model = $this->repository->getModel();
         $model->fill($request->all());
-        return response((bool)$this->repository->save($model), 201);
+        $this->repository->save($model);
+        return $this->responder->created();
     }
 
     /**
@@ -68,7 +78,8 @@ abstract class BaseController extends Controller
             $model = $this->repository->getModel();
         }
         $model->fill($request->all());
-        return response((bool)$this->repository->save($model), 201);
+        $this->repository->save($model);
+        return $this->responder->created();
     }
 
     /**
@@ -79,7 +90,7 @@ abstract class BaseController extends Controller
      */
     public function putMany(Request $request)
     {
-        return response($this->repository->createOrReplaceMany($request->data), 201);
+        return $this->responder->created();
     }
 
     /**
@@ -95,7 +106,7 @@ abstract class BaseController extends Controller
         $model->fill($request->all());
         $this->repository->save($model);
 
-        return response(null, 204);
+        return $this->responder->noContent();
     }
 
     /**
@@ -106,8 +117,8 @@ abstract class BaseController extends Controller
      */
     public function patchMany(Request $request)
     {
-        $this->repository->updateMany($request->data);
-        return response(null, 204);
+        //$this->repository->updateMany($request->data);
+        return $this->responder->noContent();
     }
 
     /**
@@ -121,7 +132,7 @@ abstract class BaseController extends Controller
         $model = $this->repository->find($id);
         $this->repository->delete($model);
 
-        return response(null, 204);
+        return $this->responder->noContent();
     }
 
     /**
@@ -133,6 +144,6 @@ abstract class BaseController extends Controller
     public function deleteMany(Request $request)
     {
         $this->repository->deleteMany($request->data);
-        return response(null, 204);
+        return $this->responder->noContent();
     }
 }

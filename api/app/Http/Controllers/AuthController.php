@@ -1,8 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Transformers\ItemTransformerInterface;
+
 use RuntimeException;
 use App\Models\AuthToken;
+use Spira\Responder\Contract\ApiResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\UnprocessableEntityException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
-class AuthController extends BaseController
+class AuthController extends ApiController
 {
     /**
      * JWT Auth
@@ -23,24 +24,26 @@ class AuthController extends BaseController
      */
     protected $jwtAuth;
 
+
     /**
      * Assign dependencies.
      *
-     * @param  JWTAuth  $jwtAuth
+     * @param  JWTAuth $jwtAuth
+     * @param ApiResponderInterface $responder
      */
-    public function __construct(JWTAuth $jwtAuth)
+    public function __construct(JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {
         $this->jwtAuth = $jwtAuth;
+        $this->responder = $responder;
     }
 
     /**
      * Get a login token.
      *
      * @param  Request $request
-     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function login(Request $request, ItemTransformerInterface $transformer)
+    public function login(Request $request)
     {
         $credentials = [
             'email' => $request->getUser(),
@@ -56,17 +59,16 @@ class AuthController extends BaseController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return response($transformer->transformItem(new AuthToken(['token' => $token])));
+        return $this->responder->item(new AuthToken(['token' => $token]));
     }
 
     /**
      * Refresh a login token.
      *
      * @param  Request $request
-     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function refresh(Request $request, ItemTransformerInterface $transformer)
+    public function refresh(Request $request)
     {
         if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
             throw new BadRequestException('Token not provided.');
@@ -87,7 +89,7 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->refresh($token);
-        return response($transformer->transformItem(new AuthToken(['token' => $token])));
+        return $this->responder->item(new AuthToken(['token' => $token]));
     }
 
     /**
@@ -95,10 +97,9 @@ class AuthController extends BaseController
      *
      * @param  Request $request
      * @param  UserRepository $user
-     * @param ItemTransformerInterface $transformer
      * @return Response
      */
-    public function token(Request $request, UserRepository $user, ItemTransformerInterface $transformer)
+    public function token(Request $request, UserRepository $user)
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
@@ -113,6 +114,6 @@ class AuthController extends BaseController
         }
 
         $token = $this->jwtAuth->fromUser($user);
-        return response($transformer->transformItem(new AuthToken(['token' => $token])));
+        return $this->responder->item(new AuthToken(['token' => $token]));
     }
 }

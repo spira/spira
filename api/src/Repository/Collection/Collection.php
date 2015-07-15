@@ -13,6 +13,55 @@ use Spira\Repository\Model\BaseModel;
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {
     /**
+     * @var null
+     */
+    protected $className;
+
+    protected $iterator;
+
+    /**
+     * Create a new collection.
+     *
+     * @param  mixed $items
+     * @param string|null $className
+     */
+    public function __construct($items = [], $className = null)
+    {
+        $items = is_array($items) ? $items : $this->getArrayableItems($items);
+        foreach ($items as $item)
+        {
+            $this->add($item);
+        }
+        $this->className = $className;
+    }
+
+    public function count($includingMarkedForDeletion = false)
+    {
+        if ($includingMarkedForDeletion){
+            return count($this->items);
+        }
+
+        return count(array_filter($this->items, function(BaseModel $item){
+            return !$item->isDeleted();
+        }));
+    }
+
+    /**
+     * @param bool $includingMarkedForDeletion
+     * @return array
+     */
+    public function all($includingMarkedForDeletion = false)
+    {
+        if ($includingMarkedForDeletion){
+            return $this->items;
+        }
+
+        return array_filter($this->items, function(BaseModel $item){
+            return !$item->isDeleted();
+        });
+    }
+
+    /**
      * Add an item to the collection.
      *
      * @param  mixed  $item
@@ -20,8 +69,9 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function add($item)
     {
+        $this->checkItem($item);
         if ($item instanceof BaseModel){
-
+            $this->preventAddingSameItem($item);
             $this->items[$this->getItemKey($item)] = $item;
         }else{
             $this->items[] = $item;
@@ -35,11 +85,35 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function remove(BaseModel $item)
     {
+        $this->checkItem($item);
         $key = $this->getItemKey($item);
+        $model = null;
         if (isset($this->items[$key])){
-            /** @var BaseModel $model */
             $model = $this->items[$key];
+        }
+
+        if (is_null($model)){
+            $key = $this->getItemHash($item);
+            if (isset($this->items[$key])){
+                $model = $this->items[$key];
+            }
+        }
+
+        if (!is_null($model)){
+            /** @var BaseModel $model */
             $model->markAsDeleted();
+        }
+    }
+
+    /**
+     * @param $item
+     * @throws ItemTypeException
+     */
+    protected function checkItem($item)
+    {
+        $className = $this->className;
+        if (!is_null($className) && !($item instanceof $className)){
+            throw new ItemTypeException('Item must be instance of '.$className);
         }
     }
 
@@ -50,7 +124,31 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function getIterator()
     {
-        return new ModelCollectionIterator($this->items);
+        if (!$this->iterator){
+            $this->iterator = new ModelCollectionIterator(new \ArrayIterator($this->items));
+        }
+        return $this->iterator;
+    }
+
+    /**
+     * In case new entity was addedm then saved, then added again
+     * @param BaseModel $item
+     */
+    protected function preventAddingSameItem(BaseModel $item)
+    {
+        $hash = $this->getItemHash($item);
+        if (isset($this->items[$hash])){
+            unset($this->items[$hash]);
+        }
+    }
+
+    /**
+     * @param BaseModel $model
+     * @return string
+     */
+    protected function getItemHash(BaseModel $model)
+    {
+        return spl_object_hash($model);
     }
 
     /**
@@ -63,7 +161,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
             return $model->getKey();
         }
 
-        return spl_object_hash($model);
+        return $this->getItemHash($model);
     }
 
 }

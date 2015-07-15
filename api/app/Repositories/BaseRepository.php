@@ -13,7 +13,7 @@ abstract class BaseRepository
     /**
      * Eloquent Model
      *
-     * @var Model
+     * @var BaseModel
      */
     protected $model;
     /**
