@@ -60,7 +60,7 @@ abstract class ApiController
         $model = $this->repository->getModel();
         $model->fill($request->all());
         $this->repository->save($model);
-        return $this->responder->created();
+        return $this->responder->item($model)->setStatusCode(201);
     }
 
     /**
@@ -79,7 +79,7 @@ abstract class ApiController
         }
         $model->fill($request->all());
         $this->repository->save($model);
-        return $this->responder->created();
+        return $this->responder->item($model)->setStatusCode(201);
     }
 
     /**
