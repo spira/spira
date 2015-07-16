@@ -1,5 +1,12 @@
-<md-dialog>
+<md-dialog flex="50">
     <md-dialog-content>
+
+        <md-toast ng-show="!!loginError">
+            <span flex>{{loginError}}</span>
+            <md-button ng-click="loginError = null">
+                Close
+            </md-button>
+        </md-toast>
 
         <form novalidate name="loginForm">
 

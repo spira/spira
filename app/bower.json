@@ -32,9 +32,9 @@
     "highlightjs": "~8.5.0",
     "angular-material": "~0.10.0",
     "toposort": "~0.3.1",
-    "angular-rest-adapter": "~1",
+    "angular-rest-adapter": "*",
     "angular-http-progress": "*",
-    "angular-jwt-auth": "~1"
+    "angular-jwt-auth": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.3",

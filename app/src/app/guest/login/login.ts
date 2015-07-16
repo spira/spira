@@ -33,14 +33,17 @@ module app.guest.login {
         ) {
 
             ngJwtAuthService
-                .registerLoginPromptFactory((existingUser, deferredCredentials:ng.IDeferred) => {
+                .registerLoginPromptFactory((deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>, loginSuccessPromise:ng.IPromise<NgJwtAuth.IUser>, currentUser:NgJwtAuth.IUser): ng.IPromise<any> => {
 
                     let dialogConfig:ng.material.IDialogOptions = {
                         templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
                         controller: namespace+'.controller',
                         clickOutsideToClose: true,
                         locals : {
-                            deferredCredentials: deferredCredentials
+                            deferredCredentials: deferredCredentials,
+                            loginSuccess: {
+                                promise: loginSuccessPromise //nest the promise in a function as otherwise material will try to wait for it to resolve
+                            },
                         }
                     };
 
@@ -48,16 +51,6 @@ module app.guest.login {
                         .catch(() => deferredCredentials.reject()) //if the dialog closes without resolving, reject the credentials request
                     ;
 
-                })
-                .registerCredentialPromiseFactory(function(existingUser){
-
-                    let dialogConfig:ng.material.IDialogOptions = {
-                        templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
-                        controller: namespace+'.controller',
-                        clickOutsideToClose: true,
-                    };
-
-                    return $mdDialog.show(dialogConfig);
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
         }
@@ -68,16 +61,20 @@ module app.guest.login {
     {
         login(username:string, password:string):void;
         cancelLoginDialog():void;
+        loginError:string;
     }
 
     class LoginController {
 
-        static $inject = ['$scope', '$mdDialog', 'deferredCredentials'];
+        static $inject = ['$scope', '$mdDialog', 'deferredCredentials', 'loginSuccess'];
         constructor(
             private $scope : IScope,
             private $mdDialog:ng.material.IDialogService,
-            private deferredCredentials:ng.IDeferred
+            private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
+            private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>}
         ) {
+
+            $scope.loginError = '';
 
             $scope.login = (username, password) => {
 
@@ -86,20 +83,22 @@ module app.guest.login {
                     password: password,
                 };
 
-                deferredCredentials.resolve(credentials);
+                deferredCredentials.resolve(credentials); //resolve the deferred credentials with the passed creds
 
-                deferredCredentials.promise
+                loginSuccess.promise
                     .then(
-                        () => $mdDialog.hide(credentials), //on success hide the credentials
-                        (err) => {
-                            console.log('error'); //@todo display the error to the user. This will be something like password incorrect
+                        (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                        (err:Error) => {
+                            if (err instanceof NgJwtAuth.NgJwtAuthException){
+                                $scope.loginError = err.message; //if the is an auth exception, show the value to the user
+                            }
                         }
                     )
                 ;
 
             };
 
-            $scope.cancelLoginDialog = () => $mdDialog.cancel();
+            $scope.cancelLoginDialog = () => $mdDialog.cancel('closed'); //allow the user to manually close the dialog
 
         }
 

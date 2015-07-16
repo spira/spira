@@ -1,6 +1,6 @@
 
 
-describe.only('Navigation', () => {
+describe('Navigation', () => {
 
     describe('Configuration', () => {
 
