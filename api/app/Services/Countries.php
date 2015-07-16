@@ -1,26 +1,44 @@
 <?php namespace App\Services;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
 use Illuminate\Support\Collection;
 use Faker\Factory as Faker;
 
-/**
- * @todo Consider consolidating Timezones and Countries into one service that
- *       can provide different kinds of static/generated data.
- */
 class Countries
 {
+    /**
+     * Guzzle Client.
+     *
+     * @var \GuzzleHttp\Client
+     */
+    protected $client;
+
+    /**
+     * Assign dependencies.
+     *
+     * @param  Client  $client
+     * @return void
+     */
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
     public function all()
     {
-        $faker = Faker::create();
-        $countries = [];
+        $client = new $this->client;
+        $response = $client->get('https://restcountries.eu/rest/v1/all');
+        $countries = new Collection;
 
-        for ($i=0; $i < 10; $i++) {
-            array_push($countries, new Collection([
-                'country_code' => $faker->countryCode,
-                'country_name' => $faker->country
+        foreach ($response->json() as $country) {
+            $countries->push(new Collection([
+                'country_name' => $country['name'],
+                'country_code' => $country['alpha2Code']
             ]));
         }
 
-        return new Collection($countries);
+        return $countries;
     }
 }

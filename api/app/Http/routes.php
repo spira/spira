@@ -33,6 +33,7 @@ $app->get('/documentation.apib', function (Request $request) use ($app) {
 });
 
 $app->get('timezones', 'TimezoneController@getAll');
+$app->get('countries', 'CountriesController@getAll');
 
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function ($app) {
     $app->get('/', ['uses' => 'UserController@getAll']);
