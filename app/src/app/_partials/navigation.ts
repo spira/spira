@@ -2,7 +2,7 @@ module app.partials.navigation{
 
     export const namespace = 'app.partials.navigation';
 
-    interface IScope extends ng.IScope
+    export interface IScope extends ng.IScope
     {
         navigationStates:ng.ui.IState[];
         authService:NgJwtAuth.NgJwtAuthService;
