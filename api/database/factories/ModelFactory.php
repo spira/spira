@@ -45,6 +45,7 @@ $factory->define(App\Models\User::class, function ($faker) {
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
         'timezone_identifier' => $faker->randomElement(array_pluck((new \App\Services\Timezones)->all(), 'timezone_identifier')),
+        'country' => $faker->country,
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
 });

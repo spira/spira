@@ -61,7 +61,7 @@ password credentials - social signin is described later in this document (@todo)
 
             {!!
                 $factory->get(\App\Models\User::class)
-                    ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+                    ->showOnly(['user_id', 'email', 'first_name', 'last_name', 'country'])
                     ->append('#userCredential',
                         $factory->get(\App\Models\UserCredential::class)
                             ->hide(['self'])

@@ -1,0 +1,17 @@
+# Group Countries
+
+## All countries [/countries]
+Users can set their country in their user profile.
+
+### Get all countries [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Request
+    + Headers
+
++ Response 200 (application/json)
+
+    + Body
+
+        {!! $factory->get((new \App\Services\Countries)->all())->count(5)->toJson() !!}
