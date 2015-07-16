@@ -54,18 +54,13 @@ module app.guest.sandbox {
 
             $scope.callApi = _.bind(this.callApi, this); //bind method to scope
 
-            $scope.promptLogin = () => {
-                ngJwtAuthService.getPromisedUser()
-                    .then((user) => $window.alert(user))
-
-            };
+            //$scope.promptLogin = () => ngJwtAuthService.promptLogin();
 
         }
 
         public callApi(apiEndpoint):void {
 
             this.ngRestAdapter
-                //.skipInterceptor()
                 .get(apiEndpoint)
                 .then((result) => {
                     this.$scope.apiResult = result;

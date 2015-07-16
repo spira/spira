@@ -29,7 +29,7 @@ module common.providers {
 
         constructor(private $state:ng.ui.IStateService) {}
 
-        private getChildStates = (stateName:string) => {
+        public getChildStates = (stateName:string) => {
 
             let state:ng.ui.IState = this.$state.get(stateName);
 

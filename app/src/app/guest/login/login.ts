@@ -10,6 +10,12 @@ module app.guest.login {
             let config : NgJwtAuth.INgJwtAuthServiceConfig = {
                 refreshBeforeSeconds: 60 * 10, //10 mins
                 checkExpiryEverySeconds: 60, //1 min
+                apiEndpoints: {
+                    base: '/api/auth/jwt',
+                    login: '/login',
+                    tokenExchange: '/token',
+                    refresh: '/refresh',
+                },
             };
 
             ngJwtAuthServiceProvider.configure(config);
@@ -56,7 +62,7 @@ module app.guest.login {
             private $mdDialog:ng.material.IDialogService
         ) {
 
-            $scope.login = function (username, password) {
+            $scope.login = (username, password) => {
 
                 let credentials:NgJwtAuth.ICredentials = {
                     username: username,
@@ -66,9 +72,7 @@ module app.guest.login {
                 $mdDialog.hide(credentials);
             };
 
-            $scope.cancelLoginDialog = () => {
-                $mdDialog.cancel();
-            }
+            $scope.cancelLoginDialog = () => $mdDialog.cancel();
 
         }
 

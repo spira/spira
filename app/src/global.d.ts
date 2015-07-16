@@ -4,7 +4,7 @@
 
 declare module global {
 
-    export interface IState extends ng.ui.IState{
+    export interface IState extends ng.ui.IState {
         data: {
             title?: string;
             role: string;
@@ -19,6 +19,15 @@ declare module global {
         options: IState;
     }
 
+    export interface IWindowService extends ng.IWindowService {
+        Toposort:any;
+
+
+    }
+
+    export interface IUser extends NgJwtAuth.IUser {
+
+    }
 
 
 }

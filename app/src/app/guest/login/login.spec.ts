@@ -79,15 +79,13 @@ describe('Login', () => {
             it('should show the login dialog when prompted', () => {
 
 
-                authService.getPromisedUser(); //@todo change this to a promptLogin() method (not yet implemented in package)
+                authService.promptLogin();
 
                 expect($mdDialog.show).to.have.been.called;
 
             });
 
         });
-
-
 
 
     });
