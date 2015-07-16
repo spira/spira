@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\Services\Countries;
+use App\Services\Datasets\Countries;
 
 class CountriesController extends BaseController
 {

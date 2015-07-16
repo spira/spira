@@ -1,10 +1,8 @@
-<?php namespace App\Services;
+<?php namespace App\Services\Datasets;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-
 use Illuminate\Support\Collection;
-use Faker\Factory as Faker;
 
 class Countries
 {

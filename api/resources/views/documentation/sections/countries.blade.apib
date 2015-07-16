@@ -14,4 +14,4 @@ Users can set their country in their user profile.
 
     + Body
 
-        {!! $factory->get((new \App\Services\Countries(new GuzzleHttp\Client))->all())->count(5)->toJson() !!}
+        {!! $factory->get((new \App\Services\Datasets\Countries(new GuzzleHttp\Client))->all())->count(5)->toJson() !!}

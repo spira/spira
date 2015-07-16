@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\Services\Timezones;
+use App\Services\Datasets\Timezones;
 
 class TimezoneController extends BaseController
 {
