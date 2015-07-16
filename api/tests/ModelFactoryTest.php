@@ -149,7 +149,14 @@ class ModelFactoryTest extends TestCase
             ->json();
 
         $this->assertJson($serviceCreatedFactoryJson);
-        $this->assertEquals($collection, json_decode($serviceCreatedFactoryJson, true));
+        $compareArray = json_decode($serviceCreatedFactoryJson, true);
+        foreach ($compareArray as &$value)
+        {
+            $this->assertArrayHasKey('_self',$value);
+            unset($value['_self']);
+        }
+
+        $this->assertEquals($collection, $compareArray);
     }
 
     public function testModelFactoryInstanceArrayableAndJsonable()

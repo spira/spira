@@ -17,8 +17,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     protected $className;
 
-    protected $iterator;
-
     /**
      * Create a new collection.
      *
@@ -124,10 +122,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function getIterator()
     {
-        if (!$this->iterator){
-            $this->iterator = new ModelCollectionIterator(new \ArrayIterator($this->items));
-        }
-        return $this->iterator;
+        return new ModelCollectionIterator($this->items);
     }
 
     /**

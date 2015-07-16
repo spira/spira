@@ -69,7 +69,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $response = $this->getResponse();
         $response->setStatusCode(200);
-        $response->setContent($this->getTransformer()->transformCollection($items));
+        $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
         return $response;
     }
 
@@ -85,7 +85,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $response = $this->getResponse();
         $response->setStatusCode(200);
-        $response->setContent($this->getTransformer()->transformItem($item));
+        $response->setContent($this->encode($this->getTransformer()->transformItem($item)));
         return $response;
     }
 
@@ -117,5 +117,15 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     public function setTransformer($transformer)
     {
         $this->transformer = $transformer;
+    }
+
+    /**
+     * Json encode
+     * @param $data
+     * @return string
+     */
+    protected function encode($data)
+    {
+        return json_encode($data);
     }
 }

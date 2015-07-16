@@ -48,6 +48,7 @@ $app->group(['prefix' => 'test'], function(Application $app){
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
     $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
+    $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
     $app->put('/entities', 'App\Http\Controllers\TestController@putMany');

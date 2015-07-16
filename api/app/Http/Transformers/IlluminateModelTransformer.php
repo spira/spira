@@ -8,9 +8,11 @@
 
 namespace App\Http\Transformers;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Contract\TransformerInterface;
+use Traversable;
 
 class IlluminateModelTransformer extends BaseTransformer implements TransformerInterface
 {
@@ -23,11 +25,18 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
      */
     public function transform($object)
     {
-        if (!($object instanceof Model)){
-            throw new \InvalidArgumentException('Must be '.Model::class);
+        $array = null;
+        if ($object instanceof Arrayable){
+            $array = $object->toArray();
         }
 
-        $array = $object->toArray();
+        if (is_null($array) && is_array($object)){
+            $array = $object;
+        }
+
+        if (is_null($array)){
+            throw new \InvalidArgumentException('must be array or '.Arrayable::class);
+        }
 
         foreach ($array as $key => $value) {
 
@@ -44,15 +53,52 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
             }
         }
 
-        if (!isset(static::$badRoutes[get_class($object)])){
-            try{
-                $array['_self'] = route(get_class($object),['id'=>$object->getQueueableId()]);
-            }catch (\InvalidArgumentException $e){
-                static::$badRoutes[get_class($object)] = true;
-            }
+        if (($object instanceof BaseModel)){
+            $this->addSelfKey($object,$array);
         }
 
         return $array;
+    }
+
+    /**
+     * Recursive adding of self key
+     * @param BaseModel $model
+     * @param $array
+     */
+    protected function addSelfKey(BaseModel $model, &$array)
+    {
+        if (!isset(static::$badRoutes[get_class($model)])){
+            try{
+                $array['_self'] = route(get_class($model),['id'=>$model->getQueueableId()]);
+            }catch (\InvalidArgumentException $e){
+                static::$badRoutes[get_class($model)] = true;
+            }
+        }
+
+        foreach ($model->getRelations() as $key => $value)
+        {
+            $camelCaseKey = camel_case($key);
+            if ($value instanceof BaseModel && isset($array[$camelCaseKey])){
+                $this->addSelfKey($value,$array[$camelCaseKey]);
+            }else if ($this->isIterable($value)) {
+                foreach ($value as $index => $relatedModel)
+                {
+                    if ($relatedModel instanceof BaseModel && isset($array[$camelCaseKey][$index])){
+                        $this->addSelfKey($relatedModel,$array[$camelCaseKey][$index]);
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * @param $var
+     * @return bool
+     */
+    protected function isIterable($var) {
+        return (is_array($var) || $var instanceof Traversable);
     }
 
     /**
@@ -110,7 +156,7 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
         if ($collection instanceof Collection){
             $collection = $collection->all();
         }
-        return json_encode($this->getService()->collection(($collection instanceof Collection)?$collection->all():$collection, $this));
+        return $this->getService()->collection(($collection instanceof Collection)?$collection->all():$collection, $this);
     }
 
     /**
@@ -119,6 +165,6 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
      */
     public function transformItem($item)
     {
-        return json_encode($this->getService()->item($item, $this));
+        return $this->getService()->item($item, $this);
     }
 }

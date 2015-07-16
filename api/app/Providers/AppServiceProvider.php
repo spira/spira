@@ -1,7 +1,9 @@
 <?php namespace App\Providers;
 
 use App\Http\Transformers\IlluminateModelTransformer;
+use App\Services\SpiraValidator;
 use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Spira\Responder\Contract\TransformerInterface;
@@ -20,5 +22,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConnectionResolverInterface::class, 'db');
         $this->app->bind(TransformerInterface::class, IlluminateModelTransformer::class);
         $this->app->bind(ApiResponderInterface::class, ApiResponder::class);
+
+        Validator::resolver(function($translator, $data, $rules, $messages)
+        {
+            return new SpiraValidator($translator, $data, $rules, $messages);
+        });
     }
 }
