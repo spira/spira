@@ -33,6 +33,22 @@ module app.guest.login {
         ) {
 
             ngJwtAuthService
+                .registerLoginPromptFactory((existingUser, deferredCredentials:ng.IDeferred) => {
+
+                    let dialogConfig:ng.material.IDialogOptions = {
+                        templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
+                        controller: namespace+'.controller',
+                        clickOutsideToClose: true,
+                        locals : {
+                            deferredCredentials: deferredCredentials
+                        }
+                    };
+
+                    return $mdDialog.show(dialogConfig)
+                        .catch(() => deferredCredentials.reject()) //if the dialog closes without resolving, reject the credentials request
+                    ;
+
+                })
                 .registerCredentialPromiseFactory(function(existingUser){
 
                     let dialogConfig:ng.material.IDialogOptions = {
@@ -56,10 +72,11 @@ module app.guest.login {
 
     class LoginController {
 
-        static $inject = ['$scope', '$mdDialog'];
+        static $inject = ['$scope', '$mdDialog', 'deferredCredentials'];
         constructor(
             private $scope : IScope,
-            private $mdDialog:ng.material.IDialogService
+            private $mdDialog:ng.material.IDialogService,
+            private deferredCredentials:ng.IDeferred
         ) {
 
             $scope.login = (username, password) => {
@@ -69,7 +86,17 @@ module app.guest.login {
                     password: password,
                 };
 
-                $mdDialog.hide(credentials);
+                deferredCredentials.resolve(credentials);
+
+                deferredCredentials.promise
+                    .then(
+                        () => $mdDialog.hide(credentials), //on success hide the credentials
+                        (err) => {
+                            console.log('error'); //@todo display the error to the user. This will be something like password incorrect
+                        }
+                    )
+                ;
+
             };
 
             $scope.cancelLoginDialog = () => $mdDialog.cancel();
