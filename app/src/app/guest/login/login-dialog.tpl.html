@@ -1,0 +1,40 @@
+<md-dialog flex="50">
+    <md-dialog-content>
+
+        <md-toast ng-show="!!loginError">
+            <span flex>{{loginError}}</span>
+            <md-button ng-click="loginError = null">
+                Close
+            </md-button>
+        </md-toast>
+
+        <form novalidate name="loginForm">
+
+            <md-input-container class="md-icon-float" >
+                <label for="loginForm.email">Email</label>
+                <md-icon>face</md-icon>
+                <input id="loginForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
+                <ng-messages for="loginForm.email.$error">
+                    <ng-message when="required">This is required.</ng-message>
+                    <ng-message when="email">This is not a valid email.</ng-message>
+                </ng-messages>
+            </md-input-container>
+
+            <md-input-container class="md-icon-float" >
+                <label for="loginForm.password">Password</label>
+                <md-icon>face</md-icon>
+                <input id="loginForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
+                <ng-messages for="loginForm.password.$error">
+                    <ng-message when="required">This is required.</ng-message>
+                </ng-messages>
+            </md-input-container>
+
+        </form>
+
+    </md-dialog-content>
+
+    <div class="md-actions">
+        <md-button ng-disabled="loginForm.$invalid" ng-click="login(user.email, user.password)" class="md-primary">Login</md-button>
+        <md-button ng-click="cancelLoginDialog()" class="md-warn">Cancel</md-button>
+    </div>
+</md-dialog>

@@ -38,22 +38,29 @@ module app.guest.sandbox {
     interface IScope extends ng.IScope
     {
         callApi(apiEndpoint:string):void;
+        promptLogin():void;
         apiResult: any;
     }
 
     class SandboxController {
 
-        static $inject = ['$scope', 'ngRestAdapter'];
-        constructor(private $scope : IScope, private ngRestAdapter:NgRestAdapter.NgRestAdapterService) {
+        static $inject = ['$scope', 'ngRestAdapter', 'ngJwtAuthService', '$window'];
+        constructor(
+            private $scope : IScope,
+            private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+            private $window:ng.IWindowService
+        ) {
 
             $scope.callApi = _.bind(this.callApi, this); //bind method to scope
+
+            //$scope.promptLogin = () => ngJwtAuthService.promptLogin();
 
         }
 
         public callApi(apiEndpoint):void {
 
             this.ngRestAdapter
-                //.skipInterceptor()
                 .get(apiEndpoint)
                 .then((result) => {
                     this.$scope.apiResult = result;
