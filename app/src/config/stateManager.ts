@@ -1,11 +1,8 @@
 ///<reference path="../../typings/tsd.d.ts" />
 
-module app.stateManager {
+module config.stateManager {
 
-    export interface IState {
-        name: string;
-        options: ng.ui.IState
-    }
+    export const namespace = 'config.stateManager';
 
     class StateManagerConfig {
 
@@ -26,27 +23,9 @@ module app.stateManager {
                     abstract: true
                 })
             ;
-            // Create state for Default Layout
-            $stateProvider
-                .state('app.public', {
-                    abstract: true,
-                    views: {
-                        'app@': { // Points to the ui-view in the index.html
-                            templateUrl: 'templates/app/_layouts/default.tpl.html'
-                        },
-                        'navigation@app.public': { // Points to the ui-view="navigation" in default.tpl.html
-                            templateUrl: 'templates/app/_partials/navigation.tpl.html',
-                            controller: 'stateManager.navigation.controller'
-                        }
-                    },
-                    data: {
-                        role: 'public'
-                    }
-                })
-            ;
 
             // Loop through each sub-module state and register them
-            angular.forEach(stateHelperServiceProvider.getStates(), (state:app.stateManager.IState) => {
+            angular.forEach(stateHelperServiceProvider.getStates(), (state:global.IStateDefinition) => {
                 $stateProvider.state(state.name, state.options);
             });
         }
@@ -57,7 +36,7 @@ module app.stateManager {
             $urlRouterProvider.otherwise(function ($injector, $location) {
                 var $state = $injector.get('$state');
 
-                $state.go('app.public.error', {
+                $state.go(app.guest.error.namespace, {
                     title: "Page not found",
                     message: 'Could not find a state associated with url "' + $location.$$url + '"',
                     url: $location.$$absUrl
@@ -67,39 +46,9 @@ module app.stateManager {
 
     }
 
-    class NavigationController {
-
-        static $inject = ['$scope', 'stateHelperService', '$window'];
-        constructor(private $scope, private stateHelperService, private $window) {
-
-            var childStates = stateHelperService.getChildStates('app.public');
-
-            //using the state.data.sortAfter key build a topology and sort it
-            var sortMap = _.reduce(childStates, function(t, state:ng.ui.IState){
-                t.add(state.name, _.get(state, 'data.sortAfter', []));
-                return t;
-            }, new $window.Toposort()).sort();
-
-            $scope.navigationStates = _.chain(sortMap)
-                .map(function(stateName){
-                    return _.find(childStates, {name: stateName}); //find the state by name
-                })
-                .filter(function(state){
-                    return _.get(state, 'data.navigation', false); //only return those that are marked as navigation
-                })
-                .reverse() //reverse the array
-                .value()
-            ;
-
-        }
-
-    }
-
-    angular.module('stateManager', [
-        'stateHelperServiceProvider',
-        'siteModules'
+    angular.module(namespace, [
+        'config.siteModules' //include the site modules after stateManager has been configured so all states can be loaded
     ])
-    .config(StateManagerConfig)
-    .controller('stateManager.navigation.controller', NavigationController);
+    .config(StateManagerConfig);
 
 }

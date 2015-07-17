@@ -35,8 +35,9 @@ abstract class BaseRepository
 
     /**
      * Assign dependencies.
-     * @param ConnectionResolverInterface $connectionResolver
-     * @throws \Exception
+     *
+     * @param  Illuminate\Container\Container  $app
+     * @return void
      */
     public function __construct(ConnectionResolverInterface $connectionResolver)
     {

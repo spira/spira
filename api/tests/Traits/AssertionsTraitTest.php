@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class AssertionsTraitTest
+ * Class AssertionsTraitTest.
  */
 class AssertionsTraitTest extends TestCase
 {
     use \Laravel\Lumen\Testing\AssertionsTrait;
 
     /**
-     * Test that date formats are valid
+     * Test that date formats are valid.
      */
     public function testValidISO8601Dates()
     {
@@ -19,7 +19,8 @@ class AssertionsTraitTest extends TestCase
     }
 
     /**
-     * Test that date formats are invalid
+     * Test that date formats are invalid.
+     *
      * @expectedException PHPUnit_Framework_AssertionFailedError
      */
     public function testInvalidISO8601Dates()
@@ -28,12 +29,12 @@ class AssertionsTraitTest extends TestCase
     }
 
     /**
-     * Test that date formats that PHP considers invalid also fail the tests
+     * Test that date formats that PHP considers invalid also fail the tests.
+     *
      * @expectedException PHPUnit_Framework_AssertionFailedError
      */
     public function testValidISO8601DateInvalidDateTimeString()
     {
         $this->assertValidIso8601Date('2010-02-18T16:23:48,3-06:00'); //actually valid ISO8601, but php's DateTime() cant parse it
     }
-
 }

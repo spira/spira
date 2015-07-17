@@ -3,11 +3,10 @@
 use GuzzleHttp\Client;
 
 /**
- * Adds mailcatcher calls
+ * Adds mailcatcher calls.
  */
 trait MailcatcherTrait
 {
-
     /**
      * @var \Guzzle\Http\Client
      */
@@ -16,14 +15,14 @@ trait MailcatcherTrait
     public function bootMailcatcherTrait()
     {
         $this->mailcatcher = new Client([
-            'base_url' => 'http://'.getenv('MAIL_HOST').':1080'
+            'base_url' => 'http://'.getenv('MAIL_HOST').':1080',
         ]);
         // clean emails between tests
         $this->clearMessages();
     }
 
     /**
-     * Empty the inbox
+     * Empty the inbox.
      */
     public function clearMessages()
     {
@@ -31,26 +30,29 @@ trait MailcatcherTrait
     }
 
     /**
-     * Get the latest email
+     * Get the latest email.
+     *
      * @return mixed
      */
     public function getLastMessage()
     {
         $messages = $this->getMessages();
         if (empty($messages)) {
-            return $this->fail("No messages received");
+            return $this->fail('No messages received');
         }
         // messages are in descending order
         return reset($messages);
     }
 
     /**
-     * Get all emails
+     * Get all emails.
+     *
      * @return mixed
      */
     public function getMessages()
     {
         $jsonResponse = $this->mailcatcher->get('/messages');
+
         return json_decode($jsonResponse->getBody());
     }
 }

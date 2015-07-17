@@ -17,21 +17,20 @@ class TestController extends ApiController
     }
 
     /**
-     * Test a standard internal exception
+     * Test a standard internal exception.
      */
     public function internalException()
     {
-        throw new \RuntimeException("Something went wrong");
+        throw new \RuntimeException('Something went wrong');
     }
 
     /**
-     * Test a fatal exception (has to be tested with guzzle to stop phpunit halting)
+     * Test a fatal exception (has to be tested with guzzle to stop phpunit halting).
+     *
      * @codeCoverageIgnore
      */
     public function fatalError()
     {
         call_to_non_existent_function();
     }
-
-
 }

@@ -14,21 +14,21 @@
 use Illuminate\Http\Request;
 use Laravel\Lumen\Application;
 
-$app->get('/', function() use ($app) {
+$app->get('/', function () use ($app) {
 
     return view('documentation.layouts.master', [
-        'apibUrl' => '/documentation.apib'
+        'apibUrl' => '/documentation.apib',
     ]);
 
 });
 
-$app->get('/documentation.apib', function(Request $request) use ($app) {
+$app->get('/documentation.apib', function (Request $request) use ($app) {
 
     $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
     return view('documentation.apiary', [
         'apiUrl' => $request->root(),
-        'faker' => Faker\Factory::create(),
+        'faker'  => Faker\Factory::create(),
     ]);
 
 });

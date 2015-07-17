@@ -92,6 +92,12 @@ class TestRepositoryTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
+        $entities = array_map(function ($id) {
+            return [
+                'entity_id' => $id,
+                'text' => 'foobar'
+            ];
+        }, $ids->toArray());
 
         $this->repository->saveMany($entities);
 

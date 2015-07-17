@@ -36,10 +36,10 @@ class TestEntity extends BaseModel {
      * @var array
      */
     protected $casts = [
-        'decimal' => 'float',
-        'date' => 'date',
+        'decimal'    => 'float',
+        'date'       => 'date',
         'created_at' => 'dateTime',
-        'updated_at' => 'dateTime'
+        'updated_at' => 'dateTime',
     ];
 
     public function addSecondTest(SecondTestEntity $entity)

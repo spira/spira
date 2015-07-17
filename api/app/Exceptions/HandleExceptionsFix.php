@@ -1,6 +1,8 @@
-<?php namespace App\Exceptions;
+<?php
 
-/**
+namespace App\Exceptions;
+
+/*
  * Exceptions fix added care of
  * https://laracasts.com/discuss/channels/lumen/lumen-debug-mode-not-showing-stack-trace
  *
@@ -16,9 +18,8 @@ use Symfony\Component\Debug\Exception\FatalErrorException;
 /**
  * @codeCoverageIgnore
  */
-class HandleExceptionsFix {
-
-
+class HandleExceptionsFix
+{
     protected $app;
 
     protected static $fatalError = null;
@@ -43,21 +44,20 @@ class HandleExceptionsFix {
         }
     }
 
-    public function handleError($level, $message, $file = '', $line = 0, $context = array())
+    public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
 
         // **** Add this, loads fatal error
         if ($level & (1 << 24)) {
-            self::$fatalError = array(
+            self::$fatalError = [
                 'message' => $message,
-                'type' => $level,
-                'file' => $file,
-                'line' => $line
-            );
+                'type'    => $level,
+                'file'    => $file,
+                'line'    => $line,
+            ];
         }
 
-        if (error_reporting() & $level)
-        {
+        if (error_reporting() & $level) {
             throw new ErrorException($message, 0, $level, $file, $line);
         }
     }
@@ -66,19 +66,16 @@ class HandleExceptionsFix {
     {
         $this->getExceptionHandler()->report($e);
 
-        if ($this->app->runningInConsole())
-        {
+        if ($this->app->runningInConsole()) {
             $this->renderForConsole($e);
-        }
-        else
-        {
+        } else {
             $this->renderHttpResponse($e);
         }
     }
 
     protected function renderForConsole($e)
     {
-        $this->getExceptionHandler()->renderForConsole(new ConsoleOutput, $e);
+        $this->getExceptionHandler()->renderForConsole(new ConsoleOutput(), $e);
     }
 
     protected function renderHttpResponse($e)
@@ -91,16 +88,14 @@ class HandleExceptionsFix {
     {
         $error = error_get_last();
 
-        if(self::$fatalError){
+        if (self::$fatalError) {
             $error = self::$fatalError;
         }
 
-        if ( ! is_null($error) && $this->isFatal($error['type']))
-        {
+        if (!is_null($error) && $this->isFatal($error['type'])) {
             $this->handleException($this->fatalExceptionFromError($error, 0));
         }
     }
-
 
     protected function fatalExceptionFromError(array $error, $traceOffset = null)
     {
@@ -109,17 +104,14 @@ class HandleExceptionsFix {
         );
     }
 
-
     protected function isFatal($type)
     {
         // *** Add type 16777217 that HVVM returns for fatal
         return in_array($type, [16777217, E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE]);
     }
 
-
     protected function getExceptionHandler()
     {
         return new \App\Exceptions\Handler();   // <-- call our app's handler
     }
-
 }

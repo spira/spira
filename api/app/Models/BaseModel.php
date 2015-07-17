@@ -42,7 +42,7 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 
     public static function getTableName()
     {
-        return with(new static)->getTable();
+        return with(new static())->getTable();
     }
 
     /**
@@ -56,8 +56,9 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function castAttribute($key, $value)
@@ -65,10 +66,11 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
         // Run the parent cast rules in the parent method
         $value = parent::castAttribute($key, $value);
 
-        if (is_null($value)) return $value;
+        if (is_null($value)) {
+            return $value;
+        }
 
-        switch ($this->getCastType($key))
-        {
+        switch ($this->getCastType($key)) {
             case 'date':
                 return Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
             case 'datetime':

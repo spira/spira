@@ -14,7 +14,8 @@ var gulpCore = require('gulp'),
             'main-bower-files',
             'minimatch',
             'run-sequence',
-            'json5'
+            'json5',
+            'merge2'
         ],
         rename: {
             'gulp-angular-templatecache': 'templateCache'
@@ -22,7 +23,10 @@ var gulpCore = require('gulp'),
     }),
     gulp = plugins.help(gulpCore),
     _ = require('lodash'),
-    browserSync = require('browser-sync').create()
+    browserSync = require('browser-sync').create(),
+    path = require('path'),
+    bowerJson = require('./app/bower.json'),
+    packageJson = require('./package.json')
 ;
 
 console.timeEnd("Core plugins loaded");
@@ -32,9 +36,16 @@ console.log('browserSync', _.functions(browserSync));
 
 var paths = {
     src: {
+        tsd: 'app/typings/**/*.d.ts',
         base: 'app/src',
         get scripts(){
-            return [this.base + '/**/*.ts', this.base + '/**/*.js', '!'+this.base + '/**/*.spec.js']
+            return [
+                //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
+                'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
+                'app/typings/**/*.d.ts', //get the local typings files
+                this.base + '/**/*.ts', this.base + '/**/*.js', //match all javascript and typescript files
+                '!'+this.base + '/**/*.spec.js', '!'+this.base + '/**/*.spec.ts' //ignore all spec files
+            ]
         },
         get templates(){
             return this.base + '/**/*.tpl.html'
@@ -46,13 +57,23 @@ var paths = {
             return this.base + '/assets/images/**/*'
         },
         get tests(){
-            return this.base + '/**/*.spec.js'
+            return [
+                //@todo relax this to app/bower_components/**/*.d.ts and negate the typings files or even better allow resolution of duplicate typings files
+                'app/bower_components/**/dist/*.d.ts', //only read in the .d.ts files from bower distribution
+                'app/typings/**/*.d.ts', //get the local typings files
+                this.base + '/**/*.d.ts', //get the source definitions
+                paths.dest.base + '/**/*.d.ts', //get the built definintions
+                this.base + '/**/*.spec.ts' //get all test specifications
+            ]
         }
     },
     dest: {
         base: 'app/build',
         get scripts(){
             return this.base+ '/js'
+        },
+        get tests(){
+            return this.base+ '/tests'
         },
         get appStyles(){
             return this.base + '/css/**/*.css'
@@ -82,29 +103,68 @@ gulp.task('clean', 'deletes all build files', [], function(cb) {
     plugins.del([paths.dest.base], cb);
 });
 
-gulp.task('scripts', 'processes javascript & typescript files', [], function () {
+gulp.task('scripts:app', 'processes javascript & typescript files', [], function () {
 
     var tsFilter = plugins.filter('**/*.ts');
     var jsFilter = plugins.filter('**/*.js');
+    var tsdFilter = plugins.filter('**/*.d.ts');
 
-    return gulp.src(paths.src.scripts)
-        //.pipe(watch(paths.src.scripts))
-        .pipe(jsFilter)
+    var tsResult = gulp.src(paths.src.scripts)
+        //remove the typings references from tsd files @todo remove when tsd recursive resolution is complete https://github.com/DefinitelyTyped/tsd/issues/150
+        .pipe(tsdFilter)
+        .pipe(plugins.replace('/// <reference path="../typings/tsd.d.ts" />', ''))
+        .pipe(tsdFilter.restore())
+
         .pipe(plugins.sourcemaps.init())
+        .pipe(jsFilter)
         .pipe(plugins.ngAnnotate())
-        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
         .pipe(jsFilter.restore())
 
         .pipe(tsFilter)
-        .pipe(plugins.tsc({
-            sourceMap:true,
-            sourceRoot: __dirname+'/app/src/',
-            keepTree: true,
-            target: "ES5"
-        }))
-        .pipe(tsFilter.restore())
+        .pipe(plugins.typescript({
+            target: "ES5",
+            noExternalResolve: true,
+            typescript: require('typescript'),
+            declarationFiles: true,
+            sortOutput: true
+        }, undefined, plugins.typescript.reporter.longReporter()));
 
-        .pipe(gulp.dest(paths.dest.scripts))
+    return plugins.merge2([
+        tsResult.dts
+            //.pipe(plugins.replace('<reference path="typings', '<reference path="../typings'))
+            .pipe(plugins.concat('declarations.d.ts'))
+            .pipe(gulp.dest(paths.dest.scripts)),
+
+        tsResult.js
+            .pipe(tsFilter.restore())
+            .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+            .pipe(gulp.dest(paths.dest.scripts))
+    ]);
+});
+
+gulp.task('scripts:test', 'processes javascript & typescript tests', [], function () {
+
+    var tsdFilter = plugins.filter('**/*.d.ts');
+
+    var tsResult = gulp.src(paths.src.tests)
+        //remove the typings references from tsd files @todo remove when tsd recursive resolution is complete https://github.com/DefinitelyTyped/tsd/issues/150
+        .pipe(tsdFilter)
+        .pipe(plugins.replace('/// <reference path="../typings/tsd.d.ts" />', ''))
+        .pipe(tsdFilter.restore())
+
+        .pipe(plugins.sourcemaps.init())
+
+        .pipe(plugins.typescript({
+            target: "ES5",
+            noExternalResolve: true,
+            typescript: require('typescript'),
+            declarationFiles: false
+        }, undefined, plugins.typescript.reporter.longReporter()))
+    ;
+
+    return tsResult.js
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
+        .pipe(gulp.dest(paths.dest.tests))
     ;
 });
 
@@ -164,17 +224,11 @@ gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
     gulp.src(files, {base: 'app/bower_components'})
         //javascript
         .pipe(jsFilter)
-        //.pipe(sourcemaps.init())
-        //.pipe(concat('vendor.js'))
-        //.pipe(sourcemaps.write('./maps'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/js'))
         .pipe(jsFilter.restore())
         //css
         .pipe(cssFilter)
-        //.pipe(sourcemaps.init())
-        //.pipe(concat('vendor.css'))
-        //.pipe(sourcemaps.write('./maps'))
 
         .pipe(plugins.replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
         .on('error', onError)
@@ -249,7 +303,7 @@ gulp.task('default', 'default task', ['build']);
 gulp.task('build', 'runs build sequence for frontend', function (cb){
     plugins.runSequence('clean',
         //'bower:install',
-        ['scripts', 'templates', 'styles', 'assets', 'bower:build'],
+        ['scripts:app', 'templates', 'styles', 'assets', 'bower:build'],
         'index',
         cb);
 });
@@ -273,7 +327,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
     });
 
     gulp.watch(paths.src.templates, ['templates']);
-    gulp.watch(paths.src.scripts, ['scripts']);
+    gulp.watch(paths.src.scripts, ['scripts:app']);
     gulp.watch(paths.src.styles, ['styles']);
     gulp.watch(paths.src.assets, ['assets']);
     gulp.watch(paths.src.base+'/index.html', ['index']);
@@ -282,7 +336,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
 
 
 gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
-    plugins.runSequence('build', 'test:karma', cb);
+    plugins.runSequence('build', 'scripts:test', 'test:karma', cb);
 });
 
 gulp.task('test:karma',  'unit test the frontend', [], function(){
@@ -296,12 +350,10 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
         .map(function(path){
             return 'app/build/'+path;
         })
-        .concat(plugins.globby.sync(paths.src.tests))
+        .concat(plugins.globby.sync(paths.dest.tests+'/**/*.js'))
     ;
 
     testFiles.push('app/build/js/templates.js');
-
-    console.log('test', testFiles);
 
     return gulp.src(testFiles)
         .pipe(plugins.karma({

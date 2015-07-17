@@ -5,9 +5,8 @@ use GuzzleHttp\Exception\ServerException;
 
 class RestExceptionTest extends TestCase
 {
-
     /**
-     * Invalid route test
+     * Invalid route test.
      */
     public function testInvalidRoute()
     {
@@ -22,11 +21,10 @@ class RestExceptionTest extends TestCase
 
         $this->assertObjectHasAttribute('message', $object);
         $this->assertTrue(is_string($object->message), 'message attribute is text');
-
     }
 
     /**
-     * Internal exception test
+     * Internal exception test.
      */
     public function testInternalException()
     {
@@ -41,22 +39,19 @@ class RestExceptionTest extends TestCase
 
         $this->assertObjectHasAttribute('message', $object);
         $this->assertTrue(is_string($object->message), 'message attribute is text');
-
     }
 
     /**
-     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit
+     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit.
      */
     public function testFatalError()
     {
-
         $webserverIp = getenv('WEBSERVER_HOST');
         $webserverPort = getenv('WEBSERVER_PORT');
 
         $request = new Client([
-            "base_url" => "http://$webserverIp:$webserverPort"
+            'base_url' => "http://$webserverIp:$webserverPort",
         ]);
-
 
         try {
             $response = $request->get('/test/fatal-error');
@@ -71,9 +66,6 @@ class RestExceptionTest extends TestCase
 
             $this->assertObjectHasAttribute('message', $object);
             $this->assertTrue(is_string($object->message), 'message attribute is text');
-
         }
-
     }
-
 }

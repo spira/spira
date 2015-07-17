@@ -1,22 +1,21 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
-class CreateTestEntitiesTable extends Migration {
-
+class CreateTestEntitiesTable extends Migration
+{
     const MODEL = 'App\Models\TestEntity';
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
         $modelClass = static::MODEL;
 
-        Schema::create($modelClass::getTableName(), function(Blueprint $table)
-            {
+        Schema::create($modelClass::getTableName(), function (Blueprint $table) {
                 $table->uuid('entity_id');
                 $table->string('varchar', 255);
                 $table->char('hash', 60);
@@ -35,18 +34,17 @@ class CreateTestEntitiesTable extends Migration {
                 $table->primary('entity_id');
             }
         );
-	}
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
         $modelClass = static::MODEL;
 
         Schema::drop($modelClass::getTableName());
-	}
-
+    }
 }
