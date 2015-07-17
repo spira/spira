@@ -2,10 +2,23 @@ module app.partials.navigation{
 
     export const namespace = 'app.partials.navigation';
 
+    export interface IScope extends ng.IScope
+    {
+        navigationStates:ng.ui.IState[];
+        authService:NgJwtAuth.NgJwtAuthService;
+        promptLogin():any;
+        logout():any;
+    }
+
     class NavigationController {
 
-        static $inject = ['$scope', 'stateHelperService', '$window'];
-        constructor(private $scope, private stateHelperService, private $window) {
+        static $inject = ['$scope', 'stateHelperService', '$window', 'ngJwtAuthService'];
+        constructor(
+            private $scope:IScope,
+            private stateHelperService:common.providers.StateHelperService,
+            private $window:global.IWindowService,
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+        ) {
 
             var childStates = stateHelperService.getChildStates(app.guest.namespace);
 
@@ -25,6 +38,11 @@ module app.partials.navigation{
                 .reverse() //reverse the array
                 .value()
             ;
+
+
+            $scope.authService = ngJwtAuthService;
+            $scope.promptLogin = () => ngJwtAuthService.promptLogin();
+            $scope.logout = () => ngJwtAuthService.logout();
 
         }
 
