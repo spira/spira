@@ -1,7 +1,6 @@
 <?php namespace App\Services\Datasets;
 
 use ReflectionClass;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 abstract class Dataset
