@@ -1,4 +1,6 @@
-<?php namespace App\Providers;
+<?php
+
+namespace App\Providers;
 
 use App\Http\Transformers\IlluminateModelTransformer;
 use App\Services\SpiraValidator;

@@ -12,7 +12,7 @@ trait AssertionsTrait
      */
     public function assertJsonArray()
     {
-        $array =json_decode($this->response->getContent(), true);
+        $array = json_decode($this->response->getContent(), true);
 
         $this->assertTrue(is_array($array));
 
@@ -26,7 +26,7 @@ trait AssertionsTrait
      */
     public function assertJsonMultipleEntries()
     {
-        $array =json_decode($this->response->getContent(), true);
+        $array = json_decode($this->response->getContent(), true);
 
         $this->assertTrue(count($array) > 1);
 
@@ -48,7 +48,8 @@ trait AssertionsTrait
     /**
      * Assert the date is a valid ISO 8601 date.
      *
-     * @param  string $date
+     * @param string $date
+     *
      * @return $this
      */
     public function assertValidIso8601Date($date)
@@ -61,7 +62,8 @@ trait AssertionsTrait
     /**
      * Validate a string that is is a valid ISO 8601 date.
      *
-     * @param  string  $dateStr
+     * @param string $dateStr
+     *
      * @return bool
      */
     protected function checkValidIso8601Date($dateStr)
@@ -69,15 +71,16 @@ trait AssertionsTrait
 
         //regex via http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
         $iso8601Regex = '/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/';
-        if(preg_match($iso8601Regex, $dateStr)){
-
+        if (preg_match($iso8601Regex, $dateStr)) {
             try {
                 new \Carbon\Carbon($dateStr);
+
                 return true;
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 return false;
             }
         }
+
         return false;
     }
 }
