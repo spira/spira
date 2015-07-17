@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Cache;
 use Illuminate\Container\Container as App;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 class UserRepository extends BaseRepository
 {
@@ -13,6 +14,28 @@ class UserRepository extends BaseRepository
      * @var int
      */
     protected $login_token_ttl = 1440;
+
+    /**
+     * Cache repository.
+     *
+     * @var CacheRepository
+     */
+    protected $cache;
+
+    /**
+     * Assign dependencies.
+     *
+     * @param App              $app
+     * @param CacheRepository  $cache
+     *
+     * @return void
+     */
+    public function __construct(App $app, CacheRepository $cache)
+    {
+        $this->cache = $cache;
+
+        parent::__construct($app);
+    }
 
     /**
      * Model name.
@@ -33,7 +56,7 @@ class UserRepository extends BaseRepository
      */
     public function findByLoginToken($token)
     {
-        if ($id = Cache::pull('login_token_'.$token)) {
+        if ($id = $this->cache->pull('login_token_'.$token)) {
             $user = $this->find($id);
 
             return $user;
@@ -52,7 +75,7 @@ class UserRepository extends BaseRepository
         $user = $this->find($id);
 
         $token = hash_hmac('sha256', str_random(40), str_random(40));
-        Cache::put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
+        $this->cache->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
         return $token;
     }
