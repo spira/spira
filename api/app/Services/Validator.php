@@ -71,6 +71,7 @@ abstract class Validator
 
         $this->registerValidateFloat();
         $this->registerValidateUuid();
+        $this->registerValidateCountry();
     }
 
     /**
@@ -100,6 +101,7 @@ abstract class Validator
         return [
             'float' => 'The :attribute must be a float.',
             'uuid'  => 'The :attribute must be an UUID string.',
+            'country'  => 'The :attribute must be a valid country code.',
         ];
     }
 
@@ -195,7 +197,6 @@ abstract class Validator
         }
 
         if (!empty(array_filter($errors))) {
-
             // Use merge instead of passing the errors to the MessageBag
             // constructor, to preserve nulls
             $errorBag = new MessageBag();
@@ -352,6 +353,22 @@ abstract class Validator
     {
         $this->validator->extend('uuid', function ($attribute, $value, $parameters) {
             return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
+        });
+    }
+
+    /**
+     * Register custom validation rule for countries.
+     *
+     * @return void
+     */
+    protected function registerValidateCountry()
+    {
+        $this->validator->extend('country', function ($attribute, $value, $parameters) {
+            $countries = $this->app->make('App\Services\Datasets\countries')
+                ->all()
+                ->toArray();
+
+            return in_array($value, array_fetch($countries, 'country_code'));
         });
     }
 }

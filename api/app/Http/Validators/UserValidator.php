@@ -17,6 +17,7 @@ class UserValidator extends Validator
         'last_name' => 'string',
         'phone' => 'string',
         'mobile' => 'string',
+        'country' => 'country',
         'timezone_identifier' => 'timezone'
     ];
 
