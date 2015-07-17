@@ -4,14 +4,14 @@ use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 
-class Timezones
+class Timezones extends Dataset
 {
     /**
      * Get all timezones.
      *
      * @return Collection
      */
-    public function all()
+    protected function getDataset()
     {
         $allTimezones = DateTimeZone::listIdentifiers();
 

@@ -32,7 +32,7 @@ class Countries extends Dataset
     /**
      * Get the dataset.
      *
-     * @return Illuminate\Support\Collection
+     * @return Collection
      */
     protected function getDataset()
     {
