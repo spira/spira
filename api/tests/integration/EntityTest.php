@@ -101,11 +101,28 @@ class EntityTest extends TestCase
 
         $this->shouldReturnJson();
 
-        $object = json_decode($this->response->getContent(),true);
+        $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
         $this->assertTrue(is_array($object));
-        //$this->assertStringStartsWith('http', $object[0]);
+        $this->assertStringStartsWith('http', $object[0]);
+    }
+
+    public function testPostOneInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        unset($entity['text']);
+
+        $this->post('/test/entities', $entity);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
+        $this->assertObjectHasAttribute('text', $object->invalid);
+
+        $this->assertEquals('The text field is required.', $object->invalid->text[0]);
     }
 
     public function testPutOneNew()
@@ -118,17 +135,36 @@ class EntityTest extends TestCase
 
         $this->put('/test/entities/'.$id, $entity);
 
-        $object = json_decode($this->response->getContent(), true);
+        $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 1, $this->repository->count());
         $this->assertTrue(is_array($object));
-        //$this->assertStringStartsWith('http', $object[0]);
+        $this->assertStringStartsWith('http', $object[0]);
+    }
+
+    public function testPutOneCollidingIds()
+    {
+        $this->markTestSkipped('should be revisited');
+        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->prepareEntity($entity);
+        $id = (string) Uuid::uuid4();
+        $entity['entityId'] = (string) Uuid::uuid4();
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/test/entities/'.$id, $entity);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(422);
+        $this->assertTrue(is_object($object));
+        $this->assertEquals('The url id does not match the json entity id.', $object->invalid->entityId[0]);
     }
 
     public function testPutOneNewInvalidId()
     {
-        $this->markTestSkipped('must be revisited');
+        $this->markTestSkipped('should be revisited');
         $id = 'foobar';
         $entity = factory(App\Models\TestEntity::class)->make([
             'entity_id' => $id,
@@ -142,12 +178,11 @@ class EntityTest extends TestCase
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
         $this->assertObjectHasAttribute('entityId', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
+        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]);
     }
 
     public function testPutManyNew()
     {
-        $this->markTestSkipped('must be revisited');
         $entities = factory(App\Models\TestEntity::class, 5)->make();
 
         $entities = array_map(function ($entity) {
@@ -169,11 +204,16 @@ class EntityTest extends TestCase
 
     public function testPutManyNewInvalidId()
     {
-        $this->markTestSkipped('must be revisited');
+        $this->markTestSkipped('should be revisited');
+    }
+
+    public function testPutManyNewInvalid()
+    {
+        $this->markTestSkipped('should be revisited');
         $entities = factory(App\Models\TestEntity::class, 5)->make();
 
         $entities = array_map(function ($entity) {
-            return array_add($this->prepareEntity($entity), 'entity_id', 'foobar');
+            return array_add($this->prepareEntity($entity), 'float', 'foobar');
         }, $entities->all());
 
         $rowCount = $this->repository->count();
@@ -184,7 +224,7 @@ class EntityTest extends TestCase
 
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
+        $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]);
         $this->assertEquals($rowCount, $this->repository->count());
     }
 
@@ -201,9 +241,13 @@ class EntityTest extends TestCase
         $this->assertEquals('foobar', $entity->varchar);
     }
 
+    public function testPatchOneInvalidId()
+    {
+        $this->markTestSkipped('should be revisited');
+    }
+
     public function testPatchMany()
     {
-        $this->markTestSkipped('must be revisited');
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
         $data = array_map(function ($entity) {
@@ -224,21 +268,7 @@ class EntityTest extends TestCase
 
     public function testPatchManyInvalidId()
     {
-        $this->markTestSkipped('must be revisited');
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
-
-        $data = array_map(function ($entity) {
-            return [
-                'entity_id' => (string) Uuid::uuid4(),
-                'varchar'   => 'foobar',
-            ];
-        }, $entities->all());
-
-        $this->patch('/test/entities', ['data' => $data]);
-        $object = json_decode($this->response->getContent());
-
-        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
-        $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
+        $this->markTestSkipped('should be revisited');
     }
 
     public function testDeleteOne()
@@ -251,5 +281,53 @@ class EntityTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, $this->repository->count());
+    }
+
+    public function testDeleteOneInvalidId()
+    {
+        $this->markTestSkipped('should be revisited');
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $rowCount = $this->repository->count();
+
+        $this->delete('/test/entities/'.'c4b3c8d3-fa8b-4cf6-828a-072bcf7dc371');
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('entityId', $object->invalid);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]);
+        $this->assertEquals($rowCount, $this->repository->count());
+    }
+
+    public function testDeleteMany()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $rowCount = $this->repository->count();
+        $ids = $entities->lists('entity_id')->toArray();
+
+        $this->delete('/test/entities', ['data' => $ids]);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($rowCount - 5, $this->repository->count());
+    }
+
+    public function testDeleteManyInvalidId()
+    {
+        $this->markTestSkipped('should be revisited');
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $rowCount = $this->repository->count();
+
+        $ids = [(string) Uuid::uuid4(), $entities->random()->entity_id, (string) Uuid::uuid4()];
+
+        $this->delete('/test/entities', ['data' => $ids]);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_array($object->invalid));
+        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertNull($object->invalid[1]);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[2]);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]);
+        $this->assertEquals($rowCount, $this->repository->count());
     }
 }
