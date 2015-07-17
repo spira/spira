@@ -6,7 +6,7 @@ use App\Exceptions\ServiceUnavailableException;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
-class Countries
+class Countries extends Dataset
 {
     /**
      * Guzzle client.
@@ -14,13 +14,6 @@ class Countries
      * @var \GuzzleHttp\Client
      */
     protected $client;
-
-    /**
-     * Cache repository.
-     *
-     * @var CacheRepository
-     */
-    protected $cache;
 
     /**
      * Assign dependencies.
@@ -32,14 +25,20 @@ class Countries
     public function __construct(Client $client, CacheRepository $cache)
     {
         $this->client = $client;
-        $this->cache = $cache;
+
+        parent::__construct($cache);
     }
 
-    public function all()
+    /**
+     * Get the dataset.
+     *
+     * @return Illuminate\Support\Collection
+     */
+    protected function getDataset()
     {
         try {
             $client = new $this->client;
-            $response = $client->get('https://restcountries.eu/rest/v2/all');
+            $response = $client->get('https://restcountries.eu/rest/v1/all');
         } catch (ClientException $e) {
             throw new ServiceUnavailableException;
         }
