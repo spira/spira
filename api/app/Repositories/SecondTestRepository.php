@@ -8,13 +8,11 @@
 
 namespace App\Repositories;
 
-
 use App\Models\BaseModel;
 use App\Models\SecondTestEntity;
 
 class SecondTestRepository extends BaseRepository
 {
-
     /**
      * Model name.
      *

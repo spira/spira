@@ -27,15 +27,15 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
     public function transform($object)
     {
         $array = null;
-        if ($object instanceof Arrayable){
+        if ($object instanceof Arrayable) {
             $array = $object->toArray();
         }
 
-        if (is_null($array) && is_array($object)){
+        if (is_null($array) && is_array($object)) {
             $array = $object;
         }
 
-        if (is_null($array)){
+        if (is_null($array)) {
             throw new \InvalidArgumentException('must be array or '.Arrayable::class);
         }
 
@@ -54,8 +54,8 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
             }
         }
 
-        if (($object instanceof BaseModel)){
-            $this->addSelfKey($object,$array);
+        if (($object instanceof BaseModel)) {
+            $this->addSelfKey($object, $array);
         }
 
         return $array;
@@ -68,33 +68,30 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
      */
     protected function addSelfKey(BaseModel $model, &$array)
     {
-        if ($route = RouteHelper::getRoute($model)){
+        if ($route = RouteHelper::getRoute($model)) {
             $array['_self'] = $route;
         }
 
-        foreach ($model->getRelations() as $key => $value)
-        {
+        foreach ($model->getRelations() as $key => $value) {
             $camelCaseKey = camel_case($key);
-            if ($value instanceof BaseModel && isset($array[$camelCaseKey])){
-                $this->addSelfKey($value,$array[$camelCaseKey]);
-            }else if ($this->isIterable($value)) {
-                foreach ($value as $index => $relatedModel)
-                {
-                    if ($relatedModel instanceof BaseModel && isset($array[$camelCaseKey][$index])){
-                        $this->addSelfKey($relatedModel,$array[$camelCaseKey][$index]);
+            if ($value instanceof BaseModel && isset($array[$camelCaseKey])) {
+                $this->addSelfKey($value, $array[$camelCaseKey]);
+            } elseif ($this->isIterable($value)) {
+                foreach ($value as $index => $relatedModel) {
+                    if ($relatedModel instanceof BaseModel && isset($array[$camelCaseKey][$index])) {
+                        $this->addSelfKey($relatedModel, $array[$camelCaseKey][$index]);
                     }
                 }
-
             }
         }
-
     }
 
     /**
      * @param $var
      * @return bool
      */
-    protected function isIterable($var) {
+    protected function isIterable($var)
+    {
         return (is_array($var) || $var instanceof Traversable);
     }
 
@@ -128,7 +125,7 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
     protected function renameKeys(array $array)
     {
         $newArray = [];
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
 
             // Recursively check if the value is an array that needs parsing too
             $value = (is_array($value)) ? $this->renameKeys($value) : $value;
@@ -150,7 +147,7 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
      */
     public function transformCollection($collection)
     {
-        if ($collection instanceof Collection){
+        if ($collection instanceof Collection) {
             $collection = $collection->all();
         }
         return $this->getService()->collection(($collection instanceof Collection)?$collection->all():$collection, $this);

@@ -62,7 +62,6 @@ class TestRepositoryTest extends TestCase
         $result = $this->repository->save($entity);
         $this->assertInstanceOf(App\Models\TestEntity::class, $result);
         $this->assertTrue($result->exists);
-
     }
 
     public function testSaveMany()
@@ -106,8 +105,6 @@ class TestRepositoryTest extends TestCase
             $compareEntity = $this->repository->find($entity->entity_id);
             $this->assertEquals('foobar', $compareEntity->text);
         }
-
-
     }
 
     public function testDelete()
@@ -174,13 +171,13 @@ class TestRepositoryTest extends TestCase
         //empty collection to array
         $rootEntity = factory(App\Models\TestEntity::class)->create();
         $entities = factory(App\Models\SecondTestEntity::class, 5)->create()->all();
-        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class,$rootEntity->testMany);
+        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class, $rootEntity->testMany);
         $this->assertEquals(0, $rootEntity->testMany->count());
         $rootEntity->testMany = $entities;
         $this->assertEquals(count($entities), $rootEntity->testMany->count());
         $this->repository->save($rootEntity);
         $compareRootEntity = $this->repository->find($rootEntity->entity_id);
-        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class,$compareRootEntity->testMany);
+        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class, $compareRootEntity->testMany);
         $this->assertEquals(count($entities), $rootEntity->testMany->count());
 
         //add to non-empty collection
@@ -190,18 +187,18 @@ class TestRepositoryTest extends TestCase
         $this->repository->save($rootEntity);
         $this->assertEquals(count($entities)+1, $rootEntity->testMany->count());
         $compareRootEntity = $this->repository->find($rootEntity->entity_id);
-        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class,$compareRootEntity->testMany);
+        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class, $compareRootEntity->testMany);
         $this->assertEquals(count($entities)+1, count($compareRootEntity->testMany->all()));
 
         //add to empty collection
         $rootEntity2 = factory(App\Models\TestEntity::class)->create();
-        $this->assertEquals($rootEntity2->testMany->count(),0);
+        $this->assertEquals($rootEntity2->testMany->count(), 0);
         $rootEntity2->testMany->add($extraEntity);
         $this->repository->save($rootEntity2);
         $this->assertEquals($rootEntity2->testMany->count(), 1);
         $this->assertEquals($extraEntity, $rootEntity2->testMany->first());
         $compareRootEntity = $this->repository->find($rootEntity2->entity_id);
-        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class,$compareRootEntity->testMany);
+        $this->assertInstanceOf(\Spira\Repository\Collection\Collection::class, $compareRootEntity->testMany);
         $this->assertEquals($extraEntity->entity_id, $rootEntity2->testMany->first()->entity_id);
 
         //add same entity to collection
@@ -275,5 +272,3 @@ class TestRepositoryTest extends TestCase
         $rootEntity->testMany->add($notValidEntity);
     }
 }
-
-

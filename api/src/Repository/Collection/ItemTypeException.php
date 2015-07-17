@@ -8,8 +8,6 @@
 
 namespace Spira\Repository\Collection;
 
-
 class ItemTypeException extends \Exception
 {
-
 }

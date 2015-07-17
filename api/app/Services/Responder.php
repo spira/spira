@@ -8,7 +8,6 @@
 
 namespace App\Services;
 
-
 use App\Http\Transformers\TransformerInterface;
 use Illuminate\Http\Request;
 

@@ -15,8 +15,7 @@ class TestManyManySecondTable extends Migration
     public function up()
     {
         $modelClass = static::MODEL;
-        Schema::create($modelClass::getTableName(), function(Blueprint $table)
-        {
+        Schema::create($modelClass::getTableName(), function (Blueprint $table) {
             $table->uuid('entity_id');
             $table->uuid('check_entity_id');
             $table->primary('entity_id');

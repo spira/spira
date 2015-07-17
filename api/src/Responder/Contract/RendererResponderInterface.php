@@ -8,7 +8,6 @@
 
 namespace Spira\Responder\Contract;
 
-
 interface RendererResponderInterface extends ResponderInterface
 {
     /**
@@ -16,5 +15,5 @@ interface RendererResponderInterface extends ResponderInterface
      * @param array $params
      * @return mixed
      */
-    public function render($template,array $params = []);
+    public function render($template, array $params = []);
 }

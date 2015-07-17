@@ -9,7 +9,6 @@ use Traversable;
 
 abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepository
 {
-
     /**
      * @param Collection|BaseModel[] $models
      * @return BaseModel[]
@@ -18,29 +17,28 @@ abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepositor
      */
     public function saveMany($models)
     {
-        if (!is_array($models) && !($models instanceof Traversable)){
+        if (!is_array($models) && !($models instanceof Traversable)) {
             throw new RepositoryException('Models must be either an array or Collection with Traversable');
         }
 
         $this->getConnection()->beginTransaction();
 
-        try{
+        try {
             $errors = [];
             /** @var BaseModel $models */
-            foreach ($models as $model)
-            {
-                try{
-                    if (!$this->save($model)){
+            foreach ($models as $model) {
+                try {
+                    if (!$this->save($model)) {
                         throw new RepositoryException('Massive assignment failed as model with id '.$model->getQueueableId().' couldn\'t be saved');
                     }
-                }catch (ValidationException $e){
+                } catch (ValidationException $e) {
                     $errors[] = $e->getErrors();
                 }
             }
-            if (!empty($errors)){
+            if (!empty($errors)) {
                 throw new ValidationExceptionCollection($errors);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->getConnection()->rollBack();
             throw $e;
         }
@@ -58,21 +56,20 @@ abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepositor
      */
     public function deleteMany($models)
     {
-        if (!is_array($models) && !($models instanceof Traversable)){
+        if (!is_array($models) && !($models instanceof Traversable)) {
             throw new RepositoryException('Models must be either an array or Collection with Traversable');
         }
 
         $this->getConnection()->beginTransaction();
 
-        try{
+        try {
             /** @var BaseModel $models */
-            foreach ($models as $model)
-            {
-                if (!$this->delete($model)){
+            foreach ($models as $model) {
+                if (!$this->delete($model)) {
                     throw new RepositoryException('Massive deletion failed as model with id '.$model->getQueueableId().' couldn\'t be deleted');
                 }
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->getConnection()->rollBack();
             throw $e;
         }

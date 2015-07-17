@@ -8,7 +8,6 @@
 
 namespace Spira\Responder\Responder;
 
-
 use Spira\Responder\Contract\ResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;

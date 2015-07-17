@@ -8,7 +8,6 @@
 
 namespace Spira\Repository\Model;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,7 +28,6 @@ use Spira\Repository\Collection\Collection;
  */
 class BaseModel extends Model
 {
-
     /**
      * @var Relation[]
      */
@@ -49,24 +47,22 @@ class BaseModel extends Model
      */
     public function __set($key, $value)
     {
-        if (method_exists($this, $key)){
-            try{
+        if (method_exists($this, $key)) {
+            try {
                 $value = $this->prepareValue($value);
-            }catch (\InvalidArgumentException $e){
+            } catch (\InvalidArgumentException $e) {
                 $value = false;
             }
 
-            if ($value !== false){
+            if ($value !== false) {
                 $models = $this->getRelationValue($key);
                 $this->addPreviousValueToDeleteStack($models);
-                $this->isValueCompatibleWithRelation($key,$value);
+                $this->isValueCompatibleWithRelation($key, $value);
                 $this->relations[$key] = $value;
             }
-
-        }else{
+        } else {
             parent::__set($key, $value);
         }
-
     }
 
     /**
@@ -77,17 +73,17 @@ class BaseModel extends Model
      */
     protected function prepareValue($value)
     {
-        if (empty($value)){
+        if (empty($value)) {
             return null;
         }
 
-        if ($this->isModel($value) || $this->isCollection($value)){
+        if ($this->isModel($value) || $this->isCollection($value)) {
             return $value;
         }
 
-        if (is_array($value)){
+        if (is_array($value)) {
             $firstModel = current($value);
-            if ($firstModel instanceof BaseModel){
+            if ($firstModel instanceof BaseModel) {
                 return $firstModel->newCollection($value);
             }
             throw new \InvalidArgumentException('Array must consist of '.BaseModel::class.' instances');
@@ -118,8 +114,7 @@ class BaseModel extends Model
             return false;
         }
 
-        foreach ($this->deleteStack as $modelToDelete)
-        {
+        foreach ($this->deleteStack as $modelToDelete) {
             if (!$modelToDelete->delete()) {
                 return false;
             }
@@ -154,18 +149,18 @@ class BaseModel extends Model
      */
     protected function isValueCompatibleWithRelation($method, $value)
     {
-        if (is_null($value)){
+        if (is_null($value)) {
             return true;
         }
 
         $relation = static::$relationsCache[$this->getRelationCacheKey($method)];
 
-        if ($relation instanceof HasOne || $relation instanceof BelongsTo){
-            if ($this->isCollection($value)){
+        if ($relation instanceof HasOne || $relation instanceof BelongsTo) {
+            if ($this->isCollection($value)) {
                 throw new SetRelationException('Can not set collection, model expected');
             }
-        }else{
-            if ($this->isModel($value)){
+        } else {
+            if ($this->isModel($value)) {
                 throw new SetRelationException('Can not set model, collection expected');
             }
         }
@@ -196,8 +191,8 @@ class BaseModel extends Model
      */
     protected function preserveKeys(Relation $relation)
     {
-        if ($relation instanceof HasOneOrMany){
-            $fk = str_replace($this->getTable().'.','',$relation->getForeignKey());
+        if ($relation instanceof HasOneOrMany) {
+            $fk = str_replace($this->getTable().'.', '', $relation->getForeignKey());
             $this->{$fk} = $relation->getParentKey();
         }
 
@@ -214,12 +209,11 @@ class BaseModel extends Model
      */
     public function save(array $options = [])
     {
-        if ($this->isDeleted()){
+        if ($this->isDeleted()) {
             return $this->delete();
         }
 
         return parent::save($options);
-
     }
 
     /**
@@ -265,7 +259,7 @@ class BaseModel extends Model
         if (!$relations instanceof Relation) {
             throw new LogicException('Relationship method must return an object of type '
                 .'Illuminate\Database\Eloquent\Relations\Relation');
-        }else{
+        } else {
             static::$relationsCache[$this->getRelationCacheKey($method)] = $relations;
         }
 
@@ -280,5 +274,4 @@ class BaseModel extends Model
     {
         return static::class.'_'.$method;
     }
-
 }

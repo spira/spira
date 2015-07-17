@@ -67,12 +67,9 @@ class BaseRepositoryTest extends TestCase
 
     public function testSave()
     {
-
     }
 
     public function testDelete()
     {
-
     }
-
 }

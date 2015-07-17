@@ -8,8 +8,6 @@
 
 namespace Spira\Repository\Model;
 
-
 class SetRelationException extends \Exception
 {
-
 }

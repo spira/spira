@@ -32,7 +32,7 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 
     protected function getValidator()
     {
-        if (is_null($this->validator)){
+        if (is_null($this->validator)) {
             $this->validator = \App::make('validator');
         }
 
@@ -85,22 +85,20 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::saving(function(BaseModel $model)
-        {
+        static::saving(function (BaseModel $model) {
             return $model->validate();
         });
     }
 
     public function validate()
     {
-        $validation = $this->getValidator()->make($this->attributes,$this->getValidationRules());
+        $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
         $this->errors = [];
-        if ($validation->fails()){
+        if ($validation->fails()) {
             $this->errors = $validation->messages();
             throw new ValidationException($this->getErrors());
         }
 
         return true;
     }
-
 }

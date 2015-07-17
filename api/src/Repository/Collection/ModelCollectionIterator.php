@@ -8,7 +8,6 @@
 
 namespace Spira\Repository\Collection;
 
-
 use Spira\Repository\Model\BaseModel;
 
 class ModelCollectionIterator extends \FilterIterator
@@ -16,7 +15,7 @@ class ModelCollectionIterator extends \FilterIterator
     /**
      * @var array
      */
-    private $items = array();
+    private $items = [];
 
     /**
      * @param \Iterator $items
@@ -63,7 +62,7 @@ class ModelCollectionIterator extends \FilterIterator
     public function valid()
     {
         $key = key($this->items);
-        $var = ($key !== NULL && $key !== FALSE);
+        $var = ($key !== null && $key !== false);
         return $var;
     }
 
@@ -76,8 +75,8 @@ class ModelCollectionIterator extends \FilterIterator
     public function accept()
     {
         $item = $this->getInnerIterator()->current();
-        if ($item instanceof BaseModel){
-            if ($item->isDeleted()){
+        if ($item instanceof BaseModel) {
+            if ($item->isDeleted()) {
                 return false;
             }
         }

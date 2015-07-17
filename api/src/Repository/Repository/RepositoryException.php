@@ -8,8 +8,6 @@
 
 namespace Spira\Repository\Repository;
 
-
 class RepositoryException extends \Exception
 {
-
 }

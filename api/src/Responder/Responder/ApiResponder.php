@@ -8,7 +8,6 @@
 
 namespace Spira\Responder\Responder;
 
-
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Spira\Responder\Contract\ApiResponderInterface;
@@ -65,7 +64,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      *
      * @return Response
      */
-    public function collection($items,array $parameters = [])
+    public function collection($items, array $parameters = [])
     {
         $response = $this->getResponse();
         $response->setStatusCode(200);

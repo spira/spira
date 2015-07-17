@@ -11,8 +11,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
-
-
     /**
      * A list of the exception types that should not be reported.
      *
@@ -45,11 +43,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-
         $debug = env('APP_DEBUG', false);
 
         $message = $e->getMessage();
-        if (!$message){
+        if (!$message) {
             $message = 'An error occurred';
         }
 
@@ -68,22 +65,22 @@ class Handler extends ExceptionHandler
 
         $statusCode = 500;
 
-        if ($e instanceof HttpExceptionInterface){
+        if ($e instanceof HttpExceptionInterface) {
             $statusCode = $e->getStatusCode();
 
             if (method_exists($e, 'getResponse')) {
-                if ($e instanceof TransformableInterface){
+                if ($e instanceof TransformableInterface) {
                     $response = $e->transform(\App::make(IlluminateModelTransformer::class));
-                }else{
+                } else {
                     $response = $e->getResponse();
                 }
             }
         }
 
-        if ($debug){
+        if ($debug) {
             $response['debug'] = $debugData;
         }
 
-        return response()->json($response, $statusCode, array(), JSON_PRETTY_PRINT);
+        return response()->json($response, $statusCode, [], JSON_PRETTY_PRINT);
     }
 }

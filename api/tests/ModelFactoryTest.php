@@ -135,9 +135,8 @@ class ModelFactoryTest extends TestCase
 
         $this->assertJson($serviceCreatedFactoryJson);
         $compareArray = json_decode($serviceCreatedFactoryJson, true);
-        foreach ($compareArray as &$value)
-        {
-            $this->assertArrayHasKey('_self',$value);
+        foreach ($compareArray as &$value) {
+            $this->assertArrayHasKey('_self', $value);
             unset($value['_self']);
         }
 

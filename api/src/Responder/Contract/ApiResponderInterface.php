@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface ApiResponderInterface extends ResponderInterface
 {
-
     /**
      * Respond with a created response and associate a location if provided.
      *
@@ -49,7 +48,7 @@ interface ApiResponderInterface extends ResponderInterface
      * @param array $parameters
      * @return Response
      */
-    public function collection($items,array $parameters = []);
+    public function collection($items, array $parameters = []);
 
     /**
      * Bind an item to a transformer and start building a response.
@@ -59,7 +58,7 @@ interface ApiResponderInterface extends ResponderInterface
      *
      * @return Response
      */
-    public function item($item,array $parameters = []);
+    public function item($item, array $parameters = []);
 
     /**
      * Bind a paginator to a transformer and start building a response.
@@ -70,5 +69,4 @@ interface ApiResponderInterface extends ResponderInterface
      * @return Response
      */
     public function paginator(Paginator $paginator, array $parameters = []);
-
 }

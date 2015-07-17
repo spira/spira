@@ -8,7 +8,6 @@
 
 namespace Spira\Responder\Contract;
 
-
 interface TransformableInterface
 {
     /**

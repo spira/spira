@@ -27,7 +27,7 @@ class TransformerTest extends TestCase
 
         $transformed = $this->transformer->transformItem($data);
         $this->assertArrayHasKey('fooBar', $transformed);
-        $this->assertArrayNotHasKey('_self',$transformed);
+        $this->assertArrayNotHasKey('_self', $transformed);
     }
 
     public function testItemNestedData()
@@ -87,13 +87,12 @@ class TransformerTest extends TestCase
         $entity->testMany = $hasManyEntity;
         $data = $this->transformer->transformItem($entity);
 
-        $this->assertArrayHasKey('_self',$data);
-        $this->assertArrayHasKey('testOne',$data);
-        $this->assertArrayHasKey('testMany',$data);
-        $this->assertArrayHasKey('_self',$data['testOne']);
-        foreach ($data['testMany'] as $value)
-        {
-            $this->assertArrayHasKey('_self',$value);
+        $this->assertArrayHasKey('_self', $data);
+        $this->assertArrayHasKey('testOne', $data);
+        $this->assertArrayHasKey('testMany', $data);
+        $this->assertArrayHasKey('_self', $data['testOne']);
+        foreach ($data['testMany'] as $value) {
+            $this->assertArrayHasKey('_self', $value);
         }
     }
 

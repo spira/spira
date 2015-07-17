@@ -51,7 +51,7 @@ abstract class BaseRepository
      * @return BaseModel
      * @throws ModelNotFoundException
      */
-    public function find($id, $columns = array('*'))
+    public function find($id, $columns = ['*'])
     {
         return $this->model->findOrFail($id, $columns);
     }
@@ -74,7 +74,7 @@ abstract class BaseRepository
      * @param  array  $columns
      * @return Collection
      */
-    public function all($columns = array('*'))
+    public function all($columns = ['*'])
     {
         return $this->model->get($columns);
     }
@@ -88,17 +88,17 @@ abstract class BaseRepository
     public function save(BaseModel $model)
     {
         $modelClassName = $this->getModelClassName();
-        if (!($model instanceof $modelClassName)){
+        if (!($model instanceof $modelClassName)) {
             throw new RepositoryException('provided model is not instance of '.$modelClassName);
         }
         /** @var BaseModel $model */
         $this->getConnection()->beginTransaction();
 
-        try{
-            if (!$model->push()){
+        try {
+            if (!$model->push()) {
                 throw new RepositoryException('couldn\'t save model');
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->getConnection()->rollBack();
             throw $e;
         }
@@ -118,7 +118,7 @@ abstract class BaseRepository
     public function delete(BaseModel $model)
     {
         $modelClassName = $this->getModelClassName();
-        if (!($model instanceof $modelClassName)){
+        if (!($model instanceof $modelClassName)) {
             throw new RepositoryException('provided model is not instance of '.$modelClassName);
         }
 
@@ -144,7 +144,7 @@ abstract class BaseRepository
     {
         $model = $this->model();
 
-        if (!$model instanceof BaseModel){
+        if (!$model instanceof BaseModel) {
             throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".BaseModel::class);
         }
 
@@ -165,7 +165,7 @@ abstract class BaseRepository
      */
     private function getModelClassName()
     {
-        if (is_null($this->modelClassName)){
+        if (is_null($this->modelClassName)) {
             $this->modelClassName = get_class($this->model);
         }
 

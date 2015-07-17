@@ -26,8 +26,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     public function __construct($items = [], $className = null)
     {
         $items = is_array($items) ? $items : $this->getArrayableItems($items);
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             $this->add($item);
         }
         $this->className = $className;
@@ -35,11 +34,11 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
 
     public function count($includingMarkedForDeletion = false)
     {
-        if ($includingMarkedForDeletion){
+        if ($includingMarkedForDeletion) {
             return count($this->items);
         }
 
-        return count(array_filter($this->items, function(BaseModel $item){
+        return count(array_filter($this->items, function (BaseModel $item) {
             return !$item->isDeleted();
         }));
     }
@@ -50,11 +49,11 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function all($includingMarkedForDeletion = false)
     {
-        if ($includingMarkedForDeletion){
+        if ($includingMarkedForDeletion) {
             return $this->items;
         }
 
-        return array_filter($this->items, function(BaseModel $item){
+        return array_filter($this->items, function (BaseModel $item) {
             return !$item->isDeleted();
         });
     }
@@ -68,10 +67,10 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     public function add($item)
     {
         $this->checkItem($item);
-        if ($item instanceof BaseModel){
+        if ($item instanceof BaseModel) {
             $this->preventAddingSameItem($item);
             $this->items[$this->getItemKey($item)] = $item;
-        }else{
+        } else {
             $this->items[] = $item;
         }
 
@@ -86,18 +85,18 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         $this->checkItem($item);
         $key = $this->getItemKey($item);
         $model = null;
-        if (isset($this->items[$key])){
+        if (isset($this->items[$key])) {
             $model = $this->items[$key];
         }
 
-        if (is_null($model)){
+        if (is_null($model)) {
             $key = $this->getItemHash($item);
-            if (isset($this->items[$key])){
+            if (isset($this->items[$key])) {
                 $model = $this->items[$key];
             }
         }
 
-        if (!is_null($model)){
+        if (!is_null($model)) {
             /** @var BaseModel $model */
             $model->markAsDeleted();
         }
@@ -110,7 +109,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     protected function checkItem($item)
     {
         $className = $this->className;
-        if (!is_null($className) && !($item instanceof $className)){
+        if (!is_null($className) && !($item instanceof $className)) {
             throw new ItemTypeException('Item must be instance of '.$className);
         }
     }
@@ -132,7 +131,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     protected function preventAddingSameItem(BaseModel $item)
     {
         $hash = $this->getItemHash($item);
-        if (isset($this->items[$hash])){
+        if (isset($this->items[$hash])) {
             unset($this->items[$hash]);
         }
     }
@@ -152,11 +151,10 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     protected function getItemKey(BaseModel $model)
     {
-        if ($model->exists){
+        if ($model->exists) {
             return $model->getKey();
         }
 
         return $this->getItemHash($model);
     }
-
 }
