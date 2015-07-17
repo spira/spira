@@ -364,7 +364,7 @@ abstract class Validator
     protected function registerValidateCountry()
     {
         $this->validator->extend('country', function ($attribute, $value, $parameters) {
-            $countries = $this->app->make('App\Services\Datasets\countries')
+            $countries = $this->app->make('App\Services\Datasets\Countries')
                 ->all()
                 ->toArray();
 
