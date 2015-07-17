@@ -63,7 +63,7 @@ abstract class ApiController
         $model->fill($request->all());
         $this->repository->save($model);
         $response = $this->responder->created();
-        if ($route = RouteHelper::getRoute($model)){
+        if ($route = RouteHelper::getRoute($model)) {
             $response->setContent(json_encode([$route]));
         }
         return $response;
@@ -78,16 +78,16 @@ abstract class ApiController
      */
     public function putOne($id, Request $request)
     {
-        try{
+        try {
             $model = $this->repository->find($id);
-        }catch (ModelNotFoundException $e){
+        } catch (ModelNotFoundException $e) {
             $model = $this->repository->getModel();
         }
         $model->fill($request->all());
         $this->repository->save($model);
 
         $response = $this->responder->created();
-        if ($route = RouteHelper::getRoute($model)){
+        if ($route = RouteHelper::getRoute($model)) {
             $response->setContent(json_encode([$route]));
         }
 
@@ -105,19 +105,17 @@ abstract class ApiController
         $data = $request->data;
         $idName = $this->repository->getModel()->getKeyName();
         $ids = [];
-        foreach ($data as $piece)
-        {
+        foreach ($data as $piece) {
             $ids[] = $piece[$idName];
         }
         $models = $this->repository->findMany($ids);
 
         $putModels = [];
-        foreach ($data as $piece)
-        {
+        foreach ($data as $piece) {
             $id = $piece[$idName];
-            if ($models->has($id)){
+            if ($models->has($id)) {
                 $model = $models->get($id);
-            }else{
+            } else {
                 $model = $this->repository->getModel();
             }
             /** @var BaseModel $model */
@@ -129,9 +127,8 @@ abstract class ApiController
 
         $response = $this->responder->created();
         $routes = [];
-        foreach ($models as $model)
-        {
-            if ($route = RouteHelper::getRoute($model)){
+        foreach ($models as $model) {
+            if ($route = RouteHelper::getRoute($model)) {
                 $routes[] = $route;
             }
         }
@@ -167,17 +164,15 @@ abstract class ApiController
         $data = $request->data;
         $idName = $this->repository->getModel()->getKeyName();
         $ids = [];
-        foreach ($data as $piece)
-        {
+        foreach ($data as $piece) {
             $ids[] = $piece[$idName];
         }
         $models = $this->repository->findMany($ids);
-        if ($models->count() !== count($ids)){
+        if ($models->count() !== count($ids)) {
             throw new \InvalidArgumentException('Not all entities were found');
         }
 
-        foreach ($data as $piece)
-        {
+        foreach ($data as $piece) {
             $id = $piece[$idName];
             $model = $models->get($id);
 
@@ -214,7 +209,7 @@ abstract class ApiController
     {
         $ids =$request->data;
         $models = $this->repository->findMany($ids);
-        if ($models->count() !== count($ids)){
+        if ($models->count() !== count($ids)) {
             throw new \InvalidArgumentException('Not all entities were found');
         }
         $this->repository->deleteMany($models);

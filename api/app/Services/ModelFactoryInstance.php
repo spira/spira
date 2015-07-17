@@ -146,7 +146,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $attributes = $entity->getAttributes();
             $appends = $entity->appends;
             $modifiedArray = array_keys($attributes);
-            if (!empty($appends)){
+            if (!empty($appends)) {
                 $modifiedArray = array_merge($modifiedArray, $appends);
             }
             $newHidden = array_diff($modifiedArray, $this->showOnly);

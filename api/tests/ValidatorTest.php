@@ -15,13 +15,13 @@ class ValidatorTest extends TestCase
     {
         $data = ['float' => 12.042];
 
-        $this->assertTrue($this->validator->make($data,['float'=>'float'])->passes());
+        $this->assertTrue($this->validator->make($data, ['float'=>'float'])->passes());
     }
 
     public function testFailingFloatValidation()
     {
         $data = ['float' => 'foo'];
-        $validation = $this->validator->make($data,['float'=>'float']);
+        $validation = $this->validator->make($data, ['float'=>'float']);
         $this->assertFalse($validation->passes());
 
         $this->assertStringEndsWith('must be a float.', $validation->messages()->get('float')[0]);
@@ -30,13 +30,13 @@ class ValidatorTest extends TestCase
     public function testPassingUuidValidation()
     {
         $data = ['uuid' => (string) Uuid::uuid4()];
-        $this->assertTrue($this->validator->make($data,['uuid'=>'uuid'])->passes());
+        $this->assertTrue($this->validator->make($data, ['uuid'=>'uuid'])->passes());
     }
 
     public function testFailingUuidValidation()
     {
         $data = ['uuid' => 'foobar'];
-        $validation = $this->validator->make($data,['uuid'=>'uuid']);
+        $validation = $this->validator->make($data, ['uuid'=>'uuid']);
         $this->assertFalse($validation->passes());
         $this->assertStringEndsWith('must be an UUID string.', $validation->messages()->get('uuid')[0]);
     }

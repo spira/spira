@@ -7,7 +7,6 @@ use Illuminate\Validation\Validator;
 
 class SpiraValidator extends Validator
 {
-
     public function validateFloat($attribute, $value, $parameters)
     {
         return is_float($value + 0);

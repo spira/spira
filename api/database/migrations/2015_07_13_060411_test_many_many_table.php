@@ -14,7 +14,6 @@ class TestManyManyTable extends Migration
      */
     public function up()
     {
-
         Schema::create(static::TABLE, function (Blueprint $table) {
             $table->uuid('test_id');
             $table->uuid('test_second_id');

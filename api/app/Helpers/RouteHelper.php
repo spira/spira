@@ -8,7 +8,6 @@
 
 namespace App\Helpers;
 
-
 use Spira\Repository\Model\BaseModel;
 
 class RouteHelper
@@ -21,10 +20,10 @@ class RouteHelper
      */
     public static function getRoute(BaseModel $model)
     {
-        if (!isset(static::$badRoutes[get_class($model)])){
-            try{
-                return route(get_class($model),['id'=>$model->getQueueableId()]);
-            }catch (\InvalidArgumentException $e){
+        if (!isset(static::$badRoutes[get_class($model)])) {
+            try {
+                return route(get_class($model), ['id'=>$model->getQueueableId()]);
+            } catch (\InvalidArgumentException $e) {
                 static::$badRoutes[get_class($model)] = true;
             }
         }

@@ -25,8 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransformerInterface::class, IlluminateModelTransformer::class);
         $this->app->bind(ApiResponderInterface::class, ApiResponder::class);
 
-        Validator::resolver(function($translator, $data, $rules, $messages)
-        {
+        Validator::resolver(function ($translator, $data, $rules, $messages) {
             return new SpiraValidator($translator, $data, $rules, $messages);
         });
     }

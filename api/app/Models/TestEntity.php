@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
  *
  * @property Collection $testMany
  */
-class TestEntity extends BaseModel {
+class TestEntity extends BaseModel
+{
     /**
      * The database table used by the model.
      *
@@ -69,11 +70,11 @@ class TestEntity extends BaseModel {
 
     public function testOne()
     {
-        return $this->hasOne(SecondTestEntity::class,'check_entity_id','entity_id');
+        return $this->hasOne(SecondTestEntity::class, 'check_entity_id', 'entity_id');
     }
 
     public function testMany()
     {
-        return $this->hasMany(SecondTestEntity::class,'check_entity_id','entity_id');
+        return $this->hasMany(SecondTestEntity::class, 'check_entity_id', 'entity_id');
     }
 }
