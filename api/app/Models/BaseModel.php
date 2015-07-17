@@ -26,7 +26,10 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     /**
      * @return array
      */
-    abstract public function getValidationRules();
+    public function getValidationRules()
+    {
+        return [];
+    }
 
     protected function getValidator()
     {

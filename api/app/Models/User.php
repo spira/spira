@@ -99,6 +99,6 @@ class User extends BaseModel implements AuthenticatableContract
      */
     public function getValidationRules()
     {
-        // TODO: Implement getValidationRules() method.
+        return [];
     }
 }
