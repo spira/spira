@@ -54,6 +54,7 @@ class TestEntity extends BaseModel {
     public function getValidationRules()
     {
         return [
+            'entity_id' => 'uuid',
             'varchar' => 'required|string',
             'hash'    => 'required|string',
             'integer' => 'required|integer',

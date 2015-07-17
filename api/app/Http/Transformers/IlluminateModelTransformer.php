@@ -8,6 +8,7 @@
 
 namespace App\Http\Transformers;
 
+use App\Helpers\RouteHelper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection;
 use Spira\Repository\Model\BaseModel;
@@ -67,12 +68,8 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
      */
     protected function addSelfKey(BaseModel $model, &$array)
     {
-        if (!isset(static::$badRoutes[get_class($model)])){
-            try{
-                $array['_self'] = route(get_class($model),['id'=>$model->getQueueableId()]);
-            }catch (\InvalidArgumentException $e){
-                static::$badRoutes[get_class($model)] = true;
-            }
+        if ($route = RouteHelper::getRoute($model)){
+            $array['_self'] = $route;
         }
 
         foreach ($model->getRelations() as $key => $value)

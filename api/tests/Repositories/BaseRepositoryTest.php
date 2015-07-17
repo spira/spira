@@ -8,7 +8,7 @@ class BaseRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->baseRepository = m::mock('App\Repositories\BaseRepository')
+        $this->baseRepository = m::mock('Spira\Repository\Repository\BaseRepository')
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 

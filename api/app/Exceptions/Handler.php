@@ -2,12 +2,17 @@
 
 namespace App\Exceptions;
 
+use App\Http\Transformers\IlluminateModelTransformer;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Spira\Responder\Contract\TransformableInterface;
+use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
+
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -67,7 +72,11 @@ class Handler extends ExceptionHandler
             $statusCode = $e->getStatusCode();
 
             if (method_exists($e, 'getResponse')) {
-                $response = $e->getResponse();
+                if ($e instanceof TransformableInterface){
+                    $response = $e->transform(\App::make(IlluminateModelTransformer::class));
+                }else{
+                    $response = $e->getResponse();
+                }
             }
         }
 

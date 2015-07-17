@@ -25,7 +25,6 @@ class TransformerService
      *
      * @param SerializerAbstract $serializer
      *
-     * @return void
      */
     public function __construct(SerializerAbstract $serializer, Manager $manager)
     {
@@ -49,7 +48,7 @@ class TransformerService
      * Create transformed data from a collection.
      *
      * @param object                             $data
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array
@@ -64,7 +63,7 @@ class TransformerService
      * Create transformed data from an item.
      *
      * @param object                             $data
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array
@@ -79,7 +78,7 @@ class TransformerService
      * Create paginated transformed data from a collection.
      *
      * @param LengthAwarePaginator               $paginator
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array

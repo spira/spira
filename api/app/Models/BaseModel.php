@@ -2,7 +2,6 @@
 
 use App\Exceptions\ValidationException;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Bosnadev\Database\Traits\UuidTrait;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Validator;

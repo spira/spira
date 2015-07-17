@@ -8,9 +8,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RouteHelper;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Responder\ApiResponder;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -60,7 +62,11 @@ abstract class ApiController
         $model = $this->repository->getModel();
         $model->fill($request->all());
         $this->repository->save($model);
-        return $this->responder->item($model)->setStatusCode(201);
+        $response = $this->responder->created();
+        if ($route = RouteHelper::getRoute($model)){
+            $response->setContent(json_encode([$route]));
+        }
+        return $response;
     }
 
     /**
@@ -79,7 +85,13 @@ abstract class ApiController
         }
         $model->fill($request->all());
         $this->repository->save($model);
-        return $this->responder->item($model)->setStatusCode(201);
+
+        $response = $this->responder->created();
+        if ($route = RouteHelper::getRoute($model)){
+            $response->setContent(json_encode([$route]));
+        }
+
+        return $response;
     }
 
     /**
@@ -90,7 +102,42 @@ abstract class ApiController
      */
     public function putMany(Request $request)
     {
-        return $this->responder->created();
+        $data = $request->data;
+        $idName = $this->repository->getModel()->getKeyName();
+        $ids = [];
+        foreach ($data as $piece)
+        {
+            $ids[] = $piece[$idName];
+        }
+        $models = $this->repository->findMany($ids);
+
+        $putModels = [];
+        foreach ($data as $piece)
+        {
+            $id = $piece[$idName];
+            if ($models->has($id)){
+                $model = $models->get($id);
+            }else{
+                $model = $this->repository->getModel();
+            }
+            /** @var BaseModel $model */
+            $model->fill($piece);
+            $putModels[] = $model;
+        }
+
+        $models = $this->repository->saveMany($putModels);
+
+        $response = $this->responder->created();
+        $routes = [];
+        foreach ($models as $model)
+        {
+            if ($route = RouteHelper::getRoute($model)){
+                $routes[] = $route;
+            }
+        }
+        $response->setContent(json_encode($routes));
+
+        return $response;
     }
 
     /**
@@ -117,7 +164,29 @@ abstract class ApiController
      */
     public function patchMany(Request $request)
     {
-        //$this->repository->updateMany($request->data);
+        $data = $request->data;
+        $idName = $this->repository->getModel()->getKeyName();
+        $ids = [];
+        foreach ($data as $piece)
+        {
+            $ids[] = $piece[$idName];
+        }
+        $models = $this->repository->findMany($ids);
+        if ($models->count() !== count($ids)){
+            throw new \InvalidArgumentException('Not all entities were found');
+        }
+
+        foreach ($data as $piece)
+        {
+            $id = $piece[$idName];
+            $model = $models->get($id);
+
+            /** @var BaseModel $model */
+            $model->fill($piece);
+        }
+
+        $this->repository->saveMany($models);
+
         return $this->responder->noContent();
     }
 
@@ -143,7 +212,12 @@ abstract class ApiController
      */
     public function deleteMany(Request $request)
     {
-        $this->repository->deleteMany($request->data);
+        $ids =$request->data;
+        $models = $this->repository->findMany($ids);
+        if ($models->count() !== count($ids)){
+            throw new \InvalidArgumentException('Not all entities were found');
+        }
+        $this->repository->deleteMany($models);
         return $this->responder->noContent();
     }
 }

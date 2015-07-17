@@ -6,7 +6,7 @@
  * Time: 22:06
  */
 
-namespace app\Repositories;
+namespace Spira\Repository\Repository;
 
 
 class RepositoryException extends \Exception

@@ -17,8 +17,19 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Repository\Collection\Collection;
 
+/**
+ * Class BaseModel
+ * @package Spira\Repository\Model
+ *
+ * @method count
+ * @method get
+ * @method findOrFail
+ * @method findMany
+ *
+ */
 class BaseModel extends Model
 {
+
     /**
      * @var Relation[]
      */
@@ -229,7 +240,6 @@ class BaseModel extends Model
     {
         return $this->isDeleted;
     }
-
 
     /**
      *
