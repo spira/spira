@@ -3,6 +3,8 @@ data:
   image: spira/docker-data
   volumes:
     - /data:/data
+  environment:
+    - DATA_ROOT=/data #default DATA_ROOT environment value for the other containers to inherit from
   privileged: true
 
 db:
@@ -56,7 +58,9 @@ web:
     - "80:80"
     - "8080:8080"
   environment:
-      - NGINX_VHOSTS=vhosts/nginx/*.local.conf
+    - DATA_ROOT=/data
+    - API_PATH=/api
+    - NGINX_VHOSTS=vhosts/nginx/*.local.conf
   privileged: true
 
 devtools:
@@ -84,5 +88,6 @@ lumen:
     - db:db
     - web:web
   environment:
+    - DATA_ROOT=/data
     - API_PATH=/api
     - API_DOTENV=.local.env
