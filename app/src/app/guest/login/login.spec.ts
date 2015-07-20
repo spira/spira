@@ -18,6 +18,7 @@ describe('Login', () => {
         let LoginController:ng.IControllerService,
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,
+            $timeout:ng.ITimeoutService,
             $mdDialog:ng.material.IDialogService,
             authService:NgJwtAuth.NgJwtAuthService,
             deferredCredentials:ng.IDeferred<any>,
@@ -32,9 +33,10 @@ describe('Login', () => {
 
         beforeEach(()=> {
 
-            inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _$q_) => {
+            inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _$q_, _$timeout_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
+                $timeout = _$timeout_;
                 $mdDialog = _$mdDialog_;
                 authService = _ngJwtAuthService_;
                 deferredCredentials = _$q_.defer();
@@ -86,16 +88,20 @@ describe('Login', () => {
 
                 (<any>$scope).cancelLoginDialog();
 
+                $timeout.flush(); //flush timeout as the modal is delayed
+
                 expect($mdDialog.cancel).to.have.been.called;
                 expect(deferredCredentials.promise).eventually.to.be.rejected;
 
                 $scope.$apply();
+
             });
 
             it('should show the login dialog when prompted', () => {
 
-
                 authService.promptLogin();
+
+                $timeout.flush(); //flush timeout as the modal is delayed
 
                 expect($mdDialog.show).to.have.been.called;
 
