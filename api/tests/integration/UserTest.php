@@ -216,4 +216,27 @@ class UserTest extends TestCase
         $this->assertResponseStatus(403);
         $this->assertEquals($rowCount, User::count());
     }
+
+    public function testChangeEmail()
+    {
+        $user = $this->createUser('guest');
+
+        // Ensure that the current email is considered confirmed.
+        $user->email_confirmed = date('Y-m-d H:i:s');
+        $user->save();
+
+        $token = $this->tokenFromUser($user);
+        $update = ['email' => 'foo@bar.com'];
+
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedUser = User::find($user->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foo@bar.com', $updatedUser->email);
+        $this->assertNull($updatedUser->email_confirmed);
+    }
 }

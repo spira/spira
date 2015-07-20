@@ -102,4 +102,35 @@ class UserRepository extends BaseRepository
 
         return $self;
     }
+
+
+    /**
+     * Update an entity by id.
+     *
+     * @param string $id
+     * @param array  $data
+     *
+     * @throws App\Exceptions\FatalException
+     *
+     * @return mixed
+     */
+    public function update($id, array $data)
+    {
+        // Make sure the data does not contain a different id for the entity.
+        $keyName = $this->model->getKeyName();
+        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
+            throw new FatalErrorException('Attempt to override entity ID value.');
+        }
+
+        $model = $this->find($id);
+
+        // Before updating the data, check if the email has changed.
+        // This shall probably be moved to the controller when the architecture
+        // update is applied.
+        if ($model->email != $data['email']) {
+            $model->email_confirmed = null;
+        }
+
+        return $model->update($data);
+    }
 }
