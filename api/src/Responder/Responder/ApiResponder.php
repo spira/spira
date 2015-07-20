@@ -66,10 +66,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function collection($items, array $parameters = [])
     {
-        $response = $this->getResponse();
-        $response->setStatusCode(200);
-        $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
-        return $response;
+        return $this->collectionWithStatusCode($items);
     }
 
     /**
@@ -82,13 +79,62 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function item($item, array $parameters = [])
     {
+        return $this->itemWithStatusCode($item);
+    }
+
+    /**
+     * Respond with a created response.
+     *
+     * @param array|Collection $items
+     * @param array $parameters
+     * @return Response
+     */
+    public function createdCollection($items, array $parameters = [])
+    {
+       return $this->collectionWithStatusCode($items,201);
+    }
+
+    /**
+     * Respond with a created response.
+     *
+     * @param object $item
+     * @param array $parameters
+     *
+     * @return Response
+     */
+    public function createdItem($item, array $parameters = [])
+    {
+        return $this->itemWithStatusCode($item,201);
+    }
+
+    /**
+     * @param $item
+     * @param int $code
+     * @return Response
+     */
+    protected function itemWithStatusCode($item, $code = 200)
+    {
         $response = $this->getResponse();
-        $response->setStatusCode(200);
+        $response->setStatusCode($code);
         $response->setContent($this->encode($this->getTransformer()->transformItem($item)));
         return $response;
     }
 
     /**
+     * @param $items
+     * @param int $code
+     * @return Response
+     */
+    protected function collectionWithStatusCode($items, $code = 200)
+    {
+        $response = $this->getResponse();
+        $response->setStatusCode($code);
+        $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
+        return $response;
+    }
+
+    /**
+     * TODO: Implement paginator() method.
      * Bind a paginator to a transformer and start building a response.
      *
      * @param Paginator $paginator
@@ -98,7 +144,6 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function paginator(Paginator $paginator, array $parameters = [])
     {
-        // TODO: Implement paginator() method.
     }
 
 
@@ -125,6 +170,8 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     protected function encode($data)
     {
-        return json_encode($data);
+        $debug = env('APP_DEBUG', false);
+        $prettyPrint = $debug?JSON_PRETTY_PRINT:0;
+        return json_encode($data,$prettyPrint);
     }
 }

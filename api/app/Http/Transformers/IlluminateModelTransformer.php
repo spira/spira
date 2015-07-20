@@ -10,12 +10,10 @@ namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Collection;
 use Spira\Repository\Model\BaseModel;
-use Spira\Responder\Contract\TransformerInterface;
 use Traversable;
 
-class IlluminateModelTransformer extends BaseTransformer implements TransformerInterface
+class IlluminateModelTransformer extends BaseTransformer
 {
     public static $badRoutes = [];
     /**
@@ -141,24 +139,4 @@ class IlluminateModelTransformer extends BaseTransformer implements TransformerI
         return $newArray;
     }
 
-    /**
-     * @param $collection
-     * @return mixed
-     */
-    public function transformCollection($collection)
-    {
-        if ($collection instanceof Collection) {
-            $collection = $collection->all();
-        }
-        return $this->getService()->collection(($collection instanceof Collection)?$collection->all():$collection, $this);
-    }
-
-    /**
-     * @param $item
-     * @return mixed
-     */
-    public function transformItem($item)
-    {
-        return $this->getService()->item($item, $this);
-    }
 }

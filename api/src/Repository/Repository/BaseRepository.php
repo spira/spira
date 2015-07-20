@@ -34,11 +34,15 @@ abstract class BaseRepository
     /**
      * Assign dependencies.
      *
-     * @param  ConnectionResolverInterface  $connectionResolver
+     * @param  ConnectionResolverInterface $connectionResolver
+     * @throws RepositoryException
      */
-    public function __construct(ConnectionResolverInterface $connectionResolver)
+    final public function __construct(ConnectionResolverInterface $connectionResolver)
     {
-        $this->model = $this->getModel();
+        $this->model = $this->model();
+        if (!$this->model instanceof BaseModel) {
+            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".BaseModel::class);
+        }
         $this->connectionResolver = $connectionResolver;
     }
 
@@ -140,15 +144,22 @@ abstract class BaseRepository
      * @return BaseModel
      * @throws RepositoryException
      */
-    public function getModel()
+    public function getNewModel()
     {
-        $model = $this->model();
+        $model = $this->model->newInstance();
 
-        if (!$model instanceof BaseModel) {
-            throw new RepositoryException("Class {$this->getModelClassName()} must be an instance of ".BaseModel::class);
-        }
+
 
         return $model;
+    }
+
+    /**
+     * Return pk name
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->model->getKey();
     }
 
 
@@ -163,7 +174,7 @@ abstract class BaseRepository
     /**
      * @return string
      */
-    private function getModelClassName()
+    protected function getModelClassName()
     {
         if (is_null($this->modelClassName)) {
             $this->modelClassName = get_class($this->model);

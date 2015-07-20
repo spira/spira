@@ -24,6 +24,7 @@ interface ApiResponderInterface extends ResponderInterface
      */
     public function created($location = null);
 
+
     /**
      * Respond with a no content response.
      *
@@ -51,6 +52,15 @@ interface ApiResponderInterface extends ResponderInterface
     public function collection($items, array $parameters = []);
 
     /**
+     * Respond with a created response.
+     *
+     * @param array|Collection $items
+     * @param array $parameters
+     * @return Response
+     */
+    public function createdCollection($items, array $parameters = []);
+
+    /**
      * Bind an item to a transformer and start building a response.
      *
      * @param object   $item
@@ -59,6 +69,18 @@ interface ApiResponderInterface extends ResponderInterface
      * @return Response
      */
     public function item($item, array $parameters = []);
+
+    /**
+     * Respond with a created response.
+     *
+     * @param object   $item
+     * @param array    $parameters
+     *
+     * @return Response
+     */
+    public function createdItem($item, array $parameters = []);
+
+
 
     /**
      * Bind a paginator to a transformer and start building a response.

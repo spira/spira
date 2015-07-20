@@ -48,11 +48,8 @@ class BaseModel extends Model
     public function __set($key, $value)
     {
         if (method_exists($this, $key)) {
-            try {
-                $value = $this->prepareValue($value);
-            } catch (\InvalidArgumentException $e) {
-                $value = false;
-            }
+
+            $value = $this->prepareValue($value);
 
             if ($value !== false) {
                 $models = $this->getRelationValue($key);
@@ -65,11 +62,13 @@ class BaseModel extends Model
         }
     }
 
+    
+
     /**
      * Prepare value for proper assignment
      * @param array|Collection|false|BaseModel $value
      * Can be array, empty array, null, false, Collection or Model
-     * @return null|Collection|BaseModel
+     * @return null|Collection|BaseModel|false  false on bad value
      */
     protected function prepareValue($value)
     {
@@ -86,10 +85,10 @@ class BaseModel extends Model
             if ($firstModel instanceof BaseModel) {
                 return $firstModel->newCollection($value);
             }
-            throw new \InvalidArgumentException('Array must consist of '.BaseModel::class.' instances');
+            return false;
         }
 
-        throw new \InvalidArgumentException('Value can not be assigned to relation');
+        return false;
     }
 
     /**
@@ -187,6 +186,7 @@ class BaseModel extends Model
     }
 
     /**
+     * @TODO add belongsTo, belongsToMany, ManytoMany relations
      * @param Relation $relation
      */
     protected function preserveKeys(Relation $relation)

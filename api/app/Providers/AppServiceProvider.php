@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Responder\Responder;
 use App\Http\Transformers\IlluminateModelTransformer;
 use App\Services\SpiraValidator;
 use Illuminate\Database\ConnectionResolverInterface;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Spira\Responder\Contract\TransformerInterface;
-use Spira\Responder\Responder\ApiResponder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('League\Fractal\Serializer\SerializerAbstract', 'League\Fractal\Serializer\ArraySerializer');
         $this->app->bind(ConnectionResolverInterface::class, 'db');
         $this->app->bind(TransformerInterface::class, IlluminateModelTransformer::class);
-        $this->app->bind(ApiResponderInterface::class, ApiResponder::class);
+        $this->app->bind(ApiResponderInterface::class, Responder::class);
 
         Validator::resolver(function ($translator, $data, $rules, $messages) {
             return new SpiraValidator($translator, $data, $rules, $messages);
