@@ -104,8 +104,8 @@ class EntityTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertTrue(is_array($object));
-        $this->assertStringStartsWith('http', $object[0]);
+        $this->assertTrue(is_object($object));
+        $this->assertStringStartsWith('http', $object->_self);
     }
 
     public function testPostOneInvalid()
@@ -139,8 +139,8 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(201);
         $this->assertEquals($rowCount + 1, $this->repository->count());
-        $this->assertTrue(is_array($object));
-        $this->assertStringStartsWith('http', $object[0]);
+        $this->assertTrue(is_object($object));
+        $this->assertStringStartsWith('http', $object->_self);
     }
 
     public function testPutOneCollidingIds()
@@ -199,7 +199,7 @@ class EntityTest extends TestCase
         $this->assertEquals($rowCount + 5, $this->repository->count());
         $this->assertTrue(is_array($object));
         $this->assertCount(5, $object);
-        $this->assertStringStartsWith('http', $object[0]);
+        $this->assertStringStartsWith('http', $object[0]->_self);
     }
 
     public function testPutManyNewInvalidId()
@@ -308,6 +308,14 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
+        $this->assertEquals($rowCount - 5, $this->repository->count());
+    }
+
+    public function testDeleteManyMissingId()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $rowCount = $this->repository->count();
+
         $this->assertEquals($rowCount - 5, $this->repository->count());
     }
 

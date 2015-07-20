@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\RouteHelper;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -37,7 +36,7 @@ abstract class ApiController
      */
     public function getAll()
     {
-        return $this->responder->collection($this->repository->all());
+        return $this->getResponder()->collection($this->getRepository()->all());
     }
 
     /**
@@ -48,7 +47,14 @@ abstract class ApiController
      */
     public function getOne($id)
     {
-        return $this->responder->item($this->repository->find($id));
+        try {
+            $model = $this->getRepository()->find($id);
+            return $this->getResponder()->item($model);
+        } catch (ModelNotFoundException $e) {
+            $this->getResponder()->errorNotFound();
+        }
+
+        return $this->getResponder()->noContent();
     }
 
     /**
@@ -59,14 +65,11 @@ abstract class ApiController
      */
     public function postOne(Request $request)
     {
-        $model = $this->repository->getModel();
+        $model = $this->getRepository()->getNewModel();
         $model->fill($request->all());
-        $this->repository->save($model);
-        $response = $this->responder->created();
-        if ($route = RouteHelper::getRoute($model)) {
-            $response->setContent(json_encode([$route]));
-        }
-        return $response;
+        $this->getRepository()->save($model);
+
+        return $this->getResponder()->createdItem($model);
     }
 
     /**
@@ -79,19 +82,14 @@ abstract class ApiController
     public function putOne($id, Request $request)
     {
         try {
-            $model = $this->repository->find($id);
+            $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
-            $model = $this->repository->getModel();
+            $model = $this->getRepository()->getNewModel();
         }
         $model->fill($request->all());
-        $this->repository->save($model);
+        $this->getRepository()->save($model);
 
-        $response = $this->responder->created();
-        if ($route = RouteHelper::getRoute($model)) {
-            $response->setContent(json_encode([$route]));
-        }
-
-        return $response;
+        return $this->getResponder()->createdItem($model);
     }
 
     /**
@@ -102,39 +100,26 @@ abstract class ApiController
      */
     public function putMany(Request $request)
     {
-        $data = $request->data;
-        $idName = $this->repository->getModel()->getKeyName();
-        $ids = [];
-        foreach ($data as $piece) {
-            $ids[] = $piece[$idName];
-        }
-        $models = $this->repository->findMany($ids);
+        $requestCollection = $request->data;
+
+        $models = $this->getRepository()->findMany($this->getIds($requestCollection));
 
         $putModels = [];
-        foreach ($data as $piece) {
-            $id = $piece[$idName];
+        foreach ($requestCollection as $requestEntity) {
+            $id = $requestEntity[$this->getRepository()->getKey()];
             if ($models->has($id)) {
                 $model = $models->get($id);
             } else {
-                $model = $this->repository->getModel();
+                $model = $this->getRepository()->getNewModel();
             }
             /** @var BaseModel $model */
-            $model->fill($piece);
+            $model->fill($requestEntity);
             $putModels[] = $model;
         }
 
-        $models = $this->repository->saveMany($putModels);
+        $models = $this->getRepository()->saveMany($putModels);
 
-        $response = $this->responder->created();
-        $routes = [];
-        foreach ($models as $model) {
-            if ($route = RouteHelper::getRoute($model)) {
-                $routes[] = $route;
-            }
-        }
-        $response->setContent(json_encode($routes));
-
-        return $response;
+        return $this->getResponder()->createdCollection($models);
     }
 
     /**
@@ -146,11 +131,11 @@ abstract class ApiController
      */
     public function patchOne($id, Request $request)
     {
-        $model = $this->repository->find($id);
+        $model = $this->getRepository()->find($id);
         $model->fill($request->all());
-        $this->repository->save($model);
+        $this->getRepository()->save($model);
 
-        return $this->responder->noContent();
+        return $this->getResponder()->noContent();
     }
 
     /**
@@ -161,28 +146,24 @@ abstract class ApiController
      */
     public function patchMany(Request $request)
     {
-        $data = $request->data;
-        $idName = $this->repository->getModel()->getKeyName();
-        $ids = [];
-        foreach ($data as $piece) {
-            $ids[] = $piece[$idName];
-        }
-        $models = $this->repository->findMany($ids);
+        $requestCollection = $request->data;
+        $ids = $this->getIds($requestCollection);
+        $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            throw new \InvalidArgumentException('Not all entities were found');
+            $this->getResponder()->errorNotFound();
         }
 
-        foreach ($data as $piece) {
-            $id = $piece[$idName];
+        foreach ($requestCollection as $requestEntity) {
+            $id = $requestEntity[$this->getRepository()->getKey()];
             $model = $models->get($id);
 
             /** @var BaseModel $model */
-            $model->fill($piece);
+            $model->fill($requestEntity);
         }
 
-        $this->repository->saveMany($models);
+        $this->getRepository()->saveMany($models);
 
-        return $this->responder->noContent();
+        return $this->getResponder()->noContent();
     }
 
     /**
@@ -193,10 +174,10 @@ abstract class ApiController
      */
     public function deleteOne($id)
     {
-        $model = $this->repository->find($id);
-        $this->repository->delete($model);
+        $model = $this->getRepository()->find($id);
+        $this->getRepository()->delete($model);
 
-        return $this->responder->noContent();
+        return $this->getResponder()->noContent();
     }
 
     /**
@@ -207,12 +188,48 @@ abstract class ApiController
      */
     public function deleteMany(Request $request)
     {
-        $ids =$request->data;
-        $models = $this->repository->findMany($ids);
+        $requestCollection =$request->data;
+        $ids = $this->getIds($requestCollection);
+        $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            throw new \InvalidArgumentException('Not all entities were found');
+            $this->getResponder()->errorNotFound();
         }
-        $this->repository->deleteMany($models);
-        return $this->responder->noContent();
+        $this->getRepository()->deleteMany($models);
+        return $this->getResponder()->noContent();
+    }
+
+    /**
+     * @return ApiResponder
+     */
+    public function getResponder()
+    {
+        return $this->responder;
+    }
+
+    /**
+     * @return BaseRepository
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    /**
+     * @param $entityCollection
+     * @param bool $exceptionOnEmpty
+     * @return array
+     */
+    protected function getIds($entityCollection, $exceptionOnEmpty = true)
+    {
+        $ids = [];
+        foreach ($entityCollection as $requestEntity) {
+            if (isset($requestEntity[$this->getRepository()->getKey()])){
+                $ids[] = $requestEntity[$this->getRepository()->getKey()];
+            }
+        }
+        if ($exceptionOnEmpty && empty($ids)){
+            $this->getResponder()->errorNotFound();
+        }
+        return $ids;
     }
 }

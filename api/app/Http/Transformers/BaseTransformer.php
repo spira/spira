@@ -2,8 +2,10 @@
 
 use App\Services\TransformerService;
 use League\Fractal\TransformerAbstract;
+use Spira\Repository\Collection\Collection;
+use Spira\Responder\Contract\TransformerInterface;
 
-abstract class BaseTransformer extends TransformerAbstract
+abstract class BaseTransformer extends TransformerAbstract  implements TransformerInterface
 {
     /**
      * @var TransformerService
@@ -27,5 +29,27 @@ abstract class BaseTransformer extends TransformerAbstract
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * @param $collection
+     * @return mixed
+     */
+    public function transformCollection($collection)
+    {
+        if ($collection instanceof Collection){
+            $collection = $collection->all();
+        }
+
+        return $this->getService()->collection($collection, $this);
+    }
+
+    /**
+     * @param $item
+     * @return mixed
+     */
+    public function transformItem($item)
+    {
+        return $this->getService()->item($item, $this);
     }
 }

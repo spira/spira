@@ -47,7 +47,7 @@ class TransformerService
     /**
      * Create transformed data from a collection.
      *
-     * @param object                             $data
+     * @param object|array                       $data
      * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
