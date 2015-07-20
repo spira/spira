@@ -67,7 +67,15 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         return $this->hasOne('App\Models\UserCredential');
     }
 
-
+    /**
+     * Accessor to get full name attribute for the user.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
+    }
 
     /**
      * Get the password for the user.

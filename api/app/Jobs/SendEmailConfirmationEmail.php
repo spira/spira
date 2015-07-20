@@ -35,8 +35,8 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     {
         $mailer->send('emails.welcome', ['user' => $this->user], function ($m) {
 
-            $m->to($this->user->email, $this->user->first_name.' '.$this->user->last_name)->subject('Confirm Your Email');
-
+            $m->to($this->user->email, $this->user->full_name)
+                ->subject('Confirm Your Email');
         });
     }
 }
