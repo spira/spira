@@ -2,12 +2,15 @@
 
 namespace App\Repositories;
 
-use Cache;
+use App\Jobs\SendEmailConfirmationEmail;
+use Laravel\Lumen\Routing\DispatchesJobs;
 use Illuminate\Container\Container as App;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 class UserRepository extends BaseRepository
 {
+    use DispatchesJobs;
+
     /**
      * Login token time to live in minutes.
      *
@@ -103,7 +106,6 @@ class UserRepository extends BaseRepository
         return $self;
     }
 
-
     /**
      * Update an entity by id.
      *
@@ -128,7 +130,9 @@ class UserRepository extends BaseRepository
         // This shall probably be moved to the controller when the architecture
         // update is applied.
         if ($model->email != $data['email']) {
-            $model->email_confirmed = null;
+
+            $this->dispatch(new SendEmailConfirmationEmail($model));
+            $data['email_confirmed'] = null;
         }
 
         return $model->update($data);

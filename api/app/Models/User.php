@@ -40,6 +40,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'first_name',
         'last_name',
         'email',
+        'email_confirmed',
         'phone',
         'mobile',
         'timezone_identifier',
