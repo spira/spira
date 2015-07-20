@@ -157,9 +157,9 @@ abstract class BaseRepository
      * Return pk name
      * @return mixed
      */
-    public function getKey()
+    public function getKeyName()
     {
-        return $this->model->getKey();
+        return $this->model->getKeyName();
     }
 
 

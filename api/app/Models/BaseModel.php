@@ -22,12 +22,14 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
      */
     protected $errors;
 
+    protected $validationRules = [];
+
     /**
      * @return array
      */
     public function getValidationRules()
     {
-        return [];
+        return $this->validationRules;
     }
 
     protected function getValidator()

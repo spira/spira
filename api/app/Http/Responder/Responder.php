@@ -23,7 +23,7 @@ class Responder extends ApiResponder
     {
         foreach ($items as $item)
         {
-             $item->setVisible([null]);
+             $item->setVisible(['']);
         }
 
         return parent::createdCollection($items, $parameters);
@@ -36,7 +36,7 @@ class Responder extends ApiResponder
      */
     public function createdItem($item, array $parameters = [])
     {
-        $item->setVisible([null]);
+        $item->setVisible(['']);
         return parent::createdItem($item, $parameters);
     }
 

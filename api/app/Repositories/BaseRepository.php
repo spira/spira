@@ -24,6 +24,7 @@ abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepositor
         $this->getConnection()->beginTransaction();
 
         try {
+            $error = false;
             $errors = [];
             /** @var BaseModel $models */
             foreach ($models as $model) {
@@ -31,11 +32,13 @@ abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepositor
                     if (!$this->save($model)) {
                         throw new RepositoryException('Massive assignment failed as model with id '.$model->getQueueableId().' couldn\'t be saved');
                     }
+                    $errors[] = null;
                 } catch (ValidationException $e) {
+                    $error = true;
                     $errors[] = $e->getErrors();
                 }
             }
-            if (!empty($errors)) {
+            if ($error) {
                 throw new ValidationExceptionCollection($errors);
             }
         } catch (\Exception $e) {

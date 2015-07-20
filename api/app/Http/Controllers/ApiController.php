@@ -8,14 +8,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ValidationException;
+use App\Exceptions\ValidationExceptionCollection;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Laravel\Lumen\Routing\Controller;
 use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Responder\ApiResponder;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class ApiController
+abstract class ApiController extends Controller
 {
     /**
      * Model Repository.
@@ -47,6 +50,7 @@ abstract class ApiController
      */
     public function getOne($id)
     {
+        $this->validateId($id);
         try {
             $model = $this->getRepository()->find($id);
             return $this->getResponder()->item($model);
@@ -81,6 +85,7 @@ abstract class ApiController
      */
     public function putOne($id, Request $request)
     {
+        $this->validateId($id);
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -102,12 +107,16 @@ abstract class ApiController
     {
         $requestCollection = $request->data;
 
-        $models = $this->getRepository()->findMany($this->getIds($requestCollection));
+        $ids = $this->getIds($requestCollection, false);
+        $models = [];
+        if (!empty($ids)){
+            $models = $this->getRepository()->findMany($ids);
+        }
 
         $putModels = [];
         foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$this->getRepository()->getKey()];
-            if ($models->has($id)) {
+            $id = isset($requestEntity[$this->getKeyName()])?$requestEntity[$this->getKeyName()]:null;
+            if ($id && $models->has($id)) {
                 $model = $models->get($id);
             } else {
                 $model = $this->getRepository()->getNewModel();
@@ -131,6 +140,7 @@ abstract class ApiController
      */
     public function patchOne($id, Request $request)
     {
+        $this->validateId($id);
         $model = $this->getRepository()->find($id);
         $model->fill($request->all());
         $this->getRepository()->save($model);
@@ -154,7 +164,7 @@ abstract class ApiController
         }
 
         foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$this->getRepository()->getKey()];
+            $id = $requestEntity[$this->getKeyName()];
             $model = $models->get($id);
 
             /** @var BaseModel $model */
@@ -174,6 +184,7 @@ abstract class ApiController
      */
     public function deleteOne($id)
     {
+        $this->validateId($id);
         $model = $this->getRepository()->find($id);
         $this->getRepository()->delete($model);
 
@@ -188,10 +199,11 @@ abstract class ApiController
      */
     public function deleteMany(Request $request)
     {
-        $requestCollection =$request->data;
+        $requestCollection = $request->data;
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
-        if ($models->count() !== count($ids)) {
+
+        if ($models->count() !== count($requestCollection)) {
             $this->getResponder()->errorNotFound();
         }
         $this->getRepository()->deleteMany($models);
@@ -215,21 +227,54 @@ abstract class ApiController
     }
 
     /**
-     * @param $entityCollection
-     * @param bool $exceptionOnEmpty
-     * @return array
+     * @return mixed
      */
-    protected function getIds($entityCollection, $exceptionOnEmpty = true)
+    public function getKeyName()
+    {
+        return $this->getRepository()->getKeyName();
+    }
+
+    /**
+     * @param $entityCollection
+     * @return array
+     * @throws ValidationExceptionCollection
+     */
+    protected function getIds($entityCollection)
     {
         $ids = [];
+        $errors = [];
+        $error = false;
         foreach ($entityCollection as $requestEntity) {
-            if (isset($requestEntity[$this->getRepository()->getKey()])){
-                $ids[] = $requestEntity[$this->getRepository()->getKey()];
+            if (isset($requestEntity[$this->getKeyName()]) && $requestEntity[$this->getKeyName()]){
+                try {
+                    $id = $requestEntity[$this->getKeyName()];
+                    $this->validateId($id);
+                    $ids[] = $id;
+                    $errors[] = null;
+                } catch (ValidationException $e) {
+                    $error = true;
+                    $errors[] = $e->getErrors();
+                }
+            }else{
+                $errors[] = null;
             }
         }
-        if ($exceptionOnEmpty && empty($ids)){
-            $this->getResponder()->errorNotFound();
+        if ($error) {
+            throw new ValidationExceptionCollection($errors);
         }
+
         return $ids;
+    }
+
+    /**
+     * @param $id
+     * @throw ValidationException
+     */
+    protected function validateId($id)
+    {
+        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$id],[$this->getKeyName()=>'uuid']);
+        if ($validation->fails()){
+            throw new ValidationException($validation->getMessageBag());
+        }
     }
 }

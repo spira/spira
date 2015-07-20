@@ -16,11 +16,4 @@ class SecondTestEntity extends BaseModel
 
     public $timestamps = false;
 
-    /**
-     * @return array
-     */
-    public function getValidationRules()
-    {
-        return [];
-    }
 }

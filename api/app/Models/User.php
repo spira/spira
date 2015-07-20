@@ -96,11 +96,4 @@ class User extends BaseModel implements AuthenticatableContract
         // TODO: Implement getRememberTokenName() method.
     }
 
-    /**
-     * @return array
-     */
-    public function getValidationRules()
-    {
-        return [];
-    }
 }

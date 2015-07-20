@@ -43,7 +43,11 @@ class ValidationExceptionCollection extends HttpException implements Transformab
     {
         $responses = [];
         foreach ($this->exceptions as $exception) {
-            $responses[] = $exception->getResponse();
+            if (!is_null($exception)){
+                $responses[] = $exception->getResponse();
+            }else{
+                $responses[] = null;
+            }
         }
 
         return $responses;
