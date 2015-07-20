@@ -22,7 +22,11 @@ queue:
 queuerunner:
   image: spira/docker-artisan-queue-runner
   links:
-    - lumen
+    - mailcatcher:mailcatcher
+    - queue:queue
+    - cache:cache
+    - database:database
+    - web:web
   volumes_from:
     - data
 
