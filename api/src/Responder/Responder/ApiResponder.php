@@ -91,7 +91,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function createdCollection($items, array $parameters = [])
     {
-       return $this->collectionWithStatusCode($items,201);
+        return $this->collectionWithStatusCode($items, 201);
     }
 
     /**
@@ -104,7 +104,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function createdItem($item, array $parameters = [])
     {
-        return $this->itemWithStatusCode($item,201);
+        return $this->itemWithStatusCode($item, 201);
     }
 
     /**
@@ -172,6 +172,6 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $debug = env('APP_DEBUG', false);
         $prettyPrint = $debug?JSON_PRETTY_PRINT:0;
-        return json_encode($data,$prettyPrint);
+        return json_encode($data, $prettyPrint);
     }
 }

@@ -138,5 +138,4 @@ class IlluminateModelTransformer extends BaseTransformer
 
         return $newArray;
     }
-
 }

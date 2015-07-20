@@ -95,5 +95,4 @@ class User extends BaseModel implements AuthenticatableContract
     {
         // TODO: Implement getRememberTokenName() method.
     }
-
 }

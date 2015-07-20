@@ -8,7 +8,6 @@
 
 namespace App\Http\Responder;
 
-
 use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Responder\ApiResponder;
 
@@ -21,9 +20,8 @@ class Responder extends ApiResponder
      */
     public function createdCollection($items, array $parameters = [])
     {
-        foreach ($items as $item)
-        {
-             $item->setVisible(['']);
+        foreach ($items as $item) {
+            $item->setVisible(['']);
         }
 
         return parent::createdCollection($items, $parameters);
@@ -39,5 +37,4 @@ class Responder extends ApiResponder
         $item->setVisible(['']);
         return parent::createdItem($item, $parameters);
     }
-
 }

@@ -15,5 +15,4 @@ class SecondTestEntity extends BaseModel
     protected $primaryKey = 'entity_id';
 
     public $timestamps = false;
-
 }

@@ -109,7 +109,7 @@ abstract class ApiController extends Controller
 
         $ids = $this->getIds($requestCollection, false);
         $models = [];
-        if (!empty($ids)){
+        if (!empty($ids)) {
             $models = $this->getRepository()->findMany($ids);
         }
 
@@ -245,7 +245,7 @@ abstract class ApiController extends Controller
         $errors = [];
         $error = false;
         foreach ($entityCollection as $requestEntity) {
-            if (isset($requestEntity[$this->getKeyName()]) && $requestEntity[$this->getKeyName()]){
+            if (isset($requestEntity[$this->getKeyName()]) && $requestEntity[$this->getKeyName()]) {
                 try {
                     $id = $requestEntity[$this->getKeyName()];
                     $this->validateId($id);
@@ -255,7 +255,7 @@ abstract class ApiController extends Controller
                     $error = true;
                     $errors[] = $e->getErrors();
                 }
-            }else{
+            } else {
                 $errors[] = null;
             }
         }
@@ -272,8 +272,8 @@ abstract class ApiController extends Controller
      */
     protected function validateId($id)
     {
-        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$id],[$this->getKeyName()=>'uuid']);
-        if ($validation->fails()){
+        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$id], [$this->getKeyName()=>'uuid']);
+        if ($validation->fails()) {
             throw new ValidationException($validation->getMessageBag());
         }
     }

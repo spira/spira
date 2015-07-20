@@ -37,7 +37,7 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
      */
     public function transformCollection($collection)
     {
-        if ($collection instanceof Collection){
+        if ($collection instanceof Collection) {
             $collection = $collection->all();
         }
 

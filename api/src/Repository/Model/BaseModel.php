@@ -48,7 +48,6 @@ class BaseModel extends Model
     public function __set($key, $value)
     {
         if (method_exists($this, $key)) {
-
             $value = $this->prepareValue($value);
 
             if ($value !== false) {
