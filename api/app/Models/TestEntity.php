@@ -43,29 +43,23 @@ class TestEntity extends BaseModel
         'updated_at' => 'dateTime',
     ];
 
+    protected $validationRules = [
+        'entity_id' => 'uuid',
+        'varchar' => 'required|string',
+        'hash'    => 'required|string',
+        'integer' => 'required|integer',
+        'decimal' => 'required|float',
+        'boolean' => 'required|boolean',
+        'text'    => 'required|string',
+        'date'    => 'required|date',
+        'multi_word_column_title' => 'required|boolean',
+        'hidden'  => 'required|boolean'
+    ];
+
     public function addSecondTest(SecondTestEntity $entity)
     {
         $this->testMany->add($entity);
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getValidationRules()
-    {
-        return [
-            'entity_id' => 'uuid',
-            'varchar' => 'required|string',
-            'hash'    => 'required|string',
-            'integer' => 'required|integer',
-            'decimal' => 'required|float',
-            'boolean' => 'required|boolean',
-            'text'    => 'required|string',
-            'date'    => 'required|date',
-            'multi_word_column_title' => 'required|boolean',
-            'hidden'  => 'required|boolean'
-        ];
     }
 
     public function testOne()

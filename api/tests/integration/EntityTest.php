@@ -300,11 +300,10 @@ class EntityTest extends TestCase
 
     public function testDeleteMany()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = factory(App\Models\TestEntity::class, 5)->create()->all();
         $rowCount = $this->repository->count();
-        $ids = $entities->lists('entity_id')->toArray();
 
-        $this->delete('/test/entities', ['data' => $ids]);
+        $this->delete('/test/entities', ['data' => $entities]);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -315,8 +314,11 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
         $rowCount = $this->repository->count();
+        $entities[0]->entity_id = '';
+        $this->delete('/test/entities', ['data' => $entities]);
 
-        $this->assertEquals($rowCount - 5, $this->repository->count());
+        $this->assertResponseStatus(404);
+        $this->assertEquals($rowCount, $this->repository->count());
     }
 
     public function testDeleteManyInvalidId()
