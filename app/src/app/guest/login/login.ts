@@ -26,10 +26,11 @@ module app.guest.login {
 
     class LoginInit {
 
-        static $inject = ['ngJwtAuthService', '$mdDialog'];
+        static $inject = ['ngJwtAuthService', '$mdDialog', '$timeout'];
         constructor(
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $mdDialog:ng.material.IDialogService
+            private $mdDialog:ng.material.IDialogService,
+            private $timeout:ng.ITimeoutService
         ) {
 
             ngJwtAuthService
@@ -47,9 +48,8 @@ module app.guest.login {
                         }
                     };
 
-                    return $mdDialog.show(dialogConfig)
-                        .catch(() => deferredCredentials.reject()) //if the dialog closes without resolving, reject the credentials request
-                    ;
+                    return $timeout(_.noop) //first do an empty timeout to allow the controllers to init if login prompt is fired from within a .run() phase
+                        .then(() => $mdDialog.show(dialogConfig));
 
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
