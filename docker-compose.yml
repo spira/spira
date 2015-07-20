@@ -7,15 +7,13 @@ data:
     - DATA_ROOT=/data #default DATA_ROOT environment value for the other containers to inherit from
   privileged: true
 
-db:
-  image: postgres
+database:
+  image: postgres:9.4
   environment:
     - POSTGRES_PASSWORD=spira
     - POSTGRES_USER=spira
-  ports:
-    - "5432:5432"
 
-redis:
+cache:
   image: redis
 
 queue:
@@ -39,8 +37,8 @@ php:
   volumes_from:
     - data
   links:
-    - db:db
-    - redis:redis
+    - database:database
+    - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
   environment:
@@ -65,6 +63,7 @@ web:
 
 devtools:
   image: spira/docker-dev-tools:latest
+  working_dir: /data
 #  image: spira/docker-dev-tools:phantomjs-1.9.8
   volumes_from:
     - data
@@ -72,8 +71,8 @@ devtools:
   links:
     - web:nginx
     - mailcatcher:mailcatcher
-    - db:db
-    - redis:redis
+    - database:database
+    - cache:cache
     - queue:queue
 
 lumen:
@@ -84,10 +83,11 @@ lumen:
   links:
     - mailcatcher:mailcatcher
     - queue:queue
-    - redis:redis
-    - db:db
+    - cache:cache
+    - database:database
     - web:web
   environment:
     - DATA_ROOT=/data
     - API_PATH=/api
     - API_DOTENV=.local.env
+
