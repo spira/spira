@@ -116,7 +116,7 @@ class UserTest extends TestCase
     {
         $user = factory(App\Models\User::class)->create();
         $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
-        $user = array_except($transformer->transform($user), ['_self', 'userType']);
+        $user = array_except($transformer->transform($user), ['_self', 'userType', 'emailConfirmed']);
         $user['#userCredential'] = ['password' => 'password'];
 
         $this->put('/users/'.$user['userId'], $user);
@@ -238,5 +238,45 @@ class UserTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals('foo@bar.com', $updatedUser->email);
         $this->assertNull($updatedUser->email_confirmed);
+    }
+
+    public function testUpdateEmailConfirmed()
+    {
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+
+        $repo = $this->app->make('App\Repositories\UserRepository');
+        $emailToken = $repo->makeConfirmationToken($user->email);
+
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+
+        $updatedUser = User::find($user->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($datetime, $updatedUser->email_confirmed);
+    }
+
+    public function testUpdateEmailConfirmedInvalidToken()
+    {
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+
+        $repo = $this->app->make('App\Repositories\UserRepository');
+        $emailToken = 'foobar';
+
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+
+        $this->assertResponseStatus(422);
     }
 }

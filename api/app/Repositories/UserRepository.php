@@ -151,7 +151,7 @@ class UserRepository extends BaseRepository
         // Before updating the data, check if the email has changed.
         // This shall probably be moved to the controller when the architecture
         // update is applied.
-        if ($model->email != $data['email']) {
+        if (isset($data['email']) and $model->email != $data['email']) {
             $token = $this->makeConfirmationToken($data['email']);
             $this->dispatch(new SendEmailConfirmationEmail($model, $data['email'], $token));
             $data['email_confirmed'] = null;

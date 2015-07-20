@@ -31,7 +31,9 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     /**
      * Create a new job instance.
      *
-     * @param  User  $user
+     * @param  User    $user
+     * @param  string  $email
+     * @param  string  $token
      * @return void
      */
     public function __construct(User $user, $email, $token)

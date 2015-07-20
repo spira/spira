@@ -102,6 +102,7 @@ abstract class Validator
             'float' => 'The :attribute must be a float.',
             'uuid'  => 'The :attribute must be an UUID string.',
             'country'  => 'The :attribute must be a valid country code.',
+            'email_confirmation_token'  => 'The :attribute needs a valid header token.',
         ];
     }
 
