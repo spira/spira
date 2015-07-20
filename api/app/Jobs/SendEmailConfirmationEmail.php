@@ -15,14 +15,30 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     protected $user;
 
     /**
+     * Email address to confirm.
+     *
+     * @var string
+     */
+    protected $email;
+
+    /**
+     * Token for confirmation.
+     *
+     * @var string
+     */
+    protected $token;
+
+    /**
      * Create a new job instance.
      *
      * @param  User  $user
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $email, $token)
     {
         $this->user = $user;
+        $this->email = $email;
+        $this->token = $token;
     }
 
     /**
@@ -33,7 +49,11 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
      */
     public function handle(Mailer $mailer)
     {
-        $mailer->send('emails.welcome', ['user' => $this->user], function ($m) {
+        $mailer->send('emails.emailConfirmation', [
+            'user' => $this->user,
+            'email' => $this->email,
+            'token' => $this->token
+        ], function ($m) {
 
             $m->to($this->user->email, $this->user->full_name)
                 ->subject('Confirm Your Email');

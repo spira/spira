@@ -19,6 +19,13 @@ class UserRepository extends BaseRepository
     protected $login_token_ttl = 1440;
 
     /**
+     * Confirmation token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $confirmation_token_ttl = 1440;
+
+    /**
      * Cache repository.
      *
      * @var CacheRepository
@@ -84,6 +91,21 @@ class UserRepository extends BaseRepository
     }
 
     /**
+     * Make an email confirmation token for a user.
+     *
+     * @param string $email
+     *
+     * @return string
+     */
+    public function makeConfirmationToken($email)
+    {
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        $this->cache->put('email_confirmation_'.$token, $email, $this->confirmation_token_ttl);
+
+        return $token;
+    }
+
+    /**
      * Create or replace an entity by id.
      *
      * @param  string  $id
@@ -130,8 +152,8 @@ class UserRepository extends BaseRepository
         // This shall probably be moved to the controller when the architecture
         // update is applied.
         if ($model->email != $data['email']) {
-
-            $this->dispatch(new SendEmailConfirmationEmail($model));
+            $token = $this->makeConfirmationToken($data['email']);
+            $this->dispatch(new SendEmailConfirmationEmail($model, $data['email'], $token));
             $data['email_confirmed'] = null;
         }
 
