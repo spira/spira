@@ -17,6 +17,7 @@
     <filter>
         <blacklist>
             <directory>./vendor</directory>
+            <directory>./storage</directory>
         </blacklist>
     </filter>
     <php>
