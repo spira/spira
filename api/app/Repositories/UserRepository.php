@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use Cache;
-use Illuminate\Container\Container as App;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class UserRepository extends BaseRepository
 {
@@ -21,7 +21,7 @@ class UserRepository extends BaseRepository
      */
     protected function model()
     {
-        return 'App\Models\User';
+        return new User();
     }
 
     /**
