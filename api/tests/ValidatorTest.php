@@ -75,5 +75,4 @@ class ValidatorTest extends TestCase
 
     //     $this->assertStringEndsWith('valid country code.', $this->validator->errors()->get('country')[0]);
     // }
-
 }
