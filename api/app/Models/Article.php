@@ -5,7 +5,7 @@ use Spira\Repository\Collection\Collection;
 /**
  *
  * @property ArticlePermalink $permalinkRelation
- * @property ArticlePermalink[]|Collection $previousPermalinksRelation
+ * @property ArticlePermalink[]|Collection $previousPermalinksRelations
  *
  * Class Article
  * @package App\Models
@@ -56,7 +56,7 @@ class Article extends BaseModel
         $permalinkObj->current = true;
         $this->permalinkRelation = new ArticlePermalink();
         $currentLink->current = false;
-        $this->previousPermalinksRelation->add($currentLink);
+        $this->previousPermalinksRelations->add($currentLink);
     }
 
     public function getPermalink()
@@ -75,7 +75,7 @@ class Article extends BaseModel
         return $relation;
     }
 
-    public function previousPermalinksRelation()
+    public function previousPermalinksRelations()
     {
         $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
         $relation->getQuery()->where('current','=','f');
