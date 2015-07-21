@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use App\Http\Transformers\BaseTransformer;
 use App\Http\Transformers\IlluminateModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
@@ -16,6 +17,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $transformer;
     private $makeVisible;
     private $showOnly;
+    private $hide;
     private $entityType;
     private $appends = [];
 
@@ -52,7 +54,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      *
      * @return $this
      */
-    public function customize($customizations)
+    public function customize(array $customizations)
     {
         $this->customizations = $customizations;
 
@@ -88,7 +90,20 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Add properties to the returned entity.
+     * Hide attributes the factory instance returns.
+     *
+     * @param  array  $hide
+     * @return $this
+     */
+    public function hide(array $hide)
+    {
+        $this->hide = $hide;
+
+        return $this;
+    }
+
+    /**
+     * Add properties to the returned entity
      *
      * @param $key
      * @param $value
@@ -105,7 +120,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Make the model factory use a custom transformer
      * eg
-     * $factory->get(\App\Models\UserCredentials::class)
+     * $factory->get(\App\Models\UserCredential::class)
      *      ->setTransformer(\App\Http\Transformers\UserTransformer::class)
      *      ->toArray();.
      *
@@ -130,9 +145,19 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             ->times($this->entityCount)
             ->make($this->customizations);
 
-        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
+        $this->setEntityType();
 
         return $entity;
+    }
+
+    /**
+     * Set if the entity is a single item or a collection.
+     *
+     * @return void
+     */
+    protected function setEntityType()
+    {
+        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
     }
 
     /**
@@ -157,6 +182,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $hidden = $entity->getHidden();
 
             $newHidden = array_diff($hidden, $this->makeVisible);
+
+            $entity->setHidden($newHidden);
+        }
+
+        if ($this->hide) {
+            $hidden = $entity->getHidden();
+
+            $newHidden = array_merge($hidden, $this->hide);
 
             $entity->setHidden($newHidden);
         }
@@ -201,7 +234,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function transformed()
     {
-        $entity = $this->modified();
+        if ($this->factoryInstance instanceof Collection) {
+            $entity = $this->factoryInstance->slice(0, $this->entityCount);
+            $this->setEntityType();
+        } else {
+            $entity = $this->modified();
+        }
 
         if (!$this->transformer) {
             $this->transformer = new IlluminateModelTransformer($this->transformerService);
