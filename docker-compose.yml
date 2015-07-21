@@ -6,6 +6,11 @@ data:
   environment:
     - DATA_ROOT=/data #default DATA_ROOT environment value for the other containers to inherit from
   privileged: true
+  
+logviewer:
+  image: spira/docker-clarity
+  volumes_from:
+    - data
 
 database:
   image: postgres:9.4
@@ -32,8 +37,6 @@ queuerunner:
 
 mailcatcher:
   image: schickling/mailcatcher
-  ports:
-    - "1080:1080"
 
 php:  
   image: spira/docker-hhvm
@@ -56,6 +59,8 @@ web:
     - data
   links:
     - php:php
+    - logviewer:logviewer
+    - mailcatcher:mailcatcher
   ports:
     - "80:80"
     - "8080:8080"
