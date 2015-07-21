@@ -1,22 +1,20 @@
-<?php namespace App\Models;
+<?php
 
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
 use Request;
 use Tymon\JWTAuth\JWTAuth;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class AuthToken
- * @package App\Models
- *
- * Note this model does not have an associated database table as it is an abstract
- * data model with generated token data.
+ * Class AuthToken.
  */
 class AuthToken extends Model
 {
     /**
-     * JWT Auth
+     * JWT Auth.
      *
-     * @var Tymon\JWTAuth\JWTAuth
+     * @var JWTAuth
      */
     protected $jwtAuth;
 
@@ -55,7 +53,8 @@ class AuthToken extends Model
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array  $attributes
+     * @param array $attributes
+     *
      * @return void
      */
     public function __construct(array $attributes = [])
@@ -70,7 +69,8 @@ class AuthToken extends Model
     /**
      * Convert the payload claims to model attributes.
      *
-     * @param  string $token
+     * @param string $token
+     *
      * @return array
      */
     protected function claimsToAttributes($token)
@@ -104,7 +104,8 @@ class AuthToken extends Model
     /**
      * Get the user attribute.
      *
-     * @param  mixed  $attr
+     * @param mixed $attr
+     *
      * @return array
      */
     public function getUserAttribute($attr)

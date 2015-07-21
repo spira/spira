@@ -1,0 +1,37 @@
+<h2>Sandbox</h2>
+<h3>Page for testing third party modules</h3>
+
+
+
+<md-card>
+    <h3>Angular Rest Adapter</h3>
+    <md-card-content>
+
+        <form class="form-horizontal" name="apiForm" role="form" novalidate="novalidate">
+
+            <div class="form-group">
+                <label for="inputEndpoint" class="col-sm-2 control-label">Enter API endpoint</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <input ng-model="apiEndpoint" type="text" class="form-control" id="inputEndpoint" name="inputEndpoint" placeholder="/example/users/1" required>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" ng-click="callApi(apiEndpoint)" type="button" ng-disabled="apiForm.inputEndpoint.$invalid">Go!</button>
+                            </span>
+                    </div><!-- /input-group -->
+                </div>
+            </div>
+
+        </form>
+
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">API Result</h3>
+            </div>
+            <div class="panel-body">
+                <pre>{{apiResult|json}}</pre>
+            </div>
+        </div>
+
+    </md-card-content>
+</md-card>
+

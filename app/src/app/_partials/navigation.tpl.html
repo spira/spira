@@ -5,4 +5,19 @@
             {{state.data.title}}
         </md-button>
     </md-list-item>
+
+    <md-list-item>
+        <pre>{{authService.user|json}}</pre>
+    </md-list-item>
+
+    <md-list-item>
+        <md-button ng-if="!authService.loggedIn" ng-click="promptLogin()">
+            <md-icon>assignment_ind</md-icon> Login
+        </md-button>
+
+        <md-button ng-if="authService.loggedIn" ng-click="logout()">
+            <md-icon>exit_to_app</md-icon> Logout
+        </md-button>
+    </md-list-item>
+
 </md-list>

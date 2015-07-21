@@ -1,50 +1,65 @@
 <?php namespace App\Models;
 
+use App\Exceptions\ValidationException;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Bosnadev\Database\Traits\UuidTrait;
+use Illuminate\Support\MessageBag;
+use Illuminate\Validation\Factory as Validator;
 
-abstract class BaseModel extends Model
+abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 {
     use UuidTrait;
 
     public $incrementing = false;
 
     /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
+     * @var Validator
      */
-    public $appends = ['self'];
+    protected $validator;
 
     /**
-     * Get the access route for the entity.
-     *
-     * @return string
+     * @var MessageBag|null
      */
-    abstract public function entityRoute();
+    protected $errors;
+
+    protected $validationRules = [];
 
     /**
-     * Get the user's first name.
-     *
-     * @param  string  $value
-     * @return string
+     * @return array
      */
-    public function getSelfAttribute()
+    public function getValidationRules()
     {
-        return url($this->entityRoute().'/'.$this->{$this->primaryKey});
+        return $this->validationRules;
+    }
+
+    protected function getValidator()
+    {
+        if (is_null($this->validator)) {
+            $this->validator = \App::make('validator');
+        }
+
+        return $this->validator;
     }
 
     public static function getTableName()
     {
-        return with(new static)->getTable();
+        return with(new static())->getTable();
+    }
+
+    /**
+     * @return MessageBag|null
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function castAttribute($key, $value)
@@ -52,19 +67,40 @@ abstract class BaseModel extends Model
         // Run the parent cast rules in the parent method
         $value = parent::castAttribute($key, $value);
 
-        if (is_null($value)) return $value;
+        if (is_null($value)) {
+            return $value;
+        }
 
-        switch ($this->getCastType($key))
-        {
+        switch ($this->getCastType($key)) {
             case 'date':
-                return \Carbon\Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
             case 'datetime':
-                if ($value instanceof \DateTime){
-                    return \Carbon\Carbon::createFromTimestamp($value->getTimestamp())->toIso8601String();
-                }
-                return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
             default:
                 return $value;
         }
+    }
+
+    /**
+     * Listen for save event
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function (BaseModel $model) {
+            return $model->validate();
+        });
+    }
+
+    public function validate()
+    {
+        $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
+        $this->errors = [];
+        if ($validation->fails()) {
+            $this->errors = $validation->messages();
+            throw new ValidationException($this->getErrors());
+        }
+
+        return true;
     }
 }

@@ -12,30 +12,30 @@
 */
 
 use Illuminate\Http\Request;
+use Laravel\Lumen\Application;
 
-$app->get('/', function() use ($app) {
+$app->get('/', function () use ($app) {
 
     return view('documentation.layouts.master', [
-        'apibUrl' => '/documentation.apib'
+        'apibUrl' => '/documentation.apib',
     ]);
 
 });
 
-$app->get('/documentation.apib', function(Request $request) use ($app) {
+$app->get('/documentation.apib', function (Request $request) use ($app) {
 
     $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
     return view('documentation.apiary', [
         'apiUrl' => $request->root(),
-        'faker' => Faker\Factory::create(),
+        'faker'  => Faker\Factory::create(),
     ]);
 
 });
 
-$app->group(['prefix' => 'users'], function($app){
+$app->group(['prefix' => 'users'], function (Application $app) {
 
     $app->get('/', 'App\Http\Controllers\UserController@getAll');
-
     $app->get('/{id}', 'App\Http\Controllers\UserController@getOne');
 
 });
@@ -52,7 +52,8 @@ $app->group(['prefix' => 'test'], function($app){
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
-    $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
+    $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
+    $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
     $app->put('/entities', 'App\Http\Controllers\TestController@putMany');
@@ -62,8 +63,7 @@ $app->group(['prefix' => 'test'], function($app){
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
 
-$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app)
-{
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');
     $app->get('jwt/token', 'AuthController@token');

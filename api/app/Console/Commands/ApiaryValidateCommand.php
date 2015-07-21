@@ -1,9 +1,11 @@
-<?php namespace App\Console\Commands;
+<?php
+
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
 
-class ApiaryValidateCommand extends Command {
+class ApiaryValidateCommand extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -18,10 +20,8 @@ class ApiaryValidateCommand extends Command {
      */
     protected $description = 'Validate Apiary Documentation';
 
-
     /**
      * Create a new command instance.
-     *
      */
     public function __construct()
     {
@@ -35,7 +35,6 @@ class ApiaryValidateCommand extends Command {
      */
     public function handle()
     {
-
         $webserverIp = getenv('WEBSERVER_HOST');
         $webserverPort = getenv('WEBSERVER_PORT');
 
@@ -51,5 +50,4 @@ class ApiaryValidateCommand extends Command {
 
         return $exitCode;
     }
-
 }

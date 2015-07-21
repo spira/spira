@@ -1,11 +1,10 @@
 <?php
 
 /**
- * Class ModelFactoryTest
+ * Class ModelFactoryTest.
  */
 class ModelFactoryTest extends TestCase
 {
-
     private $modelFactory;
 
     public function setUp()
@@ -15,9 +14,8 @@ class ModelFactoryTest extends TestCase
         $this->modelFactory = $this->app->make('App\Services\ModelFactory');
     }
 
-
     /**
-     * Verify that the factories produce the same structured objects (values will be different)
+     * Verify that the factories produce the same structured objects (values will be different).
      */
     public function testMakeModel()
     {
@@ -26,11 +24,10 @@ class ModelFactoryTest extends TestCase
         $serviceCreatedFactory = $this->modelFactory->get(\App\Models\TestEntity::class)->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
-
     }
 
     /**
-     * Verify that the *named* factories produce the same structured objects (values will be different)
+     * Verify that the *named* factories produce the same structured objects (values will be different).
      */
     public function testMakeNamedModel()
     {
@@ -44,7 +41,7 @@ class ModelFactoryTest extends TestCase
     }
 
     /**
-     * Test that valid json is returned
+     * Test that valid json is returned.
      */
     public function testJsonModel()
     {
@@ -56,51 +53,42 @@ class ModelFactoryTest extends TestCase
 
         $this->assertArrayHasKey('multiWordColumnTitle', $decoded); //assert that keys have been camel cased by transfomer
         $this->assertArrayHasKey('_self', $decoded);
-
     }
 
-
     /**
-     * Test that call can restrict the columns returned for a single entity
+     * Test that call can restrict the columns returned for a single entity.
      */
     public function testPropertyLimitWhitelistEntity()
     {
-
         $retrieveOnly = ['varchar', 'hash'];
 
         $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->showOnly($retrieveOnly)
-            ->toArray()
-        ;
+            ->toArray();
 
         $this->assertEquals($retrieveOnly, array_keys($serviceModel));
-
     }
 
     /**
-     * Test that call can restrict the columns returned for a group of entities
+     * Test that call can restrict the columns returned for a group of entities.
      */
     public function testPropertyLimitWhitelistCollection()
     {
-
         $retrieveOnly = ['varchar', 'hash'];
 
         $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->count(2)
             ->showOnly($retrieveOnly)
-            ->toArray()
-        ;
+            ->toArray();
 
         $this->assertEquals($retrieveOnly, array_keys($serviceModel[0]));
-
     }
 
     /**
-     * Test that call can make a normally hidden column visible
+     * Test that call can make a normally hidden column visible.
      */
     public function testHiddenPropertyShowing()
     {
-
         $showProperty = 'hidden';
 
         $user = new \App\Models\TestEntity();
@@ -108,48 +96,51 @@ class ModelFactoryTest extends TestCase
 
         $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
             ->makeVisible([$showProperty])
-            ->toArray()
-        ;
+            ->toArray();
 
         $this->assertArrayHasKey($showProperty, $serviceModel);
-
     }
 
     /**
-     * Test that the $factory->make() method returns eloquent models
+     * Test that the $factory->make() method returns eloquent models.
      */
-    public function testFactoryMakesEloquent(){
-
+    public function testFactoryMakesEloquent()
+    {
         $entity = $this->modelFactory->make(App\Models\TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Database\Eloquent\Model::class, $entity);
-
     }
 
     public function testModelFactoryFullChain()
     {
         $fixture = [
-            'varchar' => 'fixed-varchar',
+            'varchar'              => 'fixed-varchar',
             'multiWordColumnTitle' => 'fixed-value',
-            'hidden' => false,
-            '#appends' => [
-                'some' => 'value'
-            ]
+            'hidden'               => false,
+            '#appends'             => [
+                'some' => 'value',
+            ],
         ];
 
         $collection = [$fixture, $fixture];
 
         $serviceCreatedFactoryJson = $this->modelFactory->get(\App\Models\TestEntity::class, 'custom')
-            ->customize(['varchar'=>$fixture['varchar'], 'multi_word_column_title' => $fixture['multiWordColumnTitle'], 'hidden' => false])
+            ->customize(['varchar' => $fixture['varchar'], 'multi_word_column_title' => $fixture['multiWordColumnTitle'], 'hidden' => false])
             ->makeVisible(['hidden'])
             ->showOnly(['varchar', 'multi_word_column_title', 'hidden'])
             ->append('#appends', $fixture['#appends'])
             ->count(2)
-            ->setTransformer(App\Http\Transformers\BaseTransformer::class)
+            ->setTransformer(App\Http\Transformers\IlluminateModelTransformer::class)
             ->json();
 
         $this->assertJson($serviceCreatedFactoryJson);
-        $this->assertEquals($collection, json_decode($serviceCreatedFactoryJson, true));
+        $compareArray = json_decode($serviceCreatedFactoryJson, true);
+        foreach ($compareArray as &$value) {
+            $this->assertArrayHasKey('_self', $value);
+            unset($value['_self']);
+        }
+
+        $this->assertEquals($collection, $compareArray);
     }
 
     public function testModelFactoryInstanceArrayableAndJsonable()
@@ -160,5 +151,4 @@ class ModelFactoryTest extends TestCase
         $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
         $this->assertJson($serviceCreatedFactoryInstance->toJson());
     }
-
 }

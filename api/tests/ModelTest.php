@@ -2,13 +2,12 @@
 
 
 /**
- * Class ModelTest
+ * Class ModelTest.
  */
 class ModelTest extends TestCase
 {
-
     /**
-     * Test Model can access table statically
+     * Test Model can access table statically.
      */
     public function testStaticTableNameAccess()
     {
@@ -21,6 +20,5 @@ class ModelTest extends TestCase
         $staticTableName = $userClass::getTableName();
 
         $this->assertEquals($dynamicTableName, $staticTableName);
-
     }
 }
