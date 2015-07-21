@@ -63,6 +63,8 @@ class UserController extends BaseController
      */
     public function resetPassword($id)
     {
+        $this->repository->resetPassword($id);
+
         return response(null, 202);
     }
 }
