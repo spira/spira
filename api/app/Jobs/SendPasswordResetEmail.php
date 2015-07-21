@@ -42,5 +42,12 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
      */
     public function handle(Mailer $mailer)
     {
+        $mailer->send('emails.resetPassword', [
+            'user' => $this->user,
+            'token' => $this->token
+        ], function ($m) {
+            $m->to($this->user->email, $this->user->first_name.' '.$this->user->last_name)
+                ->subject('Password Reset');
+        });
     }
 }
