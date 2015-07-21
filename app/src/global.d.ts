@@ -20,13 +20,20 @@ declare module global {
     }
 
     export interface IWindowService extends ng.IWindowService {
+
         Toposort:any;
+    }
 
-
+    export interface IUserCredential{
+        userCredentialId: string;
+        password: string;
     }
 
     export interface IUser extends NgJwtAuth.IUser {
-
+        userId:string;
+        firstName:string; //make compulsory
+        lastName:string; //make compulsory
+        _credentials? : IUserCredential;
     }
 
 

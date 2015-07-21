@@ -2,39 +2,51 @@
 
 let seededChance = new Chance(1);
 let fixtures = {
-    get user() {
+
+    buildUser: (overrides = {}) => {
 
         let userId = seededChance.guid();
-        return {
+        let defaultUser:global.IUser = {
             _self: '/users/'+userId,
             userId: userId,
             email: seededChance.email(),
             firstName: seededChance.first(),
             lastName: seededChance.last(),
-            phone: seededChance.phone()
-        }
+            phone: seededChance.phone(),
+            _credentials: {
+                userCredentialId: seededChance.guid(),
+                password: seededChance.string(),
+            }
+        };
+
+        return _.merge(defaultUser, overrides);
+    },
+    get user():global.IUser {
+        return fixtures.buildUser();
     },
     get users() {
-
         return _.range(10).map(() => fixtures.user);
-
     }
 };
 
-describe('UserService', () => {
+describe.only('UserService', () => {
 
     let userService:common.services.IUserService;
     let $httpBackend:ng.IHttpBackendService;
+    let authService:NgJwtAuth.NgJwtAuthService;
+    let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
     beforeEach(()=> {
 
         module('app');
 
-        inject((_$httpBackend_, _userService_) => {
+        inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_) => {
 
             if (!userService) { //dont rebind, so each test gets the singleton
                 $httpBackend = _$httpBackend_;
-                userService = _userService_; //register injected of service provider
+                userService = _userService_;
+                authService = _ngJwtAuthService_;
+                ngRestAdapter = _ngRestAdapter_;
             }
         });
 
@@ -80,6 +92,31 @@ describe('UserService', () => {
             expect(allUsersPromise).eventually.to.be.rejected;
 
             $httpBackend.flush();
+
+        });
+
+    });
+
+    describe('User Registration', () => {
+
+
+        before(() => authService.logout()); //make sure we are logged out
+
+        describe('Username/Password (non social)', () => {
+
+
+            it('should be able to create a new user and attempt login immediately',  () => {
+
+                let user = fixtures.user;
+
+                $httpBackend.expectPUT('/api/users/'+user.userId, user).respond(204);
+                $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization']));
+
+                $httpBackend.flush();
+
+                expect(authService.loggedIn).to.be.true;
+
+            })
 
         });
 
