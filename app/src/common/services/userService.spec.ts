@@ -29,7 +29,7 @@ let fixtures = {
     }
 };
 
-describe.only('UserService', () => {
+describe('UserService', () => {
 
     let userService:common.services.UserService;
     let $httpBackend:ng.IHttpBackendService;
