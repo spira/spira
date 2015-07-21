@@ -216,4 +216,17 @@ class UserTest extends TestCase
         $this->assertResponseStatus(403);
         $this->assertEquals($rowCount, User::count());
     }
+
+    public function testResetPasswordMail()
+    {
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->delete('/users/'.$user->user_id.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(202);
+        $this->assertResponseHasNoContent();
+    }
 }

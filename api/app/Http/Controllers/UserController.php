@@ -35,6 +35,7 @@ class UserController extends BaseController
         $this->middleware('permission:readOne', ['only' => 'getOne']);
         $this->middleware('permission:update', ['only' => 'patchOne']);
         $this->middleware('permission:delete', ['only' => 'deleteOne']);
+        $this->middleware('permission:reset', ['only' => 'resetPassword']);
     }
 
     /**
@@ -47,9 +48,21 @@ class UserController extends BaseController
     {
         $this->lock->setRole(User::$userTypes);
         $user = $this->jwtAuth->user();
-        $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
+        $owner = [User::class, 'userIsOwner', $user, $request->segment(2)];
 
-        $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
-        $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
+        $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete', 'reset']);
+        $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update', 'reset'], [$owner]);
+    }
+
+    /**
+     * Reset user password.
+     *
+     * @param string $id
+     *
+     * @return Response
+     */
+    public function resetPassword($id)
+    {
+        return response(null, 202);
     }
 }
