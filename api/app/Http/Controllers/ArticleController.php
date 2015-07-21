@@ -9,19 +9,19 @@
 namespace app\Http\Controllers;
 
 
-use App\Http\Validators\TestEntityValidator;
+use App\Http\Responder\Responder;
 use App\Repositories\ArticleRepository;
 
-class ArticleController extends BaseController
+class ArticleController extends ApiController
 {
     /**
      * Assign dependencies.
-     * @param TestEntityValidator $validator
      * @param ArticleRepository $repository
+     * @param Responder $responder
      */
-    public function __construct(TestEntityValidator $validator, ArticleRepository $repository)
+    public function __construct(ArticleRepository $repository, Responder $responder)
     {
-        $this->validator = $validator;
         $this->repository = $repository;
+        $this->responder = $responder;
     }
 }

@@ -1,6 +1,18 @@
 <?php namespace App\Models;
 
-class Article extends BaseModel {
+use Spira\Repository\Collection\Collection;
+
+/**
+ *
+ * @property ArticlePermalink $permalinkRelation
+ * @property ArticlePermalink[]|Collection $previousPermalinksRelation
+ *
+ * Class Article
+ * @package App\Models
+ *
+ */
+class Article extends BaseModel
+{
 
     /**
      * The database table used by the model.
@@ -17,6 +29,8 @@ class Article extends BaseModel {
 
     protected $primaryKey = 'article_id';
 
+    protected $with = ['permalinkRelation'];
+
     /**
      * Get the access route for the entity.
      *
@@ -30,5 +44,42 @@ class Article extends BaseModel {
     protected $casts = [
         'first_published' => 'dateTime',
     ];
+
+    /**
+     * @param string $permalink
+     */
+    public function setPermalink($permalink)
+    {
+        $currentLink = $this->permalinkRelation;
+        $permalinkObj = new ArticlePermalink();
+        $permalinkObj->uri = $permalink;
+        $permalinkObj->current = true;
+        $this->permalinkRelation = new ArticlePermalink();
+        $currentLink->current = false;
+        $this->previousPermalinksRelation->add($currentLink);
+    }
+
+    public function getPermalink()
+    {
+        if ($this->permalinkRelation){
+            return $this->permalinkRelation->uri;
+        }
+
+        return null;
+    }
+
+    public function permalinkRelation()
+    {
+        $relation = $this->hasOne(ArticlePermalink::class, 'article_id', 'article_id');
+        $relation->getQuery()->where('current','=','t');
+        return $relation;
+    }
+
+    public function previousPermalinksRelation()
+    {
+        $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
+        $relation->getQuery()->where('current','=','f');
+        return $relation;
+    }
 
 }
