@@ -59,4 +59,21 @@ class ValidatorTest extends TestCase
 //
 //        $this->fail('An expected exception has not been raised.');
 //    }
+
+    // public function testPassingCountryValidation()
+    // {
+    //     $data = ['country' => 'SE'];
+
+    //     $this->assertTrue($this->validator->with($data)->passes());
+    // }
+
+    // public function testFailingCountryValidation()
+    // {
+    //     $data = ['country' => 'SWE'];
+
+    //     $this->assertFalse($this->validator->with($data)->passes());
+
+    //     $this->assertStringEndsWith('valid country code.', $this->validator->errors()->get('country')[0]);
+    // }
+
 }
