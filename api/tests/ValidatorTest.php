@@ -48,6 +48,22 @@ class ValidatorTest extends TestCase
         $this->assertStringEndsWith('must be an UUID string.', $this->validator->errors()->get('uuid')[0]);
     }
 
+    public function testPassingCountryValidation()
+    {
+        $data = ['country' => 'SE'];
+
+        $this->assertTrue($this->validator->with($data)->passes());
+    }
+
+    public function testFailingCountryValidation()
+    {
+        $data = ['country' => 'SWE'];
+
+        $this->assertFalse($this->validator->with($data)->passes());
+
+        $this->assertStringEndsWith('valid country code.', $this->validator->errors()->get('country')[0]);
+    }
+
     public function testTestEntityValidator()
     {
         $validator = $this->app->make('App\Http\Validators\TestEntityValidator');
@@ -142,6 +158,7 @@ class Validation extends App\Services\Validator
             'float'                   => 'float',
             'uuid'                    => 'uuid',
             'multi_word_column_title' => 'string',
+            'country'                 => 'country',
         ];
     }
 }

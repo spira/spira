@@ -7,7 +7,7 @@ HOST: {{ $apiUrl }}/
 
 # Spira API
 
-Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.laravel.com) 
+Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.laravel.com)
 
 ## Current status
 * Hostname:
@@ -17,7 +17,13 @@ Spira is a full stack boilerplate with a REST api build on [Lumen](http://lumen.
 * Protocol: http
 * Port: 8080
 
-# Spira API Root [/]
+## Restrictions
+Each endpoint may have restrictions. These are defined as a cascading whitelist.
+e.g. the following definiton means everyone is denied _except_ admins
+```
+* Denied - [all]
+* Allowed - [admin]
+```
 
 # Group Spira API Root
 You're looking at it! This route provides this documentation, it is configured at `spira/api/resources/views/documentation/`
@@ -25,5 +31,7 @@ You can use both `$factory` and `$faker`. Note that `$factory` is a custom model
 flexibility than the base laravel `factory()` methods.
 
 @include('documentation.sections.testEntity')
-
 @include('documentation.sections.auth')
+@include('documentation.sections.user')
+@include('documentation.sections.timezones')
+@include('documentation.sections.countries')

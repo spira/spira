@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App;
-use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\ForbiddenException;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
@@ -26,6 +27,20 @@ abstract class BaseController extends Controller
      * @var App\Services\Validation\TestValidator
      */
     protected $validator;
+
+    /**
+     * Permission Lock Manager.
+     *
+     * @var Manager
+     */
+    protected $lock;
+
+    /**
+     * JWT Auth.
+     *
+     * @var Tymon\JWTAuth\JWTAuth
+     */
+    protected $jwtAuth;
 
     /**
      * Transformer to use for responses.
@@ -82,7 +97,9 @@ abstract class BaseController extends Controller
     {
         $this->validator->with($request->all())->id($id)->validate();
 
-        return response($this->repository->createOrReplace($id, $request->all()), 201);
+        $result = $this->repository->createOrReplace($id, $request->all());
+
+        return response(null, $result['code']);
     }
 
     /**

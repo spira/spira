@@ -124,7 +124,7 @@ abstract class BaseRepository
         } catch (ModelNotFoundException $e) {
             $link = $this->create(array_add($data, $keyName, $id));
 
-            return [$link[0]];
+            return ['self' => $link[0], 'code' => 201];
         }
 
         foreach ($model->getAttributes() as $key => $value) {
@@ -137,7 +137,7 @@ abstract class BaseRepository
 
         $model->update(array_add($data, $keyName, $id));
 
-        return [$model->self];
+        return ['self' => $model->self, 'code' => 204];
     }
 
     /**
@@ -157,7 +157,7 @@ abstract class BaseRepository
             $id = array_pull($entity, $this->model->getKeyName());
 
             $link = $this->createOrReplace($id, $entity);
-            array_push($links, $link[0]);
+            array_push($links, $link['self']);
         }
 
         $this->app->db->commit();

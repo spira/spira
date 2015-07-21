@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 
-class TransformInputData
+class TransformInputDataMiddleware
 {
     /**
      * Handle an incoming request.

@@ -22,17 +22,12 @@ class AuthTest extends TestCase
         ]);
     }
 
-    protected function assertException($message, $statusCode, $exception)
-    {
-        $body = json_decode($this->response->getContent());
-        $this->assertResponseStatus($statusCode);
-        $this->assertContains($message, $body->message);
-        $this->assertContains($exception, $body->debug->exception);
-    }
-
     public function testLogin()
     {
         $user = factory(App\Models\User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -65,6 +60,10 @@ class AuthTest extends TestCase
     public function testFailedTokenEncoding()
     {
         $user = factory(App\Models\User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
         $this->app->config->set('jwt.algo', 'foobar');
 
         $this->get('/auth/jwt/login', [
@@ -78,14 +77,12 @@ class AuthTest extends TestCase
     public function testRefresh()
     {
         $user = factory(App\Models\User::class)->create();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
 
         $object = json_decode($this->response->getContent());
         $this->assertResponseOk();
-
         $this->assertNotEquals($token, $object->token);
     }
 
@@ -112,8 +109,6 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-
         $claims = [
             new Subject(1),
             new Issuer('http://foo.bar'),
@@ -127,7 +122,10 @@ class AuthTest extends TestCase
         $this->validator->shouldReceive('setRefreshFlow->check');
         $payload = new Payload($claims, $this->validator, true);
 
-        $token = $jwtAuth->encode($payload);
+        $cfg = $this->app->config->get('jwt');
+        $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
+        $token = $adapter->encode($payload->get());
+
 
         $this->callRefreshToken($token);
 
@@ -139,8 +137,7 @@ class AuthTest extends TestCase
     public function testRefreshInvalidTokenSignature()
     {
         $user = factory(App\Models\User::class)->create();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
         $segments = explode('.', $token);
@@ -171,8 +168,7 @@ class AuthTest extends TestCase
     public function testRefreshMissingUser()
     {
         $user = factory(App\Models\User::class)->make();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
 

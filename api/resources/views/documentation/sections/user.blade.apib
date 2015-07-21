@@ -1,0 +1,105 @@
+# Group Users
+Every visitor to the site is a user variant, they have the same entity priority whether they are an admin or a public
+ (logged in) user. Their roles, permissions and access levels are handled independently, but linked to their account.
+
+## User collection [/users]
+Users are the entities that represent any real human within the system. They can be admins, paying members or even just
+public people with a membership. The user entity does not contain login information - this is stored in related models
+e.g. the `UserCredentials` model stores their password if they choose to use a password (they could otherwise authenticate
+with a third party through OAuth)
+
+### Get all users [GET]
+#### Restrictions
+* Denied - [all]
+* Allowed - [admin]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->get(\App\Models\User::class)->count(5)->json() !!}
+
+## User entity [/users/{userId}]
++ Parameters
+    + userId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the user entity to perform action with.
+
+### Get user entity [GET]
+#### Restrictions
+* Denied - [all]
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\User::class) !!}
+
+
+### Create/Register user entity [PUT]
+* Note that for this entity replacement of entity is *not* permitted
+#### Restrictions
+* Allowed - [all]
+Note that in this request, a child `#userCredentials` object is provided. This represents an associated model that must
+be created when the user is first registered.
+
+The request *must* provide at least one authentication method when the user is created. In this example we use standard
+password credentials - social signin is described later in this document (@todo).
+
++ Request
+    + Headers
+    + Body
+
+            {!!
+                $factory->get(\App\Models\User::class)
+                    ->showOnly(['user_id', 'email', 'first_name', 'last_name', 'country'])
+                    ->append('#userCredential',
+                        $factory->get(\App\Models\UserCredential::class)
+                            ->hide(['self'])
+                            ->makeVisible(['password'])
+                            ->customize(['password' => 'password'])
+                            ->toArray()
+                        )
+                    ->json();
+            !!}
+
++ Response 204
+
+### Update user entity [PATCH]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+    + Body
+
+            {!!
+                $factory->get(\App\Models\User::class)
+                    ->hide(['self'])
+                    ->json();
+            !!}
+
++ Response 204
+
+### Delete user entity [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 204
