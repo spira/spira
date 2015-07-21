@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, MailcatcherTrait;
 
     public function setUp()
     {
@@ -219,6 +219,7 @@ class UserTest extends TestCase
 
     public function testResetPasswordMail()
     {
+        $this->clearMessages();
         $user = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
 
@@ -226,7 +227,10 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
+        $mail = $this->getLastMessage();
+
         $this->assertResponseStatus(202);
         $this->assertResponseHasNoContent();
+        $this->assertContains('Password', $mail->subject);
     }
 }
