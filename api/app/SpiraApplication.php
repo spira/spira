@@ -1,11 +1,12 @@
-<?php namespace App;
+<?php
+
+namespace app;
 
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;
 
 class SpiraApplication extends Application
 {
-
     /**
      * Get the Monolog handler for the application.
      *
@@ -13,8 +14,7 @@ class SpiraApplication extends Application
      */
     protected function getMonologHandler()
     {
-
-        if (env('LOG_UDP_HOST')){
+        if (env('LOG_UDP_HOST')) {
             return new SyslogUdpHandler(env('LOG_UDP_HOST'), env('LOG_UDP_PORT'));
         }
 
@@ -22,6 +22,4 @@ class SpiraApplication extends Application
         return parent::getMonologHandler();
         // @codeCoverageIgnoreEnd
     }
-
-
 }

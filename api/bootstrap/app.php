@@ -1,9 +1,7 @@
 <?php
 require_once __DIR__.'/../vendor/autoload.php';
 
-Dotenv::makeMutable();
 Dotenv::load(__DIR__.'/../');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -17,12 +15,11 @@ Dotenv::load(__DIR__.'/../');
 */
 
 $app = new \App\SpiraApplication(
-	realpath(__DIR__.'/../')
+    realpath(__DIR__.'/../')
 );
 
-$hhvmfix = new App\Exceptions\HandleExceptionsFix;
+$hhvmfix = new App\Exceptions\HandleExceptionsFix();
 $hhvmfix->bootstrap($app);
-
 
  $app->withFacades();
 
@@ -61,7 +58,7 @@ $app->singleton(
 */
 
 $app->middleware([
-    'App\Http\Middleware\TransformInputData'
+    'App\Http\Middleware\TransformInputData',
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 //     // 'Illuminate\Session\Middleware\StartSession',
@@ -88,8 +85,6 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\JWTAuthServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -104,6 +99,5 @@ $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
     require __DIR__.'/../app/Http/routes.php';
 });
-
 
 return $app;

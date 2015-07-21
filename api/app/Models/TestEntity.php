@@ -1,6 +1,14 @@
 <?php namespace App\Models;
 
-class TestEntity extends BaseModel {
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * Class TestEntity
+ *
+ * @property Collection $testMany
+ */
+class TestEntity extends BaseModel
+{
     /**
      * The database table used by the model.
      *
@@ -29,20 +37,38 @@ class TestEntity extends BaseModel {
      * @var array
      */
     protected $casts = [
-        'decimal' => 'float',
-        'date' => 'date',
+        'decimal'    => 'float',
+        'date'       => 'date',
         'created_at' => 'dateTime',
-        'updated_at' => 'dateTime'
+        'updated_at' => 'dateTime',
     ];
 
-    /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    public function entityRoute()
+    protected $validationRules = [
+        'entity_id' => 'uuid',
+        'varchar' => 'required|string',
+        'hash'    => 'required|string',
+        'integer' => 'required|integer',
+        'decimal' => 'required|float',
+        'boolean' => 'required|boolean',
+        'text'    => 'required|string',
+        'date'    => 'required|date',
+        'multi_word_column_title' => 'required|boolean',
+        'hidden'  => 'required|boolean'
+    ];
+
+    public function addSecondTest(SecondTestEntity $entity)
     {
-        return '/test/entities';
+        $this->testMany->add($entity);
+        return $this;
     }
 
+    public function testOne()
+    {
+        return $this->hasOne(SecondTestEntity::class, 'check_entity_id', 'entity_id');
+    }
+
+    public function testMany()
+    {
+        return $this->hasMany(SecondTestEntity::class, 'check_entity_id', 'entity_id');
+    }
 }
