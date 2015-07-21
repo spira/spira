@@ -22,26 +22,18 @@ class AuthTest extends TestCase
         ]);
     }
 
-    protected function assertException($message, $statusCode, $exception)
-    {
-        $body = json_decode($this->response->getContent());
-        $this->assertResponseStatus($statusCode);
-        $this->assertContains($message, $body->message);
-        $this->assertContains($exception, $body->debug->exception);
-    }
-
     public function testLogin()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
-
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
 
         $array = json_decode($this->response->getContent(), true);
-
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);

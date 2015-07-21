@@ -66,8 +66,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         return $this->hasOne('App\Models\UserCredential');
     }
 
-
-
     /**
      * Get the password for the user.
      *

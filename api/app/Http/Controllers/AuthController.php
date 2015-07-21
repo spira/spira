@@ -10,6 +10,7 @@ use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Spira\Responder\Contract\ApiResponderInterface;
 
 class AuthController extends ApiController
 {
@@ -23,13 +24,14 @@ class AuthController extends ApiController
     /**
      * Assign dependencies.
      *
-     * @param JWTAuth $jwtAuth
-     *
+     * @param  JWTAuth                $jwtAuth
+     * @param  ApiResponderInterface  $responder
      * @return void
      */
-    public function __construct(JWTAuth $jwtAuth)
+    public function __construct(JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {
         $this->jwtAuth = $jwtAuth;
+        $this->responder = $responder;
     }
 
     /**
@@ -54,7 +56,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 
     /**
