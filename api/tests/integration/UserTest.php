@@ -5,7 +5,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, MailcatcherTrait;
 
     public function setUp()
     {
@@ -219,6 +219,7 @@ class UserTest extends TestCase
 
     public function testChangeEmail()
     {
+        $this->clearMessages();
         $user = $this->createUser('guest');
 
         // Ensure that the current email is considered confirmed.
@@ -233,11 +234,13 @@ class UserTest extends TestCase
         ]);
 
         $updatedUser = User::find($user->user_id);
+        $mail = $this->getLastMessage();
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foo@bar.com', $updatedUser->email);
         $this->assertNull($updatedUser->email_confirmed);
+        $this->assertContains('Confirm', $mail->subject);
     }
 
     public function testUpdateEmailConfirmed()
