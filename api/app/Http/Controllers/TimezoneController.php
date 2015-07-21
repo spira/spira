@@ -1,18 +1,21 @@
 <?php namespace App\Http\Controllers;
 
 use App\Services\Datasets\Timezones;
+use Spira\Responder\Contract\ApiResponderInterface;
 
-class TimezoneController extends BaseController
+class TimezoneController extends ApiController
 {
     /**
      * Assign dependencies.
      *
-     * @param  Timezones  $timezones
+     * @param  Timezones              $timezones
+     * @param  ApiResponderInterface  $timezones
      * @return void
      */
-    public function __construct(Timezones $timezones)
+    public function __construct(Timezones $timezones, ApiResponderInterface $responder)
     {
         $this->timezones = $timezones;
+        $this->responder = $responder;
     }
 
     /**
@@ -22,6 +25,6 @@ class TimezoneController extends BaseController
      */
     public function getAll()
     {
-        return $this->collection($this->timezones->all());
+        return $this->getResponder()->collection($this->timezones->all());
     }
 }
