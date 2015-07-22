@@ -1,11 +1,8 @@
-<?php
+<?php namespace App\Repositories;
 
-namespace App\Repositories;
-
-use Cache;
-use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use App\Models\User;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
@@ -19,23 +16,23 @@ class UserRepository extends BaseRepository
     /**
      * Cache repository.
      *
-     * @var CacheRepository
+     * @var Cache
      */
     protected $cache;
 
-    // *
-    //  * Assign dependencies.
-    //  *
-    //  * @param App              $app
-    //  * @param CacheRepository  $cache
-    //  *
-    //  * @return void
-    // public function __construct(App $app, CacheRepository $cache)
-    // {
-    //     $this->cache = $cache;
+    /**
+     * Assign dependencies.
+     *
+     * @param  Connection  $connection
+     * @param  Cache       $cache
+     * @return void
+     */
+    public function __construct(Connection $connection, Cache $cache)
+    {
+        parent::__construct($connection);
 
-    //     parent::__construct($app);
-    // }
+        $this->cache = $cache;
+    }
 
     /**
      * Model name.
@@ -56,7 +53,6 @@ class UserRepository extends BaseRepository
      */
     public function findByLoginToken($token)
     {
-        $this->cache = \App::make('Illuminate\Contracts\Cache\Repository');
         if ($id = $this->cache->pull('login_token_'.$token)) {
             $user = $this->find($id);
 
@@ -73,7 +69,6 @@ class UserRepository extends BaseRepository
      */
     public function makeLoginToken($id)
     {
-        $this->cache = \App::make('Illuminate\Contracts\Cache\Repository');
         $user = $this->find($id);
 
         $token = hash_hmac('sha256', str_random(40), str_random(40));
