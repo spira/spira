@@ -13,7 +13,6 @@ use Spira\Repository\Collection\Collection;
  */
 class Article extends BaseModel
 {
-
     /**
      * The database table used by the model.
      *
@@ -26,6 +25,8 @@ class Article extends BaseModel
      * @var array
      */
     protected $fillable = ['article_id', 'title', 'content', 'permalink', 'first_published'];
+
+    protected $hidden = ['permalinkRelation','previousPermalinksRelations'];
 
     protected $primaryKey = 'article_id';
 
@@ -45,9 +46,12 @@ class Article extends BaseModel
             $currentLink->current = false;
         }
 
-        $permalinkObj = new ArticlePermalink();
-        $permalinkObj->uri = $permalink;
-        $permalinkObj->current = true;
+        $permalinkObj = null;
+        if ($permalink){
+            $permalinkObj = new ArticlePermalink();
+            $permalinkObj->uri = $permalink;
+            $permalinkObj->current = true;
+        }
         $this->permalinkRelation = $permalinkObj;
 
         if ($currentLink && $currentLink->exists){

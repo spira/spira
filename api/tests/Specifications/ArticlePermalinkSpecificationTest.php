@@ -84,6 +84,33 @@ class ArticlePermalinkSpecificationTest extends TestCase
 
     public function testCompareResults()
     {
+        $entities = $this->prepareArticlesWithPermalinks(rand(5,15));
+        $this->repository->saveMany($entities);
+
+        /** @var Article $checkEntity */
+        $checkEntity = end($entities);
+        $checkUri = $checkEntity->getPermalink();
+        $checkUriPrevious = $checkEntity->previousPermalinksRelations->last()->uri;
+
+        $specification = new \App\Specifications\ArticlePermalinkSpecification($checkUri);
+        /** @var Article $model */
+        $model = $this->repository->findSpecifying($specification)->first();
+        foreach ($entities as $entity)
+        {
+            if ($specification->isSatisfiedBy($entity)){
+                $this->assertEquals($entity->article_id,$model->article_id);
+            }
+        }
+
+        $specification = new \App\Specifications\ArticlePermalinkSpecification($checkUriPrevious);
+        /** @var Article $model */
+        $model = $this->repository->findSpecifying($specification)->first();
+        foreach ($entities as $entity)
+        {
+            if ($specification->isSatisfiedBy($entity)){
+                $this->assertEquals($entity->article_id,$model->article_id);
+            }
+        }
 
     }
 

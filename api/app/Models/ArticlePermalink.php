@@ -24,6 +24,6 @@ class ArticlePermalink extends BaseModel
     protected $primaryKey = 'permalink_id';
 
     protected $validationRules = [
-        'uri' => 'unique'
+        'uri' => 'required|string|unique'
     ];
 }
