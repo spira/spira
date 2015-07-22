@@ -51,14 +51,13 @@ abstract class ApiController extends Controller
     public function getOne($id)
     {
         $this->validateId($id);
-        try {
-            $model = $this->getRepository()->find($id);
-            return $this->getResponder()->item($model);
-        } catch (ModelNotFoundException $e) {
+        $model = $this->getRepository()->find($id);
+
+        if (!$model){
             $this->getResponder()->errorNotFound();
         }
 
-        return $this->getResponder()->noContent();
+        return $this->getResponder()->item($model);
     }
 
     /**
@@ -86,9 +85,8 @@ abstract class ApiController extends Controller
     public function putOne($id, Request $request)
     {
         $this->validateId($id);
-        try {
-            $model = $this->getRepository()->find($id);
-        } catch (ModelNotFoundException $e) {
+        $model = $this->getRepository()->find($id);
+        if (!$model){
             $model = $this->getRepository()->getNewModel();
         }
         $model->fill($request->all());
