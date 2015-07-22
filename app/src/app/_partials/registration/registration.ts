@@ -4,17 +4,19 @@ module app.partials.registration{
 
     export interface IScope extends ng.IScope
     {
-        registerUser(email:string, password:string, first:string, last:string, goToProfile?:boolean)
+        registerUser(email:string, password:string, first:string, last:string, goToProfile?:boolean);
         submitting:boolean;
+        socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
     }
 
     class RegistrationController {
 
-        static $inject = ['$scope', 'userService', '$state'];
+        static $inject = ['$scope', 'userService', '$state', '$window'];
         constructor(
             private $scope:IScope,
             private userService:common.services.UserService,
-            private $state:ng.ui.IStateService
+            private $state:ng.ui.IStateService,
+            private $window:ng.IWindowService
         ) {
 
             $scope.submitting = false;
@@ -39,6 +41,19 @@ module app.partials.registration{
                         $scope.submitting = false;
                     })
                 ;
+            };
+
+
+            $scope.socialLogin = (type:string, redirectState?:string, redirectStateParams:Object = {}) => {
+
+                let url = '/auth/social/'+type;
+
+                if (!_.isEmpty(redirectState)){
+                    url += '?returnUrl='+(<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
+                }
+
+                this.$window.location.href = url;
+
             }
 
         }
