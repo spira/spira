@@ -74,7 +74,7 @@ class AuthController extends ApiController
         $this->jwtAuth->getUser();
 
         $token = $this->jwtAuth->refresh($token);
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 
     /**
@@ -101,6 +101,6 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
 
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 }
