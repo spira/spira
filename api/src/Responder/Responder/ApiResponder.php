@@ -116,6 +116,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $response = $this->getResponse();
         $response->setStatusCode($code);
+        $response->headers->set('Content-Type', 'application/json');
         $response->setContent($this->encode($this->getTransformer()->transformItem($item)));
         return $response;
     }
@@ -129,6 +130,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $response = $this->getResponse();
         $response->setStatusCode($code);
+        $response->headers->set('Content-Type', 'application/json');
         $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
         return $response;
     }
