@@ -45,9 +45,14 @@ class ArticlePermalinkSpecification implements EloquentSpecificationInterface
         $query = $builder->getQuery();
         $tableName = $builder->getModel()->getTable();
         $joinTableName = ArticlePermalink::getTableName();
-        $query->join($joinTableName,$joinTableName.'.article_id','=',$tableName.'.article_id','left','uri');
-        $query->where($tableName.'.article_id','=',$this->uri);
-        $query->orWhere($joinTableName.'.uri','=',$this->uri);
+        $query->join($joinTableName,$joinTableName.'.article_id','=',$tableName.'.article_id','left');
+        if (preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $this->uri)){
+            $query->where($tableName.'.article_id','=',$this->uri);
+            $query->orWhere($joinTableName.'.uri','=',$this->uri);
+        }else{
+            $query->where($joinTableName.'.uri','=',$this->uri);
+        }
+
 
         return $builder;
     }
@@ -67,10 +72,12 @@ class ArticlePermalinkSpecification implements EloquentSpecificationInterface
             return true;
         }
 
-        foreach ($entity->previousPermalinksRelations as $permalink)
-        {
-            if ($permalink->uri === $this->uri){
-                return true;
+        if ($entity->previousPermalinksRelations){
+            foreach ($entity->previousPermalinksRelations as $permalink)
+            {
+                if ($permalink->uri === $this->uri){
+                    return true;
+                }
             }
         }
 

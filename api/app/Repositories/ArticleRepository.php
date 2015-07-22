@@ -21,6 +21,6 @@ class ArticleRepository extends BaseRepository
      */
     protected function model()
     {
-        return Article::class;
+        return new Article();
     }
 }

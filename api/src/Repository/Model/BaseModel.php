@@ -95,9 +95,17 @@ class BaseModel extends Model
      */
     protected function addPreviousValueToDeleteStack($models)
     {
-        /** @var Collection|array $models */
+        /** @var Collection|BaseModel[] $models */
         $models = $this->isCollection($models)?$models->all(true):[$models];
-        $this->deleteStack = array_merge($this->deleteStack, array_filter($models));
+        $deleteArray = [];
+        foreach ($models as $model)
+        {
+            if ($model && $model->exists){
+                $deleteArray[] = $model;
+            }
+        }
+
+        $this->deleteStack = array_merge($this->deleteStack, $deleteArray);
     }
 
 

@@ -14,9 +14,8 @@ class CreateArticlesPermalinksTable extends Migration
     {
 
         Schema::create(\App\Models\ArticlePermalink::getTableName(), function (Blueprint $table) {
-                $table->uuid('permalink_id')->primary();
-                $table->string('uri', 255)->unique();
-                $table->boolean('current');
+                $table->string('uri', 255)->primary();
+                $table->boolean('current')->default(false);
                 $table->uuid('article_id')->index();
 
                 $table->dateTime('created_at');

@@ -31,16 +31,6 @@ class Article extends BaseModel
 
     protected $with = ['permalinkRelation'];
 
-    /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    public function entityRoute()
-    {
-        return '/articles';
-    }
-
     protected $casts = [
         'first_published' => 'dateTime',
     ];
@@ -51,17 +41,23 @@ class Article extends BaseModel
     public function setPermalink($permalink)
     {
         $currentLink = $this->permalinkRelation;
+        if ($currentLink){
+            $currentLink->current = false;
+        }
+
         $permalinkObj = new ArticlePermalink();
         $permalinkObj->uri = $permalink;
         $permalinkObj->current = true;
-        $this->permalinkRelation = new ArticlePermalink();
-        $currentLink->current = false;
-        $this->previousPermalinksRelations->add($currentLink);
+        $this->permalinkRelation = $permalinkObj;
+
+        if ($currentLink && $currentLink->exists){
+            $this->previousPermalinksRelations->add($currentLink);
+        }
     }
 
     public function getPermalink()
     {
-        if ($this->permalinkRelation){
+        if ($this->permalinkRelation && $this->permalinkRelation->uri){
             return $this->permalinkRelation->uri;
         }
 
