@@ -1,38 +1,47 @@
 <h2>Register</h2>
 
-<form novalidate name="registrationForm" ng-disabled="true">
+<form novalidate name="registrationForm">
 
-    <md-input-container class="md-icon-float" >
-        <label for="loginForm.email">Email</label>
-        <md-icon>face</md-icon>
-        <input id="loginForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
-        <ng-messages for="loginForm.email.$error">
-            <ng-message when="required">This is required.</ng-message>
-            <ng-message when="email">This is not a valid email.</ng-message>
-        </ng-messages>
-    </md-input-container>
+    <fieldset ng-disabled="submitting">
 
-    <md-input-container class="md-icon-float" >
-        <label for="loginForm.password">Password</label>
-        <md-icon>face</md-icon>
-        <input id="loginForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
-        <ng-messages for="loginForm.password.$error">
-            <ng-message when="required">Password is required.</ng-message>
-        </ng-messages>
-    </md-input-container>
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.email">Email</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
+            <ng-messages for="registrationForm.email.$error">
+                <ng-message when="required">This is required.</ng-message>
+                <ng-message when="email">This is not a valid email.</ng-message>
+            </ng-messages>
+        </md-input-container>
 
-    <md-input-container class="md-icon-float" >
-        <label for="loginForm.firstName">First Name</label>
-        <md-icon>face</md-icon>
-        <input id="loginForm.firstName" name="firstName" ng-model="user.firstName" type="text" ng-required="false">
-    </md-input-container>
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.password">Password</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
+            <ng-messages for="registrationForm.password.$error">
+                <ng-message when="required">Password is required.</ng-message>
+            </ng-messages>
+        </md-input-container>
 
-    <md-input-container class="md-icon-float" >
-        <label for="loginForm.lastName">Last Name</label>
-        <md-icon>face</md-icon>
-        <input id="loginForm.lastName" name="lastName" ng-model="user.lastName" type="text" ng-required="false">
-    </md-input-container>
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.firstName">First Name</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.firstName" name="firstName" ng-model="user.firstName" type="text" ng-required="false">
+        </md-input-container>
 
-    <md-button class="md-raised md-primary" ng-click="registerUser(user.email, user.password, user.firstName, user.lastName, true)">Register</md-button>
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.lastName">Last Name</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.lastName" name="lastName" ng-model="user.lastName" type="text" ng-required="false">
+        </md-input-container>
+
+        <md-button
+                class="md-raised md-primary"
+                ng-click="registerUser(user.email, user.password, user.firstName, user.lastName, true)"
+                ng-disabled="registrationForm.$invalid"
+                >Register
+        </md-button>
+
+    </fieldset>
 
 </form>

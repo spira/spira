@@ -5,6 +5,7 @@ module app.partials.registration{
     export interface IScope extends ng.IScope
     {
         registerUser(email:string, password:string, first:string, last:string, goToProfile?:boolean)
+        submitting:boolean;
     }
 
     class RegistrationController {
@@ -16,8 +17,11 @@ module app.partials.registration{
             private $state:ng.ui.IStateService
         ) {
 
+            $scope.submitting = false;
+
             $scope.registerUser = (email:string, password:string, first:string, last:string, goToProfile:boolean = false) => {
 
+                $scope.submitting = true;
 
                 return userService.registerAndLogin(email, password, first, last)
                     .then((createdUser) => {
@@ -30,6 +34,9 @@ module app.partials.registration{
                         }
 
                         return createdUser;
+                    })
+                    .finally(() => {
+                        $scope.submitting = false;
                     })
                 ;
             }
