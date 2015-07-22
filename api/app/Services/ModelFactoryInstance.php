@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Transformers\BaseTransformer;
+use App\Http\Transformers\IlluminateModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -114,8 +115,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function setTransformer($transformerName)
     {
-        $this->transformer = new $transformerName();
-
+        $this->transformer = new $transformerName($this->transformerService);
         return $this;
     }
 
@@ -145,7 +145,11 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         if ($this->showOnly) {
             $attributes = $entity->getAttributes();
             $appends = $entity->appends;
-            $newHidden = array_diff(array_merge(array_keys($attributes), $appends), $this->showOnly);
+            $modifiedArray = array_keys($attributes);
+            if (!empty($appends)) {
+                $modifiedArray = array_merge($modifiedArray, $appends);
+            }
+            $newHidden = array_diff($modifiedArray, $this->showOnly);
             $entity->setHidden($newHidden);
         }
 
@@ -200,7 +204,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         $entity = $this->modified();
 
         if (!$this->transformer) {
-            $this->transformer = new BaseTransformer();
+            $this->transformer = new IlluminateModelTransformer($this->transformerService);
         }
 
         $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);

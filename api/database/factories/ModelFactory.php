@@ -48,6 +48,14 @@ $factory->define(App\Models\TestEntity::class, function ($faker) {
     ];
 });
 
+$factory->define(App\Models\SecondTestEntity::class, function ($faker) {
+    return [
+        'entity_id' => $faker->uuid,
+        'check_entity_id' => $faker->uuid,
+        'value' => $faker->word
+    ];
+});
+
 $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use ($factory) {
     $testEntity = $factory->raw(App\Models\TestEntity::class);
 

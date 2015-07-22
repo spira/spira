@@ -14,12 +14,12 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\JWTAuth;
 
-class AuthController extends BaseController
+class AuthController extends ApiController
 {
     /**
      * JWT Auth.
      *
-     * @var Tymon\JWTAuth\JWTAuth
+     * @var JWTAuth
      */
     protected $jwtAuth;
 
