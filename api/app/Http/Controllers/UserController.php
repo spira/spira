@@ -5,6 +5,8 @@ use App\Models\User;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
+use Illuminate\Support\MessageBag;
+use App\Exceptions\ValidationException;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
@@ -86,10 +88,13 @@ class UserController extends ApiController
         // Duplicates process from parent class
         $this->validateId($id);
         try {
-            $model = $this->getRepository()->find($id);
+            if ($model = $this->getRepository()->find($id)) {
+                throw new ValidationException(new MessageBag(['uuid' => 'Users are not permitted to be replaced.']));
+            }
         } catch (ModelNotFoundException $e) {
             $model = $this->getRepository()->getNewModel();
         }
+
         $model->fill($request->all());
         $this->getRepository()->save($model);
 

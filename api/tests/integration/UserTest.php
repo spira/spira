@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
@@ -101,9 +102,9 @@ class UserTest extends TestCase
                     ->toArray()
                 );
 
-        $this->transformerService = $this->app->make(App\Services\TransformerService::class);
-        $this->transformer = new App\Http\Transformers\IlluminateModelTransformer($this->transformerService);
-        $user = $this->transformer->transform($user);
+        $transformerService = $this->app->make(App\Services\TransformerService::class);
+        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $user = $transformer->transform($user);
 
         $this->put('/users/'.$user['userId'], $user);
 
@@ -114,9 +115,9 @@ class UserTest extends TestCase
 
     public function testPutOneAlreadyExisting()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
-        $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
+        $transformerService = $this->app->make(App\Services\TransformerService::class);
+        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
         $user = array_except($transformer->transform($user), ['_self', 'userType']);
         $user['#userCredential'] = ['password' => 'password'];
 
