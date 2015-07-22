@@ -3,10 +3,12 @@
 use App;
 use App\Models\User;
 use Tymon\JWTAuth\JWTAuth;
-use App\Extensions\Lock\Manager;
 use Illuminate\Http\Request;
+use App\Models\UserCredential;
+use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
@@ -29,17 +31,15 @@ class UserController extends ApiController
      * Assign dependencies.
      *
      * @param  Repository  $repository
-     * @param  Validator   $validator
      * @param  Lock        $lock
      * @param  JWTAuth     $jwtAuth
      * @param  Request     $request
      * @param  Responder   $responder
      * @return void
      */
-    public function __construct(Repository $repository, Validator $validator, Manager $lock, JWTAuth $jwtAuth, Request $request, Responder $responder)
+    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder)
     {
         $this->repository = $repository;
-        $this->validator = $validator;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
         $this->responder = $responder;
@@ -66,5 +66,36 @@ class UserController extends ApiController
         $this->middleware('permission:readOne', ['only' => 'getOne']);
         $this->middleware('permission:update', ['only' => 'patchOne']);
         $this->middleware('permission:delete', ['only' => 'deleteOne']);
+    }
+
+    /**
+     * Put an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function putOne($id, Request $request)
+    {
+        // Extract the credentials
+        $credential = $request->get('#user_credential');
+
+        // Set new users to guest
+        $request->merge(['user_type' =>'guest']);
+
+        // Duplicates process from parent class
+        $this->validateId($id);
+        try {
+            $model = $this->getRepository()->find($id);
+        } catch (ModelNotFoundException $e) {
+            $model = $this->getRepository()->getNewModel();
+        }
+        $model->fill($request->all());
+        $this->getRepository()->save($model);
+
+        // Finally create the credentials
+        $model->setCredential(new UserCredential($credential));
+
+        return $this->getResponder()->createdItem($model);
     }
 }

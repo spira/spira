@@ -20,7 +20,6 @@ class UserTest extends TestCase
 
     public function testGetAllByAdminUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -36,7 +35,6 @@ class UserTest extends TestCase
 
     public function testGetAllByGuestUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
 
@@ -49,7 +47,6 @@ class UserTest extends TestCase
 
     public function testGetOneByAdminUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser();
         $userToGet = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
@@ -65,7 +62,6 @@ class UserTest extends TestCase
 
     public function testGetOneByGuestUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $userToGet = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
@@ -79,7 +75,6 @@ class UserTest extends TestCase
 
     public function testGetOneBySelfUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $userToGet = $user;
         $token = $this->tokenFromUser($user);
@@ -95,7 +90,6 @@ class UserTest extends TestCase
 
     public function testPutOne()
     {
-        $this->markTestSkipped('must be revisited');
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(\App\Models\User::class)
             ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
@@ -107,14 +101,14 @@ class UserTest extends TestCase
                     ->toArray()
                 );
 
-        $transformer = $this->app->make('App\Http\Transformers\BaseTransformer');
-        $user = $transformer->transform($user);
+        $this->transformerService = $this->app->make(App\Services\TransformerService::class);
+        $this->transformer = new App\Http\Transformers\IlluminateModelTransformer($this->transformerService);
+        $user = $this->transformer->transform($user);
 
         $this->put('/users/'.$user['userId'], $user);
 
         $createdUser = User::find($user['userId']);
         $this->assertResponseStatus(201);
-        $this->assertResponseHasNoContent();
         $this->assertEquals($user['firstName'], $createdUser->first_name);
     }
 

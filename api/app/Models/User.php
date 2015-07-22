@@ -17,13 +17,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    public $table = 'users';
-
-    /**
      * The primary key for the model.
      *
      * @var string
@@ -47,23 +40,20 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    public function entityRoute()
-    {
-        return '/users';
-    }
-
-    /**
      * Get the credentials associated with the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function userCredential()
     {
-        return $this->hasOne('App\Models\UserCredential');
+        return $this->hasOne(UserCredential::class);
+    }
+
+    public function setCredential(UserCredential $credential)
+    {
+        $this->userCredential()->save($credential);
+
+        return $this;
     }
 
     /**
