@@ -18,14 +18,18 @@ module app.partials.registration{
 
             $scope.registerUser = (email:string, password:string, first:string, last:string, goToProfile:boolean = false) => {
 
-                userService.registerAndLogin(email, password, first, last)
+
+                return userService.registerAndLogin(email, password, first, last)
                     .then((createdUser) => {
+
                         if (goToProfile){
 
-                            this.$state.go('member.profile', {
+                            this.$state.go('app.user.profile', {
                                 onBoard: true //start the onboarding walkthrough
-                            })
+                            });
                         }
+
+                        return createdUser;
                     })
                 ;
             }

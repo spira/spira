@@ -12,7 +12,6 @@ let fixtures = {
             email: seededChance.email(),
             firstName: seededChance.first(),
             lastName: seededChance.last(),
-            phone: seededChance.phone(),
             _credentials: {
                 userCredentialId: seededChance.guid(),
                 password: seededChance.string(),
@@ -28,6 +27,8 @@ let fixtures = {
         return _.range(10).map(() => fixtures.user);
     }
 };
+
+const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
 
 describe('UserService', () => {
 
@@ -108,14 +109,40 @@ describe('UserService', () => {
             it('should be able to create a new user and attempt login immediately',  () => {
 
                 let user = _.clone(fixtures.user);
+                delete user._self;
 
-                $httpBackend.expectPUT('/api/users/'+user.userId, user).respond(204);
+
+                $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
+                    return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
+                }).respond(204);
                 $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                 //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
 
                 userService.registerAndLogin(user.email, user._credentials.password, user.firstName, user.lastName);
 
                 $httpBackend.flush();
+
+            });
+
+        });
+
+        describe('Email checking', () => {
+
+
+            it('should be able to poll the api to check if an email has been registered', () => {
+
+                let notExistingEmail = 'not-registered@example.com';
+
+                $httpBackend.expectHEAD('/api/users/email/'+notExistingEmail).respond(404);
+                $httpBackend.expectHEAD('/api/users/email/'+seededEmail).respond(200);
+
+                let notExistingCheck = userService.isEmailRegistered(notExistingEmail);
+                let existingCheck = userService.isEmailRegistered(seededEmail);
+
+                $httpBackend.flush();
+
+                expect(notExistingCheck).eventually.to.become(false);
+                expect(existingCheck).eventually.to.become(true);
 
             });
 

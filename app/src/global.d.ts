@@ -7,7 +7,7 @@ declare module global {
     export interface IState extends ng.ui.IState {
         data: {
             title?: string;
-            role: string;
+            role?: string;
             icon?: string;
             sortAfter?: string;
             navigation?: boolean;

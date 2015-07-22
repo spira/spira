@@ -69,6 +69,20 @@ module common.services {
 
         }
 
+        /**
+         * Check if an email has been registered
+         * @param email
+         * @returns {ng.IPromise<boolean>}
+         */
+        public isEmailRegistered(email:String):ng.IPromise<boolean> {
+
+            return this.ngRestAdapter
+                .skipInterceptor()
+                .head('/users/email/'+email)
+                .then(() => true, () => false) //200 OK is true (email exists) 404 is false (email not registered)
+            ;
+
+        }
     }
 
     angular.module(namespace+'.userService', [])
