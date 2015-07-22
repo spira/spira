@@ -48,10 +48,7 @@ class IlluminateModelTransformer extends BaseTransformer
             // Find any potential snake_case keys in the 'root' array, and
             // convert them to camelCase
             if (is_string($key) && str_contains($key, '_')) {
-                // camel_case() will strip away starting _, so put it back
-                $prefix = starts_with($key, '_') ? '_' : '';
-
-                $array = $this->renameArrayKey($array, $key, $prefix.camel_case($key));
+                $array = $this->renameArrayKey($array, $key, $this->camelCase($key));
             }
         }
 
@@ -133,15 +130,26 @@ class IlluminateModelTransformer extends BaseTransformer
 
             // Convert snake_case to camelCase
             if (is_string($key) && str_contains($key, '_')) {
-                // camel_case() will strip away starting _, so put it back
-                $prefix = starts_with($key, '_') ? '_' : '';
-
-                $newArray[$prefix.camel_case($key)] = $value;
+                $newArray[$this->camelCase($key)] = $value;
             } else {
                 $newArray[$key] = $value;
             }
         }
 
         return $newArray;
+    }
+
+    /**
+     * Convert a string to camelCase with preserved starting underscore.
+     *
+     * @param  string  $str
+     * @return string
+     */
+    protected function camelCase($str)
+    {
+        // camel_case() will strip away starting _, so put it back
+        $prefix = starts_with($str, '_') ? '_' : '';
+
+        return $prefix.camel_case($str);
     }
 }
