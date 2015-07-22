@@ -37,7 +37,7 @@ abstract class BaseRepository
      * @param  ConnectionResolverInterface $connectionResolver
      * @throws RepositoryException
      */
-    final public function __construct(ConnectionResolverInterface $connectionResolver)
+    public function __construct(ConnectionResolverInterface $connectionResolver)
     {
         $this->model = $this->model();
         if (!$this->model instanceof BaseModel) {
