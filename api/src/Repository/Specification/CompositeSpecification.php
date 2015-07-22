@@ -2,13 +2,14 @@
 
 namespace Spira\Repository\Specification;
 
+use Illuminate\Database\Eloquent\Builder;
 use Spira\Repository\Model\BaseModel;
 
-class CompositeSpecification implements SpecificationInterface
+class CompositeSpecification implements EloquentSpecificationInterface
 {
 
     /**
-     * @var SpecificationInterface[]
+     * @var EloquentSpecificationInterface[]
      */
     protected $specifications = array();
 
@@ -35,4 +36,17 @@ class CompositeSpecification implements SpecificationInterface
         $this->specifications[] = $specification;
     }
 
+    /**
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function attachCriteriaToBuilder(Builder $builder)
+    {
+        foreach($this->specifications as $specification)
+        {
+            $specification->attachCriteriaToBuilder($builder);
+        }
+
+        return $builder;
+    }
 }

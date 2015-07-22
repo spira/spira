@@ -22,7 +22,7 @@ use Spira\Repository\Collection\Collection;
  *
  * @method count
  * @method get
- * @method findOrFail
+ * @method find
  * @method findMany
  *
  */

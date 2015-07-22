@@ -2,13 +2,13 @@
 
 namespace Spira\Repository\Specification;
 
-use Spira\Repository\Model\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 interface EloquentSpecificationInterface extends SpecificationInterface
 {
     /**
-     * @param BaseModel $entity
-     * @return BaseModel
+     * @param Builder $builder
+     * @return Builder
      */
-    public function attachCriteriaToModel(BaseModel $entity);
+    public function attachCriteriaToBuilder(Builder $builder);
 }
