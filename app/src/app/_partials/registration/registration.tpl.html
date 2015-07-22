@@ -1,6 +1,6 @@
 <h2>Register</h2>
 
-<form novalidate name="registrationForm">
+<form novalidate name="registrationForm" ng-disabled="true">
 
     <md-input-container class="md-icon-float" >
         <label for="loginForm.email">Email</label>
@@ -17,8 +17,22 @@
         <md-icon>face</md-icon>
         <input id="loginForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
         <ng-messages for="loginForm.password.$error">
-            <ng-message when="required">This is required.</ng-message>
+            <ng-message when="required">Password is required.</ng-message>
         </ng-messages>
     </md-input-container>
+
+    <md-input-container class="md-icon-float" >
+        <label for="loginForm.firstName">First Name</label>
+        <md-icon>face</md-icon>
+        <input id="loginForm.firstName" name="firstName" ng-model="user.firstName" type="text" ng-required="false">
+    </md-input-container>
+
+    <md-input-container class="md-icon-float" >
+        <label for="loginForm.lastName">Last Name</label>
+        <md-icon>face</md-icon>
+        <input id="loginForm.lastName" name="lastName" ng-model="user.lastName" type="text" ng-required="false">
+    </md-input-container>
+
+    <md-button class="md-raised md-primary" ng-click="registerUser(user.email, user.password, user.firstName, user.lastName, true)">Register</md-button>
 
 </form>
