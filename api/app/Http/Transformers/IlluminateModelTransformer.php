@@ -48,7 +48,10 @@ class IlluminateModelTransformer extends BaseTransformer
             // Find any potential snake_case keys in the 'root' array, and
             // convert them to camelCase
             if (is_string($key) && str_contains($key, '_')) {
-                $array = $this->renameArrayKey($array, $key, camel_case($key));
+                // camel_case() will strip away starting _, so put it back
+                $prefix = starts_with($key, '_') ? '_' : '';
+
+                $array = $this->renameArrayKey($array, $key, $prefix.camel_case($key));
             }
         }
 
@@ -130,7 +133,10 @@ class IlluminateModelTransformer extends BaseTransformer
 
             // Convert snake_case to camelCase
             if (is_string($key) && str_contains($key, '_')) {
-                $newArray[camel_case($key)] = $value;
+                // camel_case() will strip away starting _, so put it back
+                $prefix = starts_with($key, '_') ? '_' : '';
+
+                $newArray[$prefix.camel_case($key)] = $value;
             } else {
                 $newArray[$key] = $value;
             }

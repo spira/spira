@@ -94,7 +94,7 @@ class UserTest extends TestCase
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(\App\Models\User::class)
             ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
-            ->append('#userCredential',
+            ->append('_userCredential',
                 $factory->get(\App\Models\UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
@@ -116,10 +116,11 @@ class UserTest extends TestCase
     public function testPutOneAlreadyExisting()
     {
         $user = factory(App\Models\User::class)->create();
+        $user['_userCredential'] = ['password' => 'password'];
+
         $transformerService = $this->app->make(App\Services\TransformerService::class);
         $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
         $user = array_except($transformer->transform($user), ['_self', 'userType']);
-        $user['#userCredential'] = ['password' => 'password'];
 
         $this->put('/users/'.$user['userId'], $user);
 
