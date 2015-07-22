@@ -95,6 +95,8 @@ describe('Login', () => {
 
                 $scope.$apply();
 
+                expect(authService.loggedIn).to.be.false;
+
             });
 
             it('should show the login dialog when prompted', () => {

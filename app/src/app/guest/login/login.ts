@@ -66,10 +66,11 @@ module app.guest.login {
 
     class LoginController {
 
-        static $inject = ['$scope', '$mdDialog', 'deferredCredentials', 'loginSuccess'];
+        static $inject = ['$scope', '$mdDialog', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess'];
         constructor(
             private $scope : IScope,
             private $mdDialog:ng.material.IDialogService,
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
             private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
             private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>}
         ) {
@@ -98,7 +99,10 @@ module app.guest.login {
 
             };
 
-            $scope.cancelLoginDialog = () => $mdDialog.cancel('closed'); //allow the user to manually close the dialog
+            $scope.cancelLoginDialog = () => {
+                ngJwtAuthService.logout(); //make sure the user is logged out
+                $mdDialog.cancel('closed');
+            }; //allow the user to manually close the dialog
 
         }
 
