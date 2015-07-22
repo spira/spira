@@ -8,11 +8,12 @@ module app {
         constructor($mdThemingProvider:ng.material.IThemingProvider){
 
 
-            //$mdThemingProvider.theme('default')
-            //    .primaryPalette('green')
-            //    .accentPalette('grey')
-            //;
+            $mdThemingProvider.theme('default')
+                .primaryPalette('green')
+                .accentPalette('grey')
+            ;
 
+            /*
             $mdThemingProvider.definePalette('amazingPaletteName', {
                 '50': 'rgb(100, 100, 5)',
                 '100': 'rgb(100, 100, 10)',
@@ -37,6 +38,7 @@ module app {
             $mdThemingProvider.theme('default')
                 .primaryPalette('amazingPaletteName');
 
+            */
         }
 
     }
