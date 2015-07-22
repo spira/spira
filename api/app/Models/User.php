@@ -40,6 +40,13 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
+     * Model validation.
+     *
+     * @var
+     */
+    protected $validationRules = [];
+
+    /**
      * Get the credentials associated with the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\Relation
@@ -49,6 +56,12 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         return $this->hasOne(UserCredential::class);
     }
 
+    /**
+     * Set the user's credentials.
+     *
+     * @param  UserCredential  $credential
+     * @return $this
+     */
     public function setCredential(UserCredential $credential)
     {
         $this->userCredential()->save($credential);

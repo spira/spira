@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\ConnectionResolverInterface as Connection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserRepository extends BaseRepository
 {
@@ -42,6 +43,22 @@ class UserRepository extends BaseRepository
     protected function model()
     {
         return new User;
+    }
+
+    /**
+     * Check if a user exists.
+     *
+     * @param  string  $id
+     * @return bool
+     */
+    public function exists($id)
+    {
+        try {
+            $this->find($id);
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
+        return true;
     }
 
     /**

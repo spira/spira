@@ -10,7 +10,6 @@ use App\Exceptions\ValidationException;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
@@ -85,22 +84,20 @@ class UserController extends ApiController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        // Duplicates process from parent class
         $this->validateId($id);
-        try {
-            if ($model = $this->getRepository()->find($id)) {
-                throw new ValidationException(new MessageBag(['uuid' => 'Users are not permitted to be replaced.']));
-            }
-        } catch (ModelNotFoundException $e) {
-            $model = $this->getRepository()->getNewModel();
+        if ($this->repository->exists($id)) {
+            throw new ValidationException(
+                new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
+            );
         }
 
+        $model = $this->repository->getNewModel();
         $model->fill($request->all());
-        $this->getRepository()->save($model);
+        $this->repository->save($model);
 
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
 
-        return $this->getResponder()->createdItem($model);
+        return $this->responder->createdItem($model);
     }
 }

@@ -129,7 +129,6 @@ class UserTest extends TestCase
 
     public function testPatchOneByAdminUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('admin');
         $userToUpdate = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
@@ -154,7 +153,6 @@ class UserTest extends TestCase
 
     public function testPatchOneByGuestUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $userToUpdate = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
@@ -168,7 +166,6 @@ class UserTest extends TestCase
 
     public function testPatchOneBySelfUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
@@ -193,7 +190,6 @@ class UserTest extends TestCase
 
     public function testDeleteOneByAdminUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('admin');
         $userToDelete = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
@@ -210,7 +206,6 @@ class UserTest extends TestCase
 
     public function testDeleteOneByGuestUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = $this->createUser('guest');
         $userToDelete = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
