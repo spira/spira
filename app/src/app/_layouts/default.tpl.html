@@ -1,6 +1,6 @@
 <md-sidenav
         class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
-        md-component-id="left"
+        md-component-id="navigation"
         md-is-locked-open="$mdMedia('gt-sm')"
         ui-view="navigation">
 </md-sidenav>
@@ -12,7 +12,7 @@
  >
 
     <md-toolbar layout="row" class="md-whiteframe-z1">
-        <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="toggleLeftNav()" aria-label="Show Menu">
+        <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="toggleNavigationSidenav()" aria-label="Show Menu">
             <md-icon>menu</md-icon>
         </md-button>
         <h1>Spira</h1>
@@ -20,3 +20,10 @@
 
     <md-content flex id="content" ui-view="main"></md-content>
 </div>
+
+<md-sidenav
+        id="userRegistration"
+        class="md-sidenav-right md-whiteframe-z2"
+        md-component-id="registration"
+        ui-view="registration">
+</md-sidenav>

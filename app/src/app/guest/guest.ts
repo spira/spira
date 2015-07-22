@@ -17,8 +17,12 @@ module app.guest {
                         templateUrl: 'templates/app/_layouts/default.tpl.html'
                     },
                     'navigation@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
-                        templateUrl: 'templates/app/_partials/navigation.tpl.html',
+                        templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
                         controller: app.partials.navigation.namespace+'.controller'
+                    },
+                    'registration@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
+                        templateUrl: 'templates/app/_partials/registration/registration.tpl.html',
+                        controller: app.partials.registration.namespace+'.controller'
                     }
                 },
                 data: {

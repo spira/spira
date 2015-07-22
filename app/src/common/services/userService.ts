@@ -28,23 +28,41 @@ module common.services {
 
         /**
          * Register a user
-         * @param user
+         * @param email
+         * @param password
+         * @param firstName
+         * @param lastName
          * @returns {ng.IHttpPromise<any>}
          */
-        public register(user:global.IUser):ng.IPromise<global.IUser>{
+        private register(email:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUser>{
 
-            return this.ngRestAdapter.put('/users/'+user.userId, user);
+            let user:global.IUser = {
+                userId: this.ngRestAdapter.uuid(),
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                _credentials: {
+                    userCredentialId: this.ngRestAdapter.uuid(),
+                    password: password,
+                }
+            };
+
+            return this.ngRestAdapter.put('/users/'+user.userId, user)
+                .then(() => user); //return this user object
         }
 
         /**
          * Register and log in a user
-         * @param user
+         * @param email
+         * @param password
+         * @param firstName
+         * @param lastName
          * @returns {IPromise<TResult>}
          */
-        public registerAndLogin(user:global.IUser):ng.IPromise<any>{
+        public registerAndLogin(email:string, password:string, firstName:string, lastName:string):ng.IPromise<any>{
 
-            return this.register(user)
-                .then(() => {
+            return this.register(email, password, firstName, lastName)
+                .then((user) => {
                     return this.ngJwtAuthService.authenticateCredentials(user.email, user._credentials.password);
                 })
             ;

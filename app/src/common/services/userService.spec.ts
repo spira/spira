@@ -107,13 +107,13 @@ describe('UserService', () => {
 
             it('should be able to create a new user and attempt login immediately',  () => {
 
-                let user = fixtures.user;
+                let user = _.clone(fixtures.user);
 
                 $httpBackend.expectPUT('/api/users/'+user.userId, user).respond(204);
                 $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                 //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
 
-                userService.registerAndLogin(user);
+                userService.registerAndLogin(user.email, user._credentials.password, user.firstName, user.lastName);
 
                 $httpBackend.flush();
 
