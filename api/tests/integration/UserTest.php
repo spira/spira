@@ -19,12 +19,13 @@ class UserTest extends TestCase
 
     protected function createUser($type = 'admin')
     {
-        $user = factory(App\Models\User::class)->create(['user_type' => $type]);
+        $user = factory(User::class)->create(['user_type' => $type]);
         return $user;
     }
 
     public function testGetAllByAdminUser()
     {
+        $user = factory(User::class, 10)->create();
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -96,10 +97,10 @@ class UserTest extends TestCase
     public function testPutOne()
     {
         $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(\App\Models\User::class)
+        $user = $factory->get(User::class)
             ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
             ->append('_userCredential',
-                $factory->get(\App\Models\UserCredential::class)
+                $factory->get(App\Models\UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
                     ->customize(['password' => 'password'])
@@ -122,7 +123,7 @@ class UserTest extends TestCase
 
     public function testPutOneAlreadyExisting()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $user['_userCredential'] = ['password' => 'password'];
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);

@@ -1,15 +1,11 @@
 <?php namespace App\Repositories;
 
 use App\Models\User;
-use App\Jobs\SendEmailConfirmationEmail;
-use Laravel\Lumen\Routing\DispatchesJobs;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
-    use DispatchesJobs;
-
     /**
      * Login token time to live in minutes.
      *
@@ -100,34 +96,5 @@ class UserRepository extends BaseRepository
         $token = hash_hmac('sha256', str_random(40), str_random(40));
         $this->cache->put('email_confirmation_'.$token, $email, $this->confirmation_token_ttl);
         return $token;
-    }
-
-    /**
-     * Update an entity by id.
-     *
-     * @param string $id
-     * @param array  $data
-     *
-     * @throws App\Exceptions\FatalException
-     *
-     * @return mixed
-     */
-    public function update($id, array $data)
-    {
-        // Make sure the data does not contain a different id for the entity.
-        $keyName = $this->model->getKeyName();
-        if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
-            throw new FatalErrorException('Attempt to override entity ID value.');
-        }
-        $model = $this->find($id);
-        // Before updating the data, check if the email has changed.
-        // This shall probably be moved to the controller when the architecture
-        // update is applied.
-        if (isset($data['email']) and $model->email != $data['email']) {
-            $token = $this->makeConfirmationToken($data['email']);
-            $this->dispatch(new SendEmailConfirmationEmail($model, $data['email'], $token));
-            $data['email_confirmed'] = null;
-        }
-        return $model->update($data);
     }
 }

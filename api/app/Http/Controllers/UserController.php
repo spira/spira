@@ -7,13 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Exceptions\ValidationException;
+use App\Jobs\SendEmailConfirmationEmail;
 use App\Extensions\Lock\Manager as Lock;
+use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
 {
+    use DispatchesJobs;
+
     /**
      * Permission Lock Manager.
      *
@@ -99,5 +103,31 @@ class UserController extends ApiController
         $model->setCredential(new UserCredential($credential));
 
         return $this->responder->createdItem($model);
+    }
+
+    /**
+     * Patch an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function patchOne($id, Request $request)
+    {
+        $this->validateId($id);
+        $model = $this->repository->find($id);
+
+        // Check if the email is being changed, and initialize confirmation
+        $email = $request->get('email');
+        if ($email and $model->email != $email) {
+            $token = $this->repository->makeConfirmationToken($email);
+            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
+            $request->merge(['email_confirmed' => null]);
+        }
+
+        $model->fill($request->all());
+        $this->repository->save($model);
+
+        return $this->responder->noContent();
     }
 }
