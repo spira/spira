@@ -108,9 +108,12 @@ class UserTest extends TestCase
 
         $this->put('/users/'.$user['userId'], $user);
 
+        $response = json_decode($this->response->getContent());
+
         $createdUser = User::find($user['userId']);
         $this->assertResponseStatus(201);
         $this->assertEquals($user['firstName'], $createdUser->first_name);
+        $this->assertObjectNotHasAttribute('_userCredential', $response);
     }
 
     public function testPutOneAlreadyExisting()
