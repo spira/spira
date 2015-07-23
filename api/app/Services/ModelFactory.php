@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
 
@@ -29,7 +30,11 @@ class ModelFactory
      */
     public function get($factoryClass, $definedName = 'default')
     {
-        $instance = $this->factory->of($factoryClass, $definedName);
+        if ($factoryClass instanceof Collection) {
+            $instance = $factoryClass;
+        } else {
+            $instance = $this->factory->of($factoryClass, $definedName);
+        }
 
         return new ModelFactoryInstance($instance, $this->transformerService);
     }

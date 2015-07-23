@@ -1,58 +1,79 @@
-<?php
+<?php namespace App\Models;
 
-namespace App\Models;
-
+use BeatSwitch\Lock\LockAware;
+use BeatSwitch\Lock\Callers\Caller;
+use App\Extensions\Lock\UserOwnership;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends BaseModel implements AuthenticatableContract
+class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
-    use Authenticatable;
+    use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
-    const USER_TYPE_PUBLIC = 'public';
-    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_PUBLIC];
+    const USER_TYPE_GUEST = 'guest';
+    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
     /**
-     * The database table used by the model.
+     * The primary key for the model.
      *
      * @var string
      */
-    public $table = 'users';
+    protected $primaryKey = 'user_id';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'mobile'];
+    protected $fillable = [
+        'user_id',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'mobile',
+        'timezone_identifier',
+        'user_type'
+    ];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * Model validation.
      *
      * @var array
      */
-    protected $hidden = ['password'];
-
-    protected $primaryKey = 'user_id';
+    protected $validationRules = [
+        'user_id' => 'uuid',
+        'email' => 'required|email',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'phone' => 'string',
+        'mobile' => 'string',
+        'country' => 'country',
+        'timezone_identifier' => 'timezone'
+    ];
 
     /**
-     * Get the access route for the entity.
+     * Get the credentials associated with the user.
      *
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
-    public function entityRoute()
+    public function userCredential()
     {
-        return '/users';
+        return $this->hasOne(UserCredential::class);
     }
 
     /**
-     * Get the unique identifier for the user.
+     * Set the user's credentials.
      *
-     * @return mixed
+     * @param  UserCredential  $credential
+     * @return $this
      */
-    public function getAuthIdentifier()
+    public function setCredential(UserCredential $credential)
     {
-        // TODO: Implement getAuthIdentifier() method.
+        $this->userCredential()->save($credential);
+
+        return $this;
     }
 
     /**
@@ -62,37 +83,48 @@ class User extends BaseModel implements AuthenticatableContract
      */
     public function getAuthPassword()
     {
-        // TODO: Implement getAuthPassword() method.
+        return $this->userCredential ? $this->userCredential->password : false;
     }
 
     /**
-     * Get the token value for the "remember me" session.
+     * The type of caller for lock permission.
      *
      * @return string
      */
-    public function getRememberToken()
+    public function getCallerType()
     {
-        // TODO: Implement getRememberToken() method.
+        return 'users';
     }
 
     /**
-     * Set the token value for the "remember me" session.
-     *
-     * @param  string $value
-     * @return void
-     */
-    public function setRememberToken($value)
-    {
-        // TODO: Implement setRememberToken() method.
-    }
-
-    /**
-     * Get the column name for the "remember me" token.
+     * The unique ID to identify the caller with for lock permission.
      *
      * @return string
      */
-    public function getRememberTokenName()
+    public function getCallerId()
     {
-        // TODO: Implement getRememberTokenName() method.
+        return $this->user_id;
+    }
+
+    /**
+     * The caller's roles for lock permission.
+     *
+     * @return array
+     */
+    public function getCallerRoles()
+    {
+        return [$this->user_type];
+    }
+
+    /**
+     * Check if the user is owns the entity.
+     *
+     * @param  \App\Models\User  $user
+     * @param  string            $entityId
+     * @return bool
+     */
+    public static function userIsOwner($user, $entityId)
+    {
+        return $user->user_id == $entityId;
     }
 }

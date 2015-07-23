@@ -36,7 +36,7 @@ abstract class BaseRepository
      * @param  ConnectionResolverInterface $connectionResolver
      * @throws RepositoryException
      */
-    final public function __construct(ConnectionResolverInterface $connectionResolver)
+    public function __construct(ConnectionResolverInterface $connectionResolver)
     {
         $this->model = $this->model();
         if (!$this->model instanceof BaseModel) {
@@ -130,6 +130,22 @@ abstract class BaseRepository
         /** @var BaseModel $model */
 
         return $model->delete();
+    }
+
+    /**
+     * Check if an entity exists.
+     *
+     * @param  string  $id
+     * @return bool
+     */
+    public function exists($id)
+    {
+        try {
+            $this->find($id);
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
+        return true;
     }
 
     /**

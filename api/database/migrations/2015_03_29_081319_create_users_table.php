@@ -20,11 +20,12 @@ class CreateUsersTable extends Migration
         Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
                 $table->uuid('user_id');
                 $table->string('email', 255)->unique();
-                $table->char('password', 60);
                 $table->string('first_name', 45)->nullable();
                 $table->string('last_name', 45)->nullable();
                 $table->string('phone', 45)->nullable();
                 $table->string('mobile', 45)->nullable();
+                $table->string('country', 2)->nullable();
+                $table->string('timezone_identifier', 40)->nullable();
                 $table->enum('user_type', $modelClass::$userTypes);
 
                 $table->dateTime('created_at');

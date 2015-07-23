@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\BadRequestException;
-use App\Exceptions\TokenInvalidException;
-use App\Exceptions\UnauthorizedException;
-use App\Exceptions\UnprocessableEntityException;
-use App\Models\AuthToken;
-use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 use RuntimeException;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
+use App\Exceptions\BadRequestException;
+use App\Exceptions\UnauthorizedException;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Spira\Responder\Contract\ApiResponderInterface;
 
 class AuthController extends ApiController
 {
@@ -26,13 +24,14 @@ class AuthController extends ApiController
     /**
      * Assign dependencies.
      *
-     * @param JWTAuth $jwtAuth
-     *
+     * @param  JWTAuth                $jwtAuth
+     * @param  ApiResponderInterface  $responder
      * @return void
      */
-    public function __construct(JWTAuth $jwtAuth)
+    public function __construct(JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {
         $this->jwtAuth = $jwtAuth;
+        $this->responder = $responder;
     }
 
     /**
@@ -57,7 +56,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 
     /**
@@ -69,25 +68,13 @@ class AuthController extends ApiController
      */
     public function refresh(Request $request)
     {
-        if (!$token = $this->jwtAuth->setRequest($request)->getToken()) {
-            throw new BadRequestException('Token not provided.');
-        }
+        $token = $this->jwtAuth->getTokenFromRequest();
 
-        try {
-            $user = $this->jwtAuth->authenticate((string) $token);
-        } catch (TokenExpiredException $e) {
-            throw new UnauthorizedException('Token expired.', 401, $e);
-        } catch (TokenInvalidException $e) {
-            throw new UnprocessableEntityException($e->getMessage(), 422, $e);
-        }
-
-        if (!$user) {
-            throw new RuntimeException('The user does not exist.');
-        }
+        // Get the user to make sure the token is fully valid
+        $this->jwtAuth->getUser();
 
         $token = $this->jwtAuth->refresh($token);
-
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 
     /**
@@ -114,6 +101,6 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
 
-        return $this->item(new AuthToken(['token' => $token]));
+        return $this->getResponder()->item(new AuthToken(['token' => $token]));
     }
 }
