@@ -75,18 +75,6 @@ abstract class BaseRepository
 
 
     /**
-     * @param EloquentSpecificationInterface $specification
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
-     */
-    public function findSpecifying(EloquentSpecificationInterface $specification, $columns = ['*'])
-    {
-        $qb = $this->model->query();
-        $specification->attachCriteriaToBuilder($qb);
-        return $qb->get($columns);
-    }
-
-    /**
      * Get all entities.
      *
      * @param  array  $columns
