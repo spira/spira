@@ -8,15 +8,6 @@ class UserTest extends TestCase
 {
     use DatabaseTransactions, MailcatcherTrait;
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        // We'll use the synchronous queue driver for this test, so we can test
-        // the email queue jobs.
-        putenv('QUEUE_DRIVER=sync');
-    }
-
     protected function createUser($type = 'admin')
     {
         $user = factory(App\Models\User::class)->create(['user_type' => $type]);

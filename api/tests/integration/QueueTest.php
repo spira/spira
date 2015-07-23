@@ -10,6 +10,10 @@ class QueueTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        // We'll use the beanstalkd queue driver for this test.
+        putenv('QUEUE_DRIVER=beanstalkd');
+
         $this->pheanstalk = new Pheanstalk(env('BEANSTALKD_HOST'));
     }
 
