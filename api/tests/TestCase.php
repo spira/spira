@@ -2,7 +2,7 @@
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-    use AssertionsTrait;
+    use AssertionsTrait, HelpersTrait;
 
     /**
      * Setup the test environment.
