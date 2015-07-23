@@ -37,7 +37,6 @@ class ApiaryValidateCommand extends Command
      */
     public function handle()
     {
-
         $apiaryController = new ApiaryController();
 
 
