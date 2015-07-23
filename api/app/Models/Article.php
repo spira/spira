@@ -42,26 +42,26 @@ class Article extends BaseModel
     public function setPermalink($permalink)
     {
         $currentLink = $this->permalinkRelation;
-        if ($currentLink){
+        if ($currentLink) {
             $currentLink->current = false;
         }
 
         $permalinkObj = null;
-        if ($permalink){
+        if ($permalink) {
             $permalinkObj = new ArticlePermalink();
             $permalinkObj->uri = $permalink;
             $permalinkObj->current = true;
         }
         $this->permalinkRelation = $permalinkObj;
 
-        if ($currentLink && $currentLink->exists){
+        if ($currentLink && $currentLink->exists) {
             $this->previousPermalinksRelations->add($currentLink);
         }
     }
 
     public function getPermalink()
     {
-        if ($this->permalinkRelation && $this->permalinkRelation->uri){
+        if ($this->permalinkRelation && $this->permalinkRelation->uri) {
             return $this->permalinkRelation->uri;
         }
 
@@ -71,15 +71,14 @@ class Article extends BaseModel
     public function permalinkRelation()
     {
         $relation = $this->hasOne(ArticlePermalink::class, 'article_id', 'article_id');
-        $relation->getQuery()->where('current','=','t');
+        $relation->getQuery()->where('current', '=', 't');
         return $relation;
     }
 
     public function previousPermalinksRelations()
     {
         $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
-        $relation->getQuery()->where('current','=','f');
+        $relation->getQuery()->where('current', '=', 'f');
         return $relation;
     }
-
 }

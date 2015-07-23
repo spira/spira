@@ -57,17 +57,13 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-
     }
 
     public function testPostOneValid()
     {
-
     }
 
     public function testPatchOne()
     {
-
     }
-
 }

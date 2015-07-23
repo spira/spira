@@ -116,5 +116,3 @@ $factory->define(App\Models\Article::class, function ($faker) {
         'first_published' => $faker->optional(0.9)->dateTimeThisDecade(),
     ];
 });
-
-

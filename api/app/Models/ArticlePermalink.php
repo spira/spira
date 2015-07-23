@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 /**
  * @property bool $current
  * @property string $uri

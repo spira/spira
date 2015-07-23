@@ -12,7 +12,6 @@ class CreateArticlesTable extends Migration
      */
     public function up()
     {
-
         Schema::create(\App\Models\Article::getTableName(), function (Blueprint $table) {
                 $table->uuid('article_id')->primary();
                 $table->string('title', 255);

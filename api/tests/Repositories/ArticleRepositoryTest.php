@@ -40,7 +40,7 @@ class ArticleRepositoryTest extends TestCase
 
     public function testFind()
     {
-        $entities = $this->prepareArticlesWithPermalinks(rand(5,15));
+        $entities = $this->prepareArticlesWithPermalinks(rand(5, 15));
         $this->repository->saveMany($entities);
 
         /** @var Article $checkEntity */
@@ -51,12 +51,12 @@ class ArticleRepositoryTest extends TestCase
         /** @var Article $model */
         $model = $this->repository->find($checkUri);
 
-        $this->assertEquals($model->getQueueableId(),$checkEntity->getQueueableId());
+        $this->assertEquals($model->getQueueableId(), $checkEntity->getQueueableId());
 
         /** @var Article $model */
         $model = $this->repository->find($checkUriPrevious);
 
-        $this->assertEquals($model->getQueueableId(),$checkEntity->getQueueableId());
+        $this->assertEquals($model->getQueueableId(), $checkEntity->getQueueableId());
     }
 
     /**
@@ -68,13 +68,11 @@ class ArticleRepositoryTest extends TestCase
         $counter = 1;
         /** @var Article[] $entities */
         $entities = factory(Article::class, $number)->create()->all();
-        foreach ($entities as $entity)
-        {
+        foreach ($entities as $entity) {
             $entity->setPermalink($this->getLinkName($counter++));
             $permalinks = [];
 
-            for($i = rand(1,10); $i >= 0; $i--)
-            {
+            for ($i = rand(1, 10); $i >= 0; $i--) {
                 $permalinkObj = new ArticlePermalink();
                 $permalinkObj->uri = $this->getLinkName($counter++);
                 $permalinks[] = $permalinkObj;

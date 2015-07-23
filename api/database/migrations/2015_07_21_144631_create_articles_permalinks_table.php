@@ -12,7 +12,6 @@ class CreateArticlesPermalinksTable extends Migration
      */
     public function up()
     {
-
         Schema::create(\App\Models\ArticlePermalink::getTableName(), function (Blueprint $table) {
                 $table->string('uri', 255)->primary();
                 $table->boolean('current')->default(false);

@@ -98,9 +98,8 @@ class BaseModel extends Model
         /** @var Collection|BaseModel[] $models */
         $models = $this->isCollection($models)?$models->all(true):[$models];
         $deleteArray = [];
-        foreach ($models as $model)
-        {
-            if ($model && $model->exists){
+        foreach ($models as $model) {
+            if ($model && $model->exists) {
                 $deleteArray[] = $model;
             }
         }

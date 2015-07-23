@@ -25,12 +25,12 @@ class ArticleRepository extends BaseRepository
         $query = $builder->getQuery();
         $tableName = $this->model->getTable();
         $joinTableName = ArticlePermalink::getTableName();
-        $query->join($joinTableName,$joinTableName.'.article_id','=',$tableName.'.article_id','left');
-        if (Uuid::isValid($id)){
-            $query->where($tableName.'.article_id','=',$id);
+        $query->join($joinTableName, $joinTableName.'.article_id', '=', $tableName.'.article_id', 'left');
+        if (Uuid::isValid($id)) {
+            $query->where($tableName.'.article_id', '=', $id);
         }
 
-        $query->orWhere($joinTableName.'.uri','=',$id);
+        $query->orWhere($joinTableName.'.uri', '=', $id);
 
         return $builder->get($columns)->first();
     }

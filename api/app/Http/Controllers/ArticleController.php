@@ -8,11 +8,8 @@
 
 namespace app\Http\Controllers;
 
-
 use App\Http\Responder\Responder;
 use App\Repositories\ArticleRepository;
-use App\Specifications\ArticlePermalinkSpecification;
-use Symfony\Component\HttpFoundation\Response;
 
 class ArticleController extends ApiController
 {
@@ -25,24 +22,5 @@ class ArticleController extends ApiController
     {
         $this->repository = $repository;
         $this->responder = $responder;
-    }
-
-    /**
-     * Get one entity.
-     *
-     * @param  string $id
-     * @return Response
-     */
-    public function getOne($id)
-    {
-        $model = $this->repository
-            ->findSpecifying(new ArticlePermalinkSpecification($id))
-            ->first();
-
-        if (!$model){
-            $this->getResponder()->errorNotFound();
-        }
-
-        return $this->getResponder()->item($model);
     }
 }
