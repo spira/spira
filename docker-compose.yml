@@ -61,6 +61,7 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
+    - apimock:apimock
   ports:
     - "80:80"
     - "8080:8080"
@@ -82,3 +83,12 @@ devtools:
     - database:database
     - cache:cache
     - queue:queue
+
+apimock:
+  image: spira/docker-drakov
+  volumes_from:
+      - data
+  environment:
+      - APIB_PATH=/data/api/storage/app/apiary.apib
+  ports:
+    - "3000:3000"
