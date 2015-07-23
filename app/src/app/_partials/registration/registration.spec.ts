@@ -7,9 +7,9 @@ describe('Registration', () => {
         let RegistrationController:ng.IControllerService,
             $scope:app.partials.registration.IScope,
             $mdDialog:ng.material.IDialogService,
-            userService:common.services.UserService,
+            userService:common.services.user.UserService,
             $q:ng.IQService,
-            userServiceMock:common.services.UserService = <common.services.UserService>{
+            userServiceMock:common.services.user.UserService = <common.services.user.UserService>{
                 registerAndLogin: (email, password, first, last) => $q.when(true),
             },
             $state:ng.ui.IStateService

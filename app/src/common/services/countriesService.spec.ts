@@ -1,0 +1,88 @@
+///<reference path="../../../build/js/declarations.d.ts" />
+
+(() => {
+
+    let seededChance = new Chance(1);
+    let fixtures = {
+
+        getCountries(count:number = 10) {
+
+
+            let countries = (<any>seededChance).countries(),
+                sample = seededChance.pick(countries, count),
+                mapped = _.chain(sample)
+                    .map((country) => {
+                        return {
+                            countryCode:country.abbreviation,
+                            countryName:country.name,
+                        };
+                    })
+                .value();
+
+            return mapped;
+
+        }
+    };
+
+    describe('CountriesService', () => {
+
+        let countriesService:common.services.countries.CountriesService;
+        let $httpBackend:ng.IHttpBackendService;
+        let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+
+        beforeEach(()=> {
+
+            module('app');
+
+            inject((_$httpBackend_, _countriesService_, _ngRestAdapter_) => {
+
+                if (!countriesService) { //dont rebind, so each test gets the singleton
+                    $httpBackend = _$httpBackend_;
+                    countriesService = _countriesService_;
+                    ngRestAdapter = _ngRestAdapter_;
+                }
+            });
+
+        });
+
+        afterEach(() => {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        describe('Initialisation', () => {
+
+            it('should be an injectable service', () => {
+
+                return expect(countriesService).to.be.an('object');
+            });
+
+        });
+
+        describe('Retrieve countries', () => {
+
+            it ('should return all countries', () => {
+
+                let countries = _.clone(fixtures.getCountries()); //get a set of countries
+
+                console.log('countries', countries);
+
+                $httpBackend.expectGET('/api/countries').respond(countries);
+
+                let allCountriesPromise = countriesService.getAllCountries();
+
+                expect(allCountriesPromise).eventually.to.be.fulfilled;
+                expect(allCountriesPromise).eventually.to.deep.equal(countries);
+
+                $httpBackend.flush();
+
+            });
+
+
+        });
+
+
+    });
+
+
+})();

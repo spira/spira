@@ -50,7 +50,7 @@ module app.user.profile {
         static $inject = ['$scope', 'userService', '$stateParams'];
         constructor(
             private $scope : IScope,
-            private userService:common.services.UserService,
+            private userService:common.services.user.UserService,
             private $stateParams:IStateParams
         ) {
 

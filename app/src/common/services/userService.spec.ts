@@ -1,124 +1,98 @@
 ///<reference path="../../../build/js/declarations.d.ts" />
 
-let seededChance = new Chance(1);
-let fixtures = {
+(() => {
 
-    buildUser: (overrides = {}) => {
+    let seededChance = new Chance(1);
+    let fixtures = {
 
-        let userId = seededChance.guid();
-        let defaultUser:global.IUser = {
-            _self: '/users/'+userId,
-            userId: userId,
-            email: seededChance.email(),
-            firstName: seededChance.first(),
-            lastName: seededChance.last(),
-            _credentials: {
-                userCredentialId: seededChance.guid(),
-                password: seededChance.string(),
-            }
-        };
+        buildUser: (overrides = {}) => {
 
-        return _.merge(defaultUser, overrides);
-    },
-    get user():global.IUser {
-        return fixtures.buildUser();
-    },
-    get users() {
-        return _.range(10).map(() => fixtures.user);
-    }
-};
+            let userId = seededChance.guid();
+            let defaultUser:global.IUser = {
+                _self: '/users/'+userId,
+                userId: userId,
+                email: seededChance.email(),
+                firstName: seededChance.first(),
+                lastName: seededChance.last(),
+                _credentials: {
+                    userCredentialId: seededChance.guid(),
+                    password: seededChance.string(),
+                }
+            };
 
-const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
+            return _.merge(defaultUser, overrides);
+        },
+        get user():global.IUser {
+            return fixtures.buildUser();
+        },
+        get users() {
+            return _.range(10).map(() => fixtures.user);
+        }
+    };
 
-describe('UserService', () => {
+    const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
 
-    let userService:common.services.UserService;
-    let $httpBackend:ng.IHttpBackendService;
-    let authService:NgJwtAuth.NgJwtAuthService;
-    let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+    describe('UserService', () => {
 
-    beforeEach(()=> {
+        let userService:common.services.user.UserService;
+        let $httpBackend:ng.IHttpBackendService;
+        let authService:NgJwtAuth.NgJwtAuthService;
+        let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
-        module('app');
+        beforeEach(()=> {
 
-        inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_) => {
+            module('app');
 
-            if (!userService) { //dont rebind, so each test gets the singleton
-                $httpBackend = _$httpBackend_;
-                userService = _userService_;
-                authService = _ngJwtAuthService_;
-                ngRestAdapter = _ngRestAdapter_;
-            }
-        });
+            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_) => {
 
-    });
-
-    afterEach(() => {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
-    });
-
-    describe('Initialisation', () => {
-
-        it('should be an injectable service', () => {
-
-            return expect(userService).to.be.an('object');
-        });
-
-    });
-
-    describe('All users', () => {
-
-        it ('should return all users', () => {
-
-            let users = _.clone(fixtures.users); //get a new user copy
-
-            $httpBackend.expectGET('/api/users').respond(users);
-
-            let allUsersPromise = userService.getAllUsers();
-
-            expect(allUsersPromise).eventually.to.be.fulfilled;
-            expect(allUsersPromise).eventually.to.deep.equal(users);
-
-            $httpBackend.flush();
+                if (!userService) { //dont rebind, so each test gets the singleton
+                    $httpBackend = _$httpBackend_;
+                    userService = _userService_;
+                    authService = _ngJwtAuthService_;
+                    ngRestAdapter = _ngRestAdapter_;
+                }
+            });
 
         });
 
-        it('should reject the promise getting users fails', () => {
+        afterEach(() => {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
 
-            $httpBackend.expectGET('/api/users').respond(500);
+        describe('Initialisation', () => {
 
-            let allUsersPromise = userService.getAllUsers();
+            it('should be an injectable service', () => {
 
-            expect(allUsersPromise).eventually.to.be.rejected;
-
-            $httpBackend.flush();
+                return expect(userService).to.be.an('object');
+            });
 
         });
 
-    });
+        describe('All users', () => {
 
-    describe('User Registration', () => {
+            it ('should return all users', () => {
 
+                let users = _.clone(fixtures.users); //get a new user copy
 
-        before(() => authService.logout()); //make sure we are logged out
+                $httpBackend.expectGET('/api/users').respond(users);
 
-        describe('Username/Password (non social)', () => {
+                let allUsersPromise = userService.getAllUsers();
 
+                expect(allUsersPromise).eventually.to.be.fulfilled;
+                expect(allUsersPromise).eventually.to.deep.equal(users);
 
-            it('should be able to create a new user and attempt login immediately',  () => {
+                $httpBackend.flush();
 
-                let user = _.clone(fixtures.user);
-                delete user._self;
+            });
 
+            it('should reject the promise getting users fails', () => {
 
-                $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
-                    return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
-                }).respond(204);
-                $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
-                //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
+                $httpBackend.expectGET('/api/users').respond(500);
 
-                userService.registerAndLogin(user.email, user._credentials.password, user.firstName, user.lastName);
+                let allUsersPromise = userService.getAllUsers();
+
+                expect(allUsersPromise).eventually.to.be.rejected;
 
                 $httpBackend.flush();
 
@@ -126,29 +100,60 @@ describe('UserService', () => {
 
         });
 
-        describe('Email checking', () => {
+        describe('User Registration', () => {
 
 
-            it('should be able to poll the api to check if an email has been registered', () => {
+            before(() => authService.logout()); //make sure we are logged out
 
-                let notExistingEmail = 'not-registered@example.com';
+            describe('Username/Password (non social)', () => {
 
-                $httpBackend.expectHEAD('/api/users/email/'+notExistingEmail).respond(404);
-                $httpBackend.expectHEAD('/api/users/email/'+seededEmail).respond(200);
 
-                let notExistingCheck = userService.isEmailRegistered(notExistingEmail);
-                let existingCheck = userService.isEmailRegistered(seededEmail);
+                it('should be able to create a new user and attempt login immediately',  () => {
 
-                $httpBackend.flush();
+                    let user = _.clone(fixtures.user);
+                    delete user._self;
 
-                expect(notExistingCheck).eventually.to.become(false);
-                expect(existingCheck).eventually.to.become(true);
+
+                    $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
+                        return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
+                    }).respond(204);
+                    $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
+                    //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
+
+                    userService.registerAndLogin(user.email, user._credentials.password, user.firstName, user.lastName);
+
+                    $httpBackend.flush();
+
+                });
+
+            });
+
+            describe('Email checking', () => {
+
+
+                it('should be able to poll the api to check if an email has been registered', () => {
+
+                    let notExistingEmail = 'not-registered@example.com';
+
+                    $httpBackend.expectHEAD('/api/users/email/'+notExistingEmail).respond(404);
+                    $httpBackend.expectHEAD('/api/users/email/'+seededEmail).respond(200);
+
+                    let notExistingCheck = userService.isEmailRegistered(notExistingEmail);
+                    let existingCheck = userService.isEmailRegistered(seededEmail);
+
+                    $httpBackend.flush();
+
+                    expect(notExistingCheck).eventually.to.become(false);
+                    expect(existingCheck).eventually.to.become(true);
+
+                });
 
             });
 
         });
 
+
     });
 
 
-});
+})();

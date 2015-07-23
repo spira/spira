@@ -1,6 +1,6 @@
-module common.services {
+module common.services.user {
 
-    export const namespace = 'common.services';
+    export const namespace = 'common.services.user';
 
     export class UserService {
 
@@ -85,7 +85,7 @@ module common.services {
         }
     }
 
-    angular.module(namespace+'.userService', [])
+    angular.module(namespace, [])
         .service('userService', UserService);
 
 }
