@@ -1,12 +1,10 @@
-<?php
+<?php namespace App\Repositories;
 
-namespace App\Repositories;
-
-use Cache;
+use App\Models\User;
 use App\Jobs\SendPasswordResetEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
-use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
@@ -22,33 +20,32 @@ class UserRepository extends BaseRepository
     /**
      * Cache repository.
      *
-     * @var CacheRepository
+     * @var Cache
      */
     protected $cache;
 
     /**
      * Assign dependencies.
      *
-     * @param App              $app
-     * @param CacheRepository  $cache
-     *
+     * @param  Connection  $connection
+     * @param  Cache       $cache
      * @return void
      */
-    public function __construct(App $app, CacheRepository $cache)
+    public function __construct(Connection $connection, Cache $cache)
     {
-        $this->cache = $cache;
+        parent::__construct($connection);
 
-        parent::__construct($app);
+        $this->cache = $cache;
     }
 
     /**
      * Model name.
      *
-     * @return string
+     * @return User
      */
     protected function model()
     {
-        return 'App\Models\User';
+        return new User;
     }
 
     /**
@@ -85,29 +82,6 @@ class UserRepository extends BaseRepository
     }
 
     /**
-     * Create or replace an entity by id.
-     *
-     * @param  string  $id
-     * @param  array   $data
-     * @return array
-     */
-    public function createOrReplace($id, array $data)
-    {
-        // Extract the credentials
-        $credential = array_pull($data, '#user_credential');
-
-        // Set new users to guest
-        $data['user_type'] = 'guest';
-
-        $self = parent::createOrReplace($id, $data);
-
-        // Create the credentials
-        $this->find($id)->userCredential()->create($credential);
-
-        return $self;
-    }
-
-    /**
      * Reset user password.
      *
      * @param  string  $id
@@ -119,7 +93,6 @@ class UserRepository extends BaseRepository
         // This might probably be moved to the controller when the architecture
         // update is applied.
         $user = $this->find($id);
-
         $token = $this->makeLoginToken($id);
         $this->dispatch(new SendPasswordResetEmail($user, $token));
     }

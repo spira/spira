@@ -12,6 +12,7 @@
 */
 
 use Illuminate\Http\Request;
+use Laravel\Lumen\Application;
 
 $app->get('/', function () use ($app) {
 
@@ -35,22 +36,24 @@ $app->get('/documentation.apib', function (Request $request) use ($app) {
 $app->get('timezones', 'TimezoneController@getAll');
 $app->get('countries', 'CountriesController@getAll');
 
-$app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function ($app) {
-    $app->get('/', ['uses' => 'UserController@getAll']);
-    $app->get('{id}', ['uses' => 'UserController@getOne']);
+$app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('/', ['uses' => 'UserController@getAll', 'as' => App\Models\User::class]);
+    $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
     $app->delete('{id}/password', ['uses' => 'UserController@resetPassword']);
 });
 
-$app->group(['prefix' => 'test'], function ($app) {
+
+$app->group(['prefix' => 'test'], function (Application $app) {
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
-    $app->get('/entities/{id}', 'App\Http\Controllers\TestController@getOne');
+    $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
+    $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
     $app->put('/entities', 'App\Http\Controllers\TestController@putMany');
@@ -60,7 +63,7 @@ $app->group(['prefix' => 'test'], function ($app) {
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 });
 
-$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function ($app) {
+$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');
     $app->get('jwt/token', 'AuthController@token');
