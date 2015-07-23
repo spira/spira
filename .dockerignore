@@ -1,4 +1,4 @@
-# ignore everything!
+# ignore everything! @todo resolve why the ignoreall match doesn't work
 #*/*
 # then add what is needed for the docker container
 #!vhosts/
