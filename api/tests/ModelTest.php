@@ -15,9 +15,11 @@ class ModelTest extends TestCase
 
         $user = new $userClass();
 
-        $dynamicTableName = $user->table;
+        $dynamicTableName = $user->getTable();
 
         $staticTableName = $userClass::getTableName();
+
+
 
         $this->assertEquals($dynamicTableName, $staticTableName);
     }

@@ -22,26 +22,18 @@ class AuthTest extends TestCase
         ]);
     }
 
-    protected function assertException($message, $statusCode, $exception)
-    {
-        $body = json_decode($this->response->getContent());
-        $this->assertResponseStatus($statusCode);
-        $this->assertContains($message, $body->message);
-        $this->assertContains($exception, $body->debug->exception);
-    }
-
     public function testLogin()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
-
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
 
         $array = json_decode($this->response->getContent(), true);
-
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
@@ -51,7 +43,6 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
 
         $this->get('/auth/jwt/login', [
@@ -66,8 +57,11 @@ class AuthTest extends TestCase
 
     public function testFailedTokenEncoding()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
         $this->app->config->set('jwt.algo', 'foobar');
 
         $this->get('/auth/jwt/login', [
@@ -80,22 +74,18 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
 
         $object = json_decode($this->response->getContent());
         $this->assertResponseOk();
-
         $this->assertNotEquals($token, $object->token);
     }
 
     public function testRefreshPlainHeader()
     {
-        $this->markTestSkipped('must be revisited');
         $user = App\Models\User::first();
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $token = $jwtAuth->fromUser($user);
@@ -117,9 +107,6 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
-        $this->markTestSkipped('must be revisited');
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-
         $claims = [
             new Subject(1),
             new Issuer('http://foo.bar'),
@@ -133,7 +120,9 @@ class AuthTest extends TestCase
         $this->validator->shouldReceive('setRefreshFlow->check');
         $payload = new Payload($claims, $this->validator, true);
 
-        $token = $jwtAuth->encode($payload);
+        $cfg = $this->app->config->get('jwt');
+        $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
+        $token = $adapter->encode($payload->get());
 
         $this->callRefreshToken($token);
 
@@ -144,10 +133,8 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidTokenSignature()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->create();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
         $segments = explode('.', $token);
@@ -161,7 +148,6 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidToken()
     {
-        $this->markTestSkipped('must be revisited');
         $token = 'foo.bar.baz';
 
         $this->callRefreshToken($token);
@@ -171,7 +157,6 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingToken()
     {
-        $this->markTestSkipped('must be revisited');
         $this->get('/auth/jwt/refresh');
 
         $this->assertException('not provided', 400, 'BadRequestException');
@@ -179,10 +164,8 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingUser()
     {
-        $this->markTestSkipped('must be revisited');
         $user = factory(App\Models\User::class)->make();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
 
@@ -191,7 +174,6 @@ class AuthTest extends TestCase
 
     public function testToken()
     {
-        $this->markTestSkipped('must be revisited');
         $token = 'foobar';
         $user = factory(App\Models\User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
@@ -207,7 +189,6 @@ class AuthTest extends TestCase
 
     public function testMissingToken()
     {
-        $this->markTestSkipped('must be revisited');
         $this->get('/auth/jwt/token');
 
         $this->assertException('not provided', 400, 'BadRequestException');
@@ -215,7 +196,6 @@ class AuthTest extends TestCase
 
     public function testInvalidToken()
     {
-        $this->markTestSkipped('must be revisited');
         $token = 'invalid';
         $this->get('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
@@ -226,7 +206,6 @@ class AuthTest extends TestCase
 
     public function testTokenInvalid()
     {
-        $this->markTestSkipped('must be revisited');
         $token = 'foobar';
         $user = factory(App\Models\User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
@@ -246,7 +225,6 @@ class AuthTest extends TestCase
 
     public function testMakeLoginToken()
     {
-        $this->markTestSkipped('must be revisited');
         $repo = $this->app->make('App\Repositories\UserRepository');
         $user = factory(App\Models\User::class)->create();
 
