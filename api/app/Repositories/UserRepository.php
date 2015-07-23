@@ -1,6 +1,9 @@
 <?php namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
+use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\ConnectionResolverInterface as Connection;
 
@@ -96,5 +99,24 @@ class UserRepository extends BaseRepository
         $token = hash_hmac('sha256', str_random(40), str_random(40));
         $this->cache->put('email_confirmation_'.$token, $email, $this->confirmation_token_ttl);
         return $token;
+    }
+
+    /**
+     * If the email_confirmation field is set, make sure we've a valid token.
+     *
+     * @param  Request  $request
+     * @return void
+     */
+    public function validateEmailConfirmationToken(Request $request)
+    {
+        if ($request->get('email_confirmed')) {
+            $token = $request->headers->get('email-confirm-token');
+            if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
+
+                throw new ValidationException(
+                    new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
+                );
+            }
+        }
     }
 }

@@ -30,22 +30,4 @@ class SpiraValidator extends Validator
 
         return in_array($value, array_fetch($countries, 'country_code'));
     }
-
-    /**
-     * Register custom validation rule for email confirmation token.
-     *
-     * @return void
-     */
-    protected function registerEmailConfirmationToken()
-    {
-        $this->validator->extend('email_confirmation_token', function ($attribute, $value, $parameters) {
-
-            $token = $this->request->headers->get('email-confirm-token');
-
-            if ($email = $this->cache->pull('email_confirmation_'.$token)) {
-                return true;
-            }
-            return false;
-        });
-    }
 }

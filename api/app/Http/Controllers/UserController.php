@@ -115,6 +115,7 @@ class UserController extends ApiController
     public function patchOne($id, Request $request)
     {
         $this->validateId($id);
+        $this->repository->validateEmailConfirmationToken($request);
         $model = $this->repository->find($id);
 
         // Check if the email is being changed, and initialize confirmation

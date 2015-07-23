@@ -46,7 +46,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     protected $validationRules = [
         'user_id' => 'uuid',
         'email' => 'required|email',
-        'email_confirmed' => 'date|email_confirmation_token',
+        'email_confirmed' => 'date',
         'first_name' => 'string',
         'last_name' => 'string',
         'phone' => 'string',
