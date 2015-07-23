@@ -8,21 +8,32 @@ class BaseRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->baseRepository = m::mock('App\Repositories\BaseRepository')
+        $this->baseRepository = m::mock('Spira\Repository\Repository\BaseRepository')
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
+
+        $connection = m::mock('Illuminate\Database\Connection');
+
+        $this->assertTrue($connection instanceof Illuminate\Database\Connection);
+
+        $connectionResolver = m::mock('Illuminate\Database\ConnectionResolverInterface')
+            ->shouldReceive('connection')
+            ->times()
+            ->andReturn($connection)
+            ->getMock();
+
+        $this->assertTrue($connectionResolver instanceof Illuminate\Database\ConnectionResolverInterface);
+
+
 
         $this->baseModel = m::mock('App\Models\BaseModel')->makePartial();
         $this->app->instance('App\Models\BaseModel', $this->baseModel);
 
         $this->baseRepository->shouldReceive('model')
             ->once()
-            ->andReturn('App\Models\BaseModel');
+            ->andReturn($this->baseModel);
 
-        $this->baseModel->shouldReceive('entityRoute')
-            ->andReturn('/base-model');
-
-        $this->baseRepository->__construct($this->app);
+        $this->baseRepository->__construct($connectionResolver);
     }
 
     public function testFind()
@@ -48,29 +59,17 @@ class BaseRepositoryTest extends TestCase
         $this->assertTrue(is_array($result));
     }
 
-    public function testCreate()
+
+    public function getModel()
     {
-        $this->baseModel->shouldReceive('create')
-            ->once()
-            ->with(m::type('array'))
-            ->andReturn($this->baseModel);
-
-        $result = $this->baseRepository->create(['foo' => 'bar']);
-
-        $this->assertTrue(is_array($result));
+        $this->setExpectedException('Illuminate\Database\Eloquent\ModelNotFoundException');
     }
 
-    public function testCreateOrReplaceOverrideId()
+    public function testSave()
     {
-        $this->setExpectedException('App\Exceptions\FatalErrorException');
-
-        $result = $this->baseRepository->createOrReplace('foo', ['id' => 'bar']);
     }
 
-    public function testUpdateOverrideId()
+    public function testDelete()
     {
-        $this->setExpectedException('App\Exceptions\FatalErrorException');
-
-        $result = $this->baseRepository->update('foo', ['id' => 'bar']);
     }
 }

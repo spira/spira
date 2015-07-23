@@ -25,7 +25,7 @@ class GenerateKeysCommand extends Command
     /**
      * Filesystem.
      *
-     * @var Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $file;
 

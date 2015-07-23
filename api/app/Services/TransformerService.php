@@ -11,7 +11,7 @@ use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\SerializerAbstract;
 use League\Fractal\TransformerAbstract;
 
-class Transformer
+class TransformerService
 {
     /**
      * Fractal manager.
@@ -25,11 +25,10 @@ class Transformer
      *
      * @param SerializerAbstract $serializer
      *
-     * @return void
      */
-    public function __construct(SerializerAbstract $serializer)
+    public function __construct(SerializerAbstract $serializer, Manager $manager)
     {
-        $this->manager = new Manager();
+        $this->manager = $manager;
         $this->manager->setSerializer($serializer);
     }
 
@@ -48,8 +47,8 @@ class Transformer
     /**
      * Create transformed data from a collection.
      *
-     * @param object                             $data
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param object|array                       $data
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array
@@ -57,7 +56,6 @@ class Transformer
     public function collection($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Collection($data, $this->getTransformer($transformer), $resourceKey);
-
         return $this->manager->createData($resource)->toArray()['data'];
     }
 
@@ -65,7 +63,7 @@ class Transformer
      * Create transformed data from an item.
      *
      * @param object                             $data
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array
@@ -73,7 +71,6 @@ class Transformer
     public function item($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
-
         return $this->manager->createData($resource)->toArray();
     }
 
@@ -81,7 +78,7 @@ class Transformer
      * Create paginated transformed data from a collection.
      *
      * @param LengthAwarePaginator               $paginator
-     * @param League\Fractal\TransformerAbstract $transformer
+     * @param TransformerAbstract $transformer
      * @param string                             $resourceKey
      *
      * @return array
