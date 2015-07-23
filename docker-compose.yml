@@ -80,7 +80,7 @@ devtools:
     - data
   privileged: true
   links:
-    - web:nginx
+    - web:web
     - mailcatcher:mailcatcher
     - database:database
     - cache:cache
