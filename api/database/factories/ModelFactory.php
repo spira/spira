@@ -43,6 +43,13 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
 
 $factory->define(App\Models\User::class, function ($faker) {
+
+    // Prepare available country codes (Faker does not generate valid country codes)
+    $countries = \App::make('App\Services\Datasets\Countries')
+            ->all()
+            ->toArray();
+    $countryCodes = array_fetch($countries, 'country_code');
+
     return [
         'user_id' => $faker->uuid,
         'email' => $faker->email,
@@ -50,7 +57,7 @@ $factory->define(App\Models\User::class, function ($faker) {
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
-        'country' => $faker->countryCode,
+        'country' => $faker->randomElement($countryCodes),
         'timezone_identifier' => $faker->randomElement(array_pluck(App::make('App\Services\Datasets\Timezones')->all(), 'timezone_identifier')),
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
