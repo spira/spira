@@ -1,10 +1,8 @@
-<?php
+<?php namespace App\Repositories;
 
-namespace App\Repositories;
-
-use Cache;
-use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use App\Models\User;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
@@ -18,33 +16,32 @@ class UserRepository extends BaseRepository
     /**
      * Cache repository.
      *
-     * @var CacheRepository
+     * @var Cache
      */
     protected $cache;
 
     /**
      * Assign dependencies.
      *
-     * @param App              $app
-     * @param CacheRepository  $cache
-     *
+     * @param  Connection  $connection
+     * @param  Cache       $cache
      * @return void
      */
-    public function __construct(App $app, CacheRepository $cache)
+    public function __construct(Connection $connection, Cache $cache)
     {
-        $this->cache = $cache;
+        parent::__construct($connection);
 
-        parent::__construct($app);
+        $this->cache = $cache;
     }
 
     /**
      * Model name.
      *
-     * @return string
+     * @return User
      */
     protected function model()
     {
-        return 'App\Models\User';
+        return new User;
     }
 
     /**
@@ -78,28 +75,5 @@ class UserRepository extends BaseRepository
         $this->cache->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
         return $token;
-    }
-
-    /**
-     * Create or replace an entity by id.
-     *
-     * @param  string  $id
-     * @param  array   $data
-     * @return array
-     */
-    public function createOrReplace($id, array $data)
-    {
-        // Extract the credentials
-        $credential = array_pull($data, '#user_credential');
-
-        // Set new users to guest
-        $data['user_type'] = 'guest';
-
-        $self = parent::createOrReplace($id, $data);
-
-        // Create the credentials
-        $this->find($id)->userCredential()->create($credential);
-
-        return $self;
     }
 }
