@@ -1,9 +1,9 @@
 <?php
 
-
 namespace App\Services;
 
 use Illuminate\Validation\Validator;
+use Rhumsaa\Uuid\Uuid;
 
 class SpiraValidator extends Validator
 {
@@ -14,6 +14,6 @@ class SpiraValidator extends Validator
 
     public function validateUuid($attribute, $value, $parameters)
     {
-        return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
+        return Uuid::isValid($value);
     }
 }
