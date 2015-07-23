@@ -52,6 +52,9 @@
     },
     "angular-material/angular-material.d.ts": {
       "commit": "38c6ccfde0e67ff10d7408e0ee8b7720b3f21d3b"
+    },
+    "moment-timezone/moment-timezone.d.ts": {
+      "commit": "efc57a6eb7b4d0747894fc106b9dd87e45a8d183"
     }
   }
 }

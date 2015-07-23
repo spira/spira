@@ -5,6 +5,7 @@ module common.services {
     angular.module(namespace, [
         namespace+'.user',
         namespace+'.countries',
+        namespace+'.timezones',
     ]);
 
 }
