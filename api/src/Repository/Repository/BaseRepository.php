@@ -4,7 +4,6 @@ use App\Models\BaseModel;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
 use Spira\Repository\Collection\Collection;
-use Spira\Repository\Specification\EloquentSpecificationInterface;
 
 abstract class BaseRepository
 {
