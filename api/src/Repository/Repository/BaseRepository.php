@@ -132,6 +132,22 @@ abstract class BaseRepository
     }
 
     /**
+     * Check if an entity exists.
+     *
+     * @param  string  $id
+     * @return bool
+     */
+    public function exists($id)
+    {
+        try {
+            $this->find($id);
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Get number of items in storage.
      * @return int
      */
