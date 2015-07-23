@@ -1,15 +1,11 @@
 <?php namespace App\Repositories;
 
 use App\Models\User;
-use App\Jobs\SendPasswordResetEmail;
-use Laravel\Lumen\Routing\DispatchesJobs;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
-    use DispatchesJobs;
-
     /**
      * Login token time to live in minutes.
      *
@@ -79,21 +75,5 @@ class UserRepository extends BaseRepository
         $this->cache->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
         return $token;
-    }
-
-    /**
-     * Reset user password.
-     *
-     * @param  string  $id
-     * @return void
-     */
-    public function resetPassword($id)
-    {
-        // Note:
-        // This might probably be moved to the controller when the architecture
-        // update is applied.
-        $user = $this->find($id);
-        $token = $this->makeLoginToken($id);
-        $this->dispatch(new SendPasswordResetEmail($user, $token));
     }
 }
