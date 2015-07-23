@@ -1,0 +1,15 @@
+# ignore everything!
+#*/*
+# then add what is needed for the docker container
+#!vhosts/
+#!api/
+#!app/build/
+
+node_modules
+app/bower_components
+.vagrant
+vagrant
+features
+logs
+reports
+vendor
