@@ -1,22 +1,19 @@
-<?php
+<?php namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
-
-use App\Http\Validators\TestEntityValidator;
 use App\Repositories\TestRepository;
+use Spira\Responder\Contract\ApiResponderInterface;
 
-class TestController extends BaseController
+class TestController extends ApiController
 {
     /**
      * Assign dependencies.
-     *
-     * @param TestEntityValidator $validator
-     * @param TestRepository      $repository
+     * @param TestRepository $repository
+     * @param ApiResponderInterface $responder
      */
-    public function __construct(TestEntityValidator $validator, TestRepository $repository)
+    public function __construct(TestRepository $repository, ApiResponderInterface $responder)
     {
-        $this->validator = $validator;
         $this->repository = $repository;
+        $this->responder = $responder;
     }
 
     /**
