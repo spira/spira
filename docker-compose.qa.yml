@@ -1,15 +1,13 @@
 
-data:
+spira:
   image: spira/spira
   volumes:
-    - /vhosts:/vhosts
-    - /logs:/logs
-    - /qa:/data
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
 
 logviewer:
   image: spira/docker-clarity
   volumes_from:
-    - data
+    - spira
 
 database:
   image: postgres:9.4
@@ -34,7 +32,7 @@ queuerunner:
     - database:database
     - web:web
   volumes_from:
-    - data
+    - spira
 
 mailcatcher:
   image: schickling/mailcatcher
@@ -42,7 +40,7 @@ mailcatcher:
 php:  
   image: spira/docker-hhvm
   volumes_from:
-    - data
+    - spira
   links:
     - database:database
     - cache:cache
@@ -56,7 +54,7 @@ php:
 web:  
   image: spira/docker-nginx
   volumes_from:
-    - data
+    - spira
   links:
     - php:php
     - logviewer:logviewer
