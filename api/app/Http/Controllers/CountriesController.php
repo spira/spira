@@ -1,18 +1,21 @@
 <?php namespace App\Http\Controllers;
 
 use App\Services\Datasets\Countries;
+use Spira\Responder\Contract\ApiResponderInterface;
 
-class CountriesController extends BaseController
+class CountriesController extends ApiController
 {
     /**
      * Assign dependencies.
      *
-     * @param  Countries  $countries
+     * @param  Countries              $countries
+     * @param  ApiResponderInterface  $responder
      * @return void
      */
-    public function __construct(Countries $countries)
+    public function __construct(Countries $countries, ApiResponderInterface $responder)
     {
         $this->countries = $countries;
+        $this->responder = $responder;
     }
 
     /**
@@ -22,6 +25,6 @@ class CountriesController extends BaseController
      */
     public function getAll()
     {
-        return $this->collection($this->countries->all());
+        return $this->getResponder()->collection($this->countries->all());
     }
 }
