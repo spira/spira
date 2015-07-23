@@ -1,11 +1,10 @@
-<?php
+<?php namespace App\Repositories;
 
-namespace App\Repositories;
-
+use App\Models\User;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
-use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Illuminate\Database\ConnectionResolverInterface as Connection;
 
 class UserRepository extends BaseRepository
 {
@@ -28,33 +27,32 @@ class UserRepository extends BaseRepository
     /**
      * Cache repository.
      *
-     * @var CacheRepository
+     * @var Cache
      */
     protected $cache;
 
     /**
      * Assign dependencies.
      *
-     * @param App              $app
-     * @param CacheRepository  $cache
-     *
+     * @param  Connection  $connection
+     * @param  Cache       $cache
      * @return void
      */
-    public function __construct(App $app, CacheRepository $cache)
+    public function __construct(Connection $connection, Cache $cache)
     {
-        $this->cache = $cache;
+        parent::__construct($connection);
 
-        parent::__construct($app);
+        $this->cache = $cache;
     }
 
     /**
      * Model name.
      *
-     * @return string
+     * @return User
      */
     protected function model()
     {
-        return 'App\Models\User';
+        return new User;
     }
 
     /**
@@ -101,31 +99,7 @@ class UserRepository extends BaseRepository
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
         $this->cache->put('email_confirmation_'.$token, $email, $this->confirmation_token_ttl);
-
         return $token;
-    }
-
-    /**
-     * Create or replace an entity by id.
-     *
-     * @param  string  $id
-     * @param  array   $data
-     * @return array
-     */
-    public function createOrReplace($id, array $data)
-    {
-        // Extract the credentials
-        $credential = array_pull($data, '#user_credential');
-
-        // Set new users to guest
-        $data['user_type'] = 'guest';
-
-        $self = parent::createOrReplace($id, $data);
-
-        // Create the credentials
-        $this->find($id)->userCredential()->create($credential);
-
-        return $self;
     }
 
     /**
@@ -145,9 +119,7 @@ class UserRepository extends BaseRepository
         if (array_key_exists($keyName, $data) and $id !== $data[$keyName]) {
             throw new FatalErrorException('Attempt to override entity ID value.');
         }
-
         $model = $this->find($id);
-
         // Before updating the data, check if the email has changed.
         // This shall probably be moved to the controller when the architecture
         // update is applied.
@@ -156,7 +128,6 @@ class UserRepository extends BaseRepository
             $this->dispatch(new SendEmailConfirmationEmail($model, $data['email'], $token));
             $data['email_confirmed'] = null;
         }
-
         return $model->update($data);
     }
 }

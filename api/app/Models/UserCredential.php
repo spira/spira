@@ -42,14 +42,4 @@ class UserCredential extends BaseModel
     {
         $this->attributes['password'] = Hash::make($value);
     }
-
-    /**
-     * Get the access route for the entity.
-     *
-     * @return string
-     */
-    public function entityRoute()
-    {
-        return '/user/{userId}/user-credentials'; //@todo make this route match work
-    }
 }

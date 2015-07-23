@@ -28,14 +28,12 @@ class AuthTest extends TestCase
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
-
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
 
         $array = json_decode($this->response->getContent(), true);
-
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
@@ -125,7 +123,6 @@ class AuthTest extends TestCase
         $cfg = $this->app->config->get('jwt');
         $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
         $token = $adapter->encode($payload->get());
-
 
         $this->callRefreshToken($token);
 

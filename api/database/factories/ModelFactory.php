@@ -13,6 +13,12 @@
 
 use Carbon\Carbon;
 
+// Ensure that the custom validation rules are registered so the factories also
+// have them available.
+Validator::resolver(function ($translator, $data, $rules, $messages) {
+    return new \App\Services\SpiraValidator($translator, $data, $rules, $messages);
+});
+
 $factory->define(App\Models\TestEntity::class, function ($faker) {
     return [
         'entity_id' => $faker->uuid,
@@ -45,8 +51,8 @@ $factory->define(App\Models\User::class, function ($faker) {
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
-        'country' => $faker->countryCode,
-        'timezone_identifier' => $faker->randomElement(array_pluck(App::make('App\Services\Datasets\Timezones')->all(), 'timezone_identifier')),
+        'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
+        'timezone_identifier' => $faker->timezone,
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
 });
@@ -62,6 +68,20 @@ $factory->define(App\Models\UserCredential::class, function ($faker) {
         'user_credential_id' => $faker->uuid,
         'password' => 'password'
     ];
+});
+
+$factory->define(App\Models\SecondTestEntity::class, function ($faker) {
+    return [
+        'entity_id' => $faker->uuid,
+        'check_entity_id' => $faker->uuid,
+        'value' => $faker->word
+    ];
+});
+
+$factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use ($factory) {
+    $testEntity = $factory->raw(App\Models\TestEntity::class);
+
+    return array_merge($testEntity, ['varchar' => 'custom']);
 });
 
 $factory->define(App\Models\AuthToken::class, function ($faker) {

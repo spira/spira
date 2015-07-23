@@ -14,7 +14,7 @@ class AuthToken extends Model
     /**
      * JWT Auth.
      *
-     * @var Tymon\JWTAuth\JWTAuth
+     * @var JWTAuth
      */
     protected $jwtAuth;
 

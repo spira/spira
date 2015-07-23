@@ -16,11 +16,9 @@ class EmailTest extends TestCase
     {
         $subject = 'Test Email';
 
-        $responseCode = Mail::send('emails.welcome', [], function ($message) use ($subject) {
+        Mail::send('emails.welcome', [], function ($message) use ($subject) {
             $message->to('foo@example.com', 'John Smith')->subject($subject);
         });
-
-        $this->assertEquals($responseCode, 1, 'email send response code is 1');
 
         $message = $this->getLastMessage();
 

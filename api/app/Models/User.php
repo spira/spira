@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Models;
+<?php namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
@@ -15,13 +13,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    public $table = 'users';
 
     /**
      * The primary key for the model.
@@ -48,14 +39,21 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
-     * Get the access route for the entity.
+     * Model validation.
      *
-     * @return string
+     * @var array
      */
-    public function entityRoute()
-    {
-        return '/users';
-    }
+    protected $validationRules = [
+        'user_id' => 'uuid',
+        'email' => 'required|email',
+        'email_confirmed' => 'date|email_confirmation_token',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'phone' => 'string',
+        'mobile' => 'string',
+        'country' => 'country',
+        'timezone_identifier' => 'timezone'
+    ];
 
     /**
      * Get the credentials associated with the user.
@@ -64,7 +62,20 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public function userCredential()
     {
-        return $this->hasOne('App\Models\UserCredential');
+        return $this->hasOne(UserCredential::class);
+    }
+
+    /**
+     * Set the user's credentials.
+     *
+     * @param  UserCredential  $credential
+     * @return $this
+     */
+    public function setCredential(UserCredential $credential)
+    {
+        $this->userCredential()->save($credential);
+
+        return $this;
     }
 
     /**
