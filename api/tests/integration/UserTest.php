@@ -8,11 +8,6 @@ class UserTest extends TestCase
 {
     use DatabaseTransactions, MailcatcherTrait;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     protected function createUser($type = 'admin')
     {
         $user = factory(App\Models\User::class)->create(['user_type' => $type]);
