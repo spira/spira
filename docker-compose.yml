@@ -87,8 +87,6 @@ devtools:
 apimock:
   image: spira/docker-drakov
   volumes_from:
-      - data
+    - data
   environment:
-      - APIB_PATH=/data/api/storage/app/apiary.apib
-  ports:
-    - "3000:3000"
+    - APIB_PATH=/data/api/storage/app/apiary.apib
