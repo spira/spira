@@ -5,6 +5,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Specification\EloquentSpecificationInterface;
 
 abstract class BaseRepository
 {
@@ -58,6 +59,18 @@ abstract class BaseRepository
     public function find($id, $columns = ['*'])
     {
         return $this->model->findOrFail($id, $columns);
+    }
+
+    /**
+     * @param EloquentSpecificationInterface $specification
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function findSpecifying(EloquentSpecificationInterface $specification, $columns = ['*'])
+    {
+        $qb = $this->model->query();
+        $specification->attachCriteriaToBuilder($qb);
+        return $qb->get($columns);
     }
 
     /**
