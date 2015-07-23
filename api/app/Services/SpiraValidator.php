@@ -1,7 +1,4 @@
-<?php
-
-
-namespace App\Services;
+<?php namespace App\Services;
 
 use Illuminate\Validation\Validator;
 
@@ -20,16 +17,17 @@ class SpiraValidator extends Validator
     /**
      * Register custom validation rule for countries.
      *
+     * @param  string  $attribute
+     * @param  string  $value
+     * @param  array   $parameters
      * @return void
      */
-    protected function registerValidateCountry()
+    protected function validateCountry($attribute, $value, $parameters)
     {
-        $this->validator->extend('country', function ($attribute, $value, $parameters) {
-            $countries = $this->app->make('App\Services\Datasets\Countries')
-                ->all()
-                ->toArray();
+        $countries = \App::make('App\Services\Datasets\Countries')
+            ->all()
+            ->toArray();
 
-            return in_array($value, array_fetch($countries, 'country_code'));
-        });
+        return in_array($value, array_fetch($countries, 'country_code'));
     }
 }
