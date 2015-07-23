@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Jobs\SendPasswordResetEmail;
+use Laravel\Lumen\Routing\DispatchesJobs;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\ConnectionResolverInterface as Connection;
 
