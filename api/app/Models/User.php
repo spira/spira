@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Models;
+<?php namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
@@ -45,12 +43,13 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * @var array
      */
     protected $validationRules = [
+        'user_id' => 'uuid',
         'email' => 'required|email',
         'first_name' => 'string',
         'last_name' => 'string',
         'phone' => 'string',
         'mobile' => 'string',
-        'country' => 'string',
+        'country' => 'country',
         'timezone_identifier' => 'timezone'
     ];
 
