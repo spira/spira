@@ -2,9 +2,12 @@
 
 namespace App\Exceptions;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Transformers\IlluminateModelTransformer;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Spira\Responder\Contract\TransformableInterface;
+use Spira\Responder\Contract\TransformerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
@@ -22,13 +25,12 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param \Exception $e
+     * @param  \Exception  $e
      *
-     * @return void
      */
     public function report(Exception $e)
     {
-        return parent::report($e);
+        parent::report($e);
     }
 
     /**
@@ -41,8 +43,44 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return BaseController::renderException($request, $e, env('APP_DEBUG', false));
+        $debug = env('APP_DEBUG', false);
 
-//        return parent::render($request, $e);
+        $message = $e->getMessage();
+        if (!$message) {
+            $message = 'An error occurred';
+        }
+
+        $debugData = [
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => explode("\n", $e->getTraceAsString()),
+        ];
+
+        $response = [
+            'message' => $message,
+        ];
+
+        $statusCode = 500;
+
+        if ($e instanceof HttpExceptionInterface) {
+            $statusCode = $e->getStatusCode();
+
+            if (method_exists($e, 'getResponse')) {
+                if ($e instanceof TransformableInterface) {
+                    $response = $e->transform(\App::make(IlluminateModelTransformer::class));
+                } else {
+                    $response = $e->getResponse();
+                }
+            }
+        }
+
+        if ($debug) {
+            $response['debug'] = $debugData;
+        }
+
+        return response()->json($response, $statusCode, [], JSON_PRETTY_PRINT);
     }
 }
