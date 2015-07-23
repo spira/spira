@@ -1,0 +1,70 @@
+
+data:
+  image: spira/spira
+  volumes:
+    - /vhosts:/vhosts
+    - /logs:/logs
+    - /qa:/data
+
+logviewer:
+  image: spira/docker-clarity
+  volumes_from:
+    - data
+
+database:
+  image: postgres:9.4
+  environment:
+    - POSTGRES_PASSWORD=spira
+    - POSTGRES_USER=spira
+  ports:
+    - "5432:5432"
+
+cache:
+  image: redis
+
+queue:
+  image: spira/docker-beanstalkd
+
+queuerunner:
+  image: spira/docker-artisan-queue-runner
+  links:
+    - mailcatcher:mailcatcher
+    - queue:queue
+    - cache:cache
+    - database:database
+    - web:web
+  volumes_from:
+    - data
+
+mailcatcher:
+  image: schickling/mailcatcher
+
+php:  
+  image: spira/docker-hhvm
+  volumes_from:
+    - data
+  links:
+    - database:database
+    - cache:cache
+    - queue:queue
+    - mailcatcher:mailcatcher
+  environment:
+    - API_PATH=/api
+    - XDEBUG_ENABLED=false
+  privileged: true
+
+web:  
+  image: spira/docker-nginx
+  volumes_from:
+    - data
+  links:
+    - php:php
+    - logviewer:logviewer
+    - mailcatcher:mailcatcher
+  ports:
+    - "80:80"
+    - "8080:8080"
+  environment:
+    - API_PATH=/api
+    - NGINX_VHOSTS=vhosts/nginx/*.local.conf
+  privileged: true
