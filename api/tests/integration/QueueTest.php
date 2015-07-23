@@ -6,15 +6,26 @@ use Pheanstalk\Pheanstalk;
 class QueueTest extends TestCase
 {
     protected $pheanstalk;
+    protected $originalDriver;
 
     public function setUp()
     {
         parent::setUp();
 
         // We'll use the beanstalkd queue driver for this test.
+        $this->originalDriver = getenv('QUEUE_DRIVER');
+        var_dump($this->originalDriver);
         putenv('QUEUE_DRIVER=beanstalkd');
 
         $this->pheanstalk = new Pheanstalk(env('BEANSTALKD_HOST'));
+    }
+
+    public function teardown()
+    {
+        parent::teardown();
+
+        // Restore the original driver
+        putenv('QUEUE_DRIVER='.$this->originalDriver);
     }
 
     /**
