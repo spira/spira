@@ -5,19 +5,17 @@
     let seededChance = new Chance(1);
     let fixtures = {
 
-        getCountries(count:number = 10) {
-
+        getCountries() {
 
             let countries = (<any>seededChance).countries(),
-                sample = seededChance.pick(countries, count),
-                mapped = _.chain(sample)
-                    .map((country) => {
+                mapped = _.chain(countries)
+                    .map((country:{abbreviation:string, name:string}) => {
                         return {
-                            countryCode:country.abbreviation,
-                            countryName:country.name,
+                            countryCode: country.abbreviation,
+                            countryName: country.name,
                         };
                     })
-                .value();
+                    .value();
 
             return mapped;
 
@@ -61,11 +59,19 @@
 
         describe('Retrieve countries', () => {
 
-            it ('should return all countries', () => {
+            beforeEach(() => {
 
-                let countries = _.clone(fixtures.getCountries()); //get a set of countries
+                sinon.spy(ngRestAdapter, 'get');
 
-                console.log('countries', countries);
+            });
+
+            afterEach(() => {
+                (<any>ngRestAdapter.get).restore();
+            });
+
+            let countries = _.clone(fixtures.getCountries()); //get a set of countries
+
+            it('should return all countries', () => {
 
                 $httpBackend.expectGET('/api/countries').respond(countries);
 
@@ -78,11 +84,19 @@
 
             });
 
+            it('should return all countries from cache', () => {
+
+                let allCountriesPromise = countriesService.getAllCountries();
+
+                expect(allCountriesPromise).eventually.to.be.fulfilled;
+                expect(allCountriesPromise).eventually.to.deep.equal(countries);
+
+                expect(ngRestAdapter.get).not.to.have.been.called;
+
+            });
 
         });
 
-
     });
-
 
 })();
