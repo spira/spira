@@ -2,6 +2,11 @@ module common.services.countries {
 
     export const namespace = 'common.services.countries';
 
+    export interface ICountryDefinition {
+        countryName:string;
+        countryCode:string;
+    }
+
     export class CountriesService {
 
         static $inject:string[] = ['ngRestAdapter', '$q'];
@@ -11,16 +16,16 @@ module common.services.countries {
 
         }
 
-        private countriesCachePromise:ng.IPromise<any> = null;
+        private countriesCachePromise:ng.IPromise<ICountryDefinition[]> = null;
 
         /**
          * Get all countries from the API
          * @returns {any}
          */
-        public getAllCountries() {
+        public getAllCountries():ng.IPromise<ICountryDefinition[]> {
 
             //store the promise in cache, so next time it is called the countries are resolved immediately.
-            if (!this.countriesCachePromise){
+            if (!this.countriesCachePromise) {
                 this.countriesCachePromise = this.ngRestAdapter.get('/countries')
                     .then((res) => {
                         return res.data;
