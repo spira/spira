@@ -66,3 +66,17 @@ web:
     - API_PATH=/api
     - NGINX_VHOSTS=vhosts/nginx/*.local.conf
   privileged: true
+
+# keep devtools as it is needed for image building
+devtools:
+  image: spira/docker-dev-tools:latest
+  working_dir: /data
+  volumes_from:
+    - spira
+  privileged: true
+  links:
+    - web:nginx
+    - mailcatcher:mailcatcher
+    - database:database
+    - cache:cache
+    - queue:queue
