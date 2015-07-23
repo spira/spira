@@ -13,6 +13,12 @@
 
 use Carbon\Carbon;
 
+// Ensure that the custom validation rules are registered so the factories also
+// have them available.
+Validator::resolver(function ($translator, $data, $rules, $messages) {
+    return new \App\Services\SpiraValidator($translator, $data, $rules, $messages);
+});
+
 $factory->define(App\Models\TestEntity::class, function ($faker) {
     return [
         'entity_id' => $faker->uuid,

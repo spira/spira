@@ -42,9 +42,17 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Model validation.
      *
-     * @var
+     * @var array
      */
-    protected $validationRules = [];
+    protected $validationRules = [
+        'email' => 'required|email',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'phone' => 'string',
+        'mobile' => 'string',
+        'country' => 'string',
+        'timezone_identifier' => 'timezone'
+    ];
 
     /**
      * Get the credentials associated with the user.
