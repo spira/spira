@@ -58,7 +58,7 @@ $app->singleton(
 */
 
 $app->middleware([
-    'App\Http\Middleware\TransformInputData',
+    'App\Http\Middleware\TransformInputDataMiddleware'
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 //     // 'Illuminate\Session\Middleware\StartSession',
@@ -66,9 +66,9 @@ $app->middleware([
 //     // 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
 ]);
 
-// $app->routeMiddleware([
-
-// ]);
+$app->routeMiddleware([
+    'permission' => 'App\Http\Middleware\PermissionMiddleware'
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +82,7 @@ $app->middleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\LockServiceProvider::class);
 $app->register(App\Providers\JWTAuthServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 

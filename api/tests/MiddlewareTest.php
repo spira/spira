@@ -9,7 +9,7 @@ class MiddlewareTest extends TestCase
      */
     public function testTransformInputData()
     {
-        $mw = new App\Http\Middleware\TransformInputData();
+        $mw = new App\Http\Middleware\TransformInputDataMiddleware();
 
         // Create a request object to test
         $request = new Illuminate\Http\Request();
@@ -30,7 +30,7 @@ class MiddlewareTest extends TestCase
 
     public function testTransformInputDataNested()
     {
-        $mw = new App\Http\Middleware\TransformInputData();
+        $mw = new App\Http\Middleware\TransformInputDataMiddleware();
 
         // Create a request object to test
         $request = new Illuminate\Http\Request();

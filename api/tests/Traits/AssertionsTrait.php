@@ -83,4 +83,12 @@ trait AssertionsTrait
 
         return false;
     }
+
+    public function assertException($message, $statusCode, $exception)
+    {
+        $body = json_decode($this->response->getContent());
+        $this->assertResponseStatus($statusCode);
+        $this->assertContains($message, $body->message);
+        $this->assertContains($exception, $body->debug->exception);
+    }
 }
