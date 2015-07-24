@@ -1,14 +1,13 @@
 
-data:
-  image: spira/docker-data
+spira:
+  image: spira/spira
   volumes:
-    - /data:/data
-  privileged: true
-  
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
+
 logviewer:
   image: spira/docker-clarity
   volumes_from:
-    - data
+    - spira
 
 database:
   image: postgres:9.4
@@ -33,16 +32,15 @@ queuerunner:
     - database:database
     - web:web
   volumes_from:
-    - data
+    - spira
 
 mailcatcher:
   image: schickling/mailcatcher
 
 php:  
   image: spira/docker-hhvm
-#  image: spira/docker-phpfpm
   volumes_from:
-    - data
+    - spira
   links:
     - database:database
     - cache:cache
@@ -50,13 +48,13 @@ php:
     - mailcatcher:mailcatcher
   environment:
     - API_PATH=/api
-    - XDEBUG_ENABLED=true
+    - XDEBUG_ENABLED=false
   privileged: true
 
 web:  
   image: spira/docker-nginx
   volumes_from:
-    - data
+    - spira
   links:
     - php:php
     - logviewer:logviewer
@@ -69,12 +67,12 @@ web:
     - NGINX_VHOSTS=vhosts/nginx/*.local.conf
   privileged: true
 
+# keep devtools as it is needed for image building
 devtools:
   image: spira/docker-dev-tools:latest
   working_dir: /data
-#  image: spira/docker-dev-tools:phantomjs-1.9.8
   volumes_from:
-    - data
+    - spira
   privileged: true
   links:
     - web:web

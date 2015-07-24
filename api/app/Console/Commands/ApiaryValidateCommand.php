@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\ApiaryController;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class ApiaryValidateCommand extends Command
 {
@@ -35,18 +37,22 @@ class ApiaryValidateCommand extends Command
      */
     public function handle()
     {
-        $webserverIp = getenv('WEBSERVER_HOST');
-        $webserverPort = getenv('WEBSERVER_PORT');
+        $apiaryController = new ApiaryController();
 
-        $url = "http://$webserverIp:$webserverPort/documentation.apib";
 
-        $output = null;
-        $return = null;
+        $apib = $apiaryController->getDocumentationApib('/');
+
+
+        $fs = new Filesystem();
+
 
         $fileLocation = storage_path().'/app/apiary.apib';
+
+        $fs->put($fileLocation, $apib);
+
         $validator = base_path().'/node_modules/.bin/api-blueprint-validator';
 
-        exec("wget $url -O $fileLocation && $validator $fileLocation", $output, $exitCode);
+        exec("$validator $fileLocation", $output, $exitCode);
 
         return $exitCode;
     }
