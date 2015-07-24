@@ -19,7 +19,7 @@ install:
   - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
   - export PATH=$PWD/travis-phantomjs:$PATH
 
-  - cp ./api/.travis.env ./api/.env
+  - rm ./api/.env && cp ./api/.travis.env ./api/.env #replace the .env file with a custom travis one
 
   - travis_retry npm install --no-spin --quiet -g gulp http-server
   - travis_retry npm install --no-spin

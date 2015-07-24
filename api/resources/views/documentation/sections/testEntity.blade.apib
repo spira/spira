@@ -16,6 +16,7 @@ The properties of the test entities cover the different column types. These are 
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
 
+
 ## Test Entity [/test/entities/{entityId}]
 
 + Parameters
@@ -30,5 +31,3 @@ The properties of the test entities cover the different column types. These are 
     + Body
 
             {!! $factory->json(\App\Models\TestEntity::class) !!}
-
-
