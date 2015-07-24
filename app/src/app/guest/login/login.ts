@@ -101,11 +101,12 @@ module app.guest.login {
                     password: password,
                 };
 
-                deferredCredentials.resolve(credentials); //resolve the deferred credentials with the passed creds
+                deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
 
                 loginSuccess.promise
                     .then(
                         (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                        null,
                         (err:Error) => {
                             if (err instanceof NgJwtAuth.NgJwtAuthException){
                                 $scope.loginError = err.message; //if the is an auth exception, show the value to the user
