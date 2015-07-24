@@ -17,6 +17,8 @@ database:
   environment:
     - POSTGRES_PASSWORD=spira
     - POSTGRES_USER=spira
+  ports:
+    - "5432:5432"
 
 cache:
   image: redis

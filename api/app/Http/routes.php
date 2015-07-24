@@ -33,11 +33,15 @@ $app->get('/documentation.apib', function (Request $request) use ($app) {
 
 });
 
-$app->group(['prefix' => 'users'], function (Application $app) {
+$app->get('timezones', 'TimezoneController@getAll');
+$app->get('countries', 'CountriesController@getAll');
 
-    $app->get('/', 'App\Http\Controllers\UserController@getAll');
-    $app->get('/{id}', 'App\Http\Controllers\UserController@getOne');
-
+$app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('/', ['uses' => 'UserController@getAll', 'as' => App\Models\User::class]);
+    $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
+    $app->put('{id}', ['uses' => 'UserController@putOne']);
+    $app->patch('{id}', ['uses' => 'UserController@patchOne']);
+    $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
 });
 
 
