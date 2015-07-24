@@ -36,5 +36,9 @@ declare module global {
         _credentials? : IUserCredential;
     }
 
+    export interface IRootScope extends ng.IRootScopeService {
+        socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
+    }
+
 
 }

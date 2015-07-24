@@ -8,6 +8,20 @@
             </md-button>
         </md-toast>
 
+        Login with
+
+        <md-button class="md-fab" aria-label="Login with Facebook" ng-click="socialLogin('facebook')">
+            <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab" aria-label="Login with Twitter" ng-click="socialLogin('twitter')">
+            <md-icon md-font-icon="fa fa-2x fa-twitter"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab" aria-label="Login with Google" ng-click="socialLogin('google')">
+            <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
+        </md-button>
+
         <form novalidate name="loginForm">
 
             <md-input-container class="md-icon-float" >

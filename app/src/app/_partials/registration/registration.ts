@@ -5,7 +5,6 @@ module app.partials.registration {
     export interface IScope extends ng.IScope {
         registerUser(email:string, password:string, first:string, last:string, goToProfile?:boolean);
         submitting:boolean;
-        socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
     }
 
     class RegistrationController {
@@ -40,18 +39,6 @@ module app.partials.registration {
                     })
                     ;
             };
-
-            $scope.socialLogin = (type:string, redirectState?:string, redirectStateParams:Object = {}) => {
-
-                let url = '/auth/social/' + type;
-
-                if (!_.isEmpty(redirectState)) {
-                    url += '?returnUrl=' + (<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
-                }
-
-                this.$window.location.href = url;
-
-            }
 
         }
 
