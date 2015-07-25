@@ -118,7 +118,6 @@ module app.guest.login {
                 (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
                 null,
                 (err:Error) => {
-                    console.log('got error', err);
                     if (err instanceof NgJwtAuth.NgJwtAuthException){
                         this.$mdToast.show(
                             (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
