@@ -33,7 +33,7 @@ declare module global {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
-        _credentials? : IUserCredential;
+        _userCredential? : IUserCredential;
     }
 
     export interface IRootScope extends ng.IRootScopeService {

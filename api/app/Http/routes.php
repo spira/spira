@@ -53,15 +53,15 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
 
 
     //@todo implement proper social logins
-    $app->get('social/facebook', function(Request $request){
+    $app->get('social/facebook', function (Request $request) {
         echo "Dummy Facebook request:\n";
         return $request;
     });
-    $app->get('social/twitter', function(Request $request){
+    $app->get('social/twitter', function (Request $request) {
         echo "Dummy Twitter request:\n";
         return $request;
     });
-    $app->get('social/google', function(Request $request){
+    $app->get('social/google', function (Request $request) {
         echo "Dummy Google request:\n";
         return $request;
     });

@@ -14,7 +14,7 @@
                 email: seededChance.email(),
                 firstName: seededChance.first(),
                 lastName: seededChance.last(),
-                _credentials: {
+                _userCredential: {
                     userCredentialId: seededChance.guid(),
                     password: seededChance.string(),
                 }
@@ -120,7 +120,7 @@
                     $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                     //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
 
-                    userService.registerAndLogin(user.email, user._credentials.password, user.firstName, user.lastName);
+                    userService.registerAndLogin(user.email, user._userCredential.password, user.firstName, user.lastName);
 
                     $httpBackend.flush();
 

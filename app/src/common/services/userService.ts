@@ -41,7 +41,7 @@ module common.services.user {
                 email: email,
                 firstName: firstName,
                 lastName: lastName,
-                _credentials: {
+                _userCredential: {
                     userCredentialId: this.ngRestAdapter.uuid(),
                     password: password,
                 }
@@ -63,7 +63,7 @@ module common.services.user {
 
             return this.register(email, password, firstName, lastName)
                 .then((user) => {
-                    return this.ngJwtAuthService.authenticateCredentials(user.email, user._credentials.password);
+                    return this.ngJwtAuthService.authenticateCredentials(user.email, user._userCredential.password);
                 })
             ;
 
