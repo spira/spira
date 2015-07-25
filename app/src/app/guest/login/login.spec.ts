@@ -153,18 +153,17 @@ describe('Login', () => {
 
         describe('dialog interactions - invalid login', () => {
 
+            let credsFail = {
+                username: 'foo',
+                password: 'fail',
+            };
+
+            let credsPass = {
+                username: 'foo',
+                password: 'pass',
+            };
+
             it('should show an error when invalid login credentials are passed', () => {
-
-                let credsFail = {
-                    username: 'foo',
-                    password: 'fail',
-                };
-
-                let credsPass = {
-                    username: 'foo',
-                    password: 'pass',
-                };
-
 
                 var progressSpy = sinon.spy();
                 deferredCredentials.promise.then(null, null, progressSpy);
@@ -184,6 +183,24 @@ describe('Login', () => {
 
             });
 
+            it('should only repeat the error message once for each failed credential attempt', () => {
+
+                var progressSpy = sinon.spy();
+                deferredCredentials.promise.then(null, null, progressSpy);
+
+                (<any>$scope).login(credsFail.username, credsFail.password);
+                (<any>$scope).login(credsFail.username, credsFail.password);
+                (<any>$scope).login(credsPass.username, credsPass.password);
+
+                $scope.$apply();
+
+                return loginSuccess.promise.then(function () {
+                    progressSpy.should.have.been.calledWith(credsFail);
+                    progressSpy.should.have.been.calledWith(credsPass);
+                    expect($mdToast.show).to.have.been.calledTwice;
+                });
+
+            })
 
         });
 

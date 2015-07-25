@@ -102,25 +102,6 @@ module app.guest.login {
 
                 deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
 
-                loginSuccess.promise
-                    .then(
-                        (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
-                        null,
-                        (err:Error) => {
-                            console.log('got error', err);
-                            if (err instanceof NgJwtAuth.NgJwtAuthException){
-                                this.$mdToast.show(
-                                    (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
-                                        .hideDelay(2000)
-                                        .position('top')
-                                        .content(err.message)
-                                        .parent('#loginDialog')
-                                );
-                            }
-                        }
-                    )
-                ;
-
             };
 
             $scope.cancelLoginDialog = () => {
@@ -130,6 +111,25 @@ module app.guest.login {
 
 
             $scope.socialLogin = $rootScope.socialLogin;
+
+            //register error handling and close on success
+            loginSuccess.promise
+                .then(
+                (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                null,
+                (err:Error) => {
+                    console.log('got error', err);
+                    if (err instanceof NgJwtAuth.NgJwtAuthException){
+                        this.$mdToast.show(
+                            (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
+                                .hideDelay(2000)
+                                .position('top')
+                                .content(err.message)
+                                .parent('#loginDialog')
+                        );
+                    }
+                }
+            );
 
         }
 
