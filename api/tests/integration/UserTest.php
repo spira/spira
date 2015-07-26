@@ -332,7 +332,7 @@ class UserTest extends TestCase
         $updatedUser = User::find($user->user_id);
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($datetime, $updatedUser->email_confirmed);
+        $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
     }
 
     public function testUpdateEmailConfirmedInvalidToken()

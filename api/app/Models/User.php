@@ -56,6 +56,22 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['email_confirmed'];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_confirmed' => 'datetime'
+    ];
+
+    /**
      * Get the credentials associated with the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\Relation
