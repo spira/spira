@@ -162,7 +162,7 @@ class ArticleTest extends TestCase
         $this->assertStringStartsWith('http', $object->_self);
 
         $checkEntity = $this->repository->find($id);
-        $this->assertEquals($checkEntity->title,$entity->title);
+        $this->assertEquals($checkEntity->title, $entity->title);
     }
 
 
@@ -177,7 +177,7 @@ class ArticleTest extends TestCase
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = $this->repository->find($id);
-        $this->assertEquals($checkEntity->title,$entity->title);
+        $this->assertEquals($checkEntity->title, $entity->title);
     }
 
     public function testPatchOneNewPermalink()
@@ -186,15 +186,15 @@ class ArticleTest extends TestCase
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
         $entity->permalink = 'foo';
-        $this->assertEquals($entity->permalinks->count(),$linksCount+1);
+        $this->assertEquals($entity->permalinks->count(), $linksCount+1);
 
         $this->patch('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
         $checkEntity = $this->repository->find($id);
-        $this->assertEquals($checkEntity->permalink,$entity->permalink);
-        $this->assertEquals($checkEntity->permalinks->count(),$linksCount+1);
+        $this->assertEquals($checkEntity->permalink, $entity->permalink);
+        $this->assertEquals($checkEntity->permalinks->count(), $linksCount+1);
     }
 
     public function testPatchOneRemovePermalink()
@@ -210,7 +210,7 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(204);
         $checkEntity = $this->repository->find($id);
         $this->assertNull($checkEntity->permalink);
-        $this->assertEquals($checkEntity->permalinks->count(),$linksCount);
+        $this->assertEquals($checkEntity->permalinks->count(), $linksCount);
     }
 
     public function testDeleteOne()
@@ -220,7 +220,7 @@ class ArticleTest extends TestCase
         $id = $entity->article_id;
 
         $entityPermalinksCount = $entity->permalinks->count();
-        $this->assertEquals($entityPermalinksCount,ArticlePermalink::where('article_id','=',$id)->count());
+        $this->assertEquals($entityPermalinksCount, ArticlePermalink::where('article_id', '=', $id)->count());
 
         $rowCount = $this->repository->count();
 

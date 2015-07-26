@@ -51,7 +51,7 @@ class Article extends BaseModel
             $permalinkObj = new ArticlePermalink();
             $permalinkObj->permalink = $permalink;
             $this->permalinks->add($permalinkObj);
-        }else{
+        } else {
             $this->attributes['permalink'] = null;
         }
     }

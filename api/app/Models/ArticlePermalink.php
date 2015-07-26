@@ -24,6 +24,6 @@ class ArticlePermalink extends BaseModel
 
     public function article()
     {
-        return $this->belongsTo(Article::class,'article_id','article_id');
+        return $this->belongsTo(Article::class, 'article_id', 'article_id');
     }
 }

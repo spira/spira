@@ -22,14 +22,14 @@ class ArticleRepository extends BaseRepository
      */
     public function find($id, $columns = ['*'])
     {
-        $result = $this->model->where('permalink','=',$id)->get()->first();
+        $result = $this->model->where('permalink', '=', $id)->get()->first();
 
         /** @var ArticlePermalink $permalink */
         if (!$result && $permalink = ArticlePermalink::find($id)) {
             $result = $permalink->article;
         }
 
-        if (!$result && Uuid::isValid($id)){
+        if (!$result && Uuid::isValid($id)) {
             $result = parent::find($id);
         }
 
