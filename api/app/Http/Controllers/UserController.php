@@ -83,7 +83,7 @@ class UserController extends ApiController
     public function putOne($id, Request $request)
     {
         // Extract the credentials
-        $credential = $request->get('_user_credential');
+        $credential = $request->get('_user_credential', []);
 
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);

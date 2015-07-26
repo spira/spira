@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\UserCredential;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -8,14 +9,31 @@ class UserTest extends TestCase
 {
     use DatabaseTransactions, MailcatcherTrait;
 
+    public function setUp()
+    {
+        parent::setUp();
+
+        // Workaround for model event firing.
+        // The package Bosnadev\Database used for automatic UUID creation relies
+        // on model events (creating) to generate the UUID.
+        //
+        // Laravel/Lumen currently doesn't fire repeated model events during
+        // unit testing, see: https://github.com/laravel/framework/issues/1181
+        User::flushEventListeners();
+        User::boot();
+        UserCredential::flushEventListeners();
+        UserCredential::boot();
+    }
+
     protected function createUser($type = 'admin')
     {
-        $user = factory(App\Models\User::class)->create(['user_type' => $type]);
+        $user = factory(User::class)->create(['user_type' => $type]);
         return $user;
     }
 
     public function testGetAllByAdminUser()
     {
+        factory(User::class, 10)->create();
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -87,15 +105,16 @@ class UserTest extends TestCase
     public function testPutOne()
     {
         $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(\App\Models\User::class)
+        $user = $factory->get(User::class)
             ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
-            ->append('_userCredential',
-                $factory->get(\App\Models\UserCredential::class)
+            ->append(
+                '_userCredential',
+                $factory->get(UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
                     ->customize(['password' => 'password'])
                     ->toArray()
-                );
+            );
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
         $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
@@ -111,9 +130,25 @@ class UserTest extends TestCase
         $this->assertObjectNotHasAttribute('_userCredential', $response);
     }
 
+    public function testPutOneNoCredentials()
+    {
+        $factory = $this->app->make('App\Services\ModelFactory');
+        $user = $factory->get(User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name']);
+
+        $transformerService = $this->app->make(App\Services\TransformerService::class);
+        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $user = $transformer->transform($user);
+
+        $this->put('/users/'.$user['userId'], $user);
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
+    }
+
     public function testPutOneAlreadyExisting()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $user['_userCredential'] = ['password' => 'password'];
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
