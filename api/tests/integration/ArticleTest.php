@@ -215,6 +215,22 @@ class ArticleTest extends TestCase
 
     public function testDeleteOne()
     {
+        $entities = $this->prepareArticlesWithPermalinks(4);
+        $entity = $entities[0];
+        $id = $entity->article_id;
 
+        $entityPermalinksCount = $entity->permalinks->count();
+        $this->assertEquals($entityPermalinksCount,ArticlePermalink::where('article_id','=',$id)->count());
+
+        $rowCount = $this->repository->count();
+
+        $permalinksTotalCount = ArticlePermalink::all()->count();
+        $this->delete('/articles/'.$id);
+        $permalinksTotalCountAfterDelete = ArticlePermalink::all()->count();
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($rowCount - 1, $this->repository->count());
+        $this->assertEquals($permalinksTotalCount - $entityPermalinksCount, $permalinksTotalCountAfterDelete);
     }
 }

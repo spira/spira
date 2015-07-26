@@ -20,7 +20,7 @@ use Spira\Repository\Collection\Collection;
  * Class BaseModel
  * @package Spira\Repository\Model
  *
- * @method int count
+ * @method static int count
  * @method static Collection get
  * @method static BaseModel findOrFail
  * @method static BaseModel find
@@ -280,6 +280,6 @@ class BaseModel extends Model
      */
     protected function getRelationCacheKey($method)
     {
-        return static::class.'_'.$method;
+        return static::class.'_'.$method.'_'.$this->getKey();
     }
 }
