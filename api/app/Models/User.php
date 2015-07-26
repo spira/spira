@@ -93,7 +93,14 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public function getAuthPassword()
     {
-        return $this->userCredential ? $this->userCredential->password : false;
+        // If no user credential is associated with the user, just return an
+        // empty string which will trigger a ValidationException during
+        // password_verify()
+        if (!$this->userCredential) {
+            return '';
+        }
+
+        return $this->userCredential->password;
     }
 
     /**
