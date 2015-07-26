@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Models\UserCredential;
 use Illuminate\Database\Seeder;
 
 class UserStorySeeder extends Seeder
@@ -11,10 +13,24 @@ class UserStorySeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\User::class)->create([
-            'email' => 'john.smith@example.com',
-        ]);
+        $this->createUser(['email' => 'john.smith@example.com']);
 
-        factory(App\Models\User::class, 99)->create();
+        for ($i=0; $i < 99; $i++) {
+            $this->createUser();
+        }
+    }
+
+    /**
+     * Create a new user with credentials.
+     *
+     * @param   array   $attributes
+     * @return  void
+     */
+    protected function createUser(array $attributes = [])
+    {
+        $user = factory(User::class)->create($attributes);
+        $credential = factory(UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
     }
 }
