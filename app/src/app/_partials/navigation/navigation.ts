@@ -45,8 +45,8 @@ module app.partials.navigation{
             $scope.promptLogin = () => ngJwtAuthService.promptLogin();
             $scope.logout = () => {
                 ngJwtAuthService.logout();
-                let currentState:global.IState = <global.IState>this.$state.get();
-                if (currentState.data.loggedIn) {
+                let currentState:global.IState = <global.IState>this.$state.current;
+                if (currentState.name && currentState.data.loggedIn) {
                     this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
                 }
             }
