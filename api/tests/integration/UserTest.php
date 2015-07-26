@@ -233,5 +233,31 @@ class UserTest extends TestCase
         $this->assertResponseStatus(202);
         $this->assertResponseHasNoContent();
         $this->assertContains('Password', $mail->subject);
+
+        // Additional testing, to ensure that the token sent, can only be used
+        // one time.
+
+        // Extract the token from the message source
+        $msg = $this->getLastMessage();
+        $source = $this->getMessageSource($msg->id);
+        preg_match_all('!https?://\S+!', $source, $matches);
+        $tokenUrl = $matches[0][0];
+        $parsed = parse_url($tokenUrl);
+        $segments = explode('/', $parsed['path']);
+        $token = last($segments);
+
+        // Use it the first time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertResponseOk();
+
+        // Use it the second time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertException('invalid', 401, 'UnauthorizedException');
     }
 }
