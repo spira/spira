@@ -6,6 +6,7 @@ declare module global {
 
     export interface IState extends ng.ui.IState {
         data: {
+            loggedIn?: boolean;
             title?: string;
             role?: string;
             icon?: string;

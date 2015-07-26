@@ -4,14 +4,21 @@ module app {
 
     class AppConfig {
 
-        static $inject = ['$mdThemingProvider', '$mdIconProvider'];
+        static $inject = ['$mdThemingProvider', '$mdIconProvider', 'ngHttpProgressProvider'];
 
-        constructor($mdThemingProvider:ng.material.IThemingProvider, $mdIconProvider:ng.material.IIconProvider) {
+        constructor($mdThemingProvider:ng.material.IThemingProvider, $mdIconProvider:ng.material.IIconProvider, ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider) {
 
             $mdThemingProvider.theme('default')
                 .primaryPalette('green')
                 .accentPalette('grey')
             ;
+
+            let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
+                color: 'green',
+                height: '2px',
+            };
+
+            ngHttpProgressProvider.configure(httpProgressConfig);
 
             //$mdIconProvider.defaultFontSet('fontawesome');
 

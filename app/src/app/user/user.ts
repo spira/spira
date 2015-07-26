@@ -22,7 +22,8 @@ module app.user {
                     }
                 },
                 data: {
-                    role: 'user'
+                    loggedIn: true,
+                    role: 'user',
                 }
             };
 
