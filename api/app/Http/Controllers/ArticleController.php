@@ -6,7 +6,7 @@
  * Time: 23:39
  */
 
-namespace app\Http\Controllers;
+namespace App\Http\Controllers;
 
 use App\Http\Responder\Responder;
 use App\Repositories\ArticleRepository;

@@ -113,6 +113,8 @@ $factory->define(App\Models\Article::class, function ($faker) {
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
-        'first_published' => $faker->optional(0.9)->dateTimeThisDecade(),
+        // ErrorException: createFromFormat() expects parameter 2 to be string, object given 0_o
+        //'first_published' => $faker->optional(0.9)->dateTimeThisDecade(),
+        'first_published' => null,
     ];
 });

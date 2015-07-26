@@ -24,17 +24,13 @@ class ArticleRepository extends BaseRepository
     {
         $result = $this->model->where('permalink','=',$id)->get()->first();
 
-        if (!$result && Uuid::isValid($id)){
-            $result = $this->model->find($id);
-        }
-
         /** @var ArticlePermalink $permalink */
         if (!$result && $permalink = ArticlePermalink::find($id)) {
             $result = $permalink->article;
         }
 
-        if (!$result){
-            throw new ModelNotFoundException('Could not find article for current permalink');
+        if (!$result && Uuid::isValid($id)){
+            $result = parent::find($id);
         }
 
         return $result;

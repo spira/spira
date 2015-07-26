@@ -1,4 +1,6 @@
 <?php
+use App\Models\Article;
+use App\Models\ArticlePermalink;
 use App\Repositories\ArticleRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -45,9 +47,40 @@ class ArticleTest extends TestCase
         return $entity;
     }
 
+    /**
+     * @param $number
+     * @return \App\Models\Article[]
+     */
+    protected function prepareArticlesWithPermalinks($number)
+    {
+        $counter = 1;
+        /** @var Article[] $entities */
+        $entities = factory(Article::class, $number)->create()->all();
+        foreach ($entities as $entity) {
+            $entity->permalink = $this->getLinkName($counter++);
+            $permalinks = [];
+
+            for ($i = rand(1, 10); $i >= 0; $i--) {
+                $permalinkObj = new ArticlePermalink();
+                $permalinkObj->permalink = $this->getLinkName($counter++);
+                $permalinks[] = $permalinkObj;
+            }
+
+            $entity->permalinks = $permalinks;
+        }
+        $this->repository->saveMany($entities);
+        return $entities;
+    }
+
+    protected function getLinkName($number)
+    {
+        return 'link_n_'.$number;
+    }
+
     public function testGetAll()
     {
-        $this->get('/test/entities');
+        $this->prepareArticlesWithPermalinks(5);
+        $this->get('/articles');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -57,13 +90,98 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
+        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+
+        $this->get('/articles/'.$entity->article_id);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
+        $this->assertObjectHasAttribute('articleId', $object);
+        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->articleId);
+        $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
+
+        $this->assertTrue(is_string($object->title));
+        $this->assertTrue(is_string($object->content));
+        $this->assertTrue(is_string($object->permalink));
     }
 
-    public function testPostOneValid()
+    public function testPostOne()
     {
+        $entity = factory(Article::class)->make();
+
+        $this->post('/articles', $this->prepareEntity($entity));
+
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(201);
+        $this->assertTrue(is_object($object));
+        $this->assertStringStartsWith('http', $object->_self);
     }
+
+    public function testPutOneNew()
+    {
+        $entity = factory(Article::class)->make();
+        $id = $entity->article_id;
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $this->shouldReturnJson();
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(201);
+        $this->assertEquals($rowCount + 1, $this->repository->count());
+        $this->assertTrue(is_object($object));
+        $this->assertStringStartsWith('http', $object->_self);
+    }
+
+    public function testPutCollidingIds()
+    {
+        $entity = factory(Article::class)->create();
+        $id = $entity->article_id;
+        $entity->title = 'foo';
+
+        $rowCount = $this->repository->count();
+
+        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $this->shouldReturnJson();
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(201);
+        $this->assertEquals($rowCount, $this->repository->count());
+        $this->assertTrue(is_object($object));
+        $this->assertStringStartsWith('http', $object->_self);
+
+        $checkEntity = $this->repository->find($id);
+        $this->assertEquals($checkEntity->title,$entity->title);
+    }
+
 
     public function testPatchOne()
+    {
+
+    }
+
+    public function testPatchOneNewPermalink()
+    {
+
+    }
+
+    public function testPatchOneRemovePermalink()
+    {
+
+    }
+
+    public function testDeleteOne()
     {
     }
 }

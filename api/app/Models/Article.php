@@ -31,11 +31,14 @@ class Article extends BaseModel
     protected $primaryKey = 'article_id';
 
     protected $casts = [
-        'first_published' => 'dateTime',
+        'first_published' => 'datetime',
     ];
 
     protected $validationRules = [
-        'permalink' => 'unique:article_permalinks,permalink'
+        'article_id' => 'uuid',
+        'title' => 'required|string',
+        'content' => 'required|string',
+        'permalink' => 'string|unique:article_permalinks,permalink'
     ];
 
     /**

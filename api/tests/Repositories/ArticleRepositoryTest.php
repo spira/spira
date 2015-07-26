@@ -38,7 +38,7 @@ class ArticleRepositoryTest extends TestCase
         $this->repository = $this->app->make(ArticleRepository::class);
     }
 
-    public function testFind()
+    public function testFindByPermalinks()
     {
         $entities = $this->prepareArticlesWithPermalinks(rand(5, 15));
         $this->repository->saveMany($entities);
@@ -56,6 +56,19 @@ class ArticleRepositoryTest extends TestCase
         /** @var Article $model */
         $model = $this->repository->find($checkUriPrevious);
 
+        $this->assertEquals($model->getQueueableId(), $checkEntity->getQueueableId());
+    }
+
+    public function testFindById()
+    {
+        $entities = $this->prepareArticlesWithPermalinks(rand(5, 15));
+        $this->repository->saveMany($entities);
+
+        /** @var Article $checkEntity */
+        $checkEntity = end($entities);
+        $id = $checkEntity->article_id;
+        /** @var Article $model */
+        $model = $this->repository->find($id);
         $this->assertEquals($model->getQueueableId(), $checkEntity->getQueueableId());
     }
 
