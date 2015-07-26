@@ -1,12 +1,29 @@
 <?php
 
 use App\Models\User;
+use App\Models\UserCredential;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
 {
     use DatabaseTransactions, MailcatcherTrait;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        // Workaround for model event firing.
+        // The package Bosnadev\Database used for automatic UUID creation relies
+        // on model events (creating) to generate the UUID.
+        //
+        // Laravel/Lumen currently doesn't fire repeated model events during
+        // unit testing, see: https://github.com/laravel/framework/issues/1181
+        User::flushEventListeners();
+        User::boot();
+        UserCredential::flushEventListeners();
+        UserCredential::boot();
+    }
 
     protected function createUser($type = 'admin')
     {
@@ -16,7 +33,7 @@ class UserTest extends TestCase
 
     public function testGetAllByAdminUser()
     {
-        $user = factory(User::class, 10)->create();
+        factory(User::class, 10)->create();
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -90,13 +107,14 @@ class UserTest extends TestCase
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(User::class)
             ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
-            ->append('_userCredential',
-                $factory->get(App\Models\UserCredential::class)
+            ->append(
+                '_userCredential',
+                $factory->get(UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
                     ->customize(['password' => 'password'])
                     ->toArray()
-                );
+            );
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
         $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
@@ -110,6 +128,22 @@ class UserTest extends TestCase
         $this->assertResponseStatus(201);
         $this->assertEquals($user['firstName'], $createdUser->first_name);
         $this->assertObjectNotHasAttribute('_userCredential', $response);
+    }
+
+    public function testPutOneNoCredentials()
+    {
+        $factory = $this->app->make('App\Services\ModelFactory');
+        $user = $factory->get(User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name']);
+
+        $transformerService = $this->app->make(App\Services\TransformerService::class);
+        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $user = $transformer->transform($user);
+
+        $this->put('/users/'.$user['userId'], $user);
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
     }
 
     public function testPutOneAlreadyExisting()
@@ -219,6 +253,49 @@ class UserTest extends TestCase
         $this->assertEquals($rowCount, User::count());
     }
 
+    public function testResetPasswordMail()
+    {
+        $this->clearMessages();
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->delete('/users/'.$user->user_id.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $mail = $this->getLastMessage();
+
+        $this->assertResponseStatus(202);
+        $this->assertResponseHasNoContent();
+        $this->assertContains('Password', $mail->subject);
+
+        // Additional testing, to ensure that the token sent, can only be used
+        // one time.
+
+        // Extract the token from the message source
+        $msg = $this->getLastMessage();
+        $source = $this->getMessageSource($msg->id);
+        preg_match_all('!https?://\S+!', $source, $matches);
+        $tokenUrl = $matches[0][0];
+        $parsed = parse_url($tokenUrl);
+        $segments = explode('/', $parsed['path']);
+        $token = last($segments);
+
+        // Use it the first time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertResponseOk();
+
+        // Use it the second time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertException('invalid', 401, 'UnauthorizedException');
+    }
+
     public function testChangeEmail()
     {
         $this->clearMessages();
@@ -239,6 +316,7 @@ class UserTest extends TestCase
         $this->assertNull($updatedUser->email_confirmed);
         $this->assertContains('Confirm', $mail->subject);
     }
+
     public function testUpdateEmailConfirmed()
     {
         $user = $this->createUser('guest');
@@ -256,6 +334,7 @@ class UserTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($datetime, $updatedUser->email_confirmed);
     }
+
     public function testUpdateEmailConfirmedInvalidToken()
     {
         $user = $this->createUser('guest');

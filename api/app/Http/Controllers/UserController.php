@@ -6,10 +6,11 @@ use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
+use App\Jobs\SendPasswordResetEmail;
 use App\Exceptions\ValidationException;
 use App\Jobs\SendEmailConfirmationEmail;
-use App\Extensions\Lock\Manager as Lock;
 use Laravel\Lumen\Routing\DispatchesJobs;
+use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
@@ -83,7 +84,7 @@ class UserController extends ApiController
     public function putOne($id, Request $request)
     {
         // Extract the credentials
-        $credential = $request->get('_user_credential');
+        $credential = $request->get('_user_credential', []);
 
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
@@ -130,5 +131,27 @@ class UserController extends ApiController
         $this->repository->save($model);
 
         return $this->responder->noContent();
+    }
+
+    /**
+     * Reset user password.
+     *
+     * @param string $id
+     * @return Response
+     */
+    public function resetPassword($id)
+    {
+        $this->validateId($id);
+
+        try {
+            $user = $this->repository->find($id);
+        } catch (ModelNotFoundException $e) {
+            $this->responder->errorNotFound();
+        }
+
+        $token = $this->repository->makeLoginToken($id);
+        $this->dispatch(new SendPasswordResetEmail($user, $token));
+
+        return $this->responder->noContent(202);
     }
 }

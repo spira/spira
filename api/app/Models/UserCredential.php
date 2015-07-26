@@ -33,6 +33,16 @@ class UserCredential extends BaseModel
     public $timestamps = false;
 
     /**
+     * Model validation.
+     *
+     * @var array
+     */
+    protected $validationRules = [
+        'user_credential_id' => 'uuid',
+        'password' => 'required|string',
+    ];
+
+    /**
      * Encrypt the user's password.
      *
      * @param  string  $value

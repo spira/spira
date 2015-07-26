@@ -11,27 +11,11 @@
 |
 */
 
-use Illuminate\Http\Request;
 use Laravel\Lumen\Application;
 
-$app->get('/', function () use ($app) {
+$app->get('/', 'ApiaryController@index');
 
-    return view('documentation.layouts.master', [
-        'apibUrl' => '/documentation.apib',
-    ]);
-
-});
-
-$app->get('/documentation.apib', function (Request $request) use ($app) {
-
-    $app->view->addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
-
-    return view('documentation.apiary', [
-        'apiUrl' => $request->root(),
-        'faker'  => Faker\Factory::create(),
-    ]);
-
-});
+$app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
 
 $app->get('timezones', 'TimezoneController@getAll');
 $app->get('countries', 'CountriesController@getAll');
@@ -42,6 +26,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+    $app->delete('{id}/password', ['uses' => 'UserController@resetPassword']);
 });
 
 

@@ -49,7 +49,7 @@ with a third party through OAuth)
 * Note that for this entity replacement of entity is *not* permitted
 #### Restrictions
 * Allowed - [all]
-Note that in this request, a child `#userCredentials` object is provided. This represents an associated model that must
+Note that in this request, a child `_userCredentials` object is provided. This represents an associated model that must
 be created when the user is first registered.
 
 The request *must* provide at least one authentication method when the user is created. In this example we use standard
@@ -92,6 +92,20 @@ password credentials - social signin is described later in this document (@todo)
             !!}
 
 + Response 204
+
+### Reset user password [DELETE /users/{userId}/password]
+#### Restrictions
+* Allowed - [admin, self]
+
+When the request is performed, the password is not actually deleted, but an
+email is sent to the user with a reset token.
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 202
 
 ### Delete user entity [DELETE]
 #### Restrictions
