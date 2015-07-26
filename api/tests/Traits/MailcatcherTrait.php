@@ -40,8 +40,11 @@ trait MailcatcherTrait
         if (empty($messages)) {
             return $this->fail('No messages received');
         }
+
         // messages are in descending order
-        return reset($messages);
+        $id = reset($messages)->id;
+
+        return $this->getMessage($id);
     }
 
     /**
@@ -52,6 +55,20 @@ trait MailcatcherTrait
     public function getMessages()
     {
         $jsonResponse = $this->mailcatcher->get('/messages');
+
+        return json_decode($jsonResponse->getBody());
+    }
+
+    /**
+     * Get a message by its id.
+     *
+     * @param  int     $id
+     * @param  string  $type
+     * @return mixed
+     */
+    public function getMessage($id, $type = 'json')
+    {
+        $jsonResponse = $this->mailcatcher->get(sprintf('/messages/%s.%s', $id, $type));
 
         return json_decode($jsonResponse->getBody());
     }
