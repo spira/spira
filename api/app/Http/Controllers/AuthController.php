@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use RuntimeException;
 use App\Models\AuthToken;
+use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
@@ -26,7 +27,6 @@ class AuthController extends ApiController
      *
      * @param  JWTAuth                $jwtAuth
      * @param  ApiResponderInterface  $responder
-     * @return void
      */
     public function __construct(JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {

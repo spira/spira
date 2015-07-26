@@ -9,8 +9,8 @@
 namespace App\Models;
 
 /**
- * @property bool $current
- * @property string $uri
+ * @property string $permalink
+ * @property Article article
  *
  * Class ArticlePermalink
  * @package App\Models
@@ -20,9 +20,10 @@ class ArticlePermalink extends BaseModel
 {
     public $table = 'article_permalinks';
 
-    protected $primaryKey = 'uri';
+    protected $primaryKey = 'permalink';
 
-    protected $validationRules = [
-        'uri' => 'required|string|unique:article_permalinks'
-    ];
+    public function article()
+    {
+        return $this->belongsTo(Article::class,'article_id','article_id');
+    }
 }

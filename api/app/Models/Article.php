@@ -4,8 +4,8 @@ use Spira\Repository\Collection\Collection;
 
 /**
  *
- * @property ArticlePermalink $permalinkRelation
- * @property ArticlePermalink[]|Collection $previousPermalinksRelations
+ * @property ArticlePermalink[]|Collection $permalinks
+ * @property string $permalink
  *
  * Class Article
  * @package App\Models
@@ -26,14 +26,16 @@ class Article extends BaseModel
      */
     protected $fillable = ['article_id', 'title', 'content', 'permalink', 'first_published'];
 
-    protected $hidden = ['permalinkRelation','previousPermalinksRelations'];
+    protected $hidden = ['pemalinks'];
 
     protected $primaryKey = 'article_id';
 
-    protected $with = ['permalinkRelation'];
-
     protected $casts = [
         'first_published' => 'dateTime',
+    ];
+
+    protected $validationRules = [
+        'permalink' => 'unique:article_permalinks,permalink'
     ];
 
     /**
@@ -41,44 +43,20 @@ class Article extends BaseModel
      */
     public function setPermalink($permalink)
     {
-        $currentLink = $this->permalinkRelation;
-        if ($currentLink) {
-            $currentLink->current = false;
-        }
+        $this->permalink = $permalink?:null;
 
-        $permalinkObj = null;
         if ($permalink) {
             $permalinkObj = new ArticlePermalink();
-            $permalinkObj->uri = $permalink;
-            $permalinkObj->current = true;
-        }
-        $this->permalinkRelation = $permalinkObj;
+            $permalinkObj->permalink = $permalink;
 
-        if ($currentLink && $currentLink->exists) {
-            $this->previousPermalinksRelations->add($currentLink);
+            $this->permalinks->add($permalinkObj);
         }
     }
 
-    public function getPermalink()
-    {
-        if ($this->permalinkRelation && $this->permalinkRelation->uri) {
-            return $this->permalinkRelation->uri;
-        }
 
-        return null;
-    }
-
-    public function permalinkRelation()
-    {
-        $relation = $this->hasOne(ArticlePermalink::class, 'article_id', 'article_id');
-        $relation->getQuery()->where('current', '=', 't');
-        return $relation;
-    }
-
-    public function previousPermalinksRelations()
+    public function permalinks()
     {
         $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
-        $relation->getQuery()->where('current', '=', 'f');
         return $relation;
     }
 }

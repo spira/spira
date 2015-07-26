@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 use App\Models\Article;
 use App\Models\ArticlePermalink;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Rhumsaa\Uuid\Uuid;
 
 class ArticleRepository extends BaseRepository
@@ -21,18 +22,22 @@ class ArticleRepository extends BaseRepository
      */
     public function find($id, $columns = ['*'])
     {
-        $builder = $this->model->query();
-        $query = $builder->getQuery();
-        $tableName = $this->model->getTable();
-        $joinTableName = ArticlePermalink::getTableName();
-        $query->join($joinTableName, $joinTableName.'.article_id', '=', $tableName.'.article_id', 'left');
-        if (Uuid::isValid($id)) {
-            $query->where($tableName.'.article_id', '=', $id);
+        $result = $this->model->where('permalink','=',$id)->get()->first();
+
+        if (!$result && Uuid::isValid($id)){
+            $result = $this->model->find($id);
         }
 
-        $query->orWhere($joinTableName.'.uri', '=', $id);
+        /** @var ArticlePermalink $permalink */
+        if (!$result && $permalink = ArticlePermalink::find($id)) {
+            $result = $permalink->article;
+        }
 
-        return $builder->get($columns)->first();
+        if (!$result){
+            throw new ModelNotFoundException('Could not find article for current permalink');
+        }
+
+        return $result;
     }
 
 

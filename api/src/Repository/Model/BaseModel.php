@@ -20,10 +20,12 @@ use Spira\Repository\Collection\Collection;
  * Class BaseModel
  * @package Spira\Repository\Model
  *
- * @method count
- * @method get
- * @method find
- * @method findMany
+ * @method int count
+ * @method static Collection get
+ * @method static BaseModel findOrFail
+ * @method static BaseModel find
+ * @method static Collection findMany
+ * @method static BaseModel where
  *
  */
 class BaseModel extends Model

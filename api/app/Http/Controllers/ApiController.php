@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\ValidationException;
 use App\Exceptions\ValidationExceptionCollection;
 use App\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Repository\Model\BaseModel;
@@ -50,13 +51,14 @@ abstract class ApiController extends Controller
     public function getOne($id)
     {
         $this->validateId($id);
-        $model = $this->getRepository()->find($id);
-
-        if (!$model) {
+        try {
+            $model = $this->getRepository()->find($id);
+            return $this->getResponder()->item($model);
+        } catch (ModelNotFoundException $e) {
             $this->getResponder()->errorNotFound();
         }
 
-        return $this->getResponder()->item($model);
+        return $this->getResponder()->noContent();
     }
 
     /**
@@ -84,8 +86,9 @@ abstract class ApiController extends Controller
     public function putOne($id, Request $request)
     {
         $this->validateId($id);
-        $model = $this->getRepository()->find($id);
-        if (!$model) {
+        try {
+            $model = $this->getRepository()->find($id);
+        } catch (ModelNotFoundException $e) {
             $model = $this->getRepository()->getNewModel();
         }
         $model->fill($request->all());

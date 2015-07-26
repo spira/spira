@@ -45,8 +45,8 @@ class ArticleRepositoryTest extends TestCase
 
         /** @var Article $checkEntity */
         $checkEntity = end($entities);
-        $checkUri = $checkEntity->getPermalink();
-        $checkUriPrevious = $checkEntity->previousPermalinksRelations->last()->uri;
+        $checkUri = $checkEntity->permalink;
+        $checkUriPrevious = $checkEntity->permalinks->last()->permalink;
 
         /** @var Article $model */
         $model = $this->repository->find($checkUri);
@@ -69,16 +69,16 @@ class ArticleRepositoryTest extends TestCase
         /** @var Article[] $entities */
         $entities = factory(Article::class, $number)->create()->all();
         foreach ($entities as $entity) {
-            $entity->setPermalink($this->getLinkName($counter++));
+            $entity->permalink = $this->getLinkName($counter++);
             $permalinks = [];
 
             for ($i = rand(1, 10); $i >= 0; $i--) {
                 $permalinkObj = new ArticlePermalink();
-                $permalinkObj->uri = $this->getLinkName($counter++);
+                $permalinkObj->permalink = $this->getLinkName($counter++);
                 $permalinks[] = $permalinkObj;
             }
 
-            $entity->previousPermalinksRelations = $permalinks;
+            $entity->permalinks = $permalinks;
         }
         return $entities;
     }

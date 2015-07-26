@@ -3,6 +3,7 @@
 use App\Models\BaseModel;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Repository\Collection\Collection;
 
 abstract class BaseRepository
@@ -55,7 +56,7 @@ abstract class BaseRepository
      */
     public function find($id, $columns = ['*'])
     {
-        return $this->model->find($id, $columns);
+        return $this->model->findOrFail($id, $columns);
     }
 
 
