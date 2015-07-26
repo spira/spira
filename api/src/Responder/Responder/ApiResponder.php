@@ -47,13 +47,14 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     /**
      * Respond with a no content response.
      *
+     * @param  int  $code
      * @return Response
      */
-    public function noContent()
+    public function noContent($code = 204)
     {
         $response = $this->getResponse();
         $response->setContent(null);
-        return $response->setStatusCode(204);
+        return $response->setStatusCode($code);
     }
 
     /**
