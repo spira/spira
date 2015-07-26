@@ -26,7 +26,7 @@ class Article extends BaseModel
      */
     protected $fillable = ['article_id', 'title', 'content', 'permalink', 'first_published'];
 
-    protected $hidden = ['pemalinks'];
+    protected $hidden = ['permalinks'];
 
     protected $primaryKey = 'article_id';
 
@@ -44,15 +44,15 @@ class Article extends BaseModel
     /**
      * @param string $permalink
      */
-    public function setPermalink($permalink)
+    public function setPermalinkAttribute($permalink)
     {
-        $this->permalink = $permalink?:null;
-
         if ($permalink) {
+            $this->attributes['permalink'] = $permalink;
             $permalinkObj = new ArticlePermalink();
             $permalinkObj->permalink = $permalink;
-
             $this->permalinks->add($permalinkObj);
+        }else{
+            $this->attributes['permalink'] = null;
         }
     }
 

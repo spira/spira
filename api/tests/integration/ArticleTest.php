@@ -168,20 +168,53 @@ class ArticleTest extends TestCase
 
     public function testPatchOne()
     {
+        $entity = factory(Article::class)->create();
+        $id = $entity->article_id;
 
+        $entity->title = 'foo';
+
+        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(204);
+        $checkEntity = $this->repository->find($id);
+        $this->assertEquals($checkEntity->title,$entity->title);
     }
 
     public function testPatchOneNewPermalink()
     {
+        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+        $id = $entity->article_id;
+        $linksCount = $entity->permalinks->count();
+        $entity->permalink = 'foo';
+        $this->assertEquals($entity->permalinks->count(),$linksCount+1);
 
+        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(204);
+
+        $checkEntity = $this->repository->find($id);
+        $this->assertEquals($checkEntity->permalink,$entity->permalink);
+        $this->assertEquals($checkEntity->permalinks->count(),$linksCount+1);
     }
 
     public function testPatchOneRemovePermalink()
     {
+        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+        $id = $entity->article_id;
+        $linksCount = $entity->permalinks->count();
 
+        $entity->permalink = '';
+
+        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(204);
+        $checkEntity = $this->repository->find($id);
+        $this->assertNull($checkEntity->permalink);
+        $this->assertEquals($checkEntity->permalinks->count(),$linksCount);
     }
 
     public function testDeleteOne()
     {
+
     }
 }
