@@ -75,6 +75,12 @@ password credentials - social signin is described later in this document (@todo)
 + Response 204
 
 ### Update user entity [PATCH]
+
+When the user changes their email an mail will be sent to the new address with a
+token in it. Then when a PATCH request is issued to the column `email_confirmed`
+the `Email-Confirm-Token: <token>` header must be set with the token from before
+or the request will be rejected.
+
 #### Restrictions
 * Allowed - [admin, self]
 
@@ -82,6 +88,7 @@ password credentials - social signin is described later in this document (@todo)
     + Headers
 
             Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Email-Confirm-Token: {!! hash_hmac('sha256', str_random(40), str_random(40)); !!}
 
     + Body
 
