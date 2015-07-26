@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Bosnadev\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -22,6 +23,10 @@ class CreateUserCredentialsTable extends Migration
             $table->char('password', 60);
 
             $table->primary('user_credential_id');
+
+            $table->foreign('user_id')
+                ->references('user_id')->on(User::getTableName())
+                ->onDelete('cascade');
         });
     }
 
