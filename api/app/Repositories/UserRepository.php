@@ -112,7 +112,6 @@ class UserRepository extends BaseRepository
         if ($request->get('email_confirmed')) {
             $token = $request->headers->get('email-confirm-token');
             if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
-
                 throw new ValidationException(
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
