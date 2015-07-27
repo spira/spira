@@ -116,12 +116,12 @@ class UserController extends ApiController
     public function patchOne($id, Request $request)
     {
         $this->validateId($id);
-        $this->repository->validateEmailConfirmationToken($request);
+    $this->repository->validateEmailConfirmationToken($request);
         $model = $this->repository->find($id);
 
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
-        if ($email and $model->email != $email) {
+        if ($email && $model->email != $email) {
             $token = $this->repository->makeConfirmationToken($email);
             $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
             $request->merge(['email_confirmed' => null]);
