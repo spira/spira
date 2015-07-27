@@ -18,12 +18,11 @@ $app = new \App\SpiraApplication(
     realpath(__DIR__.'/../')
 );
 
-$hhvmfix = new App\Exceptions\HandleExceptionsFix();
-$hhvmfix->bootstrap($app);
+$app->withFacades();
 
- $app->withFacades();
+$app->withEloquent();
 
- $app->withEloquent();
+$app->configure('hosts');
 
 /*
 |--------------------------------------------------------------------------
