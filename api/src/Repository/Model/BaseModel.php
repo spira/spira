@@ -280,6 +280,6 @@ class BaseModel extends Model
      */
     protected function getRelationCacheKey($method)
     {
-        return static::class.'_'.$method.'_'.$this->getKey();
+        return spl_object_hash($this).'_'.$method;
     }
 }
