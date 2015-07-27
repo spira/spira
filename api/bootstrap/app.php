@@ -23,6 +23,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('hosts');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
