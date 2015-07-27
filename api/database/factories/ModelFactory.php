@@ -109,12 +109,12 @@ $factory->define(App\Models\AuthToken::class, function ($faker) {
 });
 
 $factory->define(App\Models\Article::class, function ($faker) {
+    $publishedDatetime = $faker->optional(0.9)->dateTimeThisDecade();
+
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
-        // ErrorException: createFromFormat() expects parameter 2 to be string, object given 0_o
-        //'first_published' => $faker->optional(0.9)->dateTimeThisDecade(),
-        'first_published' => null,
+        'first_published' => $publishedDatetime ? $publishedDatetime->format('Y-m-d H:i:s') : null,
     ];
 });

@@ -22,18 +22,23 @@ class ArticleRepository extends BaseRepository
      */
     public function find($id, $columns = ['*'])
     {
-        $result = $this->model->where('permalink', '=', $id)->get()->first();
 
-        /** @var ArticlePermalink $permalink */
-        if (!$result && $permalink = ArticlePermalink::find($id)) {
-            $result = $permalink->article;
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)){
+            return $query = $this->model->findOrFail($id);
         }
 
-        if (!$result && Uuid::isValid($id)) {
-            $result = parent::find($id);
+        //otherwise attempt treat the id as a permalink and first try the model, then try the history
+        try {
+
+            return $this->model
+                ->where('permalink', '=', $id)
+                ->firstOrFail();
+
+        }catch(ModelNotFoundException $e){ //id or permalink not found, try permalink history
+            return ArticlePermalink::findOrFail($id)->article;
         }
 
-        return $result;
     }
 
 
