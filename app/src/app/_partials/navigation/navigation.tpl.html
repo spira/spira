@@ -1,6 +1,6 @@
 <md-list>
     <md-list-item ng-repeat="state in navigationStates | orderBy:orderMenuItems" >
-        <md-button ng-click="toggleLeftNav()" ui-sref="{{state.name}}" ui-sref-active="selected">
+        <md-button ng-click="toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
             <md-icon>{{state.data.icon}}</md-icon>
             {{state.data.title}}
         </md-button>
@@ -11,6 +11,10 @@
     </md-list-item>
 
     <md-list-item>
+        <md-button ng-if="!authService.loggedIn" ng-click="toggleRegistrationSidenav()">
+            <md-icon>assignment_ind</md-icon> Register
+        </md-button>
+
         <md-button ng-if="!authService.loggedIn" ng-click="promptLogin()">
             <md-icon>assignment_ind</md-icon> Login
         </md-button>

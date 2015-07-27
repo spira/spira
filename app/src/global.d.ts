@@ -6,8 +6,9 @@ declare module global {
 
     export interface IState extends ng.ui.IState {
         data: {
+            loggedIn?: boolean;
             title?: string;
-            role: string;
+            role?: string;
             icon?: string;
             sortAfter?: string;
             navigation?: boolean;
@@ -20,13 +21,24 @@ declare module global {
     }
 
     export interface IWindowService extends ng.IWindowService {
+
         Toposort:any;
+    }
 
-
+    export interface IUserCredential{
+        userCredentialId: string;
+        password: string;
     }
 
     export interface IUser extends NgJwtAuth.IUser {
+        userId:string;
+        firstName:string; //make compulsory
+        lastName:string; //make compulsory
+        _userCredential? : IUserCredential;
+    }
 
+    export interface IRootScope extends ng.IRootScopeService {
+        socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
     }
 
 

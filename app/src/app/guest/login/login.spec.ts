@@ -5,10 +5,21 @@ describe('Login', () => {
 
     let $q:ng.IQService,
         fixtures = {
-            failLogin: false,
-            getLoginSuccessPromise(fail){
+            getLoginSuccessPromise(deferredCreds){
+
+                let deferred = $q.defer();
+
+                deferredCreds.promise.then(null, null, (creds) => {
+                    if (creds.password == 'fail'){
+                        deferred.notify(new NgJwtAuth.NgJwtAuthException('error'));
+                    }else{
+                        deferred.resolve('success');
+                        deferredCreds.resolve(creds);
+                    }
+                });
+
                 return {
-                    promise: !fail ? $q.when('success') : $q.reject(new NgJwtAuth.NgJwtAuthException('error')),
+                    promise: deferred.promise,
                 };
             }
         };
@@ -20,6 +31,7 @@ describe('Login', () => {
             $rootScope:ng.IRootScopeService,
             $timeout:ng.ITimeoutService,
             $mdDialog:ng.material.IDialogService,
+            $mdToast:ng.material.IToastService,
             authService:NgJwtAuth.NgJwtAuthService,
             deferredCredentials:ng.IDeferred<any>,
             loginSuccess:{promise:ng.IPromise<any>}
@@ -33,17 +45,18 @@ describe('Login', () => {
 
         beforeEach(()=> {
 
-            inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _$q_, _$timeout_) => {
+            inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _$mdToast_, _$q_, _$timeout_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $timeout = _$timeout_;
                 $mdDialog = _$mdDialog_;
+                $mdToast = _$mdToast_;
                 authService = _ngJwtAuthService_;
-                deferredCredentials = _$q_.defer();
-
                 $q = _$q_;
+                deferredCredentials = $q.defer();
 
-                loginSuccess = fixtures.getLoginSuccessPromise(fixtures.failLogin);
+
+                loginSuccess = fixtures.getLoginSuccessPromise(deferredCredentials);
 
                 LoginController = $controller(app.guest.login.namespace+'.controller', {
                     $scope: $scope,
@@ -59,6 +72,7 @@ describe('Login', () => {
             sinon.spy($mdDialog, 'hide');
             sinon.spy($mdDialog, 'cancel');
             sinon.spy($mdDialog, 'show');
+            sinon.spy($mdToast, 'show');
 
         });
 
@@ -67,6 +81,7 @@ describe('Login', () => {
             (<any>$mdDialog).hide.restore();
             (<any>$mdDialog).cancel.restore();
             (<any>$mdDialog).show.restore();
+            (<any>$mdToast).show.restore();
 
         });
 
@@ -94,6 +109,8 @@ describe('Login', () => {
                 expect(deferredCredentials.promise).eventually.to.be.rejected;
 
                 $scope.$apply();
+
+                expect(authService.loggedIn).to.be.false;
 
             });
 
@@ -132,43 +149,58 @@ describe('Login', () => {
 
             });
 
-            after(() => {
-
-                fixtures.failLogin = true; //set up login failure for next describe block
-            });
-
-
         });
 
         describe('dialog interactions - invalid login', () => {
 
+            let credsFail = {
+                username: 'foo',
+                password: 'fail',
+            };
 
-            it('should show an error when invalid login credentials are passed', (done) => {
+            let credsPass = {
+                username: 'foo',
+                password: 'pass',
+            };
 
-                let creds = {
-                    username: 'foo',
-                    password: 'bar',
-                };
+            it('should show an error when invalid login credentials are passed', () => {
 
-                (<any>$scope).login(creds.username, creds.password);
+                var progressSpy = sinon.spy();
+                deferredCredentials.promise.then(null, null, progressSpy);
 
-                expect(deferredCredentials.promise).eventually.to.become(creds);
-
-                expect(loginSuccess.promise).eventually.to.be.rejectedWith('error');
-
+                (<any>$scope).login(credsFail.username, credsFail.password);
                 $scope.$apply();
 
-                loginSuccess.promise.finally(() => {
+                (<any>$scope).login(credsPass.username, credsPass.password);
+                $scope.$apply();
 
-                    expect((<any>$scope).loginError).to.have.length.above(0);
-
-                    done();
-
+                return loginSuccess.promise.then(function () {
+                    progressSpy.should.have.been.calledWith(credsFail);
+                    progressSpy.should.have.been.calledWith(credsPass);
+                    progressSpy.should.have.been.calledTwice;
+                    expect($mdToast.show).to.have.been.calledOnce;
                 });
-
 
             });
 
+            it('should only repeat the error message once for each failed credential attempt', () => {
+
+                var progressSpy = sinon.spy();
+                deferredCredentials.promise.then(null, null, progressSpy);
+
+                (<any>$scope).login(credsFail.username, credsFail.password);
+                (<any>$scope).login(credsFail.username, credsFail.password);
+                (<any>$scope).login(credsPass.username, credsPass.password);
+
+                $scope.$apply();
+
+                return loginSuccess.promise.then(function () {
+                    progressSpy.should.have.been.calledWith(credsFail);
+                    progressSpy.should.have.been.calledWith(credsPass);
+                    expect($mdToast.show).to.have.been.calledTwice;
+                });
+
+            })
 
         });
 
