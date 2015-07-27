@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responder\Responder;
+use App\Models\Article;
 use App\Repositories\ArticleRepository;
 
 class ArticleController extends ApiController
@@ -22,5 +23,12 @@ class ArticleController extends ApiController
     {
         $this->repository = $repository;
         $this->responder = $responder;
+    }
+
+    public function getPermalinks($id)
+    {
+        /** @var Article $article */
+        $article = $this->repository->find($id);
+        return $this->responder->collection($article->permalinks);
     }
 }
