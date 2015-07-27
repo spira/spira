@@ -11,7 +11,6 @@ use Rhumsaa\Uuid\Uuid;
 
 class RouteHelperTest extends TestCase
 {
-
     public function testRoute()
     {
         $uuid = Uuid::uuid4();

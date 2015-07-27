@@ -24,11 +24,11 @@ class SpiraValidator extends Validator
     public function validateCreateOnly($attribute, $value, $parameters)
     {
         $original = $this->model->getOriginal($attribute);
-        if (is_null($original)){
+        if (is_null($original)) {
             return true;
         }
 
-        if ($original == $value){
+        if ($original == $value) {
             return true;
         }
 
