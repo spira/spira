@@ -13,6 +13,7 @@ use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
@@ -34,6 +35,13 @@ class UserController extends ApiController
     protected $jwtAuth;
 
     /**
+     * Cache repository.
+     *
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * Assign dependencies.
      *
      * @param  Repository  $repository
@@ -41,14 +49,16 @@ class UserController extends ApiController
      * @param  JWTAuth     $jwtAuth
      * @param  Request     $request
      * @param  Responder   $responder
+     * @param  Cache       $cache
      * @return void
      */
-    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder)
+    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder, Cache $cache)
     {
         $this->repository = $repository;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
         $this->responder = $responder;
+        $this->cache = $cache;
 
         $this->permissions($request);
     }
@@ -116,8 +126,8 @@ class UserController extends ApiController
     public function patchOne($id, Request $request)
     {
         $this->validateId($id);
-    $this->repository->validateEmailConfirmationToken($request);
         $model = $this->repository->find($id);
+        $model->validateEmailConfirmationToken($request, $this->cache);
 
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
