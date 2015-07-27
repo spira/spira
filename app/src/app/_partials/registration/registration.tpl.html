@@ -1,0 +1,62 @@
+<h2>Register</h2>
+
+
+Register with:
+
+<md-button class="md-fab" aria-label="Register with Facebook" ng-click="socialLogin('facebook', 'app.user.profile', {onBoard: true})">
+    <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>
+</md-button>
+
+<md-button class="md-fab" aria-label="Register with Twitter" ng-click="socialLogin('twitter', 'app.user.profile', {onBoard: true})">
+    <md-icon md-font-icon="fa fa-2x fa-twitter"></md-icon>
+</md-button>
+
+<md-button class="md-fab" aria-label="Register with Google" ng-click="socialLogin('google', 'app.user.profile', {onBoard: true})">
+    <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
+</md-button>
+
+<form novalidate name="registrationForm">
+
+    <fieldset ng-disabled="submitting">
+
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.email">Email</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
+            <ng-messages for="registrationForm.email.$error">
+                <ng-message when="required">This is required.</ng-message>
+                <ng-message when="email">This is not a valid email.</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.password">Password</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
+            <ng-messages for="registrationForm.password.$error">
+                <ng-message when="required">Password is required.</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.firstName">First Name</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.firstName" name="firstName" ng-model="user.firstName" type="text" ng-required="false">
+        </md-input-container>
+
+        <md-input-container class="md-icon-float">
+            <label for="registrationForm.lastName">Last Name</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.lastName" name="lastName" ng-model="user.lastName" type="text" ng-required="false">
+        </md-input-container>
+
+        <md-button
+                class="md-raised md-primary"
+                ng-click="registerUser(user.email, user.password, user.firstName, user.lastName, true)"
+                ng-disabled="registrationForm.$invalid"
+                >Register
+        </md-button>
+
+    </fieldset>
+
+</form>
