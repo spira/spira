@@ -178,22 +178,4 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         $cache->put('email_confirmation_'.$token, $email, 1440);
         return $token;
     }
-
-    /**
-     * If the email_confirmation field is set, make sure we've a valid token.
-     *
-     * @param  Request  $request
-     * @param  Cache    $cache
-     * @return bool
-     */
-    public function validateEmailConfirmationToken(Request $request, Cache $cache)
-    {
-        if ($request->get('email_confirmed')) {
-            $token = $request->headers->get('email-confirm-token');
-            if (!$email = $cache->pull('email_confirmation_'.$token)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
