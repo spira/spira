@@ -26,6 +26,8 @@ $hhvmfix->bootstrap($app);
 
  $app->withEloquent();
 
+$app->configure('hosts');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings

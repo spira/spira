@@ -278,8 +278,7 @@ class UserTest extends TestCase
         preg_match_all('!https?://\S+!', $source, $matches);
         $tokenUrl = $matches[0][0];
         $parsed = parse_url($tokenUrl);
-        $segments = explode('/', $parsed['path']);
-        $token = last($segments);
+        $token = str_replace('passwordResetToken=', '', $parsed['query']);
 
         // Use it the first time
         $this->get('/auth/jwt/token', [
