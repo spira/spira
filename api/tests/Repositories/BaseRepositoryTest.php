@@ -75,7 +75,7 @@ class BaseRepositoryTest extends TestCase
             ->andReturn(true);
 
         $result = $this->baseRepository->save($this->baseModel);
-        $this->assertEquals($result,$this->baseModel);
+        $this->assertEquals($result, $this->baseModel);
     }
 
     public function testDelete()

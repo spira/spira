@@ -8,7 +8,6 @@
 
 namespace App\ValueObjects;
 
-
 class TypeAwareMessage
 {
     public $message;

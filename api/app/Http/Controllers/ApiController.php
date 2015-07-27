@@ -240,7 +240,7 @@ abstract class ApiController extends Controller
      * @return array
      * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection,$validate = true)
+    protected function getIds($entityCollection, $validate = true)
     {
         $ids = [];
         $errors = [];
@@ -253,7 +253,7 @@ abstract class ApiController extends Controller
                     $ids[] = $id;
                     $errors[] = null;
                 } catch (ValidationException $e) {
-                    if ($validate){
+                    if ($validate) {
                         $error = true;
                         $errors[] = $e;
                     }
