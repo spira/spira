@@ -85,7 +85,7 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
 $factory->define(App\Models\AuthToken::class, function ($faker) {
 
-    $hostname = env('APP_HOSTNAME', 'localhost');
+    $hostname = env('APP_HOST', 'localhost');
 
     $user = factory(App\Models\User::class)->make();
     $now = new Carbon();
