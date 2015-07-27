@@ -52,5 +52,4 @@ class SpiraApplication extends Application
         // *** Add type 16777217 that HVVM returns for fatal
         return in_array($type, [16777217, E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE]);
     }
-
 }
