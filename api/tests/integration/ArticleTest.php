@@ -233,4 +233,9 @@ class ArticleTest extends TestCase
         $this->assertEquals($rowCount - 1, $this->repository->count());
         $this->assertEquals($permalinksTotalCount - $entityPermalinksCount, $permalinksTotalCountAfterDelete);
     }
+
+    public function testGetPermalinks()
+    {
+
+    }
 }

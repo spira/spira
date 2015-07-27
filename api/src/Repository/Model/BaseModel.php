@@ -47,7 +47,7 @@ class BaseModel extends Model
      * @param mixed $value
      * @throws SetRelationException
      */
-    public function __set($key, $value)
+    public function setAttribute($key, $value)
     {
         if (method_exists($this, $key)) {
             $value = $this->prepareValue($value);
@@ -59,7 +59,7 @@ class BaseModel extends Model
                 $this->relations[$key] = $value;
             }
         } else {
-            parent::__set($key, $value);
+            parent::setAttribute($key, $value);
         }
     }
 

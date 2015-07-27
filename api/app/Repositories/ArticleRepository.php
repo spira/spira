@@ -25,7 +25,7 @@ class ArticleRepository extends BaseRepository
 
         //if the id is a uuid, try that or fail.
         if (Uuid::isValid($id)){
-            return $query = $this->model->findOrFail($id);
+            return $this->model->findOrFail($id);
         }
 
         //otherwise attempt treat the id as a permalink and first try the model, then try the history
