@@ -33,6 +33,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
 $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('/', 'App\Http\Controllers\ArticleController@getAll');
     $app->get('{id}', ['as'=>\App\Models\Article::class, 'uses'=>'App\Http\Controllers\ArticleController@getOne']);
+    $app->get('{id}/permalinks', 'App\Http\Controllers\ArticleController@getPermalinks');
     $app->post('/', 'App\Http\Controllers\ArticleController@postOne');
     $app->put('{id}', 'App\Http\Controllers\ArticleController@putOne');
     $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
