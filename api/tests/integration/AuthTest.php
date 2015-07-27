@@ -114,9 +114,6 @@ class AuthTest extends TestCase
         $this->assertNotEquals($token, $object->token);
     }
 
-    /**
-     * @group failing
-     */
     public function testRefreshPlainHeader()
     {
         $user = App\Models\User::first();
