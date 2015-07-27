@@ -13,8 +13,8 @@ class ArticleSeeder extends Seeder
     {
         factory(App\Models\Article::class, 10)->create();
 
-//        factory(App\Models\Article::class)->create()
-//            ->permalink()->save(factory(App\Models\ArticlePermalink::class)->make())
-//        ;
+        factory(App\Models\Article::class)->create()
+            ->save(factory(App\Models\ArticlePermalink::class)->make())
+        ;
     }
 }
