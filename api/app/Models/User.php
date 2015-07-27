@@ -2,11 +2,9 @@
 
 use Illuminate\Http\Request;
 use BeatSwitch\Lock\LockAware;
-use Illuminate\Support\MessageBag;
 use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
-use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
@@ -186,17 +184,16 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param  Request  $request
      * @param  Cache    $cache
-     * @return void
+     * @return bool
      */
     public function validateEmailConfirmationToken(Request $request, Cache $cache)
     {
         if ($request->get('email_confirmed')) {
             $token = $request->headers->get('email-confirm-token');
             if (!$email = $cache->pull('email_confirmation_'.$token)) {
-                throw new ValidationException(
-                    new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
-                );
+                return false;
             }
         }
+        return true;
     }
 }
