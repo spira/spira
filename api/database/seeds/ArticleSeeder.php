@@ -16,6 +16,5 @@ class ArticleSeeder extends Seeder
 //        factory(App\Models\Article::class)->create()
 //            ->permalink()->save(factory(App\Models\ArticlePermalink::class)->make())
 //        ;
-
     }
 }

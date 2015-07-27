@@ -238,7 +238,7 @@ class ArticleTest extends TestCase
     {
         $entity = factory(Article::class)->create();
         $this->repository->save($entity);
-        $count = ArticlePermalink::where('article_id','=',$entity->article_id)->count();
+        $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
         $this->get('/articles/'.$entity->article_id.'/permalinks');
 
@@ -247,7 +247,6 @@ class ArticleTest extends TestCase
 
         $object = json_decode($this->response->getContent());
 
-        $this->assertEquals(count($object),$count);
-
+        $this->assertEquals(count($object), $count);
     }
 }

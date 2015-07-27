@@ -19,6 +19,5 @@ class DatabaseSeeder extends Seeder
 
         $this->call('ArticleSeeder');
         $this->command->info('Articles seeded!');
-
     }
 }

@@ -24,21 +24,18 @@ class ArticleRepository extends BaseRepository
     {
 
         //if the id is a uuid, try that or fail.
-        if (Uuid::isValid($id)){
+        if (Uuid::isValid($id)) {
             return $this->model->findOrFail($id);
         }
 
         //otherwise attempt treat the id as a permalink and first try the model, then try the history
         try {
-
             return $this->model
                 ->where('permalink', '=', $id)
                 ->firstOrFail();
-
-        }catch(ModelNotFoundException $e){ //id or permalink not found, try permalink history
+        } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
             return ArticlePermalink::findOrFail($id)->article;
         }
-
     }
 
 
