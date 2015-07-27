@@ -95,8 +95,8 @@ class AuthToken extends Model
             $body[$key] = $this->getAttribute($key);
         }
 
-        // Map the user key with #
-        $body['#user'] = $this->user;
+        // Map the user key with _
+        $body['_user'] = $this->user;
 
         return $body;
     }

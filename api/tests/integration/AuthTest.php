@@ -38,7 +38,7 @@ class AuthTest extends TestCase
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
-        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['#user']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
     }
 
     public function testFailedLogin()
