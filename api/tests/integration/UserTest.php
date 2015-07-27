@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, MailcatcherTrait;
 
     public function setUp()
     {
@@ -251,5 +251,47 @@ class UserTest extends TestCase
 
         $this->assertResponseStatus(403);
         $this->assertEquals($rowCount, User::count());
+    }
+
+    public function testResetPasswordMail()
+    {
+        $this->clearMessages();
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->delete('/users/'.$user->user_id.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $mail = $this->getLastMessage();
+
+        $this->assertResponseStatus(202);
+        $this->assertResponseHasNoContent();
+        $this->assertContains('Password', $mail->subject);
+
+        // Additional testing, to ensure that the token sent, can only be used
+        // one time.
+
+        // Extract the token from the message source
+        $msg = $this->getLastMessage();
+        $source = $this->getMessageSource($msg->id);
+        preg_match_all('!https?://\S+!', $source, $matches);
+        $tokenUrl = $matches[0][0];
+        $parsed = parse_url($tokenUrl);
+        $token = str_replace('passwordResetToken=', '', $parsed['query']);
+
+        // Use it the first time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertResponseOk();
+
+        // Use it the second time
+        $this->get('/auth/jwt/token', [
+            'HTTP_AUTHORIZATION' => 'Token '.$token,
+        ]);
+
+        $this->assertException('invalid', 401, 'UnauthorizedException');
     }
 }

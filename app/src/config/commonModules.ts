@@ -7,7 +7,7 @@ module config.commonModules {
         'common.providers.stateHelperServiceProvider',
 
         //services
-        'common.services.userService',
+        'common.services',
 
         //directives
     ]);

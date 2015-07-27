@@ -12,9 +12,9 @@ logviewer:
 
 database:
   image: postgres:9.4
-  environment:
-    - POSTGRES_PASSWORD=spira
-    - POSTGRES_USER=spira
+  env_file:
+    - .common.env
+    - .local.env
   ports:
     - "5432:5432"
 
@@ -48,9 +48,9 @@ php:
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
-  environment:
-    - API_PATH=/api
-    - XDEBUG_ENABLED=true
+  env_file:
+      - .common.env
+      - .local.env
   privileged: true
 
 web:  
@@ -65,9 +65,9 @@ web:
   ports:
     - "80:80"
     - "8080:8080"
-  environment:
-    - API_PATH=/api
-    - NGINX_VHOSTS=vhosts/nginx/*.local.conf
+  env_file:
+    - .common.env
+    - .local.env
   privileged: true
 
 devtools:
@@ -77,6 +77,9 @@ devtools:
   volumes_from:
     - data
   privileged: true
+  env_file:
+    - .common.env
+    - .local.env
   links:
     - web:web
     - mailcatcher:mailcatcher
@@ -88,5 +91,6 @@ apimock:
   image: spira/docker-drakov
   volumes_from:
     - data
-  environment:
-    - APIB_PATH=/data/api/storage/app/apiary.apib
+  env_file:
+    - .common.env
+    - .local.env

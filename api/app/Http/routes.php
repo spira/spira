@@ -26,6 +26,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+    $app->delete('{id}/password', ['uses' => 'UserController@resetPassword']);
 });
 
 
@@ -59,4 +60,20 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');
     $app->get('jwt/token', 'AuthController@token');
+
+
+    //@todo implement proper social logins
+    $app->get('social/facebook', function (Request $request) {
+        echo "Dummy Facebook request:\n";
+        return $request;
+    });
+    $app->get('social/twitter', function (Request $request) {
+        echo "Dummy Twitter request:\n";
+        return $request;
+    });
+    $app->get('social/google', function (Request $request) {
+        echo "Dummy Google request:\n";
+        return $request;
+    });
+
 });

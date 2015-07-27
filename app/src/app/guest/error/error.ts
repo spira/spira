@@ -33,11 +33,11 @@ module app.guest.error {
         }
     }
 
-    interface IErrorStateParams {
+    export interface IErrorStateParams {
         title: string;
         details: any;
         url: string;
-        method: string;
+        method?: string;
         message: string;
     }
 

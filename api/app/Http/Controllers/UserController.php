@@ -6,7 +6,9 @@ use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
+use App\Jobs\SendPasswordResetEmail;
 use App\Exceptions\ValidationException;
+use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
@@ -14,6 +16,8 @@ use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
 {
+    use DispatchesJobs;
+
     /**
      * Permission Lock Manager.
      *
@@ -99,5 +103,27 @@ class UserController extends ApiController
         $model->setCredential(new UserCredential($credential));
 
         return $this->responder->createdItem($model);
+    }
+
+    /**
+     * Reset user password.
+     *
+     * @param string $id
+     * @return Response
+     */
+    public function resetPassword($id)
+    {
+        $this->validateId($id);
+
+        try {
+            $user = $this->repository->find($id);
+        } catch (ModelNotFoundException $e) {
+            $this->responder->errorNotFound();
+        }
+
+        $token = $this->repository->makeLoginToken($id);
+        $this->dispatch(new SendPasswordResetEmail($user, $token));
+
+        return $this->responder->noContent(202);
     }
 }
