@@ -56,11 +56,6 @@ class TestEntity extends BaseModel
         'hidden'  => 'required|boolean'
     ];
 
-    public function addSecondTest(SecondTestEntity $entity)
-    {
-        $this->testMany->add($entity);
-        return $this;
-    }
 
     public function testOne()
     {
