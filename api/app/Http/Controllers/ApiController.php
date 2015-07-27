@@ -116,7 +116,7 @@ abstract class ApiController extends Controller
         $putModels = [];
         foreach ($requestCollection as $requestEntity) {
             $id = isset($requestEntity[$this->getKeyName()])?$requestEntity[$this->getKeyName()]:null;
-            if ($id && $models->has($id)) {
+            if ($id && !empty($models) && $models->has($id)) {
                 $model = $models->get($id);
             } else {
                 $model = $this->getRepository()->getNewModel();
@@ -236,10 +236,11 @@ abstract class ApiController extends Controller
 
     /**
      * @param $entityCollection
+     * @param bool $validate
      * @return array
      * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection)
+    protected function getIds($entityCollection,$validate = true)
     {
         $ids = [];
         $errors = [];
@@ -252,8 +253,10 @@ abstract class ApiController extends Controller
                     $ids[] = $id;
                     $errors[] = null;
                 } catch (ValidationException $e) {
-                    $error = true;
-                    $errors[] = $e->getErrors();
+                    if ($validate){
+                        $error = true;
+                        $errors[] = $e;
+                    }
                 }
             } else {
                 $errors[] = null;
