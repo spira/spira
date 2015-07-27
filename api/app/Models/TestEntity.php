@@ -44,7 +44,7 @@ class TestEntity extends BaseModel
     ];
 
     protected $validationRules = [
-        'entity_id' => 'uuid',
+        'entity_id' => 'uuid|createOnly',
         'varchar' => 'required|string',
         'hash'    => 'required|string',
         'integer' => 'required|integer',
