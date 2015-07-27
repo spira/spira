@@ -1,9 +1,12 @@
 <?php namespace App\Models;
 
+use Illuminate\Http\Request;
 use BeatSwitch\Lock\LockAware;
+use Illuminate\Support\MessageBag;
 use BeatSwitch\Lock\Callers\Caller;
-use App\Extensions\Lock\UserOwnership;
 use Illuminate\Auth\Authenticatable;
+use App\Extensions\Lock\UserOwnership;
+use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
@@ -161,5 +164,23 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public static function userIsOwner($user, $entityId)
     {
         return $user->user_id == $entityId;
+    }
+
+    /**
+     * If the email_confirmation field is set, make sure we've a valid token.
+     *
+     * @param  Request  $request
+     * @return void
+     */
+    public function validateEmailConfirmationToken(Request $request)
+    {
+        if ($request->get('email_confirmed')) {
+            $token = $request->headers->get('email-confirm-token');
+            if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
+                throw new ValidationException(
+                    new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
+                );
+            }
+        }
     }
 }
