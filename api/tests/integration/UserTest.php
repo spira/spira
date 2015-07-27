@@ -323,8 +323,8 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
-        $repo = $this->app->make('App\Repositories\UserRepository');
-        $emailToken = $repo->makeConfirmationToken($user->email);
+        $cache = $this->app->make('Illuminate\Contracts\Cache\Repository');
+        $emailToken = $user->makeConfirmationToken($user->email, $cache);
         $this->patch('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Email-Confirm-Token' => $emailToken

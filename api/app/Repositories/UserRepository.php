@@ -14,13 +14,6 @@ class UserRepository extends BaseRepository
     protected $login_token_ttl = 1440;
 
     /**
-     * Confirmation token time to live in minutes.
-     *
-     * @var int
-     */
-    protected $confirmation_token_ttl = 1440;
-
-    /**
      * Cache repository.
      *
      * @var Cache
@@ -81,20 +74,6 @@ class UserRepository extends BaseRepository
         $token = hash_hmac('sha256', str_random(40), str_random(40));
         $this->cache->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
-        return $token;
-    }
-
-    /**
-     * Make an email confirmation token for a user.
-     *
-     * @param string $email
-     *
-     * @return string
-     */
-    public function makeConfirmationToken($email)
-    {
-        $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $this->cache->put('email_confirmation_'.$token, $email, $this->confirmation_token_ttl);
         return $token;
     }
 }
