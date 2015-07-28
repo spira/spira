@@ -10,6 +10,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class TransformerTest extends TestCase
 {
+
+    /** @var TransformerService */
+    private $service;
+
     public function setUp()
     {
         parent::setUp();
@@ -100,13 +104,18 @@ class TransformerTest extends TestCase
 
     public function testPaginated()
     {
-        $entities = factory(App\Models\TestEntity::class, 3)->make();
 
-        $paginated = new LengthAwarePaginator($entities, 3, 1, 1);
+        $total = 30;
+        $perPage = 5;
+
+        $entities = factory(App\Models\TestEntity::class, $total)->make();
+
+        $paginated = new LengthAwarePaginator($entities, $total, $perPage, 1);
 
         $collection = $this->service->paginatedCollection($paginated);
 
-        $this->assertTrue(is_array($collection));
+        $this->assertTrue(is_array($collection['data']));
+        $this->assertCount($perPage, $collection['data']);
     }
 
     public function testParseIncludes()
