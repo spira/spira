@@ -33,6 +33,6 @@ class CreateArticlesPermalinksTable extends Migration
      */
     public function down()
     {
-        Schema::drop(\App\Models\ArticlePermalink::getTableName());
+        DB::statement(sprintf('DROP TABLE %s CASCADE', \App\Models\ArticlePermalink::getTableName()));
     }
 }

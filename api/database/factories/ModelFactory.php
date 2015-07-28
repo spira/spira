@@ -110,22 +110,31 @@ $factory->define(App\Models\AuthToken::class, function ($faker) {
 
 $factory->define(App\Models\Article::class, function ($faker) {
     $publishedDatetime = $faker->optional(0.9)->dateTimeThisDecade();
-
-    $permalinks = [];
-
-    for ($i = rand(1, 10); $i >= 0; $i--) {
-        $permalinkObj = new \App\Models\ArticlePermalink();
-        $permalinkObj->permalink = str_random(255);
-        $permalinks[] = $permalinkObj;
-    }
+//
+//    $permalinks = [];
+//
+//    for ($i = rand(1, 10); $i >= 0; $i--) {
+//        $permalinkObj = new \App\Models\ArticlePermalink();
+//        $permalinkObj->permalink = str_random(255);
+//        $permalinks[] = $permalinkObj;
+//    }
 
 
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
-        'permalinks' => new \Spira\Repository\Collection\Collection($permalinks),
-        'permalink' => str_random(255),
+//        'permalinks' => new \Spira\Repository\Collection\Collection($permalinks),
+//        'permalink' => str_random(255),
         'first_published' => $publishedDatetime ? $publishedDatetime->format('Y-m-d H:i:s') : null,
     ];
+});
+
+
+$factory->define(App\Models\ArticlePermalink::class, function ($faker) {
+
+    return [
+        'permalink' => $faker->slug,
+    ];
+
 });

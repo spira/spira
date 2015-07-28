@@ -38,28 +38,50 @@ class Article extends BaseModel
         'article_id' => 'uuid',
         'title' => 'required|string',
         'content' => 'required|string',
-        'permalink' => 'string|unique:article_permalinks,permalink'
+//        'permalink' => 'string|unique:article_permalinks,permalink'
     ];
 
+//    /**
+//     * @param string $permalink
+//     */
+//    public function setPermalinkAttribute($permalink)
+//    {
+//        if ($permalink) {
+//            $this->attributes['permalink'] = $permalink;
+//            $permalinkObj = new ArticlePermalink();
+//            $permalinkObj->permalink = $permalink;
+//            $this->permalinks->add($permalinkObj);
+//        } else {
+//            $this->attributes['permalink'] = null;
+//        }
+//    }
+
     /**
-     * @param string $permalink
+     * @param string $permalinkSlug
      */
-    public function setPermalinkAttribute($permalink)
+    public function setPermalinkAttribute($permalinkSlug)
     {
-        if ($permalink) {
-            $this->attributes['permalink'] = $permalink;
-            $permalinkObj = new ArticlePermalink();
-            $permalinkObj->permalink = $permalink;
-            $this->permalinks->add($permalinkObj);
+        if ($permalinkSlug) {
+            $permalink = new ArticlePermalink();
+            $permalink->permalink = $permalinkSlug;
+
+            $this->permalinks()->save($permalink); //save to this model's permalink history
+
+            $this->currentPermalink()->associate($permalink); //set permalink as this
+
         } else {
-            $this->attributes['permalink'] = null;
+            $this->currentPermalink()->dissociate();
         }
     }
 
 
+    public function currentPermalink()
+    {
+        return $this->belongsTo(ArticlePermalink::class, 'permalink');
+    }
+
     public function permalinks()
     {
-        $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
-        return $relation;
+        return $this->hasMany(ArticlePermalink::class, 'permalink');
     }
 }
