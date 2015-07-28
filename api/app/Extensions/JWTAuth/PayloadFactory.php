@@ -8,10 +8,30 @@ class PayloadFactory extends PayloadFactoryBase
     /**
      * @var array
      */
-    protected $defaultClaims = ['iss', 'iat', 'exp', 'nbf', 'jti', 'user'];
+    protected $defaultClaims = ['iss', 'aud', 'iat', 'exp', 'nbf', 'jti', '_user'];
 
     /**
-     * Create a random value for the token.
+     * Set the Issuer (iss) claim.
+     *
+     * @return string
+     */
+    public function iss()
+    {
+        return $this->request->getHttpHost();
+    }
+
+    /**
+     * Set the Audience (aud) claim.
+     *
+     * @return string
+     */
+    public function aud()
+    {
+        return str_replace('api.', '', $this->request->getHttpHost());
+    }
+
+    /**
+     * Create a random value for the jti claim.
      *
      * @return string
      */
@@ -21,11 +41,11 @@ class PayloadFactory extends PayloadFactoryBase
     }
 
     /**
-     * Get the user object array for the token.
+     * Get the user object array for the user claim.
      *
      * @return  mixed
      */
-    protected function user()
+    protected function _user()
     {
         $users = App::make('App\Repositories\UserRepository');
         $id = $this->claims['sub'];

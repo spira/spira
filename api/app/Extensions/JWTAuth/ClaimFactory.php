@@ -16,7 +16,7 @@ class ClaimFactory extends Factory
         'jti' => 'Tymon\JWTAuth\Claims\JwtId',
         'nbf' => 'Tymon\JWTAuth\Claims\NotBefore',
         'sub' => 'Tymon\JWTAuth\Claims\Subject',
-        'user' => 'App\Extensions\JWTAuth\UserClaim'
+        '_user' => 'App\Extensions\JWTAuth\UserClaim'
     ];
 
     /**
