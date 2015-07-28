@@ -314,6 +314,25 @@ class UserTest extends TestCase
         $this->assertEquals('foo@bar.com', $updatedUser->email);
         $this->assertNull($updatedUser->email_confirmed);
         $this->assertContains('Confirm', $mail->subject);
+
+        $source = $this->getMessageSource($mail->id);
+        preg_match_all('!https?://\S+!', $source, $matches);
+        $tokenUrl = $matches[0][0];
+        $parsed = parse_url($tokenUrl);
+        $emailToken = str_replace('emailConfirmationToken=', '', $parsed['query']);
+
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+
+        $updatedUser = User::find($user->user_id);
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
+
     }
 
     public function testUpdateEmailConfirmed()

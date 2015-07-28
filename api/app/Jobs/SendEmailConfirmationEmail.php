@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Config;
 
 class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueue
 {
@@ -54,7 +55,7 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
         $mailer->send('emails.emailConfirmation', [
             'user' => $this->user,
             'email' => $this->email,
-            'token' => $this->token
+            'emailConfirmationRedirectionUrl' => Config::get('hosts.app') . '/profile?emailConfirmationToken='.$this->token
         ], function ($m) {
 
             $m->to($this->user->email, $this->user->full_name)

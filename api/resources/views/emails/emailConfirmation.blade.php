@@ -2,4 +2,4 @@
 
 Please confirm the email change to {{ $email }} by following this link
 
-http://somelink/{{ $token }}
+{{ $emailConfirmationRedirectionUrl }}
