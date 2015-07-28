@@ -90,10 +90,5 @@ $factory->define(App\Models\AuthToken::class, function ($faker) {
     $jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
     $token = $jwtAuth->fromUser($user);
 
-    // Transform the user to be injected in the token for the api doc.
-    $transformerService = App::make(App\Services\TransformerService::class);
-    $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
-    $user = $transformer->transform($user);
-
     return ['token' => $token, 'user' => $user];
 });
