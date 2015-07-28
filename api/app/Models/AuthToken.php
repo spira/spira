@@ -60,7 +60,15 @@ class AuthToken extends Model
     public function getDecodedTokenBodyAttribute()
     {
         $token = new Token($this->token);
+        $decoded = $this->jwtAuth->decode($token)->toArray();
 
-        return $this->jwtAuth->decode($token)->toArray();
+        // For the api doc, we can have a mocked user, that has been injected
+        // here from the model factory. If that is the case, replace the _user
+        // key with the injected user
+        if ($this->user) {
+            $decoded['_user'] = $this->user;
+        }
+
+        return $decoded;
     }
 }
