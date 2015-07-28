@@ -201,7 +201,7 @@ class BaseModel extends Model
     {
         if ($relation instanceof HasOneOrMany) {
             $fk = str_replace($this->getTable().'.', '', $relation->getForeignKey());
-            $this->{$fk} = $relation->getParentKey();
+            $this->attributes[$fk] = $relation->getParentKey();
         }
 
 //        if ($relation instanceof BelongsTo){

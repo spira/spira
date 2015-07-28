@@ -22,6 +22,8 @@ class ArticlePermalink extends BaseModel
 
     protected $primaryKey = 'permalink';
 
+    protected $fillable = ['article_id', 'permalink'];
+
     public function article()
     {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');

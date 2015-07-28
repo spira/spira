@@ -47,39 +47,20 @@ class ArticleTest extends TestCase
         return $entity;
     }
 
-    /**
-     * @param $number
-     * @return \App\Models\Article[]
-     */
-    protected function prepareArticlesWithPermalinks($number)
+    protected function addPermalinksToArticles($articles)
     {
-        $counter = 1;
-        /** @var Article[] $entities */
-        $entities = factory(Article::class, $number)->create()->all();
-        foreach ($entities as $entity) {
-            $entity->permalink = $this->getLinkName($counter++);
-            $permalinks = [];
-
-            for ($i = rand(1, 10); $i >= 0; $i--) {
-                $permalinkObj = new ArticlePermalink();
-                $permalinkObj->permalink = $this->getLinkName($counter++);
-                $permalinks[] = $permalinkObj;
-            }
-
-            $entity->permalinks = $permalinks;
+        foreach ($articles as $article)
+        {
+            $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
+            $article->permalinks = $permalinks;
         }
-        $this->repository->saveMany($entities);
-        return $entities;
-    }
-
-    protected function getLinkName($number)
-    {
-        return 'link_n_'.$number;
     }
 
     public function testGetAll()
     {
-        $this->prepareArticlesWithPermalinks(5);
+        $entities = factory(Article::class, 5)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
         $this->get('/articles');
 
         $this->assertResponseOk();
@@ -90,7 +71,10 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
 
         $this->get('/articles/'.$entity->article_id);
 
@@ -182,11 +166,14 @@ class ArticleTest extends TestCase
 
     public function testPatchOneNewPermalink()
     {
-        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
+
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
         $entity->permalink = 'foo';
-        $this->assertEquals($entity->permalinks->count(), $linksCount+1);
 
         $this->patch('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
@@ -199,7 +186,11 @@ class ArticleTest extends TestCase
 
     public function testPatchOneRemovePermalink()
     {
-        $entity = $this->prepareArticlesWithPermalinks(1)->first();
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
+
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
 
@@ -215,7 +206,10 @@ class ArticleTest extends TestCase
 
     public function testDeleteOne()
     {
-        $entities = $this->prepareArticlesWithPermalinks(4);
+        $entities = factory(Article::class, 4)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+
         $entity = $entities[0];
         $id = $entity->article_id;
 
@@ -237,7 +231,7 @@ class ArticleTest extends TestCase
     public function testGetPermalinks()
     {
         $entity = factory(Article::class)->create();
-        $this->repository->save($entity);
+
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
         $this->get('/articles/'.$entity->article_id.'/permalinks');

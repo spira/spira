@@ -40,13 +40,14 @@ class ArticleRepositoryTest extends TestCase
 
     public function testFindByPermalinks()
     {
-        $entities = $this->prepareArticlesWithPermalinks(rand(5, 15));
+        $entities = factory(Article::class, rand(5, 15))->create()->all();
+        $this->addPermalinksToArticles($entities);
         $this->repository->saveMany($entities);
 
         /** @var Article $checkEntity */
         $checkEntity = end($entities);
         $checkUri = $checkEntity->permalink;
-        $checkUriPrevious = $checkEntity->permalinks->last()->permalink;
+        $checkUriPrevious = $checkEntity->permalinks->first()->permalink;
 
         /** @var Article $model */
         $model = $this->repository->find($checkUri);
@@ -61,7 +62,8 @@ class ArticleRepositoryTest extends TestCase
 
     public function testFindById()
     {
-        $entities = $this->prepareArticlesWithPermalinks(rand(5, 15));
+        $entities = factory(Article::class, rand(5, 15))->create()->all();
+        $this->addPermalinksToArticles($entities);
         $this->repository->saveMany($entities);
 
         /** @var Article $checkEntity */
@@ -72,32 +74,13 @@ class ArticleRepositoryTest extends TestCase
         $this->assertEquals($model->getQueueableId(), $checkEntity->getQueueableId());
     }
 
-    /**
-     * @param $number
-     * @return \App\Models\Article[]
-     */
-    protected function prepareArticlesWithPermalinks($number)
+    protected function addPermalinksToArticles($articles)
     {
-        $counter = 1;
-        /** @var Article[] $entities */
-        $entities = factory(Article::class, $number)->create()->all();
-        foreach ($entities as $entity) {
-            $entity->permalink = $this->getLinkName($counter++);
-            $permalinks = [];
-
-            for ($i = rand(1, 10); $i >= 0; $i--) {
-                $permalinkObj = new ArticlePermalink();
-                $permalinkObj->permalink = $this->getLinkName($counter++);
-                $permalinks[] = $permalinkObj;
-            }
-
-            $entity->permalinks = $permalinks;
+        foreach ($articles as $article)
+        {
+            $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
+            $article->permalinks = $permalinks;
         }
-        return $entities;
     }
 
-    protected function getLinkName($number)
-    {
-        return 'link_n_'.$number;
-    }
 }

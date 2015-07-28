@@ -34,28 +34,48 @@ class Article extends BaseModel
         'first_published' => 'datetime',
     ];
 
-    protected $validationRules = [
-        'article_id' => 'uuid',
-        'title' => 'required|string',
-        'content' => 'required|string',
-        'permalink' => 'string|unique:article_permalinks,permalink'
-    ];
+    public function getValidationRules()
+    {
+        $permalinkRule = 'string|unique:article_permalinks,permalink';
+        if (!is_null($this->permalink)){
+            $permalinkRule.=','.$this->permalink.',permalink';
+        }
+        return [
+            'article_id' => 'uuid',
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'permalink' => $permalinkRule
+        ];
+    }
 
     /**
-     * @param string $permalink
+     * Listen for save event
+     *
+     * Saving permalink to history
      */
+    protected static function boot()
+    {
+        parent::boot();
+        static::saved(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+                $articlePermalink = new ArticlePermalink([
+                    'article_id' => $model->article_id,
+                    'permalink' => $model->permalink
+                ]);
+                return $articlePermalink->save();
+            }
+            return true;
+        });
+    }
+
     public function setPermalinkAttribute($permalink)
     {
-        if ($permalink) {
+        if ($permalink){
             $this->attributes['permalink'] = $permalink;
-            $permalinkObj = new ArticlePermalink();
-            $permalinkObj->permalink = $permalink;
-            $this->permalinks->add($permalinkObj);
-        } else {
+        }else{
             $this->attributes['permalink'] = null;
         }
     }
-
 
     public function permalinks()
     {
