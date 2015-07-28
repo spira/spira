@@ -17,15 +17,15 @@ class ArticleSeeder extends Seeder
 
         factory(App\Models\Article::class, 10)
             ->create()
-            ->each(function(\App\Models\Article $article) {
-                $permalink = factory(App\Models\ArticlePermalink::class)->make();
+            ->each(function(\App\Models\Article $article) use ($faker) {
 
-                $permalink->article()->associate($article);
-                $permalink->save();
+                foreach(range(0,$faker->numberBetween(0, 4)) as $index){
+                    $permalink = factory(App\Models\ArticlePermalink::class)->make();
+                    $permalink->article()->associate($article);
+                    $permalink->save();
+                }
 
-                $article->currentPermalink()->associate($permalink);
-                $article->save();
-
-            });
+            })
+        ;
     }
 }

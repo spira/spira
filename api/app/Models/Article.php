@@ -38,40 +38,24 @@ class Article extends BaseModel
         'article_id' => 'uuid',
         'title' => 'required|string',
         'content' => 'required|string',
-//        'permalink' => 'string|unique:article_permalinks,permalink'
+        'permalink' => 'string|unique:article_permalinks,permalink',
     ];
 
-//    /**
-//     * @param string $permalink
-//     */
-//    public function setPermalinkAttribute($permalink)
-//    {
-//        if ($permalink) {
-//            $this->attributes['permalink'] = $permalink;
-//            $permalinkObj = new ArticlePermalink();
-//            $permalinkObj->permalink = $permalink;
-//            $this->permalinks->add($permalinkObj);
-//        } else {
-//            $this->attributes['permalink'] = null;
-//        }
-//    }
 
-    /**
-     * @param string $permalinkSlug
-     */
-    public function setPermalinkAttribute($permalinkSlug)
+    private function savePermalink($permalinkSlug)
     {
         if ($permalinkSlug) {
             $permalink = new ArticlePermalink();
             $permalink->permalink = $permalinkSlug;
-
-            $this->permalinks()->save($permalink); //save to this model's permalink history
+            $permalink->article()->associate($this);
+            $permalink->save();
 
             $this->currentPermalink()->associate($permalink); //set permalink as this
 
         } else {
             $this->currentPermalink()->dissociate();
         }
+        return $this;
     }
 
 
@@ -82,6 +66,6 @@ class Article extends BaseModel
 
     public function permalinks()
     {
-        return $this->hasMany(ArticlePermalink::class, 'permalink');
+        return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 }
