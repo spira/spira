@@ -8,7 +8,7 @@
 
 namespace App\Exceptions;
 
-use HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
 
@@ -44,7 +44,7 @@ class ValidationExceptionCollection extends HttpException implements Transformab
         $responses = [];
         foreach ($this->exceptions as $exception) {
             if (!is_null($exception)) {
-                $responses[] = $exception->getResponse();
+                $responses[] = $exception->getErrors();
             } else {
                 $responses[] = null;
             }
@@ -59,6 +59,9 @@ class ValidationExceptionCollection extends HttpException implements Transformab
      */
     public function transform(TransformerInterface $transformer)
     {
-        return $transformer->transformCollection($this->getResponse());
+        return [
+            'message' => 'There was an issue with the validation of provided entity',
+            'invalid' => $transformer->transformCollection($this->getResponse()),
+        ];
     }
 }

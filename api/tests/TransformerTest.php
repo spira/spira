@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Transformers\IlluminateModelTransformer;
+use App\Services\TransformerService;
 use Mockery as m;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,6 +14,7 @@ class TransformerTest extends TestCase
     {
         parent::setUp();
         $this->transformer = $this->app->make('App\Http\Transformers\IlluminateModelTransformer');
+        $this->service = $this->app->make(TransformerService::class);
     }
 
     /**
@@ -96,23 +98,23 @@ class TransformerTest extends TestCase
         }
     }
 
-//    public function testPaginated()
-//    {
-//        $entities = factory(App\Models\TestEntity::class, 3)->make();
-//
-//        $paginated = new LengthAwarePaginator($entities, 3, 1, 1);
-//
-//        $collection = $this->service->paginatedCollection($paginated);
-//
-//        $this->assertTrue(is_array($collection));
-//    }
-//
-//    public function testParseIncludes()
-//    {
-//        $entity = factory(App\Models\TestEntity::class)->make();
-//
-//        $this->service->parseIncludes('foobar');
-//
-//        $item = $this->service->item($entity);
-//    }
+    public function testPaginated()
+    {
+        $entities = factory(App\Models\TestEntity::class, 3)->make();
+
+        $paginated = new LengthAwarePaginator($entities, 3, 1, 1);
+
+        $collection = $this->service->paginatedCollection($paginated);
+
+        $this->assertTrue(is_array($collection));
+    }
+
+    public function testParseIncludes()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+
+        $this->service->parseIncludes('foobar');
+
+        $item = $this->service->item($entity);
+    }
 }

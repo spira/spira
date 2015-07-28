@@ -35,7 +35,7 @@ abstract class BaseRepository extends \Spira\Repository\Repository\BaseRepositor
                     $errors[] = null;
                 } catch (ValidationException $e) {
                     $error = true;
-                    $errors[] = $e->getErrors();
+                    $errors[] = $e;
                 }
             }
             if ($error) {
