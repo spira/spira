@@ -85,10 +85,10 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
 $factory->define(App\Models\AuthToken::class, function ($faker) {
 
-    $user = App\Models\User::first();
+    $user = factory(App\Models\User::class)->make();
 
     $jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
     $token = $jwtAuth->fromUser($user);
 
-    return compact('token');
+    return ['token' => $token];
 });
