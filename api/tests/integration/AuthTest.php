@@ -39,6 +39,12 @@ class AuthTest extends TestCase
         $this->assertArrayHasKey('token', $array);
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+
+        // Test that decoding the token, will match the decoded body
+        $token = new Token($array['token']);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+        $this->assertEquals($decoded, $array['decodedTokenBody']);
     }
 
     public function testFailedLogin()
