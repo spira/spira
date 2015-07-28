@@ -38,28 +38,34 @@ class Article extends BaseModel
         'article_id' => 'uuid',
         'title' => 'required|string',
         'content' => 'required|string',
-        'permalink' => 'string|unique:article_permalinks,permalink'
+        'permalink' => 'string|unique:article_permalinks,permalink',
     ];
 
-    /**
-     * @param string $permalink
-     */
-    public function setPermalinkAttribute($permalink)
+
+    private function savePermalink($permalinkSlug)
     {
-        if ($permalink) {
-            $this->attributes['permalink'] = $permalink;
-            $permalinkObj = new ArticlePermalink();
-            $permalinkObj->permalink = $permalink;
-            $this->permalinks->add($permalinkObj);
+        if ($permalinkSlug) {
+            $permalink = new ArticlePermalink();
+            $permalink->permalink = $permalinkSlug;
+            $permalink->article()->associate($this);
+            $permalink->save();
+
+            $this->currentPermalink()->associate($permalink); //set permalink as this
+
         } else {
-            $this->attributes['permalink'] = null;
+            $this->currentPermalink()->dissociate();
         }
+        return $this;
     }
 
 
+    public function currentPermalink()
+    {
+        return $this->belongsTo(ArticlePermalink::class, 'permalink');
+    }
+
     public function permalinks()
     {
-        $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
-        return $relation;
+        return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 }
