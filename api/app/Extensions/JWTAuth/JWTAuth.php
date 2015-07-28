@@ -70,24 +70,4 @@ class JWTAuth extends JWTAuthBase
 
         return $user;
     }
-
-    /**
-     * Create a Payload instance.
-     *
-     * @param mixed $subject
-     * @param array $customClaims
-     * @return \Tymon\JWTAuth\Payload
-     */
-    protected function makePayload($subject, array $customClaims = [])
-    {
-        $users = App::make('App\Repositories\UserRepository');
-        $user = $users->find($subject);
-
-        return $this->manager->getPayloadFactory()->make(
-            array_merge($customClaims, [
-                'sub' => $subject,
-                '_user' => $user->toArray()
-            ])
-        );
-    }
 }
