@@ -2,6 +2,8 @@
 
 use App;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
@@ -108,20 +110,18 @@ class UserController extends ApiController
     /**
      * Reset user password.
      *
-     * @param string $id
+     * @param $email
      * @return Response
      */
-    public function resetPassword($id)
+    public function resetPassword($email)
     {
-        $this->validateId($id);
-
         try {
-            $user = $this->repository->find($id);
+            $user = $this->repository->findByEmail($email);
         } catch (ModelNotFoundException $e) {
-            $this->responder->errorNotFound();
+            throw new NotFoundHttpException('Sorry, this email does not exist in our database.', $e);
         }
 
-        $token = $this->repository->makeLoginToken($id);
+        $token = $this->repository->makeLoginToken($user->user_id);
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
         return $this->responder->noContent(202);

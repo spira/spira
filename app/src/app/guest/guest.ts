@@ -43,6 +43,7 @@ module app.guest {
         'app.guest.sandbox',
         'app.guest.error',
         'app.guest.login',
+        'app.guest.resetPassword'
     ])
     .config(GuestConfig);
 

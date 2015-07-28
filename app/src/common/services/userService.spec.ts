@@ -152,7 +152,17 @@
 
         });
 
+        describe('Password Reset', () => {
 
+            it('should open the password reset dialog', () => {
+
+            });
+
+            it('should do something', () => {
+
+            });
+
+        });
     });
 
 
