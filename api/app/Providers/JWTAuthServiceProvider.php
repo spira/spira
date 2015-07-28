@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Extensions\JWTAuth\JWTAuth;
+use App\Extensions\JWTAuth\ClaimFactory;
 use App\Extensions\JWTAuth\PayloadFactory;
 use Tymon\JWTAuth\Providers\JWTAuthServiceProvider as ServiceProvider;
 
@@ -45,6 +46,16 @@ class JWTAuthServiceProvider extends ServiceProvider
             );
 
             return $auth->setIdentifier($this->config('identifier'));
+        });
+    }
+
+    /**
+     * Register the bindings for the Payload Factory
+     */
+    protected function registerClaimFactory()
+    {
+        $this->app->singleton('tymon.jwt.claim.factory', function () {
+            return new ClaimFactory();
         });
     }
 }

@@ -8,7 +8,7 @@ class PayloadFactory extends PayloadFactoryBase
     /**
      * @var array
      */
-    protected $defaultClaims = ['iss', 'iat', 'exp', 'nbf', 'jti', '_user'];
+    protected $defaultClaims = ['iss', 'iat', 'exp', 'nbf', 'jti', 'user'];
 
     /**
      * Create a random value for the token.
@@ -25,7 +25,7 @@ class PayloadFactory extends PayloadFactoryBase
      *
      * @return  mixed
      */
-    protected function _user()
+    protected function user()
     {
         $users = App::make('App\Repositories\UserRepository');
         $id = $this->claims['sub'];
