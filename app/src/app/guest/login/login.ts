@@ -26,11 +26,14 @@ module app.guest.login {
 
     class LoginInit {
 
-        static $inject = ['ngJwtAuthService', '$mdDialog', '$timeout'];
+        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state'];
         constructor(
+            private $rootScope:global.IRootScope,
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
             private $mdDialog:ng.material.IDialogService,
-            private $timeout:ng.ITimeoutService
+            private $timeout:ng.ITimeoutService,
+            private $window:ng.IWindowService,
+            private $state:ng.ui.IStateService
         ) {
 
             ngJwtAuthService
@@ -53,6 +56,18 @@ module app.guest.login {
 
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
+
+
+
+            $rootScope.socialLogin = (type:string, redirectState:string = $state.current.name, redirectStateParams:Object = $state.current.params) => {
+
+                let url = '/auth/social/' + type;
+
+                url += '?returnUrl=' + (<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
+
+                this.$window.location.href = url;
+
+            }
         }
 
     }
@@ -62,19 +77,21 @@ module app.guest.login {
         login(username:string, password:string):void;
         cancelLoginDialog():void;
         loginError:string;
+        socialLogin(type:string);
     }
 
     class LoginController {
 
-        static $inject = ['$scope', '$mdDialog', 'deferredCredentials', 'loginSuccess'];
+        static $inject = ['$scope', '$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess'];
         constructor(
             private $scope : IScope,
+            private $rootScope : global.IRootScope,
             private $mdDialog:ng.material.IDialogService,
+            private $mdToast:ng.material.IToastService,
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
             private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
             private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>}
         ) {
-
-            $scope.loginError = '';
 
             $scope.login = (username, password) => {
 
@@ -83,22 +100,35 @@ module app.guest.login {
                     password: password,
                 };
 
-                deferredCredentials.resolve(credentials); //resolve the deferred credentials with the passed creds
-
-                loginSuccess.promise
-                    .then(
-                        (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
-                        (err:Error) => {
-                            if (err instanceof NgJwtAuth.NgJwtAuthException){
-                                $scope.loginError = err.message; //if the is an auth exception, show the value to the user
-                            }
-                        }
-                    )
-                ;
+                deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
 
             };
 
-            $scope.cancelLoginDialog = () => $mdDialog.cancel('closed'); //allow the user to manually close the dialog
+            $scope.cancelLoginDialog = () => {
+                ngJwtAuthService.logout(); //make sure the user is logged out
+                $mdDialog.cancel('closed');
+            }; //allow the user to manually close the dialog
+
+
+            $scope.socialLogin = $rootScope.socialLogin;
+
+            //register error handling and close on success
+            loginSuccess.promise
+                .then(
+                (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                null,
+                (err:Error) => {
+                    if (err instanceof NgJwtAuth.NgJwtAuthException){
+                        this.$mdToast.show(
+                            (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
+                                .hideDelay(2000)
+                                .position('top')
+                                .content(err.message)
+                                .parent('#loginDialog')
+                        );
+                    }
+                }
+            );
 
         }
 

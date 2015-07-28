@@ -12,12 +12,13 @@ module app.partials.navigation{
 
     class NavigationController {
 
-        static $inject = ['$scope', 'stateHelperService', '$window', 'ngJwtAuthService'];
+        static $inject = ['$scope', 'stateHelperService', '$window', 'ngJwtAuthService', '$state'];
         constructor(
             private $scope:IScope,
             private stateHelperService:common.providers.StateHelperService,
             private $window:global.IWindowService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+            private $state:ng.ui.IStateService
         ) {
 
             var childStates = stateHelperService.getChildStates(app.guest.namespace);
@@ -42,7 +43,13 @@ module app.partials.navigation{
 
             $scope.authService = ngJwtAuthService;
             $scope.promptLogin = () => ngJwtAuthService.promptLogin();
-            $scope.logout = () => ngJwtAuthService.logout();
+            $scope.logout = () => {
+                ngJwtAuthService.logout();
+                let currentState:global.IState = <global.IState>this.$state.current;
+                if (currentState.name && currentState.data.loggedIn) {
+                    this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
+                }
+            }
 
         }
 

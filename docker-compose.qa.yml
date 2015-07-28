@@ -11,9 +11,9 @@ logviewer:
 
 database:
   image: postgres:9.4
-  environment:
-    - POSTGRES_PASSWORD=spira
-    - POSTGRES_USER=spira
+  env_file:
+    - .common.env
+    - .qa.env
   ports:
     - "5432:5432"
 
@@ -46,9 +46,9 @@ php:
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
-  environment:
-    - API_PATH=/api
-    - XDEBUG_ENABLED=false
+  env_file:
+    - .common.env
+    - .qa.env
   privileged: true
 
 web:  
@@ -62,9 +62,9 @@ web:
   ports:
     - "80:80"
     - "8080:8080"
-  environment:
-    - API_PATH=/api
-    - NGINX_VHOSTS=vhosts/nginx/*.local.conf
+  env_file:
+    - .common.env
+    - .qa.env
   privileged: true
 
 # keep devtools as it is needed for image building
@@ -80,3 +80,6 @@ devtools:
     - database:database
     - cache:cache
     - queue:queue
+  env_file:
+    - .common.env
+    - .qa.env

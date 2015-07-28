@@ -7,7 +7,8 @@ module config.stateManager {
     class StateManagerConfig {
 
         static $inject = ['$stateProvider', '$locationProvider', '$urlRouterProvider', '$compileProvider', 'stateHelperServiceProvider'];
-        constructor(private $stateProvider, private $locationProvider, private $urlRouterProvider, private $compileProvider, private stateHelperServiceProvider){
+
+        constructor(private $stateProvider, private $locationProvider, private $urlRouterProvider, private $compileProvider, private stateHelperServiceProvider) {
 
             StateManagerConfig.configureRouter($locationProvider, $urlRouterProvider);
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
@@ -46,9 +47,65 @@ module config.stateManager {
 
     }
 
+    class StateManagerInit {
+
+        static $inject = ['$rootScope', 'ngRestAdapter', 'ngJwtAuthService', '$state', '$mdToast'];
+
+        constructor(private $rootScope:ng.IRootScopeService,
+                    private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $state:ng.ui.IStateService,
+                    private $mdToast:ng.material.IToastService) {
+
+            this.registerStatePermissions();
+
+        }
+
+        private registerStatePermissions = () => {
+
+            this.$rootScope.$on('$stateChangeStart', (event, toState:global.IState, toParams, fromState:global.IState, fromParams) => {
+
+                if (this.userMustBeLoggedIn(toState) && !this.ngJwtAuthService.loggedIn) {
+
+                    event.preventDefault();
+
+                    this.ngJwtAuthService.requireCredentialsAndAuthenticate()
+                        .then(() => {
+                            this.$state.go(toState.name, toParams);
+                        }, (err) => {
+
+                            let returnTo = fromState.name? fromState.name : 'app.guest.home' ;
+
+                            this.$state.go(returnTo).then(() => {
+
+                                this.$mdToast.show(
+                                    this.$mdToast.simple()
+                                        .hideDelay(2000)
+                                        .position('top right')
+                                        .content("You are not permitted to access " + toState.url)
+                                );
+
+                            }); //go back home
+                        })
+
+                }
+
+            })
+
+        };
+
+        private userMustBeLoggedIn = (state:global.IState)  => {
+
+            return !!state.data.loggedIn;
+
+        }
+
+    }
+
     angular.module(namespace, [
         'config.siteModules' //include the site modules after stateManager has been configured so all states can be loaded
     ])
-    .config(StateManagerConfig);
+        .config(StateManagerConfig)
+        .run(StateManagerInit);
 
 }
