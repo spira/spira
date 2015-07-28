@@ -10,7 +10,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class TransformerTest extends TestCase
 {
-
     /** @var TransformerService */
     private $service;
 
@@ -104,7 +103,6 @@ class TransformerTest extends TestCase
 
     public function testPaginated()
     {
-
         $total = 30;
         $perPage = 5;
 
