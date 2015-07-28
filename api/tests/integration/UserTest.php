@@ -332,7 +332,6 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
-
     }
 
     public function testUpdateEmailConfirmed()
