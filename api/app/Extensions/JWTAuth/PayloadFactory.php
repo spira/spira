@@ -1,6 +1,9 @@
 <?php namespace App\Extensions\JWTAuth;
 
 use App;
+use App\Repositories\UserRepository;
+use App\Services\TransformerService;
+use App\Http\Transformers\IlluminateModelTransformer;
 use Tymon\JWTAuth\PayloadFactory as PayloadFactoryBase;
 
 class PayloadFactory extends PayloadFactoryBase
@@ -47,7 +50,7 @@ class PayloadFactory extends PayloadFactoryBase
      */
     protected function _user()
     {
-        $users = App::make('App\Repositories\UserRepository');
+        $users = App::make(UserRepository::class);
         $id = $this->claims['sub'];
 
         try {
@@ -56,6 +59,11 @@ class PayloadFactory extends PayloadFactoryBase
             return null;
         }
 
-        return $user->toArray();
+        // Transform the user array
+        $transformerService = App::make(TransformerService::class);
+        $transformer = new IlluminateModelTransformer($transformerService);
+        $user = $transformer->transform($user);
+
+        return $user;
     }
 }
