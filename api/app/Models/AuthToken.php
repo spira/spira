@@ -1,10 +1,9 @@
-<?php
+<?php namespace App\Models;
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Request;
+use App;
+use Tymon\JWTAuth\Token;
 use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AuthToken.
@@ -23,7 +22,7 @@ class AuthToken extends Model
      *
      * @var array
      */
-    protected $fillable = ['token', 'iss', 'aud', 'sub', 'nbf', 'iat', 'exp', 'jti', 'user'];
+    protected $fillable = ['token'];
 
     /**
      * The attributes that should be visible in arrays.
@@ -40,17 +39,6 @@ class AuthToken extends Model
     protected $appends = ['decoded_token_body'];
 
     /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'nbf' => 'integer',
-        'iat' => 'integer',
-        'exp' => 'integer',
-    ];
-
-    /**
      * Create a new Eloquent model instance.
      *
      * @param array $attributes
@@ -59,29 +47,9 @@ class AuthToken extends Model
      */
     public function __construct(array $attributes = [])
     {
-        $this->jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
-
-        $attributes = $attributes + $this->claimsToAttributes($attributes['token']);
+        $this->jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
 
         parent::__construct($attributes);
-    }
-
-    /**
-     * Convert the payload claims to model attributes.
-     *
-     * @param string $token
-     *
-     * @return array
-     */
-    protected function claimsToAttributes($token)
-    {
-        // Prepare the attributes, and attribute order
-        $body = array_fill_keys(array_except($this->fillable, 'token'), null);
-
-        $payload = $this->jwtAuth->getPayload($token)->toArray();
-        $body = array_merge($body, $payload);
-
-        return $body;
     }
 
     /**
@@ -91,45 +59,8 @@ class AuthToken extends Model
      */
     public function getDecodedTokenBodyAttribute()
     {
-        foreach (array_keys(array_except($this->getAttributes(), ['token', 'user'])) as $key) {
-            $body[$key] = $this->getAttribute($key);
-        }
+        $token = new Token($this->token);
 
-        // Map the user key with _
-        $body['_user'] = $this->user;
-
-        return $body;
-    }
-
-    /**
-     * Get the user attribute.
-     *
-     * @param mixed $attr
-     *
-     * @return array
-     */
-    public function getUserAttribute($attr)
-    {
-        return $attr ?: $this->jwtAuth->toUser($this->token)->toArray();
-    }
-
-    /**
-     * Get the AUD attribute.
-     *
-     * @return string
-     */
-    public function getAudAttribute()
-    {
-        return str_replace('api.', '', Request::getHttpHost());
-    }
-
-    /**
-     * Get the ISS attribute.
-     *
-     * @return string
-     */
-    public function getIssAttribute()
-    {
-        return Request::getHttpHost();
+        return $this->jwtAuth->decode($token)->toArray();
     }
 }
