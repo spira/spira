@@ -10,26 +10,36 @@ use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Contracts\Auth\Guard as Auth;
 use Spira\Responder\Contract\ApiResponderInterface;
 
 class AuthController extends ApiController
 {
     /**
-     * JWT Auth.
+     * JWT Auth Package.
      *
      * @var JWTAuth
      */
     protected $jwtAuth;
 
     /**
+     * Illuminate Auth.
+     *
+     * @var Auth
+     */
+    protected $auth;
+
+    /**
      * Assign dependencies.
      *
+     * @param  Auth                   $auth
      * @param  JWTAuth                $jwtAuth
      * @param  ApiResponderInterface  $responder
      * @return void
      */
-    public function __construct(JWTAuth $jwtAuth, ApiResponderInterface $responder)
+    public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {
+        $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
         $this->responder = $responder;
     }
@@ -48,10 +58,12 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
+        if (!$this->auth->attempt($credentials)) {
+            throw new UnauthorizedException('Credentials failed.');
+        }
+
         try {
-            if (!$token = $this->jwtAuth->attempt($credentials)) {
-                throw new UnauthorizedException('Credentials failed.');
-            }
+            $token = $this->jwtAuth->fromUser($this->auth->user());
         } catch (JWTException $e) {
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
