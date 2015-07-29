@@ -6,6 +6,7 @@ module config.siteModules {
         // Top level site modules
         'app.guest',
         'app.user',
+        'app.admin',
     ]);
 
 }

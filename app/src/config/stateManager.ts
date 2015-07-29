@@ -21,7 +21,7 @@ module config.stateManager {
             //add base state
             $stateProvider
                 .state('app', {
-                    abstract: true
+                    abstract: true,
                 })
             ;
 
@@ -74,7 +74,9 @@ module config.stateManager {
                             this.$state.go(toState.name, toParams);
                         }, (err) => {
 
-                            let returnTo = fromState.name? fromState.name : 'app.guest.home' ;
+                            let returnTo = fromState.name ? fromState.name : 'app.guest.home';
+
+                            let attemptedStateName = this.$state.href(toState, toParams);
 
                             this.$state.go(returnTo).then(() => {
 
@@ -82,7 +84,7 @@ module config.stateManager {
                                     this.$mdToast.simple()
                                         .hideDelay(2000)
                                         .position('top right')
-                                        .content("You are not permitted to access " + toState.url)
+                                        .content("You are not permitted to access " + attemptedStateName)
                                 );
 
                             }); //go back home

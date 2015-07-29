@@ -18,11 +18,11 @@ module common.services.user {
          * Get all users from the API
          * @returns {any}
          */
-        public getAllUsers(){
+        public getAllUsers():ng.IPromise<global.IUser[]>{
 
             return this.ngRestAdapter.get('/users')
                 .then((res) => {
-                    return res.data;
+                    return <global.IUser[]>res.data;
                 })
             ;
 
