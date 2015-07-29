@@ -14,11 +14,14 @@ module app.user {
                 abstract: true,
                 views: {
                     'app@': { // Points to the ui-view in the index.html
-                        templateUrl: 'templates/app/_layouts/user.tpl.html'
+                        templateUrl: 'templates/app/_layouts/user.tpl.html',
+                        controller: app.namespace + '.controller',
+                        controllerAs: 'AppController',
                     },
                     'navigation@app.user': { // Points to the ui-view="navigation" in default.tpl.html
                         templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
-                        controller: app.partials.navigation.namespace+'.controller'
+                        controller: app.partials.navigation.namespace+'.controller',
+                        controllerAs: 'NavigationController',
                     }
                 },
                 data: {
