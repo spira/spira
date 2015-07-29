@@ -4,6 +4,7 @@ namespace App\Http\Transformers;
 
 use App;
 use Tymon\JWTAuth\Token;
+use App\Exceptions\NotImplementedException;
 use Spira\Responder\Contract\TransformerInterface;
 
 class AuthTokenTransformer implements TransformerInterface
@@ -29,9 +30,11 @@ class AuthTokenTransformer implements TransformerInterface
      * Collections are not used for token transformations.
      *
      * @param  mixed  $collection
+     * @throws NotImplementedException
      * @return void
      */
     public function transformCollection($collection)
     {
+        throw new NotImplementedException('Collections are not used for tokens.');
     }
 }
