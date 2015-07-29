@@ -1,9 +1,11 @@
 <?php namespace App\Models;
 
+use Illuminate\Http\Request;
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
-use App\Extensions\Lock\UserOwnership;
 use Illuminate\Auth\Authenticatable;
+use App\Extensions\Lock\UserOwnership;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
@@ -31,6 +33,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'first_name',
         'last_name',
         'email',
+        'email_confirmed',
         'phone',
         'mobile',
         'timezone_identifier',
@@ -45,12 +48,29 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     protected $validationRules = [
         'user_id' => 'uuid',
         'email' => 'required|email',
+        'email_confirmed' => 'date',
         'first_name' => 'string',
         'last_name' => 'string',
         'phone' => 'string',
         'mobile' => 'string',
         'country' => 'country',
         'timezone_identifier' => 'timezone'
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['email_confirmed'];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_confirmed' => 'datetime'
     ];
 
     /**
@@ -143,5 +163,19 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public static function userIsOwner($user, $entityId)
     {
         return $user->user_id == $entityId;
+    }
+
+    /**
+     * Make an email confirmation token for a user.
+     *
+     * @param  string  $email
+     * @param  Cache   $cache
+     * @return string
+     */
+    public function makeConfirmationToken($email, Cache $cache)
+    {
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        $cache->put('email_confirmation_'.$token, $email, 1440);
+        return $token;
     }
 }

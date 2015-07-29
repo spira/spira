@@ -46,6 +46,7 @@ $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
         'email' => $faker->email,
+        'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear($max = 'now'),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
