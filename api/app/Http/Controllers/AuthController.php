@@ -156,6 +156,7 @@ class AuthController extends ApiController
 
         $user = $socialite->with($provider)->stateless()->user();
 
+        // @todo add code to save the social login data
         var_dump($user);
 
         // $user->token;
