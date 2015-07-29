@@ -159,11 +159,14 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     }
 
     /**
-     * @param TransformerInterface $transformer
+     * @param  TransformerInterface  $transformer
+     * @return $this
      */
     public function setTransformer($transformer)
     {
         $this->transformer = $transformer;
+
+        return $this;
     }
 
     /**
