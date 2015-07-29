@@ -24,7 +24,7 @@ class IlluminateModelTransformer extends BaseTransformer
      */
     public function transform($object)
     {
-        if (is_null($object)){
+        if (is_null($object)) {
             return null;
         }
 

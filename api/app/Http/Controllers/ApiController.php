@@ -165,7 +165,7 @@ abstract class ApiController extends Controller
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            $this->notFoundMany($ids,$models);
+            $this->notFoundMany($ids, $models);
         }
 
         foreach ($requestCollection as $requestEntity) {
@@ -212,8 +212,8 @@ abstract class ApiController extends Controller
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
 
-        if (count($ids) !== $models->count()){
-            $this->notFoundMany($ids,$models);
+        if (count($ids) !== $models->count()) {
+            $this->notFoundMany($ids, $models);
         }
 
         $this->getRepository()->deleteMany($models);
@@ -292,17 +292,16 @@ abstract class ApiController extends Controller
      * @param $ids
      * @param Collection $models
      */
-    protected function notFoundMany($ids,$models)
+    protected function notFoundMany($ids, $models)
     {
         $errors = [];
-        foreach ($ids as $id)
-        {
-            if ($models->get($id)){
+        foreach ($ids as $id) {
+            if ($models->get($id)) {
                 $errors[] = null;
-            }else{
-                try{
+            } else {
+                try {
                     $this->notFound();
-                }catch (ValidationException $e){
+                } catch (ValidationException $e) {
                     $errors[] = $e;
                 }
             }
