@@ -48,6 +48,4 @@ class AuthTokenTransformer extends IlluminateModelTransformer implements Transfo
         $thisTransformation = $this->transformItem($object['token']);
         return parent::transform($thisTransformation);
     }
-
-
 }

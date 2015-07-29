@@ -7,5 +7,4 @@
  */
 class AuthToken extends BaseModel
 {
-
 }
