@@ -97,7 +97,10 @@ class JWTAuth extends JWTAuthBase
     protected function makePayload($user, array $customClaims = [])
     {
         return $this->manager->getPayloadFactory()->make(
-            array_merge($customClaims, ['sub' => $user->user_id])
+            array_merge($customClaims, [
+                'sub' => $user->user_id,
+                '_user' => $user
+            ])
         );
     }
 }

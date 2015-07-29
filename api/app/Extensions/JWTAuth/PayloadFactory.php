@@ -42,28 +42,4 @@ class PayloadFactory extends PayloadFactoryBase
     {
         return str_random(16);
     }
-
-    /**
-     * Get the user object array for the user claim.
-     *
-     * @return  mixed
-     */
-    protected function _user()
-    {
-        $users = App::make(UserRepository::class);
-        $id = $this->claims['sub'];
-
-        try {
-            $user = $users->find($id);
-        } catch (\Exception $e) {
-            return null;
-        }
-
-        // Transform the user array
-        $transformerService = App::make(TransformerService::class);
-        $transformer = new IlluminateModelTransformer($transformerService);
-        $user = $transformer->transform($user);
-
-        return $user;
-    }
 }
