@@ -62,7 +62,8 @@ class Article extends BaseModel
                     'article_id' => $model->article_id,
                     'permalink' => $model->permalink
                 ]);
-                return $articlePermalink->save();
+                $model->permalinks->add($articlePermalink);
+                return true;
             }
             return true;
         });
@@ -79,7 +80,6 @@ class Article extends BaseModel
 
     public function permalinks()
     {
-        $relation = $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
-        return $relation;
+        return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 }
