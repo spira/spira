@@ -8,9 +8,10 @@ The collection of all article posts.
 Note that this route returns paginated results as defined in the `Content-Range` headers
 
 #### Restrictions
-* Allowed - [all] - the actual articles returned will be restricted however
+* Published - Allowed - [all]
+* Unpublished - Allowed - [admin, self]
 
-+ Response 206 (application/json)
++ Response 200 (application/json)
 
     + Headers
 
@@ -20,8 +21,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!!
-                $factory->get(\App\Models\Article::class)
-                    ->showOnly(['self', 'title', 'excerpt', 'first_published'])
+                $factory->get(\App\Models\Article::class)                    
                     ->count(10)
                     ->json()
             !!}
@@ -30,14 +30,14 @@ Note that this route returns paginated results as defined in the `Content-Range`
 ## Article Entity [/articles/{articleId}]
 
 + Parameters
-    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the article to perform action with.
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
 
 
 ### Retrieve an article [GET]
 
 #### Restrictions
 * Published - Allowed - [all]
-* Unpublished - Allowed - [admin]
+* Unpublished - Allowed - [admin, self]
 + Response 200 (application/json)
 
     + Headers
@@ -45,3 +45,59 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!! $factory->json(\App\Models\Article::class) !!}
+            
+### Create/update article entity [PUT]
+
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+    + Body
+    
+            {!! $factory->json(\App\Models\Article::class) !!}
+
++ Response 201
+
+### Update the article [PATCH]
+
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
+    + Body
+            
+
++ Response 204
+
+
+### Delete the article [DELETE]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
++ Response 204
+
+## Article Permalinks [/articles/{articleId}/permalinks]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+    
+### Retrieve all article's permalinks [GET]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
+    + Body
+    
+            {!!
+                $factory->get(\App\Models\ArticlePermalink::class)                    
+                    ->count(10)
+                    ->json()
+            !!}
+
