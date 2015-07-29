@@ -38,18 +38,22 @@
         let $httpBackend:ng.IHttpBackendService;
         let authService:NgJwtAuth.NgJwtAuthService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let $mdDialog:ng.material.IDialogService;
+        let $timeout:ng.ITimeoutService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_, _$mdDialog_, _$timeout_) => {
 
                 if (!userService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     userService = _userService_;
                     authService = _ngJwtAuthService_;
                     ngRestAdapter = _ngRestAdapter_;
+                    $mdDialog = _$mdDialog_;
+                    $timeout = _$timeout_;
                 }
             });
 
@@ -156,9 +160,29 @@
 
             it('should open the password reset dialog', () => {
 
+                sinon.spy($mdDialog, 'show');
+
+                userService.promptResetPassword();
+
+                $timeout.flush();
+
+                expect($mdDialog.show).to.have.been.called;
+
+                (<any>$mdDialog).show.restore();
+
             });
 
-            it('should do something', () => {
+            it('should be able to send a reset password email', () => {
+
+                let email = 'test@email.com';
+
+                $httpBackend.expectDELETE('/api/users/' + email + '/password').respond(202);
+
+                let resetPasswordPromise = userService.resetPassword(email);
+
+                expect(resetPasswordPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
 
             });
 

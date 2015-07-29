@@ -62,7 +62,7 @@ describe('ResetPassword', () => {
 
         });
 
-        describe.only('dialog interactions - reset password', () => {
+        describe('dialog interactions - reset password', () => {
 
             it('should cancel dialog when requested', () => {
 
