@@ -44,7 +44,7 @@ class TestEntity extends BaseModel
     ];
 
     protected $validationRules = [
-        'entity_id' => 'uuid',
+        'entity_id' => 'uuid|createOnly',
         'varchar' => 'required|string',
         'hash'    => 'required|string',
         'integer' => 'required|integer',
@@ -56,11 +56,6 @@ class TestEntity extends BaseModel
         'hidden'  => 'required|boolean'
     ];
 
-    public function addSecondTest(SecondTestEntity $entity)
-    {
-        $this->testMany->add($entity);
-        return $this;
-    }
 
     public function testOne()
     {
