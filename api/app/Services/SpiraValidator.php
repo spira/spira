@@ -21,6 +21,11 @@ class SpiraValidator extends Validator
         return preg_match('/^\{?[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\}?$/', $value);
     }
 
+    public function validateNotFound()
+    {
+        return false;
+    }
+
     public function validateCreateOnly($attribute, $value, $parameters)
     {
         $original = $this->model->getOriginal($attribute);

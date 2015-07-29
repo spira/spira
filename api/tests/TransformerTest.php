@@ -97,24 +97,4 @@ class TransformerTest extends TestCase
             $this->assertArrayHasKey('_self', $value);
         }
     }
-
-    public function testPaginated()
-    {
-        $entities = factory(App\Models\TestEntity::class, 3)->make();
-
-        $paginated = new LengthAwarePaginator($entities, 3, 1, 1);
-
-        $collection = $this->service->paginatedCollection($paginated);
-
-        $this->assertTrue(is_array($collection));
-    }
-
-    public function testParseIncludes()
-    {
-        $entity = factory(App\Models\TestEntity::class)->make();
-
-        $this->service->parseIncludes('foobar');
-
-        $item = $this->service->item($entity);
-    }
 }
