@@ -25,6 +25,10 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
+    /**
+     * @param string $type
+     * @return User
+     */
     protected function createUser($type = 'admin')
     {
         $user = factory(User::class)->create(['user_type' => $type]);
@@ -259,7 +263,7 @@ class UserTest extends TestCase
         $user = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$user->user_id.'/password', [], [
+        $this->delete('/users/'.$user->email.'/password', [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -275,8 +279,8 @@ class UserTest extends TestCase
         // Extract the token from the message source
         $msg = $this->getLastMessage();
         $source = $this->getMessageSource($msg->id);
-        preg_match_all('!https?://\S+!', $source, $matches);
-        $tokenUrl = $matches[0][0];
+        preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
+        $tokenUrl = trim($matches[0][0]);
         $parsed = parse_url($tokenUrl);
         $token = str_replace('passwordResetToken=', '', $parsed['query']);
 
