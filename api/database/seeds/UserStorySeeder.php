@@ -28,11 +28,8 @@ class UserStorySeeder extends Seeder
      */
     protected function createUser(array $attributes = [])
     {
-
         factory(User::class)
             ->create($attributes)
             ->setCredential(factory(UserCredential::class)->make());
-
-
     }
 }
