@@ -22,6 +22,11 @@ class SpiraValidator extends Validator
         return Uuid::isValid($value);
     }
 
+    public function validateNotFound()
+    {
+        return false;
+    }
+
     public function validateCreateOnly($attribute, $value, $parameters)
     {
         $original = $this->model->getOriginal($attribute);

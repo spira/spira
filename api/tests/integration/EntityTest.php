@@ -233,7 +233,6 @@ class EntityTest extends TestCase
 
     public function testPatchOneInvalidId()
     {
-        $this->markTestSkipped('should be revisited');
         $this->patch('/test/entities/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('entityId', $object->invalid);
@@ -262,7 +261,20 @@ class EntityTest extends TestCase
 
     public function testPatchManyInvalidId()
     {
-        $this->markTestSkipped('should be revisited');
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+
+        $data = array_map(function ($entity) {
+            return [
+                'entity_id' => (string) Uuid::uuid4(),
+                'varchar' => 'foobar'
+            ];
+        }, $entities->all());
+
+        $this->patch('/test/entities', ['data' => $data]);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
+        $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
     }
 
     public function testDeleteOne()
@@ -279,7 +291,6 @@ class EntityTest extends TestCase
 
     public function testDeleteOneInvalidId()
     {
-        $this->markTestSkipped('should be revisited');
         $entity = factory(App\Models\TestEntity::class)->create();
         $rowCount = $this->repository->count();
 
@@ -304,33 +315,21 @@ class EntityTest extends TestCase
         $this->assertEquals($rowCount - 5, $this->repository->count());
     }
 
-    public function testDeleteManyMissingId()
-    {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
-        $rowCount = $this->repository->count();
-        $entities[0]->entity_id = '';
-        $this->delete('/test/entities', ['data' => $entities]);
-
-        $this->assertResponseStatus(404);
-        $this->assertEquals($rowCount, $this->repository->count());
-    }
-
     public function testDeleteManyInvalidId()
     {
-        $this->markTestSkipped('should be revisited');
         $entities = factory(App\Models\TestEntity::class, 5)->create();
         $rowCount = $this->repository->count();
+        $entities->first()->entity_id = (string) Uuid::uuid4();
+        $entities->last()->entity_id = (string) Uuid::uuid4();
 
-        $ids = [(string) Uuid::uuid4(), $entities->random()->entity_id, (string) Uuid::uuid4()];
-
-        $this->delete('/test/entities', ['data' => $ids]);
+        $this->delete('/test/entities', ['data' => $entities]);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertTrue(is_array($object->invalid));
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertNull($object->invalid[1]);
-        $this->assertObjectHasAttribute('entityId', $object->invalid[2]);
+        $this->assertObjectHasAttribute('entityId', $object->invalid[4]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }

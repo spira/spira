@@ -33,18 +33,6 @@ class TransformerService
     }
 
     /**
-     * Parse Include String.
-     *
-     * @param array|string $includes
-     *
-     * @return $this
-     */
-    public function parseIncludes($includes)
-    {
-        $this->manager->parseIncludes($includes);
-    }
-
-    /**
      * Create transformed data from a collection.
      *
      * @param object|array                       $data
