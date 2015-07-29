@@ -79,7 +79,10 @@ class ArticleRepositoryTest extends TestCase
         foreach ($articles as $article)
         {
             $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
-            $article->permalinks = $permalinks;
+            foreach ($permalinks as $permalink)
+            {
+                $article->permalinks->add($permalink);
+            }
         }
     }
 

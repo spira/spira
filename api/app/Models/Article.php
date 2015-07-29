@@ -56,14 +56,12 @@ class Article extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::saved(function (Article $model) {
+        static::validated(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
-                $articlePermalink = new ArticlePermalink([
-                    'article_id' => $model->article_id,
-                    'permalink' => $model->permalink
-                ]);
+                $articlePermalink = new ArticlePermalink();
+                $articlePermalink->permalink = $model->permalink;
                 $model->permalinks->add($articlePermalink);
-                return true;
+                $articlePermalink->save();
             }
             return true;
         });

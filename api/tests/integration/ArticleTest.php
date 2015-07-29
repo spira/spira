@@ -52,7 +52,10 @@ class ArticleTest extends TestCase
         foreach ($articles as $article)
         {
             $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
-            $article->permalinks = $permalinks;
+            foreach ($permalinks as $permalink)
+            {
+                $article->permalinks->add($permalink);
+            }
         }
     }
 
@@ -94,7 +97,7 @@ class ArticleTest extends TestCase
 
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
-        $this->assertTrue(is_string($object->permalink));
+        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
     }
 
     public function testPostOne()
@@ -173,7 +176,7 @@ class ArticleTest extends TestCase
 
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
-        $entity->permalink = 'foo';
+        $entity->permalink = 'foo_bar';
 
         $this->patch('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();

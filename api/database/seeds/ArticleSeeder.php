@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ArticlePermalink;
 use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
@@ -11,6 +12,17 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Article::class, 10)->create();
+        //$faker = Faker::create('au_AU');
+        factory(App\Models\Article::class, 10)
+            ->create()
+            ->each(function(\App\Models\Article $article) {
+                $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
+                foreach ($permalinks as $permalink)
+                {
+                    $article->permalinks->add($permalink);
+                }
+                $article->push();
+            })
+        ;
     }
 }

@@ -14,7 +14,7 @@ class CreateArticlesPermalinksTable extends Migration
     {
         Schema::create(\App\Models\ArticlePermalink::getTableName(), function (Blueprint $table) {
                 $table->string('permalink', 255)->primary();
-                $table->uuid('article_id')->index();
+                $table->uuid('article_id')->index()->nullable();
 
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
@@ -33,6 +33,6 @@ class CreateArticlesPermalinksTable extends Migration
      */
     public function down()
     {
-        Schema::drop(\App\Models\ArticlePermalink::getTableName());
+        DB::statement(sprintf('DROP TABLE %s CASCADE', \App\Models\ArticlePermalink::getTableName()));
     }
 }
