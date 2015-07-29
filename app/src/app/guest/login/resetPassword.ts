@@ -23,21 +23,19 @@ module app.guest.resetPassword {
                 userService.resetPassword(email)
                     .then(() => {
                         $scope.cancelResetPasswordDialog();
-                        this.$mdToast.show(
-                            $mdToast.simple()
-                                .hideDelay(2000)
-                                .position('top')
-                                .content('Password reset instructions have been sent to your email.')
-                        );
+                        this.$mdToast.show({
+                            hideDelay:2000,
+                            position:'top',
+                            template:'<md-toast>Password reset instructions have been sent to your email.</md-toast>'
+                        });
                     })
                     .catch((error) => {
-                        this.$mdToast.show(
-                            (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
-                                .hideDelay(2000)
-                                .position('top')
-                                .content(error.data.message)
-                                .parent('#resetPasswordDialog')
-                        );
+                        this.$mdToast.show({
+                            hideDelay:2000,
+                            position:'top',
+                            parent:'#resetPasswordDialog',
+                            template:'<md-toast>' + error.data.message + '</md-toast>'
+                        });
                     });
             };
 

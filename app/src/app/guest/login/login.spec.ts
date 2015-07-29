@@ -159,7 +159,7 @@ describe('Login', () => {
                 expect(deferredCredentials.promise).eventually.to.be.rejected;
 
                 //check to see if the reset password dialog has been opened
-                expect($mdDialog.show).to.have.been.calledWithMatch(sinon.match.has('controller', 'app.guest.resetPassword.controller'));
+                expect($mdDialog.show).to.have.been.calledWith(sinon.match.has('controller', 'app.guest.resetPassword.controller'));
 
             });
         });
