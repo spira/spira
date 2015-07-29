@@ -24,6 +24,10 @@ class IlluminateModelTransformer extends BaseTransformer
      */
     public function transform($object)
     {
+        if (is_null($object)){
+            return null;
+        }
+
         $array = null;
         if ($object instanceof Arrayable) {
             $array = $object->toArray();
@@ -34,7 +38,7 @@ class IlluminateModelTransformer extends BaseTransformer
         }
 
         if (is_null($array)) {
-            throw new \InvalidArgumentException('must be array or '.Arrayable::class);
+            throw new \InvalidArgumentException('must be array or '.Arrayable::class.' instead got '.gettype($object));
         }
 
         foreach ($array as $key => $value) {
