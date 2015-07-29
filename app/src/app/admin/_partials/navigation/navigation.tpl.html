@@ -1,6 +1,6 @@
 <md-list>
     <md-list-item ng-repeat="state in AdminNavigationController.navigableStates" >
-        <md-button ng-click="AdminNavigationController.toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
+        <md-button ng-click="AppController.toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
             <md-icon>{{state.data.icon}}</md-icon>
             {{state.data.title}}
         </md-button>

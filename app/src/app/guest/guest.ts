@@ -15,6 +15,8 @@ module app.guest {
                 views: {
                     'app@': { // Points to the ui-view in the index.html
                         templateUrl: 'templates/app/_layouts/default.tpl.html',
+                        controller: app.namespace + '.controller',
+                        controllerAs: 'AppController',
                     },
                     'navigation@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
                         templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
