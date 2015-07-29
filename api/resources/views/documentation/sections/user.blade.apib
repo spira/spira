@@ -16,7 +16,7 @@ with a third party through OAuth)
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
 + Response 200 (application/json)
 
@@ -36,7 +36,7 @@ with a third party through OAuth)
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
 + Response 200 (application/json)
 
@@ -81,7 +81,7 @@ password credentials - social signin is described later in this document (@todo)
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
     + Body
 
@@ -103,7 +103,7 @@ email is sent to the user with a reset token.
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
 + Response 202
 
@@ -114,6 +114,6 @@ email is sent to the user with a reset token.
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
 + Response 204

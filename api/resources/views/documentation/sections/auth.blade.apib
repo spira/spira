@@ -18,7 +18,7 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
 
     + Body
 
-            {!! $factory->json(\App\Models\AuthToken::class) !!}
+            {!! $jwtAuth->decode(new Tymon\JWTAuth\Token($jwtAuth->fromUser($factory->make(\App\Models\User::class)))) !!}
 
 ## Refresh Token [/auth/jwt/refresh]
 *Before* tokens expire they can be renewed with a get request with the current valid token as an `Authorization: Bearer`
@@ -28,11 +28,11 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
 + Request
     + Headers
 
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
 
 + Response 200
 
-            {!! $factory->json(\App\Models\AuthToken::class) !!}
+            {!! $jwtAuth->decode(new Tymon\JWTAuth\Token($jwtAuth->fromUser($factory->make(\App\Models\User::class)))) !!}
 
 ## Token Login [/auth/jwt/token]
 Sometimes a user receives a token in a link by email that is exchanged with an auth token. Tokens are _always_ single
@@ -46,4 +46,4 @@ Sometimes a user receives a token in a link by email that is exchanged with an a
 
 + Response 200
 
-            {!! $factory->json(\App\Models\AuthToken::class) !!}
+            {!! $jwtAuth->decode(new Tymon\JWTAuth\Token($jwtAuth->fromUser($factory->make(\App\Models\User::class)))) !!}
