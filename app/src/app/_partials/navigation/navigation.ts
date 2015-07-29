@@ -1,62 +1,74 @@
-module app.partials.navigation{
+module app.partials.navigation {
 
     export const namespace = 'app.partials.navigation';
 
-    export interface IScope extends ng.IScope
-    {
-        navigationStates:ng.ui.IState[];
-        authService:NgJwtAuth.NgJwtAuthService;
-        promptLogin():any;
-        logout():any;
-    }
+    export class NavigationController {
 
-    class NavigationController {
+        public navigableStates:global.IState[] = [];
 
-        static $inject = ['$scope', 'stateHelperService', '$window', 'ngJwtAuthService', '$state'];
-        constructor(
-            private $scope:IScope,
-            private stateHelperService:common.providers.StateHelperService,
-            private $window:global.IWindowService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $state:ng.ui.IStateService
-        ) {
+        static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
 
-            var childStates = stateHelperService.getChildStates(app.guest.namespace);
+        constructor(protected stateHelperService:common.providers.StateHelperService,
+                    private $window:global.IWindowService,
+                    protected ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    protected $state:ng.ui.IStateService) {
+
+            this.navigableStates = this.getNavigationStates();
+        }
+
+        protected getNavigationStates():global.IState[] {
+
+            let childStates = <global.IState[]>this.stateHelperService.getChildStates(app.guest.namespace);
+
+            return this.getNavigableStates(childStates);
+
+        }
+
+        protected sortNavigationStates(states:global.IState[]):global.IState[] {
 
             //using the state.data.sortAfter key build a topology and sort it
-            var sortMap = _.reduce(childStates, function(t, state:ng.ui.IState){
+            var sortMap = _.reduce(states, function (t, state:ng.ui.IState) {
                 t.add(state.name, _.get(state, 'data.sortAfter', []));
                 return t;
-            }, new $window.Toposort()).sort();
+            }, new this.$window.Toposort()).sort();
 
-            $scope.navigationStates = _.chain(sortMap)
-                .map(function(stateName){
-                    return _.find(childStates, {name: stateName}); //find the state by name
-                })
-                .filter(function(state){
-                    return _.get(state, 'data.navigation', false); //only return those that are marked as navigation
-                })
-                .reverse() //reverse the array
-                .value()
-            ;
+            return _.chain(sortMap)
+                    .map(function (stateName) {
+                        return _.find(states, {name: stateName}); //find the state by name
+                    })
+                    .reverse() //reverse the array
+                    .value()
+                ;
 
+        }
 
-            $scope.authService = ngJwtAuthService;
-            $scope.promptLogin = () => ngJwtAuthService.promptLogin();
-            $scope.logout = () => {
-                ngJwtAuthService.logout();
-                let currentState:global.IState = <global.IState>this.$state.current;
-                if (currentState.name && currentState.data.loggedIn) {
-                    this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
-                }
+        protected getNavigableStates(states:global.IState[]):global.IState[] {
+
+            let navigable = _.chain(states)
+                    .filter(function (state) {
+                        return _.get(state, 'data.navigation', false); //only return those that are marked as navigation
+                    })
+                    .value()
+                ;
+
+            return this.sortNavigationStates(navigable);
+        }
+
+        public promptLogin():void {
+            this.ngJwtAuthService.promptLogin();
+        }
+
+        public logout():void {
+            this.ngJwtAuthService.logout();
+            let currentState:global.IState = <global.IState>this.$state.current;
+            if (currentState.name && currentState.data.loggedIn) {
+                this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
             }
-
         }
 
     }
 
     angular.module(namespace, [])
         .controller(namespace + '.controller', NavigationController);
-
 
 }

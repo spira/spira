@@ -8,10 +8,12 @@ use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
 use App\Exceptions\ValidationException;
+use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use App\Http\Validators\UserValidator as Validator;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
@@ -33,6 +35,13 @@ class UserController extends ApiController
     protected $jwtAuth;
 
     /**
+     * Cache repository.
+     *
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * Assign dependencies.
      *
      * @param  Repository  $repository
@@ -40,14 +49,16 @@ class UserController extends ApiController
      * @param  JWTAuth     $jwtAuth
      * @param  Request     $request
      * @param  Responder   $responder
+     * @param  Cache       $cache
      * @return void
      */
-    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder)
+    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder, Cache $cache)
     {
         $this->repository = $repository;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
         $this->responder = $responder;
+        $this->cache = $cache;
 
         $this->permissions($request);
     }
@@ -103,6 +114,41 @@ class UserController extends ApiController
         $model->setCredential(new UserCredential($credential));
 
         return $this->responder->createdItem($model);
+    }
+
+    /**
+     * Patch an entity.
+     *
+     * @param  string   $id
+     * @param  Request  $request
+     * @return Response
+     */
+    public function patchOne($id, Request $request)
+    {
+        $this->validateId($id);
+        $model = $this->repository->find($id);
+
+        if ($request->get('email_confirmed')) {
+            $token = $request->headers->get('email-confirm-token');
+            if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
+                throw new ValidationException(
+                    new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
+                );
+            }
+        }
+
+        // Check if the email is being changed, and initialize confirmation
+        $email = $request->get('email');
+        if ($email && $model->email != $email) {
+            $token = $model->makeConfirmationToken($email, $this->cache);
+            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
+            $request->merge(['email_confirmed' => null]);
+        }
+
+        $model->fill($request->all());
+        $this->repository->save($model);
+
+        return $this->responder->noContent();
     }
 
     /**
