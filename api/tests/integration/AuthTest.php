@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Claims\Issuer;
 use Tymon\JWTAuth\Claims\JwtId;
 use Tymon\JWTAuth\Claims\NotBefore;
 use Tymon\JWTAuth\Claims\Subject;
+use App\Extensions\JWTAuth\UserClaim;
 use Tymon\JWTAuth\Payload;
 use Tymon\JWTAuth\Token;
 
@@ -143,7 +144,10 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
+        $user = factory(App\Models\User::class)->create();
+
         $claims = [
+            new UserClaim($user),
             new Subject(1),
             new Issuer('http://foo.bar'),
             new Expiration(123 - 3600),

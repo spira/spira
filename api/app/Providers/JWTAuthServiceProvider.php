@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Extensions\JWTAuth\JWTAuth;
+use App\Extensions\JWTAuth\JWTManager;
 use App\Extensions\JWTAuth\ClaimFactory;
 use App\Extensions\JWTAuth\PayloadFactory;
 use Tymon\JWTAuth\Providers\JWTAuthServiceProvider as ServiceProvider;
@@ -32,6 +33,33 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the bindings for the Payload Factory
+     */
+    protected function registerClaimFactory()
+    {
+        $this->app->singleton('tymon.jwt.claim.factory', function () {
+            return new ClaimFactory();
+        });
+    }
+
+    /**
+     * Register the bindings for the JWT Manager
+     */
+    protected function registerJWTManager()
+    {
+        $this->app['tymon.jwt.manager'] = $this->app->share(function ($app) {
+
+            $instance = new JWTManager(
+                $app['tymon.jwt.provider.jwt'],
+                $app['tymon.jwt.blacklist'],
+                $app['tymon.jwt.payload.factory']
+            );
+
+            return $instance->setBlacklistEnabled((bool) $this->config('blacklist_enabled'));
+        });
+    }
+
+    /**
      * Register the bindings for the main JWTAuth class
      */
     protected function registerJWTAuth()
@@ -46,16 +74,6 @@ class JWTAuthServiceProvider extends ServiceProvider
             );
 
             return $auth->setIdentifier($this->config('identifier'));
-        });
-    }
-
-    /**
-     * Register the bindings for the Payload Factory
-     */
-    protected function registerClaimFactory()
-    {
-        $this->app->singleton('tymon.jwt.claim.factory', function () {
-            return new ClaimFactory();
         });
     }
 }

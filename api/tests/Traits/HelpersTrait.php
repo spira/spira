@@ -11,7 +11,7 @@ trait HelpersTrait
         $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
         $payloadFactory = new App\Extensions\JWTAuth\PayloadFactory($claimFactory, $request, $validator);
 
-        $claims = ['sub' => $user->user_id];
+        $claims = ['sub' => $user->user_id, '_user' => $user];
         $payload = $payloadFactory->make($claims);
 
         $token = $adapter->encode($payload->get());
