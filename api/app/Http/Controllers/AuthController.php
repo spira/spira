@@ -139,6 +139,8 @@ class AuthController extends ApiController
     public function redirectToProvider($provider, Socialite $socialite)
     {
         $this->validateProvider($provider);
+
+        return $socialite->with($provider)->stateless()->redirect();
     }
 
     /**
@@ -151,6 +153,12 @@ class AuthController extends ApiController
     public function handleProviderCallback($provider, Socialite $socialite)
     {
         $this->validateProvider($provider);
+
+        $user = $socialite->with($provider)->stateless()->user();
+
+        var_dump($user);
+
+        // $user->token;
     }
 
     /**
