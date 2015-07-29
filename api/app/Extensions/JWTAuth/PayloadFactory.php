@@ -1,13 +1,40 @@
-<?php
+<?php namespace App\Extensions\JWTAuth;
 
-namespace App\Extensions\JWTAuth;
-
+use App;
+use App\Repositories\UserRepository;
+use App\Services\TransformerService;
+use App\Http\Transformers\IlluminateModelTransformer;
 use Tymon\JWTAuth\PayloadFactory as PayloadFactoryBase;
 
 class PayloadFactory extends PayloadFactoryBase
 {
     /**
-     * Create a random value for the token.
+     * @var array
+     */
+    protected $defaultClaims = ['iss', 'aud', 'iat', 'exp', 'nbf', 'jti', '_user'];
+
+    /**
+     * Set the Issuer (iss) claim.
+     *
+     * @return string
+     */
+    public function iss()
+    {
+        return $this->request->getHttpHost();
+    }
+
+    /**
+     * Set the Audience (aud) claim.
+     *
+     * @return string
+     */
+    public function aud()
+    {
+        return str_replace('api.', '', $this->request->getHttpHost());
+    }
+
+    /**
+     * Create a random value for the jti claim.
      *
      * @return string
      */

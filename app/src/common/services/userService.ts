@@ -4,11 +4,13 @@ module common.services.user {
 
     export class UserService {
 
-        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q'];
+        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog'];
         constructor(
             private ngRestAdapter: NgRestAdapter.INgRestAdapterService,
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $q:ng.IQService) {
+            private $q:ng.IQService,
+            private $mdDialog:ng.material.IDialogService
+        ) {
 
         }
 
@@ -16,11 +18,11 @@ module common.services.user {
          * Get all users from the API
          * @returns {any}
          */
-        public getAllUsers(){
+        public getAllUsers():ng.IPromise<global.IUser[]>{
 
             return this.ngRestAdapter.get('/users')
                 .then((res) => {
-                    return res.data;
+                    return <global.IUser[]>res.data;
                 })
             ;
 
@@ -32,7 +34,7 @@ module common.services.user {
          * @param password
          * @param firstName
          * @param lastName
-         * @returns {ng.IHttpPromise<any>}
+         * @returns {IPromise<global.IUser>}
          */
         private register(email:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUser>{
 
@@ -78,10 +80,31 @@ module common.services.user {
 
             return this.ngRestAdapter
                 .skipInterceptor()
-                .head('/users/email/'+email)
+                .head('/users/email/' + email)
                 .then(() => true, () => false) //200 OK is true (email exists) 404 is false (email not registered)
-            ;
+                ;
 
+        }
+
+        /**
+         * Brings up the reset password dialog
+         */
+        public promptResetPassword():void {
+            this.$mdDialog.show({
+                templateUrl: 'templates/app/guest/login/reset-password-dialog.tpl.html',
+                controller: 'app.guest.resetPassword.controller',
+                clickOutsideToClose: true
+            });
+        }
+
+        /**
+         * Reset a password for a user
+         * @param email
+         */
+        public resetPassword(email:string):ng.IPromise<any> {
+            return this.ngRestAdapter
+                .skipInterceptor()
+                .remove('/users/' + email + '/password');
         }
     }
 

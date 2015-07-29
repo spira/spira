@@ -12,17 +12,17 @@ class BaseRepositoryTest extends TestCase
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
-        $connection = m::mock('Illuminate\Database\Connection');
+        $this->connection = m::mock('Illuminate\Database\Connection');
 
-        $this->assertTrue($connection instanceof Illuminate\Database\Connection);
+        $this->assertTrue($this->connection instanceof Illuminate\Database\Connection);
 
-        $connectionResolver = m::mock('Illuminate\Database\ConnectionResolverInterface')
+        $this->connectionResolver = m::mock('Illuminate\Database\ConnectionResolverInterface')
             ->shouldReceive('connection')
             ->times()
-            ->andReturn($connection)
+            ->andReturn($this->connection)
             ->getMock();
 
-        $this->assertTrue($connectionResolver instanceof Illuminate\Database\ConnectionResolverInterface);
+        $this->assertTrue($this->connectionResolver instanceof Illuminate\Database\ConnectionResolverInterface);
 
 
 
@@ -33,7 +33,7 @@ class BaseRepositoryTest extends TestCase
             ->once()
             ->andReturn($this->baseModel);
 
-        $this->baseRepository->__construct($connectionResolver);
+        $this->baseRepository->__construct($this->connectionResolver);
     }
 
     public function testFind()
@@ -67,9 +67,22 @@ class BaseRepositoryTest extends TestCase
 
     public function testSave()
     {
+        $this->connection->shouldReceive('beginTransaction')->once();
+        $this->connection->shouldReceive('commit')->once();
+
+        $this->baseModel->shouldReceive('push')
+            ->once()
+            ->andReturn(true);
+
+        $result = $this->baseRepository->save($this->baseModel);
+        $this->assertEquals($result, $this->baseModel);
     }
 
     public function testDelete()
     {
+        $this->baseModel->shouldReceive('delete')
+            ->once()
+            ->andReturn(true);
+        $this->baseRepository->delete($this->baseModel);
     }
 }

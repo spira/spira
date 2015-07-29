@@ -70,30 +70,24 @@ module app {
 
     }
 
-    interface IScope extends ng.IScope {
-        toggleNavigationSidenav():void;
-        toggleRegistrationSidenav(open:boolean):void;
-    }
+    export class AppController {
 
-    class AppController {
+        static $inject = ['$mdSidenav'];
 
-        static $inject = ['$scope', '$mdSidenav'];
+        constructor(private $mdSidenav:ng.material.ISidenavService) {
+        }
 
-        constructor(private $scope:IScope, private $mdSidenav:ng.material.ISidenavService) {
+        public toggleNavigationSidenav() {
+            this.$mdSidenav('navigation').toggle();
+        }
 
-            $scope.toggleNavigationSidenav = function () {
-                $mdSidenav('navigation').toggle();
-            };
+        public toggleRegistrationSidenav(open:boolean) {
+            if (_.isUndefined(open)) {
+                this.$mdSidenav('registration').toggle();
+                return;
+            }
 
-            $scope.toggleRegistrationSidenav = function (open:boolean) {
-                if (_.isUndefined(open)) {
-                    $mdSidenav('registration').toggle();
-                    return;
-                }
-
-                open ? $mdSidenav('registration').open() : $mdSidenav('registration').close();
-
-            };
+            open ? this.$mdSidenav('registration').open() : this.$mdSidenav('registration').close();
 
         }
 

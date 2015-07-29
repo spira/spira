@@ -4,8 +4,7 @@ describe('Navigation', () => {
 
     describe('Configuration', () => {
 
-        let NavigationController:ng.IControllerService,
-            $scope:app.partials.navigation.IScope,
+        let NavigationController:app.partials.navigation.NavigationController,
             $mdDialog:ng.material.IDialogService,
             authService:NgJwtAuth.NgJwtAuthService
         ;
@@ -16,10 +15,8 @@ describe('Navigation', () => {
 
         beforeEach(()=> {
             inject(($controller, $rootScope, _ngJwtAuthService_, _stateHelperService_, _$window_) => {
-                $scope = $rootScope.$new();
                 authService = _ngJwtAuthService_;
                 NavigationController = $controller(app.partials.navigation.namespace+'.controller', {
-                    $scope: $scope,
                     stateHelperService : _stateHelperService_,
                     $window : _$window_,
                     ngJwtAuthService : authService,
@@ -35,7 +32,7 @@ describe('Navigation', () => {
 
         it('should have some navigation states', () => {
 
-            expect($scope.navigationStates).not.to.be.empty;
+            expect(NavigationController.navigableStates).not.to.be.empty;
 
         });
 
@@ -48,7 +45,7 @@ describe('Navigation', () => {
 
         it('should prompt for login', () => {
 
-            $scope.promptLogin();
+            NavigationController.promptLogin();
 
             expect(authService.promptLogin).to.have.been.calledOnce;
 
@@ -56,7 +53,7 @@ describe('Navigation', () => {
 
         it('should logout', () => {
 
-            $scope.logout();
+            NavigationController.logout();
 
             expect(authService.logout).to.have.been.calledOnce;
 

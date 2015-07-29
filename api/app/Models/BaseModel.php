@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Exceptions\ValidationException;
+use App\Services\SpiraValidator;
 use Carbon\Carbon;
 use Bosnadev\Database\Traits\UuidTrait;
 use Illuminate\Support\MessageBag;
@@ -94,7 +95,9 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 
     public function validate()
     {
+        /** @var SpiraValidator $validation */
         $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
+        $validation->setModel($this);
         $this->errors = [];
         if ($validation->fails()) {
             $this->errors = $validation->messages();

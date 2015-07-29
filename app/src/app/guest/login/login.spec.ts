@@ -149,6 +149,19 @@ describe('Login', () => {
 
             });
 
+            it('should cancel dialog and open reset password', () => {
+
+                (<any>$scope).resetPassword();
+
+                $timeout.flush(); //flush timeout as the modal is delayed
+
+                expect($mdDialog.cancel).to.have.been.called;
+                expect(deferredCredentials.promise).eventually.to.be.rejected;
+
+                //check to see if the reset password dialog has been opened
+                expect($mdDialog.show).to.have.been.calledWith(sinon.match.has('controller', 'app.guest.resetPassword.controller'));
+
+            });
         });
 
         describe('dialog interactions - invalid login', () => {

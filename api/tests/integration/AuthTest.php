@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Claims\Issuer;
 use Tymon\JWTAuth\Claims\JwtId;
 use Tymon\JWTAuth\Claims\NotBefore;
 use Tymon\JWTAuth\Claims\Subject;
+use App\Extensions\JWTAuth\UserClaim;
 use Tymon\JWTAuth\Payload;
 use Tymon\JWTAuth\Token;
 
@@ -38,7 +39,13 @@ class AuthTest extends TestCase
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
-        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['#user']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+
+        // Test that decoding the token, will match the decoded body
+        $token = new Token($array['token']);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+        $this->assertEquals($decoded, $array['decodedTokenBody']);
     }
 
     public function testFailedLogin()
@@ -137,7 +144,10 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
+        $user = factory(App\Models\User::class)->create();
+
         $claims = [
+            new UserClaim($user),
             new Subject(1),
             new Issuer('http://foo.bar'),
             new Expiration(123 - 3600),

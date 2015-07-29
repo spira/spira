@@ -1,10 +1,11 @@
 <?php namespace App\Extensions\JWTAuth;
 
 use Exception;
+use App\Models\User;
 use RuntimeException;
 use Tymon\JWTAuth\Token;
-use Tymon\JWTAuth\JWTAuth as JWTAuthBase;
 use App\Exceptions\BadRequestException;
+use Tymon\JWTAuth\JWTAuth as JWTAuthBase;
 use App\Exceptions\UnauthorizedException;
 use App\Exceptions\TokenInvalidException;
 use App\Exceptions\UnprocessableEntityException;
@@ -68,5 +69,38 @@ class JWTAuth extends JWTAuthBase
         }
 
         return $user;
+    }
+
+    /**
+     * Generate a token using the user identifier as the subject claim.
+     *
+     * @param mixed $user
+     * @param array $customClaims
+     *
+     * @return string
+     */
+    public function fromUser($user, array $customClaims = [])
+    {
+        $payload = $this->makePayload($user, $customClaims);
+
+        return $this->manager->encode($payload)->get();
+    }
+
+    /**
+     * Create a Payload instance.
+     *
+     * @param mixed $subject
+     * @param array $customClaims
+     *
+     * @return \Tymon\JWTAuth\Payload
+     */
+    protected function makePayload($user, array $customClaims = [])
+    {
+        return $this->manager->getPayloadFactory()->make(
+            array_merge($customClaims, [
+                'sub' => $user->user_id,
+                '_user' => $user
+            ])
+        );
     }
 }
