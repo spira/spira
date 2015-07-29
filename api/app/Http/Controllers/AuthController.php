@@ -12,10 +12,19 @@ use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
+use Illuminate\Contracts\Foundation\Application;
 use Spira\Responder\Contract\ApiResponderInterface;
+use Laravel\Socialite\Contracts\Factory as Socialite;
 
 class AuthController extends ApiController
 {
+    /**
+     * The application instance.
+     *
+     * @var Application
+     */
+    protected $app;
+
     /**
      * JWT Auth Package.
      *
@@ -36,10 +45,12 @@ class AuthController extends ApiController
      * @param  Auth                   $auth
      * @param  JWTAuth                $jwtAuth
      * @param  ApiResponderInterface  $responder
+     * @param  Application            $app
      * @return void
      */
-    public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder)
+    public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder, Application $app)
     {
+        $this->app = $app;
         $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
         $this->responder = $responder;
@@ -116,5 +127,43 @@ class AuthController extends ApiController
         $token = $this->jwtAuth->fromUser($user);
 
         return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+    }
+
+    /**
+     * Redirect the user to the Provider authentication page.
+     *
+     * @param  string     $provider
+     * @param  Socialite  $socialite
+     * @return Response
+     */
+    public function redirectToProvider($provider, Socialite $socialite)
+    {
+        $this->validateProvider($provider);
+    }
+
+    /**
+     * Obtain the user information from Provider.
+     *
+     * @param  string     $provider
+     * @param  Socialite  $socialite
+     * @return Response
+     */
+    public function handleProviderCallback($provider, Socialite $socialite)
+    {
+        $this->validateProvider($provider);
+    }
+
+    /**
+     * Check so the provider exists.
+     *
+     * @param  string  $provider
+     * @return void
+     */
+    protected function validateProvider($provider)
+    {
+        if (!in_array($provider, array_keys($this->app['config']['services']))) {
+            // Throws a NotFoundHttpException
+            $this->app->abort(404, 'Invalid provider');
+        }
     }
 }

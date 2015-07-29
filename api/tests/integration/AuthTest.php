@@ -274,4 +274,11 @@ class AuthTest extends TestCase
 
         $this->assertEquals($id, $user->user_id);
     }
+
+    public function testInvalidProvider()
+    {
+        $this->get('/auth/social/foobar');
+
+        $this->assertException('provider', 404, 'NotFoundHttpException');
+    }
 }
