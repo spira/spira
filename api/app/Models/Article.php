@@ -37,7 +37,7 @@ class Article extends BaseModel
     public function getValidationRules()
     {
         $permalinkRule = 'string|unique:article_permalinks,permalink';
-        if (!is_null($this->permalink)){
+        if (!is_null($this->permalink)) {
             $permalinkRule.=','.$this->permalink.',permalink';
         }
         return [
@@ -69,9 +69,9 @@ class Article extends BaseModel
 
     public function setPermalinkAttribute($permalink)
     {
-        if ($permalink){
+        if ($permalink) {
             $this->attributes['permalink'] = $permalink;
-        }else{
+        } else {
             $this->attributes['permalink'] = null;
         }
     }

@@ -76,14 +76,11 @@ class ArticleRepositoryTest extends TestCase
 
     protected function addPermalinksToArticles($articles)
     {
-        foreach ($articles as $article)
-        {
+        foreach ($articles as $article) {
             $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
-            foreach ($permalinks as $permalink)
-            {
+            foreach ($permalinks as $permalink) {
                 $article->permalinks->add($permalink);
             }
         }
     }
-
 }

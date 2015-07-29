@@ -108,7 +108,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
-        'permalink' => (rand(1,10)<8)?$faker->unique()->slug:null,
+        'permalink' => (rand(1, 10)<8)?$faker->unique()->slug:null,
         'first_published' => $publishedDatetime ? $publishedDatetime->format('Y-m-d H:i:s') : null,
     ];
     return ['token' => $token];

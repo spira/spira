@@ -96,7 +96,7 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
             $result = $this->validate();
         }
 
-        if (!$result && $this->exceptionOnError){
+        if (!$result && $this->exceptionOnError) {
             throw new ValidationException($this->getErrors());
         }
 

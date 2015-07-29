@@ -15,10 +15,9 @@ class ArticleSeeder extends Seeder
         //$faker = Faker::create('au_AU');
         factory(App\Models\Article::class, 10)
             ->create()
-            ->each(function(\App\Models\Article $article) {
+            ->each(function (\App\Models\Article $article) {
                 $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
-                foreach ($permalinks as $permalink)
-                {
+                foreach ($permalinks as $permalink) {
                     $article->permalinks->add($permalink);
                 }
                 $article->push();

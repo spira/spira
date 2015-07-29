@@ -8,7 +8,6 @@
 
 namespace App\Exceptions;
 
-
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
