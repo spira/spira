@@ -294,4 +294,76 @@ class UserTest extends TestCase
 
         $this->assertException('invalid', 401, 'UnauthorizedException');
     }
+
+    public function testChangeEmail()
+    {
+        $this->clearMessages();
+        $user = $this->createUser('guest');
+        // Ensure that the current email is considered confirmed.
+        $user->email_confirmed = date('Y-m-d H:i:s');
+        $user->save();
+        $token = $this->tokenFromUser($user);
+        $update = ['email' => 'foo@bar.com'];
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+        $updatedUser = User::find($user->user_id);
+        $mail = $this->getLastMessage();
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foo@bar.com', $updatedUser->email);
+        $this->assertNull($updatedUser->email_confirmed);
+        $this->assertContains('Confirm', $mail->subject);
+
+        $source = $this->getMessageSource($mail->id);
+        preg_match_all('!https?://\S+!', $source, $matches);
+        $tokenUrl = $matches[0][0];
+        $parsed = parse_url($tokenUrl);
+        $emailToken = str_replace('emailConfirmationToken=', '', $parsed['query']);
+
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+
+        $updatedUser = User::find($user->user_id);
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
+    }
+
+    public function testUpdateEmailConfirmed()
+    {
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+        $cache = $this->app->make('Illuminate\Contracts\Cache\Repository');
+        $emailToken = $user->makeConfirmationToken($user->email, $cache);
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+        $updatedUser = User::find($user->user_id);
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
+    }
+
+    public function testUpdateEmailConfirmedInvalidToken()
+    {
+        $user = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+        $datetime = date('Y-m-d H:i:s');
+        $update = ['emailConfirmed' => $datetime];
+        $repo = $this->app->make('App\Repositories\UserRepository');
+        $emailToken = 'foobar';
+        $this->patch('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Email-Confirm-Token' => $emailToken
+        ]);
+        $this->assertResponseStatus(422);
+    }
 }
