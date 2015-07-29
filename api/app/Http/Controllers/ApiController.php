@@ -14,6 +14,7 @@ use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
+use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Responder\ApiResponder;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +56,7 @@ abstract class ApiController extends Controller
             $model = $this->getRepository()->find($id);
             return $this->getResponder()->item($model);
         } catch (ModelNotFoundException $e) {
-            $this->getResponder()->errorNotFound();
+            $this->notFound($this->getKeyName());
         }
 
         return $this->getResponder()->noContent();
@@ -116,7 +117,7 @@ abstract class ApiController extends Controller
         $putModels = [];
         foreach ($requestCollection as $requestEntity) {
             $id = isset($requestEntity[$this->getKeyName()])?$requestEntity[$this->getKeyName()]:null;
-            if ($id && $models->has($id)) {
+            if ($id && !empty($models) && $models->has($id)) {
                 $model = $models->get($id);
             } else {
                 $model = $this->getRepository()->getNewModel();
@@ -141,9 +142,13 @@ abstract class ApiController extends Controller
     public function patchOne($id, Request $request)
     {
         $this->validateId($id);
-        $model = $this->getRepository()->find($id);
-        $model->fill($request->all());
-        $this->getRepository()->save($model);
+        try {
+            $model = $this->getRepository()->find($id);
+            $model->fill($request->all());
+            $this->getRepository()->save($model);
+        } catch (ModelNotFoundException $e) {
+            $this->notFound($this->getKeyName());
+        }
 
         return $this->getResponder()->noContent();
     }
@@ -160,7 +165,7 @@ abstract class ApiController extends Controller
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            $this->getResponder()->errorNotFound();
+            $this->notFoundMany($ids, $models);
         }
 
         foreach ($requestCollection as $requestEntity) {
@@ -185,8 +190,12 @@ abstract class ApiController extends Controller
     public function deleteOne($id)
     {
         $this->validateId($id);
-        $model = $this->getRepository()->find($id);
-        $this->getRepository()->delete($model);
+        try {
+            $model = $this->getRepository()->find($id);
+            $this->getRepository()->delete($model);
+        } catch (ModelNotFoundException $e) {
+            $this->notFound($this->getKeyName());
+        }
 
         return $this->getResponder()->noContent();
     }
@@ -203,9 +212,10 @@ abstract class ApiController extends Controller
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
 
-        if ($models->count() !== count($requestCollection)) {
-            $this->getResponder()->errorNotFound();
+        if (count($ids) !== $models->count()) {
+            $this->notFoundMany($ids, $models);
         }
+
         $this->getRepository()->deleteMany($models);
         return $this->getResponder()->noContent();
     }
@@ -236,10 +246,11 @@ abstract class ApiController extends Controller
 
     /**
      * @param $entityCollection
+     * @param bool $validate
      * @return array
      * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection)
+    protected function getIds($entityCollection, $validate = true)
     {
         $ids = [];
         $errors = [];
@@ -252,8 +263,10 @@ abstract class ApiController extends Controller
                     $ids[] = $id;
                     $errors[] = null;
                 } catch (ValidationException $e) {
-                    $error = true;
-                    $errors[] = $e->getErrors();
+                    if ($validate) {
+                        $error = true;
+                        $errors[] = $e;
+                    }
                 }
             } else {
                 $errors[] = null;
@@ -264,6 +277,37 @@ abstract class ApiController extends Controller
         }
 
         return $ids;
+    }
+
+
+    protected function notFound()
+    {
+        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$this->getKeyName()], [$this->getKeyName()=>'notFound']);
+        if ($validation->fails()) {
+            throw new ValidationException($validation->getMessageBag());
+        }
+    }
+
+    /**
+     * @param $ids
+     * @param Collection $models
+     */
+    protected function notFoundMany($ids, $models)
+    {
+        $errors = [];
+        foreach ($ids as $id) {
+            if ($models->get($id)) {
+                $errors[] = null;
+            } else {
+                try {
+                    $this->notFound();
+                } catch (ValidationException $e) {
+                    $errors[] = $e;
+                }
+            }
+        }
+
+        throw new ValidationExceptionCollection($errors);
     }
 
     /**

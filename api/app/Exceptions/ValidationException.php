@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Support\MessageBag;
+use Illuminate\Contracts\Support\MessageBag;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -12,18 +12,17 @@ class ValidationException extends HttpException implements  TransformableInterfa
     /**
      * The validation error messages.
      *
-     * @var MessageBag
+     * @var array
      */
-    protected $errors;
+    protected $errors = [];
 
     /**
      * Create a new validation exception instance.
-     *
-     * @param  \Illuminate\Support\MessageBag
+     * @param MessageBag $errors
      */
     public function __construct(MessageBag $errors)
     {
-        $this->errors = $errors;
+        $this->errors = $errors->toArray();
     }
 
     /**
@@ -69,7 +68,7 @@ class ValidationException extends HttpException implements  TransformableInterfa
     }
 
     /**
-     * @return MessageBag
+     * @return array
      */
     public function getErrors()
     {
