@@ -78,11 +78,12 @@ module app.guest.login {
         cancelLoginDialog():void;
         loginError:string;
         socialLogin(type:string);
+        resetPassword():void;
     }
 
     class LoginController {
 
-        static $inject = ['$scope', '$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess'];
+        static $inject = ['$scope', '$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
         constructor(
             private $scope : IScope,
             private $rootScope : global.IRootScope,
@@ -90,7 +91,8 @@ module app.guest.login {
             private $mdToast:ng.material.IToastService,
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
             private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
-            private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>}
+            private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
+            private userService:common.services.user.UserService
         ) {
 
             $scope.login = (username, password) => {
@@ -109,8 +111,12 @@ module app.guest.login {
                 $mdDialog.cancel('closed');
             }; //allow the user to manually close the dialog
 
-
             $scope.socialLogin = $rootScope.socialLogin;
+
+            $scope.resetPassword = () => {
+                $scope.cancelLoginDialog();
+                userService.promptResetPassword();
+            }; //close the login modal and open the reset password one
 
             //register error handling and close on success
             loginSuccess.promise

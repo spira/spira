@@ -34,6 +34,9 @@ queuerunner:
     - web:web
   volumes_from:
     - data
+  env_file:
+    - .common.env
+    - .local.env
 
 mailcatcher:
   image: schickling/mailcatcher

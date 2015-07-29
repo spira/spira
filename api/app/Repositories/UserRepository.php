@@ -60,6 +60,20 @@ class UserRepository extends BaseRepository
         }
     }
 
+
+    /**
+     * Get a user by their email.
+     *
+     * @param $email
+     * @return mixed
+     */
+    public function findByEmail($email)
+    {
+        return $this->model
+            ->where('email', '=', $email)
+            ->firstOrFail();
+    }
+
     /**
      * Make a single use login token for a user.
      *
