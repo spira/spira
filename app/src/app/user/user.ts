@@ -18,7 +18,8 @@ module app.user {
                     },
                     'navigation@app.user': { // Points to the ui-view="navigation" in default.tpl.html
                         templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
-                        controller: app.partials.navigation.namespace+'.controller'
+                        controller: app.partials.navigation.namespace+'.controller',
+                        controllerAs: 'NavigationController'
                     }
                 },
                 data: {

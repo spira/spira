@@ -29,15 +29,15 @@ module common.providers {
 
         constructor(private $state:ng.ui.IStateService) {}
 
-        public getChildStates = (stateName:string) => {
+        public getChildStates = (stateName:string):global.IState[] => {
 
-            let state:ng.ui.IState = this.$state.get(stateName);
+            let state:global.IState = <global.IState>this.$state.get(stateName);
 
             var routeName = state.name;
 
             // this regex is going to filter only direct children of this route.
             var childRouteRegex = new RegExp(routeName + "\.[a-z]+$", "i");
-            var states = this.$state.get();
+            var states = <global.IState[]>this.$state.get();
 
             return _.filter(states, function(state) {
                 return childRouteRegex.test(state.name) && !state.abstract;

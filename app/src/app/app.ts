@@ -80,22 +80,21 @@ module app {
         static $inject = ['$scope', '$mdSidenav'];
 
         constructor(private $scope:IScope, private $mdSidenav:ng.material.ISidenavService) {
-
-            $scope.toggleNavigationSidenav = function () {
-                $mdSidenav('navigation').toggle();
-            };
-
-            $scope.toggleRegistrationSidenav = function (open:boolean) {
-                if (_.isUndefined(open)) {
-                    $mdSidenav('registration').toggle();
-                    return;
-                }
-
-                open ? $mdSidenav('registration').open() : $mdSidenav('registration').close();
-
-            };
-
         }
+
+        public toggleNavigationSidenav = () => {
+            this.$mdSidenav('navigation').toggle();
+        };
+
+        public toggleRegistrationSidenav = (open:boolean) => {
+            if (_.isUndefined(open)) {
+                this.$mdSidenav('registration').toggle();
+                return;
+            }
+
+            open ? this.$mdSidenav('registration').open() : this.$mdSidenav('registration').close();
+
+        };
 
     }
 

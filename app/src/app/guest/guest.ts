@@ -14,15 +14,17 @@ module app.guest {
                 abstract: true,
                 views: {
                     'app@': { // Points to the ui-view in the index.html
-                        templateUrl: 'templates/app/_layouts/default.tpl.html'
+                        templateUrl: 'templates/app/_layouts/default.tpl.html',
                     },
                     'navigation@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
                         templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
-                        controller: app.partials.navigation.namespace+'.controller'
+                        controller: app.partials.navigation.namespace+'.controller',
+                        controllerAs: 'NavigationController',
                     },
                     'registration@app.guest': { // Points to the ui-view="registration" in default.tpl.html
                         templateUrl: 'templates/app/_partials/registration/registration.tpl.html',
-                        controller: app.partials.registration.namespace+'.controller'
+                        controller: app.partials.registration.namespace+'.controller',
+                        controllerAs: 'RegistrationController',
                     }
                 },
                 data: {
