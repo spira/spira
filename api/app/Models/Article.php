@@ -41,7 +41,7 @@ class Article extends BaseModel
             $permalinkRule.=','.$this->permalink.',permalink';
         }
         return [
-            'article_id' => 'uuid',
+            'article_id' => 'uuid|createOnly',
             'title' => 'required|string',
             'content' => 'required|string',
             'permalink' => $permalinkRule

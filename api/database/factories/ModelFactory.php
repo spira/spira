@@ -93,7 +93,7 @@ $factory->define(App\Models\AuthToken::class, function () use ($factory) {
 
     $token = $jwtAuth->fromUser($user);
 
-    return compact('token') + $body;
+    return ['token' => $token];
 });
 
 $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator $faker) {
@@ -111,6 +111,4 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'permalink' => (rand(1, 10)<8)?$faker->unique()->slug:null,
         'first_published' => $publishedDatetime ? $publishedDatetime->format('Y-m-d H:i:s') : null,
     ];
-    return ['token' => $token];
-
 });
