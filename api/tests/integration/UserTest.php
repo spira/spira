@@ -279,8 +279,8 @@ class UserTest extends TestCase
         // Extract the token from the message source
         $msg = $this->getLastMessage();
         $source = $this->getMessageSource($msg->id);
-        preg_match_all('!https?://\S+!', $source, $matches);
-        $tokenUrl = $matches[0][0];
+        preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
+        $tokenUrl = trim($matches[0][0]);
         $parsed = parse_url($tokenUrl);
         $token = str_replace('passwordResetToken=', '', $parsed['query']);
 
