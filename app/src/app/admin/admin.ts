@@ -37,6 +37,8 @@ module app.admin {
 
     angular.module('app.admin', [
         'app.admin.dashboard',
+        'app.admin.articles',
+        'app.admin.users',
         'app.admin.partials.navigation',
     ])
     .config(AdminConfig);

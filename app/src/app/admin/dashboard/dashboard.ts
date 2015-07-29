@@ -18,8 +18,8 @@ module app.admin.dashboard {
                 resolve: /*@ngInject*/{
                 },
                 data: {
-                    title: "Admin Dashboard",
-                    icon: 'home',
+                    title: "Dashboard",
+                    icon: 'dashboard',
                     navigation: true
                 }
             };
@@ -30,14 +30,10 @@ module app.admin.dashboard {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
+    export class DashboardController {
 
-    class DashboardController {
-
-        static $inject = ['$scope'];
-        constructor(private $scope : IScope) {
+        static $inject = [];
+        constructor() {
 
         }
 

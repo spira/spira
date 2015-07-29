@@ -13,7 +13,7 @@ class UserStorySeeder extends Seeder
      */
     public function run()
     {
-        $this->createUser(['email' => 'john.smith@example.com']);
+        $this->createUser(['email' => 'john.smith@example.com', 'user_type'=>'admin']);
 
         for ($i=0; $i < 99; $i++) {
             $this->createUser();
@@ -28,9 +28,11 @@ class UserStorySeeder extends Seeder
      */
     protected function createUser(array $attributes = [])
     {
-        $user = factory(User::class)->create($attributes);
-        $credential = factory(UserCredential::class)->make();
-        $credential->user_id = $user->user_id;
-        $credential->save();
+
+        factory(User::class)
+            ->create($attributes)
+            ->setCredential(factory(UserCredential::class)->make());
+
+
     }
 }
