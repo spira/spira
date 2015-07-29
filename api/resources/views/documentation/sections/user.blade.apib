@@ -16,7 +16,7 @@ with a third party through OAuth)
 + Request
     + Headers
 
-            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 200 (application/json)
 
@@ -36,7 +36,7 @@ with a third party through OAuth)
 + Request
     + Headers
 
-            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 200 (application/json)
 
@@ -87,7 +87,7 @@ or the request will be rejected.
 + Request
     + Headers
 
-            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
             Email-Confirm-Token: {!! hash_hmac('sha256', str_random(40), str_random(40)); !!}
 
     + Body
@@ -110,7 +110,7 @@ email is sent to the user with a reset token.
 + Request
     + Headers
 
-            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 202
 
@@ -121,6 +121,6 @@ email is sent to the user with a reset token.
 + Request
     + Headers
 
-            Authorization: Bearer {!! $jwtAuth->fromUser($factory->make(\App\Models\User::class)) !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 204

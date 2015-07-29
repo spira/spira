@@ -11,7 +11,6 @@
 |
 */
 
-use Carbon\Carbon;
 
 // Ensure that the custom validation rules are registered so the factories also
 // have them available.
@@ -82,4 +81,16 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
     $testEntity = $factory->raw(App\Models\TestEntity::class);
 
     return array_merge($testEntity, ['varchar' => 'custom']);
+});
+
+$factory->define(App\Models\AuthToken::class, function () use ($factory){
+
+    $jwtAuth = Illuminate\Support\Facades\App::make('Tymon\JWTAuth\JWTAuth');
+
+    $user = $factory->make(\App\Models\User::class);
+
+    $token = $jwtAuth->fromUser($user);
+
+    return ['token' => $token];
+
 });

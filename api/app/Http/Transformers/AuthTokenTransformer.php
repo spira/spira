@@ -7,7 +7,7 @@ use Tymon\JWTAuth\Token;
 use App\Exceptions\NotImplementedException;
 use Spira\Responder\Contract\TransformerInterface;
 
-class AuthTokenTransformer implements TransformerInterface
+class AuthTokenTransformer extends IlluminateModelTransformer implements TransformerInterface
 {
     /**
      * Transform the token string into an response array.
@@ -37,4 +37,17 @@ class AuthTokenTransformer implements TransformerInterface
     {
         throw new NotImplementedException('Collections are not used for tokens.');
     }
+
+    /**
+     * Transform the object into a response entity
+     * @param $object
+     * @return array
+     */
+    public function transform($object)
+    {
+        $thisTransformation = $this->transformItem($object['token']);
+        return parent::transform($thisTransformation);
+    }
+
+
 }
