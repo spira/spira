@@ -82,13 +82,3 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
     return array_merge($testEntity, ['varchar' => 'custom']);
 });
-
-$factory->define(App\Models\AuthToken::class, function ($faker) {
-
-    $user = factory(App\Models\User::class)->make();
-
-    $jwtAuth = \App::make('Tymon\JWTAuth\JWTAuth');
-    $token = $jwtAuth->fromUser($user);
-
-    return ['token' => $token, 'user' => $user];
-});
