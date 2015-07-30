@@ -3,18 +3,10 @@
 namespace App\Extensions\Socialite;
 
 use Laravel\Socialite\SocialiteManager;
-use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\SocialiteServiceProvider as ServiceProvider;
 
 class SocialiteServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Boot the service provider.
      */
@@ -35,16 +27,6 @@ class SocialiteServiceProvider extends ServiceProvider
         $this->app->bindShared('Laravel\Socialite\Contracts\Factory', function ($app) {
             return new SocialiteManager($app);
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return ['Laravel\Socialite\Contracts\Factory'];
     }
 
     /**

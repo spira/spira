@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App;
 use RuntimeException;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
@@ -80,7 +79,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
     }
 
     /**
@@ -99,7 +98,7 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->refresh($token);
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
     }
 
     /**
@@ -126,7 +125,7 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
     }
 
     /**
