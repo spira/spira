@@ -18,16 +18,26 @@ class ApiaryController extends Controller
 
     public function getApiaryDocumentation(Request $request)
     {
-        return $this->getDocumentationApib($request->root());
+        $apib = $this->getDocumentationApib($request->root());
+
+        $headers = [
+            'Content-Type' => 'text/plain',
+        ];
+
+        return response($apib, 200, $headers);
     }
 
     public function getDocumentationApib($apiUrl)
     {
         View::addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
-        return view('documentation.apiary', [
+        $data = [
             'apiUrl' => $apiUrl,
-            'faker'  => Faker\Factory::create(),
-        ]);
+            'faker' => Faker\Factory::create(),
+        ];
+
+        $content = view('documentation.apiary', $data)->render();
+
+        return $content;
     }
 }

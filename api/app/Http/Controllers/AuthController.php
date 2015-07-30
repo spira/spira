@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use RuntimeException;
+use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;

@@ -247,6 +247,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
         $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);
 
+        $transformedEntity = array_except($transformedEntity, $this->hide); //allow the definer to specify transformed values to hide
+
         return $transformedEntity;
     }
 

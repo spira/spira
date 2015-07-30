@@ -13,6 +13,8 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 
     public $incrementing = false;
 
+    public $exceptionOnError = true;
+
     /**
      * @var Validator
      */
@@ -83,14 +85,26 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     }
 
     /**
-     * Listen for save event
+     * @param array $options
+     * @return bool|null
+     * @throws \Exception
      */
-    protected static function boot()
+    public function save(array $options = [])
     {
-        parent::boot();
-        static::saving(function (BaseModel $model) {
-            return $model->validate();
-        });
+        $result = true;
+        if ($this->fireModelEvent('validating') !== false) {
+            $result = $this->validate();
+        }
+
+        if (!$result && $this->exceptionOnError) {
+            throw new ValidationException($this->getErrors());
+        }
+
+        if ($this->fireModelEvent('validated') === false) {
+            return false;
+        }
+
+        return parent::save($options);
     }
 
     public function validate()
@@ -101,9 +115,33 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
         $this->errors = [];
         if ($validation->fails()) {
             $this->errors = $validation->messages();
-            throw new ValidationException($this->getErrors());
+            return false;
         }
 
         return true;
+    }
+
+    /**
+     * Register a validating model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function validating($callback, $priority = 0)
+    {
+        static::registerModelEvent('validating', $callback, $priority);
+    }
+
+    /**
+     * Register a validated model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function validated($callback, $priority = 0)
+    {
+        static::registerModelEvent('validated', $callback, $priority);
     }
 }

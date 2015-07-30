@@ -1,0 +1,101 @@
+# Group Articles
+Articles are the generic posts/blogs of the system, they are used to display static CMS content.
+
+## Article Collection [/articles]
+The collection of all article posts.
+
+### Retrieve all articles [GET]
+Note that this route returns paginated results as defined in the `Content-Range` headers
+
+#### Restrictions
+* Published - Allowed - [all]
+* Unpublished - Allowed - [admin, self]
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Accept-Ranges: articles
+            Content-Range: articles=1-10/*
+
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Article::class)
+                    ->hide(['content'])
+                    ->count(10)
+                    ->json()
+            !!}
+
+
+## Article Entity [/articles/{articleId}]
+
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+
+### Retrieve an article [GET]
+
+#### Restrictions
+* Published - Allowed - [all]
+* Unpublished - Allowed - [admin, self]
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\Article::class) !!}
+            
+### Create/update article entity [PUT]
+
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Body
+    
+            {!! $factory->json(\App\Models\Article::class) !!}
+
++ Response 201
+
+### Update the article [PATCH]
+
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Body
+    
+            {!!
+                $factory->get(\App\Models\Article::class)
+                    ->hide(['_self'])
+                    ->showOnly(['content'])
+                    ->json()
+            !!}
+            
+
++ Response 204
+
+
+### Delete the article [DELETE]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Response 204
+
+## Article Permalinks [/articles/{articleId}/permalinks]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+    
+### Retrieve all article's permalinks [GET]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Response 200 (application/json)
+    + Body
+    
+            {!!
+                $factory->get(\App\Models\ArticlePermalink::class)                    
+                    ->count(3)
+                    ->json()
+            !!}
+

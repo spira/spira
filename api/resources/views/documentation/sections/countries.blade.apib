@@ -7,11 +7,9 @@ Users can set their country in their user profile.
 #### Restrictions
 * Allowed - [all]
 
-+ Request
-    + Headers
-
 + Response 200 (application/json)
 
     + Body
 
-        {!! $factory->get(App::make('App\Services\Datasets\Countries')->all())->count(5)->toJson() !!}
+            {!! $factory->get(App::make('App\Services\Datasets\Countries')->all())->count(5)->json() !!}
+
