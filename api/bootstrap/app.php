@@ -24,7 +24,6 @@ $app->withFacades();
 $app->withEloquent();
 
 $app->configure('hosts');
-$app->configure('services');
 
 /*
 |--------------------------------------------------------------------------
@@ -86,7 +85,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\LockServiceProvider::class);
 $app->register(App\Providers\JWTAuthServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
-$app->register(Laravel\Socialite\SocialiteServiceProvider::class);
+$app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
