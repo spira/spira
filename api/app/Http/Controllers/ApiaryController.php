@@ -29,7 +29,7 @@ class ApiaryController extends Controller
 
     public function getDocumentationApib($apiUrl)
     {
-        View::addExtension('blade.apib','blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
+        View::addExtension('blade.apib', 'blade'); //allow sections to be defined as .blade.apib for correct syntax highlighting
 
         $data = [
             'apiUrl' => $apiUrl,

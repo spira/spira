@@ -8,21 +8,17 @@ use Faker\Factory as Faker;
  */
 class ArticleModelTest extends TestCase
 {
-
-
     public function setUp()
     {
         parent::setUp();
 
         App\Models\Article::flushEventListeners();
         App\Models\Article::boot();
-
     }
 
 
     public function testAutomaticExcerpt()
     {
-
         $faker = Faker::create('au_AU');
         $faker->seed(1);
 
@@ -46,5 +42,4 @@ class ArticleModelTest extends TestCase
 
         $this->assertEquals($excerpt, $articleWithExcerpt->excerpt, "Article excerpt has not been overridden");
     }
-
 }
