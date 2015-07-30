@@ -67,21 +67,21 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
      */
     private function parse()
     {
-        if ($this->parsed){
+        if ($this->parsed) {
             return true;
         }
 
-        $range = $this->getRequest()->headers?$this->getRequest()->headers->get('Range',''):'';
-        $ranges = explode('-',$range);
-        if (isset($ranges[0]) && $ranges[0] !== ''){
+        $range = $this->getRequest()->headers?$this->getRequest()->headers->get('Range', ''):'';
+        $ranges = explode('-', $range);
+        if (isset($ranges[0]) && $ranges[0] !== '') {
             $this->offset = $ranges[0];
         }
 
-        if (isset($ranges[1]) && $ranges[1] !== ''){
+        if (isset($ranges[1]) && $ranges[1] !== '') {
             if (is_null($this->offset)) {
                 $this->isGetLast = true;
                 $this->limit = $ranges[1];
-            }else{
+            } else {
                 $this->limit = $ranges[1] - $ranges[0] + 1;
             }
         }

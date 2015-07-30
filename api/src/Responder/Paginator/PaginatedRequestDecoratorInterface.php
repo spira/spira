@@ -35,5 +35,4 @@ interface PaginatedRequestDecoratorInterface
      * @return Request
      */
     public function getRequest();
-
 }

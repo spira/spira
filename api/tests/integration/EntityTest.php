@@ -72,30 +72,30 @@ class EntityTest extends TestCase
         $this->assertJsonMultipleEntries();
 
         $object = json_decode($this->response->getContent());
-        $this->assertEquals($defaultLimit,count($object));
+        $this->assertEquals($defaultLimit, count($object));
     }
 
     public function testGetAllPaginatedSimpleRange()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages',['Range'=>'0-19']);
+        $this->get('/test/entities/pages', ['Range'=>'0-19']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
-        $this->assertEquals(20,count($object));
-        list($first,$last,$total) = $this->parseRange($this->response->headers->get('content-range'));
-        $this->assertEquals($total,$totalCount);
-        $this->assertEquals($first,0);
-        $this->assertEquals($last,19);
+        $this->assertEquals(20, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, 0);
+        $this->assertEquals($last, 19);
     }
 
     public function testPaginationBadRanges()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
-        $this->get('/test/entities/pages',['Range'=>'19-18']);
+        $this->get('/test/entities/pages', ['Range'=>'19-18']);
         $this->assertResponseStatus(416);
     }
 
@@ -103,7 +103,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages',['Range'=>$totalCount.'-']);
+        $this->get('/test/entities/pages', ['Range'=>$totalCount.'-']);
         $this->assertResponseStatus(416);
     }
 
@@ -111,51 +111,51 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages',['Range'=>($totalCount-2).'-'.($totalCount+20)]);
+        $this->get('/test/entities/pages', ['Range'=>($totalCount-2).'-'.($totalCount+20)]);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
-        $this->assertEquals(2,count($object));
-        list($first,$last,$total) = $this->parseRange($this->response->headers->get('content-range'));
-        $this->assertEquals($total,$totalCount);
-        $this->assertEquals($first,$totalCount-2);
-        $this->assertEquals($last,$totalCount-1);
+        $this->assertEquals(2, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, $totalCount-2);
+        $this->assertEquals($last, $totalCount-1);
     }
 
     public function testPaginationGetLast()
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages',['Range'=>'-5']);
+        $this->get('/test/entities/pages', ['Range'=>'-5']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
-        $this->assertEquals(5,count($object));
-        list($first,$last,$total) = $this->parseRange($this->response->headers->get('content-range'));
-        $this->assertEquals($total,$totalCount);
-        $this->assertEquals($first,$totalCount-5);
-        $this->assertEquals($last,$totalCount-1);
+        $this->assertEquals(5, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, $totalCount-5);
+        $this->assertEquals($last, $totalCount-1);
     }
 
     protected function parseRange($header)
     {
-        $splitTotal = explode('/',$header);
+        $splitTotal = explode('/', $header);
         $total = null;
-        if (isset($splitTotal[1]) && $splitTotal[1] !== ''){
+        if (isset($splitTotal[1]) && $splitTotal[1] !== '') {
             $total = $splitTotal[1];
         }
-        $firstAndLast = explode('-',$splitTotal[0]);
+        $firstAndLast = explode('-', $splitTotal[0]);
         $first = null;
         $last = null;
-        if (isset($firstAndLast[0]) && $firstAndLast[0] !== ''){
+        if (isset($firstAndLast[0]) && $firstAndLast[0] !== '') {
             $first = $firstAndLast[0];
         }
 
-        if (isset($firstAndLast[1]) && $firstAndLast[1] !== ''){
+        if (isset($firstAndLast[1]) && $firstAndLast[1] !== '') {
             $last = $firstAndLast[1];
         }
 
