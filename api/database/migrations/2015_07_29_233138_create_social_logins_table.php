@@ -20,6 +20,7 @@ class CreateSocialLoginsTable extends Migration
             $table->uuid('social_login_id');
 
             $table->uuid('user_id')->unique();
+            $table->string('provider');
             $table->text('token');
             $table->timestamps();
 
