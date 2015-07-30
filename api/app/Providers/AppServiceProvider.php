@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Spira\Responder\Contract\TransformerInterface;
+use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
+use Spira\Responder\Paginator\RangeRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConnectionResolverInterface::class, 'db');
         $this->app->bind(TransformerInterface::class, IlluminateModelTransformer::class);
         $this->app->bind(ApiResponderInterface::class, Responder::class);
+        $this->app->bind(PaginatedRequestDecoratorInterface::class, RangeRequest::class);
 
         Validator::resolver(function ($translator, $data, $rules, $messages) {
             return new SpiraValidator($translator, $data, $rules, $messages);

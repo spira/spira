@@ -16,9 +16,7 @@ use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
-use Spira\Responder\Paginator\AbstractPaginatedRequest;
-use Spira\Responder\Paginator\PaginatedRequestInterface;
-use Spira\Responder\Paginator\RangeRequest;
+use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Responder\ApiResponder;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -49,13 +47,18 @@ abstract class ApiController extends Controller
         return $this->getResponder()->collection($this->getRepository()->all());
     }
 
-    public function getAllPaginated(RangeRequest $request)
+    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
     {
         $count = $this->getRepository()->count();
         $limit = $request->getLimit(static::PAGINATOR_DEFAULT_LIMIT, static::PAGINATOR_MAX_LIMIT);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getRepository()->all('*',$offset,$limit);
-        $this->responder->paginatedCollection($collection, $offset, $count);
+        //eloquent do not allow 0 or negative limit and offset
+        if ($limit <= 0){
+            $collection = new Collection();
+        }else{
+            $collection = $this->getRepository()->all(['*'],$offset,$limit);
+        }
+        return $this->responder->paginatedCollection($collection, $offset, $count);
     }
 
     /**

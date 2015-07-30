@@ -46,6 +46,7 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
+    $app->get('/entities/pages', 'App\Http\Controllers\TestController@getAllPaginated');
     $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');

@@ -158,11 +158,11 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
         $offset = is_null($offset)?0:$offset;
         $totalCount = is_null($totalCount)?'*':$totalCount;
         $itemCount = count($items);
-        $rangeHeader = $offset.'-'.($itemCount+$offset).'/'.$totalCount;
+        $rangeHeader = $offset.'-'.($itemCount+$offset-1).'/'.$totalCount;
         $response->headers->set('Content-Range', $rangeHeader);
         $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
 
-        if ($this->request->headers->has('Range')){
+        if ($this->request->headers && $this->request->headers->has('Range')){
             if ($itemCount > 0){
                 $response->setStatusCode(206);
             }else{
