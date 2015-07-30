@@ -162,13 +162,13 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
         $response->headers->set('Content-Range', $rangeHeader);
         $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
 
-        if ($this->request->headers && $this->request->headers->has('Range')){
-            if ($itemCount > 0){
+        if ($this->request->headers && $this->request->headers->has('Range')) {
+            if ($itemCount > 0) {
                 $response->setStatusCode(206);
-            }else{
-                $response->setStatusCode(416,'Requested Range Not Satisfiable');
+            } else {
+                $response->setStatusCode(416, 'Requested Range Not Satisfiable');
             }
-        }else{
+        } else {
             $response->setStatusCode(200);
         }
 

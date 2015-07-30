@@ -61,7 +61,7 @@ class TestRepositoryTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
-        $result = $this->repository->all(['*'],null,2);
+        $result = $this->repository->all(['*'], null, 2);
         $this->assertTrue(is_array($result->toArray()));
         $this->assertGreaterThanOrEqual(2, $result->count());
     }
@@ -70,7 +70,7 @@ class TestRepositoryTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
         $count = $this->repository->count();
-        $result = $this->repository->all(['*'],2,null);
+        $result = $this->repository->all(['*'], 2, null);
         $this->assertTrue(is_array($result->toArray()));
         $this->assertGreaterThanOrEqual($count-2, $result->count());
     }

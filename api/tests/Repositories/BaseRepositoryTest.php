@@ -2,7 +2,6 @@
 
 use Mockery as m;
 
-
 /**
  * @property \Mockery\MockInterface $baseModel
  *
