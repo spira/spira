@@ -92,6 +92,7 @@ describe('Login', () => {
 
         it('should have initialised the auth service', () => {
 
+            $scope.$apply();
             expect((<any>authService).refreshTimerPromise).to.be.ok;
 
         });

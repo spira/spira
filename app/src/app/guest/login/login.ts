@@ -26,17 +26,21 @@ module app.guest.login {
 
     class LoginInit {
 
-        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state'];
+        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q'];
         constructor(
             private $rootScope:global.IRootScope,
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
             private $mdDialog:ng.material.IDialogService,
             private $timeout:ng.ITimeoutService,
             private $window:ng.IWindowService,
-            private $state:ng.ui.IStateService
+            private $state:ng.ui.IStateService,
+            private $q:ng.IQService
         ) {
 
             ngJwtAuthService
+                .registerUserFactory((subClaim: string, tokenData: global.JwtAuthClaims): ng.IPromise<common.models.User> => {
+                    return this.$q.when(new common.models.User(tokenData._user));
+                })
                 .registerLoginPromptFactory((deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>, loginSuccessPromise:ng.IPromise<NgJwtAuth.IUser>, currentUser:NgJwtAuth.IUser): ng.IPromise<any> => {
 
                     let dialogConfig:ng.material.IDialogOptions = {

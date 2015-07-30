@@ -40,7 +40,12 @@ module app.admin.users {
 
         static $inject = ['allUsers'];
 
-        constructor(public allUsers:global.IUser[]) {
+        constructor(public allUsers:common.models.User[]) {
+
+            this.allUsers = allUsers.map((user:common.models.User) => {
+                (<any>user).fullname = user.fullName();
+                return user;
+            })
 
         }
 
