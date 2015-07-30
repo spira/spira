@@ -81,7 +81,7 @@ class Article extends BaseModel
 
     /**
      * If there is no defined exerpt for the text, create it from the content
-     * @param $exerpt
+     * @param $excerpt
      * @return string
      */
     public function getExcerptAttribute($excerpt)
