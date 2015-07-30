@@ -275,6 +275,16 @@ class AuthTest extends TestCase
         $this->assertEquals($id, $user->user_id);
     }
 
+    public function testEnvironmentForSocial()
+    {
+        // Make sure we have the hosts env variable for the redirect url generation
+        $host = $this->app['config']['hosts.api'];
+
+        $this->assertNotNull($host);
+        $this->assertStringStartsWith('http', $host);
+        $this->assertStringEndsNotWith('/', $host);
+    }
+
     public function testInvalidProvider()
     {
         $this->get('/auth/social/foobar');
