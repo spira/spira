@@ -41,5 +41,9 @@ declare module global {
         socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
     }
 
+    export interface JwtAuthClaims extends NgJwtAuth.IJwtClaims{
+        _user: IUserData;
+    }
+
 
 }
