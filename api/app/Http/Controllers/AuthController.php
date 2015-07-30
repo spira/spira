@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App;
 use RuntimeException;
+use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
@@ -36,7 +37,6 @@ class AuthController extends ApiController
      * @param  Auth                   $auth
      * @param  JWTAuth                $jwtAuth
      * @param  ApiResponderInterface  $responder
-     * @return void
      */
     public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder)
     {

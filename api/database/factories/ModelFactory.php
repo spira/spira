@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 // Ensure that the custom validation rules are registered so the factories also
 // have them available.
@@ -92,5 +94,21 @@ $factory->define(App\Models\AuthToken::class, function () use ($factory) {
     $token = $jwtAuth->fromUser($user);
 
     return ['token' => $token];
+});
 
+$factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator $faker) {
+    return [
+        'permalink' => $faker->unique()->slug,
+    ];
+});
+
+$factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
+
+    return [
+        'article_id' => $faker->uuid,
+        'title' => $faker->sentence,
+        'content' => $content = implode("\n\n", $faker->paragraphs(3)),
+        'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
+        'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
+    ];
 });

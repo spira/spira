@@ -8,9 +8,9 @@
 
 namespace App\Exceptions;
 
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidationExceptionCollection extends HttpException implements TransformableInterface
 {

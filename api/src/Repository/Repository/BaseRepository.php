@@ -52,13 +52,14 @@ abstract class BaseRepository
      *
      * @param  string  $id
      * @param  array   $columns
-     * @return BaseModel
-     * @throws ModelNotFoundException
+     * @return BaseModel|null
      */
     public function find($id, $columns = ['*'])
     {
         return $this->model->findOrFail($id, $columns);
     }
+
+
 
     /**
      * Find a model by its primary key.
@@ -71,6 +72,7 @@ abstract class BaseRepository
     {
         return $this->model->findMany($ids, $columns);
     }
+
 
     /**
      * Get all entities.

@@ -20,10 +20,12 @@ use Spira\Repository\Collection\Collection;
  * Class BaseModel
  * @package Spira\Repository\Model
  *
- * @method count
- * @method get
- * @method findOrFail
- * @method findMany
+ * @method static int count
+ * @method static Collection get
+ * @method static BaseModel findOrFail
+ * @method static BaseModel find
+ * @method static Collection findMany
+ * @method static BaseModel where
  *
  */
 class BaseModel extends Model
@@ -45,7 +47,7 @@ class BaseModel extends Model
      * @param mixed $value
      * @throws SetRelationException
      */
-    public function __set($key, $value)
+    public function setAttribute($key, $value)
     {
         if (method_exists($this, $key)) {
             $value = $this->prepareValue($value);
@@ -57,7 +59,7 @@ class BaseModel extends Model
                 $this->relations[$key] = $value;
             }
         } else {
-            parent::__set($key, $value);
+            parent::setAttribute($key, $value);
         }
     }
 
@@ -95,9 +97,16 @@ class BaseModel extends Model
      */
     protected function addPreviousValueToDeleteStack($models)
     {
-        /** @var Collection|array $models */
+        /** @var Collection|BaseModel[] $models */
         $models = $this->isCollection($models)?$models->all(true):[$models];
-        $this->deleteStack = array_merge($this->deleteStack, array_filter($models));
+        $deleteArray = [];
+        foreach ($models as $model) {
+            if ($model && $model->exists) {
+                $deleteArray[] = $model;
+            }
+        }
+
+        $this->deleteStack = array_merge($this->deleteStack, $deleteArray);
     }
 
 
@@ -192,7 +201,7 @@ class BaseModel extends Model
     {
         if ($relation instanceof HasOneOrMany) {
             $fk = str_replace($this->getTable().'.', '', $relation->getForeignKey());
-            $this->{$fk} = $relation->getParentKey();
+            $this->attributes[$fk] = $relation->getParentKey();
         }
 
 //        if ($relation instanceof BelongsTo){
@@ -271,6 +280,6 @@ class BaseModel extends Model
      */
     protected function getRelationCacheKey($method)
     {
-        return static::class.'_'.$method;
+        return spl_object_hash($this).'_'.$method;
     }
 }
