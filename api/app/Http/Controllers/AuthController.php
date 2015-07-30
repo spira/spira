@@ -12,6 +12,7 @@ use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
+use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Laravel\Socialite\Contracts\Factory as Socialite;
@@ -155,6 +156,17 @@ class AuthController extends ApiController
         $this->validateProvider($provider);
 
         $user = $socialite->with($provider)->stateless()->user();
+
+        // Verify so we received an email address, if using oAuth credentials
+        // with Twitter for instance, that isn't whitelisted, no email
+        // address will be returned with the response.
+        // See the notes in Spira API doc under Social Login for more info.
+        if (!$user->email) {
+            // The setup is correct, but the 3rd party service is not configured
+            // or allowed to return email addresses, so we can't process the
+            // data further. Let's throw an exception and exit out.
+            throw new UnprocessableEntityException('User object has no email');
+        }
 
         // @todo add code to save the social login data
         var_dump($user);
