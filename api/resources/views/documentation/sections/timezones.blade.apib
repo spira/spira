@@ -9,11 +9,9 @@ have their emails dispatched.
 #### Restrictions
 * Allowed - [all]
 
-+ Request
-    + Headers
-
 + Response 200 (application/json)
 
     + Body
 
-        {!! $factory->get(App::make('App\Services\Datasets\Timezones')->all())->count(5)->toJson() !!}
+            {!! $factory->get(App::make('App\Services\Datasets\Timezones')->all())->count(5)->json() !!}
+

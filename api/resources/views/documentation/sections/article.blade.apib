@@ -21,7 +21,8 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!!
-                $factory->get(\App\Models\Article::class)                    
+                $factory->get(\App\Models\Article::class)
+                    ->hide(['content'])
                     ->count(10)
                     ->json()
             !!}
@@ -40,8 +41,6 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Unpublished - Allowed - [admin, self]
 + Response 200 (application/json)
 
-    + Headers
-
     + Body
 
             {!! $factory->json(\App\Models\Article::class) !!}
@@ -52,7 +51,6 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Allowed - [admin, self]
 
 + Request
-    + Headers
     + Body
     
             {!! $factory->json(\App\Models\Article::class) !!}
@@ -65,9 +63,14 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Allowed - [admin, self]
 
 + Request
-    + Headers
-
     + Body
+    
+            {!!
+                $factory->get(\App\Models\Article::class)
+                    ->hide(['_self'])
+                    ->showOnly(['content'])
+                    ->json()
+            !!}
             
 
 + Response 204
@@ -76,9 +79,6 @@ Note that this route returns paginated results as defined in the `Content-Range`
 ### Delete the article [DELETE]
 #### Restrictions
 * Allowed - [admin, self]
-
-+ Request
-    + Headers
 
 + Response 204
 
@@ -90,14 +90,12 @@ Note that this route returns paginated results as defined in the `Content-Range`
 #### Restrictions
 * Allowed - [admin, self]
 
-+ Request
-    + Headers
-
++ Response 200 (application/json)
     + Body
     
             {!!
                 $factory->get(\App\Models\ArticlePermalink::class)                    
-                    ->count(10)
+                    ->count(3)
                     ->json()
             !!}
 

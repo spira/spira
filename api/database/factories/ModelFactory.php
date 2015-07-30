@@ -103,12 +103,12 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
 });
 
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
-    $publishedDatetime = $faker->optional(0.9)->dateTimeThisDecade();
+
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
-        'permalink' => (rand(1, 10)<8)?$faker->unique()->slug:null,
-        'first_published' => $publishedDatetime ? $publishedDatetime->format('Y-m-d H:i:s') : null,
+        'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
+        'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];
 });

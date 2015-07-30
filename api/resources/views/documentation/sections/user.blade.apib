@@ -56,7 +56,6 @@ The request *must* provide at least one authentication method when the user is c
 password credentials - social signin is described later in this document (@todo).
 
 + Request
-    + Headers
     + Body
 
             {!!
@@ -64,7 +63,7 @@ password credentials - social signin is described later in this document (@todo)
                     ->showOnly(['user_id', 'email', 'first_name', 'last_name', 'country'])
                     ->append('_userCredential',
                         $factory->get(\App\Models\UserCredential::class)
-                            ->hide(['self'])
+                            ->hide(['_self'])
                             ->makeVisible(['password'])
                             ->customize(['password' => 'password'])
                             ->toArray()
@@ -94,7 +93,7 @@ or the request will be rejected.
 
             {!!
                 $factory->get(\App\Models\User::class)
-                    ->hide(['self'])
+                    ->hide(['_self'])
                     ->json();
             !!}
 
