@@ -5,24 +5,35 @@ module common.services.user {
     export class UserService {
 
         static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog'];
-        constructor(
-            private ngRestAdapter: NgRestAdapter.INgRestAdapterService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $q:ng.IQService,
-            private $mdDialog:ng.material.IDialogService
-        ) {
 
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $q:ng.IQService,
+                    private $mdDialog:ng.material.IDialogService) {
+
+        }
+
+        /**
+         * Get an instance of a user from data
+         * @param userData
+         * @returns {common.services.user.User}
+         */
+        public userFactory(userData:global.IUserData):common.models.User {
+            return new common.models.User(userData);
         }
 
         /**
          * Get all users from the API
          * @returns {any}
          */
-        public getAllUsers():ng.IPromise<global.IUser[]>{
+        public getAllUsers():ng.IPromise<common.models.User[]> {
 
             return this.ngRestAdapter.get('/users')
                 .then((res) => {
-                    return <global.IUser[]>res.data;
+
+                    return _.map(res.data, (userData:global.IUserData) => {
+                        return new common.models.User(userData);
+                    });
                 })
             ;
 
@@ -34,11 +45,11 @@ module common.services.user {
          * @param password
          * @param firstName
          * @param lastName
-         * @returns {IPromise<global.IUser>}
+         * @returns {IPromise<global.IUserData>}
          */
-        private register(email:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUser>{
+        private register(email:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUserData> {
 
-            let user:global.IUser = {
+            let userData:global.IUserData = {
                 userId: this.ngRestAdapter.uuid(),
                 email: email,
                 firstName: firstName,
@@ -49,7 +60,9 @@ module common.services.user {
                 }
             };
 
-            return this.ngRestAdapter.put('/users/'+user.userId, user)
+            let user = new common.models.User(userData);
+
+            return this.ngRestAdapter.put('/users/' + user.userId, user)
                 .then(() => user); //return this user object
         }
 
@@ -61,13 +74,13 @@ module common.services.user {
          * @param lastName
          * @returns {IPromise<TResult>}
          */
-        public registerAndLogin(email:string, password:string, firstName:string, lastName:string):ng.IPromise<any>{
+        public registerAndLogin(email:string, password:string, firstName:string, lastName:string):ng.IPromise<any> {
 
             return this.register(email, password, firstName, lastName)
-                .then((user) => {
+                .then((user:common.models.User) => {
                     return this.ngJwtAuthService.authenticateCredentials(user.email, user._userCredential.password);
                 })
-            ;
+                ;
 
         }
 
@@ -82,7 +95,7 @@ module common.services.user {
                 .skipInterceptor()
                 .head('/users/email/' + email)
                 .then(() => true, () => false) //200 OK is true (email exists) 404 is false (email not registered)
-                ;
+            ;
 
         }
 

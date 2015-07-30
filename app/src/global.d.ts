@@ -30,7 +30,7 @@ declare module global {
         password: string;
     }
 
-    export interface IUser extends NgJwtAuth.IUser {
+    export interface IUserData extends NgJwtAuth.IUser {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory

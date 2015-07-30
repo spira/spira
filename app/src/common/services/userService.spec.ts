@@ -8,7 +8,7 @@
         buildUser: (overrides = {}) => {
 
             let userId = seededChance.guid();
-            let defaultUser:global.IUser = {
+            let defaultUser:global.IUserData = {
                 _self: '/users/'+userId,
                 userId: userId,
                 email: seededChance.email(),
@@ -22,8 +22,8 @@
 
             return _.merge(defaultUser, overrides);
         },
-        get user():global.IUser {
-            return fixtures.buildUser();
+        get user():common.models.User {
+            return new common.models.User(fixtures.buildUser());
         },
         get users() {
             return _.range(10).map(() => fixtures.user);
