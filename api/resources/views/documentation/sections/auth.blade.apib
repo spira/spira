@@ -60,12 +60,24 @@ Sometimes a user receives a token in a link by email that is exchanged with an a
 
             {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
+
 ## Social Login [/auth/social/{provider}]
 A user can login by using a social profile as identification.
 
-Note: when setting up a Google App for oAuth2, Make sure that you Have _Google+
-API_ enabled on the page
-`https://console.developers.google.com/project/{Project ID}/apiui/apis/library`.
+####  Provider Specific Notes
+
+* **Google:** When setting up a Google App for oAuth2, make sure that you have
+  `Google+ API Library` enabled on the page `APIs & auth/APIs` in the
+  [Project Console](https://console.developers.google.com/project) or the
+  request to Google will not return any user data.
+* **Twitter:** For Twitter to return the email address, which is required by the
+  Spira application, the application must be whitelisted by Twitter. If not
+  Twitter returns the email address as `null`. To whitelist your app with
+  Twitter read
+  [here](https://twittercommunity.com/t/how-to-get-email-from-twitter-user-using-oauthtokens/558/185)
+  and/or
+  [here](https://dev.twitter.com/rest/reference/get/account/verify_credentials)
+  to find the current form to request an app to be whitelisted.
 
 ### Login with social provider [GET]
 + Response 200
