@@ -8,8 +8,8 @@
 
 namespace Spira\Responder\Responder;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,10 +20,15 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      * @var TransformerInterface
      */
     protected $transformer;
+    /**
+     * @var Request
+     */
+    protected $request;
 
-    public function __construct(TransformerInterface $transformer)
+    public function __construct(Request $request, TransformerInterface $transformer)
     {
         $this->transformer = $transformer;
+        $this->request = $request;
     }
 
     /**
@@ -137,16 +142,37 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     }
 
     /**
-     * TODO: Implement paginator() method.
-     * Bind a paginator to a transformer and start building a response.
+     * Build paginated response.
      *
-     * @param Paginator $paginator
+     * @param Collection|array $items
+     * @param null|int $offset
+     * @param null|int $totalCount
      * @param array $parameters
      *
      * @return Response
      */
-    public function paginator(Paginator $paginator, array $parameters = [])
+    public function paginatedCollection($items, $offset = null, $totalCount = null, array $parameters = [])
     {
+        $response = $this->getResponse();
+        $response->headers->set('Content-Type', 'application/json');
+        $offset = is_null($offset)?0:$offset;
+        $totalCount = is_null($totalCount)?'*':$totalCount;
+        $itemCount = count($items);
+        $rangeHeader = $offset.'-'.($itemCount+$offset).'/'.$totalCount;
+        $response->headers->set('Content-Range', $rangeHeader);
+        $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
+
+        if ($this->request->headers->has('Range')){
+            if ($itemCount > 0){
+                $response->setStatusCode(206);
+            }else{
+                $response->setStatusCode(416,'Requested Range Not Satisfiable');
+            }
+        }else{
+            $response->setStatusCode(200);
+        }
+
+        return $response;
     }
 
 
@@ -165,7 +191,6 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     public function setTransformer($transformer)
     {
         $this->transformer = $transformer;
-
         return $this;
     }
 

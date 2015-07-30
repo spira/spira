@@ -2,6 +2,12 @@
 
 use Mockery as m;
 
+
+/**
+ * @property \Mockery\MockInterface $baseModel
+ *
+ * Class BaseRepositoryTest
+ */
 class BaseRepositoryTest extends TestCase
 {
     public function setUp()
@@ -53,6 +59,16 @@ class BaseRepositoryTest extends TestCase
             ->once()
             ->with(m::type('array'))
             ->andReturn([]);
+
+        $this->baseModel->shouldReceive('skip')
+            ->once()
+            ->with(m::type('null'))
+            ->andReturnSelf();
+
+        $this->baseModel->shouldReceive('take')
+            ->once()
+            ->with(m::type('null'))
+            ->andReturnSelf();
 
         $result = $this->baseRepository->all();
 

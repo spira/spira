@@ -81,14 +81,15 @@ interface ApiResponderInterface extends ResponderInterface
     public function createdItem($item, array $parameters = []);
 
 
-
     /**
-     * Bind a paginator to a transformer and start building a response.
+     * Build paginated response.
      *
-     * @param Paginator $paginator
+     * @param Collection|array $items
+     * @param null|int $offset
+     * @param null|int $totalCount
      * @param array $parameters
      *
      * @return Response
      */
-    public function paginator(Paginator $paginator, array $parameters = []);
+    public function paginatedCollection($items, $offset = null, $totalCount = null, array $parameters = []);
 }
