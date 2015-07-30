@@ -291,4 +291,44 @@ class AuthTest extends TestCase
 
         $this->assertException('provider', 404, 'NotFoundHttpException');
     }
+
+    public function testProviderRedirect()
+    {
+        $this->get('/auth/social/facebook');
+
+        $this->assertResponseStatus(302);
+        $this->assertContains('refresh', $this->response->getContent());
+    }
+
+    public function testProviderCallback()
+    {
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $mock->shouldReceive('with->stateless->user')
+            ->once()
+            ->andReturn((object) [
+                'email' => 'foo@bar.baz',
+                'token' => 'foobar'
+            ]);
+
+        $this->get('/auth/social/facebook/callback');
+
+        $this->assertResponseStatus(200);
+    }
+
+    public function testProviderCallbackNoEmail()
+    {
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $mock->shouldReceive('with->stateless->user')
+            ->once()
+            ->andReturn((object) [
+                'email' => null,
+                'token' => 'foobar'
+            ]);
+
+        $this->get('/auth/social/facebook/callback');
+
+        $this->assertException('no email', 422, 'UnprocessableEntityException');
+    }
 }

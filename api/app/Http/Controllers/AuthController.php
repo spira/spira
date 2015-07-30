@@ -162,14 +162,14 @@ class AuthController extends ApiController
         // address will be returned with the response.
         // See the notes in Spira API doc under Social Login for more info.
         if (!$user->email) {
-            // The setup is correct, but the 3rd party service is not configured
-            // or allowed to return email addresses, so we can't process the
-            // data further. Let's throw an exception and exit out.
+            // The app is connected with the service, but the 3rd party service
+            // is not configured or allowed to return email addresses, so we
+            // can't process the data further. Let's throw an exception.
             throw new UnprocessableEntityException('User object has no email');
         }
 
         // @todo add code to save the social login data
-        var_dump($user);
+        // var_dump($user);
 
         // $user->token;
     }
