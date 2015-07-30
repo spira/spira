@@ -19,11 +19,11 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
     + Body
 
             {!!
-             
+
                 $factory->get(\App\Models\AuthToken::class)
                     ->setTransformer(App\Http\Transformers\AuthTokenTransformer::class)
                     ->json()
-            
+
             !!}
 
 ## Refresh Token [/auth/jwt/refresh]
@@ -39,11 +39,11 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
 + Response 200
 
             {!!
-             
+
                 $factory->get(\App\Models\AuthToken::class)
                     ->setTransformer(App\Http\Transformers\AuthTokenTransformer::class)
                     ->json()
-            
+
             !!}
 
 ## Token Login [/auth/jwt/token]
@@ -59,3 +59,13 @@ Sometimes a user receives a token in a link by email that is exchanged with an a
 + Response 200
 
             {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+## Social Login [/auth/social/{provider}]
+A user can login by using a social profile as identification.
+
+Note: when setting up a Google App for oAuth2, Make sure that you Have _Google+
+API_ enabled on the page
+`https://console.developers.google.com/project/{Project ID}/apiui/apis/library`.
+
+### Login with social provider [GET]
++ Response 200
