@@ -8,15 +8,10 @@
 
 namespace Spira\Responder\Paginator;
 
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 
-class RangeRequest extends  AbstractPaginatedRequest
+class RangeRequest implements PaginatedRequestDecoratorInterface
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
     private $parsed = false;
 
     private $offset = null;
@@ -24,6 +19,11 @@ class RangeRequest extends  AbstractPaginatedRequest
     private $limit = null;
 
     private $isGetLast = false;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     public function __construct(Request $request)
     {
@@ -71,14 +71,13 @@ class RangeRequest extends  AbstractPaginatedRequest
             return true;
         }
 
-        $range = $this->headers->get('Range','');
-
+        $range = $this->getRequest()->headers?$this->getRequest()->headers->get('Range',''):'';
         $ranges = explode('-',$range);
-        if (isset($ranges[0]) && $ranges[0]){
+        if (isset($ranges[0]) && $ranges[0] !== ''){
             $this->offset = $ranges[0];
         }
 
-        if (isset($ranges[1]) && $ranges[1]){
+        if (isset($ranges[1]) && $ranges[1] !== ''){
             if (is_null($this->offset)) {
                 $this->isGetLast = true;
                 $this->limit = $ranges[1];
@@ -88,5 +87,13 @@ class RangeRequest extends  AbstractPaginatedRequest
         }
 
         return $this->parsed = true;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 }
