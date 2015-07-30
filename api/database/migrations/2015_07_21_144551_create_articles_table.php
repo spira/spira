@@ -16,6 +16,7 @@ class CreateArticlesTable extends Migration
                 $table->uuid('article_id')->primary();
                 $table->string('title', 255);
                 $table->text('content');
+                $table->text('excerpt')->nullable();
                 $table->string('permalink', 255)->index()->nullable();
                 $table->dateTime('first_published')->nullable();
 
