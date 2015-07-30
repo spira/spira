@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use Illuminate\Support\Str;
 use Spira\Repository\Collection\Collection;
 
 /**
@@ -13,6 +14,7 @@ use Spira\Repository\Collection\Collection;
  */
 class Article extends BaseModel
 {
+    const defaultExcerptWordCount = 30;
     /**
      * The database table used by the model.
      *
@@ -24,7 +26,7 @@ class Article extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'permalink', 'first_published'];
+    protected $fillable = ['article_id', 'title', 'content', 'exerpt', 'permalink', 'first_published'];
 
     protected $hidden = ['permalinks'];
 
@@ -44,6 +46,7 @@ class Article extends BaseModel
             'article_id' => 'uuid|createOnly',
             'title' => 'required|string',
             'content' => 'required|string',
+            'exerpt' => 'string',
             'permalink' => $permalinkRule
         ];
     }
@@ -74,6 +77,20 @@ class Article extends BaseModel
         } else {
             $this->attributes['permalink'] = null;
         }
+    }
+
+    /**
+     * If there is no defined exerpt for the text, create it from the content
+     * @param $exerpt
+     * @return string
+     */
+    public function getExcerptAttribute($excerpt)
+    {
+        if ($excerpt) {
+            return $excerpt; //if it is already set, do nothing
+        }
+
+        return Str::words($this->content, self::defaultExcerptWordCount, '');
     }
 
     public function permalinks()
