@@ -2,7 +2,6 @@
 
 namespace App\Extensions\Socialite;
 
-use Laravel\Socialite\SocialiteManager;
 use Laravel\Socialite\SocialiteServiceProvider as ServiceProvider;
 
 class SocialiteServiceProvider extends ServiceProvider

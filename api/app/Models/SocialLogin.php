@@ -14,5 +14,5 @@ class SocialLogin extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['token'];
+    protected $fillable = ['provider', 'token'];
 }
