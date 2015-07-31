@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiResponder extends BaseResponder implements ApiResponderInterface
 {
@@ -153,26 +154,54 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      */
     public function paginatedCollection($items, $offset = null, $totalCount = null, array $parameters = [])
     {
-        $response = $this->getResponse();
-        $response->headers->set('Content-Type', 'application/json');
-        $offset = is_null($offset)?0:$offset;
-        $totalCount = is_null($totalCount)?'*':$totalCount;
         $itemCount = count($items);
-        $rangeHeader = $offset.'-'.($itemCount+$offset-1).'/'.$totalCount;
+        $this->validateRange($itemCount);
+
+        $response = $this->getResponse();
+        $response->headers->set('Accept-Ranges', 'entities');
+        $response->headers->set('Content-Type', 'application/json');
+        $response->setStatusCode(206);
+
+        $rangeHeader = $this->prepareRangeHeader($itemCount, $offset, $totalCount);
         $response->headers->set('Content-Range', $rangeHeader);
+
         $response->setContent($this->encode($this->getTransformer()->transformCollection($items)));
 
+
+
+       return $response;
+    }
+
+    /**
+     * @param $itemCount
+     * @return bool
+     */
+    protected function validateRange($itemCount)
+    {
         if ($this->request->headers && $this->request->headers->has('Range')) {
-            if ($itemCount > 0) {
-                $response->setStatusCode(206);
-            } else {
-                $response->setStatusCode(416, 'Requested Range Not Satisfiable');
+            if ($itemCount <= 0) {
+                throw new HttpException(416,'Requested Range Not Satisfiable');
             }
         } else {
-            $response->setStatusCode(200);
+            throw new HttpException(400,'Bad Request');
         }
+        return true;
+    }
 
-        return $response;
+
+    /**
+     * @param $itemCount
+     * @param $offset
+     * @param $totalCount
+     * @return array
+     */
+    public function prepareRangeHeader($itemCount, $offset, $totalCount)
+    {
+        $offset = is_null($offset) ? 0 : $offset;
+        $totalCount = is_null($totalCount) ? '*' : $totalCount;
+        $rangeHeader = $offset . '-' . ($itemCount + $offset - 1) . '/' . $totalCount;
+
+        return $rangeHeader;
     }
 
 

@@ -63,16 +63,22 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginated()
     {
-        $defaultLimit = \App\Http\Controllers\ApiController::PAGINATOR_DEFAULT_LIMIT;
+        $defaultLimit = 10;
         $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
-        $this->get('/test/entities/pages');
-        $this->assertResponseOk();
+        $this->get('/test/entities/pages',['Range'=>'0-']);
+        $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
 
         $object = json_decode($this->response->getContent());
         $this->assertEquals($defaultLimit, count($object));
+    }
+
+    public function testGetAllPaginatedNoRangeHeader()
+    {
+        $this->get('/test/entities/pages');
+        $this->assertResponseStatus(400);
     }
 
     public function testGetAllPaginatedSimpleRange()

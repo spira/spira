@@ -9,6 +9,7 @@
 namespace Spira\Responder\Paginator;
 
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RangeRequest implements PaginatedRequestDecoratorInterface
 {
@@ -71,17 +72,30 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
             return true;
         }
 
-        $range = $this->getRequest()->headers?$this->getRequest()->headers->get('Range', ''):'';
+        $range = null;
+        if ($this->getRequest()->headers){
+            $range = $this->getRequest()->headers->get('Range');
+        }
+
+        if (is_null($range)){
+            throw new HttpException(400,'Bad Request');
+        }
+
+        //parsing the template \d-\d (ex. 20-39)
         $ranges = explode('-', $range);
+        //if we have part before dash, we can find offset
         if (isset($ranges[0]) && $ranges[0] !== '') {
             $this->offset = $ranges[0];
         }
 
+        //if we have part after dash, we can find limit
         if (isset($ranges[1]) && $ranges[1] !== '') {
             if (is_null($this->offset)) {
+                // if we don't have offset, that means we want to get last-n entities
                 $this->isGetLast = true;
                 $this->limit = $ranges[1];
             } else {
+                //if we have offset we calculate limit
                 $this->limit = $ranges[1] - $ranges[0] + 1;
             }
         }

@@ -63,7 +63,7 @@ class TestRepositoryTest extends TestCase
 
         $result = $this->repository->all(['*'], null, 2);
         $this->assertTrue(is_array($result->toArray()));
-        $this->assertGreaterThanOrEqual(2, $result->count());
+        $this->assertEquals(2, $result->count());
     }
 
     public function testAllWithOffset()
@@ -72,7 +72,7 @@ class TestRepositoryTest extends TestCase
         $count = $this->repository->count();
         $result = $this->repository->all(['*'], 2, null);
         $this->assertTrue(is_array($result->toArray()));
-        $this->assertGreaterThanOrEqual($count-2, $result->count());
+        $this->assertEquals($count-2, $result->count());
     }
 
     public function testSave()

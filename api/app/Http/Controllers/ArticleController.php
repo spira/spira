@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responder\Responder;
+use App\Http\Responder\ArticleResponder;
 use App\Models\Article;
 use App\Repositories\ArticleRepository;
 
@@ -17,9 +17,9 @@ class ArticleController extends ApiController
     /**
      * Assign dependencies.
      * @param ArticleRepository $repository
-     * @param Responder $responder
+     * @param ArticleResponder $responder
      */
-    public function __construct(ArticleRepository $repository, Responder $responder)
+    public function __construct(ArticleRepository $repository, ArticleResponder $responder)
     {
         $this->repository = $repository;
         $this->responder = $responder;
