@@ -22,8 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class ApiController extends Controller
 {
-    const PAGINATOR_DEFAULT_LIMIT = 10;
-    const PAGINATOR_MAX_LIMIT = 50;
+    protected $paginatorDefaultLimit = 10;
+    protected $paginatorMaxLimit = 50;
 
     /**
      * Model Repository.
@@ -50,7 +50,7 @@ abstract class ApiController extends Controller
     public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
     {
         $count = $this->getRepository()->count();
-        $limit = $request->getLimit(static::PAGINATOR_DEFAULT_LIMIT, static::PAGINATOR_MAX_LIMIT);
+        $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
         //eloquent do not allow 0 or negative limit and offset
         if ($limit <= 0) {
