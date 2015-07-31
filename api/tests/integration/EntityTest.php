@@ -102,7 +102,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
         $this->get('/test/entities/pages', ['Range'=>'19-18']);
-        $this->assertResponseStatus(416);
+        $this->assertResponseStatus(400);
     }
 
     public function testPaginationOutOfRange()
