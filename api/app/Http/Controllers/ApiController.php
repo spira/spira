@@ -52,12 +52,7 @@ abstract class ApiController extends Controller
         $count = $this->getRepository()->count();
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        //eloquent do not allow 0 or negative limit and offset
-        if ($limit <= 0) {
-            $collection = new Collection();
-        } else {
-            $collection = $this->getRepository()->all(['*'], $offset, $limit);
-        }
+        $collection = $this->getRepository()->all(['*'], $offset, $limit);
         return $this->responder->paginatedCollection($collection, $offset, $count);
     }
 

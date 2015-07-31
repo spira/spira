@@ -100,6 +100,10 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
             }
         }
 
+        if (!is_null($this->limit) && $this->limit <= 0){
+            throw new HttpException(400, 'Bad Request');
+        }
+
         return $this->parsed = true;
     }
 
