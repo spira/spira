@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use RuntimeException;
-use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
+use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
@@ -147,31 +147,44 @@ class AuthController extends ApiController
     /**
      * Obtain the user information from Provider.
      *
-     * @param  string     $provider
-     * @param  Socialite  $socialite
+     * @param  string          $provider
+     * @param  Socialite       $socialite
+     * @param  UserRepository  $repo
      * @return Response
      */
-    public function handleProviderCallback($provider, Socialite $socialite)
+    public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repo)
     {
         $this->validateProvider($provider);
 
-        $user = $socialite->with($provider)->stateless()->user();
+        $socialUser = $socialite->with($provider)->stateless()->user();
 
         // Verify so we received an email address, if using oAuth credentials
         // with Twitter for instance, that isn't whitelisted, no email
         // address will be returned with the response.
         // See the notes in Spira API doc under Social Login for more info.
-        if (!$user->email) {
+        if (!$socialUser->email) {
             // The app is connected with the service, but the 3rd party service
             // is not configured or allowed to return email addresses, so we
             // can't process the data further. Let's throw an exception.
             throw new UnprocessableEntityException('User object has no email');
         }
 
-        // @todo add code to save the social login data
-        // var_dump($user);
+        try {
+            $user = $repo->findByEmail($socialUser->email);
+        } catch (Exception $e) {
 
-        // $user->token;
+        }
+
+        $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
+        $user->addSocialLogin($socialLogin);
+
+        $token = $this->jwtAuth->fromUser($user);
+        return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
+
+        // @todo add code to save the social login data
+        // var_dump($socialUser);
+
+        // $socialUser->token;
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tymon\JWTAuth\Claims\Expiration;
@@ -25,7 +26,7 @@ class AuthTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -50,7 +51,7 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -64,7 +65,7 @@ class AuthTest extends TestCase
 
     public function testLoginEmptyPassword()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -80,7 +81,7 @@ class AuthTest extends TestCase
 
     public function testLoginUserMissCredentials()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -94,7 +95,7 @@ class AuthTest extends TestCase
 
     public function testFailedTokenEncoding()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -111,7 +112,7 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
@@ -123,7 +124,7 @@ class AuthTest extends TestCase
 
     public function testRefreshPlainHeader()
     {
-        $user = App\Models\User::first();
+        $user = User::first();
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $token = $jwtAuth->fromUser($user);
 
@@ -144,7 +145,7 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $claims = [
             new UserClaim($user),
@@ -173,7 +174,7 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidTokenSignature()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
@@ -204,7 +205,7 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingUser()
     {
-        $user = factory(App\Models\User::class)->make();
+        $user = factory(User::class)->make();
         $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
@@ -215,7 +216,7 @@ class AuthTest extends TestCase
     public function testToken()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -247,7 +248,7 @@ class AuthTest extends TestCase
     public function testTokenInvalid()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -266,7 +267,7 @@ class AuthTest extends TestCase
     public function testMakeLoginToken()
     {
         $repo = $this->app->make('App\Repositories\UserRepository');
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $token = $repo->makeLoginToken($user->user_id);
 
@@ -300,22 +301,6 @@ class AuthTest extends TestCase
         $this->assertContains('refresh', $this->response->getContent());
     }
 
-    public function testProviderCallback()
-    {
-        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
-        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
-        $mock->shouldReceive('with->stateless->user')
-            ->once()
-            ->andReturn((object) [
-                'email' => 'foo@bar.baz',
-                'token' => 'foobar'
-            ]);
-
-        $this->get('/auth/social/facebook/callback');
-
-        $this->assertResponseStatus(200);
-    }
-
     public function testProviderCallbackNoEmail()
     {
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
@@ -330,5 +315,28 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook/callback');
 
         $this->assertException('no email', 422, 'UnprocessableEntityException');
+    }
+
+    public function testProviderCallbackExistingUser()
+    {
+        $user = factory(User::class)->create();
+
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $mock->shouldReceive('with->stateless->user')
+            ->once()
+            ->andReturn((object) [
+                'email' => $user->email,
+                'token' => 'foobar'
+            ]);
+
+        $this->get('/auth/social/facebook/callback');
+
+        $this->assertResponseStatus(200);
+
+        // Assert that the social login was created
+        $user = User::find($user->user_id);
+        $socialLogin = $user->socialLogins->first()->toArray();
+        $this->assertEquals('facebook', $socialLogin['provider']);
     }
 }

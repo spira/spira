@@ -84,6 +84,16 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     * Get the social logins associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function socialLogins()
+    {
+        return $this->hasMany(SocialLogin::class);
+    }
+
+    /**
      * Set the user's credentials.
      *
      * @param  UserCredential  $credential
@@ -92,6 +102,19 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public function setCredential(UserCredential $credential)
     {
         $this->userCredential()->save($credential);
+
+        return $this;
+    }
+
+    /**
+     * Add a social login to the user.
+     *
+     * @param  SocialLogin  $socialLogin
+     * @return $this
+     */
+    public function addSocialLogin(SocialLogin $socialLogin)
+    {
+        $this->socialLogins()->save($socialLogin);
 
         return $this;
     }

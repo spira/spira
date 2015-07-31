@@ -19,7 +19,7 @@ class CreateSocialLoginsTable extends Migration
         Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
             $table->uuid('social_login_id');
 
-            $table->uuid('user_id')->unique();
+            $table->uuid('user_id');
             $table->string('provider');
             $table->text('token');
             $table->timestamps();
