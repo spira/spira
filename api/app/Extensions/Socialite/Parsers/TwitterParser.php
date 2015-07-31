@@ -43,4 +43,14 @@ class TwitterParser extends AbstractParser
     {
         return last(explode(' ', $this->user->name));
     }
+
+    /**
+     * Get the user's avatar.
+     *
+     * @return string
+     */
+    protected function getAvatarImgUrlAttribute()
+    {
+        return $this->user->avatar;
+    }
 }

@@ -43,4 +43,14 @@ class FacebookParser extends AbstractParser
     {
         return $this->user->user['last_name'];
     }
+
+    /**
+     * Get the user's avatar.
+     *
+     * @return string
+     */
+    protected function getAvatarImgUrlAttribute()
+    {
+        return $this->user->avatar;
+    }
 }

@@ -43,4 +43,14 @@ class GoogleParser extends AbstractParser
     {
         return $this->user->user['name']['familyName'];
     }
+
+    /**
+     * Get the user's avatar.
+     *
+     * @return string
+     */
+    protected function getAvatarImgUrlAttribute()
+    {
+        return $this->user->avatar;
+    }
 }
