@@ -61,7 +61,7 @@ Sometimes a user receives a token in a link by email that is exchanged with an a
             {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 
-## Social Login [/auth/social/{provider}]
+## Social Login [/auth/social/{provider}?returnUrl={returnUrl}]
 A user can login by using a social profile as identification.
 
 ####  Provider Specific Notes
@@ -79,5 +79,17 @@ A user can login by using a social profile as identification.
   [here](https://dev.twitter.com/rest/reference/get/account/verify_credentials)
   to find the current form to request an app to be whitelisted.
 
-### Login with social provider [GET]
-+ Response 200
+### Auth with social provider [GET]
+
++ Parameters
+    + provider (required, string, `facebook`) ... The social provider to auth against.
+    + returnUrl (optional, url, `http%3A%2F%2Fapi.spira.io`) ... The url to return to after a successful auth process, if not provided the root url will be returned.
+
++ Response 302
+    + Headers
+
+        Location: https://www.facebook.com/v2.4/dialog/oauth?client_id=457398928507539&redirect_uri=http%3A%2F%2Fapi.spira.io%2Fauth%2Fsocial%2Ffacebook%2Fcallback&scope=email&response_type=code&state=PdUvOcZpQ9FdxIlyoGXEdJ9zFPh5AqK0NUDiQa5F
+
+## Social Login Callback [/auth/social/{provider}/callback]
+
+### Callback from social provider [GET]
