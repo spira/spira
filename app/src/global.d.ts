@@ -30,7 +30,7 @@ declare module global {
         password: string;
     }
 
-    export interface IUser extends NgJwtAuth.IUser {
+    export interface IUserData extends NgJwtAuth.IUser {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
@@ -39,6 +39,10 @@ declare module global {
 
     export interface IRootScope extends ng.IRootScopeService {
         socialLogin(type:string, redirectState?:string, redirectStateParams?:Object);
+    }
+
+    export interface JwtAuthClaims extends NgJwtAuth.IJwtClaims{
+        _user: IUserData;
     }
 
 

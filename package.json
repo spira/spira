@@ -4,8 +4,7 @@
   "description": "Lumen and AngularJS RESTful Webapp seed",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test",
-    "postinstall": "./node_modules/.bin/tsd reinstall --config app/tsd.json"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
