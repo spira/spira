@@ -1,30 +1,34 @@
-<md-list>
+<md-toolbar class="md-whiteframe-z2">
 
-    Guest Nav
+    <md-tabs md-selected="selectedIndex">
+        <md-tab ng-repeat="state in NavigationController.navigableStates" ui-sref="{{state.name}}">
+            <md-tab-label>
+                <md-icon>{{state.data.icon}}</md-icon>
+                <span>{{state.data.title}}</span>
+            </md-tab-label>
+        </md-tab>
 
-    <md-list-item ng-repeat="state in NavigationController.navigableStates" >
-        <md-button ng-click="AppController.toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
-            <md-icon>{{state.data.icon}}</md-icon>
-            {{state.data.title}}
-        </md-button>
-    </md-list-item>
+        <md-tab ng-if="!AppController.authService.loggedIn" md-on-select="AppController.toggleRegistrationSidenav()">
+            <md-tab-label>
+                <md-icon>assignment_ind</md-icon>
+                <span>Register</span>
+            </md-tab-label>
+        </md-tab>
 
-    <md-list-item ng-if="AppController.authService.loggedIn">
-        Logged in as <a ui-sref="app.user.profile"><strong>{{AppController.authService.user.fullName()}}</strong></a>
-    </md-list-item>
+        <md-tab ng-if="!AppController.authService.loggedIn" md-on-select="NavigationController.promptLogin()">
+            <md-tab-label>
+                <md-icon>assignment_ind</md-icon>
+                <span>Login</span>
+            </md-tab-label>
+        </md-tab>
 
-    <md-list-item>
-        <md-button ng-if="!AppController.authService.loggedIn" ng-click="AppController.toggleRegistrationSidenav()">
-            <md-icon>assignment_ind</md-icon> Register
-        </md-button>
+        <md-tab ng-if="AppController.authService.loggedIn" md-on-select="NavigationController.logout()">
+            <md-tab-label>
+                <md-icon>exit_to_app</md-icon>
+                <span>Logout</span>
+            </md-tab-label>
+        </md-tab>
 
-        <md-button ng-if="!AppController.authService.loggedIn" ng-click="NavigationController.promptLogin()">
-            <md-icon>assignment_ind</md-icon> Login
-        </md-button>
+    </md-tabs>
 
-        <md-button ng-if="AppController.authService.loggedIn" ng-click="NavigationController.logout()">
-            <md-icon>exit_to_app</md-icon> Logout
-        </md-button>
-    </md-list-item>
-
-</md-list>
+</md-toolbar>
