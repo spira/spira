@@ -149,7 +149,7 @@ class EntityTest extends TestCase
 
     protected function parseRange($header)
     {
-        $splitTotal = explode('/', $header);
+        $splitTotal = explode('/', str_replace('entities ','',$header));
         $total = null;
         if (isset($splitTotal[1]) && $splitTotal[1] !== '') {
             $total = $splitTotal[1];
