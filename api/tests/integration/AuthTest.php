@@ -339,4 +339,28 @@ class AuthTest extends TestCase
         $socialLogin = $user->socialLogins->first()->toArray();
         $this->assertEquals('facebook', $socialLogin['provider']);
     }
+
+    public function testProviderCallbackNewUser()
+    {
+        $user = factory(User::class)->make();
+
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $mock->shouldReceive('with->stateless->user')
+            ->once()
+            ->andReturn((object) [
+                'email' => $user->email,
+                'token' => 'foobar'
+            ]);
+
+        $this->get('/auth/social/facebook/callback');
+
+        $this->assertResponseStatus(200);
+
+        // Assert that the social login was created
+        $array = json_decode($this->response->getContent(), true);
+        $user = User::find($array['decodedTokenBody']['sub']);
+        $socialLogin = $user->socialLogins->first()->toArray();
+        $this->assertEquals('facebook', $socialLogin['provider']);
+    }
 }

@@ -16,6 +16,7 @@ use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
 use Spira\Responder\Contract\ApiResponderInterface;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends ApiController
 {
@@ -149,10 +150,10 @@ class AuthController extends ApiController
      *
      * @param  string          $provider
      * @param  Socialite       $socialite
-     * @param  UserRepository  $repo
+     * @param  UserRepository  $repository
      * @return Response
      */
-    public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repo)
+    public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repository)
     {
         $this->validateProvider($provider);
 
@@ -170,9 +171,11 @@ class AuthController extends ApiController
         }
 
         try {
-            $user = $repo->findByEmail($socialUser->email);
-        } catch (Exception $e) {
-
+            $user = $repository->findByEmail($socialUser->email);
+        } catch (ModelNotFoundException $e) {
+            $user = $repository->getNewModel();
+            $user->fill(['email' => $socialUser->email, 'user_type' => 'guest']);
+            $user = $repository->save($user);
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
@@ -180,11 +183,6 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
         return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
-
-        // @todo add code to save the social login data
-        // var_dump($socialUser);
-
-        // $socialUser->token;
     }
 
     /**
