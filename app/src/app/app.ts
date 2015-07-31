@@ -72,9 +72,9 @@ module app {
 
     export class AppController {
 
-        static $inject = ['$mdSidenav'];
+        static $inject = ['$mdSidenav', 'ngJwtAuthService'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService) {
         }
 
         public toggleNavigationSidenav() {
@@ -98,8 +98,6 @@ module app {
         'config.vendorModules',
         'config.commonModules',
         'config.stateManager',
-        'app.partials.navigation',
-        'app.partials.registration',
     ])
         .config(AppConfig)
         .run(AppInit)

@@ -1,4 +1,7 @@
 <md-list>
+
+    Guest Nav
+
     <md-list-item ng-repeat="state in NavigationController.navigableStates" >
         <md-button ng-click="AppController.toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
             <md-icon>{{state.data.icon}}</md-icon>
@@ -6,20 +9,20 @@
         </md-button>
     </md-list-item>
 
-    <md-list-item>
-        Logged in as <strong>{{NavigationController.loggedInUser.fullName()}}</strong>
+    <md-list-item ng-if="AppController.authService.loggedIn">
+        Logged in as <a ui-sref="app.user.profile"><strong>{{AppController.authService.user.fullName()}}</strong></a>
     </md-list-item>
 
     <md-list-item>
-        <md-button ng-if="!NavigationController.ngJwtAuthService.loggedIn" ng-click="AppController.toggleRegistrationSidenav()">
+        <md-button ng-if="!AppController.authService.loggedIn" ng-click="AppController.toggleRegistrationSidenav()">
             <md-icon>assignment_ind</md-icon> Register
         </md-button>
 
-        <md-button ng-if="!NavigationController.ngJwtAuthService.loggedIn" ng-click="NavigationController.promptLogin()">
+        <md-button ng-if="!AppController.authService.loggedIn" ng-click="NavigationController.promptLogin()">
             <md-icon>assignment_ind</md-icon> Login
         </md-button>
 
-        <md-button ng-if="NavigationController.ngJwtAuthService.loggedIn" ng-click="NavigationController.logout()">
+        <md-button ng-if="AppController.authService.loggedIn" ng-click="NavigationController.logout()">
             <md-icon>exit_to_app</md-icon> Logout
         </md-button>
     </md-list-item>

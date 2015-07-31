@@ -1,8 +1,8 @@
-module app.admin.partials.navigation{
+module app.admin.navigation{
 
-    export const namespace = 'app.admin.partials.navigation';
+    export const namespace = 'app.admin.navigation';
 
-    class AdminNavigationController extends app.partials.navigation.NavigationController {
+    class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
 
         static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
         constructor(

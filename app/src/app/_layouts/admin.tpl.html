@@ -15,16 +15,8 @@
         <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
             <md-icon>menu</md-icon>
         </md-button>
-        <h1>Spira</h1>
+        <h1>Admin Dashboard</h1>
     </md-toolbar>
 
     <md-content flex id="content" ui-view="main"></md-content>
 </div>
-
-<md-sidenav
-        id="userRegistration"
-        class="md-sidenav-right md-whiteframe-z2"
-        ng-if="!AppController.authService.loggedIn"
-        md-component-id="registration"
-        ui-view="registration">
-</md-sidenav>

@@ -1,8 +1,8 @@
-module app.partials.navigation {
+module app.abstract.navigation {
 
-    export const namespace = 'app.partials.navigation';
+    export const namespace = 'app.abstract.navigation';
 
-    export class NavigationController {
+    export class AbstractNavigationController {
 
         public navigableStates:global.IState[] = [];
 
@@ -35,11 +35,11 @@ module app.partials.navigation {
             }, new this.$window.Toposort()).sort();
 
             return _.chain(sortMap)
-                    .map(function (stateName) {
-                        return _.find(states, {name: stateName}); //find the state by name
-                    })
-                    .reverse() //reverse the array
-                    .value()
+                .map(function (stateName) {
+                    return _.find(states, {name: stateName}); //find the state by name
+                })
+                .reverse() //reverse the array
+                .value()
                 ;
 
         }
@@ -69,8 +69,5 @@ module app.partials.navigation {
         }
 
     }
-
-    angular.module(namespace, [])
-        .controller(namespace + '.controller', NavigationController);
 
 }
