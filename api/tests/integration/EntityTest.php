@@ -65,7 +65,7 @@ class EntityTest extends TestCase
     {
         $defaultLimit = 10;
         $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
-        $this->get('/test/entities/pages',['Range'=>'0-']);
+        $this->get('/test/entities/pages', ['Range'=>'0-']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();

@@ -73,12 +73,12 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
         }
 
         $range = null;
-        if ($this->getRequest()->headers){
+        if ($this->getRequest()->headers) {
             $range = $this->getRequest()->headers->get('Range');
         }
 
-        if (is_null($range)){
-            throw new HttpException(400,'Bad Request');
+        if (is_null($range)) {
+            throw new HttpException(400, 'Bad Request');
         }
 
         //parsing the template \d-\d (ex. 20-39)
