@@ -65,7 +65,7 @@ class EntityTest extends TestCase
     {
         $defaultLimit = 10;
         $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
-        $this->get('/test/entities/pages', ['Range'=>'0-']);
+        $this->get('/test/entities/pages', ['Range'=>'entities=0-']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -81,11 +81,17 @@ class EntityTest extends TestCase
         $this->assertResponseStatus(400);
     }
 
+    public function testGetAllPaginatedInvalidRangeHeader()
+    {
+        $this->get('/test/entities/pages', ['Range'=>'0-']);
+        $this->assertResponseStatus(400);
+    }
+
     public function testGetAllPaginatedSimpleRange()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages', ['Range'=>'0-19']);
+        $this->get('/test/entities/pages', ['Range'=>'entities=0-19']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -101,7 +107,7 @@ class EntityTest extends TestCase
     public function testPaginationBadRanges()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
-        $this->get('/test/entities/pages', ['Range'=>'19-18']);
+        $this->get('/test/entities/pages', ['Range'=>'entities=19-18']);
         $this->assertResponseStatus(400);
     }
 
@@ -109,7 +115,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages', ['Range'=>$totalCount.'-']);
+        $this->get('/test/entities/pages', ['Range'=>'entities='.$totalCount.'-']);
         $this->assertResponseStatus(416);
     }
 
@@ -117,7 +123,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages', ['Range'=>($totalCount-2).'-'.($totalCount+20)]);
+        $this->get('/test/entities/pages', ['Range'=>'entities='.($totalCount-2).'-'.($totalCount+20)]);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -134,7 +140,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = $this->repository->count();
-        $this->get('/test/entities/pages', ['Range'=>'-5']);
+        $this->get('/test/entities/pages', ['Range'=>'entities=-5']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();

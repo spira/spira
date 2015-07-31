@@ -64,7 +64,7 @@ class ArticleTest extends TestCase
         $entity->excerpt = null;
         $this->addPermalinksToArticles($entities);
         $this->repository->saveMany($entities);
-        $this->get('/articles', ['Range'=>'0-19']);
+        $this->get('/articles', ['Range'=>'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
