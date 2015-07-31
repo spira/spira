@@ -35,22 +35,25 @@ Spira has a yeoman generator at https://github.com/spira/generator-spira which i
 
 1. Install [npm](https://www.npmjs.com/).
 2. Ensure that you have added an authorise token from your github account. Part way through the composer install section you may get rate limited by github. See instructions [here](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
-5. Install yeoman:
-```
-$ npm install -g yo
-```
-6. Install spira's yeoman generator:
-```
-$ npm install -g generator-spira
-```
-7. Navigate to a directory where you want the project to be installed and run the following command:
-```
-$ yo spira
-```
-9. Follow the on screen instructions and start the generator by pressing enter. Note you may have to enter your sudo password a few times during install:
-    * To edit /etc/exports for NAT
-    * To edit /etc/hosts for host resolving
-    
+3. Install yeoman:
+  
+  ```
+  $ npm install -g yo
+  ```
+4. Install spira's yeoman generator:
+ 
+  ```
+  $ npm install -g generator-spira
+  ```
+5. Navigate to a directory where you want the project to be installed and run the following command:
+ 
+  ```
+  $ yo spira
+  ```
+6. Follow the on screen instructions and start the generator by pressing enter. Note you may have to enter your sudo password a few times during install:
+  * To edit /etc/exports for NAT
+  * To edit /etc/hosts for host resolving
+
 ## Adding Type Definitions
 
 When adding type definitions the build process may be interrupted due to the Github API rate-limit. In the case of this happening you will need to create another Github token and allow the TSD library to access it. For more information on how to do this please see the [TSD documentation](https://github.com/DefinitelyTyped/tsd). 
