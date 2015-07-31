@@ -282,11 +282,15 @@ class AuthTest extends TestCase
     public function testEnvironmentForSocial()
     {
         // Make sure we have the hosts env variable for the redirect url generation
-        $host = $this->app['config']['hosts.api'];
+        $hostApi = $this->app['config']['hosts.api'];
+        $hostApp = $this->app['config']['hosts.app'];
 
-        $this->assertNotNull($host);
-        $this->assertStringStartsWith('http', $host);
-        $this->assertStringEndsNotWith('/', $host);
+        $this->assertNotNull($hostApi);
+        $this->assertStringStartsWith('http', $hostApi);
+        $this->assertStringEndsNotWith('/', $hostApi);
+        $this->assertNotNull($hostApp);
+        $this->assertStringStartsWith('http', $hostApp);
+        $this->assertStringEndsNotWith('/', $hostApp);
     }
 
     public function testInvalidProvider()
@@ -310,10 +314,25 @@ class AuthTest extends TestCase
 
         $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
 
-        // Parse the temp token from the response and get the cached value
-        $regex = "/oauth_token\=([a-zA-Z0-9_]*)\"/";
-        preg_match_all($regex, $this->response->getContent(), $matches);
-        $key = 'oauth_return_url_'.$matches[1][0];
+        // Parse the oauth token from the response and get the cached value
+        $segments = parse_url($this->response->headers->get('location'));
+        parse_str($segments['query'], $array);
+        $key = 'oauth_return_url_'.$array['oauth_token'];
+        $url = Cache::get($key);
+
+        $this->assertEquals($url, $returnUrl);
+    }
+
+    public function testProviderRedirectReturnUrlOAuthTwo()
+    {
+        $returnUrl = 'http://www.foo.bar/';
+
+        $this->get('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
+
+        // Parse the oauth token from the response and get the cached value
+        $segments = parse_url($this->response->headers->get('location'));
+        parse_str($segments['query'], $array);
+        $key = 'oauth_return_url_'.$array['state'];
         $url = Cache::get($key);
 
         $this->assertEquals($url, $returnUrl);

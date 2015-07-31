@@ -6,4 +6,5 @@ use Laravel\Socialite\Two\FacebookProvider as FacebookProviderBase;
 
 class FacebookProvider extends FacebookProviderBase
 {
+    use ProviderTrait;
 }
