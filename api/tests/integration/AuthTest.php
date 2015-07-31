@@ -329,6 +329,7 @@ class AuthTest extends TestCase
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
+        $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);
@@ -354,6 +355,7 @@ class AuthTest extends TestCase
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
+        $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);

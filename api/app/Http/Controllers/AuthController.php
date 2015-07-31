@@ -15,6 +15,7 @@ use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
 use Spira\Responder\Contract\ApiResponderInterface;
+use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -170,11 +171,13 @@ class AuthController extends ApiController
             throw new UnprocessableEntityException('User object has no email');
         }
 
+        $socialUser = ParserFactory::parse($socialUser, $provider);
+
         try {
             $user = $repository->findByEmail($socialUser->email);
         } catch (ModelNotFoundException $e) {
             $user = $repository->getNewModel();
-            $user->fill(['email' => $socialUser->email, 'user_type' => 'guest']);
+            $user->fill(array_merge($socialUser->toArray(), ['user_type' => 'guest']));
             $user = $repository->save($user);
         }
 
