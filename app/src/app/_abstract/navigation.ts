@@ -12,7 +12,7 @@ module app.abstract.navigation {
         constructor(protected stateHelperService:common.providers.StateHelperService,
                     private $window:global.IWindowService,
                     protected ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    protected $state:ng.ui.IStateService) {
+                    public $state:ng.ui.IStateService) {
 
             this.navigableStates = this.getNavigationStates();
             this.loggedInUser = <common.models.User>(<any>ngJwtAuthService).user;

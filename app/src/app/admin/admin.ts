@@ -40,6 +40,7 @@ module app.admin {
     angular.module('app.admin', [
         'app.admin.dashboard',
         'app.admin.articles',
+        'app.admin.media',
         'app.admin.users',
         'app.admin.navigation',
     ])

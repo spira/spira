@@ -72,15 +72,23 @@ module app {
 
     export class AppController {
 
-        static $inject = ['$mdSidenav', 'ngJwtAuthService'];
+        static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
         }
 
+
+        /**
+         * Toggle the admin side navigation
+         */
         public toggleNavigationSidenav() {
             this.$mdSidenav('navigation').toggle();
         }
 
+        /**
+         * Toggle the registration sidenav
+         * @param open
+         */
         public toggleRegistrationSidenav(open:boolean) {
             if (_.isUndefined(open)) {
                 this.$mdSidenav('registration').toggle();
@@ -89,6 +97,15 @@ module app {
 
             open ? this.$mdSidenav('registration').open() : this.$mdSidenav('registration').close();
 
+        }
+
+        /**
+         * Redirect the user to their profile
+         * @param $event
+         * @returns {angular.IPromise<any>|IPromise<any>}
+         */
+        public goToUserProfile($event:ng.IAngularEvent){
+            return this.$state.go('app.user.profile', $event);
         }
 
     }

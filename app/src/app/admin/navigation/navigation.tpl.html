@@ -1,24 +1,23 @@
+<md-toolbar class="md-theme-indigo">
+    <h1 class="md-toolbar-tools">CMS</h1>
+</md-toolbar>
+
 <md-list>
-    <md-list-item ng-repeat="state in AdminNavigationController.navigableStates" >
-        <md-button ng-click="AppController.toggleNavigationSidenav()" ui-sref="{{state.name}}" ui-sref-active="selected">
-            <md-icon>{{state.data.icon}}</md-icon>
-            {{state.data.title}}
-        </md-button>
+
+    <md-list-item ng-click="AppController.goToUserProfile($event)">
+        <img alt="{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}" ng-src="{{ AdminNavigationController.ngJwtAuthService.user.avatar }}" class="md-avatar" />
+        <p>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
     </md-list-item>
 
-    <md-list-item>
-        <pre>{{AdminNavigationController.ngJwtAuthService.user|json}}</pre>
+    <md-list-item ng-repeat="state in AdminNavigationController.navigableStates" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
+        <md-icon>{{state.data.icon}}</md-icon>
+        <p>{{state.data.title}}</p>
+        <md-divider ng-if="!$last"></md-divider>
     </md-list-item>
 
-    <md-list-item>
-
-        <md-button ng-if="!AdminNavigationController.ngJwtAuthService.loggedIn" ng-click="AdminNavigationController.promptLogin()">
-            <md-icon>assignment_ind</md-icon> Login
-        </md-button>
-
-        <md-button ng-if="AdminNavigationController.ngJwtAuthService.loggedIn" ng-click="AdminNavigationController.logout()">
-            <md-icon>exit_to_app</md-icon> Logout
-        </md-button>
+    <md-list-item ng-click="AdminNavigationController.logout()">
+        <md-icon>exit_to_app</md-icon>
+        <p>Logout</p>
     </md-list-item>
 
 </md-list>
