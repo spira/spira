@@ -72,10 +72,7 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
             return true;
         }
 
-        $range = null;
-        if ($this->getRequest()->headers) {
-            $range = $this->getRequest()->headers->get('Range');
-        }
+        $range = $this->getRangeHeader();
 
         if (is_null($range)) {
             throw new HttpException(400, 'Bad Request');
@@ -113,5 +110,28 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function getRangeHeader()
+    {
+        $range = null;
+        if ($this->getRequest()->headers) {
+            $range = $this->getRequest()->headers->get('Range');
+
+            if (strpos($range, 'entities=') !== 0) {
+                $range = null;
+
+                return $range;
+            } else {
+                $range = str_replace('entities=', '', $range);
+
+                return $range;
+            }
+        }
+
+        return $range;
     }
 }
