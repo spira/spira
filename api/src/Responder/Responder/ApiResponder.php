@@ -199,7 +199,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         $offset = is_null($offset) ? 0 : $offset;
         $totalCount = is_null($totalCount) ? '*' : $totalCount;
-        $rangeHeader = $offset . '-' . ($itemCount + $offset - 1) . '/' . $totalCount;
+        $rangeHeader = 'entities '.$offset . '-' . ($itemCount + $offset - 1) . '/' . $totalCount;
 
         return $rangeHeader;
     }

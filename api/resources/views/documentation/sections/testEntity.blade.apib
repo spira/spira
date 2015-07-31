@@ -13,7 +13,50 @@ The properties of the test entities cover the different column types. These are 
     + Body
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
+            
+## Test Entities paginated [/test/entities/pages]
 
+### Retrieve entities with default limit [GET]
++ Request
+    + Headers
+            Range: 0-
+            
+
++ Response 200 (application/json)
+    + Headers
+            Accept-Ranges: entities
+            Content-Range: entities 0-9/200
+    + Body
+
+            {!! $factory->get(\App\Models\TestEntity::class)->count(10)->json() !!}
+
+### Retrieve first 2 entities [GET]
++ Request
+    + Headers
+            Range: 0-2
+            
+
++ Response 200 (application/json)
+    + Headers
+            Accept-Ranges: entities
+            Content-Range: entities 0-2/200
+    + Body
+
+            {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
+            
+### Retrieve last 2 entities [GET]
++ Request
+    + Headers
+            Range: -2
+            
+
++ Response 200 (application/json)
+    + Headers
+            Accept-Ranges: entities
+            Content-Range: entities 197-199/200
+    + Body
+
+            {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
 
 ## Test Entity [/test/entities/{entityId}]
 
