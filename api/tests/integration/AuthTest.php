@@ -304,6 +304,21 @@ class AuthTest extends TestCase
         $this->assertContains('refresh', $this->response->getContent());
     }
 
+    public function testProviderRedirectReturnUrlOAuthOne()
+    {
+        $returnUrl = 'http://www.foo.bar/';
+
+        $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
+
+        // Parse the temp token from the response and get the cached value
+        $regex = "/oauth_token\=([a-zA-Z0-9_]*)\"/";
+        preg_match_all($regex, $this->response->getContent(), $matches);
+        $key = 'oauth_return_url_'.$matches[1][0];
+        $url = Cache::get($key);
+
+        $this->assertEquals($url, $returnUrl);
+    }
+
     public function testProviderCallbackNoEmail()
     {
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
@@ -329,6 +344,7 @@ class AuthTest extends TestCase
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
+        $socialUser->avatar = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->stateless->user')
             ->once()
@@ -355,6 +371,7 @@ class AuthTest extends TestCase
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
+        $socialUser->avatar = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->stateless->user')
             ->once()

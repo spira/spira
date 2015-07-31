@@ -3,10 +3,12 @@
 namespace App\Extensions\Socialite;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use League\OAuth1\Client\Server\Server;
 use Laravel\Socialite\One\AbstractProvider;
 use Illuminate\Cache\CacheManager as Cache;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use League\OAuth1\Client\Credentials\TemporaryCredentials;
 
 abstract class AbstractOneProvider extends AbstractProvider
 {
@@ -57,7 +59,38 @@ abstract class AbstractOneProvider extends AbstractProvider
             $this->cache->put($key, $temp, 30);
         }
 
+        $this->storeReturnUrl($temp);
+
         return new RedirectResponse($this->server->getAuthorizationUrl($temp));
+    }
+
+    /**
+     * Store a return url in the cache if provided.
+     *
+     * @param  TemporaryCredentials  $temp
+     * @return void
+     */
+    protected function storeReturnUrl(TemporaryCredentials $temp)
+    {
+        if ($url = $this->request->get('return_url')) {
+            $key = 'oauth_return_url_'.$temp->getIdentifier();
+            $this->cache->put($key, $url, 30);
+        }
+    }
+
+    /**
+     * Get the return url for the request.
+     *
+     * @return string
+     */
+    public function returnUrl()
+    {
+        $key = 'oauth_return_url_'.$this->request->get('oauth_token');
+
+        // If we have no return url stored, redirect back to root page
+        $url = $this->cache->get($key, Config::get('hosts.app'));
+
+        return $url;
     }
 
     /**
