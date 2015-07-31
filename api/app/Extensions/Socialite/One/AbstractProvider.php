@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Extensions\Socialite;
+namespace App\Extensions\Socialite\One;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use League\OAuth1\Client\Server\Server;
-use Laravel\Socialite\One\AbstractProvider;
 use Illuminate\Cache\CacheManager as Cache;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
+use Laravel\Socialite\One\AbstractProvider as AbstractProviderBase;
 
-abstract class AbstractOneProvider extends AbstractProvider
+abstract class AbstractProvider extends AbstractProviderBase
 {
     /**
      * Indicates if the session state should be utilized.
