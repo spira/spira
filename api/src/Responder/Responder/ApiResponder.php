@@ -169,7 +169,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
 
 
 
-       return $response;
+        return $response;
     }
 
     /**
@@ -180,10 +180,10 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
     {
         if ($this->request->headers && $this->request->headers->has('Range')) {
             if ($itemCount <= 0) {
-                throw new HttpException(416,'Requested Range Not Satisfiable');
+                throw new HttpException(416, 'Requested Range Not Satisfiable');
             }
         } else {
-            throw new HttpException(400,'Bad Request');
+            throw new HttpException(400, 'Bad Request');
         }
         return true;
     }

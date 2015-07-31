@@ -71,7 +71,7 @@ class ArticleTest extends TestCase
         $this->assertJsonMultipleEntries();
         $object = json_decode($this->response->getContent());
         $this->assertNotNull($object[0]->excerpt);
-        $this->assertObjectNotHasAttribute('content',$object[0]);
+        $this->assertObjectNotHasAttribute('content', $object[0]);
     }
 
     public function testGetOne()
