@@ -6,7 +6,7 @@ module common.services.article {
         title:string;
         body:string;
         permalink:string;
-        _author?:global.IUser;
+        _author?:common.models.User;
     }
 
     export class ArticleService {

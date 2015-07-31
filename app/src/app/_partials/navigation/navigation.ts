@@ -7,6 +7,7 @@ module app.partials.navigation {
         public navigableStates:global.IState[] = [];
 
         static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
+        public loggedInUser:common.models.User;
 
         constructor(protected stateHelperService:common.providers.StateHelperService,
                     private $window:global.IWindowService,
@@ -14,6 +15,7 @@ module app.partials.navigation {
                     protected $state:ng.ui.IStateService) {
 
             this.navigableStates = this.getNavigationStates();
+            this.loggedInUser = <common.models.User>(<any>ngJwtAuthService).user;
         }
 
         protected getNavigationStates():global.IState[] {

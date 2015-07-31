@@ -69,31 +69,51 @@ module config.stateManager {
 
                     event.preventDefault();
 
-                    this.ngJwtAuthService.requireCredentialsAndAuthenticate()
-                        .then(() => {
-                            this.$state.go(toState.name, toParams);
-                        }, (err) => {
-
-                            let returnTo = fromState.name ? fromState.name : 'app.guest.home';
-
-                            let attemptedStateName = this.$state.href(toState, toParams);
-
-                            this.$state.go(returnTo).then(() => {
-
+                    //check to see if a password reset token is provided and use that if so
+                    if(!_.isEmpty(toParams['passwordResetToken'])) {
+                        this.ngJwtAuthService.exchangeToken(toParams['passwordResetToken'])
+                            .then(() => {
+                                this.$state.go(toState.name, toParams);
+                            }, (err) => {
                                 this.$mdToast.show(
                                     this.$mdToast.simple()
                                         .hideDelay(2000)
                                         .position('top right')
-                                        .content("You are not permitted to access " + attemptedStateName)
+                                        .content("Sorry, you have already tried to reset your password using this link")
                                 );
-
-                            }); //go back home
-                        })
-
+                                this.showLoginAndRedirectTo(toState, toParams, fromState);
+                            });
+                    }
+                    else {
+                        this.showLoginAndRedirectTo(toState, toParams, fromState);
+                    }
                 }
 
             })
 
+        };
+
+        private showLoginAndRedirectTo = (toState:global.IState, toParams, fromState:global.IState) => {
+            this.ngJwtAuthService.requireCredentialsAndAuthenticate()
+                .then(() => {
+                    this.$state.go(toState.name, toParams);
+                }, (err) => {
+
+                    let returnTo = fromState.name ? fromState.name : 'app.guest.home';
+
+                    let attemptedStateName = this.$state.href(toState, toParams);
+
+                    this.$state.go(returnTo).then(() => {
+
+                        this.$mdToast.show(
+                            this.$mdToast.simple()
+                                .hideDelay(2000)
+                                .position('top right')
+                                .content("You are not permitted to access " + attemptedStateName)
+                        );
+
+                    }); //go back home
+                })
         };
 
         private userMustBeLoggedIn = (state:global.IState)  => {
