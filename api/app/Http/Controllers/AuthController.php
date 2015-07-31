@@ -95,11 +95,11 @@ class AuthController extends ApiController
      * Login with a single use token.
      *
      * @param Request                          $request
-     * @param \App\Repositories\UserRepository $user
+     * @param \App\Repositories\UserRepository $userRepository
      *
      * @return Response
      */
-    public function token(Request $request, UserRepository $user)
+    public function token(Request $request, UserRepository $userRepository)
     {
         $header = $request->headers->get('authorization');
         if (!starts_with(strtolower($header), 'token')) {
@@ -109,7 +109,7 @@ class AuthController extends ApiController
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
-        if (!$user = $user->findByLoginToken($token)) {
+        if (!$user = $userRepository->findByLoginToken($token)) {
             throw new UnauthorizedException('Token invalid.');
         }
 
