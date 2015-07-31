@@ -324,14 +324,14 @@ class AuthTest extends TestCase
     {
         $user = factory(User::class)->create();
 
+        $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $socialUser->email = $user->email;
+        $socialUser->token = 'foobar';
         $mock->shouldReceive('with->stateless->user')
             ->once()
-            ->andReturn((object) [
-                'email' => $user->email,
-                'token' => 'foobar'
-            ]);
+            ->andReturn($socialUser);
 
         $this->get('/auth/social/facebook/callback');
 
@@ -349,14 +349,14 @@ class AuthTest extends TestCase
     {
         $user = factory(User::class)->make();
 
+        $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $socialUser->email = $user->email;
+        $socialUser->token = 'foobar';
         $mock->shouldReceive('with->stateless->user')
             ->once()
-            ->andReturn((object) [
-                'email' => $user->email,
-                'token' => 'foobar'
-            ]);
+            ->andReturn($socialUser);
 
         $this->get('/auth/social/facebook/callback');
 
