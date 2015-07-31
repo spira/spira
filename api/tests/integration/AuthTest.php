@@ -41,6 +41,7 @@ class AuthTest extends TestCase
         $this->assertArrayHasKey('token', $array);
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
 
         // Test that decoding the token, will match the decoded body
         $token = new Token($array['token']);
@@ -113,20 +114,21 @@ class AuthTest extends TestCase
     public function testRefresh()
     {
         $user = factory(User::class)->create();
-        $token = $this->tokenFromUser($user);
+        $token = $this->tokenFromUser($user, ['method' => 'password']);
 
         $this->callRefreshToken($token);
 
         $object = json_decode($this->response->getContent());
         $this->assertResponseOk();
         $this->assertNotEquals($token, $object->token);
+        $this->assertEquals('password', $object->decodedTokenBody->method);
     }
 
     public function testRefreshPlainHeader()
     {
         $user = User::first();
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $jwtAuth->fromUser($user, ['method' => 'password']);
 
         $options = ['headers' => ['authorization' => 'Bearer '.$token]];
         $client = new Client([
@@ -141,6 +143,7 @@ class AuthTest extends TestCase
         $array = $res->json();
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertNotEquals($token, $array['token']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
     }
 
     public function testRefreshExpiredToken()
@@ -333,6 +336,8 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(200);
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertEquals('facebook', $array['decodedTokenBody']['method']);
 
         // Assert that the social login was created
         $user = User::find($user->user_id);
@@ -356,9 +361,10 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(200);
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertEquals('facebook', $array['decodedTokenBody']['method']);
 
         // Assert that the social login was created
-        $array = json_decode($this->response->getContent(), true);
         $user = User::find($array['decodedTokenBody']['sub']);
         $socialLogin = $user->socialLogins->first()->toArray();
         $this->assertEquals('facebook', $socialLogin['provider']);

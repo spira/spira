@@ -77,7 +77,7 @@ class AuthController extends ApiController
         }
 
         try {
-            $token = $this->jwtAuth->fromUser($this->auth->user());
+            $token = $this->jwtAuth->fromUser($this->auth->user(), ['method' => 'password']);
         } catch (JWTException $e) {
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
@@ -181,7 +181,7 @@ class AuthController extends ApiController
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
         $user->addSocialLogin($socialLogin);
 
-        $token = $this->jwtAuth->fromUser($user);
+        $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
         return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
     }
 
