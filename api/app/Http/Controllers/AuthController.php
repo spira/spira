@@ -190,7 +190,7 @@ class AuthController extends ApiController
 
         // Prepare response data
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->stateless()->returnUrl();
+        $returnUrl = $socialite->with($provider)->stateless()->getCachedReturnUrl();
 
         return $this->responder->redirect($returnUrl, 302, ['token' => $token]);
     }

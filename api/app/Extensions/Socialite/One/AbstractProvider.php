@@ -11,7 +11,7 @@ use League\OAuth1\Client\Credentials\TemporaryCredentials;
 use Laravel\Socialite\One\AbstractProvider as AbstractProviderBase;
 use App\Extensions\Socialite\Contracts\Provider as ProviderContract;
 
-abstract class AbstractProvider extends AbstractProviderBase
+abstract class AbstractProvider extends AbstractProviderBase implements ProviderContract
 {
     /**
      * Indicates if the session state should be utilized.
@@ -84,7 +84,7 @@ abstract class AbstractProvider extends AbstractProviderBase
      *
      * @return string
      */
-    public function returnUrl()
+    public function getCachedReturnUrl()
     {
         $key = 'oauth_return_url_'.$this->request->get('oauth_token');
 

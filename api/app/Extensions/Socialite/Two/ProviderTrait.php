@@ -47,7 +47,7 @@ trait ProviderTrait
      *
      * @return string
      */
-    public function returnUrl()
+    public function getCachedReturnUrl()
     {
         $key = 'oauth_return_url_'.$this->request->get('state');
 

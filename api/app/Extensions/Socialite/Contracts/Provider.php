@@ -10,4 +10,11 @@ interface Provider
      * @var int
      */
     const CACHE_TTL = 30;
+
+    /**
+     * Get the return url for the request.
+     *
+     * @return string
+     */
+    public function getCachedReturnUrl();
 }

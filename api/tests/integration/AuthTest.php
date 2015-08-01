@@ -383,7 +383,7 @@ class AuthTest extends TestCase
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);
-        $mock->shouldReceive('with->stateless->returnUrl')
+        $mock->shouldReceive('with->stateless->getCachedReturnUrl')
             ->once()
             ->andReturn('http://foo.bar');
 
@@ -419,7 +419,7 @@ class AuthTest extends TestCase
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);
-        $mock->shouldReceive('with->stateless->returnUrl')
+        $mock->shouldReceive('with->stateless->getCachedReturnUrl')
             ->once()
             ->andReturn('http://foo.bar');
 
