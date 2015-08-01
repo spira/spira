@@ -390,7 +390,8 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook/callback');
 
         // Get the returned token
-        $token = new Token($this->response->headers->get('token'));
+        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $token = new Token($token);
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $decoded = $jwtAuth->decode($token)->toArray();
 
@@ -427,7 +428,8 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook/callback');
 
         // Get the returned token
-        $token = new Token($this->response->headers->get('token'));
+        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $token = new Token($token);
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $decoded = $jwtAuth->decode($token)->toArray();
 
