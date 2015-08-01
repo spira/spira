@@ -3,6 +3,7 @@
 use Laravel\Socialite\Two\User;
 use App\Exceptions\NotImplementedException;
 use App\Extensions\Socialite\SocialiteManager;
+use App\Extensions\Socialite\Two\FacebookProvider;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 
 class SocialiteTest extends TestCase
@@ -24,7 +25,7 @@ class SocialiteTest extends TestCase
         $manager = new SocialiteManager($this->app);
         $driver = $manager->with('facebook');
 
-        $this->assertInstanceOf('App\Extensions\Socialite\Two\FacebookProvider', $driver);
+        $this->assertInstanceOf(FacebookProvider::class, $driver);
     }
 
     public function testCreateTwitterDriver()
@@ -47,6 +48,46 @@ class SocialiteTest extends TestCase
         $driver = $manager->with('google');
 
         $this->assertInstanceOf('App\Extensions\Socialite\Two\GoogleProvider', $driver);
+    }
+
+    public function testProviderTraitUser()
+    {
+        $mock = Mockery::mock(FacebookProvider::class, [$this->app->request, null, null, null])->makePartial()->shouldAllowMockingProtectedMethods();
+        $mock->shouldReceive('getAccessToken')
+            ->once()
+            ->andReturn([]);
+        $mock->shouldReceive('getUserByToken')
+            ->once()
+            ->andReturn(['id' => 'foo']);
+
+        $user = $mock->user();
+
+        $this->assertInstanceOf(User::class, $user);
+    }
+
+    public function testProviderTraitgetCachedReturnUrlCache()
+    {
+        $returnUrl = 'http://foo.bar';
+        Cache::put('oauth_return_url_foo', $returnUrl, 1);
+        $request = Mockery::mock('Illuminate\Http\Request');
+        $request->shouldReceive('get')
+            ->once()
+            ->andReturn('foo');
+
+        $mock = Mockery::mock(FacebookProvider::class, [$request, null, null, null])->makePartial();
+
+        $url = $mock->getCachedReturnUrl();
+
+        $this->assertEquals($url, $returnUrl);
+    }
+
+    public function testProviderTraitgetCachedReturnUrlNoCache()
+    {
+        $mock = Mockery::mock(FacebookProvider::class, [$this->app->request, null, null, null])->makePartial();
+
+        $url = $mock->getCachedReturnUrl();
+
+        $this->assertEquals($url, config('hosts.app'));
     }
 
     public function testAbstractParserMagicMethods()
