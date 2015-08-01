@@ -370,7 +370,7 @@ class AuthTest extends TestCase
         $this->assertException('no email', 422, 'UnprocessableEntityException');
     }
 
-    public function tesAtProviderCallbackExistingUser()
+    public function testProviderCallbackExistingUser()
     {
         $user = factory(User::class)->create();
 
