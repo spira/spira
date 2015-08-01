@@ -3,7 +3,7 @@
 namespace App\Extensions\Socialite\Parsers;
 
 use Laravel\Socialite\Contracts\User;
-use App\Exceptions\FatalErrorException;
+use App\Exceptions\NotImplementedException;
 
 class ParserFactory
 {
@@ -24,7 +24,7 @@ class ParserFactory
         if (class_exists($parser)) {
             return new $parser($user);
         } else {
-            throw new FatalErrorException('No parser for '.$provider.' exists.');
+            throw new NotImplementedException('No parser for '.$provider.' exists.');
         }
     }
 }
