@@ -97,4 +97,16 @@ class TransformerTest extends TestCase
             $this->assertArrayHasKey('_self', $value);
         }
     }
+
+    public function testAuthTokenTransformerCollection()
+    {
+        $this->setExpectedExceptionRegExp(
+            App\Exceptions\NotImplementedException::class,
+            '/tokens.*/',
+            0
+        );
+
+        $transformer = $this->app->make(App\Http\Transformers\AuthTokenTransformer::class);
+        $transformer->transformCollection([]);
+    }
 }
