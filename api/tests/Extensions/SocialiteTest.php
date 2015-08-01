@@ -27,19 +27,25 @@ class SocialiteTest extends TestCase
         $this->assertInstanceOf('App\Extensions\Socialite\Two\FacebookProvider', $driver);
     }
 
+    public function testCreateTwitterDriver()
+    {
+        // If no twitter credentials exists in the env, add mock credentials
+        if (!$this->app->config->get('services.twitter.client_id')) {
+            $this->app->config->set('services.twitter.client_id', 'foo');
+            $this->app->config->set('services.twitter.client_secret', 'bar');
+        }
+
+        $manager = new SocialiteManager($this->app);
+        $driver = $manager->with('twitter');
+
+        $this->assertInstanceOf('App\Extensions\Socialite\One\TwitterProvider', $driver);
+    }
+
     public function testCreateGoogleDriver()
     {
         $manager = new SocialiteManager($this->app);
         $driver = $manager->with('google');
 
         $this->assertInstanceOf('App\Extensions\Socialite\Two\GoogleProvider', $driver);
-    }
-
-    public function testCreateTwitterDriver()
-    {
-        $manager = new SocialiteManager($this->app);
-        $driver = $manager->with('twitter');
-
-        $this->assertInstanceOf('App\Extensions\Socialite\One\TwitterProvider', $driver);
     }
 }
