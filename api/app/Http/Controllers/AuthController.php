@@ -14,10 +14,10 @@ use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
-use Spira\Responder\Contract\ApiResponderInterface;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class AuthController extends ApiController
 {
@@ -45,13 +45,13 @@ class AuthController extends ApiController
     /**
      * Assign dependencies.
      *
-     * @param  Auth                   $auth
-     * @param  JWTAuth                $jwtAuth
-     * @param  ApiResponderInterface  $responder
-     * @param  Application            $app
+     * @param  Auth         $auth
+     * @param  JWTAuth      $jwtAuth
+     * @param  Responder    $responder
+     * @param  Application  $app
      * @return void
      */
-    public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder, Application $app)
+    public function __construct(Auth $auth, JWTAuth $jwtAuth, Responder $responder, Application $app)
     {
         $this->app = $app;
         $this->auth = $auth;
@@ -171,8 +171,10 @@ class AuthController extends ApiController
             throw new UnprocessableEntityException('User object has no email');
         }
 
+        // Parse the social user to fit within Spira's user model
         $socialUser = ParserFactory::parse($socialUser, $provider);
 
+        // Get or create the Spira user from the social login
         try {
             $user = $repository->findByEmail($socialUser->email);
         } catch (ModelNotFoundException $e) {
@@ -184,8 +186,11 @@ class AuthController extends ApiController
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
         $user->addSocialLogin($socialLogin);
 
+        // Prepare response data
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        return $this->responder->setTransformer($this->app->make(AuthTokenTransformer::class))->item($token);
+        $returnUrl = $socialite->with($provider)->stateless()->returnUrl();
+
+        return $this->responder->redirect($returnUrl, 302, ['token' => $token]);
     }
 
     /**

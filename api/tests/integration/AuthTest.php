@@ -325,7 +325,7 @@ class AuthTest extends TestCase
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
             $mock->shouldReceive('with->stateless->redirect')
                 ->once()
-                ->andReturn(redirect('http://asd?oauth_token=foobar'));
+                ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
         }
 
         $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
@@ -370,7 +370,7 @@ class AuthTest extends TestCase
         $this->assertException('no email', 422, 'UnprocessableEntityException');
     }
 
-    public function testProviderCallbackExistingUser()
+    public function tesAtProviderCallbackExistingUser()
     {
         $user = factory(User::class)->create();
 
@@ -384,12 +384,21 @@ class AuthTest extends TestCase
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);
+        $mock->shouldReceive('with->stateless->returnUrl')
+            ->once()
+            ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
 
-        $this->assertResponseStatus(200);
+        // Get the returned token
+        $token = new Token($this->response->headers->get('token'));
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+
+        $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
-        $this->assertEquals('facebook', $array['decodedTokenBody']['method']);
+        $this->assertEquals('facebook', $decoded['method']);
+        $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
         $user = User::find($user->user_id);
@@ -411,15 +420,24 @@ class AuthTest extends TestCase
         $mock->shouldReceive('with->stateless->user')
             ->once()
             ->andReturn($socialUser);
+        $mock->shouldReceive('with->stateless->returnUrl')
+            ->once()
+            ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
 
-        $this->assertResponseStatus(200);
+        // Get the returned token
+        $token = new Token($this->response->headers->get('token'));
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+
+        $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
-        $this->assertEquals('facebook', $array['decodedTokenBody']['method']);
+        $this->assertEquals('facebook', $decoded['method']);
+        $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
-        $user = User::find($array['decodedTokenBody']['sub']);
+        $user = User::find($decoded['sub']);
         $socialLogin = $user->socialLogins->first()->toArray();
         $this->assertEquals('facebook', $socialLogin['provider']);
     }
