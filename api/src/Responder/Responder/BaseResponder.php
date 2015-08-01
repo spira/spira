@@ -10,6 +10,7 @@ namespace Spira\Responder\Responder;
 
 use Spira\Responder\Contract\ResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BaseResponder implements ResponderInterface
@@ -101,5 +102,16 @@ class BaseResponder implements ResponderInterface
     public function getResponse()
     {
         return new Response();
+    }
+
+    /**
+     * @param  string  $url
+     * @param  int     $status
+     * @param  array   $headers
+     * @return Response
+     */
+    public function getRedirectResponse($url, $status = 302, array $headers = [])
+    {
+        return new RedirectResponse($url, $status, $headers);
     }
 }
