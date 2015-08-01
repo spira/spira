@@ -328,6 +328,7 @@ class AuthTest extends TestCase
         $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
+        $this->assertTrue($this->response->headers->has('location'));
         $segments = parse_url($this->response->headers->get('location'));
         parse_str($segments['query'], $array);
         $key = 'oauth_return_url_'.$array['oauth_token'];
@@ -343,6 +344,7 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
+        $this->assertTrue($this->response->headers->has('location'));
         $segments = parse_url($this->response->headers->get('location'));
         parse_str($segments['query'], $array);
         $key = 'oauth_return_url_'.$array['state'];
@@ -395,6 +397,7 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
+        $this->assertTrue($this->response->headers->has('location'));
         $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
@@ -431,6 +434,7 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
+        $this->assertTrue($this->response->headers->has('location'));
         $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
