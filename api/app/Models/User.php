@@ -98,6 +98,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * Set the user's credentials.
      *
      * @param  UserCredential  $credential
+     *
      * @return $this
      */
     public function setCredential(UserCredential $credential)
@@ -111,6 +112,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * Add a social login to the user.
      *
      * @param  SocialLogin  $socialLogin
+     *
      * @return $this
      */
     public function addSocialLogin(SocialLogin $socialLogin)
@@ -182,6 +184,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param  \App\Models\User  $user
      * @param  string            $entityId
+     *
      * @return bool
      */
     public static function userIsOwner($user, $entityId)
@@ -194,6 +197,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param  string  $email
      * @param  Cache   $cache
+     *
      * @return string
      */
     public function makeConfirmationToken($email, Cache $cache)

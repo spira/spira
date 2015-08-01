@@ -114,6 +114,7 @@ class ApiResponder extends BaseResponder implements ApiResponderInterface
      * @param  string  $url
      * @param  int     $status
      * @param  array   $headers
+     *
      * @return Response
      */
     public function redirect($url, $status = 302, array $headers = [])

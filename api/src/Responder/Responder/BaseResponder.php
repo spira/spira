@@ -108,6 +108,7 @@ class BaseResponder implements ResponderInterface
      * @param  string  $url
      * @param  int     $status
      * @param  array   $headers
+     *
      * @return Response
      */
     public function getRedirectResponse($url, $status = 302, array $headers = [])
