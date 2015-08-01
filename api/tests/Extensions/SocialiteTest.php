@@ -48,4 +48,13 @@ class SocialiteTest extends TestCase
 
         $this->assertInstanceOf('App\Extensions\Socialite\Two\GoogleProvider', $driver);
     }
+
+    public function testAbstractParserMagicMethods()
+    {
+        $mock = Mockery::mock('App\Extensions\Socialite\Parsers\AbstractParser')->makePartial();
+        $mock->token = 'foobar';
+
+        $this->assertNull($mock->foobar);
+        $this->assertEquals('foobar', $mock->token);
+    }
 }

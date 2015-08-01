@@ -110,4 +110,17 @@ abstract class AbstractParser implements Arrayable
             return $this->attributes[$key];
         }
     }
+
+    /**
+     * Dynamically set user attributes.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     *
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
 }
