@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-Use Log;
+use Log;
 use RuntimeException;
 use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;

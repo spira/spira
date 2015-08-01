@@ -305,7 +305,6 @@ class AuthTest extends TestCase
         $this->get('/auth/social/facebook');
 
         $this->assertResponseStatus(302);
-        $this->assertContains('refresh', $this->response->getContent());
     }
 
     public function testProviderRedirectReturnUrlOAuthOne()
