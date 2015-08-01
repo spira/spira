@@ -320,7 +320,7 @@ class AuthTest extends TestCase
             Cache::put('oauth_return_url_'.'foobar', $returnUrl, 1);
             $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
-            $mock->shouldReceive('with->stateless->redirect')
+            $mock->shouldReceive('with->redirect')
                 ->once()
                 ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
         }
@@ -357,7 +357,7 @@ class AuthTest extends TestCase
     {
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
         $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
-        $mock->shouldReceive('with->stateless->user')
+        $mock->shouldReceive('with->user')
             ->once()
             ->andReturn((object) [
                 'email' => null,
@@ -380,10 +380,10 @@ class AuthTest extends TestCase
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
-        $mock->shouldReceive('with->stateless->user')
+        $mock->shouldReceive('with->user')
             ->once()
             ->andReturn($socialUser);
-        $mock->shouldReceive('with->stateless->getCachedReturnUrl')
+        $mock->shouldReceive('with->getCachedReturnUrl')
             ->once()
             ->andReturn('http://foo.bar');
 
@@ -418,10 +418,10 @@ class AuthTest extends TestCase
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
-        $mock->shouldReceive('with->stateless->user')
+        $mock->shouldReceive('with->user')
             ->once()
             ->andReturn($socialUser);
-        $mock->shouldReceive('with->stateless->getCachedReturnUrl')
+        $mock->shouldReceive('with->getCachedReturnUrl')
             ->once()
             ->andReturn('http://foo.bar');
 

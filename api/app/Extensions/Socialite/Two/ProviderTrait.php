@@ -19,10 +19,6 @@ trait ProviderTrait
     {
         $state = Str::random(40);
 
-        if ($this->usesState()) {
-            $this->request->getSession()->set('state', $state);
-        }
-
         $this->storeReturnUrl($state);
 
         return new RedirectResponse($this->getAuthUrl($state));
@@ -59,6 +55,16 @@ trait ProviderTrait
     }
 
     /**
+     * Determine if the current request / session has a mismatching "state".
+     *
+     * @return bool
+     */
+    protected function hasInvalidState()
+    {
+        return false;
+    }
+
+    /**
      * Get the GET parameters for the code request.
      *
      * @param  string|null  $state
@@ -75,5 +81,15 @@ trait ProviderTrait
         ];
 
         return $fields;
+    }
+
+    /**
+     * Determine if the provider is operating with state.
+     *
+     * @return bool
+     */
+    protected function usesState()
+    {
+        return false;
     }
 }

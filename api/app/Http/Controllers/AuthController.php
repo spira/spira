@@ -150,7 +150,7 @@ class AuthController extends ApiController
     {
         $this->validateProvider($provider);
 
-        return $socialite->with($provider)->stateless()->redirect();
+        return $socialite->with($provider)->redirect();
     }
 
     /**
@@ -168,7 +168,7 @@ class AuthController extends ApiController
     {
         $this->validateProvider($provider);
 
-        $socialUser = $socialite->with($provider)->stateless()->user();
+        $socialUser = $socialite->with($provider)->user();
 
         // Verify so we received an email address, if using oAuth credentials
         // with Twitter for instance, that isn't whitelisted, no email
@@ -199,7 +199,7 @@ class AuthController extends ApiController
 
         // Prepare response data
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->stateless()->getCachedReturnUrl();
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl();
 
         return $this->responder->redirect($returnUrl, 302, ['Authorization-Update' => 'Bearer '.$token]);
     }

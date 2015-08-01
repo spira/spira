@@ -14,13 +14,6 @@ use App\Extensions\Socialite\Contracts\Provider as ProviderContract;
 abstract class AbstractProvider extends AbstractProviderBase implements ProviderContract
 {
     /**
-     * Indicates if the session state should be utilized.
-     *
-     * @var bool
-     */
-    protected $stateless = false;
-
-    /**
      * Cache repository.
      *
      * @var Cache
@@ -52,14 +45,10 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
     {
         $temp = $this->server->getTemporaryCredentials();
 
-        if ($this->usesState()) {
-            $this->request->getSession()->set('oauth.temp', $temp);
-        } else {
-            // If we have a stateless app without sessions, use the cache to
-            // store the secret for man in the middle attack protection
-            $key = 'oauth_temp_'.$temp->getIdentifier();
-            $this->cache->put($key, $temp, ProviderContract::CACHE_TTL);
-        }
+        // We have a stateless app without sessions, so we use the cache to
+        // store the secret for man in the middle attack protection
+        $key = 'oauth_temp_'.$temp->getIdentifier();
+        $this->cache->put($key, $temp, ProviderContract::CACHE_TTL);
 
         $this->storeReturnUrl($temp);
 
@@ -103,42 +92,16 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
      */
     protected function getToken()
     {
-        if ($this->usesState()) {
-            $temp = $this->request->getSession()->get('oauth.temp');
-        } else {
-            // If we have a stateless app without sessions, use the cache to
-            // retrieve the temp credentials for man in the middle attack
-            // protection
-            $key = 'oauth_temp_'.$this->request->get('oauth_token');
-            $temp = $this->cache->get($key, '');
-        }
+        // We have a stateless app without sessions, so we use the cache to
+        // retrieve the temp credentials for man in the middle attack
+        // protection
+        $key = 'oauth_temp_'.$this->request->get('oauth_token');
+        $temp = $this->cache->get($key, '');
 
         return $this->server->getTokenCredentials(
             $temp,
             $this->request->get('oauth_token'),
             $this->request->get('oauth_verifier')
         );
-    }
-
-    /**
-     * Determine if the provider is operating with state.
-     *
-     * @return bool
-     */
-    protected function usesState()
-    {
-        return ! $this->stateless;
-    }
-
-    /**
-     * Indicates that the provider should operate as stateless.
-     *
-     * @return $this
-     */
-    public function stateless()
-    {
-        $this->stateless = true;
-
-        return $this;
     }
 }
