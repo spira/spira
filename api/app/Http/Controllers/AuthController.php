@@ -178,7 +178,7 @@ class AuthController extends ApiController
             // The app is connected with the service, but the 3rd party service
             // is not configured or allowed to return email addresses, so we
             // can't process the data further. Let's throw an exception.
-            Log::critical('Social provider '.$provider.' does not return emails.');
+            Log::critical('Provider '.$provider.' does not return email.');
             throw new UnprocessableEntityException('User object has no email');
         }
 

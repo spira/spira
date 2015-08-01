@@ -55,16 +55,6 @@ trait ProviderTrait
     }
 
     /**
-     * Determine if the current request / session has a mismatching "state".
-     *
-     * @return bool
-     */
-    protected function hasInvalidState()
-    {
-        return false;
-    }
-
-    /**
      * Get the GET parameters for the code request.
      *
      * @param  string|null  $state
@@ -84,12 +74,14 @@ trait ProviderTrait
     }
 
     /**
-     * Determine if the provider is operating with state.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    protected function usesState()
+    public function user()
     {
-        return false;
+        $user = $this->mapUserToObject($this->getUserByToken(
+            $token = $this->getAccessToken($this->getCode())
+        ));
+
+        return $user->setToken($token);
     }
 }
