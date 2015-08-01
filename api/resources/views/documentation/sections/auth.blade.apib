@@ -92,4 +92,16 @@ A user can login by using a social profile as identification.
 
 ## Social Login Callback [/auth/social/{provider}/callback]
 
+After the user has authenticated with the social provider, the provider returns
+to the application with the authentication details to this route.
+
 ### Callback from social provider [GET]
+
++ Parameters
+    + provider (required, string, `facebook`) ... The social provider the callback comes from.
+
++ Response 302
+
+    + Headers
+            Location: http://api.spira.io
+            Token: {!! $factory->make(\App\Models\AuthToken::class)->token !!}
