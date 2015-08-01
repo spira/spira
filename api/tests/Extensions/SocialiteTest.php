@@ -3,7 +3,7 @@
 use Laravel\Socialite\Two\User;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 
-class Socialite extends TestCase
+class SocialiteTest extends TestCase
 {
     public function testParserFactoryUnknownParser()
     {
