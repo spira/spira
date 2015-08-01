@@ -316,9 +316,7 @@ class AuthTest extends TestCase
         // tests against twitter if credentials is available, and if not
         // available, we still can test that the cache with the returnurl is
         // properly set.
-        if (!$this->app->config->get('services.twitter.client_id') ||
-            !$this->app->config->get('services.twitter.client_id')
-        ) {
+        if (!$this->app->config->get('services.twitter.client_id')) {
             Cache::put('oauth_return_url_'.'foobar', $returnUrl, 1);
             $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
