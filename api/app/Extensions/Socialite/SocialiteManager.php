@@ -17,7 +17,7 @@ class SocialiteManager extends Manager
      */
     protected function createFacebookDriver()
     {
-        $config = $this->app['config']['services.facebook'];
+        $config = config('services.facebook');
 
         return $this->buildProvider(FacebookProvider::class, $config);
     }
@@ -29,7 +29,7 @@ class SocialiteManager extends Manager
      */
     protected function createGoogleDriver()
     {
-        $config = $this->app['config']['services.google'];
+        $config = config('services.google');
 
         return $this->buildProvider(GoogleProvider::class, $config);
     }
@@ -41,7 +41,7 @@ class SocialiteManager extends Manager
      */
     protected function createTwitterDriver()
     {
-        $config = $this->app['config']['services.twitter'];
+        $config = config('services.twitter');
 
         return new TwitterProvider(
             $this->app['request'],
