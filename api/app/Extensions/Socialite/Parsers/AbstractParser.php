@@ -25,6 +25,7 @@ abstract class AbstractParser implements Arrayable
      * Initialize the parser.
      *
      * @param  User  $user
+     *
      * @return void
      */
     public function __construct(User $user)
@@ -100,6 +101,7 @@ abstract class AbstractParser implements Arrayable
      * Dynamically retrieve parsed user attributes.
      *
      * @param  string  $key
+     *
      * @return mixed
      */
     public function __get($key)

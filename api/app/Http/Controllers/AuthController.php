@@ -11,6 +11,7 @@ use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Exceptions\NotImplementedException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
@@ -50,6 +51,7 @@ class AuthController extends ApiController
      * @param  JWTAuth      $jwtAuth
      * @param  Responder    $responder
      * @param  Application  $app
+     *
      * @return void
      */
     public function __construct(Auth $auth, JWTAuth $jwtAuth, Responder $responder, Application $app)
@@ -109,8 +111,11 @@ class AuthController extends ApiController
     /**
      * Login with a single use token.
      *
-     * @param Request                          $request
-     * @param \App\Repositories\UserRepository $userRepository
+     * @param  Request         $request
+     * @param  UserRepository  $userRepository
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
      *
      * @return Response
      */
@@ -138,6 +143,7 @@ class AuthController extends ApiController
      *
      * @param  string     $provider
      * @param  Socialite  $socialite
+     *
      * @return Response
      */
     public function redirectToProvider($provider, Socialite $socialite)
@@ -153,6 +159,9 @@ class AuthController extends ApiController
      * @param  string          $provider
      * @param  Socialite       $socialite
      * @param  UserRepository  $repository
+     *
+     * @throws UnprocessableEntityException
+     *
      * @return Response
      */
     public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repository)
@@ -199,13 +208,15 @@ class AuthController extends ApiController
      * Check so the provider exists.
      *
      * @param  string  $provider
+     *
+     * @throws NotImplementedException
+     *
      * @return void
      */
     protected function validateProvider($provider)
     {
         if (!in_array($provider, array_keys($this->app['config']['services']))) {
-            // Throws a NotFoundHttpException
-            $this->app->abort(404, 'Invalid provider');
+            throw new NotImplementedException('Provider '.$provider.' is not supported.');
         }
     }
 }

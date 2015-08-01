@@ -12,6 +12,9 @@ class ParserFactory
      *
      * @param  User    $user
      * @param  string  $provider
+     *
+     * @throws NotImplementedException
+     *
      * @return ParserContract
      */
     public static function parse(User $user, $provider)

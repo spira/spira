@@ -297,7 +297,7 @@ class AuthTest extends TestCase
     {
         $this->get('/auth/social/foobar');
 
-        $this->assertException('provider', 404, 'NotFoundHttpException');
+        $this->assertException('Provider', 501, 'NotImplementedException');
     }
 
     public function testProviderRedirect()

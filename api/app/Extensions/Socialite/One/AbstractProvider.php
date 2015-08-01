@@ -33,6 +33,7 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
      * @param  Request  $request
      * @param  Server   $server
      * @param  Cache    $cache
+     *
      * @return void
      */
     public function __construct(Request $request, Server $server, Cache $cache)
@@ -69,6 +70,7 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
      * Store a return url in the cache if provided.
      *
      * @param  TemporaryCredentials  $temp
+     *
      * @return void
      */
     protected function storeReturnUrl(TemporaryCredentials $temp)

@@ -13,7 +13,7 @@ trait ProviderTrait
     /**
      * Redirect the user of the application to the provider's authentication screen.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function redirect()
     {
@@ -32,6 +32,7 @@ trait ProviderTrait
      * Store a return url in the cache if provided.
      *
      * @param  string  $state
+     *
      * @return void
      */
     protected function storeReturnUrl($state)
@@ -61,6 +62,7 @@ trait ProviderTrait
      * Get the GET parameters for the code request.
      *
      * @param  string|null  $state
+     *
      * @return array
      */
     protected function getCodeFields($state = null)
