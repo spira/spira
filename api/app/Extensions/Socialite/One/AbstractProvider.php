@@ -9,6 +9,7 @@ use Illuminate\Cache\CacheManager as Cache;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
 use Laravel\Socialite\One\AbstractProvider as AbstractProviderBase;
+use App\Extensions\Socialite\Contracts\Provider as ProviderContract;
 
 abstract class AbstractProvider extends AbstractProviderBase
 {
@@ -56,7 +57,7 @@ abstract class AbstractProvider extends AbstractProviderBase
             // If we have a stateless app without sessions, use the cache to
             // store the secret for man in the middle attack protection
             $key = 'oauth_temp_'.$temp->getIdentifier();
-            $this->cache->put($key, $temp, 30);
+            $this->cache->put($key, $temp, ProviderContract::CACHE_TTL);
         }
 
         $this->storeReturnUrl($temp);
@@ -74,7 +75,7 @@ abstract class AbstractProvider extends AbstractProviderBase
     {
         if ($url = $this->request->get('return_url')) {
             $key = 'oauth_return_url_'.$temp->getIdentifier();
-            $this->cache->put($key, $url, 30);
+            $this->cache->put($key, $url, ProviderContract::CACHE_TTL);
         }
     }
 

@@ -6,6 +6,7 @@ use Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Extensions\Socialite\Contracts\Provider as ProviderContract;
 
 trait ProviderTrait
 {
@@ -37,7 +38,7 @@ trait ProviderTrait
     {
         if ($url = $this->request->get('return_url')) {
             $key = 'oauth_return_url_'.$state;
-            Cache::put($key, $url, 30);
+            Cache::put($key, $url, ProviderContract::CACHE_TTL);
         }
     }
 
