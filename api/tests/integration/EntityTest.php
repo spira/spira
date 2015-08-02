@@ -38,7 +38,7 @@ class EntityTest extends TestCase
     {
         // We run the entity through the transformer to get the attributes named
         // as if they came from the frontend.
-        $transformer = $this->app->make(\App\Http\Transformers\IlluminateModelTransformer::class);
+        $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
         $entity = $transformer->transform($entity);
 
         // As the hidden attribute is hidden when we get the array, we need to
