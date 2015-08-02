@@ -339,9 +339,7 @@ gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
     plugins.runSequence('build', 'scripts:test', 'test:karma', cb);
 });
 
-gulp.task('test:karma',  'unit test the frontend', [], function(){
-
-
+gulp.task('test:karma',  'unit test the frontend', [], function(done){
 
     var files = getIndexFiles({
         devDeps: true
