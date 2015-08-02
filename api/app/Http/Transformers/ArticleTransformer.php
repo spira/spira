@@ -8,7 +8,6 @@
 
 namespace App\Http\Transformers;
 
-
 use App\Models\Article;
 
 class ArticleTransformer extends EloquentModelTransformer
@@ -26,5 +25,4 @@ class ArticleTransformer extends EloquentModelTransformer
 
         return parent::transformCollection($collection);
     }
-
 }

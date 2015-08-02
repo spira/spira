@@ -67,7 +67,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->getResponse()->item($token,$this->transformer);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 
     /**
@@ -86,7 +86,7 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->refresh($token);
 
-        return $this->getResponse()->item($token,$this->transformer);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 
     /**
@@ -113,6 +113,6 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
 
-        return $this->getResponse()->item($token,$this->transformer);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 }
