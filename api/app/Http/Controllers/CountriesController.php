@@ -1,21 +1,22 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Countries;
-use Spira\Responder\Contract\ApiResponderInterface;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class CountriesController extends ApiController
 {
     /**
      * Assign dependencies.
      *
-     * @param  Countries              $countries
-     * @param  ApiResponderInterface  $responder
-     * @return void
+     * @param  Countries $countries
+     * @param  EloquentModelTransformer $transformer
      */
-    public function __construct(Countries $countries, ApiResponderInterface $responder)
+    public function __construct(Countries $countries, EloquentModelTransformer $transformer)
     {
         $this->countries = $countries;
-        $this->responder = $responder;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -25,6 +26,6 @@ class CountriesController extends ApiController
      */
     public function getAll()
     {
-        return $this->getResponder()->collection($this->countries->all());
+        return $this->getResponse()->collection($this->countries->all(), $this->transformer);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Spira\Responder\Contract\TransformableInterface;
@@ -70,7 +70,7 @@ class Handler extends ExceptionHandler
 
             if (method_exists($e, 'getResponse')) {
                 if ($e instanceof TransformableInterface) {
-                    $response = $e->transform(\App::make(IlluminateModelTransformer::class));
+                    $response = $e->transform(\App::make(EloquentModelTransformer::class));
                 } else {
                     $response = $e->getResponse();
                 }

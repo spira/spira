@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\TransformerService;
 use Mockery as m;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @property IlluminateModelTransformer transformer
+ * @property EloquentModelTransformer transformer
  */
 class TransformerTest extends TestCase
 {
     public function setUp()
     {
         parent::setUp();
-        $this->transformer = $this->app->make('App\Http\Transformers\IlluminateModelTransformer');
+        $this->transformer = $this->app->make('App\Http\Transformers\EloquentModelTransformer');
         $this->service = $this->app->make(TransformerService::class);
     }
 
