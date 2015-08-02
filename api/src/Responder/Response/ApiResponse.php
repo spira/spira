@@ -25,7 +25,7 @@ class ApiResponse extends Response
     public function created($location = null)
     {
         $this->setContent(null);
-        $this->setStatusCode(201);
+        $this->setStatusCode(self::HTTP_CREATED);
         if (! is_null($location)) {
             $this->headers->set('Location', $location);
         }
@@ -39,7 +39,7 @@ class ApiResponse extends Response
      * @param  int  $code
      * @return Response
      */
-    public function noContent($code = 204)
+    public function noContent($code = self::HTTP_NO_CONTENT)
     {
         $this->setContent(null);
         return $this->setStatusCode($code);
@@ -73,7 +73,7 @@ class ApiResponse extends Response
         foreach ($items as $item) {
             $item->setVisible(['']);
         }
-        return $this->collectionWithStatusCode($items, $transformer, 201);
+        return $this->collectionWithStatusCode($items, $transformer, self::HTTP_CREATED);
     }
 
     /**
@@ -101,7 +101,7 @@ class ApiResponse extends Response
     public function createdItem($item, TransformerInterface $transformer, array $parameters = [])
     {
         $item->setVisible(['']);
-        return $this->itemWithStatusCode($item, $transformer, 201);
+        return $this->itemWithStatusCode($item, $transformer, self::HTTP_CREATED);
     }
 
     /**
@@ -110,7 +110,7 @@ class ApiResponse extends Response
      * @param int $code
      * @return Response
      */
-    protected function itemWithStatusCode($item, TransformerInterface $transformer, $code = 200)
+    protected function itemWithStatusCode($item, TransformerInterface $transformer, $code = self::HTTP_OK)
     {
         $this->setStatusCode($code);
         $this->headers->set('Content-Type', 'application/json');
@@ -124,7 +124,7 @@ class ApiResponse extends Response
      * @param int $code
      * @return Response
      */
-    protected function collectionWithStatusCode($items, TransformerInterface $transformer, $code = 200)
+    protected function collectionWithStatusCode($items, TransformerInterface $transformer, $code = self::HTTP_OK)
     {
         $this->setStatusCode($code);
         $this->headers->set('Content-Type', 'application/json');
@@ -152,7 +152,7 @@ class ApiResponse extends Response
 
         $this->headers->set('Accept-Ranges', 'entities');
         $this->headers->set('Content-Type', 'application/json');
-        $this->setStatusCode(206);
+        $this->setStatusCode(self::HTTP_PARTIAL_CONTENT);
 
         $rangeHeader = $this->prepareRangeHeader($itemCount, $offset, $totalCount);
         $this->headers->set('Content-Range', $rangeHeader);
@@ -170,7 +170,7 @@ class ApiResponse extends Response
     protected function validateRange($itemCount)
     {
         if ($itemCount <= 0) {
-            throw new HttpException(416, 'Requested Range Not Satisfiable');
+            throw new HttpException(self::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE, 'Requested Range Not Satisfiable');
         }
 
         return true;
