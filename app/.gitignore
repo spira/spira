@@ -1,5 +1,4 @@
 bower_components/*
 build/
 release/
-typings/*
 !bower_components/.gitkeep
