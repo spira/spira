@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\TransformerService;
 use Mockery as m;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @property IlluminateModelTransformer transformer
+ * @property EloquentModelTransformer transformer
  */
 class TransformerTest extends TestCase
 {
     public function setUp()
     {
         parent::setUp();
-        $this->transformer = $this->app->make('App\Http\Transformers\IlluminateModelTransformer');
+        $this->transformer = $this->app->make('App\Http\Transformers\EloquentModelTransformer');
         $this->service = $this->app->make(TransformerService::class);
     }
 
@@ -96,5 +96,17 @@ class TransformerTest extends TestCase
         foreach ($data['testMany'] as $value) {
             $this->assertArrayHasKey('_self', $value);
         }
+    }
+
+    public function testAuthTokenTransformerCollection()
+    {
+        $this->setExpectedExceptionRegExp(
+            App\Exceptions\NotImplementedException::class,
+            '/tokens.*/',
+            0
+        );
+
+        $transformer = $this->app->make(App\Http\Transformers\AuthTokenTransformer::class);
+        $transformer->transformCollection([]);
     }
 }
