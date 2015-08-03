@@ -58,7 +58,7 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
             'emailConfirmationRedirectionUrl' => Config::get('hosts.app') . '/profile?emailConfirmationToken='.$this->token
         ], function ($m) {
 
-            $m->to($this->user->email, $this->user->full_name)
+            $m->to($this->email, $this->user->full_name)
                 ->subject('Confirm Your Email');
         });
     }

@@ -316,6 +316,7 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foo@bar.com', $updatedUser->email);
+        $this->assertEquals('foo@bar.com', $mail->to);
         $this->assertNull($updatedUser->email_confirmed);
         $this->assertContains('Confirm', $mail->subject);
 
