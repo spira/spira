@@ -16,6 +16,11 @@ class TestController extends ApiController
         $this->transformer = $transformer;
     }
 
+    public function urlEncode($id)
+    {
+        return $this->getResponse()->item(['test'=>$id]);
+    }
+
     /**
      * Test a standard internal exception.
      */
