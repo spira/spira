@@ -98,6 +98,7 @@ class ArticleController extends ApiController
      */
     public function deleteMeta($id, $metaName)
     {
+        $metaName = urldecode($metaName);
         $article = $this->getArticle($id);
         $meta = $article->metas->get($metaName);
         $article->metas->remove($meta);

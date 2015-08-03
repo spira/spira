@@ -51,6 +51,7 @@ $app->group(['prefix' => 'test'], function (Application $app) {
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
     $app->get('/entities/pages', 'App\Http\Controllers\TestController@getAllPaginated');
+    $app->get('/entities_encoded/{id}', 'App\Http\Controllers\TestController@urlEncode');
     $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
