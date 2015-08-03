@@ -84,6 +84,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\LockServiceProvider::class);
 $app->register(App\Providers\JWTAuthServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
+$app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
