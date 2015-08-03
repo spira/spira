@@ -74,14 +74,4 @@ class SocialLogin extends BaseModel
     {
         return new Collection($models);
     }
-
-    /**
-     * Get the value of the model's primary key.
-     *
-     * @return mixed
-     */
-    public function getKey()
-    {
-        return false;
-    }
 }
