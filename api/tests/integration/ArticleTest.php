@@ -339,11 +339,11 @@ class ArticleTest extends TestCase
         $this->assertEquals($metaCount+2, $updatedArticle->metas->count());
         $counter = 0;
         foreach ($updatedArticle->metas as $meta) {
-            if ($meta->meta_content == 'foobar'){
+            if ($meta->meta_content == 'foobar') {
                 $counter++;
             }
         }
-        $this->assertEquals($counter,$metaCount);
+        $this->assertEquals($counter, $metaCount);
     }
 
     public function deleteMeta()
@@ -358,5 +358,4 @@ class ArticleTest extends TestCase
         $updatedArticle = $this->repository->find($article->article_id);
         $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
     }
-
 }

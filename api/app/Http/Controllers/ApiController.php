@@ -71,7 +71,7 @@ abstract class ApiController extends Controller
      */
     public function getOne($id)
     {
-        if ($this->validateRequest){
+        if ($this->validateRequest) {
             $this->validateId($id, $this->getKeyName());
         }
 
@@ -113,7 +113,7 @@ abstract class ApiController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        if ($this->validateRequest){
+        if ($this->validateRequest) {
             $this->validateId($id, $this->getKeyName());
         }
         try {
@@ -174,7 +174,7 @@ abstract class ApiController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        if ($this->validateRequest){
+        if ($this->validateRequest) {
             $this->validateId($id, $this->getKeyName());
         }
         try {
@@ -224,7 +224,7 @@ abstract class ApiController extends Controller
      */
     public function deleteOne($id)
     {
-        if ($this->validateRequest){
+        if ($this->validateRequest) {
             $this->validateId($id, $this->getKeyName());
         }
         try {

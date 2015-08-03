@@ -79,7 +79,7 @@ class ArticleController extends ApiController
             }
             /** @var ArticleMeta $model */
             $meta->fill($requestEntity);
-            if (!$meta->exists){
+            if (!$meta->exists) {
                 $article->metas->add($meta);
             }
         }
@@ -113,11 +113,11 @@ class ArticleController extends ApiController
      */
     private function getArticle($id)
     {
-        try{
+        try {
             /** @var Article $article */
             $article = $this->repository->find($id);
             return $article;
-        }catch (ModelNotFoundException $e){
+        } catch (ModelNotFoundException $e) {
             throw $this->notFoundException($this->getKeyName());
         }
     }
@@ -127,7 +127,7 @@ class ArticleController extends ApiController
      */
     private function getMetaKeyName()
     {
-        if (is_null($this->metaKeyName)){
+        if (is_null($this->metaKeyName)) {
             $meta = new ArticleMeta();
             $this->metaKeyName = $meta->getKeyName();
         }

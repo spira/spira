@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 class ArticleMeta extends BaseModel
 {
     /**
@@ -27,7 +26,7 @@ class ArticleMeta extends BaseModel
         $metaUniqueRule = 'unique:article_metas,meta_name';
         if ($this->exists) {
             $metaUniqueRule.=','.$this->meta_name.',meta_name';
-        }else{
+        } else {
             $metaUniqueRule.=',NULL,NULL';
         }
         $metaUniqueRule.= ',article_id,'.$this->article_id;
@@ -43,5 +42,4 @@ class ArticleMeta extends BaseModel
     {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');
     }
-
 }
