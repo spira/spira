@@ -110,6 +110,7 @@ class UserController extends ApiController
 
         $model = $this->repository->getNewModel();
         $model->fill($request->all());
+        $model->email = $request->get('email');
         $this->repository->save($model);
 
         // Finally create the credentials

@@ -4,6 +4,7 @@ use App\Exceptions\ValidationException;
 use App\Services\SpiraValidator;
 use Carbon\Carbon;
 use Bosnadev\Database\Traits\UuidTrait;
+use DateTime;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Validator;
 
@@ -154,28 +155,14 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
      */
     public function setAttribute($key, $value)
     {
-        // First we will check for the presence of a mutator for the set operation
-        // which simply lets the developers tweak the attribute as it is set on
-        // the model, such as "json_encoding" an listing of data for storage.
-        if ($this->hasSetMutator($key)) {
-            $method = 'set'.Str::studly($key).'Attribute';
-
-            return $this->{$method}($value);
-        }
-
-        // If an attribute is listed as a "date", we'll convert it from a DateTime
-        // instance into a form proper for storage on the database tables using
-        // the connection grammar's date format. We will auto set the values.
-        elseif (in_array($key, $this->getDates()) && $value) {
+        if (in_array($key, $this->getDates()) && $value) {
             if(!$value instanceof Carbon && ! $value instanceof DateTime) {
                 $value = new Carbon($value);
+                $this->attributes[$key] = $value;
+                return;
             }
         }
 
-        if ($this->isJsonCastable($key)) {
-            $value = json_encode($value);
-        }
-
-        $this->attributes[$key] = $value;
+        parent::setAttribute($key, $value);
     }
 }

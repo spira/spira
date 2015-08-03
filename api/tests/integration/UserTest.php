@@ -172,8 +172,6 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'userId' => $userToUpdate->user_id,
-            'email' => 'foo@bar.com',
             'firstName' => 'foobar'
         ];
 
@@ -186,7 +184,6 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $updatedUser->first_name);
-        $this->assertEquals('foo@bar.com', $updatedUser->email);
     }
 
     public function testPatchOneByGuestUser()
@@ -209,8 +206,6 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'userId' => $userToUpdate->user_id,
-            'email' => 'foo@bar.com',
             'firstName' => 'foobar'
         ];
 
@@ -223,7 +218,24 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $updatedUser->first_name);
-        $this->assertEquals('foo@bar.com', $updatedUser->email);
+    }
+
+    public function testPatchOneBySelfUserUUID()
+    {
+        $user = $this->createUser('guest');
+        $userToUpdate = $user;
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            'userId' => '1234',
+            'firstName' => 'foobar'
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(422);
     }
 
     public function testDeleteOneByAdminUser()
@@ -315,8 +327,7 @@ class UserTest extends TestCase
         $mail = $this->getLastMessage();
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals('foo@bar.com', $updatedUser->email);
-        $this->assertEquals('foo@bar.com', $mail->to);
+        $this->assertContains('<foo@bar.com>', $mail->recipients);
         $this->assertNull($updatedUser->email_confirmed);
         $this->assertContains('Confirm', $mail->subject);
 
@@ -326,17 +337,18 @@ class UserTest extends TestCase
         $parsed = parse_url($tokenUrl);
         $emailToken = str_replace('emailConfirmationToken=', '', $parsed['query']);
 
-        $datetime = date('Y-m-d H:i:s');
+        $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];
         $this->patch('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Email-Confirm-Token' => $emailToken
+            'email-confirm-token' => $emailToken
         ]);
 
         $updatedUser = User::find($user->user_id);
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($datetime, date('Y-m-d H:i:s', strtotime($updatedUser->email_confirmed)));
+        $this->assertEquals('foo@bar.com', $updatedUser->email);
     }
 
     public function testUpdateEmailConfirmed()
