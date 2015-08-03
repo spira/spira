@@ -75,7 +75,6 @@ abstract class ApiController extends Controller
 
         try {
             $model = $this->getRepository()->find($id);
-
         } catch (ModelNotFoundException $e) {
             $this->notFound();
         }
@@ -84,7 +83,6 @@ abstract class ApiController extends Controller
             ->transformer($this->transformer)
             ->item($model)
         ;
-
     }
 
     /**
