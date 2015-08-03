@@ -18,7 +18,9 @@ module app.admin.navigation{
 
         protected getNavigationStates():global.IState[]{
 
-            let childStates = this.stateHelperService.getChildStates(app.admin.namespace);
+            let childStates = this.stateHelperService.getChildStates(app.admin.namespace, 1);
+
+            console.log(childStates);
 
             return this.getNavigableStates(childStates);
         }
