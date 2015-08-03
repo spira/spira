@@ -20,7 +20,7 @@ class ApiResponse extends Response
     /**
      * Set the transformer to use for building entities
      * @param TransformerInterface $transformer
-     * @return $this
+     * @return ApiResponse
      */
     public function transformer(TransformerInterface $transformer)
     {
@@ -31,7 +31,7 @@ class ApiResponse extends Response
     /**
      * Respond with a created response and associate a location if provided.
      * @param null $location
-     * @return Response
+     * @return ApiResponse
      */
     public function created($location = null)
     {
@@ -50,7 +50,7 @@ class ApiResponse extends Response
      * Respond with a no content response.
      *
      * @param  int  $code
-     * @return Response
+     * @return ApiResponse
      */
     public function noContent($code = self::HTTP_NO_CONTENT)
     {
@@ -65,7 +65,7 @@ class ApiResponse extends Response
      * Bind an item to a transformer and start building a response.
      * @param $item
      * @param int $statusCode
-     * @return Response
+     * @return ApiResponse
      */
     public function item($item, $statusCode = self::HTTP_OK)
     {
@@ -84,7 +84,7 @@ class ApiResponse extends Response
     /**
      * Respond with a created response.
      * @param $item
-     * @return Response
+     * @return ApiResponse
      */
     public function createdItem($item)
     {
@@ -95,7 +95,7 @@ class ApiResponse extends Response
     /**
      * @param $items
      * @param int $statusCode
-     * @return Response
+     * @return ApiResponse
      */
     public function collection($items, $statusCode = Response::HTTP_OK)
     {
@@ -114,7 +114,7 @@ class ApiResponse extends Response
     /**
      * Respond with a created response and hide all the items (except self)
      * @param $items
-     * @return Response
+     * @return ApiResponse
      */
     public function createdCollection($items)
     {
@@ -131,7 +131,7 @@ class ApiResponse extends Response
      * @param $items
      * @param null $offset
      * @param null $totalCount
-     * @return Response
+     * @return ApiResponse
      */
     public function paginatedCollection($items, $offset = null, $totalCount = null)
     {
