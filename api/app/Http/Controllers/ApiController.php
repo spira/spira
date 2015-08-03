@@ -45,7 +45,9 @@ abstract class ApiController extends Controller
      */
     public function getAll()
     {
-        return $this->getResponse()->collection($this->getRepository()->all(), $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->collection($this->getRepository()->all());
     }
 
     public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
@@ -54,7 +56,10 @@ abstract class ApiController extends Controller
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
         $collection = $this->getRepository()->all(['*'], $offset, $limit);
-        return $this->getResponse()->paginatedCollection($collection, $this->transformer, $offset, $count);
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->paginatedCollection($collection, $offset, $count);
     }
 
     /**
@@ -66,14 +71,20 @@ abstract class ApiController extends Controller
     public function getOne($id)
     {
         $this->validateId($id);
+        $model = null;
+
         try {
             $model = $this->getRepository()->find($id);
-            return $this->getResponse()->item($model, $this->transformer);
+
         } catch (ModelNotFoundException $e) {
-            $this->notFound($this->getKeyName());
+            $this->notFound();
         }
 
-        return $this->getResponse()->noContent();
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($model)
+        ;
+
     }
 
     /**
@@ -88,7 +99,9 @@ abstract class ApiController extends Controller
         $model->fill($request->all());
         $this->getRepository()->save($model);
 
-        return $this->getResponse()->createdItem($model, $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->createdItem($model);
     }
 
     /**
@@ -109,7 +122,9 @@ abstract class ApiController extends Controller
         $model->fill($request->all());
         $this->getRepository()->save($model);
 
-        return $this->getResponse()->createdItem($model, $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->createdItem($model);
     }
 
     /**
@@ -143,7 +158,9 @@ abstract class ApiController extends Controller
 
         $models = $this->getRepository()->saveMany($putModels);
 
-        return $this->getResponse()->createdCollection($models, $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->createdCollection($models);
     }
 
     /**
