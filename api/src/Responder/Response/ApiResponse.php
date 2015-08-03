@@ -194,21 +194,19 @@ class ApiResponse extends Response
      *
      * @param  string  $url
      * @param  int     $status
-     * @param  array   $headers
      *
      * @throws InvalidArgumentException
      *
      * @return void
      */
-    public function redirect($url, $status = 302, array $headers = [])
+    public function redirect($url, $status = 302)
     {
         if (empty($url)) {
             throw new InvalidArgumentException('Cannot redirect to an empty URL.');
         }
 
         $this->setStatusCode($status);
-        $this->headers->add($headers);
-        $this->headers->set('Location', $url);
+        $this->header('Location', $url);
 
         if (!$this->isRedirect()) {
             throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
