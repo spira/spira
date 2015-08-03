@@ -398,7 +398,7 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
-        $this->assertTrue($this->response->headers->has('location'));
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
         $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
@@ -436,7 +436,7 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(302);
         $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
-        $this->assertTrue($this->response->headers->has('location'));
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
         $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
 
         // Assert that the social login was created
