@@ -3,6 +3,9 @@
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Rhumsaa\Uuid\Uuid;
 
+/**
+ * @property \App\Repositories\BaseRepository $repository
+ */
 class EntityTest extends TestCase
 {
     use DatabaseTransactions;
@@ -35,7 +38,7 @@ class EntityTest extends TestCase
     {
         // We run the entity through the transformer to get the attributes named
         // as if they came from the frontend.
-        $transformer = $this->app->make(\App\Http\Transformers\IlluminateModelTransformer::class);
+        $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
         $entity = $transformer->transform($entity);
 
         // As the hidden attribute is hidden when we get the array, we need to
@@ -56,6 +59,119 @@ class EntityTest extends TestCase
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
+    }
+
+    public function testGetAllPaginated()
+    {
+        $defaultLimit = 10;
+        $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
+        $this->get('/test/entities/pages', ['Range'=>'entities=0-']);
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertEquals($defaultLimit, count($object));
+    }
+
+    public function testGetAllPaginatedNoRangeHeader()
+    {
+        $this->get('/test/entities/pages');
+        $this->assertResponseStatus(400);
+    }
+
+    public function testGetAllPaginatedInvalidRangeHeader()
+    {
+        $this->get('/test/entities/pages', ['Range'=>'0-']);
+        $this->assertResponseStatus(400);
+    }
+
+    public function testGetAllPaginatedSimpleRange()
+    {
+        $entities = factory(App\Models\TestEntity::class, 20)->create();
+        $totalCount = $this->repository->count();
+        $this->get('/test/entities/pages', ['Range'=>'entities=0-19']);
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+        $this->assertEquals(20, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, 0);
+        $this->assertEquals($last, 19);
+    }
+
+    public function testPaginationBadRanges()
+    {
+        $entities = factory(App\Models\TestEntity::class, 20)->create();
+        $this->get('/test/entities/pages', ['Range'=>'entities=19-18']);
+        $this->assertResponseStatus(400);
+    }
+
+    public function testPaginationOutOfRange()
+    {
+        $entities = factory(App\Models\TestEntity::class, 10)->create();
+        $totalCount = $this->repository->count();
+        $this->get('/test/entities/pages', ['Range'=>'entities='.$totalCount.'-']);
+        $this->assertResponseStatus(416);
+    }
+
+    public function testPaginationMoreThanInRepo()
+    {
+        $entities = factory(App\Models\TestEntity::class, 10)->create();
+        $totalCount = $this->repository->count();
+        $this->get('/test/entities/pages', ['Range'=>'entities='.($totalCount-2).'-'.($totalCount+20)]);
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+        $this->assertEquals(2, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, $totalCount-2);
+        $this->assertEquals($last, $totalCount-1);
+    }
+
+    public function testPaginationGetLast()
+    {
+        $entities = factory(App\Models\TestEntity::class, 10)->create();
+        $totalCount = $this->repository->count();
+        $this->get('/test/entities/pages', ['Range'=>'entities=-5']);
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+        $this->assertEquals(5, count($object));
+        list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
+        $this->assertEquals($total, $totalCount);
+        $this->assertEquals($first, $totalCount-5);
+        $this->assertEquals($last, $totalCount-1);
+    }
+
+    protected function parseRange($header)
+    {
+        $splitTotal = explode('/', str_replace('entities ', '', $header));
+        $total = null;
+        if (isset($splitTotal[1]) && $splitTotal[1] !== '') {
+            $total = $splitTotal[1];
+        }
+        $firstAndLast = explode('-', $splitTotal[0]);
+        $first = null;
+        $last = null;
+        if (isset($firstAndLast[0]) && $firstAndLast[0] !== '') {
+            $first = $firstAndLast[0];
+        }
+
+        if (isset($firstAndLast[1]) && $firstAndLast[1] !== '') {
+            $last = $firstAndLast[1];
+        }
+
+        return [$first,$last,$total];
     }
 
     public function testGetOne()

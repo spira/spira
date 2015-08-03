@@ -10,13 +10,17 @@ Note that this route returns paginated results as defined in the `Content-Range`
 #### Restrictions
 * Published - Allowed - [all]
 * Unpublished - Allowed - [admin, self]
-
++ Request
+    + Headers
+    
+            Range: entities=0-
+            
 + Response 200 (application/json)
 
     + Headers
-
-            Accept-Ranges: articles
-            Content-Range: articles=1-10/*
+    
+            Accept-Ranges: entities
+            Content-Range: entities 0-9/200
 
     + Body
 

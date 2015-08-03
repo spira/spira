@@ -16,11 +16,16 @@ use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
-use Spira\Responder\Responder\ApiResponder;
+use Spira\Responder\Contract\TransformerInterface;
+use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
+use Spira\Responder\Response\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class ApiController extends Controller
 {
+    protected $paginatorDefaultLimit = 10;
+    protected $paginatorMaxLimit = 50;
+
     /**
      * Model Repository.
      *
@@ -29,9 +34,9 @@ abstract class ApiController extends Controller
     protected $repository;
 
     /**
-     * @var ApiResponder
+     * @var TransformerInterface
      */
-    protected $responder;
+    protected $transformer;
 
     /**
      * Get all entities.
@@ -40,7 +45,16 @@ abstract class ApiController extends Controller
      */
     public function getAll()
     {
-        return $this->getResponder()->collection($this->getRepository()->all());
+        return $this->getResponse()->collection($this->getRepository()->all(), $this->transformer);
+    }
+
+    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
+    {
+        $count = $this->getRepository()->count();
+        $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
+        $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
+        $collection = $this->getRepository()->all(['*'], $offset, $limit);
+        return $this->getResponse()->paginatedCollection($collection, $this->transformer, $offset, $count);
     }
 
     /**
@@ -54,12 +68,12 @@ abstract class ApiController extends Controller
         $this->validateId($id);
         try {
             $model = $this->getRepository()->find($id);
-            return $this->getResponder()->item($model);
+            return $this->getResponse()->item($model, $this->transformer);
         } catch (ModelNotFoundException $e) {
             $this->notFound($this->getKeyName());
         }
 
-        return $this->getResponder()->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
@@ -74,7 +88,7 @@ abstract class ApiController extends Controller
         $model->fill($request->all());
         $this->getRepository()->save($model);
 
-        return $this->getResponder()->createdItem($model);
+        return $this->getResponse()->createdItem($model, $this->transformer);
     }
 
     /**
@@ -95,7 +109,7 @@ abstract class ApiController extends Controller
         $model->fill($request->all());
         $this->getRepository()->save($model);
 
-        return $this->getResponder()->createdItem($model);
+        return $this->getResponse()->createdItem($model, $this->transformer);
     }
 
     /**
@@ -129,7 +143,7 @@ abstract class ApiController extends Controller
 
         $models = $this->getRepository()->saveMany($putModels);
 
-        return $this->getResponder()->createdCollection($models);
+        return $this->getResponse()->createdCollection($models, $this->transformer);
     }
 
     /**
@@ -150,7 +164,7 @@ abstract class ApiController extends Controller
             $this->notFound($this->getKeyName());
         }
 
-        return $this->getResponder()->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
@@ -178,7 +192,7 @@ abstract class ApiController extends Controller
 
         $this->getRepository()->saveMany($models);
 
-        return $this->getResponder()->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
@@ -197,7 +211,7 @@ abstract class ApiController extends Controller
             $this->notFound($this->getKeyName());
         }
 
-        return $this->getResponder()->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
@@ -217,15 +231,15 @@ abstract class ApiController extends Controller
         }
 
         $this->getRepository()->deleteMany($models);
-        return $this->getResponder()->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
-     * @return ApiResponder
+     * @return ApiResponse
      */
-    public function getResponder()
+    public function getResponse()
     {
-        return $this->responder;
+        return new ApiResponse();
     }
 
     /**

@@ -26,7 +26,7 @@ class Article extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'exerpt', 'permalink', 'first_published'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published'];
 
     protected $hidden = ['permalinks'];
 
@@ -46,7 +46,7 @@ class Article extends BaseModel
             'article_id' => 'uuid|createOnly',
             'title' => 'required|string',
             'content' => 'required|string',
-            'exerpt' => 'string',
+            'excerpt' => 'string',
             'permalink' => $permalinkRule
         ];
     }

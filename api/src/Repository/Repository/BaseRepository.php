@@ -60,29 +60,32 @@ abstract class BaseRepository
     }
 
 
-
     /**
      * Find a model by its primary key.
      *
-     * @param  array  $ids
-     * @param  array  $columns
+     * @param  array $ids
+     * @param  array $columns
+     * @param null $skip
+     * @param null $take
      * @return Collection
      */
-    public function findMany($ids, $columns = ['*'])
+    public function findMany($ids, $columns = ['*'], $skip = null, $take = null)
     {
-        return $this->model->findMany($ids, $columns);
+        return $this->model->skip($skip)->take($take)->findMany($ids, $columns);
     }
 
 
     /**
      * Get all entities.
      *
-     * @param  array  $columns
+     * @param  array $columns
+     * @param null $skip
+     * @param null $take
      * @return Collection
      */
-    public function all($columns = ['*'])
+    public function all($columns = ['*'], $skip = null, $take = null)
     {
-        return $this->model->get($columns);
+        return $this->model->skip($skip)->take($take)->get($columns);
     }
 
     /**
