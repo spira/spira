@@ -14,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiResponse extends Response
 {
-
     /** @var TransformerInterface */
     protected $transformer = null;
 
@@ -36,7 +35,6 @@ class ApiResponse extends Response
      */
     public function created($location = null)
     {
-
         if (! is_null($location)) {
             $this->header('Location', $location);
         }
@@ -71,8 +69,7 @@ class ApiResponse extends Response
      */
     public function item($item, $statusCode = self::HTTP_OK)
     {
-
-        if ($this->transformer){
+        if ($this->transformer) {
             $item = $this->transformer->transformItem($item);
         }
 
@@ -102,8 +99,7 @@ class ApiResponse extends Response
      */
     public function collection($items, $statusCode = Response::HTTP_OK)
     {
-
-        if ($this->transformer){
+        if ($this->transformer) {
             $items = $this->transformer->transformCollection($items);
         }
 
