@@ -339,7 +339,7 @@ gulp.task('test:app',  'unit test & report frontend coverage', [], function(cb){
     plugins.runSequence('build', 'scripts:test', 'test:karma', cb);
 });
 
-gulp.task('test:karma',  'unit test the frontend', [], function(){
+gulp.task('test:karma',  'unit test the frontend', [], function(done){
 
     var files = getIndexFiles({
         devDeps: true
@@ -355,16 +355,16 @@ gulp.task('test:karma',  'unit test the frontend', [], function(){
 
     testFiles.push('app/build/js/templates.js');
 
-    return gulp.src(testFiles)
-        .pipe(plugins.karma({
-            configFile: 'karma.conf.js',
-            action: 'run'
-        }))
-        .on('error', function(err) {
-            // Make sure failed tests cause gulp to exit non-zero
-            throw err;
-        });
+    var karmaConfig = {
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true,
+        files: testFiles
+    };
 
+
+    var KarmaServer = require('karma').Server;
+
+    new KarmaServer(karmaConfig, done).start();
 });
 
 gulp.task('test:api', 'unit tests the api', [], function(){
