@@ -24,6 +24,8 @@ class TimezoneController extends ApiController
      */
     public function getAll()
     {
-        return $this->getResponse()->collection($this->timezones->all(), $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->collection($this->timezones->all());
     }
 }
