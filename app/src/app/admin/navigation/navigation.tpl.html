@@ -9,15 +9,17 @@
     </md-list-item>
 </md-list>
 
+<md-divider></md-divider>
+
 <md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
 
     <md-list-item ng-if="!!stateGroup.name">
-        <p>{{ stateGroup.name }}</p>
+        <p><small>{{ stateGroup.name | uppercase}}</small></p>
     </md-list-item>
 
     <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
         <md-icon>{{state.data.icon}}</md-icon>
-        <p>{{state.data.title}}</p>
+        <p>{{state.data.title | uppercase}}</p>
 
     </md-list-item>
 
@@ -27,7 +29,7 @@
     >
     </menu-toggle>
 
-    <md-divider ng-repeat-end ng-if="!$last"></md-divider>
+    <md-divider ng-repeat-end></md-divider>
 
 </md-list>
 

@@ -5,7 +5,7 @@
             aria-expanded="{{isOpen()}}">
 
         <md-icon>{{navigationState.data.icon}}</md-icon>
-        <p>{{navigationState.data.title}}</p>
+        <p>{{navigationState.data.title | uppercase}}</p>
 
         <span aria-hidden="true" class="md-toggle-icon"
               ng-class="{'toggled' : isOpen()}">

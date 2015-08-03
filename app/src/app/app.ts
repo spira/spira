@@ -8,10 +8,17 @@ module app {
 
         constructor($mdThemingProvider:ng.material.IThemingProvider, $mdIconProvider:ng.material.IIconProvider, ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider) {
 
-            $mdThemingProvider.theme('default')
+            $mdThemingProvider.theme('defaultTheme')
                 .primaryPalette('green')
                 .accentPalette('grey')
             ;
+
+            $mdThemingProvider.theme('adminTheme')
+                .primaryPalette('blue-grey')
+                .accentPalette('deep-orange')
+            ;
+
+            $mdThemingProvider.setDefaultTheme('defaultTheme');
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
                 color: 'green',
