@@ -10,27 +10,40 @@ namespace Spira\Responder\Response;
 
 use InvalidArgumentException;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiResponse extends Response
 {
+    /** @var TransformerInterface */
+    protected $transformer = null;
+
+    /**
+     * Set the transformer to use for building entities
+     * @param TransformerInterface $transformer
+     * @return $this
+     */
+    public function transformer(TransformerInterface $transformer)
+    {
+        $this->transformer = $transformer;
+        return $this;
+    }
+
     /**
      * Respond with a created response and associate a location if provided.
-     *
-     * @param null|string $location
-     *
+     * @param null $location
      * @return Response
      */
     public function created($location = null)
     {
-        $this->setContent(null);
-        $this->setStatusCode(self::HTTP_CREATED);
         if (! is_null($location)) {
-            $this->headers->set('Location', $location);
+            $this->header('Location', $location);
         }
-        return $this;
+
+        return $this
+            ->setContent(null)
+            ->setStatusCode(self::HTTP_CREATED)
+        ;
     }
 
 
@@ -42,126 +55,98 @@ class ApiResponse extends Response
      */
     public function noContent($code = self::HTTP_NO_CONTENT)
     {
-        $this->setContent(null);
-        return $this->setStatusCode($code);
+        return $this
+            ->setStatusCode($code)
+            ->setContent(null)
+        ;
     }
 
-
-    /**
-     * Bind a collection to a transformer and start building a response.
-     *
-     * @param array|Collection $items
-     * @param TransformerInterface $transformer
-     * @param array $parameters
-     * @return Response
-     */
-    public function collection($items, TransformerInterface $transformer, array $parameters = [])
-    {
-        return $this->collectionWithStatusCode($items, $transformer);
-    }
-
-
-    /**
-     * Respond with a created response.
-     *
-     * @param array|Collection $items
-     * @param TransformerInterface $transformer
-     * @param array $parameters
-     * @return Response
-     */
-    public function createdCollection($items, TransformerInterface $transformer, array $parameters = [])
-    {
-        foreach ($items as $item) {
-            $item->setVisible(['']);
-        }
-        return $this->collectionWithStatusCode($items, $transformer, self::HTTP_CREATED);
-    }
 
     /**
      * Bind an item to a transformer and start building a response.
-     *
-     * @param object|string $item
-     * @param TransformerInterface $transformer
-     * @param array $parameters
+     * @param $item
+     * @param int $statusCode
      * @return Response
      */
-    public function item($item, TransformerInterface $transformer, array $parameters = [])
+    public function item($item, $statusCode = self::HTTP_OK)
     {
-        return $this->itemWithStatusCode($item, $transformer);
+        if ($this->transformer) {
+            $item = $this->transformer->transformItem($item);
+        }
+
+        return $this
+            ->header('Content-Type', 'application/json')
+            ->setContent($this->encode($item))
+            ->setStatusCode($statusCode)
+        ;
     }
 
 
     /**
      * Respond with a created response.
-     *
-     * @param object $item
-     * @param TransformerInterface $transformer
-     * @param array $parameters
+     * @param $item
      * @return Response
      */
-    public function createdItem($item, TransformerInterface $transformer, array $parameters = [])
+    public function createdItem($item)
     {
         $item->setVisible(['']);
-        return $this->itemWithStatusCode($item, $transformer, self::HTTP_CREATED);
-    }
-
-    /**
-     * @param $item
-     * @param TransformerInterface $transformer
-     * @param int $code
-     * @return Response
-     */
-    protected function itemWithStatusCode($item, TransformerInterface $transformer, $code = self::HTTP_OK)
-    {
-        $this->setStatusCode($code);
-        $this->headers->set('Content-Type', 'application/json');
-        $this->setContent($this->encode($transformer->transformItem($item)));
-        return $this;
+        return $this->item($item, self::HTTP_CREATED);
     }
 
     /**
      * @param $items
-     * @param TransformerInterface $transformer
-     * @param int $code
+     * @param int $statusCode
      * @return Response
      */
-    protected function collectionWithStatusCode($items, TransformerInterface $transformer, $code = self::HTTP_OK)
+    public function collection($items, $statusCode = Response::HTTP_OK)
     {
-        $this->setStatusCode($code);
-        $this->headers->set('Content-Type', 'application/json');
-        $this->setContent($this->encode($transformer->transformCollection($items)));
+        if ($this->transformer) {
+            $items = $this->transformer->transformCollection($items);
+        }
 
-        return $this;
+        return $this
+            ->header('Content-Type', 'application/json')
+            ->setContent($this->encode($items))
+            ->setStatusCode($statusCode)
+        ;
+    }
+
+
+    /**
+     * Respond with a created response and hide all the items (except self)
+     * @param $items
+     * @return Response
+     */
+    public function createdCollection($items)
+    {
+        foreach ($items as $item) {
+            $item->setVisible(['']);
+        }
+
+        return $this->collection($items, self::HTTP_CREATED);
     }
 
 
     /**
      * Build paginated response.
-     *
-     * @param Collection|array $items
-     * @param null|int $offset
-     * @param null|int $totalCount
-     * @param TransformerInterface $transformer
-     * @param array $parameters
+     * @param $items
+     * @param null $offset
+     * @param null $totalCount
      * @return Response
-     * @throws HttpException
      */
-    public function paginatedCollection($items, TransformerInterface $transformer, $offset = null, $totalCount = null, array $parameters = [])
+    public function paginatedCollection($items, $offset = null, $totalCount = null)
     {
         $itemCount = count($items);
         $this->validateRange($itemCount);
 
-        $this->headers->set('Accept-Ranges', 'entities');
-        $this->headers->set('Content-Type', 'application/json');
-        $this->setStatusCode(self::HTTP_PARTIAL_CONTENT);
-
         $rangeHeader = $this->prepareRangeHeader($itemCount, $offset, $totalCount);
-        $this->headers->set('Content-Range', $rangeHeader);
 
-        $this->setContent($this->encode($transformer->transformCollection($items)));
-
-
-        return $this;
+        return $this
+            ->header('Accept-Ranges', 'entities')
+            ->header('Content-Type', 'application/json')
+            ->header('Content-Range', $rangeHeader)
+            ->collection($items, self::HTTP_PARTIAL_CONTENT)
+        ;
     }
 
     /**

@@ -29,6 +29,8 @@ class ArticleController extends ApiController
     {
         /** @var Article $article */
         $article = $this->repository->find($id);
-        return $this->getResponse()->collection($article->permalinks, $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->collection($article->permalinks);
     }
 }

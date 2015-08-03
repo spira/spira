@@ -121,7 +121,9 @@ class UserController extends ApiController
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
 
-        return $this->getResponse()->createdItem($model, $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->createdItem($model, $this->transformer);
     }
 
     /**
