@@ -17,14 +17,12 @@ class CreateSocialLoginsTable extends Migration
     {
         $modelClass = static::MODEL;
         Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
-            $table->uuid('social_login_id');
-
             $table->uuid('user_id');
             $table->string('provider', 16);
             $table->string('token');
             $table->timestamps();
 
-            $table->primary('social_login_id');
+            $table->primary(['user_id', 'provider']);
             $table->foreign('user_id')
                 ->references('user_id')->on(User::getTableName())
                 ->onDelete('cascade');
