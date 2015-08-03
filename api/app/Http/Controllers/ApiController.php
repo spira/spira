@@ -20,6 +20,7 @@ use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 abstract class ApiController extends Controller
 {
@@ -76,7 +77,7 @@ abstract class ApiController extends Controller
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
-            $this->notFound();
+            throw $this->notFoundException();
         }
 
         return $this->getResponse()
@@ -176,7 +177,7 @@ abstract class ApiController extends Controller
             $model->fill($request->all());
             $this->getRepository()->save($model);
         } catch (ModelNotFoundException $e) {
-            $this->notFound($this->getKeyName());
+            throw $this->notFoundException($this->getKeyName());
         }
 
         return $this->getResponse()->noContent();
@@ -194,7 +195,7 @@ abstract class ApiController extends Controller
         $ids = $this->getIds($requestCollection);
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            $this->notFoundMany($ids, $models);
+            throw $this->notFoundManyException($ids, $models);
         }
 
         foreach ($requestCollection as $requestEntity) {
@@ -223,7 +224,7 @@ abstract class ApiController extends Controller
             $model = $this->getRepository()->find($id);
             $this->getRepository()->delete($model);
         } catch (ModelNotFoundException $e) {
-            $this->notFound($this->getKeyName());
+            throw $this->notFoundException();
         }
 
         return $this->getResponse()->noContent();
@@ -242,7 +243,7 @@ abstract class ApiController extends Controller
         $models = $this->getRepository()->findMany($ids);
 
         if (count($ids) !== $models->count()) {
-            $this->notFoundMany($ids, $models);
+            throw $this->notFoundManyException($ids, $models);
         }
 
         $this->getRepository()->deleteMany($models);
@@ -309,19 +310,29 @@ abstract class ApiController extends Controller
     }
 
 
-    protected function notFound()
+    /**
+     * Build notFoundException
+     * @return ValidationException
+     */
+    protected function notFoundException()
     {
         $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$this->getKeyName()], [$this->getKeyName()=>'notFound']);
-        if ($validation->fails()) {
-            throw new ValidationException($validation->getMessageBag());
+        if (!$validation->fails()) {
+            // @codeCoverageIgnoreStart
+            throw new \LogicException("Validator should have failed");
+            // @codeCoverageIgnoreEnd
         }
+
+        return new ValidationException($validation->getMessageBag());
     }
 
     /**
+     * Get notFoundManyException
      * @param $ids
      * @param Collection $models
+     * @return ValidationExceptionCollection
      */
-    protected function notFoundMany($ids, $models)
+    protected function notFoundManyException($ids, $models)
     {
         $errors = [];
         foreach ($ids as $id) {
@@ -329,14 +340,14 @@ abstract class ApiController extends Controller
                 $errors[] = null;
             } else {
                 try {
-                    $this->notFound();
+                    throw $this->notFoundException();
                 } catch (ValidationException $e) {
                     $errors[] = $e;
                 }
             }
         }
 
-        throw new ValidationExceptionCollection($errors);
+        return new ValidationExceptionCollection($errors);
     }
 
     /**
