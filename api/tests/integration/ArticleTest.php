@@ -119,8 +119,8 @@ class ArticleTest extends TestCase
         $this->addPermalinksToArticles($entities);
         $this->repository->saveMany($entities);
         $entity = current($entities);
-
-        $this->get('/articles/'.$entity->permalink);
+        $permalink = $entity->permalinks->first();
+        $this->get('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
