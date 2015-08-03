@@ -107,7 +107,7 @@ class UserController extends ApiController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
         if ($this->repository->exists($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -135,7 +135,7 @@ class UserController extends ApiController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
         $model = $this->repository->find($id);
 
         if ($request->get('email_confirmed')) {

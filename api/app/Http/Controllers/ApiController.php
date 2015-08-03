@@ -20,7 +20,6 @@ use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 
 abstract class ApiController extends Controller
 {
@@ -71,13 +70,12 @@ abstract class ApiController extends Controller
      */
     public function getOne($id)
     {
-        $this->validateId($id);
-        $model = null;
+        $this->validateId($id, $this->getKeyName());
 
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException();
+            throw $this->notFoundException($this->getKeyName());
         }
 
         return $this->getResponse()
@@ -112,7 +110,7 @@ abstract class ApiController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -136,7 +134,7 @@ abstract class ApiController extends Controller
     {
         $requestCollection = $request->data;
 
-        $ids = $this->getIds($requestCollection, false);
+        $ids = $this->getIds($requestCollection, $this->getKeyName());
         $models = [];
         if (!empty($ids)) {
             $models = $this->getRepository()->findMany($ids);
@@ -171,7 +169,7 @@ abstract class ApiController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
         try {
             $model = $this->getRepository()->find($id);
             $model->fill($request->all());
@@ -192,10 +190,10 @@ abstract class ApiController extends Controller
     public function patchMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection);
+        $ids = $this->getIds($requestCollection, $this->getKeyName());
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
-            throw $this->notFoundManyException($ids, $models);
+            throw $this->notFoundManyException($ids, $models, $this->getKeyName());
         }
 
         foreach ($requestCollection as $requestEntity) {
@@ -219,12 +217,12 @@ abstract class ApiController extends Controller
      */
     public function deleteOne($id)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
         try {
             $model = $this->getRepository()->find($id);
             $this->getRepository()->delete($model);
         } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException();
+            throw $this->notFoundException($this->getKeyName());
         }
 
         return $this->getResponse()->noContent();
@@ -239,11 +237,11 @@ abstract class ApiController extends Controller
     public function deleteMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection);
+        $ids = $this->getIds($requestCollection, $this->getKeyName());
         $models = $this->getRepository()->findMany($ids);
 
         if (count($ids) !== $models->count()) {
-            throw $this->notFoundManyException($ids, $models);
+            throw $this->notFoundManyException($ids, $models, $this->getKeyName());
         }
 
         $this->getRepository()->deleteMany($models);
@@ -276,27 +274,29 @@ abstract class ApiController extends Controller
 
     /**
      * @param $entityCollection
+     * @param string $keyName
      * @param bool $validate
+     * @param string $rule
      * @return array
      * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection, $validate = true)
+    protected function getIds($entityCollection, $keyName, $validate = true, $rule = 'uuid')
     {
         $ids = [];
         $errors = [];
         $error = false;
         foreach ($entityCollection as $requestEntity) {
-            if (isset($requestEntity[$this->getKeyName()]) && $requestEntity[$this->getKeyName()]) {
+            if (isset($requestEntity[$keyName]) && $requestEntity[$keyName]) {
                 try {
-                    $id = $requestEntity[$this->getKeyName()];
-                    $this->validateId($id);
+                    $id = $requestEntity[$keyName];
+                    if ($validate) {
+                        $this->validateId($id, $keyName, $rule);
+                    }
                     $ids[] = $id;
                     $errors[] = null;
                 } catch (ValidationException $e) {
-                    if ($validate) {
-                        $error = true;
-                        $errors[] = $e;
-                    }
+                    $error = true;
+                    $errors[] = $e;
                 }
             } else {
                 $errors[] = null;
@@ -312,11 +312,12 @@ abstract class ApiController extends Controller
 
     /**
      * Build notFoundException
+     * @param string $keyName
      * @return ValidationException
      */
-    protected function notFoundException()
+    protected function notFoundException($keyName = '')
     {
-        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$this->getKeyName()], [$this->getKeyName()=>'notFound']);
+        $validation = $this->getValidationFactory()->make([$keyName=>$keyName], [$keyName=>'notFound']);
         if (!$validation->fails()) {
             // @codeCoverageIgnoreStart
             throw new \LogicException("Validator should have failed");
@@ -330,9 +331,10 @@ abstract class ApiController extends Controller
      * Get notFoundManyException
      * @param $ids
      * @param Collection $models
+     * @param string $keyName
      * @return ValidationExceptionCollection
      */
-    protected function notFoundManyException($ids, $models)
+    protected function notFoundManyException($ids, $models, $keyName = '')
     {
         $errors = [];
         foreach ($ids as $id) {
@@ -340,7 +342,7 @@ abstract class ApiController extends Controller
                 $errors[] = null;
             } else {
                 try {
-                    throw $this->notFoundException();
+                    throw $this->notFoundException($keyName);
                 } catch (ValidationException $e) {
                     $errors[] = $e;
                 }
@@ -352,11 +354,13 @@ abstract class ApiController extends Controller
 
     /**
      * @param $id
+     * @param string $keyName
+     * @param string $rule
      * @throw ValidationException
      */
-    protected function validateId($id)
+    protected function validateId($id, $keyName, $rule = 'uuid')
     {
-        $validation = $this->getValidationFactory()->make([$this->getKeyName()=>$id], [$this->getKeyName()=>'uuid']);
+        $validation = $this->getValidationFactory()->make([$keyName=>$id], [$keyName=>$rule]);
         if ($validation->fails()) {
             throw new ValidationException($validation->getMessageBag());
         }

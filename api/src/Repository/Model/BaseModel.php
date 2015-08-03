@@ -196,7 +196,6 @@ class BaseModel extends Model
     }
 
     /**
-     * @TODO add belongsTo, belongsToMany, ManytoMany relations
      * @param Relation $relation
      */
     protected function preserveKeys(Relation $relation)
@@ -205,11 +204,6 @@ class BaseModel extends Model
             $fk = str_replace($this->getTable().'.', '', $relation->getForeignKey());
             $this->attributes[$fk] = $relation->getParentKey();
         }
-
-//        if ($relation instanceof BelongsTo){
-//            $fk = str_replace($this->getTable().'.','',$relation->getForeignKey());
-//            $relation->getParent()->$fk = $this->{$relation->getOtherKey()};
-//        }
     }
 
     /**
