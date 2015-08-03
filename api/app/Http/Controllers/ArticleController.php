@@ -72,21 +72,20 @@ class ArticleController extends ApiController
         $article = $this->getArticle($id);
         $requestCollection = $request->data;
 
-        $metaNames = $this->getIds($requestCollection, $this->getMetaKeyName(), true, 'required|string');
-
-        foreach ($metaNames as $metaName)
-        {
-            if (!$meta = $article->metas->find($metaName)){
+        foreach ($requestCollection as $requestEntity) {
+            $id = isset($requestEntity[$this->getMetaKeyName()])?$requestEntity[$this->getMetaKeyName()]:null;
+            if (!$meta = $article->metas->find($id)) {
                 $meta = new ArticleMeta();
             }
-            $meta->fill($request->all());
-
+            /** @var ArticleMeta $model */
+            $meta->fill($requestEntity);
             if (!$meta->exists){
                 $article->metas->add($meta);
             }
         }
 
         $this->repository->save($article);
+
         return $this->getResponse()->created();
     }
 

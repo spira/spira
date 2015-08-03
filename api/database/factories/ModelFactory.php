@@ -104,8 +104,8 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
 
 $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $faker) {
     return [
-        'article_meta_name' => $faker->unique()->slug,
-        'content' => $faker->slug,
+        'meta_name' => $faker->unique()->slug,
+        'meta_content' => $faker->slug,
     ];
 });
 

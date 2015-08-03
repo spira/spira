@@ -314,4 +314,49 @@ class ArticleTest extends TestCase
         $this->assertEquals(count($object), $count);
     }
 
+    public function testPutMetas()
+    {
+        $articles = factory(Article::class, 2)->create()->all();
+        $this->addMetasToArticles($articles);
+        $this->repository->saveMany($articles);
+
+        $article = current($articles);
+        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
+
+        $entities = array_map(function ($entity) {
+            return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
+        }, $article->metas->all());
+
+        $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
+        foreach ($metas as $meta) {
+            $entities[] = $this->prepareEntity($meta);
+        }
+
+        $this->put('/articles/'.$article->article_id.'/meta', ['data' => $entities]);
+        $this->assertResponseStatus(201);
+        $updatedArticle = $this->repository->find($article->article_id);
+
+        $this->assertEquals($metaCount+2, $updatedArticle->metas->count());
+        $counter = 0;
+        foreach ($updatedArticle->metas as $meta) {
+            if ($meta->meta_content == 'foobar'){
+                $counter++;
+            }
+        }
+        $this->assertEquals($counter,$metaCount);
+    }
+
+    public function deleteMeta()
+    {
+        $articles = factory(Article::class, 2)->create()->all();
+        $this->addMetasToArticles($articles);
+        $this->repository->saveMany($articles);
+        $article = current($articles);
+        $metaEntity = $article->metas->first();
+        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
+        $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
+        $updatedArticle = $this->repository->find($article->article_id);
+        $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
+    }
+
 }

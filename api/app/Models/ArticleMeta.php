@@ -18,26 +18,24 @@ class ArticleMeta extends BaseModel
      */
     public $table = 'article_metas';
 
-    protected $primaryKey = 'article_meta_name';
+    protected $primaryKey = 'meta_name';
 
-    protected $fillable = ['article_id', 'article_meta_name', 'content', 'property'];
-
-    protected $validationRules = [
-        'article_id' => 'uuid|createOnly',
-        'article_meta_name' => 'required|string|createOnly|unique:article_metas,email_address,NULL,id,account_id,1',
-        'content' => 'string',
-        'property' => 'string'
-    ];
+    protected $fillable = ['article_id', 'meta_name', 'meta_content', 'property'];
 
     public function getValidationRules()
     {
-        $metaUniqueRule = 'unique:article_metas,article_meta_name,NULL,NULL,article_id,'.$this->article_id;
-
+        $metaUniqueRule = 'unique:article_metas,meta_name';
+        if ($this->exists) {
+            $metaUniqueRule.=','.$this->meta_name.',meta_name';
+        }else{
+            $metaUniqueRule.=',NULL,NULL';
+        }
+        $metaUniqueRule.= ',article_id,'.$this->article_id;
         return [
             'article_id' => 'uuid|createOnly',
-            'article_meta_name' => 'required|string|createOnly|'.$metaUniqueRule,
-            'content' => 'string',
-            'property' => 'string'
+            'meta_name' => 'required|string|createOnly|'.$metaUniqueRule,
+            'meta_content' => 'string',
+            'meta_property' => 'string'
         ];
     }
 
