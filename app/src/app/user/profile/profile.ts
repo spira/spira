@@ -30,7 +30,6 @@ module app.user.profile {
                         $mdToast:ng.material.IToastService
                     ) => {
                         if(!_.isEmpty($stateParams['emailConfirmationToken'])) {
-                            console.log(ngJwtAuthService.getUser());
                             userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams['emailConfirmationToken'])
                                 .then(() => {
                                     $mdToast.show(

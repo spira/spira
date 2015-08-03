@@ -130,6 +130,14 @@ class UserController extends ApiController
         $this->validateId($id);
         $model = $this->repository->find($id);
 
+        // Check if the email is being changed, and initialize confirmation
+        $email = $request->get('email');
+        if ($email && $model->email != $email) {
+            $token = $model->makeConfirmationToken($email, $this->cache);
+            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
+            $request->merge(['email_confirmed' => null]);
+        }
+
         if ($request->get('email_confirmed')) {
             $token = $request->headers->get('email-confirm-token');
             if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
@@ -137,14 +145,9 @@ class UserController extends ApiController
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
             }
-        }
-
-        // Check if the email is being changed, and initialize confirmation
-        $email = $request->get('email');
-        if ($email && $model->email != $email) {
-            $token = $model->makeConfirmationToken($email, $this->cache);
-            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
-            $request->merge(['email_confirmed' => null]);
+            else {
+                $model->email = $email;
+            }
         }
 
         $model->fill($request->all());
