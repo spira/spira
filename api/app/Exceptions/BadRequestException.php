@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BadRequestException extends HttpException
@@ -18,6 +19,6 @@ class BadRequestException extends HttpException
      */
     public function __construct($message = 'Bad Request.', $code = 0, Exception $previous = null)
     {
-        parent::__construct(400, $message, $previous);
+        parent::__construct(Response::HTTP_BAD_REQUEST, $message, $previous);
     }
 }

@@ -13,7 +13,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Spira\Repository\Model\BaseModel;
 use Traversable;
 
-class IlluminateModelTransformer extends BaseTransformer
+class EloquentModelTransformer extends BaseTransformer
 {
     public static $badRoutes = [];
     /**

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Laravel\Lumen\Routing\Controller;
 use Faker;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiaryController extends Controller
 {
@@ -24,7 +25,7 @@ class ApiaryController extends Controller
             'Content-Type' => 'text/plain',
         ];
 
-        return response($apib, 200, $headers);
+        return response($apib, Response::HTTP_OK, $headers);
     }
 
     public function getDocumentationApib($apiUrl)

@@ -31,7 +31,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
 
 
 $app->group(['prefix' => 'articles'], function (Application $app) {
-    $app->get('/', 'App\Http\Controllers\ArticleController@getAll');
+    $app->get('/', 'App\Http\Controllers\ArticleController@getAllPaginated');
     $app->get('{id}', ['as'=>\App\Models\Article::class, 'uses'=>'App\Http\Controllers\ArticleController@getOne']);
     $app->get('{id}/permalinks', 'App\Http\Controllers\ArticleController@getPermalinks');
     $app->post('/', 'App\Http\Controllers\ArticleController@postOne');
@@ -46,6 +46,7 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->get('/fatal-error', 'App\Http\Controllers\TestController@fatalError');
 
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
+    $app->get('/entities/pages', 'App\Http\Controllers\TestController@getAllPaginated');
     $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');

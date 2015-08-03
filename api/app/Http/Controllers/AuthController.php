@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App;
 use RuntimeException;
-use App\Models\AuthToken;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
@@ -13,7 +12,6 @@ use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
-use Spira\Responder\Contract\ApiResponderInterface;
 
 class AuthController extends ApiController
 {
@@ -36,13 +34,13 @@ class AuthController extends ApiController
      *
      * @param  Auth                   $auth
      * @param  JWTAuth                $jwtAuth
-     * @param  ApiResponderInterface  $responder
+     * @param  AuthTokenTransformer  $transformer
      */
-    public function __construct(Auth $auth, JWTAuth $jwtAuth, ApiResponderInterface $responder)
+    public function __construct(Auth $auth, JWTAuth $jwtAuth, AuthTokenTransformer $transformer)
     {
         $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
-        $this->responder = $responder;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -69,7 +67,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 
     /**
@@ -88,7 +86,7 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->refresh($token);
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 
     /**
@@ -115,6 +113,6 @@ class AuthController extends ApiController
 
         $token = $this->jwtAuth->fromUser($user);
 
-        return $this->responder->setTransformer(App::make(AuthTokenTransformer::class))->item($token);
+        return $this->getResponse()->item($token, $this->transformer);
     }
 }

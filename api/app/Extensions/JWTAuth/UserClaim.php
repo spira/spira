@@ -7,7 +7,7 @@ use App\Models\User;
 use Tymon\JWTAuth\Claims\Claim;
 use App\Services\TransformerService;
 use Tymon\JWTAuth\Exceptions\InvalidClaimException;
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 
 class UserClaim extends Claim
 {
@@ -29,7 +29,7 @@ class UserClaim extends Claim
     {
         // Transform the user before encoding
         $transformerService = App::make(TransformerService::class);
-        $transformer = new IlluminateModelTransformer($transformerService);
+        $transformer = new EloquentModelTransformer($transformerService);
         $value = $transformer->transform($value);
 
         return parent::setValue($value);

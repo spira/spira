@@ -3,7 +3,7 @@
 use App;
 use App\Repositories\UserRepository;
 use App\Services\TransformerService;
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use Tymon\JWTAuth\PayloadFactory as PayloadFactoryBase;
 
 class PayloadFactory extends PayloadFactoryBase

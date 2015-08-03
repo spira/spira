@@ -1,6 +1,7 @@
 <?php namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ForbiddenException extends HttpException
@@ -15,6 +16,6 @@ class ForbiddenException extends HttpException
      */
     public function __construct($message = 'Denied.', $code = 0, Exception $previous = null)
     {
-        parent::__construct(403, $message, $previous);
+        parent::__construct(Response::HTTP_FORBIDDEN, $message, $previous);
     }
 }

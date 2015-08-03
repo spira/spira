@@ -4,6 +4,9 @@ use Mockery as m;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
+/**
+ * @property \App\Repositories\BaseRepository $repository
+ */
 class TestRepositoryTest extends TestCase
 {
     use DatabaseTransactions;
@@ -52,6 +55,24 @@ class TestRepositoryTest extends TestCase
         $result = $this->repository->all();
         $this->assertTrue(is_array($result->toArray()));
         $this->assertGreaterThanOrEqual(5, $result->count());
+    }
+
+    public function testAllWithLimit()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+
+        $result = $this->repository->all(['*'], null, 2);
+        $this->assertTrue(is_array($result->toArray()));
+        $this->assertEquals(2, $result->count());
+    }
+
+    public function testAllWithOffset()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $count = $this->repository->count();
+        $result = $this->repository->all(['*'], 2, null);
+        $this->assertTrue(is_array($result->toArray()));
+        $this->assertEquals($count-2, $result->count());
     }
 
     public function testSave()
