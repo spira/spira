@@ -4,6 +4,15 @@ use Spira\Responder\Response\ApiResponse;
 
 class ResponseTest extends TestCase
 {
+    public function testRedirect()
+    {
+        $url = 'http:://foo.bar';
+        $response = (new ApiResponse)->redirect($url);
+
+        $this->assertEquals('302', $response->getStatusCode());
+        $this->assertEquals($url, $response->headers->get('location'));
+    }
+
     public function testRedirectNoUrl()
     {
         $this->setExpectedExceptionRegExp(
@@ -11,9 +20,8 @@ class ResponseTest extends TestCase
             '/redirect.*/',
             0
         );
-        $response = new ApiResponse;
 
-        $response->redirect('');
+        (new ApiResponse)->redirect('');
     }
 
     public function testRedirectIncorrectStatusCode()
@@ -23,8 +31,7 @@ class ResponseTest extends TestCase
             '/redirect.*/',
             0
         );
-        $response = new ApiResponse;
 
-        $response->redirect('http://foo.bar', 200);
+        (new ApiResponse)->redirect('http://foo.bar', 200);
     }
 }
