@@ -25,6 +25,8 @@ class CountriesController extends ApiController
      */
     public function getAll()
     {
-        return $this->getResponse()->collection($this->countries->all(), $this->transformer);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->collection($this->countries->all());
     }
 }
