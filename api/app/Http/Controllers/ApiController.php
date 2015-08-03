@@ -25,6 +25,7 @@ abstract class ApiController extends Controller
 {
     protected $paginatorDefaultLimit = 10;
     protected $paginatorMaxLimit = 50;
+    protected $validateRequest = true;
 
     /**
      * Model Repository.
@@ -70,7 +71,9 @@ abstract class ApiController extends Controller
      */
     public function getOne($id)
     {
-        $this->validateId($id, $this->getKeyName());
+        if ($this->validateRequest){
+            $this->validateId($id, $this->getKeyName());
+        }
 
         try {
             $model = $this->getRepository()->find($id);
@@ -110,7 +113,9 @@ abstract class ApiController extends Controller
      */
     public function putOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName());
+        if ($this->validateRequest){
+            $this->validateId($id, $this->getKeyName());
+        }
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -134,7 +139,7 @@ abstract class ApiController extends Controller
     {
         $requestCollection = $request->data;
 
-        $ids = $this->getIds($requestCollection, $this->getKeyName());
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest);
         $models = [];
         if (!empty($ids)) {
             $models = $this->getRepository()->findMany($ids);
@@ -169,7 +174,9 @@ abstract class ApiController extends Controller
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName());
+        if ($this->validateRequest){
+            $this->validateId($id, $this->getKeyName());
+        }
         try {
             $model = $this->getRepository()->find($id);
             $model->fill($request->all());
@@ -190,7 +197,7 @@ abstract class ApiController extends Controller
     public function patchMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName());
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest);
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
             throw $this->notFoundManyException($ids, $models, $this->getKeyName());
@@ -217,7 +224,9 @@ abstract class ApiController extends Controller
      */
     public function deleteOne($id)
     {
-        $this->validateId($id, $this->getKeyName());
+        if ($this->validateRequest){
+            $this->validateId($id, $this->getKeyName());
+        }
         try {
             $model = $this->getRepository()->find($id);
             $this->getRepository()->delete($model);
@@ -237,7 +246,7 @@ abstract class ApiController extends Controller
     public function deleteMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName());
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest);
         $models = $this->getRepository()->findMany($ids);
 
         if (count($ids) !== $models->count()) {

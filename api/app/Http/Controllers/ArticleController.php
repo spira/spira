@@ -23,6 +23,7 @@ class ArticleController extends ApiController
      * @var string
      */
     private $metaKeyName = null;
+    protected $validateRequest = false;
 
     /**
      * Assign dependencies.
@@ -112,7 +113,6 @@ class ArticleController extends ApiController
      */
     private function getArticle($id)
     {
-        $this->validateId($id, $this->getKeyName());
         try{
             /** @var Article $article */
             $article = $this->repository->find($id);
