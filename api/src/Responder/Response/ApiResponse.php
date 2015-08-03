@@ -8,6 +8,7 @@
 
 namespace Spira\Responder\Response;
 
+use InvalidArgumentException;
 use Illuminate\Http\Response;
 use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -186,5 +187,29 @@ class ApiResponse extends Response
         $debug = env('APP_DEBUG', false);
         $prettyPrint = $debug?JSON_PRETTY_PRINT:0;
         return json_encode($data, $prettyPrint);
+    }
+
+    /**
+     * Creates a redirect response.
+     *
+     * @param  string  $url
+     * @param  int     $status
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public function redirect($url, $status = 302)
+    {
+        if (empty($url)) {
+            throw new InvalidArgumentException('Cannot redirect to an empty URL.');
+        }
+
+        $this->setStatusCode($status);
+        $this->header('Location', $url);
+
+        if (!$this->isRedirect()) {
+            throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
+        }
     }
 }
