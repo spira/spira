@@ -7,7 +7,8 @@ class ResponseTest extends TestCase
     public function testRedirect()
     {
         $url = 'http:://foo.bar';
-        $response = (new ApiResponse)->redirect($url);
+        $response = new ApiResponse;
+        $response->redirect($url);
 
         $this->assertEquals('302', $response->getStatusCode());
         $this->assertEquals($url, $response->headers->get('location'));
