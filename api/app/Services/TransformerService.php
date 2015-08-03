@@ -24,7 +24,7 @@ class TransformerService
      * Initialize the transform manager.
      *
      * @param SerializerAbstract $serializer
-     *
+     * @param Manager $manager
      */
     public function __construct(SerializerAbstract $serializer, Manager $manager)
     {
@@ -59,26 +59,6 @@ class TransformerService
     public function item($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
-        return $this->manager->createData($resource)->toArray();
-    }
-
-    /**
-     * Create paginated transformed data from a collection.
-     *
-     * @param LengthAwarePaginator               $paginator
-     * @param TransformerAbstract $transformer
-     * @param string                             $resourceKey
-     *
-     * @return array
-     */
-    public function paginatedCollection(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
-    {
-        $paginator->appends(\Request::query());
-
-        $resource = new Collection($paginator->getCollection(), $this->getTransformer($transformer), $resourceKey);
-
-        $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
         return $this->manager->createData($resource)->toArray();
     }
 
