@@ -26,6 +26,8 @@ use Spira\Repository\Collection\Collection;
  * @method static BaseModel find
  * @method static Collection findMany
  * @method static BaseModel where
+ * @method static BaseModel skip offset
+ * @method static BaseModel take limit
  *
  */
 class BaseModel extends Model

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TokenInvalidException extends HttpException
@@ -18,6 +19,6 @@ class TokenInvalidException extends HttpException
      */
     public function __construct($message = 'Invalid token.', $code = 0, Exception $previous = null)
     {
-        parent::__construct(422, $message, $previous);
+        parent::__construct(Response::HTTP_UNPROCESSABLE_ENTITY, $message, $previous);
     }
 }

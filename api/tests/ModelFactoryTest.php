@@ -130,7 +130,7 @@ class ModelFactoryTest extends TestCase
             ->showOnly(['varchar', 'multi_word_column_title', 'hidden'])
             ->append('#appends', $fixture['#appends'])
             ->count(2)
-            ->setTransformer(App\Http\Transformers\IlluminateModelTransformer::class)
+            ->setTransformer(App\Http\Transformers\EloquentModelTransformer::class)
             ->json();
 
         $this->assertJson($serviceCreatedFactoryJson);

@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Contracts\Support\MessageBag;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidationException extends HttpException implements  TransformableInterface
@@ -32,7 +33,7 @@ class ValidationException extends HttpException implements  TransformableInterfa
      */
     public function getStatusCode()
     {
-        return 422;
+        return Response::HTTP_UNPROCESSABLE_ENTITY;
     }
 
     /**
