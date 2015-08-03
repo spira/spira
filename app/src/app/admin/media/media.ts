@@ -25,6 +25,7 @@ module app.admin.media {
                     title: "Media",
                     icon: 'description',
                     navigation: true,
+                    navigationGroup: 'cms',
                     sortAfter: app.admin.articles.namespace,
                 }
             };

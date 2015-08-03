@@ -14,6 +14,7 @@ module app.admin.articles {
                     title: "Articles",
                     icon: 'description',
                     navigation: true,
+                    navigationGroup: 'cms',
                     sortAfter: app.admin.dashboard.namespace,
                 }
             };

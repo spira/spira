@@ -4,6 +4,24 @@ module app.admin.navigation{
 
     class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
 
+        public groupedNavigableStates = [
+            {
+                key: 'undefined',
+                name: null,
+                states: null
+            },
+            {
+                key: 'cms',
+                name: "Content Management",
+                states: null
+            },
+            {
+                key: 'admin',
+                name: "Administration",
+                states: null
+            }
+        ];
+
         static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
         constructor(
             stateHelperService:common.providers.StateHelperService,
@@ -14,13 +32,18 @@ module app.admin.navigation{
 
             super(stateHelperService, $window, ngJwtAuthService, $state);
 
+            let groupedStates = _.groupBy(this.navigableStates, 'data.navigationGroup');
+
+            this.groupedNavigableStates = _.map(this.groupedNavigableStates, (stateGroup) => {
+                stateGroup.states = groupedStates[stateGroup.key];
+                return stateGroup;
+            });
+
         }
 
         protected getNavigationStates():global.IState[]{
 
             let childStates = this.stateHelperService.getChildStates(app.admin.namespace, 1);
-
-            console.log(childStates);
 
             return this.getNavigableStates(childStates);
         }
