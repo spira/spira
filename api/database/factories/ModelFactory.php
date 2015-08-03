@@ -73,6 +73,13 @@ $factory->define(App\Models\UserCredential::class, function ($faker) {
     ];
 });
 
+$factory->define(App\Models\SocialLogin::class, function ($faker) {
+    return [
+        'provider' => $faker->randomElement(['facebook', 'google', 'twitter']),
+        'token' => $faker->sha256,
+    ];
+});
+
 $factory->define(App\Models\SecondTestEntity::class, function ($faker) {
     return [
         'entity_id' => $faker->uuid,

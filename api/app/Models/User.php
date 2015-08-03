@@ -109,7 +109,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     * Add a social login to the user.
+     * Add or update a social login for the user.
      *
      * @param  SocialLogin  $socialLogin
      *
@@ -117,7 +117,13 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public function addSocialLogin(SocialLogin $socialLogin)
     {
-        $this->socialLogins()->save($socialLogin);
+        $login = $this->socialLogins()->where('provider', $socialLogin->provider)->first();
+
+        if ($login) {
+            $login->fill($socialLogin->toArray())->save();
+        } else {
+            $this->socialLogins()->save($socialLogin);
+        }
 
         return $this;
     }
