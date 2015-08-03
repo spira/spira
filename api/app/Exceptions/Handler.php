@@ -7,6 +7,7 @@ use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
@@ -63,7 +64,7 @@ class Handler extends ExceptionHandler
             'message' => $message,
         ];
 
-        $statusCode = 500;
+        $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR; //default
 
         if ($e instanceof HttpExceptionInterface) {
             $statusCode = $e->getStatusCode();

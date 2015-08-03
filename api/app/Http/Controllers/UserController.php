@@ -176,6 +176,6 @@ class UserController extends ApiController
         $token = $this->repository->makeLoginToken($user->user_id);
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
-        return $this->getResponse()->noContent(202);
+        return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
     }
 }

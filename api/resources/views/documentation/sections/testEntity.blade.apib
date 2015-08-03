@@ -19,11 +19,13 @@ The properties of the test entities cover the different column types. These are 
 ### Retrieve entities with default limit [GET]
 + Request
     + Headers
+    
             Range: entities=0-
             
 
 + Response 200 (application/json)
     + Headers
+    
             Accept-Ranges: entities
             Content-Range: entities 0-9/200
     + Body
@@ -33,13 +35,16 @@ The properties of the test entities cover the different column types. These are 
 ### Retrieve first 2 entities [GET]
 + Request
     + Headers
+    
             Range: entities=0-2
             
 
 + Response 200 (application/json)
     + Headers
+    
             Accept-Ranges: entities
             Content-Range: entities 0-2/200
+            
     + Body
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
@@ -47,13 +52,16 @@ The properties of the test entities cover the different column types. These are 
 ### Retrieve last 2 entities [GET]
 + Request
     + Headers
+    
             Range: entities=-2
             
 
 + Response 200 (application/json)
     + Headers
+    
             Accept-Ranges: entities
             Content-Range: entities 197-199/200
+            
     + Body
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}

@@ -9,6 +9,7 @@
 namespace Spira\Responder\Paginator;
 
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RangeRequest implements PaginatedRequestDecoratorInterface
@@ -20,6 +21,8 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     private $limit = null;
 
     private $isGetLast = false;
+
+    protected $rangeKey = 'entities';
 
     /**
      * @var Request
@@ -72,11 +75,7 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
             return true;
         }
 
-        $range = $this->getRangeHeader();
-
-        if (is_null($range)) {
-            throw new HttpException(400, 'Bad Request');
-        }
+        $range = $this->getRequestedRange();
 
         //parsing the template \d-\d (ex. 20-39)
         $ranges = explode('-', $range);
@@ -98,7 +97,7 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
         }
 
         if (!is_null($this->limit) && $this->limit <= 0) {
-            throw new HttpException(400, 'Bad Request');
+            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid Range header');
         }
 
         return $this->parsed = true;
@@ -113,25 +112,23 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     }
 
     /**
-     * @return null|string
+     * Get requested range
+     * @return mixed
      */
-    protected function getRangeHeader()
+    protected function getRequestedRange()
     {
-        $range = null;
         if ($this->getRequest()->headers) {
             $range = $this->getRequest()->headers->get('Range');
 
-            if (strpos($range, 'entities=') !== 0) {
-                $range = null;
+            if (strpos($range, $this->rangeKey . '=') !== 0) {
 
-                return $range;
+                throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid Range header, Expected format example - `Range: ' . $this->rangeKey . '=0-100`');
             } else {
-                $range = str_replace('entities=', '', $range);
 
-                return $range;
+                return str_replace($this->rangeKey . '=', '', $range);
             }
         }
 
-        return $range;
+        throw new HttpException(Response::HTTP_BAD_REQUEST, 'Range header expected');
     }
 }

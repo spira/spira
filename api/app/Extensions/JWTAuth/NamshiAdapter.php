@@ -68,7 +68,7 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
         try {
             $jws = JWS::load($token);
         } catch (Exception $e) {
-            throw new TokenInvalidException('Could not decode token: '.$e->getMessage(), 500, $e);
+            throw new TokenInvalidException('Could not decode token: '.$e->getMessage(), null, $e);
         }
 
         if (!$jws->verify($this->secret['public'], $this->algo)) {
