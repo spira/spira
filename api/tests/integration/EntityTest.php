@@ -459,6 +459,6 @@ class EntityTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
-        $this->assertEquals(urldecode($object->test),$compareString);
+        $this->assertEquals(urldecode($object->test), $compareString);
     }
 }
