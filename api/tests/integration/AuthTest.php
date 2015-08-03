@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tymon\JWTAuth\Claims\Expiration;
@@ -25,7 +26,7 @@ class AuthTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -40,6 +41,7 @@ class AuthTest extends TestCase
         $this->assertArrayHasKey('token', $array);
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
 
         // Test that decoding the token, will match the decoded body
         $token = new Token($array['token']);
@@ -50,7 +52,7 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -64,7 +66,7 @@ class AuthTest extends TestCase
 
     public function testLoginEmptyPassword()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -80,7 +82,7 @@ class AuthTest extends TestCase
 
     public function testLoginUserMissCredentials()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -94,7 +96,7 @@ class AuthTest extends TestCase
 
     public function testFailedTokenEncoding()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -111,21 +113,22 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
-        $user = factory(App\Models\User::class)->create();
-        $token = $this->tokenFromUser($user);
+        $user = factory(User::class)->create();
+        $token = $this->tokenFromUser($user, ['method' => 'password']);
 
         $this->callRefreshToken($token);
 
         $object = json_decode($this->response->getContent());
         $this->assertResponseOk();
         $this->assertNotEquals($token, $object->token);
+        $this->assertEquals('password', $object->decodedTokenBody->method);
     }
 
     public function testRefreshPlainHeader()
     {
-        $user = App\Models\User::first();
+        $user = User::first();
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user);
+        $token = $jwtAuth->fromUser($user, ['method' => 'password']);
 
         $options = ['headers' => ['authorization' => 'Bearer '.$token]];
         $client = new Client([
@@ -140,11 +143,12 @@ class AuthTest extends TestCase
         $array = $res->json();
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertNotEquals($token, $array['token']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
     }
 
     public function testRefreshExpiredToken()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $claims = [
             new UserClaim($user),
@@ -173,7 +177,7 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidTokenSignature()
     {
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
@@ -204,7 +208,7 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingUser()
     {
-        $user = factory(App\Models\User::class)->make();
+        $user = factory(User::class)->make();
         $token = $this->tokenFromUser($user);
 
         $this->callRefreshToken($token);
@@ -215,7 +219,7 @@ class AuthTest extends TestCase
     public function testToken()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -247,7 +251,7 @@ class AuthTest extends TestCase
     public function testTokenInvalid()
     {
         $token = 'foobar';
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -266,12 +270,178 @@ class AuthTest extends TestCase
     public function testMakeLoginToken()
     {
         $repo = $this->app->make('App\Repositories\UserRepository');
-        $user = factory(App\Models\User::class)->create();
+        $user = factory(User::class)->create();
 
         $token = $repo->makeLoginToken($user->user_id);
 
         $id = Cache::pull('login_token_'.$token);
 
         $this->assertEquals($id, $user->user_id);
+    }
+
+    public function testEnvironmentForSocial()
+    {
+        // Make sure we have the hosts env variable for the redirect url generation
+        $hostApi = $this->app['config']['hosts.api'];
+        $hostApp = $this->app['config']['hosts.app'];
+
+        $this->assertNotNull($hostApi);
+        $this->assertStringStartsWith('http', $hostApi);
+        $this->assertStringEndsNotWith('/', $hostApi);
+        $this->assertNotNull($hostApp);
+        $this->assertStringStartsWith('http', $hostApp);
+        $this->assertStringEndsNotWith('/', $hostApp);
+    }
+
+    public function testInvalidProvider()
+    {
+        $this->get('/auth/social/foobar');
+
+        $this->assertException('Provider', 501, 'NotImplementedException');
+    }
+
+    public function testProviderRedirect()
+    {
+        $this->get('/auth/social/facebook');
+
+        $this->assertResponseStatus(302);
+    }
+
+    public function testProviderRedirectReturnUrlOAuthOne()
+    {
+        $returnUrl = 'http://www.foo.bar/';
+
+        // If we have no valid twitter credentials, we'll mock the redirect
+        // request and set a cache manually. That allows us to still run live
+        // tests against twitter if credentials is available, and if not
+        // available, we still can test that the cache with the returnurl is
+        // properly set.
+        if (!$this->app->config->get('services.twitter.client_id')) {
+            Cache::put('oauth_return_url_'.'foobar', $returnUrl, 1);
+            $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+            $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+            $mock->shouldReceive('with->redirect')
+                ->once()
+                ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
+        }
+
+        $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
+
+        // Parse the oauth token from the response and get the cached value
+        $this->assertTrue($this->response->headers->has('location'));
+        $segments = parse_url($this->response->headers->get('location'));
+        parse_str($segments['query'], $array);
+        $key = 'oauth_return_url_'.$array['oauth_token'];
+        $url = Cache::get($key);
+
+        $this->assertEquals($url, $returnUrl);
+    }
+
+    public function testProviderRedirectReturnUrlOAuthTwo()
+    {
+        $returnUrl = 'http://www.foo.bar/';
+
+        $this->get('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
+
+        // Parse the oauth token from the response and get the cached value
+        $this->assertTrue($this->response->headers->has('location'));
+        $segments = parse_url($this->response->headers->get('location'));
+        parse_str($segments['query'], $array);
+        $key = 'oauth_return_url_'.$array['state'];
+        $url = Cache::get($key);
+
+        $this->assertEquals($url, $returnUrl);
+    }
+
+    public function testProviderCallbackNoEmail()
+    {
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $mock->shouldReceive('with->user')
+            ->once()
+            ->andReturn((object) [
+                'email' => null,
+                'token' => 'foobar'
+            ]);
+
+        $this->get('/auth/social/facebook/callback');
+
+        $this->assertException('no email', 422, 'UnprocessableEntityException');
+    }
+
+    public function testProviderCallbackExistingUser()
+    {
+        $user = factory(User::class)->create();
+
+        $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $socialUser->email = $user->email;
+        $socialUser->token = 'foobar';
+        $socialUser->avatar = 'foobar';
+        $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
+        $mock->shouldReceive('with->user')
+            ->once()
+            ->andReturn($socialUser);
+        $mock->shouldReceive('with->getCachedReturnUrl')
+            ->once()
+            ->andReturn('http://foo.bar');
+
+        $this->get('/auth/social/facebook/callback');
+
+        // Get the returned token
+        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $token = new Token($token);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+
+        $this->assertResponseStatus(302);
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertEquals('facebook', $decoded['method']);
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
+        $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
+
+        // Assert that the social login was created
+        $user = User::find($user->user_id);
+        $socialLogin = $user->socialLogins->first()->toArray();
+        $this->assertEquals('facebook', $socialLogin['provider']);
+    }
+
+    public function testProviderCallbackNewUser()
+    {
+        $user = factory(User::class)->make();
+
+        $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
+        $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
+        $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
+        $socialUser->email = $user->email;
+        $socialUser->token = 'foobar';
+        $socialUser->avatar = 'foobar';
+        $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
+        $mock->shouldReceive('with->user')
+            ->once()
+            ->andReturn($socialUser);
+        $mock->shouldReceive('with->getCachedReturnUrl')
+            ->once()
+            ->andReturn('http://foo.bar');
+
+        $this->get('/auth/social/facebook/callback');
+
+        // Get the returned token
+        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $token = new Token($token);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+
+        $this->assertResponseStatus(302);
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertEquals('facebook', $decoded['method']);
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
+        $this->assertEquals('http://foo.bar', $this->response->headers->get('location'));
+
+        // Assert that the social login was created
+        $user = User::find($decoded['sub']);
+        $socialLogin = $user->socialLogins->first()->toArray();
+        $this->assertEquals('facebook', $socialLogin['provider']);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Transformers;
 use App;
 use Tymon\JWTAuth\Token;
 use App\Exceptions\NotImplementedException;
-use Spira\Responder\Contract\TransformerInterface;
 
 class AuthTokenTransformer extends EloquentModelTransformer
 {

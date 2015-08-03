@@ -54,6 +54,8 @@ $factory->define(App\Models\User::class, function ($faker) {
         'mobile' => $faker->optional(0.5)->phoneNumber,
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
+        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
+
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
 });
@@ -68,6 +70,13 @@ $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
         'user_credential_id' => $faker->uuid,
         'password' => 'password'
+    ];
+});
+
+$factory->define(App\Models\SocialLogin::class, function ($faker) {
+    return [
+        'provider' => $faker->randomElement(['facebook', 'google', 'twitter']),
+        'token' => $faker->sha256,
     ];
 });
 
