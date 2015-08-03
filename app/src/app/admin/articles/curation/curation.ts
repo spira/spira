@@ -20,7 +20,7 @@ module app.admin.articles.curation {
                 },
                 data: {
                     title: "Article Curation",
-                    icon: 'description',
+                    icon: 'account_balance',
                     navigation: true,
                     sortAfter: app.admin.articles.listing.namespace,
                 }

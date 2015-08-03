@@ -23,7 +23,7 @@ module app.admin.articles.listing {
                 },
                 data: {
                     title: "Articles Listing",
-                    icon: 'description',
+                    icon: 'library_books',
                     navigation: true,
                 }
             };

@@ -1,0 +1,31 @@
+<div class="menu-toggle">
+    <md-list-item
+            ng-click="toggle()"
+            aria-controls="docs-menu-{{state.name}}"
+            aria-expanded="{{isOpen()}}">
+
+        <md-icon>{{navigationState.data.icon}}</md-icon>
+        <p>{{navigationState.data.title}}</p>
+
+        <span aria-hidden="true" class="md-toggle-icon"
+              ng-class="{'toggled' : isOpen()}">
+            <md-icon md-svg-src="md-toggle-arrow"></md-icon>
+        </span>
+        <span class="md-visually-hidden">
+            Toggle {{isOpen()? 'expanded' : 'collapsed'}}
+        </span>
+    </md-list-item>
+
+    <md-list>
+
+        <md-list-item ng-repeat="state in navigationState.children" ng-click="gotoState(state.name)" ui-sref-active="selected">
+            <md-icon>{{state.data.icon}}</md-icon>
+            <p>{{state.data.title}}</p>
+            <md-divider ng-if="!$last"></md-divider>
+        </md-list-item>
+
+    </md-list>
+
+</div>
+
+

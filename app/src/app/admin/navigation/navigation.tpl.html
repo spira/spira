@@ -15,11 +15,19 @@
         <p>{{ stateGroup.name }}</p>
     </md-list-item>
 
-    <md-list-item ng-repeat="state in stateGroup.states" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
+    <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
         <md-icon>{{state.data.icon}}</md-icon>
         <p>{{state.data.title}}</p>
-        <md-divider ng-if="!$last"></md-divider>
+
     </md-list-item>
+
+    <menu-toggle
+         ng-if="state.abstract && state.children.length > 0"
+         navigation-state="state"
+    >
+    </menu-toggle>
+
+    <md-divider ng-repeat-end ng-if="!$last"></md-divider>
 
 </md-list>
 
