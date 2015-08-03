@@ -1,21 +1,20 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Timezones;
-use Spira\Responder\Contract\ApiResponderInterface;
 
 class TimezoneController extends ApiController
 {
     /**
      * Assign dependencies.
      *
-     * @param  Timezones              $timezones
-     * @param  ApiResponderInterface  $timezones
-     * @return void
+     * @param Timezones $timezones
+     * @param EloquentModelTransformer $transformer
      */
-    public function __construct(Timezones $timezones, ApiResponderInterface $responder)
+    public function __construct(Timezones $timezones, EloquentModelTransformer $transformer)
     {
         $this->timezones = $timezones;
-        $this->responder = $responder;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -25,6 +24,8 @@ class TimezoneController extends ApiController
      */
     public function getAll()
     {
-        return $this->getResponder()->collection($this->timezones->all());
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->collection($this->timezones->all());
     }
 }

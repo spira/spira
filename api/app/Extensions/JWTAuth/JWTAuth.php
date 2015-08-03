@@ -43,9 +43,9 @@ class JWTAuth extends JWTAuthBase
         try {
             $user = $this->authenticate((string) $token);
         } catch (TokenExpiredException $e) {
-            throw new UnauthorizedException('Token expired.', 401, $e);
+            throw new UnauthorizedException('Token expired.', null, $e);
         } catch (TokenInvalidException $e) {
-            throw new UnprocessableEntityException($e->getMessage(), 422, $e);
+            throw new UnprocessableEntityException($e->getMessage(), null, $e);
         }
 
         if (!$user) {

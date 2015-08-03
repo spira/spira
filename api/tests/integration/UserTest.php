@@ -121,7 +121,7 @@ class UserTest extends TestCase
             );
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
         $this->put('/users/'.$user['userId'], $user);
@@ -141,7 +141,7 @@ class UserTest extends TestCase
             ->showOnly(['user_id', 'email', 'first_name', 'last_name']);
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
         $this->put('/users/'.$user['userId'], $user);
@@ -156,7 +156,7 @@ class UserTest extends TestCase
         $user['_userCredential'] = ['password' => 'password'];
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\IlluminateModelTransformer($transformerService);
+        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = array_except($transformer->transform($user), ['_self', 'userType']);
 
         $this->put('/users/'.$user['userId'], $user);

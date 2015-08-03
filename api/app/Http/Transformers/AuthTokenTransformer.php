@@ -5,9 +5,8 @@ namespace App\Http\Transformers;
 use App;
 use Tymon\JWTAuth\Token;
 use App\Exceptions\NotImplementedException;
-use Spira\Responder\Contract\TransformerInterface;
 
-class AuthTokenTransformer extends IlluminateModelTransformer implements TransformerInterface
+class AuthTokenTransformer extends EloquentModelTransformer
 {
     /**
      * Transform the token string into an response array.

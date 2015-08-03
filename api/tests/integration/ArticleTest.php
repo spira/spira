@@ -41,7 +41,7 @@ class ArticleTest extends TestCase
     {
         // We run the entity through the transformer to get the attributes named
         // as if they came from the frontend.
-        $transformer = $this->app->make(\App\Http\Transformers\IlluminateModelTransformer::class);
+        $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
         $entity = $transformer->transform($entity);
 
         return $entity;
@@ -57,17 +57,21 @@ class ArticleTest extends TestCase
         }
     }
 
-    public function testGetAll()
+    public function testGetAllPaginated()
     {
         $entities = factory(Article::class, 5)->create()->all();
+        $entity = current($entities);
+        $entity->excerpt = null;
         $this->addPermalinksToArticles($entities);
         $this->repository->saveMany($entities);
-        $this->get('/articles');
-
-        $this->assertResponseOk();
+        $this->get('/articles', ['Range'=>'entities=0-19']);
+        $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
+        $object = json_decode($this->response->getContent());
+        $this->assertNotNull($object[0]->excerpt);
+        $this->assertObjectNotHasAttribute('content', $object[0]);
     }
 
     public function testGetOne()

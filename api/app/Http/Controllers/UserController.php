@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use App;
+use App\Extensions\Lock\Manager;
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
@@ -14,9 +17,7 @@ use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
-use App\Http\Validators\UserValidator as Validator;
 use Illuminate\Contracts\Cache\Repository as Cache;
-use Spira\Responder\Contract\ApiResponderInterface as Responder;
 
 class UserController extends ApiController
 {
@@ -32,7 +33,7 @@ class UserController extends ApiController
     /**
      * JWT Auth.
      *
-     * @var Tymon\JWTAuth\JWTAuth
+     * @var JWTAuth
      */
     protected $jwtAuth;
 
@@ -46,20 +47,25 @@ class UserController extends ApiController
     /**
      * Assign dependencies.
      *
-     * @param  Repository  $repository
-     * @param  Lock        $lock
-     * @param  JWTAuth     $jwtAuth
-     * @param  Request     $request
-     * @param  Responder   $responder
-     * @param  Cache       $cache
-     * @return void
+     * @param  Repository $repository
+     * @param  Lock $lock
+     * @param  JWTAuth $jwtAuth
+     * @param  Request $request
+     * @param  EloquentModelTransformer $transformer
+     * @param  Cache $cache
      */
-    public function __construct(Repository $repository, Lock $lock, JWTAuth $jwtAuth, Request $request, Responder $responder, Cache $cache)
-    {
+    public function __construct(
+        Repository $repository,
+        Lock $lock,
+        JWTAuth $jwtAuth,
+        Request $request,
+        EloquentModelTransformer $transformer,
+        Cache $cache
+    ) {
         $this->repository = $repository;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->responder = $responder;
+        $this->transformer = $transformer;
         $this->cache = $cache;
 
         $this->permissions($request);
@@ -116,7 +122,9 @@ class UserController extends ApiController
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
 
-        return $this->responder->createdItem($model);
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->createdItem($model, $this->transformer);
     }
 
     /**
@@ -154,7 +162,7 @@ class UserController extends ApiController
         $model->fill($request->all());
         $this->repository->save($model);
 
-        return $this->responder->noContent();
+        return $this->getResponse()->noContent();
     }
 
     /**
@@ -174,6 +182,6 @@ class UserController extends ApiController
         $token = $this->repository->makeLoginToken($user->user_id);
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
-        return $this->responder->noContent(202);
+        return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
     }
 }

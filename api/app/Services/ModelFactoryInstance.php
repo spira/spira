@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Collection;
 use App\Http\Transformers\BaseTransformer;
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -242,7 +242,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         }
 
         if (!$this->transformer) {
-            $this->transformer = new IlluminateModelTransformer($this->transformerService);
+            $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
 
         $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);

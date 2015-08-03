@@ -36,7 +36,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'phone',
         'mobile',
         'timezone_identifier',
-        'user_type'
+        'user_type',
+        'avatar_img_url'
     ];
 
     /**
@@ -83,14 +84,45 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     * Get the social logins associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function socialLogins()
+    {
+        return $this->hasMany(SocialLogin::class);
+    }
+
+    /**
      * Set the user's credentials.
      *
      * @param  UserCredential  $credential
+     *
      * @return $this
      */
     public function setCredential(UserCredential $credential)
     {
         $this->userCredential()->save($credential);
+
+        return $this;
+    }
+
+    /**
+     * Add or update a social login for the user.
+     *
+     * @param  SocialLogin  $socialLogin
+     *
+     * @return $this
+     */
+    public function addSocialLogin(SocialLogin $socialLogin)
+    {
+        $login = $this->socialLogins()->where('provider', $socialLogin->provider)->first();
+
+        if ($login) {
+            $login->fill($socialLogin->toArray())->save();
+        } else {
+            $this->socialLogins()->save($socialLogin);
+        }
 
         return $this;
     }
@@ -157,6 +189,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param  \App\Models\User  $user
      * @param  string            $entityId
+     *
      * @return bool
      */
     public static function userIsOwner($user, $entityId)
@@ -169,6 +202,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param  string  $email
      * @param  Cache   $cache
+     *
      * @return string
      */
     public function makeConfirmationToken($email, Cache $cache)

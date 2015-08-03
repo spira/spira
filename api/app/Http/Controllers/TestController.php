@@ -1,19 +1,19 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Transformers\EloquentModelTransformer;
 use App\Repositories\TestRepository;
-use Spira\Responder\Contract\ApiResponderInterface;
 
 class TestController extends ApiController
 {
     /**
      * Assign dependencies.
      * @param TestRepository $repository
-     * @param ApiResponderInterface $responder
+     * @param EloquentModelTransformer $transformer
      */
-    public function __construct(TestRepository $repository, ApiResponderInterface $responder)
+    public function __construct(TestRepository $repository, EloquentModelTransformer $transformer)
     {
         $this->repository = $repository;
-        $this->responder = $responder;
+        $this->transformer = $transformer;
     }
 
     /**

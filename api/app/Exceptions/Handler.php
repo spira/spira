@@ -2,11 +2,12 @@
 
 namespace App\Exceptions;
 
-use App\Http\Transformers\IlluminateModelTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
@@ -63,14 +64,14 @@ class Handler extends ExceptionHandler
             'message' => $message,
         ];
 
-        $statusCode = 500;
+        $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR; //default
 
         if ($e instanceof HttpExceptionInterface) {
             $statusCode = $e->getStatusCode();
 
             if (method_exists($e, 'getResponse')) {
                 if ($e instanceof TransformableInterface) {
-                    $response = $e->transform(\App::make(IlluminateModelTransformer::class));
+                    $response = $e->transform(\App::make(EloquentModelTransformer::class));
                 } else {
                     $response = $e->getResponse();
                 }
