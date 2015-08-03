@@ -198,7 +198,7 @@ class ApiResponse extends Response
      *
      * @throws InvalidArgumentException
      *
-     * @return $this
+     * @return void
      */
     public function redirect($url, $status = 302, array $headers = [])
     {
@@ -213,7 +213,5 @@ class ApiResponse extends Response
         if (!$this->isRedirect()) {
             throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
         }
-
-        return $this;
     }
 }

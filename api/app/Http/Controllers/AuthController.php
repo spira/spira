@@ -206,7 +206,9 @@ class AuthController extends ApiController
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
         $returnUrl = $socialite->with($provider)->getCachedReturnUrl();
 
-        return $this->getResponse()->redirect($returnUrl, 302, ['Authorization-Update' => 'Bearer '.$token]);
+        $response = $this->getResponse();
+        $response->redirect($returnUrl, 302, ['Authorization-Update' => 'Bearer '.$token]);
+        return $response;
     }
 
     /**
