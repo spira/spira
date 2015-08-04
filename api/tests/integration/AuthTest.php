@@ -389,17 +389,24 @@ class AuthTest extends TestCase
 
         $this->get('/auth/social/facebook/callback');
 
+
+        $this->assertResponseStatus(302);
+
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
+        $locationHeader = $this->response->headers->get('location');
+
         // Get the returned token
-        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $tokenParam = parse_url($locationHeader, PHP_URL_QUERY);
+        $this->assertStringStartsWith('jwtAuthToken=', $tokenParam);
+
+        $token = str_replace('jwtAuthToken=', '', $tokenParam);
+
         $token = new Token($token);
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $decoded = $jwtAuth->decode($token)->toArray();
 
-        $this->assertResponseStatus(302);
-        $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
-        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
-        $this->assertStringStartsWith('http://foo.bar', $this->response->headers->get('location'));
+        $this->assertStringStartsWith('http://foo.bar', $locationHeader);
 
         // Assert that the social login was created
         $user = User::find($user->user_id);
@@ -427,14 +434,23 @@ class AuthTest extends TestCase
 
         $this->get('/auth/social/facebook/callback');
 
+
+
+        $this->assertResponseStatus(302);
+
+        $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
+        $locationHeader = $this->response->headers->get('location');
+
         // Get the returned token
-        $token = str_replace('Bearer ', '', $this->response->headers->get('authorization-update'));
+        $tokenParam = parse_url($locationHeader, PHP_URL_QUERY);
+        $this->assertStringStartsWith('jwtAuthToken=', $tokenParam);
+
+        $token = str_replace('jwtAuthToken=', '', $tokenParam);
+
         $token = new Token($token);
         $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
         $decoded = $jwtAuth->decode($token)->toArray();
 
-        $this->assertResponseStatus(302);
-        $array = json_decode($this->response->getContent(), true);
         $this->assertEquals('facebook', $decoded['method']);
         $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
         $this->assertStringStartsWith('http://foo.bar', $this->response->headers->get('location'));
