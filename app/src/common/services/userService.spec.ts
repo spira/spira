@@ -187,6 +187,28 @@
             });
 
         });
+
+        describe('Change Email', () => {
+
+            it('should be able to send a patch request to confirm email change', () => {
+
+                let user = _.clone(fixtures.user);
+
+                const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
+
+                $httpBackend.expectPATCH('/api/users/' + user.userId, user,
+                    (headers) => {
+                        return headers['email-confirm-token'] == emailToken;
+                    }).respond(202);
+
+                let emailConfirmationPromise = userService.confirmEmail(user, emailToken);
+
+                expect(emailConfirmationPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+            });
+
+        });
     });
 
 
