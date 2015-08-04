@@ -127,7 +127,7 @@ module common.services.user {
          * @returns {ng.IHttpPromise<any>}
          */
         public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any>{
-            user['emailConfirmed'] = moment().toISOString();
+            user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
                 .patch('/users/' + user.userId, user, {'email-confirm-token':emailConfirmToken});
         }

@@ -12,7 +12,7 @@ module app.user.profile {
         ){
 
             let state:global.IState = {
-                url: '/profile?passwordResetToken&emailConfirmationToken',
+                url: '/profile?emailConfirmationToken',
                 views: {
                     "main@app.user": {
                         controller: namespace+'.controller',
