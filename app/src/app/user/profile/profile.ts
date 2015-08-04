@@ -10,7 +10,7 @@ module app.user.profile {
         constructor(private stateHelperServiceProvider){
 
             let state:global.IState = {
-                url: '/profile?passwordResetToken',
+                url: '/profile',
                 views: {
                     "main@app.user": {
                         controller: namespace+'.controller',
