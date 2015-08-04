@@ -42,7 +42,7 @@ before_script:
 
 script:
   - gulp test
-  - ./node_modules/.bin/cucumber.js
+  - ./node_modules/.bin/cucumber.js --tags ~@ignore #skip @ignored features
 
 after_script:
   - php ./vendor/bin/coveralls -v
