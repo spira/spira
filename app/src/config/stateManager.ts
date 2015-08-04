@@ -70,10 +70,8 @@ module config.stateManager {
 
                     event.preventDefault();
 
-                    console.log('stopping to check authService is initialised');
                     //defer prompting for login until the auth service has completed all checks
                     this.authService.initialisedPromise.finally(() => {
-                        console.log('auth service initialised');
                         this.showLoginAndRedirectTo(toState, toParams, fromState);
                     });
 
