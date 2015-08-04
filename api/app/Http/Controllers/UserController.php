@@ -153,8 +153,7 @@ class UserController extends ApiController
                 throw new ValidationException(
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
-            }
-            else {
+            } else {
                 $model->email = $email;
             }
         }

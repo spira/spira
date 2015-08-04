@@ -156,7 +156,7 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     public function setAttribute($key, $value)
     {
         if (in_array($key, $this->getDates()) && $value) {
-            if(!$value instanceof Carbon && ! $value instanceof DateTime) {
+            if (!$value instanceof Carbon && ! $value instanceof DateTime) {
                 $value = new Carbon($value);
                 $this->attributes[$key] = $value;
                 return;
