@@ -30,9 +30,13 @@ module common.services.auth {
 
         }
 
+        /**
+         * Initialise the NgJwtAuthService
+         * @returns {ng.IPromise<any>}
+         */
         private initialiseJwtAuthService() {
 
-            let jwtAuthServiceInitialisedPromise = this.ngJwtAuthService
+            return this.ngJwtAuthService
                 .registerUserFactory((subClaim: string, tokenData: global.JwtAuthClaims): ng.IPromise<common.models.User> => {
                     return this.$q.when(new common.models.User(tokenData._user));
                 })
@@ -56,10 +60,12 @@ module common.services.auth {
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
 
-            return jwtAuthServiceInitialisedPromise;
-
         }
 
+        /**
+         * Check the address bar for a new jwt token to process
+         * @returns {any}
+         */
         private processQueryToken():ng.IPromise<any> {
 
             this.removeFacebookHash();
@@ -88,6 +94,10 @@ module common.services.auth {
 
         }
 
+        /**
+         * Check the url for password reset token and process it
+         * @returns {any}
+         */
         private processPasswordResetToken():ng.IPromise<any> {
 
             let queryParams = this.$location.search();
@@ -95,8 +105,11 @@ module common.services.auth {
                 return this.$q.when(true); //immediately resolve
             }
 
-            return this.ngJwtAuthService.exchangeToken(queryParams.passwordResetToken)
-                .then(null, (err) => {
+            let token = queryParams.passwordResetToken;
+            this.$location.search('passwordResetToken', null);
+
+            return this.ngJwtAuthService.exchangeToken(token)
+                .catch((err) => {
                     this.$mdToast.show(
                         this.$mdToast.simple()
                             .hideDelay(2000)
