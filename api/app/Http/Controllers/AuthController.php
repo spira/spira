@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Log;
 use RuntimeException;
+use Spira\Responder\Response\ApiResponse;
 use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class AuthController extends ApiController
+class AuthController extends EntityController
 {
     /**
      * The application instance.
@@ -51,7 +52,6 @@ class AuthController extends ApiController
      * @param  AuthTokenTransformer  $transformer
      * @param  Application           $app
      *
-     * @return void
      */
     public function __construct(Auth $auth, JWTAuth $jwtAuth, AuthTokenTransformer $transformer, Application $app)
     {
@@ -66,7 +66,7 @@ class AuthController extends ApiController
      *
      * @param Request $request
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function login(Request $request)
     {
@@ -95,7 +95,7 @@ class AuthController extends ApiController
      *
      * @param Request $request
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function refresh(Request $request)
     {
@@ -120,7 +120,7 @@ class AuthController extends ApiController
      * @throws BadRequestException
      * @throws UnauthorizedException
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function token(Request $request, UserRepository $userRepository)
     {
@@ -149,7 +149,7 @@ class AuthController extends ApiController
      * @param  string     $provider
      * @param  Socialite  $socialite
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function redirectToProvider($provider, Socialite $socialite)
     {
@@ -167,7 +167,7 @@ class AuthController extends ApiController
      *
      * @throws UnprocessableEntityException
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repository)
     {

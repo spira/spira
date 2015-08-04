@@ -3,7 +3,7 @@
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Repositories\TestRepository;
 
-class TestController extends ApiController
+class TestController extends EntityController
 {
     /**
      * Assign dependencies.

@@ -271,6 +271,23 @@ class BaseModel extends Model
     }
 
     /**
+     * Set the specific relationship in the model.
+     *
+     * @param  string $relationName
+     * @param  mixed $value
+     * @param Relation|null $relation
+     * @return $this
+     */
+    public function setRelation($relationName, $value, $relation = null)
+    {
+        if ($relation instanceof Relation){
+            static::$relationsCache[$this->getRelationCacheKey($relationName)] = $relation;
+        }
+
+        return parent::setRelation($relationName, $value);
+    }
+
+    /**
      * @param $method
      * @return string
      */

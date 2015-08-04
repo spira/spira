@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Responder\Response\ApiResponse;
 
-class ArticleController extends ApiController
+class ArticleController extends EntityController
 {
     /**
      * @var string

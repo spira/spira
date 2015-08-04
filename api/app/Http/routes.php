@@ -39,9 +39,9 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\ArticleController@deleteOne');
 
-    $app->get('{id}/meta', 'App\Http\Controllers\ArticleController@getMetas');
-    $app->put('{id}/meta', 'App\Http\Controllers\ArticleController@putMetas');
-    $app->delete('{id}/meta/{metaName}', 'App\Http\Controllers\ArticleController@deleteMeta');
+    $app->get('{id}/meta', 'App\Http\Controllers\ArticleMetaController@getAll');
+    $app->put('{id}/meta', 'App\Http\Controllers\ArticleMetaController@putMany');
+    $app->delete('{id}/meta/{childId}', 'App\Http\Controllers\ArticleMetaController@deleteOne');
 });
 
 $app->group(['prefix' => 'test'], function (Application $app) {
