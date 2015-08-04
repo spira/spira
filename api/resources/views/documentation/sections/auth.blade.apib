@@ -88,7 +88,7 @@ A user can login by using a social profile as identification.
 + Response 302
     + Headers
 
-        Location: https://www.facebook.com/v2.4/dialog/oauth?client_id=457398928507539&redirect_uri=http%3A%2F%2Fapi.spira.io%2Fauth%2Fsocial%2Ffacebook%2Fcallback&scope=email&response_type=code&state=PdUvOcZpQ9FdxIlyoGXEdJ9zFPh5AqK0NUDiQa5F
+            Location: https://www.facebook.com/v2.4/dialog/oauth?client_id=457398928507539&redirect_uri=http%3A%2F%2Fapi.spira.io%2Fauth%2Fsocial%2Ffacebook%2Fcallback&scope=email&response_type=code&state=PdUvOcZpQ9FdxIlyoGXEdJ9zFPh5AqK0NUDiQa5F
 
 ## Social Login Callback [/auth/social/{provider}/callback]
 
@@ -103,5 +103,6 @@ to the application with the authentication details to this route.
 + Response 302
 
     + Headers
+    
             Location: http://spira.io?jwtAuthToken={!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
