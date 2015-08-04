@@ -103,5 +103,5 @@ to the application with the authentication details to this route.
 + Response 302
 
     + Headers
-            Location: http://api.spira.io
-            Token: {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Location: http://spira.io?jwtAuthToken={!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
