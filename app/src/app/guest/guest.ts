@@ -19,13 +19,13 @@ module app.guest {
                         controllerAs: 'AppController',
                     },
                     'navigation@app.guest': { // Points to the ui-view="navigation" in default.tpl.html
-                        templateUrl: 'templates/app/_partials/navigation/navigation.tpl.html',
-                        controller: app.partials.navigation.namespace+'.controller',
+                        templateUrl: 'templates/app/guest/navigation/navigation.tpl.html',
+                        controller: app.guest.navigation.namespace+'.controller',
                         controllerAs: 'NavigationController',
                     },
                     'registration@app.guest': { // Points to the ui-view="registration" in default.tpl.html
-                        templateUrl: 'templates/app/_partials/registration/registration.tpl.html',
-                        controller: app.partials.registration.namespace+'.controller',
+                        templateUrl: 'templates/app/guest/registration/registration.tpl.html',
+                        controller: app.guest.registration.namespace+'.controller',
                         controllerAs: 'RegistrationController',
                     }
                 },
@@ -43,11 +43,13 @@ module app.guest {
 
     angular.module('app.guest', [
         'app.guest.home',
+        'app.guest.navigation',
+        'app.guest.registration',
         'app.guest.articles',
         'app.guest.sandbox',
         'app.guest.error',
         'app.guest.login',
-        'app.guest.resetPassword'
+        'app.guest.resetPassword',
     ])
     .config(GuestConfig);
 

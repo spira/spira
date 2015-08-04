@@ -4,7 +4,7 @@ data:
   volumes:
     - /data:/data
   privileged: true
-  
+
 logviewer:
   image: spira/docker-clarity
   volumes_from:
@@ -41,7 +41,7 @@ queuerunner:
 mailcatcher:
   image: schickling/mailcatcher
 
-php:  
+php:
   image: spira/docker-hhvm
 #  image: spira/docker-phpfpm
   volumes_from:
@@ -54,9 +54,10 @@ php:
   env_file:
       - .common.env
       - .local.env
+      - .secret.env
   privileged: true
 
-web:  
+web:
   image: spira/docker-nginx
   volumes_from:
     - data
@@ -83,6 +84,7 @@ devtools:
   env_file:
     - .common.env
     - .local.env
+    - .secret.env
   links:
     - web:web
     - mailcatcher:mailcatcher

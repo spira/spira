@@ -19,11 +19,11 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
     + Body
 
             {!!
-             
+
                 $factory->get(\App\Models\AuthToken::class)
                     ->setTransformer(App\Http\Transformers\AuthTokenTransformer::class)
                     ->json()
-            
+
             !!}
 
 ## Refresh Token [/auth/jwt/refresh]
@@ -39,11 +39,11 @@ Auth uses [JSON Web Tokens](http://self-issued.info/docs/draft-ietf-oauth-json-w
 + Response 200
 
             {!!
-             
+
                 $factory->get(\App\Models\AuthToken::class)
                     ->setTransformer(App\Http\Transformers\AuthTokenTransformer::class)
                     ->json()
-            
+
             !!}
 
 ## Token Login [/auth/jwt/token]
@@ -59,3 +59,50 @@ Sometimes a user receives a token in a link by email that is exchanged with an a
 + Response 200
 
             {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+
+## Social Login [/auth/social/{provider}?returnUrl={returnUrl}]
+A user can login by using a social profile as identification.
+
+####  Provider Specific Notes
+
+* **Google:** When setting up a Google App for oAuth2, make sure that you have
+  `Google+ API Library` enabled on the page `APIs & auth/APIs` in the
+  [Project Console](https://console.developers.google.com/project) or the
+  request to Google will not return any user data.
+* **Twitter:** For Twitter to return the email address, which is required by the
+  Spira application, the application must be whitelisted by Twitter. If not
+  Twitter returns the email address as `null`. To whitelist your app with
+  Twitter read
+  [here](https://twittercommunity.com/t/how-to-get-email-from-twitter-user-using-oauthtokens/558/185)
+  and/or
+  [here](https://dev.twitter.com/rest/reference/get/account/verify_credentials)
+  to find the current form to request an app to be whitelisted.
+
+### Auth with social provider [GET]
+
++ Parameters
+    + provider (required, string, `facebook`) ... The social provider to auth against.
+    + returnUrl (optional, url, `http%3A%2F%2Fapi.spira.io`) ... The url to return to after a successful auth process, if not provided the root url will be returned.
+
++ Response 302
+    + Headers
+
+            Location: https://www.facebook.com/v2.4/dialog/oauth?client_id=457398928507539&redirect_uri=http%3A%2F%2Fapi.spira.io%2Fauth%2Fsocial%2Ffacebook%2Fcallback&scope=email&response_type=code&state=PdUvOcZpQ9FdxIlyoGXEdJ9zFPh5AqK0NUDiQa5F
+
+## Social Login Callback [/auth/social/{provider}/callback]
+
+After the user has authenticated with the social provider, the provider returns
+to the application with the authentication details to this route.
+
+### Callback from social provider [GET]
+
++ Parameters
+    + provider (required, string, `facebook`) ... The social provider the callback comes from.
+
++ Response 302
+
+    + Headers
+    
+            Location: http://spira.io?jwtAuthToken={!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
