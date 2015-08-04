@@ -1,1 +1,39 @@
 <h2>User Profile</h2>
+
+<form novalidate name="editProfileForm">
+
+    <md-input-container class="md-icon-float" >
+        <label for="editProfileForm.first_name">First Name</label>
+        <md-icon>account_box</md-icon>
+        <input id="editProfileForm.first_name" ng-model="user.first_name" name="first_name" type="text" ng-required="true">
+        <ng-messages for="editProfileForm.first_name.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-input-container class="md-icon-float" >
+        <label for="editProfileForm.last_name">Last Name</label>
+        <md-icon>account_box</md-icon>
+        <input id="editProfileForm.last_name" ng-model="user.last_name" name="last_name" type="text" ng-required="true">
+        <ng-messages for="editProfileForm.last_name.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-input-container class="md-icon-float" >
+        <label for="editProfileForm.email">Email</label>
+        <md-icon>email</md-icon>
+        <input id="editProfileForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
+        <ng-messages for="editProfileForm.email.$error">
+            <ng-message when="required">This is required.</ng-message>
+            <ng-message when="email">This is not a valid email.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <div class="md-actions">
+        <md-button ng-disabled="editProfileForm.$invalid" ng-click="login(user.email, user.password)" class="md-primary">Update</md-button>
+    </div>
+</form>
+
+
+
