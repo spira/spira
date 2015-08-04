@@ -38,7 +38,7 @@ class SocialiteServiceProvider extends ServiceProvider
     public function registerServiceRedirects()
     {
         $services = array_keys($this->app['config']['services']);
-        $host = $this->app['config']['hosts.api'];
+        $host = $this->app['config']['hosts.app'];
 
         foreach ($services as $service) {
             $url = sprintf('%s/auth/social/%s/callback', $host, $service);
