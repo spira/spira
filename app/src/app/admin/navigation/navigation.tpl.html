@@ -1,0 +1,42 @@
+<md-toolbar class="md-theme-indigo">
+    <h1 class="md-toolbar-tools">CMS</h1>
+</md-toolbar>
+
+<md-list>
+    <md-list-item ng-click="AppController.goToUserProfile($event)">
+        <img alt="{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}" ng-src="{{ AdminNavigationController.ngJwtAuthService.user.avatar }}" class="md-avatar" />
+        <p>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
+    </md-list-item>
+</md-list>
+
+<md-divider></md-divider>
+
+<md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
+
+    <md-list-item ng-if="!!stateGroup.name">
+        <p><small>{{ stateGroup.name | uppercase}}</small></p>
+    </md-list-item>
+
+    <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
+        <md-icon>{{state.data.icon}}</md-icon>
+        <p>{{state.data.title | uppercase}}</p>
+
+    </md-list-item>
+
+    <menu-toggle
+         ng-if="state.abstract && state.children.length > 0"
+         navigation-state="state"
+    >
+    </menu-toggle>
+
+    <md-divider ng-repeat-end></md-divider>
+
+</md-list>
+
+<md-list>
+
+    <md-list-item ng-click="AdminNavigationController.logout()">
+        <md-icon>exit_to_app</md-icon>
+        <p>Logout</p>
+    </md-list-item>
+</md-list>
