@@ -1,0 +1,35 @@
+.menu-toggle {
+
+    .md-toggle-icon {
+        display: block;
+        margin-left: auto;
+        vertical-align: middle;
+        transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        transition: transform 0.3s ease-in-out;
+        -webkit-transition: -webkit-transform 0.3s ease-in-out;
+    }
+
+    .md-toggle-icon.toggled {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+
+    md-list {
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        -webkit-transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+        -webkit-transition-property: height;
+        -moz-transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+        -moz-transition-property: height;
+        transition: 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+        transition-property: height;
+
+        md-icon {
+            margin-left: 25px; //indent the subnav
+        }
+
+    }
+
+}

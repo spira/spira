@@ -48,7 +48,7 @@ module.exports = function() {
 
                 expect(navigationPresent).to.be.true;
 
-                return driver.findElements({ css: '.navigation a'});
+                return driver.findElements({ css: '.navigation md-tab-item'});
             }).then(function(links){
                 return driver.wait(until.elementIsVisible(links[0]), 5000);
             }).then(function(){
