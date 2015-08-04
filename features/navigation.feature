@@ -1,5 +1,6 @@
 # ./features/navigation.feature
 
+@ignore
 Feature: Navigation
   As any user
   I want to be able to navigate the site
