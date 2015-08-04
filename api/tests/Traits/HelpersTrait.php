@@ -1,7 +1,7 @@
 <?php
 trait HelpersTrait
 {
-    protected function tokenFromUser($user)
+    protected function tokenFromUser($user, $customClaims = [])
     {
         $cfg = $this->app->config->get('jwt');
         $validator = new Tymon\JWTAuth\Validators\PayloadValidator;
@@ -12,6 +12,8 @@ trait HelpersTrait
         $payloadFactory = new App\Extensions\JWTAuth\PayloadFactory($claimFactory, $request, $validator);
 
         $claims = ['sub' => $user->user_id, '_user' => $user];
+        $claims = array_merge($customClaims, $claims);
+
         $payload = $payloadFactory->make($claims);
 
         $token = $adapter->encode($payload->get());

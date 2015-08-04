@@ -27,8 +27,11 @@ class TransformInputDataMiddleware
             // Find any potential camelCase keys in the 'root' array, and convert
             // them to snake_case
             if (!ctype_lower($key)) {
-                $request->offsetSet(snake_case($key), $value);
-                $request->offsetUnset($key);
+                // Only convert if the key will change
+                if ($key != snake_case($key)) {
+                    $request->offsetSet(snake_case($key), $value);
+                    $request->offsetUnset($key);
+                }
             }
         }
 
