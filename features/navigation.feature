@@ -1,6 +1,5 @@
 # ./features/navigation.feature
 
-@ignore
 Feature: Navigation
   As any user
   I want to be able to navigate the site
@@ -10,12 +9,15 @@ Feature: Navigation
     When I am on the home page
     Then I should see a navigation section
 
+
+  @ignore
   Scenario: View navigation - mobile
     Given I am an anonymous user on a "mobile" browser
     When I am on the home page
     And I click on the menu button
     Then I should see a navigation section
 
+  @ignore
   Scenario: Use navigation
     Given I am an anonymous user on a "desktop" browser
     When I am on the home page
@@ -23,6 +25,7 @@ Feature: Navigation
     Then I should see that the page has changed
     And I should see the page I am on highlighted in the navigation
 
+  @ignore
   Scenario: Use navigation - mobile
     Given I am an anonymous user on a "mobile" browser
     When I am on the home page
