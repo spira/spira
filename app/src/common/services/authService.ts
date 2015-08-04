@@ -62,8 +62,10 @@ module common.services.auth {
 
         private processQueryToken():ng.IPromise<any> {
 
+            this.removeFacebookHash();
             let queryParams = this.$location.search();
             if (queryParams.jwtAuthToken) {
+
                 let queryTokenPromise = this.ngJwtAuthService.processNewToken(queryParams.jwtAuthToken);
 
                 this.$location.search('jwtAuthToken', null);
@@ -72,6 +74,17 @@ module common.services.auth {
             }
 
             return this.$q.when(true); //immediately resolve
+
+        }
+
+        /**
+         * Removes the facebook return hash `#_=_`
+         */
+        private removeFacebookHash():void {
+
+            if (this.$location.hash() == '_=_'){
+                this.$location.hash('');
+            }
 
         }
 

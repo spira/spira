@@ -103,7 +103,7 @@ module app.guest.login {
                 (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
                 null,
                 (err:Error) => {
-                    if (err instanceof NgJwtAuth.NgJwtAuthException){
+                    if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException){
                         this.$mdToast.show(
                             (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
                                 .hideDelay(2000)
@@ -111,6 +111,8 @@ module app.guest.login {
                                 .content(err.message)
                                 .parent('#loginDialog')
                         );
+                    }else{
+                        console.error(err);
                     }
                 }
             );
