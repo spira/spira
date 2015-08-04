@@ -1,6 +1,6 @@
-module app.partials.registration {
+module app.guest.registration {
 
-    export const namespace = 'app.partials.registration';
+    export const namespace = 'app.guest.registration';
 
     export interface IScope extends ng.IScope {
         registerUser(email:string, password:string, first:string, last:string, goToProfile?:boolean);

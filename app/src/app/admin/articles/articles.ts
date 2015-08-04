@@ -9,22 +9,12 @@ module app.admin.articles {
 
             let state:global.IState = {
                 url: '/articles',
-                views: {
-                    "main@app.admin": {
-                        controller: namespace+'.controller',
-                        controllerAs: 'ArticlesController',
-                        templateUrl: 'templates/app/admin/articles/articles.tpl.html'
-                    }
-                },
-                resolve: /*@ngInject*/{
-                    allArticles: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getAllArticles();
-                    }
-                },
+                abstract: true,
                 data: {
                     title: "Articles",
                     icon: 'description',
                     navigation: true,
+                    navigationGroup: 'cms',
                     sortAfter: app.admin.dashboard.namespace,
                 }
             };
@@ -35,17 +25,10 @@ module app.admin.articles {
 
     }
 
-    export class ArticlesController {
-
-        static $inject = ['allArticles'];
-        constructor(public allArticles:common.services.article.IArticle[]) {
-
-        }
-
-    }
-
-    angular.module(namespace, [])
-        .config(ArticlesConfig)
-        .controller(namespace+'.controller', ArticlesController);
+    angular.module(namespace, [
+        'app.admin.articles.listing',
+        'app.admin.articles.curation',
+    ])
+        .config(ArticlesConfig);
 
 }

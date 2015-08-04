@@ -8,10 +8,17 @@ module app {
 
         constructor($mdThemingProvider:ng.material.IThemingProvider, $mdIconProvider:ng.material.IIconProvider, ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider) {
 
-            $mdThemingProvider.theme('default')
+            $mdThemingProvider.theme('defaultTheme')
                 .primaryPalette('green')
                 .accentPalette('grey')
             ;
+
+            $mdThemingProvider.theme('adminTheme')
+                .primaryPalette('blue-grey')
+                .accentPalette('deep-orange')
+            ;
+
+            $mdThemingProvider.setDefaultTheme('defaultTheme');
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
                 color: 'green',
@@ -72,15 +79,23 @@ module app {
 
     export class AppController {
 
-        static $inject = ['$mdSidenav'];
+        static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
         }
 
+
+        /**
+         * Toggle the admin side navigation
+         */
         public toggleNavigationSidenav() {
             this.$mdSidenav('navigation').toggle();
         }
 
+        /**
+         * Toggle the registration sidenav
+         * @param open
+         */
         public toggleRegistrationSidenav(open:boolean) {
             if (_.isUndefined(open)) {
                 this.$mdSidenav('registration').toggle();
@@ -91,6 +106,15 @@ module app {
 
         }
 
+        /**
+         * Redirect the user to their profile
+         * @param $event
+         * @returns {angular.IPromise<any>|IPromise<any>}
+         */
+        public goToUserProfile($event:ng.IAngularEvent){
+            return this.$state.go('app.user.profile', $event);
+        }
+
     }
 
     angular.module(namespace, [
@@ -98,8 +122,6 @@ module app {
         'config.vendorModules',
         'config.commonModules',
         'config.stateManager',
-        'app.partials.navigation',
-        'app.partials.registration',
     ])
         .config(AppConfig)
         .run(AppInit)
