@@ -49,16 +49,17 @@ module config.stateManager {
 
     class StateManagerInit {
 
-        static $inject = ['$rootScope', 'ngRestAdapter', 'ngJwtAuthService', '$state', '$mdToast'];
+        static $inject = ['$rootScope', 'ngRestAdapter', 'ngJwtAuthService', '$state', '$mdToast', 'authService'];
 
         constructor(private $rootScope:ng.IRootScopeService,
                     private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $state:ng.ui.IStateService,
-                    private $mdToast:ng.material.IToastService) {
+                    private $mdToast:ng.material.IToastService,
+                    private authService:common.services.auth.AuthService
+        ) {
 
             this.registerStatePermissions();
-
         }
 
         private registerStatePermissions = () => {
@@ -69,24 +70,11 @@ module config.stateManager {
 
                     event.preventDefault();
 
-                    //check to see if a password reset token is provided and use that if so
-                    if(!_.isEmpty(toParams['passwordResetToken'])) {
-                        this.ngJwtAuthService.exchangeToken(toParams['passwordResetToken'])
-                            .then(() => {
-                                this.$state.go(toState.name, toParams);
-                            }, (err) => {
-                                this.$mdToast.show(
-                                    this.$mdToast.simple()
-                                        .hideDelay(2000)
-                                        .position('top right')
-                                        .content("Sorry, you have already tried to reset your password using this link")
-                                );
-                                this.showLoginAndRedirectTo(toState, toParams, fromState);
-                            });
-                    }
-                    else {
+                    //defer prompting for login until the auth service has completed all checks
+                    this.authService.initialisedPromise.finally(() => {
                         this.showLoginAndRedirectTo(toState, toParams, fromState);
-                    }
+                    });
+
                 }
 
             })
