@@ -26,8 +26,8 @@
 * `VBoxManage modifyvm "boot2docker-vm" --natpf1 delete "xdebug"` - close opened port
 * `VBoxManage modifyvm boot2docker-vm --memory 4000` - allocate more ram to the machine (unit is MB)
 
-### Container development (only available from within the spira vagrant box if you place docker source repos in a folder (../docker) relative to this README.md file.
-* `docker build -t spira/docker-phpfpm:latest .` - build an image, give it a tag
+### Container development (only available from within the spira vagrant box if you place docker source repos in a folder (../../docker) relative to this README.md file.
+* `docker build -t spira/docker-phpfpm:latest .` - build an image, give it a tag. Ensure you are in the folder containing the 'Dockerfile' that you want to build
 * `docker push spira/docker-phpfpm` - publish a container back to dockerhub (feel free to halt the process after the first image uploads, the process continues in the background). Also note that unless pushing to a private hub, you are better off not pushing from local, and use [Docker Hub's Automated Builds](https://docs.docker.com/docker-hub/builds/) instead.
 * `docker images -q --filter "dangling=true" | xargs docker rmi` - delete all images that are not current (free up some disk space)
 * Getting resolve issues when building? Edit `/etc/resolve.conf` in boot2docker. (`boot2docker ssh` then `vi /etc/resolve.conf` to edit) and change the nameserver entry: `nameserver 8.8.8.8`
