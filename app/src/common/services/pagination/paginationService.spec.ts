@@ -26,7 +26,7 @@ interface mockEntity {
 
     };
 
-    describe.only('PaginationService', () => {
+    describe('PaginationService', () => {
 
         let paginationService:common.services.pagination.PaginationService;
         let $httpBackend:ng.IHttpBackendService;
