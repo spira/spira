@@ -1,6 +1,6 @@
 <h2>User Profile</h2>
 
-<form novalidate name="editProfileForm">
+<form novalidate name="editProfileForm" ng-submit="ProfileController.updateProfile()">
 
     <md-input-container class="md-icon-float" >
         <label for="editProfileForm.first_name">First Name</label>
@@ -31,7 +31,7 @@
     </md-input-container>
 
     <div class="md-actions">
-        <md-button ng-disabled="editProfileForm.$invalid" ng-click="login(user.email, user.password)" class="md-primary">Update</md-button>
+        <input class="md-button" ng-disabled="editProfileForm.$invalid" type="submit" value="Update">
     </div>
 </form>
 

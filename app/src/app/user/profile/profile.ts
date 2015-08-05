@@ -14,6 +14,7 @@ module app.user.profile {
                 views: {
                     "main@app.user": {
                         controller: namespace+'.controller',
+                        controllerAs: 'ProfileController',
                         templateUrl: 'templates/app/user/profile/profile.tpl.html'
                     }
                 },
@@ -36,10 +37,6 @@ module app.user.profile {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
-
     interface IStateParams extends ng.ui.IStateParamsService
     {
         onBoard?:boolean;
@@ -47,16 +44,18 @@ module app.user.profile {
 
     class ProfileController {
 
-        static $inject = ['$scope', 'userService', '$stateParams'];
+        static $inject = ['userService', '$stateParams'];
         constructor(
-            private $scope : IScope,
             private userService:common.services.user.UserService,
             private $stateParams:IStateParams
         ) {
 
             let runOnBoarding = $stateParams.onBoard;
-            //@todo complete controller
 
+        }
+
+        public updateProfile() {
+            console.log('here');
         }
 
     }
