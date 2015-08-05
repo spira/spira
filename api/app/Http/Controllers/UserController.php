@@ -160,7 +160,11 @@ class UserController extends ApiController
         $model->fill($request->except('email'));
         $this->repository->save($model);
 
-        return $this->getResponse()->noContent();
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+
+        $token = $jwtAuth->fromUser($model);
+
+        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
 
     /**

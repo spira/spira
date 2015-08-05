@@ -8,6 +8,7 @@ module common.models {
         public lastName:string;
         public _userCredential:global.IUserCredential;
         public emailConfirmed:string;
+        public country:string;
 
         constructor(data:global.IUserData) {
 

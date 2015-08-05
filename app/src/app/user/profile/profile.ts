@@ -48,33 +48,41 @@ module app.user.profile {
                                     );
                                 });
                         }
+                    },
+                    countries:(
+                        countriesService:common.services.countries.CountriesService
+                    ) => {
+                        return countriesService.getAllCountries()
                     }
-                },
-                data: {
-                    title: "User Profile",
-                    icon: 'extension',
-                    navigation: true,
-                }
-            };
+},
+data: {
+    title: "User Profile",
+        icon: 'extension',
+        navigation: true,
+}
+};
 
-            stateHelperServiceProvider.addState(namespace, state);
+stateHelperServiceProvider.addState(namespace, state);
 
-        }
+}
 
-    }
+}
 
-    interface IStateParams extends ng.ui.IStateParamsService
-    {
-        onBoard?:boolean;
-        emailConfirmationToken?:string;
-    }
+interface IStateParams extends ng.ui.IStateParamsService
+{
+    onBoard?:boolean;
+    emailConfirmationToken?:string;
+}
 
-    class ProfileController {
+class ProfileController {
 
-        static $inject = ['userService', '$stateParams'];
+    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries'];
         constructor(
             private userService:common.services.user.UserService,
-            private $stateParams:IStateParams
+            private $stateParams:IStateParams,
+            public user:common.models.User,
+            private $mdToast:ng.material.IToastService,
+            public countries:common.services.countries.ICountryDefinition
         ) {
 
             let runOnBoarding = $stateParams.onBoard;
@@ -82,7 +90,21 @@ module app.user.profile {
         }
 
         public updateProfile() {
-            console.log('here');
+            this.userService.updateProfile(this.user)
+                .then(() => {
+                    this.$mdToast.show({
+                        hideDelay:2000,
+                        position:'top',
+                        template:'<md-toast>Profile update was successful.</md-toast>'
+                    });
+                },
+                (err) => {
+                    this.$mdToast.show({
+                        hideDelay:2000,
+                        position:'top',
+                        template:'<md-toast>Profile update was unsuccessful, please try again.</md-toast>'
+                    });
+                })
         }
 
     }

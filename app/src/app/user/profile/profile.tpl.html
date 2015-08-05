@@ -1,39 +1,53 @@
-<h2>User Profile</h2>
+<md-content layout-padding>
+    <h2>User Profile</h2>
 
-<form novalidate name="editProfileForm" ng-submit="ProfileController.updateProfile()">
+    <form novalidate name="editProfileForm" ng-submit="ProfileController.updateProfile()">
+        <md-content layout-padding>
+            <h3>About You</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container class="md-icon-float">
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.firstName" ng-model="ProfileController.user.firstName" name="firstName" type="text" ng-required="true" aria-label="First Name">
+                    <ng-messages for="editProfileForm.first_name.$error">
+                        <ng-message when="required">This is required.</ng-message>
+                    </ng-messages>
+                </md-input-container>
 
-    <md-input-container class="md-icon-float" >
-        <label for="editProfileForm.first_name">First Name</label>
-        <md-icon>account_box</md-icon>
-        <input id="editProfileForm.first_name" ng-model="user.first_name" name="first_name" type="text" ng-required="true">
-        <ng-messages for="editProfileForm.first_name.$error">
-            <ng-message when="required">This is required.</ng-message>
-        </ng-messages>
-    </md-input-container>
+                <md-input-container class="md-icon-float">
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.lastName" ng-model="ProfileController.user.lastName" name="lastName" type="text" ng-required="true" aria-label="Last Name">
+                    <ng-messages for="editProfileForm.last_name.$error">
+                        <ng-message when="required">This is required.</ng-message>
+                    </ng-messages>
+                </md-input-container>
 
-    <md-input-container class="md-icon-float" >
-        <label for="editProfileForm.last_name">Last Name</label>
-        <md-icon>account_box</md-icon>
-        <input id="editProfileForm.last_name" ng-model="user.last_name" name="last_name" type="text" ng-required="true">
-        <ng-messages for="editProfileForm.last_name.$error">
-            <ng-message when="required">This is required.</ng-message>
-        </ng-messages>
-    </md-input-container>
+                <md-input-container class="md-icon-float">
+                    <md-select-label>WHERE DO YOU LIVE</md-select-label>
+                    <md-select ng-model="ProfileController.user.country">
+                        <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
+                    </md-select>
+                </md-input-container>
+            </md-whiteframe>
+        </md-content>
 
-    <md-input-container class="md-icon-float" >
-        <label for="editProfileForm.email">Email</label>
-        <md-icon>email</md-icon>
-        <input id="editProfileForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
-        <ng-messages for="editProfileForm.email.$error">
-            <ng-message when="required">This is required.</ng-message>
-            <ng-message when="email">This is not a valid email.</ng-message>
-        </ng-messages>
-    </md-input-container>
+        <md-content layout-padding>
+            <h3>Email</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container class="md-icon-float" layout>
+                    <md-icon>email</md-icon>
+                    <input id="editProfileForm.email" ng-model="ProfileController.user.email" name="email" type="email" ng-required="true" aria-label="Email">
+                    <ng-messages for="editProfileForm.email.$error">
+                        <ng-message when="required">This is required.</ng-message>
+                        <ng-message when="email">This is not a valid email.</ng-message>
+                    </ng-messages>
+                </md-input-container>
+                <small>NOTE: We'll send you a confirmation email to your new address if you update your email</small>
+            </md-whiteframe>
+        </md-content>
 
-    <div class="md-actions">
-        <input class="md-button" ng-disabled="editProfileForm.$invalid" type="submit" value="Update">
-    </div>
-</form>
-
-
-
+        <div class="md-actions">
+            <md-button class="md-primary md-raised" ng-disabled="editProfileForm.$invalid" type="submit">Save</md-button>
+            <md-button class="md-raised">Cancel</md-button>
+        </div>
+    </form>
+</md-content>
