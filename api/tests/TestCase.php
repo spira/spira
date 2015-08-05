@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
+
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
     use AssertionsTrait, HelpersTrait;
@@ -11,9 +14,19 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     public function setUp()
     {
+
         $this->bootTraits();
 
         parent::setUp();
+
+        DB::connection()->beginTransaction(); //start a new transaction
+    }
+
+    public function tearDown()
+    {
+        DB::connection()->rollBack(); //rollback the transaction so the test case can be rerun without duplicate key exceptions
+        DB::connection()->setPdo(null); //close the pdo connection to `avoid too many connections` errors
+        parent::tearDown();
     }
 
     /**

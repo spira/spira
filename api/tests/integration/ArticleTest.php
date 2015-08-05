@@ -2,11 +2,9 @@
 use App\Models\Article;
 use App\Models\ArticlePermalink;
 use App\Repositories\ArticleRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ArticleTest extends TestCase
 {
-    use DatabaseTransactions;
 
     /**
      * @var ArticleRepository

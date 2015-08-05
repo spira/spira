@@ -1,15 +1,12 @@
 <?php
 
 use Mockery as m;
-use Rhumsaa\Uuid\Uuid;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 /**
  * @property \App\Repositories\BaseRepository $repository
  */
 class TestRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
 
     public function setUp()
     {

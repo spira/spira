@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tymon\JWTAuth\Claims\Expiration;
 use Tymon\JWTAuth\Claims\IssuedAt;
 use Tymon\JWTAuth\Claims\Issuer;
@@ -15,7 +14,6 @@ use Tymon\JWTAuth\Token;
 
 class AuthTest extends TestCase
 {
-    use DatabaseTransactions;
 
     protected function callRefreshToken($token)
     {

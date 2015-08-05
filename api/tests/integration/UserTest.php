@@ -2,12 +2,10 @@
 
 use App\Models\User;
 use App\Models\UserCredential;
-use Rhumsaa\Uuid\Uuid;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserTest extends TestCase
 {
-    use DatabaseTransactions, MailcatcherTrait;
+    use MailcatcherTrait;
 
     public function setUp()
     {

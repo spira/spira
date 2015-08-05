@@ -2,11 +2,9 @@
 
 use App\Models\User;
 use App\Models\SocialLogin;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserModelTest extends TestCase
 {
-    use DatabaseTransactions;
 
     public function testUpdatingSocialLogin()
     {
