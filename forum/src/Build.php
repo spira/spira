@@ -40,6 +40,9 @@ class Build
 
         // Copy the API module inside the application directory
         $this->recurseCopy('vendor/kasperisager/vanilla-api', 'public/applications/api');
+
+        // Copy the SSO plugin to the plugins directory
+        $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
     }
 
     /**

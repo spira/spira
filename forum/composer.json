@@ -2,6 +2,7 @@
     "type": "project",
     "require": {
         "vanilla/vanilla": "dev-master#71dc135745ea65c66444e67468e6a4670421bdac",
+        "vanilla/addons": "*",
         "kasperisager/vanilla-api": "dev-master#8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
     },
     "repositories": [
@@ -12,6 +13,18 @@
         {
             "type": "git",
             "url": "git@github.com:kasperisager/vanilla-api.git"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "vanilla/addons",
+                "version": "1.4.4",
+                "source": {
+                    "url": "git@github.com:vanilla/addons.git",
+                    "type": "git",
+                    "reference": "release/1507"
+                }
+            }
         }
     ],
     "minimum-stability": "dev",

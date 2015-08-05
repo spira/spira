@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b51a98ab6ae13c9146b10ce8e74a94df",
+    "hash": "48a28351fcb62ea80e4476e579afc1df",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -80,6 +80,16 @@
             ],
             "description": "RESTful API shim for Vanilla",
             "time": "2015-02-04 08:59:55"
+        },
+        {
+            "name": "vanilla/addons",
+            "version": "1.4.4",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:vanilla/addons.git",
+                "reference": "release/1507"
+            },
+            "type": "library"
         },
         {
             "name": "vanilla/vanilla",
