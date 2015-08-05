@@ -12,11 +12,21 @@ module common.services.pagination {
         constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
         }
 
+        /**
+         * Build the range header
+         * @param from
+         * @param to
+         */
         private static getRangeHeader(from:number, to:number):string {
             return 'entities=' + from + '-' + to;
         }
 
-        private getResponse(count:number = this.count, index:number = this.currentIndex):ng.IPromise<any[]> {
+        /**
+         * Get the response from the collection endpoint
+         * @param count
+         * @param index
+         */
+        private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<any[]> {
 
             return this.ngRestAdapter.get(this.url, {
                 Range: Paginator.getRangeHeader(index, index + count - 1)
@@ -41,7 +51,7 @@ module common.services.pagination {
          * @returns {IPromise<TResult>}
          * @param count
          */
-        public getNext(count:number = this.currentIndex):ng.IPromise<any[]> {
+        public getNext(count:number = this.count):ng.IPromise<any[]> {
 
             let responsePromise = this.getResponse(count);
 
@@ -60,13 +70,13 @@ module common.services.pagination {
 
         /**
          * Get the a specific range
-         * @param count
-         * @param index
          * @returns {ng.IPromise<any[]>}
+         * @param first
+         * @param last
          */
-        public getRange(count:number = this.count, index:number = this.currentIndex):ng.IPromise<any[]> {
+        public getRange(first:number, last:number):ng.IPromise<any[]> {
 
-            return this.getResponse(count, index);
+            return this.getResponse(last-first+1, first);
         }
 
     }
@@ -79,7 +89,12 @@ module common.services.pagination {
 
         }
 
-        public getPaginatorInstance(url:string) {
+        /**
+         * Get an instance of the Paginator
+         * @param url
+         * @returns {common.services.pagination.Paginator}
+         */
+        public getPaginatorInstance(url:string):Paginator {
             return new Paginator(url, this.ngRestAdapter);
         }
 
@@ -89,4 +104,3 @@ module common.services.pagination {
         .service('paginationService', PaginationService);
 
 }
-

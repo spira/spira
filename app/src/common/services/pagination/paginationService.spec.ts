@@ -169,22 +169,22 @@ interface mockEntity {
 
             });
 
-            it.skip('should be able to get a subset of results directly', () => {
+            it('should be able to get a subset of results directly', () => {
 
                 let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
 
                 $httpBackend.expectGET('/api/collection', (headers) => { //second request
-                    return headers.Range == 'entities=12-36'
+                    return headers.Range == 'entities=5-24'
                 })
-                .respond(206, collection.slice(12, 37));
+                .respond(206, collection.slice(5, 25));
 
-                let results = paginator.getRange(12, 36);
+                let results = paginator.getRange(5, 24);
 
                 $httpBackend.flush();
 
                 expect(results).eventually.to.be.instanceof(Array);
-                expect(results).eventually.to.have.length(24);
-                expect(results).eventually.to.deep.equal(collection.slice(12, 37));
+                expect(results).eventually.to.have.length(20);
+                expect(results).eventually.to.deep.equal(collection.slice(5, 25));
 
 
             });
