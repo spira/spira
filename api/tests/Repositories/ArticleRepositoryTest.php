@@ -13,7 +13,6 @@ use App\Repositories\ArticleRepository;
 
 class ArticleRepositoryTest extends TestCase
 {
-
     /**
      * @var ArticleRepository
      */

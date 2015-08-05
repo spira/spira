@@ -14,7 +14,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     public function setUp()
     {
-
         $this->bootTraits();
 
         parent::setUp();

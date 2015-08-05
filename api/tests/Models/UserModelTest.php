@@ -5,7 +5,6 @@ use App\Models\SocialLogin;
 
 class UserModelTest extends TestCase
 {
-
     public function testUpdatingSocialLogin()
     {
         $user = factory(User::class)->create();

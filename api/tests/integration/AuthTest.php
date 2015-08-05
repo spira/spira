@@ -14,7 +14,6 @@ use Tymon\JWTAuth\Token;
 
 class AuthTest extends TestCase
 {
-
     protected function callRefreshToken($token)
     {
         $this->get('/auth/jwt/refresh', [

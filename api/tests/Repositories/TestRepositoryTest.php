@@ -7,7 +7,6 @@ use Mockery as m;
  */
 class TestRepositoryTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

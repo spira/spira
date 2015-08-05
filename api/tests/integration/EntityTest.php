@@ -7,7 +7,6 @@ use Rhumsaa\Uuid\Uuid;
  */
 class EntityTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();

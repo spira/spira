@@ -5,7 +5,6 @@ use App\Repositories\ArticleRepository;
 
 class ArticleTest extends TestCase
 {
-
     /**
      * @var ArticleRepository
      */
