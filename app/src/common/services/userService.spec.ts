@@ -196,7 +196,12 @@
 
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
 
-                $httpBackend.expectPATCH('/api/users/' + user.userId, user,
+                $httpBackend.expectPATCH('/api/users/' + user.userId,
+                    (data) => {
+                        let data:{emailConfirmed:string} = JSON.parse(data);
+                        // TSD only has definitions for moment 2.8.0 which does not contain function isBetween
+                        return data.emailConfirmed && (<any>moment)(data.emailConfirmed).isBetween(moment().subtract(1, 'second'), moment());
+                    },
                     (headers) => {
                         return headers['email-confirm-token'] == emailToken;
                     }).respond(202);

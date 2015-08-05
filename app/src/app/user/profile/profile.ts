@@ -29,8 +29,8 @@ module app.user.profile {
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                         $mdToast:ng.material.IToastService
                     ) => {
-                        if(!_.isEmpty($stateParams['emailConfirmationToken'])) {
-                            userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams['emailConfirmationToken'])
+                        if(!_.isEmpty($stateParams.emailConfirmationToken)) {
+                            userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
                                 .then(() => {
                                     $mdToast.show(
                                         $mdToast.simple()
@@ -69,6 +69,7 @@ module app.user.profile {
     interface IStateParams extends ng.ui.IStateParamsService
     {
         onBoard?:boolean;
+        emailConfirmationToken?:string;
     }
 
     class ProfileController {

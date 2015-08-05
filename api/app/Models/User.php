@@ -37,7 +37,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'mobile',
         'timezone_identifier',
         'user_type',
-        'avatar_img_url'
+        'avatar_img_url',
+        'email'
     ];
 
     /**
