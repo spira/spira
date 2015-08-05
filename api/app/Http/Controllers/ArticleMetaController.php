@@ -14,6 +14,7 @@ use App\Repositories\ArticleRepository;
 
 class ArticleMetaController extends ChildEntityController
 {
+    protected $validateRequestRule = 'required|string';
     protected $validateChildRequestRule = 'required|string';
     protected $relationName = 'metas';
 

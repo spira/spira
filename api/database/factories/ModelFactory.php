@@ -115,6 +115,7 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
     return [
         'meta_name' => $faker->unique()->slug,
         'meta_content' => $faker->slug,
+        'meta_property' => $faker->slug,
     ];
 });
 

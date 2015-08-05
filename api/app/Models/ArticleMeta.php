@@ -19,7 +19,7 @@ class ArticleMeta extends BaseModel
 
     protected $primaryKey = 'meta_name';
 
-    protected $fillable = ['article_id', 'meta_name', 'meta_content', 'property'];
+    protected $fillable = ['article_id', 'meta_name', 'meta_content', 'meta_property'];
 
     public function getValidationRules()
     {

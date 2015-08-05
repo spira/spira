@@ -19,7 +19,6 @@ abstract class ApiController extends Controller
 
     protected $paginatorDefaultLimit = 10;
     protected $paginatorMaxLimit = 50;
-    protected $validateRequest = true;
     protected $validateRequestRule = 'uuid';
 
     /**

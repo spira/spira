@@ -23,7 +23,7 @@ class ArticleController extends EntityController
      * @var string
      */
     private $metaKeyName = null;
-    protected $validateRequest = false;
+    protected $validateRequestRule = 'required|string';
 
     /**
      * Assign dependencies.

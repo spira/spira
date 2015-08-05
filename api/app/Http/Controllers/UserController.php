@@ -62,13 +62,11 @@ class UserController extends EntityController
         EloquentModelTransformer $transformer,
         Cache $cache
     ) {
-        $this->repository = $repository;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->transformer = $transformer;
         $this->cache = $cache;
-
         $this->permissions($request);
+        parent::__construct($repository,$transformer);
     }
 
     /**
