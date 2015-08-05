@@ -17,5 +17,14 @@
     "minimum-stability": "dev",
     "config": {
         "preferred-install": "dist"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spira\\": "src/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "Spira\\Build::postInstall",
+        "post-update-cmd": ""
     }
 }
