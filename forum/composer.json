@@ -1,0 +1,21 @@
+{
+    "type": "project",
+    "require": {
+        "vanilla/vanilla": "dev-master#f02fd44d2db2c4d0b849fb39c1fcf05c16908d9c",
+        "kasperisager/vanilla-api": "dev-master#8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:vanilla/vanilla.git"
+        },
+        {
+            "type": "git",
+            "url": "git@github.com:kasperisager/vanilla-api.git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "config": {
+        "preferred-install": "dist"
+    }
+}

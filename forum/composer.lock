@@ -1,0 +1,120 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "5b5caf8239ea7e414f3a03a7df17b403",
+    "packages": [
+        {
+            "name": "altorouter/altorouter",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dannyvankooten/AltoRouter.git",
+                "reference": "0290dc5073747bc44cfb9d1420a3c8d30430e118"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dannyvankooten/AltoRouter/zipball/0290dc5073747bc44cfb9d1420a3c8d30430e118",
+                "reference": "0290dc5073747bc44cfb9d1420a3c8d30430e118",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "AltoRouter.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Danny van Kooten",
+                    "email": "dannyvankooten@gmail.com",
+                    "homepage": "http://dannyvankooten.com/"
+                },
+                {
+                    "name": "Koen Punt",
+                    "homepage": "https://github.com/koenpunt"
+                },
+                {
+                    "name": "niahoo",
+                    "homepage": "https://github.com/niahoo"
+                }
+            ],
+            "description": "A lightning fast router for PHP",
+            "homepage": "https://github.com/dannyvankooten/AltoRouter",
+            "keywords": [
+                "lightweight",
+                "router",
+                "routing"
+            ],
+            "time": "2014-01-08 13:47:24"
+        },
+        {
+            "name": "kasperisager/vanilla-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:kasperisager/vanilla-api.git",
+                "reference": "8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
+            },
+            "require": {
+                "altorouter/altorouter": "1.0.x"
+            },
+            "type": "library",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kasper Isager",
+                    "email": "kasperisager@gmail.com"
+                }
+            ],
+            "description": "RESTful API shim for Vanilla",
+            "time": "2015-02-04 08:59:55"
+        },
+        {
+            "name": "vanilla/vanilla",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:vanilla/vanilla.git",
+                "reference": "f02fd44d2db2c4d0b849fb39c1fcf05c16908d9c"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "1.5.*"
+            },
+            "type": "library",
+            "license": [
+                "GPLv2"
+            ],
+            "authors": [
+                {
+                    "name": "Todd Burry",
+                    "email": "todd@vanillaforums.com"
+                }
+            ],
+            "description": "Vanilla is a powerfully simple discussion forum you can easily customize to make as unique as your community.",
+            "time": "2015-06-12 14:16:40"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "vanilla/vanilla": 20,
+        "kasperisager/vanilla-api": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
