@@ -14,10 +14,6 @@ use App\Repositories\ArticleRepository;
 
 class ArticleController extends EntityController
 {
-    /**
-     * @var string
-     */
-    private $metaKeyName = null;
     protected $validateRequestRule = 'required|string';
 
     /**

@@ -1,10 +1,10 @@
 <?php namespace Spira\Repository\Repository;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Model\BaseModel;
 use Spira\Repository\Validation\ValidationException;
 use Spira\Repository\Validation\ValidationExceptionCollection;
 use Traversable;

@@ -15,9 +15,11 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Validation\RelationSaveException;
 use Spira\Repository\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as ValidationFactory;
+use Spira\Repository\Validation\ValidationExceptionCollection;
 use Spira\Repository\Validation\Validator;
 
 /**
@@ -60,6 +62,11 @@ abstract class BaseModel extends Model
      */
     protected $errors;
 
+    /**
+     * @var MessageBag[]
+     */
+    protected $relationErrors = [];
+
     protected $validationRules = [];
 
     /**
@@ -81,6 +88,15 @@ abstract class BaseModel extends Model
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @param string $relationName
+     * @return \Exception|null
+     */
+    public function getRelationErrors($relationName)
+    {
+        return isset($this->relationErrors[$relationName])?$this->relationErrors[$relationName]:null;
     }
 
     /**
@@ -172,17 +188,45 @@ abstract class BaseModel extends Model
         // To sync all of the relationships to the database, we will simply spin through
         // the relationships and save each model via this "push" method, which allows
         // us to recurse into all of these nested relations for the model instance.
+        $errorInRelations = false;
         foreach ($this->relations as $key => $models) {
-            /** @var Collection|array $models */
-            $models = $this->isCollection($models)? $models->all(true) : [$models];
             $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
-            foreach (array_filter($models) as $model) {
-                /** @var BaseModel $model */
-                $model->preserveKeys($relation);
-                if (!$model->push()) {
-                    return false;
+
+            if ($this->isCollection($models)){
+                /** @var Collection $models */
+                $models = $models->all(true);
+                $error = false;
+                $errors = [];
+                foreach (array_filter($models) as $model) {
+                    /** @var BaseModel $model */
+                    $model->preserveKeys($relation);
+                    try{
+                        $model->push();
+                        $errors[] = null;
+                    }catch (ValidationException $e){
+                        $errors[] = $e;
+                        $error = true;
+                        $errorInRelations = true;
+                    }
+                }
+                if ($error){
+                    $this->relationErrors[$key] = new ValidationExceptionCollection($errors);
+                }
+            }else{
+                /** @var BaseModel $models */
+                $models->preserveKeys($relation);
+                try{
+                    $models->push();
+                }catch (ValidationException $e){
+                    $this->relationErrors[$key] = $e;
+                    $errorInRelations = true;
                 }
             }
+
+        }
+
+        if ($errorInRelations){
+            throw new RelationSaveException('Validation error');
         }
 
         return true;
