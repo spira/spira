@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Response\ApiResponse;
 
@@ -23,7 +22,6 @@ class ChildEntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateChildRequest = true;
     protected $validateChildRequestRule = 'uuid';
 
     protected $relationName = null;
@@ -37,10 +35,7 @@ class ChildEntityController extends ApiController
      */
     public function getAll($id)
     {
-
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
 
         try {
             $model = $this->getRepository()->find($id);
@@ -64,9 +59,7 @@ class ChildEntityController extends ApiController
      */
     public function getOne($id, $childId)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
 
         try {
             $model = $this->getRepository()->find($id);
@@ -75,15 +68,13 @@ class ChildEntityController extends ApiController
         }
 
         $relation = $this->getRelation($model);
+        $childKey = $this->getChildKey($relation);
+        $this->validateId($childId, $childKey, $this->validateChildRequestRule);
 
-        if ($this->validateChildRequest){
-            $this->validateId($childId, $this->getChildKey($relation), $this->validateChildRequestRule);
-        }
-
-        $relation->getBaseQuery()->whereIn($this->getChildKey($relation),$childId);
+        $relation->getBaseQuery()->whereIn($childKey,$childId);
         $childModel = $relation->getResults();
         if (!$childModel){
-            throw $this->notFoundException($this->getChildKey($relation));
+            throw $this->notFoundException($childKey);
         }
 
         return $this->getResponse()
@@ -101,9 +92,7 @@ class ChildEntityController extends ApiController
      */
     public function postOne($id, Request $request)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
 
         try {
             $model = $this->getRepository()->find($id);
@@ -131,9 +120,8 @@ class ChildEntityController extends ApiController
      */
     public function putOne($id, $childId, Request $request)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -141,12 +129,10 @@ class ChildEntityController extends ApiController
         }
 
         $relation = $this->getRelation($model);
+        $childKey = $this->getChildKey($relation);
+        $this->validateId($childId, $childKey, $this->validateChildRequestRule);
 
-        if ($this->validateChildRequest){
-            $this->validateId($childId, $this->getChildKey($relation), $this->validateChildRequestRule);
-        }
-
-        $relation->getBaseQuery()->whereIn($this->getChildKey($relation),$childId);
+        $relation->getBaseQuery()->whereIn($childKey, $childId);
         $childModel = $relation->getResults();
 
         if (!$childModel){
@@ -172,9 +158,8 @@ class ChildEntityController extends ApiController
     {
         $requestCollection = $request->data;
 
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -184,10 +169,10 @@ class ChildEntityController extends ApiController
         $relation = $this->getRelation($model);
         $childKey = $this->getChildKey($relation);
 
-        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildRequest, $this->validateChildRequestRule);
+        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildRequestRule);
         $childModels = [];
         if (!empty($ids)) {
-            $relation->getBaseQuery()->whereIn($this->getChildKey($relation),$ids);
+            $relation->getBaseQuery()->whereIn($childKey,$ids);
             $childModels = $relation->getResults();
         }
 
@@ -224,9 +209,8 @@ class ChildEntityController extends ApiController
      */
     public function patchOne($id, $childId, Request $request)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -234,12 +218,11 @@ class ChildEntityController extends ApiController
         }
 
         $relation = $this->getRelation($model);
+        $childKey = $this->getChildKey($relation);
 
-        if ($this->validateChildRequest){
-            $this->validateId($childId, $this->getChildKey($relation), $this->validateRequestRule);
-        }
+        $this->validateId($childId, $childKey, $this->validateChildRequestRule);
 
-        $relation->getBaseQuery()->whereIn($this->getChildKey($relation),$childId);
+        $relation->getBaseQuery()->whereIn($childKey,$childId);
         $childModel = $relation->getResults();
 
         if (!$childModel){
@@ -289,9 +272,8 @@ class ChildEntityController extends ApiController
      */
     public function deleteOne($id, $childId)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -299,12 +281,10 @@ class ChildEntityController extends ApiController
         }
 
         $relation = $this->getRelation($model);
+        $childKey = $this->getChildKey($relation);
+        $this->validateId($childId, $childKey, $this->validateChildRequestRule);
 
-        if ($this->validateChildRequest){
-            $this->validateId($childId, $this->getChildKey($relation), $this->validateChildRequestRule);
-        }
-
-        $relation->getBaseQuery()->whereIn($this->getChildKey($relation),$childId);
+        $relation->getBaseQuery()->whereIn($childKey, $childId);
         $childModel = $relation->getResults();
 
         if (!$childModel){

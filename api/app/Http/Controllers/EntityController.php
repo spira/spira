@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Spira\Repository\Model\BaseModel;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class EntityController extends ApiController
 {
@@ -52,9 +51,7 @@ abstract class EntityController extends ApiController
      */
     public function getOne($id)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
 
         try {
             $model = $this->getRepository()->find($id);
@@ -94,9 +91,8 @@ abstract class EntityController extends ApiController
      */
     public function putOne($id, Request $request)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -120,7 +116,7 @@ abstract class EntityController extends ApiController
     {
         $requestCollection = $request->data;
 
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest, $this->validateRequestRule);
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
         $models = [];
         if (!empty($ids)) {
             $models = $this->getRepository()->findMany($ids);
@@ -155,9 +151,8 @@ abstract class EntityController extends ApiController
      */
     public function patchOne($id, Request $request)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
         } catch (ModelNotFoundException $e) {
@@ -179,7 +174,7 @@ abstract class EntityController extends ApiController
     public function patchMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest, $this->validateRequestRule);
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
         $models = $this->getRepository()->findMany($ids);
         if ($models->count() !== count($ids)) {
             throw $this->notFoundManyException($ids, $models, $this->getKeyName());
@@ -206,9 +201,8 @@ abstract class EntityController extends ApiController
      */
     public function deleteOne($id)
     {
-        if ($this->validateRequest) {
-            $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        }
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+
         try {
             $model = $this->getRepository()->find($id);
             $this->getRepository()->delete($model);
@@ -228,7 +222,7 @@ abstract class EntityController extends ApiController
     public function deleteMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequest, $this->validateRequestRule);
+        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
         $models = $this->getRepository()->findMany($ids);
 
         if (count($ids) !== $models->count()) {
