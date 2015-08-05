@@ -1,5 +1,1 @@
-{{ $user->first_name }},
-
-Please confirm the email change to {{ $email }} by following this link
-
-{{ $emailConfirmationRedirectionUrl }}
+{{ $user->first_name }}, please confirm the email change to {{ $email }} by following <a href='{{ $emailConfirmationRedirectionUrl }}'>this link</a>.

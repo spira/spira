@@ -119,6 +119,18 @@ module common.services.user {
                 .skipInterceptor()
                 .remove('/users/' + email + '/password');
         }
+
+        /**
+         * Confirm email update for a user
+         * @param user
+         * @param emailConfirmToken
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any>{
+            user.emailConfirmed = moment().toISOString();
+            return this.ngRestAdapter
+                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
+        }
     }
 
     angular.module(namespace, [])

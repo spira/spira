@@ -1,1 +1,1 @@
-{{ $user->first_name }}, Please reset your password by following <a href='{{ $passwordResetRedirectionUrl }}'>this link</a>.
+{{ $user->first_name }}, please reset your password by following <a href='{{ $passwordResetRedirectionUrl }}'>this link</a>.
