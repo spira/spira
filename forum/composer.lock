@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e2ed21fe09b805faf702087417db2532",
+    "hash": "b51a98ab6ae13c9146b10ce8e74a94df",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -87,7 +87,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:vanilla/vanilla.git",
-                "reference": "f02fd44d2db2c4d0b849fb39c1fcf05c16908d9c"
+                "reference": "71dc135745ea65c66444e67468e6a4670421bdac"
             },
             "require-dev": {
                 "squizlabs/php_codesniffer": "1.5.*"
@@ -103,7 +103,7 @@
                 }
             ],
             "description": "Vanilla is a powerfully simple discussion forum you can easily customize to make as unique as your community.",
-            "time": "2015-06-12 14:16:40"
+            "time": "2015-06-18 21:43:45"
         }
     ],
     "packages-dev": [],
