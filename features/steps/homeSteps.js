@@ -1,6 +1,8 @@
 'use strict';
 
 var expect = require('chai').expect;
+var webdriver = require('selenium-webdriver');
+var until = webdriver.until;
 
 module.exports = function() {
     this.World = require('../support/world.js').World;
@@ -19,10 +21,7 @@ module.exports = function() {
 
     this.Then(/^I should see "(.*)" as the page title$/, function (title, next) {
 
-        this.driver.getTitle().then(function(pageTitle) {
-
-            expect(pageTitle).to.equal(title);
-
+        this.driver.wait(until.titleIs(title), 1000).then(function(){
             next();
         });
 
