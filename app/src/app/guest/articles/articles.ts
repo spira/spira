@@ -17,8 +17,11 @@ module app.guest.articles {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    allArticles: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getAllArticles();
+                    articlesPaginator: (articleService:common.services.article.ArticleService) => {
+                        return articleService.getArticlesPaginator();
+                    },
+                    initialArticles: (articlesPaginator:common.services.pagination.Paginator) => {
+                        return articlesPaginator.getNext();
                     }
                 },
                 data: {
@@ -38,10 +41,27 @@ module app.guest.articles {
 
     export class ArticlesController {
 
-        static $inject = ['allArticles'];
-        constructor(public allArticles:common.services.article.IArticle[]) {
+        public allArticles:common.models.Article[] = [];
+        static $inject = ['articlesPaginator', 'initialArticles'];
+        constructor(private articlesPaginator:common.services.pagination.Paginator, initialArticles:common.models.Article[]) {
+
+            this.allArticles = initialArticles;
 
         }
+
+
+        /**
+         * Get more articles
+         */
+        public showMore():void {
+
+            this.articlesPaginator.getNext().then((moreArticles:common.models.Article[]) => {
+
+                this.allArticles = this.allArticles.concat(moreArticles)
+            });
+
+        }
+
 
     }
 

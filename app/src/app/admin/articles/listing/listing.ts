@@ -17,8 +17,8 @@ module app.admin.articles.listing {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    allArticles: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getAllArticles();
+                    articlesPaginator: (articleService:common.services.article.ArticleService) => {
+                        return articleService.getArticlesPaginator();
                     }
                 },
                 data: {
@@ -36,11 +36,15 @@ module app.admin.articles.listing {
 
     export class ArticlesListingController {
 
-        static $inject = ['allArticles'];
-        constructor(public allArticles:common.services.article.IArticle[]) {
+        public allArticles:common.models.Article[] = [];
+        static $inject = ['articlesPaginator'];
+        constructor(private articlesPaginator:common.services.pagination.Paginator) {
+
+            articlesPaginator.getNext().then((articles) => {
+                this.allArticles = articles;
+            });
 
         }
-
     }
 
     angular.module(namespace, [])

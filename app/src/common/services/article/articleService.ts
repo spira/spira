@@ -2,32 +2,22 @@ module common.services.article {
 
     export const namespace = 'common.services.article';
 
-    export interface IArticle {
-        title:string;
-        body:string;
-        permalink:string;
-        _author?:common.models.User;
-    }
-
     export class ArticleService {
 
-        static $inject:string[] = ['ngRestAdapter'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService'];
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private paginationService:common.services.pagination.PaginationService) {
         }
 
-        /**
-         * Get all articles from the API
-         * @returns {any}
-         */
-        public getAllArticles():ng.IPromise<IArticle[]> {
+        public static articleFactory(data:any):common.models.Article {
+            return new common.models.Article(data);
+        }
 
-            return this.ngRestAdapter.get('/articles')
-                .then((res) => {
-                    return <IArticle[]>res.data;
-                })
-                ;
+        public getArticlesPaginator():common.services.pagination.Paginator {
 
+            return this.paginationService
+                .getPaginatorInstance('/articles')
+                .setModelFactory(ArticleService.articleFactory);
         }
 
     }
