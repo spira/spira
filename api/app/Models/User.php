@@ -32,13 +32,13 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'user_id',
         'first_name',
         'last_name',
-        'email',
         'email_confirmed',
         'phone',
         'mobile',
         'timezone_identifier',
         'user_type',
-        'avatar_img_url'
+        'avatar_img_url',
+        'email'
     ];
 
     /**
@@ -47,7 +47,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * @var array
      */
     protected $validationRules = [
-        'user_id' => 'uuid',
+        'user_id' => 'uuid|createOnly',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
