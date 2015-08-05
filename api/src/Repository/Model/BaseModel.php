@@ -15,6 +15,10 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Validation\ValidationException;
+use Illuminate\Support\MessageBag;
+use Illuminate\Validation\Factory as ValidationFactory;
+use Spira\Repository\Validation\Validator;
 
 /**
  * Class BaseModel
@@ -30,7 +34,7 @@ use Spira\Repository\Collection\Collection;
  * @method static BaseModel take limit
  *
  */
-class BaseModel extends Model
+abstract class BaseModel extends Model
 {
     /**
      * @var Relation[]
@@ -43,6 +47,41 @@ class BaseModel extends Model
     protected $deleteStack = [];
 
     protected $isDeleted = false;
+
+    public $exceptionOnError = true;
+
+    /**
+     * @var ValidationFactory
+     */
+    protected $validator;
+
+    /**
+     * @var MessageBag|null
+     */
+    protected $errors;
+
+    protected $validationRules = [];
+
+    /**
+     * @return array
+     */
+    public function getValidationRules()
+    {
+        return $this->validationRules;
+    }
+
+    /**
+     * @return ValidationFactory
+     */
+    abstract protected function getValidator();
+
+    /**
+     * @return MessageBag|null
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
 
     /**
      * @param string $key
@@ -217,8 +256,64 @@ class BaseModel extends Model
             return $this->delete();
         }
 
+        $result = true;
+        if ($this->fireModelEvent('validating') !== false) {
+            $result = $this->validate();
+        }
+
+        if (!$result && $this->exceptionOnError) {
+            throw new ValidationException($this->getErrors());
+        }
+
+        if ($this->fireModelEvent('validated') === false) {
+            return false;
+        }
+
+
         return parent::save($options);
     }
+
+    public function validate()
+    {
+        /** @var Validator $validation */
+        $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
+        if (!$validation instanceof Validator){
+            throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
+        }
+        $validation->setModel($this);
+        $this->errors = [];
+        if ($validation->fails()) {
+            $this->errors = $validation->messages();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Register a validating model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function validating($callback, $priority = 0)
+    {
+        static::registerModelEvent('validating', $callback, $priority);
+    }
+
+    /**
+     * Register a validated model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function validated($callback, $priority = 0)
+    {
+        static::registerModelEvent('validated', $callback, $priority);
+    }
+
 
     /**
      * Create a new Eloquent Collection instance.

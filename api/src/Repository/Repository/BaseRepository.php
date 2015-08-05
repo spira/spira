@@ -5,6 +5,9 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Validation\ValidationException;
+use Spira\Repository\Validation\ValidationExceptionCollection;
+use Traversable;
 
 abstract class BaseRepository
 {
@@ -116,6 +119,47 @@ abstract class BaseRepository
         return $model;
     }
 
+    /**
+     * @param Collection|BaseModel[] $models
+     * @return BaseModel[]
+     * @throws \Exception some general exception
+     * @throws RepositoryException
+     */
+    public function saveMany($models)
+    {
+        if (!is_array($models) && !($models instanceof Traversable)) {
+            throw new RepositoryException('Models must be either an array or Collection with Traversable');
+        }
+
+        $this->getConnection()->beginTransaction();
+
+        try {
+            $error = false;
+            $errors = [];
+            /** @var BaseModel $models */
+            foreach ($models as $model) {
+                try {
+                    if (!$this->save($model)) {
+                        throw new RepositoryException('Massive assignment failed as model with id '.$model->getQueueableId().' couldn\'t be saved');
+                    }
+                    $errors[] = null;
+                } catch (ValidationException $e) {
+                    $error = true;
+                    $errors[] = $e;
+                }
+            }
+            if ($error) {
+                throw new ValidationExceptionCollection($errors);
+            }
+        } catch (\Exception $e) {
+            $this->getConnection()->rollBack();
+            throw $e;
+        }
+
+        $this->getConnection()->commit();
+        return $models;
+    }
+
 
     /**
      * Delete an entity by id.
@@ -134,6 +178,37 @@ abstract class BaseRepository
         /** @var BaseModel $model */
 
         return $model->delete();
+    }
+
+    /**
+     * Delete a collection of entities.
+     *
+     * @param  Collection|BaseModel[] $models
+     * @throws \Exception
+     * @return bool
+     */
+    public function deleteMany($models)
+    {
+        if (!is_array($models) && !($models instanceof Traversable)) {
+            throw new RepositoryException('Models must be either an array or Collection with Traversable');
+        }
+
+        $this->getConnection()->beginTransaction();
+
+        try {
+            /** @var BaseModel $models */
+            foreach ($models as $model) {
+                if (!$this->delete($model)) {
+                    throw new RepositoryException('Massive deletion failed as model with id '.$model->getQueueableId().' couldn\'t be deleted');
+                }
+            }
+        } catch (\Exception $e) {
+            $this->getConnection()->rollBack();
+            throw $e;
+        }
+
+        $this->getConnection()->commit();
+        return true;
     }
 
     /**

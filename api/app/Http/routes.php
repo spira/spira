@@ -62,6 +62,18 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities', 'App\Http\Controllers\TestController@patchMany');
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
+
+
+    $app->get('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@getAll');
+    $app->get('/entities/{id}/children/pages', 'App\Http\Controllers\ChildTestController@getAllPaginated');
+    $app->get('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@getOne');
+    $app->post('/entities/{id}/child', 'App\Http\Controllers\ChildTestController@postOne');
+    $app->put('/entities/{id}/child', 'App\Http\Controllers\ChildTestController@putOne');
+    $app->put('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@putMany');
+    $app->patch('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@patchOne');
+    $app->patch('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@patchMany');
+    $app->delete('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@deleteOne');
+    $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
 });
 
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {

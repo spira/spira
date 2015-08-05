@@ -6,7 +6,7 @@
  * Time: 20:12
  */
 
-namespace App\Exceptions;
+namespace Spira\Repository\Validation;
 
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;

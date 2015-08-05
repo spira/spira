@@ -8,10 +8,10 @@
 
 namespace App\Extensions\Controller;
 
-use App\Exceptions\ValidationException;
-use App\Exceptions\ValidationExceptionCollection;
 use Laravel\Lumen\Routing\ValidatesRequests;
 use Spira\Repository\Collection\Collection;
+use Spira\Repository\Validation\ValidationException;
+use Spira\Repository\Validation\ValidationExceptionCollection;
 
 trait RequestValidationTrait
 {
