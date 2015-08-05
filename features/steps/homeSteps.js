@@ -21,7 +21,10 @@ module.exports = function() {
 
     this.Then(/^I should see "(.*)" as the page title$/, function (title, next) {
 
-        this.driver.wait(until.titleIs(title), 1000).then(function(){
+        this.driver.getTitle().then(function(pageTitle) {
+
+            expect(pageTitle).to.equal(title);
+
             next();
         });
 
