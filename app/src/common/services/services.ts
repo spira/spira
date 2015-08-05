@@ -8,9 +8,8 @@ module common.services {
         namespace+'.article',
         namespace+'.countries',
         namespace+'.timezones',
+        namespace+'.pagination',
     ]);
 
 }
-
-
 

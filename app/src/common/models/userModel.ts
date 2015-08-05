@@ -20,9 +20,6 @@ module common.models {
         }
 
     }
-    //
-    //angular.module(namespace, [])
-    //    .service('userService', UserService);
 
 }
 
