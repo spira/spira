@@ -61,12 +61,11 @@ interface mockEntity {
 
         });
 
-        describe('Default paginator', () => {
+        describe('Paginator', () => {
+
+            let collection = fixtures.exampleCollection;
 
             it ('should default to 10 entities retrieved', () => {
-
-
-                let collection = fixtures.exampleCollection;
 
                 $httpBackend.expectGET('/api/collection', (headers) => {
                     return headers.Range == 'entities=0-9'
@@ -82,6 +81,111 @@ interface mockEntity {
                 expect(results).eventually.to.be.instanceof(Array);
                 expect(results).eventually.to.have.length(10);
                 expect(results).eventually.to.deep.equal(_.take(collection, 10));
+
+            });
+
+            it('should return the second set of results when getNext() is called again', () => {
+
+
+                let paginator = paginationService.getPaginatorInstance('/collection');
+
+                // Get first page
+                $httpBackend.expectGET('/api/collection', (headers) => {
+                    return headers.Range == 'entities=0-9'
+                })
+                .respond(206, _.take(collection, 10));
+
+                paginator.getNext();
+
+                $httpBackend.flush();
+
+                //Get second page
+                $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                    return headers.Range == 'entities=10-19'
+                })
+                .respond(206, collection.slice(10, 20));
+
+                let results = paginator.getNext();
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceof(Array);
+                expect(results).eventually.to.have.length(10);
+                expect(results).eventually.to.deep.equal(collection.slice(10, 20));
+
+            });
+
+            it('should return the same set of results after reset() is called', () => {
+
+
+                let paginator = paginationService.getPaginatorInstance('/collection');
+
+                // Get first page
+                $httpBackend.expectGET('/api/collection', (headers) => {
+                    return headers.Range == 'entities=0-9'
+                })
+                .respond(206, _.take(collection, 10));
+
+                let results1 = paginator.getNext();
+
+                paginator.reset(); //reset the counter
+
+                $httpBackend.flush();
+
+                // Get first page again
+                $httpBackend.expectGET('/api/collection', (headers) => {
+                    return headers.Range == 'entities=0-9'
+                })
+                    .respond(206, _.take(collection, 10));
+
+                let results2 = paginator.getNext();
+
+                $httpBackend.flush();
+
+                expect(results1).eventually.to.be.instanceof(Array);
+                expect(results1).eventually.to.have.length(10);
+                expect(results2).eventually.to.have.length(10);
+                expect(results1).eventually.to.deep.equal(_.take(collection, 10));
+                expect(results2).eventually.to.deep.equal(_.take(collection, 10));
+
+            });
+
+            it('should be able to configure the page size', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                    return headers.Range == 'entities=0-2'
+                })
+                    .respond(206, _.take(collection, 3));
+
+                let results = paginator.getNext();
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceof(Array);
+                expect(results).eventually.to.have.length(3);
+                expect(results).eventually.to.deep.equal(_.take(collection, 3));
+
+            });
+
+            it.skip('should be able to get a subset of results directly', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                    return headers.Range == 'entities=12-36'
+                })
+                .respond(206, collection.slice(12, 37));
+
+                let results = paginator.getRange(12, 36);
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceof(Array);
+                expect(results).eventually.to.have.length(24);
+                expect(results).eventually.to.deep.equal(collection.slice(12, 37));
+
 
             });
 
