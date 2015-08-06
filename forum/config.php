@@ -1,4 +1,6 @@
-<?php if (!defined('APPLICATION')) exit();
+<?php if (!defined('APPLICATION')) {
+    exit();
+}
 
 // Conversations
 $Configuration['Conversations']['Version'] = '2.2b1';
