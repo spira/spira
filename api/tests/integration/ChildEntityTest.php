@@ -81,8 +81,7 @@ class ChildEntityTest extends TestCase
         $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
         $this->assertTrue(is_string($object->value), 'Varchar column type is text');
 
-        $this->assertEquals($childEntity->entity_id,$object->entityId);
-
+        $this->assertEquals($childEntity->entity_id, $object->entityId);
     }
 
     public function testPostOneValid()
@@ -261,8 +260,7 @@ class ChildEntityTest extends TestCase
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        foreach ($entity->testMany as $childEntity)
-        {
+        foreach ($entity->testMany as $childEntity) {
             $this->assertEquals('foobar', $childEntity->value);
         }
     }

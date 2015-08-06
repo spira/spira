@@ -47,7 +47,8 @@ class ValidatorTest extends TestCase
         $data = ['multi_word_column_title' => 0.12];
 
         $validation = $this->validator->make($data, ['multi_word_column_title'=>'required|boolean']);
-        $this->assertFalse($validation->passes());$validation->passes();
+        $this->assertFalse($validation->passes());
+        $validation->passes();
     }
 
     public function testPassingCountryValidation()

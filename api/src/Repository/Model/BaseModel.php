@@ -176,9 +176,9 @@ abstract class BaseModel extends Model
     {
         $validationError = false;
 
-        try{
+        try {
             $this->save();
-        }catch (ValidationException $e){
+        } catch (ValidationException $e) {
             $validationError = true;
         }
 
@@ -196,7 +196,7 @@ abstract class BaseModel extends Model
         foreach ($this->relations as $key => $models) {
             $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
 
-            if ($this->isCollection($models)){
+            if ($this->isCollection($models)) {
                 /** @var Collection $models */
                 $models = $models->all(true);
                 $error = false;
@@ -204,33 +204,33 @@ abstract class BaseModel extends Model
                 foreach (array_filter($models) as $model) {
                     /** @var BaseModel $model */
                     $model->preserveKeys($relation);
-                    try{
+                    try {
                         $model->push();
                         $errors[] = null;
-                    }catch (ValidationException $e){
+                    } catch (ValidationException $e) {
                         $errors[] = $e;
                         $error = true;
                         $validationError = true;
                     }
                 }
-                if ($error){
+                if ($error) {
                     $this->relationErrors[$key] = new ValidationExceptionCollection($errors);
                     $this->errors->add($key, $errors);
                 }
-            }else if ($models){
+            } elseif ($models) {
                 /** @var BaseModel $models */
                 $models->preserveKeys($relation);
-                try{
+                try {
                     $models->push();
-                }catch (ValidationException $e){
-                    $this->errors->add($key,$models->getErrors());
+                } catch (ValidationException $e) {
+                    $this->errors->add($key, $models->getErrors());
                     $this->relationErrors[$key] = $e;
                     $validationError = true;
                 }
             }
         }
 
-        if ($validationError){
+        if ($validationError) {
             throw new ValidationException($this->getErrors());
         }
 
@@ -326,7 +326,7 @@ abstract class BaseModel extends Model
     {
         /** @var Validator $validation */
         $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
-        if (!$validation instanceof Validator){
+        if (!$validation instanceof Validator) {
             throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
         }
         $validation->setModel($this);
@@ -334,7 +334,7 @@ abstract class BaseModel extends Model
         if ($validation->fails()) {
             $this->errors = $validation->messages();
             return false;
-        }else{
+        } else {
             $this->errors = new MessageBag();
         }
 
@@ -426,7 +426,7 @@ abstract class BaseModel extends Model
      */
     public function setRelation($relationName, $value, $relation = null)
     {
-        if ($relation instanceof Relation){
+        if ($relation instanceof Relation) {
             static::$relationsCache[$this->getRelationCacheKey($relationName)] = $relation;
         }
 

@@ -8,7 +8,6 @@
 
 namespace Spira\Repository\Validation;
 
-
 use Spira\Repository\Model\BaseModel;
 
 class Validator extends \Illuminate\Validation\Validator

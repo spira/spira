@@ -12,7 +12,7 @@ class TestController extends EntityController
      */
     public function __construct(TestRepository $repository, EloquentModelTransformer $transformer)
     {
-        parent::__construct($repository,$transformer);
+        parent::__construct($repository, $transformer);
     }
 
     public function urlEncode($id)

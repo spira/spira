@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Transformers\ArticleTransformer;
 use App\Repositories\ArticleRepository;
 

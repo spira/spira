@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Repositories\ArticleRepository;
 
@@ -22,5 +21,4 @@ class ArticleMetaController extends ChildEntityController
     {
         parent::__construct($repository, $transformer);
     }
-
 }

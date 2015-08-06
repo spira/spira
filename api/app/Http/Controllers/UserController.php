@@ -66,7 +66,7 @@ class UserController extends EntityController
         $this->jwtAuth = $jwtAuth;
         $this->cache = $cache;
         $this->permissions($request);
-        parent::__construct($repository,$transformer);
+        parent::__construct($repository, $transformer);
     }
 
     /**
@@ -105,7 +105,7 @@ class UserController extends EntityController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id, $this->getKeyName(),$this->validateRequestRule);
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
         if ($this->repository->exists($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
