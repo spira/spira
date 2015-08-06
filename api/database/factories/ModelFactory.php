@@ -50,13 +50,18 @@ $factory->define(App\Models\User::class, function ($faker) {
         'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear($max = 'now'),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
-        'phone' => $faker->optional(0.5)->phoneNumber,
-        'mobile' => $faker->optional(0.5)->phoneNumber,
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
-        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
-
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+    ];
+});
+
+$factory->define(App\Models\UserProfile::class, function ($faker) {
+    return [
+        'phone' => $faker->optional(0.5)->phoneNumber,
+        'mobile' => $faker->optional(0.5)->phoneNumber,
+        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
+        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
     ];
 });
 
@@ -68,7 +73,6 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
 
 $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
-        'user_credential_id' => $faker->uuid,
         'password' => 'password'
     ];
 });
