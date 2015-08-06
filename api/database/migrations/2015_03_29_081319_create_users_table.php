@@ -29,7 +29,7 @@ class CreateUsersTable extends Migration
                 $table->string('timezone_identifier', 40)->nullable();
                 $table->enum('user_type', $modelClass::$userTypes);
                 $table->string('avatar_img_url')->nullable();
-
+                $table->date('dob')->nullable();
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
 

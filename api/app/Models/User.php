@@ -38,7 +38,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'timezone_identifier',
         'user_type',
         'avatar_img_url',
-        'email'
+        'email',
+        'dob'
     ];
 
     /**
@@ -55,7 +56,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'phone' => 'string',
         'mobile' => 'string',
         'country' => 'country',
-        'timezone_identifier' => 'timezone'
+        'timezone_identifier' => 'timezone',
+        'dob' => 'date'
     ];
 
     /**
@@ -63,7 +65,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $dates = ['email_confirmed'];
+    protected $dates = ['email_confirmed', 'dob'];
 
     /**
      * The attributes that should be casted to native types.
@@ -71,7 +73,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * @var array
      */
     protected $casts = [
-        'email_confirmed' => 'datetime'
+        'email_confirmed' => 'datetime',
+        'dob' => 'date',
     ];
 
     /**

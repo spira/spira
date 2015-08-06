@@ -47,7 +47,7 @@ $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
         'email' => $faker->email,
-        'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear($max = 'now'),
+        'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear(),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'phone' => $faker->optional(0.5)->phoneNumber,
@@ -55,8 +55,8 @@ $factory->define(App\Models\User::class, function ($faker) {
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
         'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
-
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
     ];
 });
 

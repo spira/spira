@@ -27,6 +27,15 @@
                         <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
                     </md-select>
                 </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <label for="editProfileForm.dob">WHEN WERE YOU BORN</label>
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.dob" ng-model="ProfileController.user.dob" name="dob" type="text" ng-required="true">
+                    <ng-messages for="editProfileForm.last_name.$error">
+                        <ng-message when="required">This is required.</ng-message>
+                    </ng-messages>
+                </md-input-container>
             </md-whiteframe>
         </md-content>
 

@@ -9,9 +9,9 @@ module common.models {
         public _userCredential:global.IUserCredential;
         public emailConfirmed:string;
         public country:string;
+        public dob:string;
 
         constructor(data:global.IUserData) {
-
             _.assign(this, data);
 
         }
