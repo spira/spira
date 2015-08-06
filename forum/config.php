@@ -18,21 +18,26 @@ $Configuration['EnabledApplications']['Vanilla'] = 'vanilla';
 // EnabledPlugins
 $Configuration['EnabledPlugins']['GettingStarted'] = 'GettingStarted';
 $Configuration['EnabledPlugins']['HtmLawed'] = 'HtmLawed';
+$Configuration['EnabledPlugins']['jsconnect'] = true;
 
 // Garden
 $Configuration['Garden']['Title'] = 'Spira';
 $Configuration['Garden']['Cookie']['Salt'] = '';
 $Configuration['Garden']['Cookie']['Domain'] = '';
-$Configuration['Garden']['Registration']['ConfirmEmail'] = true;
+$Configuration['Garden']['Registration']['ConfirmEmail'] = false;
+$Configuration['Garden']['Registration']['Method'] = 'Connect';
 $Configuration['Garden']['Email']['SupportName'] = 'Spira';
 $Configuration['Garden']['InputFormatter'] = 'Html';
 $Configuration['Garden']['Version'] = '2.2b1';
 $Configuration['Garden']['Cdns']['Disable'] = false;
 $Configuration['Garden']['CanProcessImages'] = true;
+$Configuration['Garden']['RewriteUrls'] = true;
 $Configuration['Garden']['Installed'] = false;
 
 // Plugins
 $Configuration['Plugins']['GettingStarted']['Dashboard'] = '1';
+$Configuration['Plugins']['GettingStarted']['Plugins'] = '1';
+$Configuration['Plugins']['GettingStarted']['Registration'] = '1';
 
 // Routes
 $Configuration['Routes']['DefaultController'] = 'discussions';
