@@ -2,7 +2,7 @@ module app.admin.navigation{
 
     export const namespace = 'app.admin.navigation';
 
-    class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
+    export class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
 
         public groupedNavigableStates = [
             {
