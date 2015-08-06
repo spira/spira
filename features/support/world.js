@@ -45,8 +45,8 @@ var World = function World(callback) {
         this.baseUrl = 'http://127.0.0.1:8001';
     }
 
-    if (!!process.env.NGINX_PORT_80_TCP){ //if we are executing from a docker container
-        this.baseUrl = 'http://' + process.env.NGINX_PORT_80_TCP_ADDR; //rewrite it to the nginx container tcp address
+    if (!!process.env.WEB_PORT_80_TCP_ADDR){ //if we are executing from a docker container
+        this.baseUrl = 'http://' + process.env.WEB_PORT_80_TCP_ADDR; //rewrite it to the nginx container tcp address
     }
 
     this.waitFor = function(cssLocator, timeout) {

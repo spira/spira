@@ -1,5 +1,3 @@
-///<reference path="../../../build/js/declarations.d.ts" />
-
 (() => {
 
     let seededChance = new Chance(1);

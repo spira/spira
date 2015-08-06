@@ -10,6 +10,7 @@ module config.commonModules {
         'common.services',
 
         //directives
+        'common.directives',
     ]);
 
 }

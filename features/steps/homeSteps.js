@@ -1,6 +1,8 @@
 'use strict';
 
 var expect = require('chai').expect;
+var webdriver = require('selenium-webdriver');
+var until = webdriver.until;
 
 module.exports = function() {
     this.World = require('../support/world.js').World;

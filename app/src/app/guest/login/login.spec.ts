@@ -11,7 +11,7 @@ describe('Login', () => {
 
                 deferredCreds.promise.then(null, null, (creds) => {
                     if (creds.password == 'fail'){
-                        deferred.notify(new NgJwtAuth.NgJwtAuthException('error'));
+                        deferred.notify(new NgJwtAuth.NgJwtAuthCredentialsFailedException('error'));
                     }else{
                         deferred.resolve('success');
                         deferredCreds.resolve(creds);

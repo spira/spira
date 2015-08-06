@@ -7,6 +7,7 @@ module common.models {
         public firstName:string;
         public lastName:string;
         public _userCredential:global.IUserCredential;
+        public emailConfirmed:string;
 
         constructor(data:global.IUserData) {
 
@@ -19,9 +20,6 @@ module common.models {
         }
 
     }
-    //
-    //angular.module(namespace, [])
-    //    .service('userService', UserService);
 
 }
 

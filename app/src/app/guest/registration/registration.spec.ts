@@ -5,7 +5,7 @@ describe('Registration', () => {
     describe('Configuration', () => {
 
         let RegistrationController:ng.IControllerService,
-            $scope:app.partials.registration.IScope,
+            $scope:app.guest.registration.IScope,
             $mdDialog:ng.material.IDialogService,
             userService:common.services.user.UserService,
             $q:ng.IQService,
@@ -25,7 +25,7 @@ describe('Registration', () => {
                 $q = _$q_;
                 userService = _userService_;
                 $state = _$state_;
-                RegistrationController = $controller(app.partials.registration.namespace+'.controller', {
+                RegistrationController = $controller(app.guest.registration.namespace+'.controller', {
                     $scope: $scope,
                     userService : userServiceMock,
                     $state: $state

@@ -4,6 +4,7 @@ use App\Exceptions\ValidationException;
 use App\Services\SpiraValidator;
 use Carbon\Carbon;
 use Bosnadev\Database\Traits\UuidTrait;
+use DateTime;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Validator;
 
@@ -76,9 +77,9 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
 
         switch ($this->getCastType($key)) {
             case 'date':
-                return Carbon::createFromFormat('Y-m-d H:i', $value.' 00:00')->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d', $value);
             case 'datetime':
-                return Carbon::createFromFormat('Y-m-d H:i:s', $value)->toIso8601String();
+                return Carbon::createFromFormat('Y-m-d H:i:s', $value);
             default:
                 return $value;
         }
@@ -143,5 +144,25 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
     public static function validated($callback, $priority = 0)
     {
         static::registerModelEvent('validated', $callback, $priority);
+    }
+
+    /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function setAttribute($key, $value)
+    {
+        if (in_array($key, $this->getDates()) && $value) {
+            if (!$value instanceof Carbon && ! $value instanceof DateTime) {
+                $value = new Carbon($value);
+                $this->attributes[$key] = $value;
+                return;
+            }
+        }
+
+        parent::setAttribute($key, $value);
     }
 }

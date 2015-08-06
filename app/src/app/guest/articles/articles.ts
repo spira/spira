@@ -12,11 +12,14 @@ module app.guest.articles {
                 views: {
                     "main@app.guest": {
                         controller: namespace+'.controller',
+                        controllerAs: 'ArticlesController',
                         templateUrl: 'templates/app/guest/articles/articles.tpl.html'
                     }
                 },
                 resolve: /*@ngInject*/{
-
+                    allArticles: (articleService:common.services.article.ArticleService) => {
+                        return articleService.getAllArticles();
+                    }
                 },
                 data: {
                     title: "Articles",
@@ -33,14 +36,10 @@ module app.guest.articles {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
+    export class ArticlesController {
 
-    class ArticlesController {
-
-        static $inject = ['$scope'];
-        constructor(private $scope : IScope) {
+        static $inject = ['allArticles'];
+        constructor(public allArticles:common.services.article.IArticle[]) {
 
         }
 

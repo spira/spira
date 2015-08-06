@@ -51,7 +51,7 @@ var paths = {
             return this.base + '/**/*.tpl.html'
         },
         get styles(){
-            return this.base + '/styles/**/*.less'
+            return this.base + '/**/*.less'
         },
         get assets(){
             return this.base + '/assets/images/**/*'

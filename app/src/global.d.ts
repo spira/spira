@@ -12,7 +12,8 @@ declare module global {
             icon?: string;
             sortAfter?: string;
             navigation?: boolean;
-        }
+        },
+        children?:IState[];
     }
 
     export interface IStateDefinition {

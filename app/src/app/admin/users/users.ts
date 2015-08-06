@@ -26,7 +26,7 @@ module app.admin.users {
                     title: "Users",
                     icon: 'group',
                     navigation: true,
-                    sortAfter: app.admin.articles.namespace,
+                    navigationGroup: 'admin',
                 }
             };
 

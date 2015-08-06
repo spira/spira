@@ -13,7 +13,7 @@ class ArticleSeeder extends Seeder
     public function run()
     {
         //$faker = Faker::create('au_AU');
-        factory(App\Models\Article::class, 10)
+        factory(App\Models\Article::class, 50)
             ->create()
             ->each(function (\App\Models\Article $article) {
                 $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();

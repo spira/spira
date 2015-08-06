@@ -9,6 +9,7 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spira\Repository\Model\BaseModel;
 use Traversable;
@@ -41,6 +42,13 @@ class EloquentModelTransformer extends BaseTransformer
             throw new \InvalidArgumentException('must be array or '.Arrayable::class.' instead got '.gettype($object));
         }
 
+        if (($object instanceof BaseModel)) {
+            $castTypes = $object['casts'];
+            foreach ($array as $key => $value) {
+                $array[$key] = $this->castAttribute($castTypes, $key, $value);
+            }
+        }
+
         foreach ($array as $key => $value) {
 
             // Handle snakecase conversion in sub arrays
@@ -61,6 +69,36 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         return $array;
+    }
+
+    /**
+     * Cast an attribute from a PHP type.
+     *
+     * @param $castTypes
+     * @param $key
+     * @param $value
+     * @return mixed
+     * @internal param BaseModel $model
+     * @internal param $object
+     */
+    private function castAttribute($castTypes, $key, $value)
+    {
+        if (!array_key_exists($key, $castTypes)) {
+            return $value;
+        }
+
+        $castType = $castTypes[$key];
+
+        if ($value instanceof Carbon) {
+            switch ($castType) {
+                case 'date':
+                    return $value->format('Y-m-d');
+                default:
+                    return $value->toIso8601String();
+            }
+        }
+
+        return $value;
     }
 
     /**

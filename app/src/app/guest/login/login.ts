@@ -26,7 +26,7 @@ module app.guest.login {
 
     class LoginInit {
 
-        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q'];
+        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q', '$location'];
         constructor(
             private $rootScope:global.IRootScope,
             private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
@@ -36,31 +36,6 @@ module app.guest.login {
             private $state:ng.ui.IStateService,
             private $q:ng.IQService
         ) {
-
-            ngJwtAuthService
-                .registerUserFactory((subClaim: string, tokenData: global.JwtAuthClaims): ng.IPromise<common.models.User> => {
-                    return this.$q.when(new common.models.User(tokenData._user));
-                })
-                .registerLoginPromptFactory((deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>, loginSuccessPromise:ng.IPromise<NgJwtAuth.IUser>, currentUser:NgJwtAuth.IUser): ng.IPromise<any> => {
-
-                    let dialogConfig:ng.material.IDialogOptions = {
-                        templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
-                        controller: namespace+'.controller',
-                        clickOutsideToClose: true,
-                        locals : {
-                            deferredCredentials: deferredCredentials,
-                            loginSuccess: {
-                                promise: loginSuccessPromise //nest the promise in a function as otherwise material will try to wait for it to resolve
-                            },
-                        }
-                    };
-
-                    return $timeout(_.noop) //first do an empty timeout to allow the controllers to init if login prompt is fired from within a .run() phase
-                        .then(() => $mdDialog.show(dialogConfig));
-
-                })
-                .init(); //initialise the auth service (kicks off the timers etc)
-
 
 
             $rootScope.socialLogin = (type:string, redirectState:string = $state.current.name, redirectStateParams:Object = $state.current.params) => {
@@ -128,7 +103,7 @@ module app.guest.login {
                 (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
                 null,
                 (err:Error) => {
-                    if (err instanceof NgJwtAuth.NgJwtAuthException){
+                    if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException){
                         this.$mdToast.show(
                             (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
                                 .hideDelay(2000)
@@ -136,6 +111,8 @@ module app.guest.login {
                                 .content(err.message)
                                 .parent('#loginDialog')
                         );
+                    }else{
+                        console.error(err);
                     }
                 }
             );
