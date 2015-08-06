@@ -193,6 +193,14 @@ abstract class BaseModel extends Model
         // the relationships and save each model via this "push" method, which allows
         // us to recurse into all of these nested relations for the model instance.
 
+        //we need to differentiate collection saving and single model saving
+        //as they rise different exceptions with different logic
+        //1) thus we need to store those exceptions ($this->relationErrors)
+        //2) we need also to add current error, to errors stack ($this->errors)
+        //
+        //$this->relationErrors for ChildEntity
+        //$this->errors for ParentEntity
+
         foreach ($this->relations as $key => $models) {
             $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
 
