@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Repository\Collection\Collection;
-use Spira\Repository\Validation\RelationSaveException;
 use Spira\Repository\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as ValidationFactory;
@@ -171,11 +170,16 @@ abstract class BaseModel extends Model
      * Save the model and all of its relationships.
      *
      * @return bool
+     * @throws \Exception
      */
     public function push()
     {
-        if (!$this->save()) {
-            return false;
+        $validationError = false;
+
+        try{
+            $this->save();
+        }catch (ValidationException $e){
+            $validationError = true;
         }
 
         foreach ($this->deleteStack as $modelToDelete) {
@@ -188,7 +192,7 @@ abstract class BaseModel extends Model
         // To sync all of the relationships to the database, we will simply spin through
         // the relationships and save each model via this "push" method, which allows
         // us to recurse into all of these nested relations for the model instance.
-        $errorInRelations = false;
+
         foreach ($this->relations as $key => $models) {
             $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
 
@@ -206,27 +210,28 @@ abstract class BaseModel extends Model
                     }catch (ValidationException $e){
                         $errors[] = $e;
                         $error = true;
-                        $errorInRelations = true;
+                        $validationError = true;
                     }
                 }
                 if ($error){
                     $this->relationErrors[$key] = new ValidationExceptionCollection($errors);
+                    $this->errors->add($key, $errors);
                 }
-            }else{
+            }else if ($models){
                 /** @var BaseModel $models */
                 $models->preserveKeys($relation);
                 try{
                     $models->push();
                 }catch (ValidationException $e){
+                    $this->errors->add($key,$models->getErrors());
                     $this->relationErrors[$key] = $e;
-                    $errorInRelations = true;
+                    $validationError = true;
                 }
             }
-
         }
 
-        if ($errorInRelations){
-            throw new RelationSaveException('Validation error');
+        if ($validationError){
+            throw new ValidationException($this->getErrors());
         }
 
         return true;
@@ -329,6 +334,8 @@ abstract class BaseModel extends Model
         if ($validation->fails()) {
             $this->errors = $validation->messages();
             return false;
+        }else{
+            $this->errors = new MessageBag();
         }
 
         return true;

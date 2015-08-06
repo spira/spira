@@ -67,7 +67,7 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->get('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@getAll');
     $app->get('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@getOne');
     $app->post('/entities/{id}/child', 'App\Http\Controllers\ChildTestController@postOne');
-    $app->put('/entities/{id}/child', 'App\Http\Controllers\ChildTestController@putOne');
+    $app->put('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@putOne');
     $app->put('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@putMany');
     $app->patch('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@patchOne');
     $app->patch('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@patchMany');
