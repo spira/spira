@@ -61,11 +61,11 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The attributes that should be mutated to datetimes.
      *
      * @var array
      */
-    protected $dates = ['email_confirmed', 'dob'];
+    protected $dates = ['email_confirmed'];
 
     /**
      * The attributes that should be casted to native types.
