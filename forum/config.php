@@ -6,10 +6,10 @@
 $Configuration['Conversations']['Version'] = '2.2b1';
 
 // Database
-$Configuration['Database']['Name'] = 'vanilla_dev';
-$Configuration['Database']['Host'] = 'localhost';
-$Configuration['Database']['User'] = 'homestead';
-$Configuration['Database']['Password'] = 'secret';
+$Configuration['Database']['Name'] = getenv('MYSQL_DATABASE');
+$Configuration['Database']['Host'] = getenv('VANILLADATABASE_PORT_3306_TCP_ADDR');
+$Configuration['Database']['User'] = getenv('MYSQL_USER');
+$Configuration['Database']['Password'] = getenv('MYSQL_DATABASE');
 
 // EnabledApplications
 $Configuration['EnabledApplications']['Conversations'] = 'conversations';
