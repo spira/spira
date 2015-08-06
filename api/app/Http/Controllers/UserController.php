@@ -116,6 +116,7 @@ class UserController extends ApiController
 
         $model = $this->repository->getNewModel();
         $model->fill($request->all());
+        $model->{User::getPrimaryKeyName()} = $id;
         $this->repository->save($model);
 
         // Finally create the credentials
@@ -135,7 +136,8 @@ class UserController extends ApiController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id);
+        $this->validate($request, User::getValidationRules());
+
         $model = $this->repository->find($id);
 
         // Check if the email is being changed, and initialize confirmation

@@ -26,16 +26,19 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
      */
     protected $errors;
 
-    protected $validationRules = [];
+    protected static $validationRules = [];
 
     /**
      * @return array
      */
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        return $this->validationRules;
+        return static::$validationRules;
     }
 
+    /**
+     * @return Validator
+     */
     protected function getValidator()
     {
         if (is_null($this->validator)) {
@@ -45,9 +48,20 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
         return $this->validator;
     }
 
+    /**
+     * @return mixed
+     */
     public static function getTableName()
     {
         return with(new static())->getTable();
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getPrimaryKeyName()
+    {
+        return with(new static())->primaryKey;
     }
 
     /**

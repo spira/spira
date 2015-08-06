@@ -29,7 +29,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * @var array
      */
     protected $fillable = [
-        'user_id',
         'first_name',
         'last_name',
         'email_confirmed',
@@ -42,12 +41,21 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
+     * An array of attributes that are not mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [
+        'user_id',
+    ];
+
+    /**
      * Model validation.
      *
      * @var array
      */
-    protected $validationRules = [
-        'user_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+        'user_id' => 'uuid',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
