@@ -32,8 +32,11 @@
         "preferred-install": "dist"
     },
     "autoload": {
+        "psr-0": {
+            "": "src/"
+        },
         "psr-4": {
-            "Spira\\": "src/"
+            "Spira\\": "src/Spira/"
         }
     },
     "scripts": {

@@ -2,6 +2,7 @@
 
 namespace Spira;
 
+use Migrate;
 use Composer\Script\Event;
 
 class Build
@@ -43,6 +44,12 @@ class Build
 
         // Copy the SSO plugin to the plugins directory
         $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
+
+        // Copy the initial configuration to conf directory
+        // copy('config.php', 'public/conf/config.php');
+
+        // var_dump('start migrate');
+        (new Migrate)->migrate();
     }
 
     /**
