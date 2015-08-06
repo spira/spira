@@ -45,6 +45,13 @@ module app.admin.navigation{
 
             let childStates = this.stateHelperService.getChildStates(app.admin.namespace, 1);
 
+            childStates = _.map(childStates, (state) => {
+                if (state.children){
+                    state.children = _.compact(this.getNavigableStates(state.children));
+                }
+                return state;
+            });
+
             return this.getNavigableStates(childStates);
         }
 

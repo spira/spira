@@ -20,6 +20,27 @@
 
         });
 
+        it('should get the uuid identifier when there is no permalink', () => {
+
+            let uuid = seededChance.guid();
+
+            let article = new common.models.Article({articleId:uuid});
+
+            expect(article.getIdentifier()).to.be.equal(uuid);
+
+        });
+
+        it('should get the permalink identifier when there is a permalink', () => {
+
+            let uuid = seededChance.guid();
+            let permalink = seededChance.string();
+
+            let article = new common.models.Article({articleId:uuid, permalink:permalink});
+
+            expect(article.getIdentifier()).to.be.equal(permalink);
+
+        });
+
     });
 
 })();

@@ -3,21 +3,20 @@
     let seededChance = new Chance(1);
     let fixtures = {
 
-        getArticle():common.services.article.IArticle {
+        getArticle():common.models.Article {
 
             let title = seededChance.sentence();
 
-            return {
+            return new common.models.Article({
                 title: title,
                 body: seededChance.paragraph(),
-                permalink: title.replace(' ', ''),
-            };
+                permalink: title.replace(' ', '-'),
+            });
 
         },
         getArticles() {
 
             return chance.unique(fixtures.getArticle, 30);
-
         }
     };
 
@@ -56,7 +55,7 @@
 
         });
 
-        describe('Retrieve all articles', () => {
+        describe('Retrieve an article paginator', () => {
 
             beforeEach(() => {
 
@@ -70,14 +69,16 @@
 
             let articles = _.clone(fixtures.getArticles()); //get a set of articles
 
-            it('should return all articles', () => {
+            it('should return the first set of articles', () => {
 
-                $httpBackend.expectGET('/api/articles').respond(articles);
+                $httpBackend.expectGET('/api/articles').respond(_.take(articles, 10));
 
-                let allArticlePromise = articleService.getAllArticles();
+                let articlePaginator = articleService.getArticlesPaginator();
 
-                expect(allArticlePromise).eventually.to.be.fulfilled;
-                expect(allArticlePromise).eventually.to.deep.equal(articles);
+                let firstSet = articlePaginator.getNext(10);
+
+                expect(firstSet).eventually.to.be.fulfilled;
+                expect(firstSet).eventually.to.deep.equal(_.take(articles, 10));
 
                 $httpBackend.flush();
 
@@ -85,6 +86,25 @@
 
 
         });
+
+        describe('Get article', () => {
+
+            let mockArticle  = fixtures.getArticle();
+
+            it('should be able to retrieve an article by permalink', () => {
+
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+
+                let article = articleService.getArticle(mockArticle.permalink);
+
+                expect(article).eventually.to.be.fulfilled;
+                expect(article).eventually.to.deep.equal(mockArticle);
+
+                $httpBackend.flush();
+
+            });
+
+        })
 
     });
 
