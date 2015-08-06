@@ -39,8 +39,8 @@ class TestEntity extends BaseModel
     protected $casts = [
         'decimal'    => 'float',
         'date'       => 'date',
-        'created_at' => 'dateTime',
-        'updated_at' => 'dateTime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected $validationRules = [
