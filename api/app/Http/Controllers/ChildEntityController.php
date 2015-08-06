@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Spira\Repository\Model\BaseModel;
-use Spira\Repository\Validation\RelationSaveException;
 use Spira\Repository\Validation\ValidationException;
 use Spira\Responder\Response\ApiResponse;
 
