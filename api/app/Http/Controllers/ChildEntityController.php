@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Spira\Repository\Model\BaseModel;
 use Spira\Repository\Validation\RelationSaveException;
+use Spira\Repository\Validation\ValidationException;
 use Spira\Responder\Response\ApiResponse;
 
 
@@ -239,10 +240,10 @@ class ChildEntityController extends ApiController
 
         foreach ($requestCollection as $requestEntity) {
             $id = $requestEntity[$childKey];
-            $model = $childModels->get($id);
+            $childModel = $childModels->get($id);
 
-            /** @var BaseModel $model */
-            $model->fill($requestEntity);
+            /** @var BaseModel $childModel */
+            $childModel->fill($requestEntity);
         }
 
         $model->setRelation($this->relationName,$childModels,$relation);
@@ -344,7 +345,7 @@ class ChildEntityController extends ApiController
     {
         try{
             $this->getRepository()->save($model);
-        }catch (RelationSaveException $e){
+        }catch (ValidationException $e){
             if ($exception = $model->getRelationErrors($this->relationName)){
                 throw $exception;
             }
