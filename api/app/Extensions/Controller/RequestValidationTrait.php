@@ -102,7 +102,7 @@ trait RequestValidationTrait
      */
     protected function validateId($id, $keyName, $rule = null)
     {
-        if (!is_null($rule)){
+        if (!is_null($rule)) {
             $validation = $this->getValidationFactory()->make([$keyName=>$id], [$keyName=>$rule]);
             if ($validation->fails()) {
                 throw new ValidationException($validation->getMessageBag());

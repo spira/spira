@@ -13,10 +13,8 @@ use Laravel\Lumen\Routing\Controller;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
-
 abstract class ApiController extends Controller
 {
-
     protected $paginatorDefaultLimit = 10;
     protected $paginatorMaxLimit = 50;
     protected $validateRequestRule = 'uuid';

@@ -232,7 +232,4 @@ abstract class EntityController extends ApiController
         $this->getRepository()->deleteMany($models);
         return $this->getResponse()->noContent();
     }
-
-
-
 }
