@@ -81,13 +81,13 @@ class EloquentModelTransformer extends BaseTransformer
      */
     private function castAttribute($castTypes, $key, $value)
     {
-        if(!array_key_exists($key, $castTypes)) {
+        if (!array_key_exists($key, $castTypes)) {
             return $value;
         }
 
         $castType = $castTypes[$key];
 
-        if($value instanceof Carbon) {
+        if ($value instanceof Carbon) {
             switch ($castType) {
                 case 'date':
                     return $value->format('Y-m-d');
