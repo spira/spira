@@ -71,6 +71,10 @@ abstract class BaseModel extends \Spira\Repository\Model\BaseModel
         // Run the parent cast rules in the parent method
         $value = parent::castAttribute($key, $value);
 
+        if(is_null($value)) {
+            return $value;
+        }
+
         switch ($this->getCastType($key)) {
             case 'date':
                 return Carbon::createFromFormat('Y-m-d', $value);

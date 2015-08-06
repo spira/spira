@@ -42,6 +42,13 @@ class EloquentModelTransformer extends BaseTransformer
             throw new \InvalidArgumentException('must be array or '.Arrayable::class.' instead got '.gettype($object));
         }
 
+        if (($object instanceof BaseModel)) {
+            $castTypes = $object['casts'];
+            foreach ($array as $key => $value) {
+                $array[$key] = $this->castAttribute($castTypes, $key, $value);
+            }
+        }
+
         foreach ($array as $key => $value) {
 
             // Handle snakecase conversion in sub arrays
@@ -58,11 +65,6 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            $castTypes = $object['casts'];
-            foreach ($array as $key => $value) {
-                $array[$key] = $this->castAttribute($castTypes, $key, $value);
-            }
-
             $this->addSelfKey($object, $array);
         }
 
