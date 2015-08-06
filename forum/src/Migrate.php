@@ -16,21 +16,18 @@ class Migrate
     {
     }
 
-    public function migrate()
+    public function start()
     {
         $this->quickBootstrap();
 
-        // The structures and related classes that creates Vanilla's DB scheme
-        // do more wild things like using undefined variables, merging booleans
-        // as arrays etc etc. So we disable all errors except fatal errors, so
-        // we can run these files.
-        error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR);
-        ini_set('display_errors', 0);
+        $this->migrate();
 
-        // Create the database tables
-        require_once('public/applications/dashboard/settings/structure.php');
-        require_once('public/applications/vanilla/settings/structure.php');
-        require_once('public/applications/conversations/settings/structure.php');
+        $this->config();
+
+        $this->adminUser();
+
+        // Flag the application as installed
+        saveToConfig('Garden.Installed', true);
     }
 
     /**
@@ -50,9 +47,59 @@ class Migrate
         // Define initial constants
         define('DS', '/');
         define('APPLICATION', 'Vanilla');
+        define('APPLICATION_VERSION', '2.2b1');
         define('PATH_ROOT', getcwd().'/public');
 
         // Boostrap Vanilla
         require_once('public/bootstrap.php');
+    }
+
+    /**
+     * Create the database tables and default content.
+     *
+     * @return  void
+     */
+    protected function migrate()
+    {
+        // The structures and related classes that creates Vanilla's DB scheme
+        // do more wild things like using undefined variables, merging booleans
+        // as arrays etc etc. So we disable all errors except fatal errors, so
+        // we can run these files.
+        error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR);
+        ini_set('display_errors', 0);
+
+        // Create the database tables
+        require_once('public/applications/dashboard/settings/structure.php');
+        require_once('public/applications/vanilla/settings/structure.php');
+        require_once('public/applications/conversations/settings/structure.php');
+    }
+
+    /**
+     * Update the configuration.
+     *
+     * @return void
+     */
+    protected function config()
+    {
+        saveToConfig('Garden.Cookie.Salt', RandomString(10));
+    }
+
+    /**
+     * Create the default admin user.
+     *
+     * @return void
+     */
+    protected function adminUser()
+    {
+        $UserModel = Gdn::userModel();
+        $UserModel->defineSchema();
+
+        $user = [
+            'Name' => 'admin',
+            'Email' => 'admin@admin.com',
+            'Password' => 'password'
+        ];
+
+        $AdminUserID = $UserModel->SaveAdminUser($user);
     }
 }

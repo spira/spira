@@ -46,10 +46,10 @@ class Build
         $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
 
         // Copy the initial configuration to conf directory
-        // copy('config.php', 'public/conf/config.php');
+        copy('config.php', 'public/conf/config.php');
 
-        // var_dump('start migrate');
-        (new Migrate)->migrate();
+        // Setup Vanilla
+        (new Migrate)->start();
     }
 
     /**
