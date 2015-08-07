@@ -4,6 +4,7 @@ use App;
 use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -104,6 +105,9 @@ class UserController extends ApiController
         // Extract the credentials
         $credential = $request->get('_user_credential', []);
 
+        // Extract the profile
+        $profile = $request->get('_user_profile', []);
+
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
@@ -120,6 +124,11 @@ class UserController extends ApiController
 
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
+
+        // Finally create the profile if it exists
+        if(!empty($profile)) {
+            $model->setProfile(new UserProfile($profile));
+        }
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -159,6 +168,14 @@ class UserController extends ApiController
 
         $model->fill($request->except('email'));
         $this->repository->save($model);
+
+        // Extract the profile and update if necessary
+        $profileUpdateDetails = $request->get('_user_profile', []);
+        if(!empty($profileUpdateDetails)) {
+            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
+            $profile->fill($profileUpdateDetails);
+            $model->setProfile($profile);
+        }
 
         return $this->getResponse()->noContent();
     }
