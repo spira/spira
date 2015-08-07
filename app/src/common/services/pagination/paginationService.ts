@@ -144,17 +144,17 @@ module common.services.pagination {
             }
         }
 
-        private static parseContentRangeHeader(headerString:String):IRangeHeaderData {
+        public static parseContentRangeHeader(headerString:String):IRangeHeaderData {
             let parts = headerString.split(/[\s\/]/);
 
             if (parts.length !== 3){
-                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`");
+                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`, got `"+headerString+"`");
             }
 
             let rangeParts = parts[1].split('-');
 
             if (rangeParts.length !== 2){
-                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`");
+                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`, got `"+headerString+"`");
             }
 
             let count:any = parts[2];

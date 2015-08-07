@@ -62,7 +62,7 @@ interface mockEntity {
 
         });
 
-        describe.only('Paginator', () => {
+        describe('Paginator', () => {
 
             let collection = fixtures.exampleCollection;
 
@@ -190,6 +190,31 @@ interface mockEntity {
 
             });
 
+            it('should be able to define a custom model factory', () => {
+
+                function Foo(data){
+                    _.assign(this, data);
+                }
+
+                let modelFactory = (data:any) => new Foo(data);
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setModelFactory(modelFactory);
+
+                $httpBackend.expectGET('/api/collection').respond(206, _.take(collection, 10));
+
+                let results = paginator.getNext();
+
+                results.then((items) => {
+                    expect(_.first(items)).to.be.instanceOf(Foo);
+                });
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceOf(Array);
+
+
+            });
+
             it('should redirect to the error handler if a fatal response comes from the api', () => {
 
                 let paginator = paginationService.getPaginatorInstance('/fatal');
@@ -269,6 +294,34 @@ interface mockEntity {
 
                 expect(retrievedResponses).to.be.instanceof(Array);
                 expect(retrievedResponses).to.have.length(31);
+
+            });
+
+            it('should throw exception when an invalid `Content-Range` header is passed', () => {
+
+                let valid = [
+                    'entities 10-19/50',
+                    'entities 10-19/*',
+                ];
+
+                let invalid = [
+                    'erghewar',
+                    'entities=10/*',
+                    'entities 10-19',
+                ];
+
+                let validFns = _.map(valid, (headerString:string) => () => common.services.pagination.Paginator.parseContentRangeHeader(headerString));
+                let invalidFns = _.map(invalid, (headerString:string) => () => common.services.pagination.Paginator.parseContentRangeHeader(headerString));
+
+                _.each(validFns, (validFn) => {
+
+                    expect(validFn).not.to.throw(common.services.pagination.PaginatorException);
+                });
+
+                _.each(invalidFns, (invalidFn) => {
+
+                    expect(invalidFn).to.throw(common.services.pagination.PaginatorException);
+                });
 
             });
 
