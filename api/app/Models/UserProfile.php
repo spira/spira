@@ -23,6 +23,13 @@ class UserProfile extends BaseModel
         'phone',
         'mobile',
         'dob',
+        'gender',
+        'about',
+        'facebook',
+        'twitter',
+        'pinterest',
+        'instagram',
+        'website',
     ];
 
     /**
@@ -34,6 +41,13 @@ class UserProfile extends BaseModel
         'phone' => 'string',
         'mobile' => 'string',
         'dob' => 'date',
+        'gender' => 'in:M,F',
+        'about' => 'string',
+        'facebook' => 'string',
+        'twitter' => 'string',
+        'pinterest' => 'string',
+        'instagram' => 'string',
+        'website' => 'string',
     ];
 
     /**
