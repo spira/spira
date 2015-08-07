@@ -26,8 +26,7 @@ class VanillaConfigurator
 
         $this->adminUser();
 
-        // Flag the application as installed
-        saveToConfig('Garden.Installed', true);
+        $this->enableApplications();
     }
 
     /**
@@ -82,6 +81,19 @@ class VanillaConfigurator
     protected function config()
     {
         saveToConfig('Garden.Cookie.Salt', RandomString(10));
+
+        $ApplicationInfo = [];
+        include(CombinePaths([PATH_APPLICATIONS.DS.'dashboard'.DS.'settings'.DS.'about.php']));
+
+        // Detect Internet connection for CDNs
+        $Disconnected = !(bool)@fsockopen('ajax.googleapis.com', 80);
+
+        saveToConfig([
+            'Garden.Version' => arrayValue('Version', val('Dashboard', $ApplicationInfo, []), 'Undefined'),
+            'Garden.Cdns.Disable' => $Disconnected,
+            'Garden.CanProcessImages' => function_exists('gd_info'),
+            'EnabledPlugins.HtmLawed' => 'HtmLawed'
+        ]);
     }
 
     /**
@@ -101,5 +113,30 @@ class VanillaConfigurator
         ];
 
         $AdminUserID = $UserModel->SaveAdminUser($user);
+    }
+
+    /**
+     * Enable applications and create permisisions for roles.
+     *
+     * @return void
+     */
+    protected function enableApplications()
+    {
+        $ApplicationManager = new Gdn_ApplicationManager();
+        $AppNames = c('Garden.Install.Applications', ['Conversations', 'Vanilla']);
+
+        foreach ($AppNames as $AppName) {
+            $Validation = new Gdn_Validation();
+            $ApplicationManager->RegisterPermissions($AppName, $Validation);
+            $ApplicationManager->EnableApplication($AppName, $Validation);
+        }
+
+        Gdn::pluginManager()->start(true);
+
+        // Flag the application as installed
+        saveToConfig('Garden.Installed', true);
+
+        // Setup default permissions for all roles
+        PermissionModel::ResetAllRoles();
     }
 }
