@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "47e0ddfa68f95cf561d4de91613523c8",
+    "hash": "9cb9ab16d20feeb29d9779c86b9d5234",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -83,11 +83,11 @@
         },
         {
             "name": "vanilla/addons",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:vanilla/addons.git",
-                "reference": "release/1507"
+                "reference": "8cd6750c4dac56f69d56a35fbf91a5481d025cdd"
             },
             "type": "library"
         },
