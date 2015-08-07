@@ -2,7 +2,7 @@
 
 namespace Spira;
 
-use Migrate;
+use VanillaConfigurator;
 use Composer\Script\Event;
 
 class Build
@@ -49,7 +49,7 @@ class Build
         copy('config.php', 'public/conf/config.php');
 
         // Setup Vanilla
-        (new Migrate)->start();
+        (new VanillaConfigurator)->start();
     }
 
     /**

@@ -5,7 +5,7 @@
  * that are not following any namespace or psr schema. So we must make sure this
  * class is operating outside namespaces to avoid problems.
  */
-class Migrate
+class VanillaConfigurator
 {
     /**
      * Assign dependencies.
