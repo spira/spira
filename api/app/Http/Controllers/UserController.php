@@ -199,4 +199,24 @@ class UserController extends ApiController
 
         return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
     }
+
+    /**
+     * Get the user's profile.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getProfile($id) {
+        $this->validateId($id);
+
+        $userProfile = UserProfile::find($id);
+
+        if(is_null($userProfile)) {
+            return $this->getResponse()->noContent();
+        }
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($userProfile);
+    }
 }

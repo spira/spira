@@ -106,6 +106,51 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
+    public function testGetProfileByAdminUser()
+    {
+        $user = $this->createUser();
+        $userToGet = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
+    public function testGetProfileByGuestUser()
+    {
+        $this->markTestSkipped('Permissions have not been implemented properly yet.');
+
+        $user = $this->createUser('guest');
+        $userToGet = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGetProfileBySelfUser()
+    {
+        $user = $this->createUser('guest');
+        $userToGet = $user;
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
     public function testPutOne()
     {
         $factory = $this->app->make('App\Services\ModelFactory');

@@ -44,7 +44,6 @@ with a third party through OAuth)
 
             {!! $factory->json(\App\Models\User::class) !!}
 
-
 ### Create/Register user entity [PUT]
 * Note that for this entity replacement of entity is *not* permitted
 #### Restrictions
@@ -115,7 +114,36 @@ or the request will be rejected.
 
 + Response 204
 
-### Reset user password [DELETE /users/{userId}/password]
+### Delete user entity [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 204
+
+## User profile [/users/{userId}/profile]
+### Get user profile [GET]
+#### Restrictions
+* Denied - [all]
+* Allowed - [admin, self]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\UserProfile::class) !!}
+
+## User credentials [/users/{userId}/password]
+### Reset user password [DELETE]
 #### Restrictions
 * Allowed - [admin, self]
 
@@ -128,14 +156,3 @@ email is sent to the user with a reset token.
             Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 202
-
-### Delete user entity [DELETE]
-#### Restrictions
-* Allowed - [admin]
-
-+ Request
-    + Headers
-
-            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
-
-+ Response 204
