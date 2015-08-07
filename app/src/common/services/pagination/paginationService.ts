@@ -19,7 +19,7 @@ module common.services.pagination {
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
 
-        private entityCount:number;
+        private entityCountTotal:number;
 
         constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
@@ -59,13 +59,13 @@ module common.services.pagination {
          */
         private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<common.models.IModel[]> {
 
-            if (this.entityCount && index >= this.entityCount){
+            if (this.entityCountTotal && index >= this.entityCountTotal){
                 return this.$q.reject(new PaginatorException("No more results found!"));
             }
 
             let last = index + count - 1;
-            if (this.entityCount && last >= this.entityCount){
-                last = this.entityCount;
+            if (this.entityCountTotal && last >= this.entityCountTotal){
+                last = this.entityCountTotal - 1;
             }
 
             return this.ngRestAdapter
@@ -133,18 +133,14 @@ module common.services.pagination {
         private processContentRangeHeader(headers:ng.IHttpHeadersGetter):void {
             let headerString = headers('Content-Range');
 
-            console.log('headerstring', headerString);
-
             if (!headerString){
                 return;
             }
 
             let headerParts = Paginator.parseContentRangeHeader(headerString);
 
-            console.log('headerParts', headerParts);
-
-            if (_.isNaN(Number(headerParts.count))){
-                this.entityCount = headerParts.count;
+            if (_.isNumber(headerParts.count)){
+                this.entityCountTotal = <number>headerParts.count;
             }
         }
 
@@ -161,11 +157,16 @@ module common.services.pagination {
                 throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`");
             }
 
+            let count:any = parts[2];
+            if (!_.isNaN(Number(count))){
+                count = parseInt(count);
+            }
+
             return {
                 entityName: parts[0],
-                from: Number(rangeParts[0]),
-                to: Number(rangeParts[1]),
-                count: rangeParts[2],
+                from: parseInt(rangeParts[0]),
+                to: parseInt(rangeParts[1]),
+                count: count,
             }
 
         }

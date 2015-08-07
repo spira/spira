@@ -231,14 +231,17 @@ interface mockEntity {
 
             });
 
-            it.only('should not attempt to retrieve from the api when the all items are retrieved', () => {
+            it('should not attempt to retrieve from the api when the all items are retrieved', () => {
 
                 let collection = _.clone(fixtures.getExampleCollection(31));
                 let responses = _.chunk(collection, 5);
 
                 let paginator = paginationService.getPaginatorInstance('/collection').setCount(5);
 
-                _.each(responses, (response) => {
+
+                let retrievedResponses = [];
+
+                _.each(responses, (response:{id:number}[]) => {
 
                     let requestRangeHeader = 'entities=' + _.first(response).id + '-' + _.last(response).id;
                     let responseRangeHeader = requestRangeHeader.replace('=', ' ') + '/' + collection.length;
@@ -250,22 +253,24 @@ interface mockEntity {
                         'Content-Range' : responseRangeHeader
                     });
 
-                });
-
-                let retrievedResponses = [];
-
-                _.times(10, () => { //iterate more than required (this should be able to retrieve 50 entities, we only want 31
                     paginator.getNext().then((res) => {
-                        retrievedResponses.concat(res)
+                        retrievedResponses = retrievedResponses.concat(res)
                     });
+
+                    $httpBackend.flush();
+
+                    //$rootScope.$apply();
+
                 });
 
-                $httpBackend.flush();
+                _.times(3, () => { //iterate more than required to verify no outstanding requests are generated
+                    paginator.getNext();
+                });
 
-                expect(retrievedResponses).eventually.to.be.instanceof(Array);
-                expect(retrievedResponses).eventually.to.have.length(31);
+                expect(retrievedResponses).to.be.instanceof(Array);
+                expect(retrievedResponses).to.have.length(31);
 
-            })
+            });
 
 
         });
