@@ -1,11 +1,23 @@
 <h2 class="md-flex">Articles</h2>
 
-<md-card ng-repeat="article in ArticlesController.allArticles">
-    <h2>{{article.title}}</h2>
-    <md-card-content>
-        {{article.excerpt}}
-    </md-card-content>
-</md-card>
+<div infinite-scroll="ArticlesController.showMore()">
+    <md-card
+            ng-repeat="article in ArticlesController.allArticles"
+            >
+
+        <h2>{{article.title}}</h2>
+        <md-card-content>
+            {{article.excerpt}}
+        </md-card-content>
+    </md-card>
+</div>
 
 
-<md-button class="md-raised md-primary" ng-click="ArticlesController.showMore()">Show More</md-button>
+<md-button
+        class="md-raised md-primary"
+        ng-click="ArticlesController.infiniteScroll()"
+        ng-if="!ArticlesController.allArticlesRetrieved && !ArticlesController.scrollToEnd"
+        >Keep Loading
+</md-button>
+
+<p ng-if="ArticlesController.allArticlesRetrieved">No more articles!</p>

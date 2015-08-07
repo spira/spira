@@ -6,6 +6,8 @@ module common.services.article {
 
         static $inject:string[] = ['ngRestAdapter', 'paginationService'];
 
+        private cachedPaginator:common.services.pagination.Paginator;
+
         constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private paginationService:common.services.pagination.PaginationService) {
         }
 
@@ -24,9 +26,14 @@ module common.services.article {
          */
         public getArticlesPaginator():common.services.pagination.Paginator {
 
-            return this.paginationService
-                .getPaginatorInstance('/articles')
-                .setModelFactory(ArticleService.articleFactory);
+            //cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator){
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/articles')
+                    .setModelFactory(ArticleService.articleFactory);
+            }
+
+            return this.cachedPaginator;
         }
 
         /**

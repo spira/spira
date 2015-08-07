@@ -43,11 +43,12 @@ module app.guest.error {
 
     class ErrorInit {
 
-        static $inject = ['ngRestAdapter', '$state', '$filter'];
+        static $inject = ['ngRestAdapter', '$state', '$filter', '$rootScope'];
         constructor(
             private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
             private $state:ng.ui.IStateService,
-            private $filter:ng.IFilterService
+            private $filter:ng.IFilterService,
+            private $rootScope:ng.IRootScopeService
         ) {
 
             ngRestAdapter.registerApiErrorHandler(_.bind(this.errorInterceptorHandler, this));
@@ -55,6 +56,8 @@ module app.guest.error {
         }
 
         private errorInterceptorHandler = (requestConfig: ng.IRequestConfig, responseObject: ng.IHttpPromiseCallbackArg<any>) => {
+
+            this.$rootScope.$broadcast('apiErrorHandler', "Redirecting to error page");
 
             let params:IErrorStateParams = {
                 title: responseObject.statusText,
