@@ -4,6 +4,13 @@ module common.services.pagination {
 
     export class PaginatorException extends common.SpiraException {}
 
+    export interface IRangeHeaderData{
+        entityName:string;
+        from:number;
+        to:number;
+        count:number|string;
+    }
+
     export class Paginator {
 
         private static defaultCount:number = 10;
@@ -11,6 +18,8 @@ module common.services.pagination {
         private count:number = Paginator.defaultCount;
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
+
+        private entityCount:number;
 
         constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
@@ -37,17 +46,34 @@ module common.services.pagination {
         }
 
         /**
+         * scenario
+         * 34 entities
+         * request 30 - 34
+         * count 5
+         */
+
+        /**
          * Get the response from the collection endpoint
          * @param count
          * @param index
          */
         private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<common.models.IModel[]> {
 
+            if (this.entityCount && index >= this.entityCount){
+                return this.$q.reject(new PaginatorException("No more results found!"));
+            }
+
+            let last = index + count - 1;
+            if (this.entityCount && last >= this.entityCount){
+                last = this.entityCount;
+            }
+
             return this.ngRestAdapter
                 .skipInterceptor(Paginator.conditionalSkipInterceptor)
                 .get(this.url, {
-                    Range: Paginator.getRangeHeader(index, index + count - 1)
-                }).then((response) => {
+                    Range: Paginator.getRangeHeader(index, last)
+                }).then((response:ng.IHttpPromiseCallbackArg<any>) => {
+                    this.processContentRangeHeader(response.headers);
                     return _.map(response.data, (modelData) => this.modelFactory(modelData));
                 }).catch(() => {
                     return this.$q.reject(new PaginatorException("No more results found!"));
@@ -104,6 +130,45 @@ module common.services.pagination {
             return this;
         }
 
+        private processContentRangeHeader(headers:ng.IHttpHeadersGetter):void {
+            let headerString = headers('Content-Range');
+
+            console.log('headerstring', headerString);
+
+            if (!headerString){
+                return;
+            }
+
+            let headerParts = Paginator.parseContentRangeHeader(headerString);
+
+            console.log('headerParts', headerParts);
+
+            if (_.isNaN(Number(headerParts.count))){
+                this.entityCount = headerParts.count;
+            }
+        }
+
+        private static parseContentRangeHeader(headerString:String):IRangeHeaderData {
+            let parts = headerString.split(/[\s\/]/);
+
+            if (parts.length !== 3){
+                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`");
+            }
+
+            let rangeParts = parts[1].split('-');
+
+            if (rangeParts.length !== 2){
+                throw new PaginatorException("Invalid range header; expected pattern: `entities 1-10/50`");
+            }
+
+            return {
+                entityName: parts[0],
+                from: Number(rangeParts[0]),
+                to: Number(rangeParts[1]),
+                count: rangeParts[2],
+            }
+
+        }
     }
 
     export class PaginationService {

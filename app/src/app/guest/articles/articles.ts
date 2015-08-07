@@ -66,7 +66,7 @@ module app.guest.articles {
             this.articlesPaginator.getNext()
                 .then((moreArticles:common.models.Article[]) => {
 
-                    this.allArticles = this.allArticles.concat(moreArticles)
+                    this.allArticles = this.allArticles.concat(moreArticles);
                 }).catch((err) => {
                     this.allArticlesRetrieved = true;
                 });

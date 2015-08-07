@@ -231,6 +231,42 @@ interface mockEntity {
 
             });
 
+            it.only('should not attempt to retrieve from the api when the all items are retrieved', () => {
+
+                let collection = _.clone(fixtures.getExampleCollection(31));
+                let responses = _.chunk(collection, 5);
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(5);
+
+                _.each(responses, (response) => {
+
+                    let requestRangeHeader = 'entities=' + _.first(response).id + '-' + _.last(response).id;
+                    let responseRangeHeader = requestRangeHeader.replace('=', ' ') + '/' + collection.length;
+
+                    $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                        return headers.Range == requestRangeHeader
+                    })
+                    .respond(206, response, {
+                        'Content-Range' : responseRangeHeader
+                    });
+
+                });
+
+                let retrievedResponses = [];
+
+                _.times(10, () => { //iterate more than required (this should be able to retrieve 50 entities, we only want 31
+                    paginator.getNext().then((res) => {
+                        retrievedResponses.concat(res)
+                    });
+                });
+
+                $httpBackend.flush();
+
+                expect(retrievedResponses).eventually.to.be.instanceof(Array);
+                expect(retrievedResponses).eventually.to.have.length(31);
+
+            })
+
 
         });
 
