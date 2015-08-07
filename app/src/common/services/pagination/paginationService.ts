@@ -19,7 +19,7 @@ module common.services.pagination {
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
 
-        private entityCountTotal:number;
+        public entityCountTotal:number;
 
         constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
@@ -89,6 +89,14 @@ module common.services.pagination {
         public setCount(count:number):Paginator {
             this.count = count;
             return this;
+        }
+
+        /**
+         * Get the current count
+         * @returns {number}
+         */
+        public getCount():number {
+            return this.count;
         }
 
         /**
