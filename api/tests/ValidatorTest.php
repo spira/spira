@@ -41,24 +41,15 @@ class ValidatorTest extends TestCase
         $this->assertStringEndsWith('must be an UUID string.', $validation->messages()->get('uuid')[0]);
     }
 
-//    public function testCamelCaseTransform()
-//    {
-//        try {
-//            $data = ['multi_word_column_title' => 0.12];
-//
-//            $this->validator->with($data)->validate();
-//        }
-//
-//        catch (App\Exceptions\ValidationException $expected) {
-//            $messages = $expected->getResponse()['invalid']->toArray();
-//
-//            $this->assertArrayHasKey('multiWordColumnTitle', $messages);
-//            $this->assertEquals(422, $expected->getStatusCode());
-//            return;
-//        }
-//
-//        $this->fail('An expected exception has not been raised.');
-//    }
+    public function testCamelCaseTransform()
+    {
+        $this->markTestSkipped('can be tested in testEntity');
+        $data = ['multi_word_column_title' => 0.12];
+
+        $validation = $this->validator->make($data, ['multi_word_column_title'=>'required|boolean']);
+        $this->assertFalse($validation->passes());
+        $validation->passes();
+    }
 
     public function testPassingCountryValidation()
     {

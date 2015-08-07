@@ -6,6 +6,7 @@ use Spira\Repository\Collection\Collection;
 /**
  *
  * @property ArticlePermalink[]|Collection $permalinks
+ * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
@@ -39,7 +40,7 @@ class Article extends BaseModel
      */
     protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published', 'primaryImage', 'status'];
 
-    protected $hidden = ['permalinks'];
+    protected $hidden = ['permalinks','metas'];
 
     protected $primaryKey = 'article_id';
 
@@ -110,5 +111,10 @@ class Article extends BaseModel
     public function permalinks()
     {
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
+    }
+
+    public function metas()
+    {
+        return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
     }
 }
