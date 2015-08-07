@@ -116,8 +116,10 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
+        'status' => $faker->randomElement(App\Models\Article::$statuses),
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
         'excerpt' => Str::words($content, 30, ''),
+        'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];

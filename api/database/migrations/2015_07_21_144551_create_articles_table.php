@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Article;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -12,12 +13,14 @@ class CreateArticlesTable extends Migration
      */
     public function up()
     {
-        Schema::create(\App\Models\Article::getTableName(), function (Blueprint $table) {
+        Schema::create(Article::getTableName(), function (Blueprint $table) {
                 $table->uuid('article_id')->primary();
                 $table->string('title', 255);
+                $table->enum('status', Article::$statuses);
                 $table->text('content');
                 $table->text('excerpt')->nullable();
-                $table->string('permalink', 255)->index()->nullable();
+                $table->string('primary_image')->nullable();
+                $table->string('permalink')->index()->nullable();
                 $table->dateTime('first_published')->nullable();
 
                 $table->dateTime('created_at');
@@ -33,6 +36,6 @@ class CreateArticlesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(\App\Models\Article::getTableName());
+        Schema::drop(Article::getTableName());
     }
 }

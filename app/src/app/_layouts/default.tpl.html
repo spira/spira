@@ -1,25 +1,24 @@
-<md-content layout="column" >
+<div layout="column" >
     <md-toolbar class="md-whiteframe-z1" md-scroll-shrink="true" layout-align="center center">
         <h1>Spira</h1>
         <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
             <md-icon>menu</md-icon>
         </md-button>
     </md-toolbar>
-</md-content>
+</div>
 
-<md-content layout="column" ui-view="navigation">
+<div layout="column" ui-view="navigation">
 
-</md-content>
+</div>
 
-<md-content flex layout="column"
-     tabIndex="-1"
+<div layout="column"
      role="main"
-     class="md-whiteframe-z2"
+     layout-margin layout-fill layout-padding
      id="content"
      ui-view="main"
- >
+        >
 
-</md-content>
+</div>
 
 <md-sidenav
         id="userRegistration"

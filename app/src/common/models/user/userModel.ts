@@ -1,6 +1,6 @@
 module common.models {
 
-    export class User implements global.IUserData{
+    export class User implements global.IUserData, IModel{
 
         public userId:string;
         public email:string;

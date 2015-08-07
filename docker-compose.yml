@@ -18,6 +18,14 @@ database:
   ports:
     - "5432:5432"
 
+vanilladatabase:
+  image: mariadb:10.0
+  env_file:
+    - .common.env
+    - .local.env
+  ports:
+    - "3306:3306"
+
 cache:
   image: redis
 
@@ -48,13 +56,14 @@ php:
     - data
   links:
     - database:database
+    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
   env_file:
-      - .common.env
-      - .local.env
-      - .secret.env
+    - .common.env
+    - .local.env
+    - .secret.env
   privileged: true
 
 web:
@@ -76,8 +85,8 @@ web:
 
 devtools:
   image: spira/docker-dev-tools:latest
-  working_dir: /data
 #  image: spira/docker-dev-tools:phantomjs-1.9.8
+  working_dir: /data
   volumes_from:
     - data
   privileged: true
@@ -89,6 +98,7 @@ devtools:
     - web:web
     - mailcatcher:mailcatcher
     - database:database
+    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
 

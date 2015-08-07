@@ -8,8 +8,12 @@ module common.services.pagination {
 
         private count:number = Paginator.defaultCount;
         private currentIndex:number = 0;
+        private modelFactory:common.models.IModelFactory;
 
         constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+
+            this.modelFactory = (data:any) => data; //set a default factory that just returns the data
+
         }
 
         /**
@@ -26,12 +30,12 @@ module common.services.pagination {
          * @param count
          * @param index
          */
-        private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<any[]> {
+        private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<common.models.IModel[]> {
 
             return this.ngRestAdapter.get(this.url, {
                 Range: Paginator.getRangeHeader(index, index + count - 1)
             }).then((response) => {
-                return response.data;
+                return _.map(response.data, (modelData) => this.modelFactory(modelData));
             });
 
         }
@@ -77,6 +81,12 @@ module common.services.pagination {
         public getRange(first:number, last:number):ng.IPromise<any[]> {
 
             return this.getResponse(last-first+1, first);
+        }
+
+
+        public setModelFactory(modelFactory:common.models.IModelFactory):Paginator{
+            this.modelFactory = modelFactory;
+            return this;
         }
 
     }
