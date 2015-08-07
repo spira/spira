@@ -52,6 +52,8 @@ module app.admin.articles.listing {
 
         public pages:number[] = [];
 
+        public currentPageIndex:number;
+
         constructor(private articlesPaginator:common.services.pagination.Paginator, articles, public $stateParams:IArticlesListingStateParams) {
 
             this.articles = articles;
@@ -60,6 +62,8 @@ module app.admin.articles.listing {
 
             this.pages = _.range(1, Math.ceil(articlesPaginator.entityCountTotal/perPage) + 1);
 
+
+            this.currentPageIndex = this.$stateParams.page - 1;
         }
     }
 

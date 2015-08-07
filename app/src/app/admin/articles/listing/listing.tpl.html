@@ -32,7 +32,7 @@
 
 
 <md-toolbar>
-    <md-tabs md-selected="ArticlesListingController.$stateParams.page - 1">
+    <md-tabs md-selected="ArticlesListingController.currentPageIndex">
 
         <md-tab ng-repeat="pageNumber in ArticlesListingController.pages" ui-sref="app.admin.articles.listing({page:pageNumber})">
             <md-tab-label>
