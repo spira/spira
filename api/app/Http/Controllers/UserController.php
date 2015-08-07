@@ -206,7 +206,7 @@ class UserController extends EntityController
      */
     public function getProfile($id)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName());
 
         $userProfile = UserProfile::find($id);
 
