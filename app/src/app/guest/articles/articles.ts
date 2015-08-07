@@ -42,6 +42,7 @@ module app.guest.articles {
     export class ArticlesController {
 
         public allArticles:common.models.Article[] = [];
+        public allArticlesRetrieved:boolean = false;
         static $inject = ['articlesPaginator', 'initialArticles'];
         constructor(private articlesPaginator:common.services.pagination.Paginator, initialArticles:common.models.Article[]) {
 
@@ -55,10 +56,13 @@ module app.guest.articles {
          */
         public showMore():void {
 
-            this.articlesPaginator.getNext().then((moreArticles:common.models.Article[]) => {
+            this.articlesPaginator.getNext()
+                .then((moreArticles:common.models.Article[]) => {
 
-                this.allArticles = this.allArticles.concat(moreArticles)
-            });
+                    this.allArticles = this.allArticles.concat(moreArticles)
+                }).catch((err) => {
+                    this.allArticlesRetrieved = true;
+                });
 
         }
 

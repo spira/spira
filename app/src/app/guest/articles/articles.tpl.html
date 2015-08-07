@@ -8,4 +8,10 @@
 </md-card>
 
 
-<md-button class="md-raised md-primary" ng-click="ArticlesController.showMore()">Show More</md-button>
+<md-button
+        class="md-raised md-primary"
+        ng-click="ArticlesController.showMore()"
+        ng-hide="ArticlesController.allArticlesRetrieved"
+    >Show More</md-button>
+
+<p ng-if="ArticlesController.allArticlesRetrieved">No more articles!</p>

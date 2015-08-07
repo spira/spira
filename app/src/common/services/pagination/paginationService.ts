@@ -2,6 +2,8 @@ module common.services.pagination {
 
     export const namespace = 'common.services.pagination';
 
+    export class PaginatorException extends common.SpiraException {}
+
     export class Paginator {
 
         private static defaultCount:number = 10;
@@ -10,12 +12,21 @@ module common.services.pagination {
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
 
-        constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+        constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
             this.modelFactory = (data:any) => data; //set a default factory that just returns the data
 
         }
 
+        /**
+         * Method to test when to skip the interceptor
+         * @param rejection
+         * @returns {boolean}
+         */
+        private static conditionalSkipInterceptor(rejection: ng.IHttpPromiseCallbackArg<any>): boolean {
+
+            return rejection.status == 416;
+        }
         /**
          * Build the range header
          * @param from
@@ -32,11 +43,15 @@ module common.services.pagination {
          */
         private getResponse(count:number, index:number = this.currentIndex):ng.IPromise<common.models.IModel[]> {
 
-            return this.ngRestAdapter.get(this.url, {
-                Range: Paginator.getRangeHeader(index, index + count - 1)
-            }).then((response) => {
-                return _.map(response.data, (modelData) => this.modelFactory(modelData));
-            });
+            return this.ngRestAdapter
+                .skipInterceptor(Paginator.conditionalSkipInterceptor)
+                .get(this.url, {
+                    Range: Paginator.getRangeHeader(index, index + count - 1)
+                }).then((response) => {
+                    return _.map(response.data, (modelData) => this.modelFactory(modelData));
+                }).catch(() => {
+                    return this.$q.reject(new PaginatorException("No more results found!"));
+                });
 
         }
 
@@ -93,9 +108,9 @@ module common.services.pagination {
 
     export class PaginationService {
 
-        static $inject:string[] = ['ngRestAdapter'];
+        static $inject:string[] = ['ngRestAdapter', '$q'];
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
 
         }
 
@@ -105,7 +120,7 @@ module common.services.pagination {
          * @returns {common.services.pagination.Paginator}
          */
         public getPaginatorInstance(url:string):Paginator {
-            return new Paginator(url, this.ngRestAdapter);
+            return new Paginator(url, this.ngRestAdapter, this.$q);
         }
 
     }

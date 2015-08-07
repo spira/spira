@@ -224,7 +224,8 @@ interface mockEntity {
 
                 $rootScope.$apply();
 
-                expect($rootScope.$broadcast).not.to.have.been.called;
+                expect($rootScope.$broadcast).not.to.have.been.calledWith('apiErrorHandler');
+                expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
 
                 (<any>$rootScope).$broadcast.restore();
 
