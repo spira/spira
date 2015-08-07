@@ -46,7 +46,7 @@ class VanillaConfigurator
         // Define initial constants
         define('DS', '/');
         define('APPLICATION', 'Vanilla');
-        define('APPLICATION_VERSION', '2.2b1');
+        define('APPLICATION_VERSION', $this->getVersion());
         define('PATH_ROOT', getcwd().'/public');
 
         // Boostrap Vanilla
@@ -138,5 +138,23 @@ class VanillaConfigurator
 
         // Setup default permissions for all roles
         PermissionModel::ResetAllRoles();
+    }
+
+    /**
+     * Get Vanilla version from Vanilla's index.php.
+     *
+     * @return string
+     */
+    protected function getVersion()
+    {
+        $lines = file('public/index.php');
+
+        foreach ($lines as $line) {
+            $pattern = '/\'APPLICATION_VERSION\', \'([a-z0-9.]*)\'/';
+            preg_match($pattern, $line, $matches);
+            if ($matches) {
+                return $matches[1];
+            }
+        }
     }
 }
