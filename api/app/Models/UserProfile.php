@@ -3,6 +3,11 @@
 class UserProfile extends BaseModel
 {
     /**
+     * The character length of the 'about' field
+     */
+    const ABOUT_LENGTH = 120;
+
+    /**
      * The primary key for the model.
      *
      * @var string

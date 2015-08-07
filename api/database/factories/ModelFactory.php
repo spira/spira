@@ -61,7 +61,14 @@ $factory->define(App\Models\UserProfile::class, function ($faker) {
     return [
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
-        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
+        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d'),
+        'gender' => $faker->randomElement(['M', 'F']),
+        'about' => $faker->optional(0.5)->text(120),
+        'facebook' => $faker->optional(0.5)->url(),
+        'twitter' => $faker->optional(0.5)->userName(),
+        'pinterest' => $faker->optional(0.5)->url(),
+        'instagram' => $faker->optional(0.5)->url(),
+        'website' => $faker->optional(0.5)->url()
     ];
 });
 
