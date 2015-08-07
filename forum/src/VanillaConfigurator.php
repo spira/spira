@@ -27,6 +27,8 @@ class VanillaConfigurator
         $this->adminUser();
 
         $this->enableApplications();
+
+        $this->configureJsConnect();
     }
 
     /**
@@ -138,6 +140,32 @@ class VanillaConfigurator
 
         // Setup default permissions for all roles
         PermissionModel::ResetAllRoles();
+    }
+
+    /**
+     * Setup a provider in jsConnect.
+     *
+     * @return void
+     */
+    protected function configureJsConnect()
+    {
+        $provider = [
+            'AuthenticationKey' => 'client',
+            'AssociationSecret' => 'secret',
+            'AssociationHashMethod' => 'md5',
+            'AuthenticationSchemeAlias' => 'jsconnect',
+            'Name' => 'Spira',
+            'AuthenticateUrl' => 'http://vanilla.spira.dev/auth',
+            'Attributes' => serialize([
+                'HashType' => 'md5',
+                'TestMode' => false,
+                'Trusted' => true
+            ]),
+            'Active' => true,
+            'IsDefault' => true
+        ];
+
+        Gdn::SQL()->Options('Ignore', true)->Insert('UserAuthenticationProvider', $provider);
     }
 
     /**
