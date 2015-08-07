@@ -67,7 +67,7 @@ module app {
                     private ngRestAdapter:NgRestAdapter.NgRestAdapterService) {
 
             moment.locale('en-gb');
-            $rootScope.$on("$stateChangeError", _.bind(console.error, console));
+            $rootScope.$on('$stateChangeError', _.bind(console.error, console));
 
             ngRestAdapter.setSkipInterceptorRoutes([
                 /\/api\/auth.*/ //skip the /api/auth* routes as they are handled independently by angular-jwt-auth

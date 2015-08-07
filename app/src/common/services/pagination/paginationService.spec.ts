@@ -31,18 +31,19 @@ interface mockEntity {
         let paginationService:common.services.pagination.PaginationService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _paginationService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _paginationService_, _ngRestAdapter_, _$rootScope_) => {
 
-                if (!paginationService) { //dont rebind, so each test gets the singleton
-                    $httpBackend = _$httpBackend_;
-                    paginationService = _paginationService_;
-                    ngRestAdapter = _ngRestAdapter_;
-                }
+                $httpBackend = _$httpBackend_;
+                paginationService = _paginationService_;
+                ngRestAdapter = _ngRestAdapter_;
+                $rootScope = _$rootScope_;
+
             });
 
         });
@@ -61,7 +62,7 @@ interface mockEntity {
 
         });
 
-        describe('Paginator', () => {
+        describe.only('Paginator', () => {
 
             let collection = fixtures.exampleCollection;
 
@@ -186,6 +187,46 @@ interface mockEntity {
                 expect(results).eventually.to.have.length(20);
                 expect(results).eventually.to.deep.equal(collection.slice(5, 25));
 
+
+            });
+
+            it('should redirect to the error handler if a fatal response comes from the api', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/fatal');
+
+                $httpBackend.expectGET('/api/fatal').respond(500);
+
+                let results = paginator.getNext();
+
+                sinon.spy($rootScope, '$broadcast');
+
+                $httpBackend.flush();
+
+                $rootScope.$apply();
+
+                expect($rootScope.$broadcast).to.have.been.calledWith('apiErrorHandler', "Redirecting to error page");
+
+                (<any>$rootScope).$broadcast.restore();
+
+            });
+
+            it('should NOT redirect to the error handler if a recoverable 416 Requested Range Not Satisfiable response comes from the api', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/no-more-results');
+
+                $httpBackend.expectGET('/api/no-more-results').respond(416);
+
+                let results = paginator.getNext();
+
+                sinon.spy($rootScope, '$broadcast');
+
+                $httpBackend.flush();
+
+                $rootScope.$apply();
+
+                expect($rootScope.$broadcast).not.to.have.been.called;
+
+                (<any>$rootScope).$broadcast.restore();
 
             });
 
