@@ -170,6 +170,14 @@ interface mockEntity {
 
             });
 
+            it('should be able to get the current count', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                expect(paginator.getCount()).to.equal(3);
+
+            });
+
             it('should be able to get a subset of results directly', () => {
 
                 let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
@@ -186,6 +194,26 @@ interface mockEntity {
                 expect(results).eventually.to.be.instanceof(Array);
                 expect(results).eventually.to.have.length(20);
                 expect(results).eventually.to.deep.equal(collection.slice(5, 25));
+
+
+            });
+
+            it('should be able to retrieve results by page', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(10);
+
+                $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                    return headers.Range == 'entities=10-19'
+                })
+                    .respond(206, collection.slice(10, 20));
+
+                let results = paginator.getPage(2);
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceof(Array);
+                expect(results).eventually.to.have.length(10);
+                expect(results).eventually.to.deep.equal(collection.slice(10, 20));
 
 
             });

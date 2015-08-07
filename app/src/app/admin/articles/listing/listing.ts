@@ -29,9 +29,7 @@ module app.admin.articles.listing {
                         return articleService.getArticlesPaginator().setCount(12);
                     },
                     initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:IArticlesListingStateParams) => {
-                        console.log('page is', $stateParams.page);
-                        //return articlesPaginator.getPage($stateParams.page);
-                        return articlesPaginator.getNext();
+                        return articlesPaginator.getPage($stateParams.page);
                     }
                 },
                 data: {

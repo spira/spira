@@ -114,6 +114,22 @@ module common.services.pagination {
         }
 
         /**
+         * Get results with traditional pagination page numbers (1 - indexed)
+         * @param page
+         */
+        public getPage(page:number):ng.IPromise<any[]> {
+
+            let first = this.count * (page - 1);
+
+            let responsePromise = this.getResponse(this.count, first);
+
+            this.currentIndex = first;
+
+            return responsePromise;
+
+        }
+
+        /**
          * Set the index back to 0 or specified index value
          */
         public reset(index:number = 0):Paginator {
