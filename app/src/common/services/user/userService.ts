@@ -141,6 +141,18 @@ module common.services.user {
             return this.ngRestAdapter
                 .patch('/users/' + user.userId, user);
         }
+
+        /**
+         * Get extra user profile information
+         * @param user
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public getProfile(user:common.models.User):ng.IPromise<common.models.UserProfile> {
+            return this.ngRestAdapter.get('/users/' + user.userId + '/profile')
+                .then((res) => {
+                    return new common.models.UserProfile(res.data);
+                });
+        }
     }
 
     angular.module(namespace, [])

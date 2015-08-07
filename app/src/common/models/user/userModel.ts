@@ -6,10 +6,11 @@ module common.models {
         public email:string;
         public firstName:string;
         public lastName:string;
-        public _userCredential:global.IUserCredential;
         public emailConfirmed:string;
         public country:string;
-        public dob:string;
+        public avatarImgUrl:string;
+        public _userCredential:global.IUserCredential;
+        public _userProfile:common.models.UserProfile;
 
         constructor(data:global.IUserData) {
             _.assign(this, data);

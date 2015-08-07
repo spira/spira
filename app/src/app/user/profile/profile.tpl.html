@@ -31,7 +31,7 @@
                 <md-input-container class="md-icon-float">
                     <label for="editProfileForm.dob">WHEN WERE YOU BORN</label>
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.dob" ng-model="ProfileController.user.dob" name="dob" type="text" ng-required="true">
+                    <input id="editProfileForm.dob" ng-model="ProfileController.user._userProfile.dob" name="dob" type="text" ng-required="true">
                     <ng-messages for="editProfileForm.last_name.$error">
                         <ng-message when="required">This is required.</ng-message>
                     </ng-messages>

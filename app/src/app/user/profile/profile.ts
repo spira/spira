@@ -53,6 +53,12 @@ module app.user.profile {
                         countriesService:common.services.countries.CountriesService
                     ) => {
                         return countriesService.getAllCountries()
+                    },
+                    userProfile:(
+                        userService:common.services.user.UserService,
+                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+                    ) => {
+                        return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
                     }
 },
 data: {
@@ -76,16 +82,17 @@ interface IStateParams extends ng.ui.IStateParamsService
 
 class ProfileController {
 
-    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries'];
+    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'userProfile'];
         constructor(
             private userService:common.services.user.UserService,
             private $stateParams:IStateParams,
             public user:common.models.User,
             private $mdToast:ng.material.IToastService,
-            public countries:common.services.countries.ICountryDefinition
+            public countries:common.services.countries.ICountryDefinition,
+            public userProfile:common.models.UserProfile
         ) {
 
-            let runOnBoarding = $stateParams.onBoard;
+            user._userProfile = userProfile;
 
         }
 

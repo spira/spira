@@ -9,6 +9,9 @@
             email:seededChance.email(),
             firstName:seededChance.first(),
             lastName:seededChance.last(),
+            emailConfirmed:seededChance.date(),
+            country:seededChance.country(),
+            avatarImgUrl:seededChance.url()
         };
 
         it('should instantiate a new user', () => {
@@ -23,7 +26,7 @@
 
             let user = new common.models.User(userData);
 
-            expect(user.fullName()).to.equal(userData.firstName + ' '+userData.lastName);
+            expect(user.fullName()).to.equal(userData.firstName + ' ' + userData.lastName);
 
         });
 
