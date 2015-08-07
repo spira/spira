@@ -150,12 +150,12 @@ class VanillaConfigurator
     protected function configureJsConnect()
     {
         $provider = [
-            'AuthenticationKey' => 'client',
-            'AssociationSecret' => 'secret',
+            'AuthenticationKey' => getenv('VANILLA_JSCONNECT_CLIENT_ID'),
+            'AssociationSecret' => getenv('VANILLA_JSCONNECT_SECRET'),
             'AssociationHashMethod' => 'md5',
             'AuthenticationSchemeAlias' => 'jsconnect',
             'Name' => 'Spira',
-            'AuthenticateUrl' => 'http://local.api.spira.io:8080/auth/sso/vanilla',
+            'AuthenticateUrl' => getenv('API_HOST').'/auth/sso/vanilla',
             'Attributes' => serialize([
                 'HashType' => 'sha1',
                 'TestMode' => false,

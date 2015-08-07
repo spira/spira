@@ -37,8 +37,8 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     public function __construct(Request $request, $user)
     {
-        $this->clientId = 'client';
-        $this->secret = 'secret';
+        $this->clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
+        $this->secret = env('VANILLA_JSCONNECT_SECRET');
 
         parent::__construct($request, $user);
     }
