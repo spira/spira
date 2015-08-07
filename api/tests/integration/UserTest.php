@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\UserCredential;
+use App\Models\UserProfile;
 
 class UserTest extends TestCase
 {
@@ -30,6 +31,7 @@ class UserTest extends TestCase
     protected function createUser($type = 'admin')
     {
         $user = factory(User::class)->create(['user_type' => $type]);
+        $user->setProfile(factory(UserProfile::class)->make());
         return $user;
     }
 
@@ -104,7 +106,89 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
+    public function testGetProfileByAdminUser()
+    {
+        $user = $this->createUser();
+        $userToGet = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
+    public function testGetProfileByGuestUser()
+    {
+        $this->markTestSkipped('Permissions have not been implemented properly yet.');
+
+        $user = $this->createUser('guest');
+        $userToGet = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGetProfileBySelfUser()
+    {
+        $user = $this->createUser('guest');
+        $userToGet = $user;
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
     public function testPutOne()
+    {
+        $factory = $this->app->make('App\Services\ModelFactory');
+        $user = $factory->get(User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->append(
+                '_userCredential',
+                $factory->get(UserCredential::class)
+                    ->hide(['self'])
+                    ->makeVisible(['password'])
+                    ->customize(['password' => 'password'])
+                    ->toArray()
+            )
+            ->append(
+                '_userProfile',
+                $factory->get(UserProfile::class)
+                    ->hide(['self'])
+                    ->transformed()
+            );
+
+        $transformerService = $this->app->make(App\Services\TransformerService::class);
+        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
+        $user = $transformer->transform($user);
+
+        $this->put('/users/'.$user['userId'], $user);
+
+        $response = json_decode($this->response->getContent());
+
+        $createdUser = User::find($user['userId']);
+        $userProfile = UserProfile::find($user['userId']);
+        $this->assertResponseStatus(201);
+        $this->assertEquals($user['firstName'], $createdUser->first_name);
+        $this->assertEquals($user['_userProfile']['dob'], $userProfile->dob->toDateString());
+        $this->assertObjectNotHasAttribute('_userCredential', $response);
+        $this->assertObjectNotHasAttribute('_userProfile', $response);
+    }
+
+    public function testPutOneNoProfile()
     {
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(User::class)
@@ -130,6 +214,10 @@ class UserTest extends TestCase
         $this->assertResponseStatus(201);
         $this->assertEquals($user['firstName'], $createdUser->first_name);
         $this->assertObjectNotHasAttribute('_userCredential', $response);
+        $this->assertObjectNotHasAttribute('_userProfile', $response);
+
+        $userProfile = UserProfile::find($user['userId']);
+        $this->assertNull($userProfile);
     }
 
     public function testPutOneNoCredentials()
@@ -163,7 +251,7 @@ class UserTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-    public function testPatchOneByAdminUser()
+    public function testPatchOneByAdminUserNoProfile()
     {
         $user = $this->createUser('admin');
         $userToUpdate = $this->createUser('guest');
@@ -184,6 +272,32 @@ class UserTest extends TestCase
         $this->assertEquals('foobar', $updatedUser->first_name);
     }
 
+    public function testPatchOneByAdminUser()
+    {
+        $user = $this->createUser('admin');
+        $userToUpdate = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            'firstName' => 'foobar',
+            '_userProfile' => [
+                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedUser = User::find($userToUpdate->user_id);
+        $updatedProfile = UserProfile::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foobar', $updatedUser->first_name);
+        $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
+    }
+
     public function testPatchOneByGuestUser()
     {
         $user = $this->createUser('guest');
@@ -197,7 +311,7 @@ class UserTest extends TestCase
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
 
-    public function testPatchOneBySelfUser()
+    public function testPatchOneBySelfUserNoProfile()
     {
         $user = $this->createUser('guest');
         $userToUpdate = $user;
@@ -216,6 +330,32 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $updatedUser->first_name);
+    }
+
+    public function testPatchOneBySelfUser()
+    {
+        $user = $this->createUser('guest');
+        $userToUpdate = $user;
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            'firstName' => 'foobar',
+            '_userProfile' => [
+                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedUser = User::find($userToUpdate->user_id);
+        $updatedProfile = UserProfile::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertEquals('foobar', $updatedUser->first_name);
+        $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
     }
 
     public function testPatchOneBySelfUserUUID()
@@ -241,15 +381,18 @@ class UserTest extends TestCase
         $user = $this->createUser('admin');
         $userToDelete = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
-        $rowCount = User::count();
 
         $this->delete('/users/'.$userToDelete->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
+        $user = User::find($userToDelete->user_id);
+        $profile = UserProfile::find($userToDelete->user_id);
+
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($rowCount - 1, User::count());
+        $this->assertNull($user);
+        $this->assertNull($profile);
     }
 
     public function testDeleteOneByGuestUser()
@@ -257,14 +400,17 @@ class UserTest extends TestCase
         $user = $this->createUser('guest');
         $userToDelete = $this->createUser('guest');
         $token = $this->tokenFromUser($user);
-        $rowCount = User::count();
 
         $this->delete('/users/'.$userToDelete->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
+        $user = User::find($userToDelete->user_id);
+        $profile = UserProfile::find($userToDelete->user_id);
+
         $this->assertResponseStatus(403);
-        $this->assertEquals($rowCount, User::count());
+        $this->assertNotNull($user);
+        $this->assertNotNull($profile);
     }
 
     public function testResetPasswordMail()

@@ -22,6 +22,7 @@ $app->get('countries', 'CountriesController@getAll');
 
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('/', ['uses' => 'UserController@getAll', 'as' => App\Models\User::class]);
+    $app->get('{id}/profile', ['uses' => 'UserController@getProfile']);
     $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);

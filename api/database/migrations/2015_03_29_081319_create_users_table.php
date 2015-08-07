@@ -23,13 +23,10 @@ class CreateUsersTable extends Migration
                 $table->dateTime('email_confirmed')->nullable()->default(null);
                 $table->string('first_name', 45)->nullable();
                 $table->string('last_name', 45)->nullable();
-                $table->string('phone', 45)->nullable();
-                $table->string('mobile', 45)->nullable();
                 $table->string('country', 2)->nullable();
                 $table->string('timezone_identifier', 40)->nullable();
                 $table->enum('user_type', $modelClass::$userTypes);
                 $table->string('avatar_img_url')->nullable();
-
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
 
