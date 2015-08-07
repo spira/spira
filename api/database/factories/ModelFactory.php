@@ -64,11 +64,11 @@ $factory->define(App\Models\UserProfile::class, function ($faker) {
         'dob' => $faker->dateTimeThisCentury()->format('Y-m-d'),
         'gender' => $faker->randomElement(['M', 'F']),
         'about' => $faker->optional(0.5)->text(120),
-        'facebook' => $faker->optional(0.5)->url(),
-        'twitter' => $faker->optional(0.5)->userName(),
-        'pinterest' => $faker->optional(0.5)->url(),
-        'instagram' => $faker->optional(0.5)->url(),
-        'website' => $faker->optional(0.5)->url()
+        'facebook' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'twitter' => '@' . $faker->optional(0.5)->userName(),
+        'pinterest' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'instagram' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'website' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
     ];
 });
 

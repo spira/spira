@@ -7,18 +7,12 @@
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-input-container class="md-icon-float">
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.firstName" ng-model="ProfileController.user.firstName" name="firstName" type="text" ng-required="true" aria-label="First Name">
-                    <ng-messages for="editProfileForm.first_name.$error">
-                        <ng-message when="required">This is required.</ng-message>
-                    </ng-messages>
+                    <input id="editProfileForm.firstName" ng-model="ProfileController.user.firstName" name="firstName" type="text" aria-label="First Name">
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.lastName" ng-model="ProfileController.user.lastName" name="lastName" type="text" ng-required="true" aria-label="Last Name">
-                    <ng-messages for="editProfileForm.last_name.$error">
-                        <ng-message when="required">This is required.</ng-message>
-                    </ng-messages>
+                    <input id="editProfileForm.lastName" ng-model="ProfileController.user.lastName" name="lastName" type="text" aria-label="Last Name">
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
@@ -31,10 +25,16 @@
                 <md-input-container class="md-icon-float">
                     <label for="editProfileForm.dob">WHEN WERE YOU BORN</label>
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.dob" ng-model="ProfileController.user._userProfile.dob" name="dob" type="text" ng-required="true">
-                    <ng-messages for="editProfileForm.last_name.$error">
-                        <ng-message when="required">This is required.</ng-message>
-                    </ng-messages>
+                    <input id="editProfileForm.dob" ng-model="ProfileController.user._userProfile.dob" name="dob" type="text">
+                </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <md-radio-group-label>ARE YOU</md-radio-group-label>
+                    <md-radio-group ng-model="ProfileController.user._userProfile.gender">
+                        <md-radio-button value="M">Male</md-radio-button>
+                        <md-radio-button value="F"> Female </md-radio-button>
+                        <md-radio-button value="">Prefer not to say</md-radio-button>
+                    </md-radio-group>
                 </md-input-container>
             </md-whiteframe>
         </md-content>
