@@ -206,12 +206,13 @@ class UserController extends ApiController
      * @param $id
      * @return \Illuminate\Http\Response
      */
-    public function getProfile($id) {
+    public function getProfile($id)
+    {
         $this->validateId($id);
 
         $userProfile = UserProfile::find($id);
 
-        if(is_null($userProfile)) {
+        if (is_null($userProfile)) {
             return $this->getResponse()->noContent();
         }
 
