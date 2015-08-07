@@ -126,7 +126,7 @@ class UserController extends ApiController
         $model->setCredential(new UserCredential($credential));
 
         // Finally create the profile if it exists
-        if(!empty($profile)) {
+        if (!empty($profile)) {
             $model->setProfile(new UserProfile($profile));
         }
 
@@ -171,7 +171,7 @@ class UserController extends ApiController
 
         // Extract the profile and update if necessary
         $profileUpdateDetails = $request->get('_user_profile', []);
-        if(!empty($profileUpdateDetails)) {
+        if (!empty($profileUpdateDetails)) {
             $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
             $profile->fill($profileUpdateDetails);
             $model->setProfile($profile);
