@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\UserCredential;
+use App\Models\UserProfile;
 use Illuminate\Database\Seeder;
 
 class UserStorySeeder extends Seeder
@@ -28,8 +29,8 @@ class UserStorySeeder extends Seeder
      */
     protected function createUser(array $attributes = [])
     {
-        factory(User::class)
-            ->create($attributes)
-            ->setCredential(factory(UserCredential::class)->make());
+        $user = factory(User::class)->create($attributes);
+        $user->setCredential(factory(UserCredential::class)->make());
+        $user->setProfile(factory(UserProfile::class)->make());
     }
 }

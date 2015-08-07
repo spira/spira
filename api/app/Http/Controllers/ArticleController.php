@@ -9,11 +9,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTransformer;
-use App\Models\Article;
 use App\Repositories\ArticleRepository;
 
-class ArticleController extends ApiController
+class ArticleController extends EntityController
 {
+    protected $validateRequestRule = 'required|string';
+
     /**
      * Assign dependencies.
      * @param ArticleRepository $repository
@@ -23,14 +24,5 @@ class ArticleController extends ApiController
     {
         $this->repository = $repository;
         $this->transformer = $transformer;
-    }
-
-    public function getPermalinks($id)
-    {
-        /** @var Article $article */
-        $article = $this->repository->find($id);
-        return $this->getResponse()
-            ->transformer($this->transformer)
-            ->collection($article->permalinks);
     }
 }
