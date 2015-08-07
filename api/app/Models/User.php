@@ -1,6 +1,5 @@
 <?php namespace App\Models;
 
-use Illuminate\Http\Request;
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
@@ -33,13 +32,11 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'first_name',
         'last_name',
         'email_confirmed',
-        'phone',
-        'mobile',
         'timezone_identifier',
         'user_type',
         'avatar_img_url',
         'email',
-        'dob'
+        'dob',
     ];
 
     /**
@@ -53,11 +50,9 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'email_confirmed' => 'date',
         'first_name' => 'string',
         'last_name' => 'string',
-        'phone' => 'string',
-        'mobile' => 'string',
         'country' => 'country',
         'timezone_identifier' => 'timezone',
-        'dob' => 'date'
+        'dob' => 'date',
     ];
 
     /**
@@ -88,6 +83,16 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     * Get the profile associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function userProfile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    /**
      * Get the social logins associated with the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\Relation
@@ -107,6 +112,20 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public function setCredential(UserCredential $credential)
     {
         $this->userCredential()->save($credential);
+
+        return $this;
+    }
+
+    /**
+     * Set the user's profile.
+     *
+     * @param UserProfile $profile
+     * @return $this
+     *
+     */
+    public function setProfile(UserProfile $profile)
+    {
+        $this->userProfile()->save($profile);
 
         return $this;
     }
