@@ -155,9 +155,9 @@ class VanillaConfigurator
             'AssociationHashMethod' => 'md5',
             'AuthenticationSchemeAlias' => 'jsconnect',
             'Name' => 'Spira',
-            'AuthenticateUrl' => 'http://vanilla.spira.dev/auth',
+            'AuthenticateUrl' => 'http://local.api.spira.io:8080/auth/sso/vanilla',
             'Attributes' => serialize([
-                'HashType' => 'md5',
+                'HashType' => 'sha1',
                 'TestMode' => false,
                 'Trusted' => true
             ]),

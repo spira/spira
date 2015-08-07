@@ -50,11 +50,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     public function getResponse()
     {
-        // Use md5 for now.
-        // $secure = false;
-        $secure = true;
-
-        return $this->response($this->formatUser(), $secure);
+        return $this->response($this->formatUser(), 'sha1');
     }
 
     /**
@@ -157,7 +153,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         $json = json_encode($result);
 
         if ($this->request->has('callback')) {
-            echo $this->request->get('callback').$json;
+            printf('%s(%s)', $this->request->get('callback'), $json);
         } else {
             echo $json;
         }
