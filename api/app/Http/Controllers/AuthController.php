@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
+use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -225,5 +226,25 @@ class AuthController extends ApiController
         if (!in_array($provider, array_keys($this->app['config']['services']))) {
             throw new NotImplementedException('Provider '.$provider.' is not supported.');
         }
+    }
+
+    /**
+     * Provide a requester with user information for single sign on.
+     *
+     * @param  string  $requester
+     * @param  Request $request
+     *
+     * @return Response
+     */
+    public function singleSignOn($requester, Request $request)
+    {
+        // Here we gonna need to get the user authenticated for the current
+        // session. As we don't have sessions, we'll need to get access to the
+        // jwt token here.
+        $user = null;
+
+        $requester = SingleSignOnFactory::create($requester, $request, $user);
+
+        return $requester->getResponse();
     }
 }
