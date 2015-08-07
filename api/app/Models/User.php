@@ -36,7 +36,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'user_type',
         'avatar_img_url',
         'email',
-        'dob',
     ];
 
     /**
@@ -52,7 +51,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'last_name' => 'string',
         'country' => 'country',
         'timezone_identifier' => 'timezone',
-        'dob' => 'date',
     ];
 
     /**
@@ -69,7 +67,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $casts = [
         'email_confirmed' => 'datetime',
-        'dob' => 'date',
     ];
 
     /**

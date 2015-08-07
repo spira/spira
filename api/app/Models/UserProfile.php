@@ -17,8 +17,7 @@ class UserProfile extends BaseModel
     protected $fillable = [
         'phone',
         'mobile',
-        'avatar_img_url',
-        'dob'
+        'dob',
     ];
 
     /**

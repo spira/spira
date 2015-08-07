@@ -21,8 +21,8 @@ class CreateUserProfilesTable extends Migration
             $table->uuid('user_id');
             $table->string('phone', 45)->nullable();
             $table->string('mobile', 45)->nullable();
-            $table->string('avatar_img_url')->nullable();
             $table->date('dob')->nullable();
+
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 
