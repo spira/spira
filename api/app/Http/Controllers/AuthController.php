@@ -226,10 +226,11 @@ class AuthController extends ApiController
      */
     public function singleSignOn($requester, Request $request)
     {
-        // Here we gonna need to get the user authenticated for the current
-        // session. As we don't have sessions, we'll need to get access to the
-        // jwt token here.
-        $user = null;
+        if ($token = $request->cookie('JwtAuthToken')) {
+            $user = $this->jwtAuth->toUser($token);
+        } else {
+            $user = null;
+        }
 
         $requester = SingleSignOnFactory::create($requester, $request, $user);
 

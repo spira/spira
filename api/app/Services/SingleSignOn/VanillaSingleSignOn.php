@@ -65,10 +65,10 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         } else {
             // Temporaray dummy user
             return [
-                'uniqueid' => '1234567890',
-                'name' => 'Foo Bar',
-                'email' => 'foo@bar.com',
-                'photourl' => ''
+                'uniqueid' => $this->user->user_id,
+                'name' => $this->user->full_name,
+                'email' => $this->user->email,
+                'photourl' => $this->user->avatar_img_url
             ];
         }
     }
