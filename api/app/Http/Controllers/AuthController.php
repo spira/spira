@@ -12,6 +12,7 @@ use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\NotImplementedException;
+use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
@@ -88,7 +89,8 @@ class AuthController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token);
+            ->item($token)
+            ->withCookie($this->tokenToCookie($token, $request));
     }
 
     /**
@@ -109,7 +111,8 @@ class AuthController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token);
+            ->item($token)
+            ->withCookie($this->tokenToCookie($token, $request));
     }
 
     /**
@@ -141,7 +144,8 @@ class AuthController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token);
+            ->item($token)
+            ->withCookie($this->tokenToCookie($token, $request));
     }
 
     /**
@@ -213,22 +217,6 @@ class AuthController extends ApiController
     }
 
     /**
-     * Check so the provider exists.
-     *
-     * @param  string  $provider
-     *
-     * @throws NotImplementedException
-     *
-     * @return void
-     */
-    protected function validateProvider($provider)
-    {
-        if (!in_array($provider, array_keys($this->app['config']['services']))) {
-            throw new NotImplementedException('Provider '.$provider.' is not supported.');
-        }
-    }
-
-    /**
      * Provide a requester with user information for single sign on.
      *
      * @param  string  $requester
@@ -246,5 +234,45 @@ class AuthController extends ApiController
         $requester = SingleSignOnFactory::create($requester, $request, $user);
 
         return $requester->getResponse();
+    }
+
+
+    /**
+     * Prepare the token to be passed as cookie.
+     *
+     * @param  string  $token
+     * @param  Request $request
+     *
+     * @return Cookie
+     */
+    protected function tokenToCookie($token, $request)
+    {
+        // Get the domain
+        $segments = explode('.', $request->getHost());
+        if (count($segments) > 1) {
+            $segments = array_slice($segments, -2);
+        }
+        $domain = implode('.', $segments);
+
+        // Set expiration to browser session
+        $expiration = 0;
+
+        return new Cookie('JwtAuthToken', $token, $expiration, '/', $domain, false, false);
+    }
+
+    /**
+     * Check so the social provider exists.
+     *
+     * @param  string  $provider
+     *
+     * @throws NotImplementedException
+     *
+     * @return void
+     */
+    protected function validateProvider($provider)
+    {
+        if (!in_array($provider, array_keys($this->app['config']['services']))) {
+            throw new NotImplementedException('Provider '.$provider.' is not supported.');
+        }
     }
 }
