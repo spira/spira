@@ -1,6 +1,6 @@
 module common.models {
 
-    export class User implements global.IUserData, IModel{
+    export class User extends Model implements global.IUserData {
 
         public userId:string;
         public email:string;
@@ -10,6 +10,8 @@ module common.models {
         public emailConfirmed:string;
 
         constructor(data:global.IUserData) {
+
+            super(data);
 
             _.assign(this, data);
 
