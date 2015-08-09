@@ -19,7 +19,7 @@ class TestModel extends common.models.Model {
 (() => {
 
 
-    describe.only('TracksChanges decorator', () => {
+    describe('TracksChanges decorator', () => {
 
 
         it('should instantiate a new model', () => {
