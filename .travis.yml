@@ -19,6 +19,7 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin beanstalkd
+  - mysql -e 'create database vanilla;'
 
 install:
   # Install phantomjs@2.0.0 (remove this when https://github.com/travis-ci/travis-ci/issues/3225 is resolved)
@@ -41,7 +42,6 @@ install:
 before_script:
 
   - psql -c 'create database spira;' -U postgres
-  - mysql -e 'create database vanilla;'
   - gulp build
   - php ./api/artisan migrate --seed
   - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
