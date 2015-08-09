@@ -77,4 +77,29 @@ class ValidatorTest extends TestCase
 
         $this->assertStringEndsWith('valid country code.', $validation->messages()->get('country')[0]);
     }
+
+    public function testPassingValidateAlphaDashSpace()
+    {
+        $data = ['username' => 'foo1 bar_-.baz'];
+
+        $validation = $this->validator->make($data, ['username' => 'alpha_dash_space']);
+        $this->assertTrue($validation->passes());
+    }
+
+    public function testFailingValidateAlphaDashSpace()
+    {
+        $data = ['username' => '#foo'];
+        $validation = $this->validator->make($data, ['username' => 'alpha_dash_space']);
+        $this->assertFalse($validation->passes());
+
+        $data = ['username' => 'foo,bar'];
+        $validation = $this->validator->make($data, ['username' => 'alpha_dash_space']);
+        $this->assertFalse($validation->passes());
+
+        $data = ['username' => '$foo'];
+        $validation = $this->validator->make($data, ['username' => 'alpha_dash_space']);
+        $this->assertFalse($validation->passes());
+
+        $this->assertContains('spaces', $validation->messages()->get('username')[0]);
+    }
 }
