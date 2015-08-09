@@ -19,7 +19,7 @@ abstract class AbstractParser implements Arrayable
      *
      * @var array
      */
-    protected $attributes = ['token', 'email', 'first_name', 'last_name', 'avatar_img_url'];
+    protected $attributes = ['token', 'email', 'username', 'first_name', 'last_name', 'avatar_img_url'];
 
     /**
      * Initialize the parser.
@@ -48,6 +48,13 @@ abstract class AbstractParser implements Arrayable
      * @return string
      */
     abstract protected function getEmailAttribute();
+
+    /**
+     * Get the user's username.
+     *
+     * @return string
+     */
+    abstract protected function getUsernameAttribute();
 
     /**
      * Get the user's first name.

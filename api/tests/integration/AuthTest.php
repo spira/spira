@@ -376,6 +376,7 @@ class AuthTest extends TestCase
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
+        $socialUser->name = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->user')
             ->once()
@@ -385,7 +386,6 @@ class AuthTest extends TestCase
             ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
-
 
         $this->assertResponseStatus(302);
 
@@ -421,6 +421,7 @@ class AuthTest extends TestCase
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
+        $socialUser->name = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->user')
             ->once()
@@ -430,8 +431,6 @@ class AuthTest extends TestCase
             ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
-
-
 
         $this->assertResponseStatus(302);
 
