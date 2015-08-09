@@ -446,4 +446,16 @@ class EntityTest extends TestCase
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($rowCount, $this->repository->count());
     }
+
+
+    public function testNoInnerLumenUrlDecode()
+    {
+        $compareString = '%foo?*:bar/"foo';
+        $this->get('/test/entities_encoded/'.urlencode($compareString));
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertEquals(urldecode($object->test), $compareString);
+    }
 }
