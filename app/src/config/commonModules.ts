@@ -1,4 +1,4 @@
-module config.commonModules {
+namespace config.commonModules {
 
     export const namespace = 'config.commonModules';
 

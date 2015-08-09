@@ -1,4 +1,4 @@
-module app.admin.articles.listing {
+namespace app.admin.articles.listing {
 
     export const namespace = 'app.admin.articles.listing';
 

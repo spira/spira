@@ -1,4 +1,4 @@
-module common {
+namespace common {
 
     export declare class Error {
         public name: string;

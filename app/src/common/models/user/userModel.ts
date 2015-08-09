@@ -1,4 +1,4 @@
-module common.models {
+namespace common.models {
 
     export class User implements global.IUserData, IModel{
 

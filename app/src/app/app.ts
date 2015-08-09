@@ -1,4 +1,4 @@
-module app {
+namespace app {
 
     export const namespace = 'app';
 

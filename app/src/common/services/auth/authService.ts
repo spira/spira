@@ -1,4 +1,4 @@
-module common.services.auth {
+namespace common.services.auth {
 
     export const namespace = 'common.services.auth';
 
