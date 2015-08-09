@@ -60,7 +60,7 @@ $factory->define(App\Models\UserProfile::class, function ($faker) {
     return [
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
-        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
+        'avatar_img_url' => $faker->optional(0.8)->imageUrl(100, 100, 'people'),
         'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
     ];
 });

@@ -15,20 +15,6 @@
             </md-tab-label>
         </md-tab>
 
-        <md-tab ng-if="!AppController.authService.loggedIn" md-on-select="NavigationController.promptLogin()">
-            <md-tab-label>
-                <md-icon>assignment_ind</md-icon>
-                <span>Login</span>
-            </md-tab-label>
-        </md-tab>
-
-        <md-tab ng-if="AppController.authService.loggedIn" md-on-select="NavigationController.logout()">
-            <md-tab-label>
-                <md-icon>exit_to_app</md-icon>
-                <span>Logout</span>
-            </md-tab-label>
-        </md-tab>
-
     </md-tabs>
 
 </md-toolbar>

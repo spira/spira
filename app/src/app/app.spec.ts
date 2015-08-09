@@ -6,7 +6,7 @@ describe('Bootstrap', () => {
 
     describe('isCurrentUrl', () => {
 
-        let AppCtrl, $location, $scope;
+        let AppCtrl, ngJwtAuthService;
 
         beforeEach(() => {
 
@@ -14,10 +14,15 @@ describe('Bootstrap', () => {
         });
 
         beforeEach(()=> {
-            inject(($controller, _$location_, $rootScope) => {
-                $location = _$location_;
-                $scope = $rootScope.$new();
-                AppCtrl = $controller('app.controller', {$location: $location, $scope: $scope});
+            inject(($controller, _$mdSidenav_, _ngJwtAuthService_, _$state_) => {
+
+                ngJwtAuthService = _ngJwtAuthService_;
+
+                AppCtrl = $controller('app.controller', {
+                    $mdSidenav : _$mdSidenav_,
+                    ngJwtAuthService : ngJwtAuthService,
+                    $state : _$state_
+                });
             })
         });
 
@@ -25,6 +30,35 @@ describe('Bootstrap', () => {
 
             expect(AppCtrl).to.be.ok;
         });
+
+
+        describe('Login actions', () => {
+
+            beforeEach(() => {
+
+                sinon.spy(ngJwtAuthService, 'promptLogin');
+                sinon.spy(ngJwtAuthService, 'logout');
+
+            });
+
+            it('should prompt for login', () => {
+
+                AppCtrl.promptLogin();
+
+                expect(ngJwtAuthService.promptLogin).to.have.been.calledOnce;
+
+            });
+
+            it('should logout', () => {
+
+                AppCtrl.logout();
+
+                expect(ngJwtAuthService.logout).to.have.been.calledOnce;
+
+            });
+
+        });
+
 
 
     });
