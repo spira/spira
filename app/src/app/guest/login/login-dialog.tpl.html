@@ -3,15 +3,15 @@
 
         Login with
 
-        <md-button class="md-fab" aria-label="Login with Facebook" ng-click="socialLogin('facebook')">
+        <md-button class="md-fab" aria-label="Login with Facebook" ng-click="LoginController.socialLogin('facebook')">
             <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>
         </md-button>
 
-        <md-button class="md-fab" aria-label="Login with Twitter" ng-click="socialLogin('twitter')">
+        <md-button class="md-fab" aria-label="Login with Twitter" ng-click="LoginController.socialLogin('twitter')">
             <md-icon md-font-icon="fa fa-2x fa-twitter"></md-icon>
         </md-button>
 
-        <md-button class="md-fab" aria-label="Login with Google" ng-click="socialLogin('google')">
+        <md-button class="md-fab" aria-label="Login with Google" ng-click="LoginController.socialLogin('google')">
             <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
         </md-button>
 
@@ -35,14 +35,14 @@
                     <ng-message when="required">This is required.</ng-message>
                 </ng-messages>
             </md-input-container>
-            <a href="#" ng-click="resetPassword()">Reset Password</a>
+            <a href="#" ng-click="LoginController.resetPassword()">Reset Password</a>
 
         </form>
 
     </md-dialog-content>
 
     <div class="md-actions">
-        <md-button ng-disabled="loginForm.$invalid" ng-click="login(user.email, user.password)" class="md-primary">Login</md-button>
-        <md-button ng-click="cancelLoginDialog()" class="md-warn">Cancel</md-button>
+        <md-button ng-disabled="loginForm.$invalid" ng-click="LoginController.login(user.email, user.password)" class="md-primary">Login</md-button>
+        <md-button ng-click="LoginController.cancelLoginDialog()" class="md-warn">Cancel</md-button>
     </div>
 </md-dialog>
