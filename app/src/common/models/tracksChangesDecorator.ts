@@ -45,7 +45,7 @@ namespace common.models {
                 let value = val; //store the value locally
 
                 Object.defineProperty(obj, propName, {
-                    enumerable: true,
+                    enumerable: !_.isFunction(value),
                     get: function() {
                         return value;
                     },
