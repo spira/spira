@@ -26,13 +26,19 @@ namespace common.models {
 
             let changedProperties = [];
 
-            obj.resetChangedProperties = function(){
-                changedProperties = [];
-            };
+            Object.defineProperty(obj, 'resetChangedProperties', {
+                enumerable: false,
+                value: function(){
+                    changedProperties = [];
+                }
+            });
 
-            obj.getChangedProperties = function(){
-                return changedProperties;
-            };
+            Object.defineProperty(obj, 'getChangedProperties', {
+                enumerable: false,
+                value: function(){
+                    return changedProperties;
+                }
+            });
 
             _.forIn(obj, (val, propName) => {
 
