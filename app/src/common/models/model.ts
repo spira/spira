@@ -6,6 +6,14 @@ module common.models {
         (data:any):IModel;
     }
 
+    export class Model implements IModel {
+
+        constructor(data:any) {
+            _.assign(this, data);
+        }
+
+    }
+
 }
 
 
