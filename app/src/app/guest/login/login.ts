@@ -5,9 +5,10 @@ namespace app.guest.login {
     class LoginConfig {
 
         static $inject = ['ngJwtAuthServiceProvider'];
-        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider){
 
-            let config : NgJwtAuth.INgJwtAuthServiceConfig = {
+        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider) {
+
+            let config:NgJwtAuth.INgJwtAuthServiceConfig = {
                 refreshBeforeSeconds: 60 * 10, //10 mins
                 checkExpiryEverySeconds: 60, //1 min
                 apiEndpoints: {
@@ -27,16 +28,14 @@ namespace app.guest.login {
     class LoginInit {
 
         static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q', '$location'];
-        constructor(
-            private $rootScope:global.IRootScope,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $mdDialog:ng.material.IDialogService,
-            private $timeout:ng.ITimeoutService,
-            private $window:ng.IWindowService,
-            private $state:ng.ui.IStateService,
-            private $q:ng.IQService
-        ) {
 
+        constructor(private $rootScope:global.IRootScope,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $mdDialog:ng.material.IDialogService,
+                    private $timeout:ng.ITimeoutService,
+                    private $window:ng.IWindowService,
+                    private $state:ng.ui.IStateService,
+                    private $q:ng.IQService) {
 
             $rootScope.socialLogin = (type:string, redirectState:string = $state.current.name, redirectStateParams:Object = $state.current.params) => {
 
@@ -51,72 +50,82 @@ namespace app.guest.login {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-        login(username:string, password:string):void;
-        cancelLoginDialog():void;
-        loginError:string;
-        socialLogin(type:string);
-        resetPassword():void;
-    }
+    export class LoginController {
 
-    class LoginController {
+        public socialLogin;
 
-        static $inject = ['$scope', '$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
-        constructor(
-            private $scope : IScope,
-            private $rootScope : global.IRootScope,
-            private $mdDialog:ng.material.IDialogService,
-            private $mdToast:ng.material.IToastService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
-            private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
-            private userService:common.services.user.UserService
-        ) {
+        static $inject = ['$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
 
-            $scope.login = (username, password) => {
+        constructor(private $rootScope:global.IRootScope,
+                    private $mdDialog:ng.material.IDialogService,
+                    private $mdToast:ng.material.IToastService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
+                    private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
+                    private userService:common.services.user.UserService) {
 
-                let credentials:NgJwtAuth.ICredentials = {
-                    username: username,
-                    password: password,
-                };
+            this.handleLoginSuccessPromise();
 
-                deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
+            this.socialLogin = $rootScope.socialLogin;
 
-            };
+        }
 
-            $scope.cancelLoginDialog = () => {
-                ngJwtAuthService.logout(); //make sure the user is logged out
-                $mdDialog.cancel('closed');
-            }; //allow the user to manually close the dialog
-
-            $scope.socialLogin = $rootScope.socialLogin;
-
-            $scope.resetPassword = () => {
-                $scope.cancelLoginDialog();
-                userService.promptResetPassword();
-            }; //close the login modal and open the reset password one
+        /**
+         * Register the login success promise handler
+         */
+        private handleLoginSuccessPromise() {
 
             //register error handling and close on success
-            loginSuccess.promise
+            this.loginSuccess.promise
                 .then(
-                (user) => $mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                (user) => this.$mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
                 null,
                 (err:Error) => {
-                    if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException){
+                    if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException) {
                         this.$mdToast.show(
-                            (<any>$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
+                            (<any>this.$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
                                 .hideDelay(2000)
                                 .position('top')
                                 .content(err.message)
                                 .parent('#loginDialog')
                         );
-                    }else{
+                    } else {
                         console.error(err);
                     }
                 }
             );
+        }
 
+        /**
+         * allow the user to manually close the dialog
+         */
+        public cancelLoginDialog() {
+            this.ngJwtAuthService.logout(); //make sure the user is logged out
+            this.$mdDialog.cancel('closed');
+        }
+
+        /**
+         * Attempt login
+         * @param username
+         * @param password
+         */
+        public login(username, password) {
+
+            let credentials:NgJwtAuth.ICredentials = {
+                username: username,
+                password: password,
+            };
+
+            this.deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
+
+        }
+
+        /**
+         * Trigger reset password flow
+         */
+        public resetPassword(email?:string) {
+            this.cancelLoginDialog();
+            this.userService.promptResetPassword(email);
         }
 
     }
@@ -124,6 +133,6 @@ namespace app.guest.login {
     angular.module(namespace, [])
         .config(LoginConfig)
         .run(LoginInit)
-        .controller(namespace+'.controller', LoginController);
+        .controller(namespace + '.controller', LoginController);
 
 }

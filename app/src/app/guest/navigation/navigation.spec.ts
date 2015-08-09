@@ -36,29 +36,6 @@ describe('Navigation', () => {
 
         });
 
-        beforeEach(() => {
-
-            sinon.spy(authService, 'promptLogin');
-            sinon.spy(authService, 'logout');
-
-        });
-
-        it('should prompt for login', () => {
-
-            NavigationController.promptLogin();
-
-            expect(authService.promptLogin).to.have.been.calledOnce;
-
-        });
-
-        it('should logout', () => {
-
-            NavigationController.logout();
-
-            expect(authService.logout).to.have.been.calledOnce;
-
-        });
-
 
     });
 

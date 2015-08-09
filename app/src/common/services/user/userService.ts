@@ -102,11 +102,15 @@ namespace common.services.user {
         /**
          * Brings up the reset password dialog
          */
-        public promptResetPassword():void {
+        public promptResetPassword(email:string = undefined):void {
             this.$mdDialog.show({
                 templateUrl: 'templates/app/guest/login/reset-password-dialog.tpl.html',
                 controller: 'app.guest.resetPassword.controller',
-                clickOutsideToClose: true
+                controllerAs: 'ResetPasswordController',
+                clickOutsideToClose: true,
+                locals: {
+                    defaultEmail : email
+                }
             });
         }
 

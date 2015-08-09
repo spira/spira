@@ -81,7 +81,7 @@ namespace app {
 
         static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService, public ngJwtAuthService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
         }
 
 
@@ -106,13 +106,16 @@ namespace app {
 
         }
 
-        /**
-         * Redirect the user to their profile
-         * @param $event
-         * @returns {angular.IPromise<any>|IPromise<any>}
-         */
-        public goToUserProfile($event:ng.IAngularEvent){
-            return this.$state.go('app.user.profile', $event);
+        public promptLogin():void {
+            this.ngJwtAuthService.promptLogin();
+        }
+
+        public logout():void {
+            this.ngJwtAuthService.logout();
+            let currentState:global.IState = <global.IState>this.$state.current;
+            if (currentState.name && currentState.data.loggedIn) {
+                this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
+            }
         }
 
     }
