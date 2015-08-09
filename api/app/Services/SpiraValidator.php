@@ -67,6 +67,19 @@ class SpiraValidator extends Validator
     }
 
     /**
+     * Register custom validation rule for alpha numeric dash with spaces.
+     *
+     * @param  string  $attribute
+     * @param  string  $value
+     * @param  array   $parameters
+     * @return void
+     */
+    protected function validateAlphaDashSpace($attribute, $value, $parameters)
+    {
+        return preg_match('/^[\pL\pN\s._-]+$/u', $value);
+    }
+
+    /**
      * Replace all error message place-holders with actual values.
      *
      * @param  string  $message
