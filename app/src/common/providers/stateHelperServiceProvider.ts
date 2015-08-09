@@ -1,4 +1,4 @@
-module common.providers {
+namespace common.providers {
 
     export const namespace = 'common.providers';
 

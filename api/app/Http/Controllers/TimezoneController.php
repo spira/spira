@@ -2,8 +2,9 @@
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Timezones;
+use Spira\Responder\Response\ApiResponse;
 
-class TimezoneController extends ApiController
+class TimezoneController extends EntityController
 {
     /**
      * Assign dependencies.
@@ -20,7 +21,7 @@ class TimezoneController extends ApiController
     /**
      * Get all entities.
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function getAll()
     {

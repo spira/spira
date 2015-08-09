@@ -3,7 +3,7 @@
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Repositories\TestRepository;
 
-class TestController extends ApiController
+class TestController extends EntityController
 {
     /**
      * Assign dependencies.
@@ -12,8 +12,12 @@ class TestController extends ApiController
      */
     public function __construct(TestRepository $repository, EloquentModelTransformer $transformer)
     {
-        $this->repository = $repository;
-        $this->transformer = $transformer;
+        parent::__construct($repository, $transformer);
+    }
+
+    public function urlEncode($id)
+    {
+        return $this->getResponse()->item(['test'=>$id]);
     }
 
     /**

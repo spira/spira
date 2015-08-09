@@ -1,5 +1,6 @@
 <?php
 use App\Models\Article;
+use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
 use App\Repositories\ArticleRepository;
 
@@ -54,6 +55,16 @@ class ArticleTest extends TestCase
         }
     }
 
+    protected function addMetasToArticles($articles)
+    {
+        foreach ($articles as $article) {
+            $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
+            foreach ($metas as $meta) {
+                $article->metas->add($meta);
+            }
+        }
+    }
+
     public function testGetAllPaginated()
     {
         $entities = factory(Article::class, 5)->create()->all();
@@ -79,6 +90,34 @@ class ArticleTest extends TestCase
         $entity = current($entities);
 
         $this->get('/articles/'.$entity->article_id);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
+        $this->assertObjectHasAttribute('articleId', $object);
+        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->articleId);
+        $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
+
+        $this->assertTrue(is_string($object->title));
+        $this->assertTrue(is_string($object->content));
+        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+    }
+
+    public function testGetOneByPermalink()
+    {
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
+        $permalink = $entity->permalinks->first();
+        $this->get('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -244,5 +283,76 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
+    }
+
+    public function testGetPermalinksNotFoundArticle()
+    {
+        $this->get('/articles/foo_bar/permalinks');
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
+    }
+
+    public function testGetMetas()
+    {
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addMetasToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
+
+        $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
+
+        $this->get('/articles/'.$entity->article_id.'/meta');
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertEquals(count($object), $count);
+    }
+
+    public function testPutMetas()
+    {
+        $articles = factory(Article::class, 2)->create()->all();
+        $this->addMetasToArticles($articles);
+        $this->repository->saveMany($articles);
+
+        $article = current($articles);
+        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
+
+        $entities = array_map(function ($entity) {
+            return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
+        }, $article->metas->all());
+
+        $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
+        foreach ($metas as $meta) {
+            $entities[] = $this->prepareEntity($meta);
+        }
+
+        $this->put('/articles/'.$article->article_id.'/meta', ['data' => $entities]);
+        $this->assertResponseStatus(201);
+        $updatedArticle = $this->repository->find($article->article_id);
+
+        $this->assertEquals($metaCount+2, $updatedArticle->metas->count());
+        $counter = 0;
+        foreach ($updatedArticle->metas as $meta) {
+            if ($meta->meta_content == 'foobar') {
+                $counter++;
+            }
+        }
+        $this->assertEquals($counter, $metaCount);
+    }
+
+    public function deleteMeta()
+    {
+        $articles = factory(Article::class, 2)->create()->all();
+        $this->addMetasToArticles($articles);
+        $this->repository->saveMany($articles);
+        $article = current($articles);
+        $metaEntity = $article->metas->first();
+        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
+        $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
+        $updatedArticle = $this->repository->find($article->article_id);
+        $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
     }
 }

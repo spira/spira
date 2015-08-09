@@ -88,7 +88,7 @@
 
             });
 
-            it('should reject the promise getting users fails', () => {
+            it('should reject the promise if getting users fails', () => {
 
                 $httpBackend.expectGET('/api/users').respond(500);
 

@@ -1,4 +1,4 @@
-module config.vendorModules {
+namespace config.vendorModules {
 
     export const namespace = 'config.vendorModules';
 
@@ -16,6 +16,7 @@ module config.vendorModules {
         'ngHttpProgress', //http request progress meter - https://github.com/spira/angular-http-progress
         'ngRestAdapter', // api helper methods - https://github.com/spira/angular-rest-adapter
         'ngJwtAuth', // json web token authentication - https://github.com/spira/angular-jwt-auth
+        'infinite-scroll', //infinite scrolling - https://github.com/sroze/ngInfiniteScroll
     ]);
 
 }

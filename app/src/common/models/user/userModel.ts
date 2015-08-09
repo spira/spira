@@ -1,6 +1,7 @@
-module common.models {
+namespace common.models {
 
-    export class User implements global.IUserData, IModel{
+    @tracksChanges
+    export class User extends Model implements global.IUserData {
 
         public userId:string;
         public email:string;
@@ -13,8 +14,9 @@ module common.models {
         public _userProfile:common.models.UserProfile;
 
         constructor(data:global.IUserData) {
-            _.assign(this, data);
+            super(data);
 
+            _.assign(this, data);
         }
 
         public fullName() {

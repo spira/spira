@@ -4,7 +4,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Countries;
 use Symfony\Component\HttpFoundation\Response;
 
-class CountriesController extends ApiController
+class CountriesController extends EntityController
 {
     /**
      * Assign dependencies.

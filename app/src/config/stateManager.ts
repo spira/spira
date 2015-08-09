@@ -1,6 +1,6 @@
 ///<reference path="../../typings/tsd.d.ts" />
 
-module config.stateManager {
+namespace config.stateManager {
 
     export const namespace = 'config.stateManager';
 

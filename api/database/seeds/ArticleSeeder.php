@@ -20,6 +20,10 @@ class ArticleSeeder extends Seeder
                 foreach ($permalinks as $permalink) {
                     $article->permalinks->add($permalink);
                 }
+                $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
+                foreach ($metas as $meta) {
+                    $article->metas->add($meta);
+                }
                 $article->push();
             })
         ;

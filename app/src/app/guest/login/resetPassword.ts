@@ -1,4 +1,4 @@
-module app.guest.resetPassword {
+namespace app.guest.resetPassword {
 
     export const namespace = 'app.guest.resetPassword';
 

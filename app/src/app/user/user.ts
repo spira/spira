@@ -1,7 +1,7 @@
 
 ///<reference path="../../../src/global.d.ts" />
 
-module app.user {
+namespace app.user {
 
     export const namespace = 'app.user';
 

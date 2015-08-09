@@ -6,7 +6,7 @@
  * Time: 23:53
  */
 
-namespace App\ValueObjects;
+namespace Spira\Repository\Validation;
 
 class TypeAwareMessage
 {

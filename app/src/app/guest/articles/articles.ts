@@ -1,4 +1,4 @@
-module app.guest.articles {
+namespace app.guest.articles {
 
     export const namespace = 'app.guest.articles';
 
@@ -18,7 +18,7 @@ module app.guest.articles {
                 },
                 resolve: /*@ngInject*/{
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getArticlesPaginator();
+                        return articleService.getArticlesPaginator().setCount(5);
                     },
                     initialArticles: (articlesPaginator:common.services.pagination.Paginator) => {
                         return articlesPaginator.getNext();
@@ -41,7 +41,11 @@ module app.guest.articles {
 
     export class ArticlesController {
 
+        private initialArticleCountLimit = 10;
+
         public allArticles:common.models.Article[] = [];
+        public allArticlesRetrieved:boolean = false;
+        public scrollToEnd:boolean = false;
         static $inject = ['articlesPaginator', 'initialArticles'];
         constructor(private articlesPaginator:common.services.pagination.Paginator, initialArticles:common.models.Article[]) {
 
@@ -55,10 +59,23 @@ module app.guest.articles {
          */
         public showMore():void {
 
-            this.articlesPaginator.getNext().then((moreArticles:common.models.Article[]) => {
+            if (!this.scrollToEnd && this.allArticles.length >= this.initialArticleCountLimit){
+                return;
+            }
 
-                this.allArticles = this.allArticles.concat(moreArticles)
-            });
+            this.articlesPaginator.getNext()
+                .then((moreArticles:common.models.Article[]) => {
+
+                    this.allArticles = this.allArticles.concat(moreArticles);
+                }).catch((err) => {
+                    this.allArticlesRetrieved = true;
+                });
+
+        }
+
+        public infiniteScroll():void {
+
+            this.scrollToEnd = true;
 
         }
 
