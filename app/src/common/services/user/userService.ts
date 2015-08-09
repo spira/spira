@@ -1,4 +1,4 @@
-module common.services.user {
+namespace common.services.user {
 
     export const namespace = 'common.services.user';
 

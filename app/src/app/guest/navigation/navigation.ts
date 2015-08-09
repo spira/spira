@@ -1,4 +1,4 @@
-module app.guest.navigation {
+namespace app.guest.navigation {
 
     export const namespace = 'app.guest.navigation';
 

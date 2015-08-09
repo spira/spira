@@ -1,4 +1,4 @@
-module common.services.pagination {
+namespace common.services.pagination {
 
     export const namespace = 'common.services.pagination';
 

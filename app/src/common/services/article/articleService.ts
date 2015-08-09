@@ -1,4 +1,4 @@
-module common.services.article {
+namespace common.services.article {
 
     export const namespace = 'common.services.article';
 

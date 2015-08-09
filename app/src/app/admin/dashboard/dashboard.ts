@@ -1,4 +1,4 @@
-module app.admin.dashboard {
+namespace app.admin.dashboard {
 
     export const namespace = 'app.admin.dashboard';
 

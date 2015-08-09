@@ -1,6 +1,6 @@
 ///<reference path="../../../../src/global.d.ts" />
 
-module app.user.profile {
+namespace app.user.profile {
 
     export const namespace = 'app.user.profile';
 
