@@ -1,4 +1,4 @@
-module common.models {
+namespace common.models {
 
     @tracksChanges
     export class User extends Model implements global.IUserData {

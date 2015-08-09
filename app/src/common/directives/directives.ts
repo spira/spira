@@ -1,4 +1,4 @@
-module common.directives {
+namespace common.directives {
 
     export const namespace = 'common.directives';
 

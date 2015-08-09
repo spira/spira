@@ -1,4 +1,4 @@
-module app.abstract.navigation {
+namespace app.abstract.navigation {
 
     export const namespace = 'app.abstract.navigation';
 

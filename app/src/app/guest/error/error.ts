@@ -1,4 +1,4 @@
-module app.guest.error {
+namespace app.guest.error {
 
     export const namespace = 'app.guest.error';
 

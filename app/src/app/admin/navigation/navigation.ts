@@ -1,4 +1,4 @@
-module app.admin.navigation{
+namespace app.admin.navigation{
 
     export const namespace = 'app.admin.navigation';
 

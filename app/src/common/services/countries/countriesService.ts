@@ -1,4 +1,4 @@
-module common.services.countries {
+namespace common.services.countries {
 
     export const namespace = 'common.services.countries';
 
