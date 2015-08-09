@@ -31,18 +31,19 @@ interface mockEntity {
         let paginationService:common.services.pagination.PaginationService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _paginationService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _paginationService_, _ngRestAdapter_, _$rootScope_) => {
 
-                if (!paginationService) { //dont rebind, so each test gets the singleton
-                    $httpBackend = _$httpBackend_;
-                    paginationService = _paginationService_;
-                    ngRestAdapter = _ngRestAdapter_;
-                }
+                $httpBackend = _$httpBackend_;
+                paginationService = _paginationService_;
+                ngRestAdapter = _ngRestAdapter_;
+                $rootScope = _$rootScope_;
+
             });
 
         });
@@ -169,6 +170,14 @@ interface mockEntity {
 
             });
 
+            it('should be able to get the current count', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                expect(paginator.getCount()).to.equal(3);
+
+            });
+
             it('should be able to get a subset of results directly', () => {
 
                 let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
@@ -186,6 +195,161 @@ interface mockEntity {
                 expect(results).eventually.to.have.length(20);
                 expect(results).eventually.to.deep.equal(collection.slice(5, 25));
 
+
+            });
+
+            it('should be able to retrieve results by page', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(10);
+
+                $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                    return headers.Range == 'entities=10-19'
+                })
+                    .respond(206, collection.slice(10, 20));
+
+                let results = paginator.getPage(2);
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceof(Array);
+                expect(results).eventually.to.have.length(10);
+                expect(results).eventually.to.deep.equal(collection.slice(10, 20));
+
+
+            });
+
+            it('should be able to define a custom model factory', () => {
+
+                function Foo(data){
+                    _.assign(this, data);
+                }
+
+                let modelFactory = (data:any) => new Foo(data);
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setModelFactory(modelFactory);
+
+                $httpBackend.expectGET('/api/collection').respond(206, _.take(collection, 10));
+
+                let results = paginator.getNext();
+
+                results.then((items) => {
+                    expect(_.first(items)).to.be.instanceOf(Foo);
+                });
+
+                $httpBackend.flush();
+
+                expect(results).eventually.to.be.instanceOf(Array);
+
+
+            });
+
+            it('should redirect to the error handler if a fatal response comes from the api', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/fatal');
+
+                $httpBackend.expectGET('/api/fatal').respond(500);
+
+                let results = paginator.getNext();
+
+                sinon.spy($rootScope, '$broadcast');
+
+                $httpBackend.flush();
+
+                $rootScope.$apply();
+
+                expect($rootScope.$broadcast).to.have.been.calledWith('apiErrorHandler', "Redirecting to error page");
+
+                (<any>$rootScope).$broadcast.restore();
+
+            });
+
+            it('should NOT redirect to the error handler if a recoverable 416 Requested Range Not Satisfiable response comes from the api', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/no-more-results');
+
+                $httpBackend.expectGET('/api/no-more-results').respond(416);
+
+                let results = paginator.getNext();
+
+                sinon.spy($rootScope, '$broadcast');
+
+                $httpBackend.flush();
+
+                $rootScope.$apply();
+
+                expect($rootScope.$broadcast).not.to.have.been.calledWith('apiErrorHandler');
+                expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
+
+                (<any>$rootScope).$broadcast.restore();
+
+            });
+
+            it('should not attempt to retrieve from the api when the all items are retrieved', () => {
+
+                let collection = _.clone(fixtures.getExampleCollection(31));
+                let responses = _.chunk(collection, 5);
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(5);
+
+
+                let retrievedResponses = [];
+
+                _.each(responses, (response:{id:number}[]) => {
+
+                    let requestRangeHeader = 'entities=' + _.first(response).id + '-' + _.last(response).id;
+                    let responseRangeHeader = requestRangeHeader.replace('=', ' ') + '/' + collection.length;
+
+                    $httpBackend.expectGET('/api/collection', (headers) => { //second request
+                        return headers.Range == requestRangeHeader
+                    })
+                    .respond(206, response, {
+                        'Content-Range' : responseRangeHeader
+                    });
+
+                    paginator.getNext().then((res) => {
+                        retrievedResponses = retrievedResponses.concat(res)
+                    });
+
+                    $httpBackend.flush();
+
+                    //$rootScope.$apply();
+
+                });
+
+                _.times(3, () => { //iterate more than required to verify no outstanding requests are generated
+                    paginator.getNext();
+                });
+
+                expect(retrievedResponses).to.be.instanceof(Array);
+                expect(retrievedResponses).to.have.length(31);
+
+            });
+
+            it('should throw exception when an invalid `Content-Range` header is passed', () => {
+
+                let valid = [
+                    'entities 10-19/50',
+                    'entities 10-19/*',
+                ];
+
+                let invalid = [
+                    'erghewar',
+                    'entities=10/*',
+                    'entities 10-19',
+                ];
+
+                let validFns = _.map(valid, (headerString:string) => () => common.services.pagination.Paginator.parseContentRangeHeader(headerString));
+                let invalidFns = _.map(invalid, (headerString:string) => () => common.services.pagination.Paginator.parseContentRangeHeader(headerString));
+
+                _.each(validFns, (validFn) => {
+
+                    expect(validFn).not.to.throw(common.services.pagination.PaginatorException);
+                });
+
+                _.each(invalidFns, (invalidFn) => {
+
+                    expect(invalidFn).to.throw(common.services.pagination.PaginatorException);
+                });
 
             });
 

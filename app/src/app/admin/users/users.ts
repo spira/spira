@@ -1,4 +1,4 @@
-module app.admin.users {
+namespace app.admin.users {
 
     export const namespace = 'app.admin.users';
 

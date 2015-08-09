@@ -9,14 +9,14 @@ class UserCredential extends BaseModel
      *
      * @var string
      */
-    protected $primaryKey = 'user_credential_id';
+    protected $primaryKey = 'user_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_credential_id', 'password'];
+    protected $fillable = ['password'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -38,7 +38,6 @@ class UserCredential extends BaseModel
      * @var array
      */
     protected $validationRules = [
-        'user_credential_id' => 'uuid',
         'password' => 'required|string',
     ];
 

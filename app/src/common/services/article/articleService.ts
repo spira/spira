@@ -1,32 +1,50 @@
-module common.services.article {
+namespace common.services.article {
 
     export const namespace = 'common.services.article';
 
-    export interface IArticle {
-        title:string;
-        body:string;
-        permalink:string;
-        _author?:common.models.User;
-    }
-
     export class ArticleService {
 
-        static $inject:string[] = ['ngRestAdapter'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService'];
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+        private cachedPaginator:common.services.pagination.Paginator;
+
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private paginationService:common.services.pagination.PaginationService) {
         }
 
         /**
-         * Get all articles from the API
-         * @returns {any}
+         * Get an instance of the Article given data
+         * @param data
+         * @returns {common.models.Article}
          */
-        public getAllArticles():ng.IPromise<IArticle[]> {
+        public static articleFactory(data:any):common.models.Article {
+            return new common.models.Article(data);
+        }
 
-            return this.ngRestAdapter.get('/articles')
-                .then((res) => {
-                    return <IArticle[]>res.data;
-                })
-                ;
+        /**
+         * Get the article paginator
+         * @returns {Paginator}
+         */
+        public getArticlesPaginator():common.services.pagination.Paginator {
+
+            //cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator){
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/articles')
+                    .setModelFactory(ArticleService.articleFactory);
+            }
+
+            return this.cachedPaginator;
+        }
+
+        /**
+         * Get an Article given an identifier (uuid or permalink)
+         * @param identifier
+         * @returns {IPromise<common.models.Article>}
+         */
+        public getArticle(identifier:string):ng.IPromise<common.models.Article> {
+
+            return this.ngRestAdapter.get('/articles/'+identifier)
+                .then((res) => ArticleService.articleFactory(res.data));
 
         }
 

@@ -1,30 +1,52 @@
-<md-content layout="column" >
-    <md-toolbar class="md-whiteframe-z1" md-scroll-shrink="true" layout-align="center center">
+<div layout="column" >
+    <md-toolbar layout="row" class="md-whiteframe-z1" md-scroll-shrink="true">
         <h1>Spira</h1>
-        <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
-            <md-icon>menu</md-icon>
+
+        <span flex></span>
+
+        <md-fab-speed-dial md-open="false" md-direction="left" id="profileMenu" ng-if="AppController.ngJwtAuthService.loggedIn">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab" layout="row" layout-align="center">
+                    <img ng-src="{{AppController.ngJwtAuthService.user.avatarImgUrl}}" alt="{{AppController.ngJwtAuthService.user.fullName()}}" />
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="logout" class="md-fab md-raised md-mini" ng-click="AppController.logout()">
+                    <md-icon>exit_to_app</md-icon>
+                </md-button>
+                <md-button ui-sref="app.user.profile" class="md-fab md-raised md-mini">
+                    <md-icon>face</md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+
+        <md-button class="md-fab md-raised md-mini" ng-if="!AppController.ngJwtAuthService.loggedIn" ng-click="AppController.promptLogin()">
+            <md-icon>person</md-icon>
         </md-button>
+
     </md-toolbar>
-</md-content>
 
-<md-content layout="column" ui-view="navigation">
 
-</md-content>
 
-<md-content flex layout="column"
-     tabIndex="-1"
+</div>
+
+<div layout="column" ui-view="navigation">
+
+</div>
+
+<div layout="column"
      role="main"
-     class="md-whiteframe-z2"
+     layout-margin layout-fill layout-padding
      id="content"
      ui-view="main"
- >
+        >
 
-</md-content>
+</div>
 
 <md-sidenav
         id="userRegistration"
         class="md-sidenav-right md-whiteframe-z2"
-        ng-if="!AppController.authService.loggedIn"
+        ng-if="!AppController.ngJwtAuthService.loggedIn"
         md-component-id="registration"
         ui-view="registration">
 </md-sidenav>

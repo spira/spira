@@ -1,8 +1,8 @@
-module app.admin.navigation{
+namespace app.admin.navigation{
 
     export const namespace = 'app.admin.navigation';
 
-    class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
+    export class AdminNavigationController extends app.abstract.navigation.AbstractNavigationController {
 
         public groupedNavigableStates = [
             {
@@ -44,6 +44,13 @@ module app.admin.navigation{
         protected getNavigationStates():global.IState[]{
 
             let childStates = this.stateHelperService.getChildStates(app.admin.namespace, 1);
+
+            childStates = _.map(childStates, (state) => {
+                if (state.children){
+                    state.children = _.compact(this.getNavigableStates(state.children));
+                }
+                return state;
+            });
 
             return this.getNavigableStates(childStates);
         }

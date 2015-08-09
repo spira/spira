@@ -1,4 +1,4 @@
-module common.directives.menuToggle {
+namespace common.directives.menuToggle {
 
     export const namespace = 'common.directives.menuToggle';
 

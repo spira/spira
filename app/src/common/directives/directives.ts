@@ -1,9 +1,9 @@
-module common.directives {
+namespace common.directives {
 
     export const namespace = 'common.directives';
 
     angular.module(namespace, [
-        'common.directives.menuToggle'
+        'common.directives.menuToggle',
     ])
     ;
 

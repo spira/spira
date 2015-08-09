@@ -88,7 +88,7 @@
 
             });
 
-            it('should reject the promise getting users fails', () => {
+            it('should reject the promise if getting users fails', () => {
 
                 $httpBackend.expectGET('/api/users').respond(500);
 
@@ -195,8 +195,8 @@
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
 
                 $httpBackend.expectPATCH('/api/users/' + user.userId,
-                    (data) => {
-                        let data:{emailConfirmed:string} = JSON.parse(data);
+                    (jsonData:string) => {
+                        let data:{emailConfirmed:string} = JSON.parse(jsonData);
                         // TSD only has definitions for moment 2.8.0 which does not contain function isBetween
                         return data.emailConfirmed && (<any>moment)(data.emailConfirmed).isBetween(moment().subtract(1, 'second'), moment());
                     },

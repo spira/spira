@@ -1,4 +1,4 @@
-module common.services.auth {
+namespace common.services.auth {
 
     export const namespace = 'common.services.auth';
 
@@ -45,6 +45,7 @@ module common.services.auth {
                     let dialogConfig:ng.material.IDialogOptions = {
                         templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
                         controller: 'app.guest.login.controller',
+                        controllerAs: 'LoginController',
                         clickOutsideToClose: true,
                         locals : {
                             deferredCredentials: deferredCredentials,

@@ -1,4 +1,4 @@
-module common.services.timezones {
+namespace common.services.timezones {
 
     export const namespace = 'common.services.timezones';
 

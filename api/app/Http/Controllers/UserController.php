@@ -4,7 +4,9 @@ use App;
 use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spira\Repository\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;
@@ -12,14 +14,13 @@ use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
-use App\Exceptions\ValidationException;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
-class UserController extends ApiController
+class UserController extends EntityController
 {
     use DispatchesJobs;
 
@@ -62,13 +63,11 @@ class UserController extends ApiController
         EloquentModelTransformer $transformer,
         Cache $cache
     ) {
-        $this->repository = $repository;
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->transformer = $transformer;
         $this->cache = $cache;
-
         $this->permissions($request);
+        parent::__construct($repository, $transformer);
     }
 
     /**
@@ -104,10 +103,13 @@ class UserController extends ApiController
         // Extract the credentials
         $credential = $request->get('_user_credential', []);
 
+        // Extract the profile
+        $profile = $request->get('_user_profile', []);
+
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
         if ($this->repository->exists($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -120,6 +122,11 @@ class UserController extends ApiController
 
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
+
+        // Finally create the profile if it exists
+        if (!empty($profile)) {
+            $model->setProfile(new UserProfile($profile));
+        }
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -135,7 +142,7 @@ class UserController extends ApiController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id);
+        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
         $model = $this->repository->find($id);
 
         // Check if the email is being changed, and initialize confirmation
@@ -160,6 +167,14 @@ class UserController extends ApiController
         $model->fill($request->except('email'));
         $this->repository->save($model);
 
+        // Extract the profile and update if necessary
+        $profileUpdateDetails = $request->get('_user_profile', []);
+        if (!empty($profileUpdateDetails)) {
+            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
+            $profile->fill($profileUpdateDetails);
+            $model->setProfile($profile);
+        }
+
         return $this->getResponse()->noContent();
     }
 
@@ -181,5 +196,26 @@ class UserController extends ApiController
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
         return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Get the user's profile.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getProfile($id)
+    {
+        $this->validateId($id, $this->getKeyName());
+
+        $userProfile = UserProfile::find($id);
+
+        if (is_null($userProfile)) {
+            return $this->getResponse()->noContent();
+        }
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($userProfile);
     }
 }

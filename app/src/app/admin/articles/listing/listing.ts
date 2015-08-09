@@ -1,6 +1,11 @@
-module app.admin.articles.listing {
+namespace app.admin.articles.listing {
 
     export const namespace = 'app.admin.articles.listing';
+
+    export interface IArticlesListingStateParams extends ng.ui.IStateParamsService
+    {
+        page:number;
+    }
 
     export class ArticlesListingConfig {
 
@@ -8,7 +13,10 @@ module app.admin.articles.listing {
         constructor(private stateHelperServiceProvider){
 
             let state:global.IState = {
-                url: '/listing',
+                url: '/listing/{page:int}',
+                params: {
+                    page: 1
+                },
                 views: {
                     "main@app.admin": {
                         controller: namespace+'.controller',
@@ -17,8 +25,11 @@ module app.admin.articles.listing {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    allArticles: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getAllArticles();
+                    articlesPaginator: (articleService:common.services.article.ArticleService) => {
+                        return articleService.getArticlesPaginator().setCount(12);
+                    },
+                    initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:IArticlesListingStateParams) => {
+                        return articlesPaginator.getPage($stateParams.page);
                     }
                 },
                 data: {
@@ -36,11 +47,24 @@ module app.admin.articles.listing {
 
     export class ArticlesListingController {
 
-        static $inject = ['allArticles'];
-        constructor(public allArticles:common.services.article.IArticle[]) {
+        public articles:common.models.Article[] = [];
+        static $inject = ['articlesPaginator', 'initArticles', '$stateParams'];
 
+        public pages:number[] = [];
+
+        public currentPageIndex:number;
+
+        constructor(private articlesPaginator:common.services.pagination.Paginator, articles, public $stateParams:IArticlesListingStateParams) {
+
+            this.articles = articles;
+
+            let perPage = articlesPaginator.getCount();
+
+            this.pages = _.range(1, Math.ceil(articlesPaginator.entityCountTotal/perPage) + 1);
+
+
+            this.currentPageIndex = this.$stateParams.page - 1;
         }
-
     }
 
     angular.module(namespace, [])

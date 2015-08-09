@@ -1,4 +1,4 @@
-module config.siteModules {
+namespace config.siteModules {
 
     export const namespace = 'config.siteModules';
 

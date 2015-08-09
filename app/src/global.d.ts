@@ -2,7 +2,7 @@
 
 ///<reference path="../typings/tsd.d.ts" />
 
-declare module global {
+declare namespace global {
 
     export interface IState extends ng.ui.IState {
         data: {

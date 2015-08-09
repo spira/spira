@@ -1,4 +1,44 @@
-<h2>Articles</h2>
+<div layout-padding>
+
+    <h2>Articles</h2>
+
+    <md-grid-list
+            md-cols-sm="1"
+            md-cols-md="2"
+            md-cols-gt-md="4"
+            md-row-height="1:1"
+            md-gutter="12px"
+            md-gutter-gt-sm="8px">
+
+        <md-grid-tile
+                ng-repeat="article in ArticlesListingController.articles"
+                ui-sref="app.admin.articles.article({permalink: article.getIdentifier()})"
+                md-ink-ripple style="cursor:pointer">
+
+            <md-grid-tile-header>
+                <h3>{{article.status | uppercase}}</h3>
+            </md-grid-tile-header>
+
+            <img width="100%" ng-src="{{article.primaryImage}}" alt="{{article.title}}">
+
+            <md-grid-tile-footer>
+                <h3>{{article.title}}</h3>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+
+    </md-grid-list>
+
+</div>
 
 
-<pre highlight="">{{ArticlesController.allArticles|json}}</pre>
+<md-toolbar>
+    <md-tabs md-selected="ArticlesListingController.currentPageIndex">
+
+        <md-tab ng-repeat="pageNumber in ArticlesListingController.pages" ui-sref="app.admin.articles.listing({page:pageNumber})">
+            <md-tab-label>
+                <span>{{pageNumber}}</span>
+            </md-tab-label>
+        </md-tab>
+
+    </md-tabs>
+</md-toolbar>

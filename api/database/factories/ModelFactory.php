@@ -51,13 +51,18 @@ $factory->define(App\Models\User::class, function ($faker) {
         'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear($max = 'now'),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
-        'phone' => $faker->optional(0.5)->phoneNumber,
-        'mobile' => $faker->optional(0.5)->phoneNumber,
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
-        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
-
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+    ];
+});
+
+$factory->define(App\Models\UserProfile::class, function ($faker) {
+    return [
+        'phone' => $faker->optional(0.5)->phoneNumber,
+        'mobile' => $faker->optional(0.5)->phoneNumber,
+        'avatar_img_url' => $faker->optional(0.8)->imageUrl(100, 100, 'people'),
+        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
     ];
 });
 
@@ -69,7 +74,6 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
 
 $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
-        'user_credential_id' => $faker->uuid,
         'password' => 'password'
     ];
 });
@@ -112,13 +116,23 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
     ];
 });
 
+$factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $faker) {
+    return [
+        'meta_name' => $faker->unique()->slug,
+        'meta_content' => $faker->slug,
+        'meta_property' => $faker->slug,
+    ];
+});
+
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
+        'status' => $faker->randomElement(App\Models\Article::$statuses),
         'content' => $content = implode("\n\n", $faker->paragraphs(3)),
         'excerpt' => Str::words($content, 30, ''),
+        'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];

@@ -6,6 +6,7 @@ use Spira\Repository\Collection\Collection;
 /**
  *
  * @property ArticlePermalink[]|Collection $permalinks
+ * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
@@ -15,6 +16,17 @@ use Spira\Repository\Collection\Collection;
 class Article extends BaseModel
 {
     const defaultExcerptWordCount = 30;
+
+
+    /**
+     * Article statuses. ! WARNING these statuses define the enum types in the migration, don't remove any!
+     */
+    const STATUS_DRAFT = 'draft';
+    const STATUS_SCHEDULED = 'scheduled';
+    const STATUS_PUBLISHED = 'published';
+
+    public static $statuses = [self::STATUS_DRAFT, self::STATUS_SCHEDULED, self::STATUS_PUBLISHED];
+
     /**
      * The database table used by the model.
      *
@@ -26,9 +38,9 @@ class Article extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published', 'primaryImage', 'status'];
 
-    protected $hidden = ['permalinks'];
+    protected $hidden = ['permalinks','metas'];
 
     protected $primaryKey = 'article_id';
 
@@ -42,11 +54,14 @@ class Article extends BaseModel
         if (!is_null($this->permalink)) {
             $permalinkRule.=','.$this->permalink.',permalink';
         }
+
         return [
             'article_id' => 'uuid|createOnly',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
+            'primaryImage' => 'string',
+            'status' => 'in:' . implode(',', self::$statuses),
             'permalink' => $permalinkRule
         ];
     }
@@ -96,5 +111,10 @@ class Article extends BaseModel
     public function permalinks()
     {
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
+    }
+
+    public function metas()
+    {
+        return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
     }
 }

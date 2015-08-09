@@ -1,4 +1,4 @@
-module app.admin.articles {
+namespace app.admin.articles {
 
     export const namespace = 'app.admin.articles';
 
@@ -27,6 +27,7 @@ module app.admin.articles {
 
     angular.module(namespace, [
         'app.admin.articles.listing',
+        'app.admin.articles.article',
         'app.admin.articles.curation',
     ])
         .config(ArticlesConfig);
