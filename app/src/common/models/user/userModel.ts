@@ -1,5 +1,6 @@
 module common.models {
 
+    @tracksChanges
     export class User extends Model implements global.IUserData {
 
         public userId:string;

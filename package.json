@@ -65,19 +65,19 @@
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.0.2",
     "karma-phantomjs-launcher": "^0.2.0",
-    "phantomjs": "just-boris/phantomjs",
     "karma-sinon": "^1.0.4",
     "karma-sinon-chai": "^1.0.0",
     "lodash": "^3.6.0",
     "main-bower-files": "^2.6.2",
     "merge2": "^0.3.6",
     "minimatch": "^2.0.4",
+    "phantomjs": "just-boris/phantomjs",
     "replace": "^0.3.0",
     "run-sequence": "^1.0.2",
     "sanitize-filename": "^1.3.0",
     "selenium-webdriver": "^2.45.1",
     "sinon": "^1.15.4",
     "tsd": "^0.6.3",
-    "typescript": "^1.5.0-beta"
+    "typescript": "^1.5.3"
   }
 }

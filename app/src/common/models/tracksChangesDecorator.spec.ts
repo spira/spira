@@ -5,7 +5,7 @@ let data:any = {
     string:seededChance.string(),
 };
 
-@tracksChanges
+@common.models.tracksChanges
 class TestModel extends common.models.Model {
     public string;
     public uuid;
@@ -34,7 +34,7 @@ class TestModel extends common.models.Model {
 
             let model = new TestModel(data);
 
-            expect(model.getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
+            expect((<common.models.ITracksChangesDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
         });
 
@@ -44,7 +44,7 @@ class TestModel extends common.models.Model {
 
             model.string = 'foo';
 
-            expect(model.getChangedProperties()).to.be.instanceOf(Array).and.to.include('string');
+            expect((<common.models.ITracksChangesDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.include('string');
 
         });
 
@@ -54,9 +54,9 @@ class TestModel extends common.models.Model {
 
             model.string = 'foo';
 
-            model.resetChangedProperties();
+            (<common.models.ITracksChangesDecorator>model).resetChangedProperties();
 
-            expect(model.getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
+            expect((<common.models.ITracksChangesDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
         })
 
