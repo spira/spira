@@ -1,6 +1,8 @@
 <?php namespace App\Models;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Rhumsaa\Uuid\Uuid;
 use Spira\Repository\Collection\Collection;
 
 /**
@@ -83,6 +85,25 @@ class Article extends BaseModel
             }
             return true;
         });
+    }
+
+    /**
+     * @param string $id article_id or permalink
+     * @return Article
+     */
+    public function find($id)
+    {
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return parent::find($id);
+        }
+
+        //otherwise attempt treat the id as a permalink and first try the model, then try the history
+        try {
+            return $this->where('permalink', '=', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
+            return ArticlePermalink::find($id)->article;
+        }
     }
 
     public function setPermalinkAttribute($permalink)
