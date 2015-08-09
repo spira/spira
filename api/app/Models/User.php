@@ -30,6 +30,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $fillable = [
         'user_id',
+        'username',
         'first_name',
         'last_name',
         'email_confirmed',
@@ -48,6 +49,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $validationRules = [
         'user_id' => 'uuid|createOnly',
+        'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
