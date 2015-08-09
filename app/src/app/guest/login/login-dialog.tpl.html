@@ -32,10 +32,9 @@
                 <md-icon>face</md-icon>
                 <input id="loginForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
                 <ng-messages for="loginForm.password.$error">
-                    <ng-message when="required">This is required.</ng-message>
+                    <ng-message when="required">This is required. <a href="#" ng-click="LoginController.resetPassword(user.email)">Forgot your password? Click Here</a></ng-message>
                 </ng-messages>
             </md-input-container>
-            <a href="#" ng-click="LoginController.resetPassword()">Reset Password</a>
 
         </form>
 

@@ -5,9 +5,10 @@ namespace app.guest.login {
     class LoginConfig {
 
         static $inject = ['ngJwtAuthServiceProvider'];
-        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider){
 
-            let config : NgJwtAuth.INgJwtAuthServiceConfig = {
+        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider) {
+
+            let config:NgJwtAuth.INgJwtAuthServiceConfig = {
                 refreshBeforeSeconds: 60 * 10, //10 mins
                 checkExpiryEverySeconds: 60, //1 min
                 apiEndpoints: {
@@ -27,16 +28,14 @@ namespace app.guest.login {
     class LoginInit {
 
         static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q', '$location'];
-        constructor(
-            private $rootScope:global.IRootScope,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $mdDialog:ng.material.IDialogService,
-            private $timeout:ng.ITimeoutService,
-            private $window:ng.IWindowService,
-            private $state:ng.ui.IStateService,
-            private $q:ng.IQService
-        ) {
 
+        constructor(private $rootScope:global.IRootScope,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $mdDialog:ng.material.IDialogService,
+                    private $timeout:ng.ITimeoutService,
+                    private $window:ng.IWindowService,
+                    private $state:ng.ui.IStateService,
+                    private $q:ng.IQService) {
 
             $rootScope.socialLogin = (type:string, redirectState:string = $state.current.name, redirectStateParams:Object = $state.current.params) => {
 
@@ -53,19 +52,17 @@ namespace app.guest.login {
 
     export class LoginController {
 
-
         public socialLogin;
 
         static $inject = ['$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
-        constructor(
-            private $rootScope : global.IRootScope,
-            private $mdDialog:ng.material.IDialogService,
-            private $mdToast:ng.material.IToastService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
-            private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
-            private userService:common.services.user.UserService
-        ) {
+
+        constructor(private $rootScope:global.IRootScope,
+                    private $mdDialog:ng.material.IDialogService,
+                    private $mdToast:ng.material.IToastService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
+                    private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
+                    private userService:common.services.user.UserService) {
 
             this.handleLoginSuccessPromise();
 
@@ -126,9 +123,9 @@ namespace app.guest.login {
         /**
          * Trigger reset password flow
          */
-        public resetPassword () {
+        public resetPassword(email?:string) {
             this.cancelLoginDialog();
-            this.userService.promptResetPassword();
+            this.userService.promptResetPassword(email);
         }
 
     }
@@ -136,6 +133,6 @@ namespace app.guest.login {
     angular.module(namespace, [])
         .config(LoginConfig)
         .run(LoginInit)
-        .controller(namespace+'.controller', LoginController);
+        .controller(namespace + '.controller', LoginController);
 
 }
