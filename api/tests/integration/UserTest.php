@@ -108,7 +108,7 @@ class UserTest extends TestCase
     {
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
             ->append(
                 '_userCredential',
                 $factory->get(UserCredential::class)
