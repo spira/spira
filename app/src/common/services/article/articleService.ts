@@ -21,6 +21,18 @@ namespace common.services.article {
         }
 
         /**
+         * Get a new article with no values and a set uuid
+         * @returns {common.models.Article}
+         */
+        public newArticle():common.models.Article {
+
+            return new common.models.Article({
+                articleId: this.ngRestAdapter.uuid(),
+            });
+
+        }
+
+        /**
          * Get the article paginator
          * @returns {Paginator}
          */

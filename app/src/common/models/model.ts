@@ -8,8 +8,10 @@ namespace common.models {
 
     export class Model implements IModel {
 
-        constructor(data:any) {
-            _.assign(this, data);
+        constructor(data?:any) {
+            if (data){
+                _.assign(this, data);
+            }
         }
 
     }

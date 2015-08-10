@@ -23,6 +23,13 @@ namespace app.admin.articles.article {
                 },
                 resolve: /*@ngInject*/{
                     article: (articleService:common.services.article.ArticleService, $stateParams:IStateParams) => {
+
+                        if (!$stateParams.permalink){
+                            let newArticle = articleService.newArticle();
+                            $stateParams.permalink = newArticle.getIdentifier();
+                            return newArticle;
+                        }
+
                         return articleService.getArticle($stateParams.permalink);
                     }
                 },

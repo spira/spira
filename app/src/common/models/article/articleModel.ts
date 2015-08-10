@@ -1,5 +1,6 @@
 namespace common.models {
 
+    @changeAware
     export class Article implements IModel{
 
         public articleId:string;
@@ -12,6 +13,7 @@ namespace common.models {
         constructor(data:any) {
 
             _.assign(this, data);
+
         }
 
         /**
