@@ -3,6 +3,11 @@
 class UserProfile extends BaseModel
 {
     /**
+     * The character length of the 'about' field
+     */
+    const ABOUT_LENGTH = 120;
+
+    /**
      * The primary key for the model.
      *
      * @var string
@@ -17,8 +22,14 @@ class UserProfile extends BaseModel
     protected $fillable = [
         'phone',
         'mobile',
-        'avatar_img_url',
-        'dob'
+        'dob',
+        'gender',
+        'about',
+        'facebook',
+        'twitter',
+        'pinterest',
+        'instagram',
+        'website',
     ];
 
     /**
@@ -30,6 +41,13 @@ class UserProfile extends BaseModel
         'phone' => 'string',
         'mobile' => 'string',
         'dob' => 'date',
+        'gender' => 'in:M,F,N/A',
+        'about' => 'string',
+        'facebook' => 'string',
+        'twitter' => 'string',
+        'pinterest' => 'string',
+        'instagram' => 'string',
+        'website' => 'string',
     ];
 
     /**

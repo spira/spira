@@ -54,7 +54,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The attributes that should be mutated to datetimes.
      *
      * @var array
      */
@@ -66,7 +66,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      * @var array
      */
     protected $casts = [
-        'email_confirmed' => 'datetime'
+        'email_confirmed' => 'datetime',
     ];
 
     /**

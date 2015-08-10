@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
 
         Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
                 $table->uuid('user_id');
-                $table->string('email', 255)->unique();
+                $table->string('email', 100)->unique();
                 $table->dateTime('email_confirmed')->nullable()->default(null);
                 $table->string('first_name', 45)->nullable();
                 $table->string('last_name', 45)->nullable();
@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
                 $table->string('timezone_identifier', 40)->nullable();
                 $table->enum('user_type', $modelClass::$userTypes);
                 $table->string('avatar_img_url')->nullable();
+
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
 

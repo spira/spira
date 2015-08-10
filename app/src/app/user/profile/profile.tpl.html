@@ -1,1 +1,107 @@
-<h2>User Profile</h2>
+<div layout-padding>
+    <h2>User Profile</h2>
+
+    <form novalidate name="editProfileForm" ng-submit="ProfileController.updateProfile()">
+        <md-content layout-padding>
+            <h3>About You</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container class="md-icon-float">
+                    <label for="editProfileForm.firstName">First Name</label>
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.firstName" ng-model="ProfileController.user.firstName" name="firstName" type="text" md-maxlength="45">
+                </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <label for="editProfileForm.lastName">Last Name</label>
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.lastName" ng-model="ProfileController.user.lastName" name="lastName" type="text" md-maxlength="45">
+                </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <md-select-label>WHERE DO YOU LIVE</md-select-label>
+                    <md-select ng-model="ProfileController.user.country" aria-label="Country">
+                        <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <label for="editProfileForm.dob">WHEN WERE YOU BORN</label>
+                    <md-icon>account_box</md-icon>
+                    <input id="editProfileForm.dob" ng-model="ProfileController.user._userProfile.dob" name="dob" type="text">
+                </md-input-container>
+
+                <md-input-container class="md-icon-float">
+                    <md-radio-group-label>ARE YOU</md-radio-group-label>
+                    <md-radio-group ng-model="ProfileController.user._userProfile.gender">
+                        <md-radio-button ng-repeat="option in common.models.UserProfile.genderOptions"
+                                         ng-value="option.value">
+                            {{ option.label }}
+                        </md-radio-button>
+                    </md-radio-group>
+                </md-input-container>
+            </md-whiteframe>
+        </md-content>
+
+        <md-content layout-padding>
+            <h3>Email</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container class="md-icon-float" layout>
+                    <md-icon>email</md-icon>
+                    <input id="editProfileForm.email" ng-model="ProfileController.user.email" name="email" type="email" ng-required="true" aria-label="Email" md-maxlength="100">
+                    <ng-messages for="editProfileForm.email.$error">
+                        <ng-message when="required">This is required.</ng-message>
+                        <ng-message when="email">This is not a valid email.</ng-message>
+                    </ng-messages>
+                </md-input-container>
+                <small>NOTE: We'll send you a confirmation email to your new address if you update your email</small>
+            </md-whiteframe>
+        </md-content>
+
+        <md-content layout-padding>
+            <h3>Profile</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container>
+                    <label for="editProfileForm.about">TELL EVERYONE A LITTLE ABOUT YOURSELF</label>
+                    <textarea id="editProfileForm.about" columns="1" ng-model="ProfileController.user._userProfile.about" name="about" md-maxlength="120"></textarea>
+                </md-input-container>
+
+                <label>YOUR SOCIAL CHANNELS</label>
+                <md-input-container md-no-float>
+                    <md-icon>accessibility</md-icon>
+                    <input id="editProfileForm.facebook" ng-model="ProfileController.user._userProfile.facebook" name="facebook" type="text" aria-label="Facebook" md-maxlength="100" placeholder="https://www.facebook.com/your.profile">
+                </md-input-container>
+                <md-input-container md-no-float>
+                    <md-icon>accessibility</md-icon>
+                    <input id="editProfileForm.twitter" ng-model="ProfileController.user._userProfile.twitter" name="twitter" type="text" aria-label="Twitter" md-maxlength="45" placeholder="@yourUsername">
+                </md-input-container>
+                <md-input-container md-no-float>
+                    <md-icon>accessibility</md-icon>
+                    <input id="editProfileForm.pinterest" ng-model="ProfileController.user._userProfile.pinterest" name="pinterest" type="text" aria-label="Pinterest" md-maxlength="100" placeholder="https://www.pinterest.com/yourusername">
+                </md-input-container>
+                <md-input-container md-no-float>
+                    <md-icon>accessibility</md-icon>
+                    <input id="editProfileForm.instagram" ng-model="ProfileController.user._userProfile.instagram" name="instagram" type="text" aria-label="Instagram" md-maxlength="100" placeholder="https://www.instagram.com/yourusername">
+                </md-input-container>
+                <md-input-container md-no-float>
+                    <md-icon>accessibility</md-icon>
+                    <input id="editProfileForm.website" ng-model="ProfileController.user._userProfile.website" name="website" type="text" aria-label="Your Website" md-maxlength="100" placeholder="https://www.yourwebsite.com">
+                </md-input-container>
+            </md-whiteframe>
+        </md-content>
+
+        <md-content layout-padding>
+            <h3>Preferences</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-select-label>TIMEZONE</md-select-label>
+                <md-select ng-model="ProfileController.user.timezoneIdentifier" aria-label="Timezone">
+                    <md-option ng-value="timezone.timezoneIdentifier" ng-repeat="timezone in ProfileController.timezones">{{ timezone.timezoneIdentifier }}</md-option>
+                </md-select>
+            </md-whiteframe>
+        </md-content>
+
+        <div class="md-actions">
+            <md-button class="md-primary md-raised" ng-disabled="editProfileForm.$invalid" type="submit">Save</md-button>
+            <md-button class="md-raised">Cancel</md-button>
+        </div>
+    </form>
+</div>
