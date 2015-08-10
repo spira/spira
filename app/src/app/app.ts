@@ -118,6 +118,15 @@ namespace app {
             }
         }
 
+        /**
+         * Redirect the user to their profile
+         * @param $event
+         * @returns {angular.IPromise<any>|IPromise<any>}
+         */
+        public goToUserProfile($event:ng.IAngularEvent){
+            return this.$state.go('app.user.profile', $event);
+        }
+
     }
 
     angular.module(namespace, [

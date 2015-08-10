@@ -1,28 +1,45 @@
 namespace common.models {
 
-    export interface ITracksChangesDecorator{
+    export interface IChangeAwareDecorator{
         getChangedProperties?():string[];
         resetChangedProperties?():void;
+        getOriginal?():typeof Model;
+        getChanged?():{
+            [key:string]: any;
+        };
     }
 
-    export function tracksChanges(target: any) {
+    export function changeAware(target: any) {
 
         // save a reference to the original constructor
         var original = target;
 
+        // ugly! utility function to rename a function
+        function renameFunction(name, fn) {
+
+            return new Function('fn',
+                "return function " + name + "(){ return fn.apply(this,arguments)}"
+            )(fn);
+
+        }
+
         // a utility function to generate instances of a class
-        function construct(constructor, args) {
+        function construct(constructor, args, name) {
             var c : any = function () {
                 return constructor.apply(this, args);
             };
+
+            c = renameFunction(name, c);
+
             c.prototype = constructor.prototype;
+
             return new c();
         }
 
         // the new constructor behaviour
         var f : any = function (...args) {
 
-            let obj = construct(original, args);
+            let obj = construct(original, args, original.name);
 
             let changedProperties = [];
 
@@ -37,6 +54,20 @@ namespace common.models {
                 enumerable: false,
                 value: function(){
                     return changedProperties;
+                }
+            });
+
+            Object.defineProperty(obj, 'getChanged', {
+                enumerable: false,
+                value: function(){
+                    return _.pick(this, changedProperties);
+                }
+            });
+
+            Object.defineProperty(obj, 'getOriginal', {
+                enumerable: false,
+                value: function(){
+                    return construct(original, args);
                 }
             });
 
@@ -55,6 +86,8 @@ namespace common.models {
 
                         if (changedProperties.indexOf(propName) === -1){
                             changedProperties.push(propName);
+                        }else if (v === this.getOriginal()[propName]){
+                            changedProperties = _.without(changedProperties, propName); //remove the changed properties if it becomes unchanged
                         }
                     }
                 });
@@ -64,6 +97,8 @@ namespace common.models {
             return obj;
 
         };
+
+        f = _.merge(f, _.clone(original)); //merge in static members
 
         // copy prototype so intanceof operator still works
         f.prototype = original.prototype;
