@@ -130,10 +130,32 @@ namespace common.services.user {
          * @param emailConfirmToken
          * @returns {ng.IHttpPromise<any>}
          */
-        public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any>{
+        public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any> {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
                 .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
+        }
+
+        /**
+         * Send request to update profile information
+         * @param user
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public updateProfile(user:common.models.User):ng.IPromise<any> {
+            return this.ngRestAdapter
+                .patch('/users/' + user.userId, user);
+        }
+
+        /**
+         * Get extra user profile information
+         * @param user
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public getProfile(user:common.models.User):ng.IPromise<common.models.UserProfile> {
+            return this.ngRestAdapter.get('/users/' + user.userId + '/profile')
+                .then((res) => {
+                    return new common.models.UserProfile(res.data);
+                });
         }
     }
 

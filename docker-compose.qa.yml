@@ -17,7 +17,7 @@ database:
   ports:
     - "5432:5432"
 
-vanilla_database:
+vanilladatabase:
   image: mariadb:10.0
   env_file:
     - .common.env

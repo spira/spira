@@ -24,6 +24,11 @@ namespace app.user {
                         controllerAs: 'NavigationController',
                     }
                 },
+                resolve: {
+                    user:(ngJwtAuthService:NgJwtAuth.NgJwtAuthService) => {
+                        return <common.models.User>ngJwtAuthService.getUser()
+                    }
+                },
                 data: {
                     loggedIn: true,
                     role: 'user',

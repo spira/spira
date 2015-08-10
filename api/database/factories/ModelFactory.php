@@ -47,12 +47,13 @@ $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
         'email' => $faker->email,
-        'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear($max = 'now'),
+        'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear(),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
-        'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+        'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
+        'user_type' => $faker->randomElement(App\Models\User::$userTypes)
     ];
 });
 
@@ -60,8 +61,14 @@ $factory->define(App\Models\UserProfile::class, function ($faker) {
     return [
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
-        'avatar_img_url' => $faker->optional(0.8)->imageUrl(100, 100, 'people'),
-        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d')
+        'dob' => $faker->dateTimeThisCentury()->format('Y-m-d'),
+        'gender' => $faker->optional(0.5)->randomElement(['M', 'F', 'N/A']),
+        'about' => $faker->optional(0.5)->text(120),
+        'facebook' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'twitter' => $faker->boolean() ? '@' . $faker->userName() : null,
+        'pinterest' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'instagram' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
+        'website' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
     ];
 });
 

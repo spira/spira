@@ -11,16 +11,18 @@ namespace common.models {
         public email:string;
         public firstName:string;
         public lastName:string;
-        public _userCredential:global.IUserCredential;
         public emailConfirmed:string;
+        public country:string;
+        public avatarImgUrl:string;
+        public timezoneIdentifier:string;
+        public _userCredential:global.IUserCredential;
+        public _userProfile:common.models.UserProfile;
         public userType:string;
 
         constructor(data:global.IUserData) {
-
             super(data);
 
             _.assign(this, data);
-
         }
 
         /**
