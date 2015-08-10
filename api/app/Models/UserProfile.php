@@ -41,7 +41,7 @@ class UserProfile extends BaseModel
         'phone' => 'string',
         'mobile' => 'string',
         'dob' => 'date',
-        'gender' => 'in:M,F',
+        'gender' => 'in:M,F,N/A',
         'about' => 'string',
         'facebook' => 'string',
         'twitter' => 'string',

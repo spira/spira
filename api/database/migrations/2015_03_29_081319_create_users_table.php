@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
 
         Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
                 $table->uuid('user_id');
-                $table->string('email', 255)->unique();
+                $table->string('email', 100)->unique();
                 $table->dateTime('email_confirmed')->nullable()->default(null);
                 $table->string('first_name', 45)->nullable();
                 $table->string('last_name', 45)->nullable();
