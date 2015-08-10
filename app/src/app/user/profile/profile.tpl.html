@@ -19,7 +19,7 @@
 
                 <md-input-container class="md-icon-float">
                     <md-select-label>WHERE DO YOU LIVE</md-select-label>
-                    <md-select ng-model="ProfileController.user.country">
+                    <md-select ng-model="ProfileController.user.country" aria-label="Country">
                         <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
                     </md-select>
                 </md-input-container>
@@ -86,6 +86,29 @@
                     <md-icon>accessibility</md-icon>
                     <input id="editProfileForm.website" ng-model="ProfileController.user._userProfile.website" name="website" type="text" aria-label="Your Website" md-maxlength="100" placeholder="https://www.yourwebsite.com">
                 </md-input-container>
+            </md-whiteframe>
+        </md-content>
+
+        <md-content layout-padding>
+            <h3>Preferences</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-autocomplete-label>TIMEZONE</md-autocomplete-label>
+                <md-autocomplete
+                        md-no-cache="false"
+                        md-search-text="ProfileController.autocompleteSearchText"
+                        md-selected-item="ProfileController.user.timezoneIdentifier"
+                        md-selected-item-change="ProfileController.itemSelected()"
+                        md-items="timezone in ProfileController.searchTimezones(ProfileController.autocompleteSearchText)"
+                        md-min-length="1"
+                        placeholder="What is your current timezone?"
+                        ng-init="ProfileController.initAutocomplete()">
+                    <md-item-template>
+                        <span md-highlight-text="ProfileController.autocompleteSearchText" md-highlight-flags="^i"> {{ timezone }} </span>
+                    </md-item-template>
+                    <md-not-found>
+                        No matches found for "{{ ProfileController.autocompleteSearchText }}".
+                    </md-not-found>
+                </md-autocomplete>
             </md-whiteframe>
         </md-content>
 

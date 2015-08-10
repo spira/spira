@@ -54,6 +54,16 @@ namespace app.user.profile {
                     ) => {
                         return countriesService.getAllCountries()
                     },
+                    timezones:(
+                        timezonesService:common.services.timezones.TimezonesService
+                    ) => {
+                        // We don't need anything but the timezone identifier here
+                        return timezonesService.getAllTimezones()
+                            .then((timezones:common.services.timezones.ITimezoneDefinition[]) => {
+                                let result:string[] = _.pluck(timezones, 'timezoneIdentifier');
+                                return result;
+                            });
+                    },
                     userProfile:(
                         userService:common.services.user.UserService,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService
@@ -82,21 +92,25 @@ interface IStateParams extends ng.ui.IStateParamsService
 
 class ProfileController {
 
-    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'userProfile'];
+    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'timezones', 'userProfile', '$filter'];
         constructor(
             private userService:common.services.user.UserService,
             private $stateParams:IStateParams,
             public user:common.models.User,
             private $mdToast:ng.material.IToastService,
             public countries:common.services.countries.ICountryDefinition,
-            public userProfile:common.models.UserProfile
+            public timezones:string[],
+            public userProfile:common.models.UserProfile,
+            private $filter:ng.IFilterService
         ) {
 
             user._userProfile = userProfile;
 
         }
 
-        public updateProfile() {
+        public autocompleteSearchText:string;
+
+        public updateProfile():void {
             this.userService.updateProfile(this.user)
                 .then(() => {
                     this.$mdToast.show({
@@ -112,6 +126,22 @@ class ProfileController {
                         template:'<md-toast>Profile update was unsuccessful, please try again.</md-toast>'
                     });
                 })
+        }
+
+        public searchTimezones(search:string):string[] {
+            return _.filter(this.timezones, (s) => {
+                let regEx = new RegExp(search);
+                return regEx.test(s);
+            });
+        }
+
+        public itemSelected():void {
+            this.autocompleteSearchText = this.user.timezoneIdentifier;
+        }
+
+        public initAutocomplete():void {
+            this.autocompleteSearchText = this.user.timezoneIdentifier;
+            console.log("setting" + this.user.timezoneIdentifier);
         }
 
     }
