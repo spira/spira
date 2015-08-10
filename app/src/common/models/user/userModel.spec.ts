@@ -1,4 +1,4 @@
-(() => {
+namespace common.models {
 
     let seededChance = new Chance(1);
 
@@ -11,25 +11,36 @@
             lastName:seededChance.last(),
             emailConfirmed:seededChance.date(),
             country:seededChance.country(),
-            avatarImgUrl:seededChance.url()
+            avatarImgUrl:seededChance.url(),
+            userType: seededChance.pick(User.userTypes)
         };
 
         it('should instantiate a new user', () => {
 
-            let user = new common.models.User(userData);
+            let user = new User(userData);
 
-            expect(user).to.be.instanceOf(common.models.User);
+            expect(user).to.be.instanceOf(User);
 
         });
 
         it('should return the user\'s full name', () => {
 
-            let user = new common.models.User(userData);
+            let user = new User(userData);
 
             expect(user.fullName()).to.equal(userData.firstName + ' ' + userData.lastName);
 
         });
 
+        it('should be able to check if the user is an administrator', () => {
+
+            userData.userType = 'admin';
+
+            let user = new User(userData);
+
+            expect(user.isAdmin()).to.be.true;
+
+        });
+
     });
 
-})();
+}

@@ -6,7 +6,7 @@ describe('Bootstrap', () => {
 
     describe('isCurrentUrl', () => {
 
-        let AppCtrl, ngJwtAuthService;
+        let AppCtrl, ngJwtAuthService, $state;
 
         beforeEach(() => {
 
@@ -17,11 +17,12 @@ describe('Bootstrap', () => {
             inject(($controller, _$mdSidenav_, _ngJwtAuthService_, _$state_) => {
 
                 ngJwtAuthService = _ngJwtAuthService_;
+                $state = _$state_;
 
                 AppCtrl = $controller('app.controller', {
                     $mdSidenav : _$mdSidenav_,
                     ngJwtAuthService : ngJwtAuthService,
-                    $state : _$state_
+                    $state : $state
                 });
             })
         });
@@ -59,6 +60,21 @@ describe('Bootstrap', () => {
 
         });
 
+        describe('navigation actions', () => {
+
+            it('should navigate to the user profile', () => {
+
+                sinon.spy($state, 'go');
+
+                AppCtrl.goToUserProfile();
+
+                expect($state.go).to.have.been.calledWith('app.user.profile');
+
+                (<any>$state).go.restore();
+
+            });
+
+        });
 
 
     });
