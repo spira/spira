@@ -66,7 +66,8 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'permission' => 'App\Http\Middleware\PermissionMiddleware'
+    'permission' => 'App\Http\Middleware\PermissionMiddleware',
+    'transaction' => App\Http\Middleware\TransactionMiddleware::class
 ]);
 
 /*
@@ -97,7 +98,7 @@ $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 |
 */
 
-$app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
+$app->group(['namespace' => 'App\Http\Controllers'], function () {
     require __DIR__.'/../app/Http/routes.php';
 });
 
