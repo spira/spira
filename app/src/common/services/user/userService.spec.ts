@@ -124,9 +124,8 @@
 
                 it('should be able to create a new user and attempt login immediately',  () => {
 
-                    let user = _.clone(fixtures.user);
+                    let user = _.compactObject(fixtures.user);
                     delete user._self;
-
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
                         return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
