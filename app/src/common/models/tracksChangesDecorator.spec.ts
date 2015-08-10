@@ -7,6 +7,9 @@ let data:any = {
 
 @common.models.tracksChanges
 class TestModel extends common.models.Model {
+
+    public static staticMember = 'this-is-static';
+
     public string;
     public uuid;
 
@@ -58,7 +61,13 @@ class TestModel extends common.models.Model {
 
             expect((<common.models.ITracksChangesDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
-        })
+        });
+
+        it('should not overwrite static properties', () => {
+
+            expect(TestModel.staticMember).to.equal('this-is-static');
+
+        });
 
     });
 
