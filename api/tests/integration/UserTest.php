@@ -3,18 +3,10 @@
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserCredential;
-use Faker\Factory as Faker;
 
 class UserTest extends TestCase
 {
     use MailcatcherTrait;
-
-    /**
-     * Keep the array with unique data, to avoid query the db multiple times.
-     *
-     * @var  array
-     */
-    protected $uniques;
 
     public function setUp()
     {
@@ -32,67 +24,7 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
-    /**
-     * @return Faker
-     */
-    protected function getFakerWithUniqueUserData()
-    {
-        // Prepare an array with user data already used
-        $users = User::all();
-        if (!$this->uniques) {
-            $uniques = ['username' => [], 'email' => []];
-            foreach ($users as $user) {
-                array_push($uniques['username'], [$user->username => null]);
-                array_push($uniques['email'], [$user->email => null]);
-            }
-
-            $this->uniques = $uniques;
-        }
-
-        // As the array of already used faker data is protected in Faker and
-        // has no accessor method, we'll rely on ReflectionObject to modify
-        // the property before letting faker generate data.
-        $faker = Faker::create();
-        $unique = $faker->unique();
-
-        $object = new ReflectionObject($unique);
-        $property = $object->getProperty('uniques');
-        $property->setAccessible(true);
-        $property->setValue($unique, $this->uniques);
-
-        return $faker;
-    }
-
-    /**
-     * @param  array  $attributes
-     * @param  int    $times
-     *
-     * @return User|void
-     */
-    protected function createUser(array $attributes = [], $times = 1)
-    {
-        for ($i = 0; $i < $times; $i++) {
-            $faker = $this->getFakerWithUniqueUserData();
-            $default = [
-                'email' => $faker->unique()->email,
-                'username' => $faker->unique()->username,
-                'user_type' => 'admin'
-            ];
-            $attr = array_merge($default, $attributes);
-
-            $user = factory(User::class)->create($attr);
-
-            $user->setProfile(factory(UserProfile::class)->make());
-        }
-
-        if ($times === 1) {
-            return $user;
-        } else {
-            return;
-        }
-    }
-
-    public function teAstGetAllByAdminUser()
+    public function testGetAllByAdminUser()
     {
         $this->createUser([], 10);
         $user = $this->createUser();
