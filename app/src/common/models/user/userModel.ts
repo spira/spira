@@ -10,6 +10,7 @@ namespace common.models {
         public emailConfirmed:string;
         public country:string;
         public avatarImgUrl:string;
+        public timezoneIdentifier:string;
         public _userCredential:global.IUserCredential;
         public _userProfile:common.models.UserProfile;
 
