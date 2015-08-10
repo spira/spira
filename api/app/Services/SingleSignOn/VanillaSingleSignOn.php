@@ -63,14 +63,40 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         if (!$this->user) {
             return [];
         } else {
-            // Temporaray dummy user
             return [
                 'uniqueid' => $this->user->user_id,
                 'name' => $this->user->full_name,
                 'email' => $this->user->email,
-                'photourl' => $this->user->avatar_img_url
+                'photourl' => $this->user->avatar_img_url,
+                'roles' => $this->getMappedRoles()
             ];
         }
+    }
+
+    /**
+     * Convert spira roles to a string suitable for Vanilla.
+     *
+     * @return string
+     */
+    protected function getMappedRoles()
+    {
+        $roles = $this->user->roles->pluck('name');
+
+        // Map Spira to Vanilla roles
+        $roles = $roles->map(function ($role) {
+            $mapping = [
+                'admin' => 'administrator',
+                'guest' => 'member'
+            ];
+
+            if (array_key_exists($role, $mapping)) {
+                return $mapping[$role];
+            }
+
+            return $role;
+        });
+
+        return $roles->implode(',');
     }
 
     /**
