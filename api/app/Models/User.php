@@ -160,6 +160,19 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     * Scope a query by username.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string                                 $username
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUsername($query, $username)
+    {
+        return $query->where('username', 'ilike', $username);
+    }
+
+    /**
      * Get the password for the user.
      *
      * @return string

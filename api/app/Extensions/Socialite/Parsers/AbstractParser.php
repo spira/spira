@@ -7,6 +7,8 @@ use Illuminate\Contracts\Support\Arrayable;
 
 abstract class AbstractParser implements Arrayable
 {
+    use UsernameTrait;
+
     /**
      * User object to parse.
      *
@@ -50,13 +52,6 @@ abstract class AbstractParser implements Arrayable
     abstract protected function getEmailAttribute();
 
     /**
-     * Get the user's username.
-     *
-     * @return string
-     */
-    abstract protected function getUsernameAttribute();
-
-    /**
      * Get the user's first name.
      *
      * @return string
@@ -87,9 +82,16 @@ abstract class AbstractParser implements Arrayable
         $this->attributes = array_fill_keys($this->attributes, '');
 
         foreach (array_keys($this->attributes) as $attribute) {
+            // Get the attribute
             $method = camel_case('get_'.$attribute.'_attribute');
             if (method_exists($this, $method)) {
-                $this->attributes[$attribute] = $this->$method();
+                $this->attributes[$attribute] = $value = $this->$method();
+            }
+
+            // Filter the attribute
+            $method = camel_case('filter_'.$attribute.'_attribute');
+            if (method_exists($this, $method)) {
+                $this->attributes[$attribute] = $this->$method($value);
             }
         }
     }
