@@ -1,9 +1,9 @@
-namespace common.models {
+namespace common.decorators {
 
     export interface IChangeAwareDecorator{
         getChangedProperties?():string[];
         resetChangedProperties?():void;
-        getOriginal?():typeof Model;
+        getOriginal?():typeof common.models.AbstractModel;
         getChanged?():{
             [key:string]: any;
         };

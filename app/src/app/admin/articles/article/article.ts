@@ -78,8 +78,24 @@ namespace app.admin.articles.article {
 
     export class ArticleController {
 
-        static $inject = ['article', '$stateParams'];
-        constructor(public article:common.models.Article, public $stateParams:IArticleStateParams) {
+        static $inject = ['article', '$stateParams', 'articleService', '$mdToast'];
+        constructor(public article:common.models.Article, public $stateParams:IArticleStateParams, private articleService:common.services.article.ArticleService, private $mdToast:ng.material.IToastService) {
+        }
+
+        /**
+         * Save the article
+         * @returns {any}
+         */
+        public save(){
+
+            return this.articleService.saveArticle(this.article, this.$stateParams.newArticle)
+                .then(() => {
+                    this.$mdToast.show({
+                        hideDelay:2000,
+                        position:'top',
+                        template:'<md-toast>Article saved</md-toast>'
+                    });
+                });
         }
 
     }

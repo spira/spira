@@ -60,6 +60,21 @@ namespace common.services.article {
 
         }
 
+        /**
+         * Save the article
+         * @param article
+         * @param newArticle
+         * @returns {any}
+         */
+        public saveArticle(article:common.models.Article, newArticle:boolean = false){
+
+            let method = newArticle? 'put' : 'patch';
+
+            return this.ngRestAdapter[method]('/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged())
+                .then((res) => article);
+
+        }
+
     }
 
     angular.module(namespace, [])

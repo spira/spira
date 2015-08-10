@@ -1,7 +1,7 @@
 namespace common.models {
 
-    @changeAware
-    export class Article implements IModel{
+    @common.decorators.changeAware
+    export class Article extends AbstractModel{
 
         public articleId:string;
         public title:string;
@@ -11,6 +11,8 @@ namespace common.models {
         public status:string;
 
         constructor(data:any) {
+
+            super(data);
 
             _.assign(this, data);
 

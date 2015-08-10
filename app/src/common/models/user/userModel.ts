@@ -1,7 +1,7 @@
 namespace common.models {
 
-    @changeAware
-    export class User extends Model implements global.IUserData {
+    @common.decorators.changeAware
+    export class User extends AbstractModel implements global.IUserData {
 
         public static adminType = 'admin';
         public static guestType = 'guest';
