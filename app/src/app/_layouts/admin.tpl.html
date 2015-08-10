@@ -1,35 +1,45 @@
-<div layout="row" md-theme="adminTheme">
+<section md-theme="adminTheme" layout="column" layout-fill>
 
-    <md-sidenav
-            class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
-            md-component-id="navigation"
-            md-is-locked-open="$mdMedia('gt-sm')"
-            ui-view="navigation">
-    </md-sidenav>
+    <div layout="row" flex>
 
-    <div flex layout="column"
-         tabIndex="-1"
-         role="main"
-         class="md-whiteframe-z2"
-            >
+        <md-sidenav
+                class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
+                md-component-id="navigation"
+                md-is-locked-open="$mdMedia('gt-sm')"
+                ui-view="navigation">
+        </md-sidenav>
 
-        <md-toolbar layout="row" class="md-whiteframe-z1">
-            <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm
-                       ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
-                <md-icon>menu</md-icon>
-            </md-button>
-            <h2>Admin Dashboard</h2>
-        </md-toolbar>
-
-        <div layout="column"
+        <div flex layout="column"
+             tabIndex="-1"
              role="main"
-             layout-margin layout-fill
-             id="content"
-             ui-view="main"
+             class="md-whiteframe-z2"
                 >
+
+            <md-toolbar layout="row" class="md-whiteframe-z1">
+                <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm
+                           ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
+                    <md-icon>menu</md-icon>
+                </md-button>
+                <h2>Admin Dashboard</h2>
+            </md-toolbar>
+
+            <div layout="column"
+                 role="main"
+                 id="content"
+                 ui-view="main"
+                    >
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+
+    <footer>
+        <md-toolbar layout="row" layout-align="center-center">
+            <h4>Footer</h4>
+        </md-toolbar>
+    </footer>
+
+</section>

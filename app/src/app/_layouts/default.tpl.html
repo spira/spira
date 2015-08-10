@@ -1,4 +1,5 @@
-<div layout="column" >
+<header>
+
     <md-toolbar layout="row" class="md-whiteframe-z1" md-scroll-shrink="true">
         <h1>Spira</h1>
 
@@ -17,6 +18,9 @@
                 <md-button ui-sref="app.user.profile" class="md-fab md-raised md-mini">
                     <md-icon>face</md-icon>
                 </md-button>
+                <md-button ng-if="AppController.ngJwtAuthService.user.isAdmin()" ui-sref="app.admin.dashboard" class="md-fab md-raised md-mini md-fab-action-item">
+                    <md-icon>dashboard</md-icon>
+                </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
 
@@ -26,22 +30,28 @@
 
     </md-toolbar>
 
+    <nav layout="column" ui-view="navigation"></nav>
+
+</header>
 
 
-</div>
-
-<div layout="column" ui-view="navigation">
-
-</div>
-
-<div layout="column"
+<main layout="column"
      role="main"
-     layout-margin layout-fill layout-padding
+     layout-margin layout-padding
      id="content"
      ui-view="main"
         >
 
-</div>
+</main>
+
+<span flex></span>
+
+<footer>
+    <md-toolbar layout="row" layout-align="center-center">
+        <h4>Footer</h4>
+    </md-toolbar>
+</footer>
+
 
 <md-sidenav
         id="userRegistration"

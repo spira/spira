@@ -35,6 +35,7 @@ declare namespace global {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
+        userType?:string;
         _userCredential? : IUserCredential;
     }
 

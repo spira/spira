@@ -4,7 +4,7 @@
 
 <md-list>
     <md-list-item ng-click="AppController.goToUserProfile($event)">
-        <img alt="{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}" ng-src="{{ AdminNavigationController.ngJwtAuthService.user.avatar }}" class="md-avatar" />
+        <img ng-src="{{AdminNavigationController.ngJwtAuthService.user.avatarImgUrl}}" alt="{{AdminNavigationController.ngJwtAuthService.user.fullName()}}" class="md-avatar"/>
         <p>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
     </md-list-item>
 </md-list>
