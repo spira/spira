@@ -1,6 +1,6 @@
 namespace common.models {
 
-    @tracksChanges
+    @changeAware
     export class User extends Model implements global.IUserData {
 
         public userId:string;
