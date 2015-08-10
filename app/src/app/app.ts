@@ -81,9 +81,10 @@ namespace app {
 
         static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService, public ngJwtAuthService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService,
+                    public ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $state:ng.ui.IStateService) {
         }
-
 
         /**
          * Toggle the admin side navigation
@@ -96,13 +97,13 @@ namespace app {
          * Toggle the registration sidenav
          * @param open
          */
-        public toggleRegistrationSidenav(open:boolean) {
-            if (_.isUndefined(open)) {
-                this.$mdSidenav('registration').toggle();
-                return;
-            }
+        public toggleRegistrationSidenav(open:boolean = !this.$mdSidenav('registration').isOpen()) {
 
-            open ? this.$mdSidenav('registration').open() : this.$mdSidenav('registration').close();
+            if (open) {
+                this.$mdSidenav('registration').open();
+            } else {
+                this.$mdSidenav('registration').close();
+            }
 
         }
 
@@ -123,7 +124,7 @@ namespace app {
          * @param $event
          * @returns {angular.IPromise<any>|IPromise<any>}
          */
-        public goToUserProfile($event:ng.IAngularEvent){
+        public goToUserProfile($event:ng.IAngularEvent) {
             return this.$state.go('app.user.profile', $event);
         }
 

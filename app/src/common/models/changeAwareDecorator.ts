@@ -67,7 +67,7 @@ namespace common.models {
             Object.defineProperty(obj, 'getOriginal', {
                 enumerable: false,
                 value: function(){
-                    return construct(original, args);
+                    return construct(original, args, original.name);
                 }
             });
 
