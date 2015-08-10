@@ -17,6 +17,9 @@
                 <md-button ui-sref="app.user.profile" class="md-fab md-raised md-mini">
                     <md-icon>face</md-icon>
                 </md-button>
+                <md-button ng-if="AppController.ngJwtAuthService.user.isAdmin()" ui-sref="app.admin.dashboard" class="md-fab md-raised md-mini md-fab-action-item">
+                    <md-icon>dashboard</md-icon>
+                </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
 
