@@ -102,6 +102,22 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     *
+     * @todo Replace these two methods with the hasMany relationship for roles
+     *       when implementing. For now they "simulate" the relationship so
+     *       functionality accessing roles will get a similar dataset as when
+     *       the relation is implemented
+     */
+    public function roles()
+    {
+        return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
+    }
+    public function getRolesAttribute()
+    {
+        return $this->roles();
+    }
+
+    /**
      * Set the user's credentials.
      *
      * @param  UserCredential  $credential
