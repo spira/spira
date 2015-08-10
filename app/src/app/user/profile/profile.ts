@@ -54,6 +54,11 @@ namespace app.user.profile {
                     ) => {
                         return countriesService.getAllCountries()
                     },
+                    timezones:(
+                        timezonesService:common.services.timezones.TimezonesService
+                    ) => {
+                        return timezonesService.getAllTimezones();
+                    },
                     userProfile:(
                         userService:common.services.user.UserService,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService
@@ -82,13 +87,14 @@ interface IStateParams extends ng.ui.IStateParamsService
 
 class ProfileController {
 
-    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'userProfile'];
+    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'timezones', 'userProfile'];
         constructor(
             private userService:common.services.user.UserService,
             private $stateParams:IStateParams,
             public user:common.models.User,
             private $mdToast:ng.material.IToastService,
             public countries:common.services.countries.ICountryDefinition,
+            public timezones:common.services.timezones.ITimezoneDefinition,
             public userProfile:common.models.UserProfile
         ) {
 
@@ -96,7 +102,7 @@ class ProfileController {
 
         }
 
-        public updateProfile() {
+        public updateProfile():void {
             this.userService.updateProfile(this.user)
                 .then(() => {
                     this.$mdToast.show({
@@ -113,7 +119,6 @@ class ProfileController {
                     });
                 })
         }
-
     }
 
     angular.module(namespace, [])
