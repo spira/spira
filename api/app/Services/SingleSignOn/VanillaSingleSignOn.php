@@ -58,7 +58,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      *
      * @return array
      */
-    protected function formatUser()
+    public function formatUser()
     {
         if (!$this->user) {
             return [];
