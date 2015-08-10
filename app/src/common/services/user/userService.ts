@@ -133,6 +133,9 @@ namespace common.services.user {
         public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any> {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
+                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => {
+                    return rejection.status == 422;
+                })
                 .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
         }
 
