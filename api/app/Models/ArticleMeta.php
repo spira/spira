@@ -8,7 +8,9 @@
 
 namespace App\Models;
 
-class ArticleMeta extends BaseModel
+use Illuminate\Database\Eloquent\Builder;
+
+class ArticleMeta extends ChildBaseModel
 {
     /**
      * The database table used by the model.
@@ -41,5 +43,26 @@ class ArticleMeta extends BaseModel
     public function article()
     {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');
+    }
+
+
+    /**
+     * @param Builder $query
+     * @param BaseModel $parent
+     * @return Builder
+     */
+    protected function attachParentModelToQuery(Builder $query, BaseModel $parent)
+    {
+        $query->where('article_id','=',$parent->article_id);
+        return $query;
+    }
+
+    /**
+     * @param BaseModel $parent
+     * @return void
+     */
+    public function attachParent(BaseModel $parent)
+    {
+        $this->article_id = $parent->article_id;
     }
 }

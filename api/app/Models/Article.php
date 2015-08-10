@@ -91,18 +91,18 @@ class Article extends BaseModel
      * @param string $id article_id or permalink
      * @return Article
      */
-    public function find($id)
+    public function findByPermalink($id)
     {
         //if the id is a uuid, try that or fail.
         if (Uuid::isValid($id)) {
-            return parent::find($id);
+            return parent::findOrFail($id);
         }
 
         //otherwise attempt treat the id as a permalink and first try the model, then try the history
         try {
             return $this->where('permalink', '=', $id)->firstOrFail();
         } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
-            return ArticlePermalink::find($id)->article;
+            return ArticlePermalink::findOrFail($id)->article;
         }
     }
 

@@ -9,16 +9,30 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Repositories\ArticleRepository;
+use App\Models\Article;
+use App\Models\ArticleMeta;
+use Spira\Repository\Model\BaseModel;
 
 class ArticleMetaController extends ChildEntityController
 {
-    protected $validateRequestRule = 'required|string';
+    protected $validateParentRequestRule = 'required|string';
     protected $validateChildRequestRule = 'required|string';
-    protected $relationName = 'metas';
 
-    public function __construct(ArticleRepository $repository, EloquentModelTransformer $transformer)
+
+    public function __construct(Article $parentModel, ArticleMeta $childModel, EloquentModelTransformer $transformer)
     {
-        parent::__construct($repository, $transformer);
+        parent::__construct($parentModel, $childModel, $transformer);
     }
+
+    /**
+     * @param $id
+     * @return BaseModel
+     */
+    protected function getParentEntityById($id)
+    {
+        /** @var Article $model */
+        $model = $this->getParentModel();
+        return $model->findByPermalink($id);
+    }
+
 }
