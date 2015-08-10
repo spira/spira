@@ -1,11 +1,15 @@
 namespace common.models {
 
-    export interface ITracksChangesDecorator{
+    export interface IChangeAwareDecorator{
         getChangedProperties?():string[];
         resetChangedProperties?():void;
+        getOriginal?():typeof Model;
+        getChanged?():{
+            [key:string]: any;
+        };
     }
 
-    export function tracksChanges(target: any) {
+    export function changeAware(target: any) {
 
         // save a reference to the original constructor
         var original = target;
@@ -40,6 +44,20 @@ namespace common.models {
                 }
             });
 
+            Object.defineProperty(obj, 'getChanged', {
+                enumerable: false,
+                value: function(){
+                    return _.pick(this, changedProperties);
+                }
+            });
+
+            Object.defineProperty(obj, 'getOriginal', {
+                enumerable: false,
+                value: function(){
+                    return construct(original, args);
+                }
+            });
+
             _.forIn(obj, (val, propName) => {
 
                 let value = val; //store the value locally
@@ -55,6 +73,8 @@ namespace common.models {
 
                         if (changedProperties.indexOf(propName) === -1){
                             changedProperties.push(propName);
+                        }else if (v === this.getOriginal()[propName]){
+                            changedProperties = _.without(changedProperties, propName); //remove the changed properties if it becomes unchanged
                         }
                     }
                 });
