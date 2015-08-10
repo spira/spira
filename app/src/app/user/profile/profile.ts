@@ -65,32 +65,31 @@ namespace app.user.profile {
                     ) => {
                         return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
                     }
-},
-data: {
-    title: "User Profile",
-        icon: 'extension',
-        navigation: true,
-}
-};
+                },
+                data: {
+                    title: "User Profile",
+                        icon: 'extension',
+                        navigation: true,
+                }
+            };
 
-stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, state);
 
-}
+        }
 
-}
+    }
 
-interface IStateParams extends ng.ui.IStateParamsService
-{
-    onBoard?:boolean;
-    emailConfirmationToken?:string;
-}
+    interface IStateParams extends ng.ui.IStateParamsService
+    {
+        onBoard?:boolean;
+        emailConfirmationToken?:string;
+    }
 
-class ProfileController {
+    export class ProfileController {
 
-    static $inject = ['userService', '$stateParams', 'user', '$mdToast', 'countries', 'timezones', 'userProfile'];
+        static $inject = ['userService', 'user', '$mdToast', 'countries', 'timezones', 'userProfile'];
         constructor(
             private userService:common.services.user.UserService,
-            private $stateParams:IStateParams,
             public user:common.models.User,
             private $mdToast:ng.material.IToastService,
             public countries:common.services.countries.ICountryDefinition,
@@ -124,5 +123,8 @@ class ProfileController {
     angular.module(namespace, [])
         .config(ProfileConfig)
         .controller(namespace+'.controller', ProfileController);
-
 }
+
+
+
+
