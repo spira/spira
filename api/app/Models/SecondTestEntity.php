@@ -8,7 +8,9 @@
 
 namespace App\Models;
 
-class SecondTestEntity extends BaseModel
+use Illuminate\Database\Eloquent\Builder;
+
+class SecondTestEntity extends ChildBaseModel
 {
     public $table = 'second_test_entities';
 
@@ -28,4 +30,23 @@ class SecondTestEntity extends BaseModel
             'check_entity_id' => 'uuid',
             'value' => 'required|string'
         ];
+
+    /**
+     * @param Builder $query
+     * @param BaseModel $parent
+     * @return Builder
+     */
+    protected function attachParentModelToQuery(Builder $query, BaseModel $parent)
+    {
+        return $query->where('check_entity_id','=', $parent->entity_id);
+    }
+
+    /**
+     * @param BaseModel $parent
+     * @return void
+     */
+    public function attachParent(BaseModel $parent)
+    {
+        $this->check_entity_id = $parent->entity_id;
+    }
 }

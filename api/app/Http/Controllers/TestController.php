@@ -1,19 +1,15 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Repositories\TestRepository;
+use App\Models\TestEntity;
 
 class TestController extends EntityController
 {
-    /**
-     * Assign dependencies.
-     * @param TestRepository $repository
-     * @param EloquentModelTransformer $transformer
-     */
-    public function __construct(TestRepository $repository, EloquentModelTransformer $transformer)
+    public function __construct(TestEntity $model, EloquentModelTransformer $transformer)
     {
-        parent::__construct($repository, $transformer);
+        parent::__construct($model, $transformer);
     }
+
 
     public function urlEncode($id)
     {

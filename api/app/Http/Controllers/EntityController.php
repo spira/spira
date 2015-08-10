@@ -155,7 +155,7 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->createdCollection($models);
+            ->createdCollection($putModels);
     }
 
     /**
