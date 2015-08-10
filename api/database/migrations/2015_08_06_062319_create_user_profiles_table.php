@@ -22,7 +22,7 @@ class CreateUserProfilesTable extends Migration
             $table->string('phone', 45)->nullable();
             $table->string('mobile', 45)->nullable();
             $table->date('dob')->nullable();
-            $table->enum('gender', array('M', 'F', 'N/A'))->nullable();
+            $table->enum('gender', ['M', 'F', 'N/A'])->nullable();
             $table->string('about', $modelClass::ABOUT_LENGTH)->nullable();
             $table->string('facebook', 100)->nullable();
             $table->string('twitter', 45)->nullable();
