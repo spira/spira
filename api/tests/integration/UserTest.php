@@ -71,7 +71,6 @@ class UserTest extends TestCase
      */
     protected function createUser(array $attributes = [], $times = 1)
     {
-
         for ($i = 0; $i < $times; $i++) {
             $faker = $this->getFakerWithUniqueUserData();
             $default = [
