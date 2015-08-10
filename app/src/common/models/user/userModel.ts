@@ -7,17 +7,17 @@ namespace common.models {
         public static guestType = 'guest';
         public static userTypes:string[] = [User.adminType, User.guestType];
 
-        public userId:string;
-        public email:string;
-        public firstName:string;
-        public lastName:string;
-        public emailConfirmed:string;
-        public country:string;
-        public avatarImgUrl:string;
-        public timezoneIdentifier:string;
-        public _userCredential:global.IUserCredential;
-        public _userProfile:common.models.UserProfile;
-        public userType:string;
+        public userId:string = undefined;
+        public email:string = undefined;
+        public firstName:string = undefined;
+        public lastName:string = undefined;
+        public emailConfirmed:string = undefined;
+        public country:string = undefined;
+        public avatarImgUrl:string = undefined;
+        public timezoneIdentifier:string = undefined;
+        public _userCredential:global.IUserCredential = undefined;
+        public _userProfile:common.models.UserProfile = undefined;
+        public userType:string = undefined;
 
         constructor(data:global.IUserData) {
             super(data);

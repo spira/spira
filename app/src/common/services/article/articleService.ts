@@ -64,14 +64,17 @@ namespace common.services.article {
          * Save the article
          * @param article
          * @param newArticle
-         * @returns {any}
+         * @returns ng.IPromise<common.models.Article>
          */
-        public saveArticle(article:common.models.Article, newArticle:boolean = false){
+        public saveArticle(article:common.models.Article, newArticle:boolean = false):ng.IPromise<common.models.Article>{
 
             let method = newArticle? 'put' : 'patch';
 
             return this.ngRestAdapter[method]('/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged())
-                .then((res) => article);
+                .then((res) => {
+                    (<common.decorators.IChangeAwareDecorator>article).resetChangedProperties(); //reset so next save only saves the changed ones
+                    return article;
+                });
 
         }
 

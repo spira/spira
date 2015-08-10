@@ -3,12 +3,12 @@ namespace common.models {
     @common.decorators.changeAware
     export class Article extends AbstractModel{
 
-        public articleId:string;
-        public title:string;
-        public permalink:string;
-        public content:string;
-        public primaryImage:string;
-        public status:string;
+        public articleId:string = undefined;
+        public title:string = undefined;
+        public permalink:string = undefined;
+        public content:string = undefined;
+        public primaryImage:string = undefined;
+        public status:string = undefined;
 
         constructor(data:any) {
 
