@@ -51,7 +51,7 @@ namespace app.admin.articles.article {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams) => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.permalink || $stateParams.permalink == 'new'){
                             let newArticle = articleService.newArticle();
