@@ -7,10 +7,10 @@ namespace app.guest.registration {
         submitting:boolean;
     }
 
-    class RegistrationController {
+    export class RegistrationController {
 
         public isOpen = () => false;
-        public socialLogin
+        public socialLogin;
 
         public submitting:boolean = false;
 

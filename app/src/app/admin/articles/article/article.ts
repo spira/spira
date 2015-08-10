@@ -53,9 +53,9 @@ namespace app.admin.articles.article {
                 resolve: /*@ngInject*/{
                     article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams) => {
 
-                        if (!$stateParams.permalink){
+                        if (!$stateParams.permalink || $stateParams.permalink == 'new'){
                             let newArticle = articleService.newArticle();
-                            $stateParams.permalink = newArticle.getIdentifier();
+                            $stateParams.permalink = 'new';
                             $stateParams.newArticle = true;
                             return newArticle;
                         }
