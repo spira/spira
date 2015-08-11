@@ -68,6 +68,9 @@ namespace app.user.profile {
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService
                     ) => {
                         return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
+                    },
+                    genderOptions:() => {
+                        return common.models.UserProfile.genderOptions;
                     }
                 },
                 data: {
@@ -91,14 +94,15 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'user', '$mdToast', 'countries', 'timezones', 'userProfile'];
+        static $inject = ['userService', 'user', '$mdToast', 'countries', 'timezones', 'userProfile', 'genderOptions'];
         constructor(
             private userService:common.services.user.UserService,
             public user:common.models.User,
             private $mdToast:ng.material.IToastService,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
-            public userProfile:common.models.UserProfile
+            public userProfile:common.models.UserProfile,
+            public genderOptions:common.models.IGenderOption[]
         ) {
 
             user._userProfile = userProfile;
