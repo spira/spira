@@ -4,7 +4,7 @@ describe('Registration', () => {
 
     describe('Configuration', () => {
 
-        let RegistrationController:ng.IControllerService,
+        let RegistrationController:app.guest.registration.RegistrationController,
             $scope:app.guest.registration.IScope,
             $mdDialog:ng.material.IDialogService,
             userService:common.services.user.UserService,
@@ -55,7 +55,7 @@ describe('Registration', () => {
 
         it('should attempt registration of a user', () => {
 
-            $scope.registerUser(email, password, first, last);
+            RegistrationController.registerUser(email, password, first, last);
 
             expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, password, first, last);
             expect($state.go).not.to.have.been.called;
@@ -64,7 +64,7 @@ describe('Registration', () => {
 
         it('should attempt registration of a user and redirect to the profile page when requested', () => {
 
-            let userPromise = $scope.registerUser(email, password, first, last, true);
+            let userPromise = RegistrationController.registerUser(email, password, first, last, true);
 
             expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, password, first, last);
 

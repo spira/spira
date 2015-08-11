@@ -1,26 +1,24 @@
-let seededChance = new Chance(1);
+namespace common.decorators {
 
-let data:any = {
-    uuid:seededChance.guid(),
-    string:seededChance.string(),
-};
+    let seededChance = new Chance(1);
 
-@common.models.changeAware
-class TestModel extends common.models.Model {
-    public string;
-    public uuid;
+    let data:any = {
+        uuid:seededChance.guid(),
+        string:seededChance.string(),
+    };
 
-    constructor(data){
-        super(data);
-        _.assign(this, data);
+    @changeAware
+    class TestModel extends common.models.AbstractModel {
+        public string;
+        public uuid;
+
+        constructor(data){
+            super(data);
+            _.assign(this, data);
+        }
     }
-}
-
-(() => {
-
 
     describe('@changeAware decorator', () => {
-
 
         it('should instantiate a new model', () => {
 
@@ -34,7 +32,7 @@ class TestModel extends common.models.Model {
 
             let model = new TestModel(data);
 
-            expect((<common.models.IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
+            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
         });
 
@@ -44,7 +42,7 @@ class TestModel extends common.models.Model {
 
             model.string = 'foo';
 
-            expect((<common.models.IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.include('string');
+            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.include('string');
 
         });
 
@@ -54,37 +52,36 @@ class TestModel extends common.models.Model {
 
             model.string = 'foo';
 
-            (<common.models.IChangeAwareDecorator>model).resetChangedProperties();
+            (<IChangeAwareDecorator>model).resetChangedProperties();
 
-            expect((<common.models.IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
+            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
         });
 
         it('should be able to retrieve the original unmodified object', () => {
-
 
             let original = new TestModel(data);
             let model = new TestModel(data);
 
             model.string = 'foo'; //make a change
 
-            expect((<common.models.IChangeAwareDecorator>model).getOriginal()).to.deep.equal(original);
+            expect((<IChangeAwareDecorator>model).getOriginal()).to.deep.equal(original);
 
         });
 
-        it ('should be able to retrieve the changed key-value map', () => {
+        it('should be able to retrieve the changed key-value map', () => {
 
             let model = new TestModel(data);
 
             model.string = 'foo'; //make a change
 
-            expect((<common.models.IChangeAwareDecorator>model).getChanged()).to.deep.equal({
+            expect((<IChangeAwareDecorator>model).getChanged()).to.deep.equal({
                 string: 'foo'
             });
 
         });
 
-        it ('should not mark a property as changed if it returns to it\'s original value', () => {
+        it('should not mark a property as changed if it returns to it\'s original value', () => {
 
             let original = new TestModel(data);
             let model = new TestModel(data);
@@ -92,10 +89,10 @@ class TestModel extends common.models.Model {
             model.string = 'foo'; //make a change
             model.string = original.string; //change it back
 
-            expect((<common.models.IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
+            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
         });
 
     });
 
-})();
+}

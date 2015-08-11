@@ -9,7 +9,10 @@ namespace common.models {
             email:seededChance.email(),
             firstName:seededChance.first(),
             lastName:seededChance.last(),
-            userType: seededChance.pick(User.userTypes),
+            emailConfirmed:seededChance.date(),
+            country:seededChance.country(),
+            avatarImgUrl:seededChance.url(),
+            userType: seededChance.pick(User.userTypes)
         };
 
         it('should instantiate a new user', () => {
@@ -24,7 +27,7 @@ namespace common.models {
 
             let user = new User(userData);
 
-            expect(user.fullName()).to.equal(userData.firstName + ' '+userData.lastName);
+            expect(user.fullName()).to.equal(userData.firstName + ' ' + userData.lastName);
 
         });
 

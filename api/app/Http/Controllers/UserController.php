@@ -175,7 +175,11 @@ class UserController extends EntityController
             $model->setProfile($profile);
         }
 
-        return $this->getResponse()->noContent();
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+
+        $token = $jwtAuth->fromUser($model);
+
+        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
 
     /**

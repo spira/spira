@@ -3,21 +3,21 @@
 
 Register with:
 
-<md-button class="md-fab" aria-label="Register with Facebook" ng-click="socialLogin('facebook', 'app.user.profile', {onBoard: true})">
+<md-button class="md-fab" aria-label="Register with Facebook" ng-click="RegistrationController.socialLogin('facebook', 'app.user.profile', {onBoard: true})">
     <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>
 </md-button>
 
-<md-button class="md-fab" aria-label="Register with Twitter" ng-click="socialLogin('twitter', 'app.user.profile', {onBoard: true})">
+<md-button class="md-fab" aria-label="Register with Twitter" ng-click="RegistrationController.socialLogin('twitter', 'app.user.profile', {onBoard: true})">
     <md-icon md-font-icon="fa fa-2x fa-twitter"></md-icon>
 </md-button>
 
-<md-button class="md-fab" aria-label="Register with Google" ng-click="socialLogin('google', 'app.user.profile', {onBoard: true})">
+<md-button class="md-fab" aria-label="Register with Google" ng-click="RegistrationController.socialLogin('google', 'app.user.profile', {onBoard: true})">
     <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
 </md-button>
 
 <form novalidate name="registrationForm">
 
-    <fieldset ng-disabled="submitting">
+    <fieldset ng-disabled="RegistrationController.submitting">
 
         <md-input-container class="md-icon-float">
             <label for="registrationForm.email">Email</label>
@@ -52,7 +52,7 @@ Register with:
 
         <md-button
                 class="md-raised md-primary"
-                ng-click="registerUser(user.email, user.password, user.firstName, user.lastName, true)"
+                ng-click="RegistrationController.registerUser(user.email, user.password, user.firstName, user.lastName, true)"
                 ng-disabled="registrationForm.$invalid"
                 >Register
         </md-button>

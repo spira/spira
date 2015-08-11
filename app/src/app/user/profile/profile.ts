@@ -16,6 +16,7 @@ namespace app.user.profile {
                 views: {
                     "main@app.user": {
                         controller: namespace+'.controller',
+                        controllerAs: 'ProfileController',
                         templateUrl: 'templates/app/user/profile/profile.tpl.html'
                     }
                 },
@@ -27,7 +28,8 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         $stateParams:IStateParams,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                        $mdToast:ng.material.IToastService
+                        $mdToast:ng.material.IToastService,
+                        $location:ng.ILocationService
                     ) => {
                         if(!_.isEmpty($stateParams.emailConfirmationToken)) {
                             userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
@@ -38,6 +40,9 @@ namespace app.user.profile {
                                             .position('top right')
                                             .content('Your email has successfully been updated')
                                     );
+
+                                    $location.search('emailConfirmationToken', null);
+
                                 }, (err) => {
                                     $mdToast.show(
                                         $mdToast.simple()
@@ -47,12 +52,28 @@ namespace app.user.profile {
                                     );
                                 });
                         }
+                    },
+                    countries:(
+                        countriesService:common.services.countries.CountriesService
+                    ) => {
+                        return countriesService.getAllCountries()
+                    },
+                    timezones:(
+                        timezonesService:common.services.timezones.TimezonesService
+                    ) => {
+                        return timezonesService.getAllTimezones();
+                    },
+                    userProfile:(
+                        userService:common.services.user.UserService,
+                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+                    ) => {
+                        return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
                     }
                 },
                 data: {
                     title: "User Profile",
-                    icon: 'extension',
-                    navigation: true,
+                        icon: 'extension',
+                        navigation: true,
                 }
             };
 
@@ -62,34 +83,52 @@ namespace app.user.profile {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
-
     interface IStateParams extends ng.ui.IStateParamsService
     {
         onBoard?:boolean;
         emailConfirmationToken?:string;
     }
 
-    class ProfileController {
+    export class ProfileController {
 
-        static $inject = ['$scope', 'userService', '$stateParams'];
+        static $inject = ['userService', 'user', '$mdToast', 'countries', 'timezones', 'userProfile'];
         constructor(
-            private $scope : IScope,
             private userService:common.services.user.UserService,
-            private $stateParams:IStateParams
+            public user:common.models.User,
+            private $mdToast:ng.material.IToastService,
+            public countries:common.services.countries.ICountryDefinition,
+            public timezones:common.services.timezones.ITimezoneDefinition,
+            public userProfile:common.models.UserProfile
         ) {
 
-            let runOnBoarding = $stateParams.onBoard;
-            //@todo complete controller
+            user._userProfile = userProfile;
 
         }
 
+        public updateProfile():void {
+            this.userService.updateProfile(this.user)
+                .then(() => {
+                    this.$mdToast.show({
+                        hideDelay:2000,
+                        position:'top',
+                        template:'<md-toast>Profile update was successful.</md-toast>'
+                    });
+                },
+                (err) => {
+                    this.$mdToast.show({
+                        hideDelay:2000,
+                        position:'top',
+                        template:'<md-toast>Profile update was unsuccessful, please try again.</md-toast>'
+                    });
+                })
+        }
     }
 
     angular.module(namespace, [])
         .config(ProfileConfig)
         .controller(namespace+'.controller', ProfileController);
-
 }
+
+
+
+
