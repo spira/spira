@@ -5,6 +5,10 @@
         "vanilla/addons": "1.4.5",
         "kasperisager/vanilla-api": "dev-master#8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "guzzlehttp/guzzle": "5.3.*"
+    },
     "repositories": [
         {
             "type": "git",
