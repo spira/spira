@@ -51,7 +51,7 @@ abstract class EntityController extends ApiController
         $count = $this->countEntities();
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getAllEntities($limit,$offset);
+        $collection = $this->getAllEntities($limit, $offset);
 
         return $this->getResponse()
             ->transformer($this->transformer)
