@@ -61,7 +61,44 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     public function getResponse()
     {
-        return $this->response($this->formatUser(), $this->secure);
+        // Validate the request
+        if ($this->secure) {
+            try {
+                $this->validateRequest();
+            } catch (VanillaException $e) {
+                return $this->formatResponse([
+                    'error' => $e->getType(),
+                    'message' => $e->getMessage()
+                ]);
+            }
+        }
+
+        $user = $this->formatUser();
+
+        if (!$this->request->has('timestamp') && !$this->request->has('signature')) {
+            if (is_array($user) && count($user) > 0) {
+                // We are only going to return public information when no signature is sent.
+                $result = [
+                    'name' => $user['name'],
+                    'photourl' => @$user['photourl']
+                ];
+            } else {
+                $result = [
+                    'name' => '',
+                    'photourl' => ''
+                ];
+            }
+        } elseif (is_array($user) && count($user) > 0) {
+            if ($this->secure === null) {
+                $result = $user;
+            } else {
+                $result = $this->sign($user, $this->secure, true);
+            }
+        } else {
+            $result = ['name' => '', 'photourl' => ''];
+        }
+
+        return $this->formatResponse($result);
     }
 
     /**
@@ -111,61 +148,21 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     }
 
     /**
-     * Generate the response string that Vanilla expects.
+     * Format the response as expected by Vanilla.
      *
-     * @param  array  $user
-     * @param  mixed  $secure
+     * @param  array  $data
      *
      * @return string
      */
-    protected function response($user, $secure = true)
+    protected function formatResponse(array $data)
     {
-        $user = array_change_key_case($user);
-
-        // Check if there are any errors in the request, when using signatures.
-        if ($secure) {
-            try {
-                $this->validateRequest();
-            } catch (VanillaException $e) {
-                $error = [
-                    'error' => $e->getType(),
-                    'message' => $e->getMessage()
-                ];
-            }
-        }
-
-        if (isset($error)) {
-            $result = $error;
-        } elseif (!$this->request->has('timestamp') && !$this->request->has('signature')) {
-            if (is_array($user) && count($user) > 0) {
-                // We are only going to return public information when no signature is sent.
-                $result = [
-                    'name' => $user['name'],
-                    'photourl' => @$user['photourl']
-                ];
-            } else {
-                $result = [
-                    'name' => '',
-                    'photourl' => ''
-                ];
-            }
-        } elseif (is_array($user) && count($user) > 0) {
-            if ($secure === null) {
-                $result = $user;
-            } else {
-                $result = $this->sign($user, $secure, true);
-            }
-        } else {
-            $result = ['name' => '', 'photourl' => ''];
-        }
-
-        $json = json_encode($result);
+        $encoded = json_encode($data);
 
         if ($this->request->has('callback')) {
-            return sprintf('%s(%s)', $this->request->get('callback'), $json);
-        } else {
-            return $json;
+            $encoded = sprintf('%s(%s)', $this->request->get('callback'), $encoded);
         }
+
+        return $encoded;
     }
 
     /**
@@ -278,6 +275,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         ];
 
         foreach ($validators as $validator => $condition) {
+            // First make sure the conditions are fulfilled for the validator
             if ($condition) {
                 $method = camel_case('validCondition_'.$condition);
 
