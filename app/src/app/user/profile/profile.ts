@@ -28,7 +28,8 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         $stateParams:IStateParams,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                        $mdToast:ng.material.IToastService
+                        $mdToast:ng.material.IToastService,
+                        $location:ng.ILocationService
                     ) => {
                         if(!_.isEmpty($stateParams.emailConfirmationToken)) {
                             userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
@@ -39,6 +40,9 @@ namespace app.user.profile {
                                             .position('top right')
                                             .content('Your email has successfully been updated')
                                     );
+
+                                    $location.search('emailConfirmationToken', null);
+
                                 }, (err) => {
                                     $mdToast.show(
                                         $mdToast.simple()

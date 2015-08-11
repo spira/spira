@@ -1,0 +1,50 @@
+<h2 ng-if="ArticleController.$stateParams.newArticle">Create</h2>
+<h2 ng-if="!ArticleController.$stateParams.newArticle">Edit</h2>
+
+
+    <md-input-container>
+        <label for="articleFormTitle">Title</label>
+
+        <input id="articleFormTitle" ng-model="ArticleController.article.title" name="title" type="text" ng-required="true">
+        <ng-messages for="articleFormTitle.title.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-input-container>
+        <label for="articleFormPermalink">Permalink</label>
+
+        <input id="articleFormPermalink" ng-model="ArticleController.article.permalink" name="permalink" type="text" ng-required="true" ng-change="ArticleController.updatePermalink()">
+        <ng-messages for="articleFormTitle.permalink.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+
+    <md-input-container flex>
+        <label for="articleFormContent">Content</label>
+
+        <textarea id="articleFormContent" ng-model="ArticleController.article.content" columns="1"></textarea>
+        <ng-messages for="articleFormTitle.title.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-input-container flex>
+        <label for="articleFormExcerpt">Excerpt</label>
+
+        <textarea id="articleFormExcerpt" ng-model="ArticleController.article.excerpt" columns="1" md-maxlength="140"></textarea>
+        <ng-messages for="articleFormTitle.excerpt.$error">
+            <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-chips
+            ng-init="ArticleController.article.tags = []"
+            ng-model="ArticleController.article.tags"
+            readonly="false"
+            placeholder="Enter a tag"
+            delete-button-label="Remove Tag"
+            delete-hint="Press delete to remove tag"
+            secondary-placeholder="+Tag"></md-chips>
+

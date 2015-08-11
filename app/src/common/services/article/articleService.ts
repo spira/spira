@@ -21,6 +21,18 @@ namespace common.services.article {
         }
 
         /**
+         * Get a new article with no values and a set uuid
+         * @returns {common.models.Article}
+         */
+        public newArticle():common.models.Article {
+
+            return new common.models.Article({
+                articleId: this.ngRestAdapter.uuid(),
+            });
+
+        }
+
+        /**
          * Get the article paginator
          * @returns {Paginator}
          */
@@ -45,6 +57,24 @@ namespace common.services.article {
 
             return this.ngRestAdapter.get('/articles/'+identifier)
                 .then((res) => ArticleService.articleFactory(res.data));
+
+        }
+
+        /**
+         * Save the article
+         * @param article
+         * @param newArticle
+         * @returns ng.IPromise<common.models.Article>
+         */
+        public saveArticle(article:common.models.Article, newArticle:boolean = false):ng.IPromise<common.models.Article>{
+
+            let method = newArticle? 'put' : 'patch';
+
+            return this.ngRestAdapter[method]('/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged())
+                .then((res) => {
+                    (<common.decorators.IChangeAwareDecorator>article).resetChangedProperties(); //reset so next save only saves the changed ones
+                    return article;
+                });
 
         }
 

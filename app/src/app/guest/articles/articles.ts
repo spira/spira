@@ -24,6 +24,9 @@ namespace app.guest.articles {
                         return articlesPaginator.getNext();
                     }
                 },
+                onExit: ['articlesPaginator', (articlesPaginator:common.services.pagination.Paginator) => {
+                    articlesPaginator.reset();
+                }],
                 data: {
                     title: "Articles",
                     role: 'guest',

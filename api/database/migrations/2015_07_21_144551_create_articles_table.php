@@ -16,7 +16,7 @@ class CreateArticlesTable extends Migration
         Schema::create(Article::getTableName(), function (Blueprint $table) {
                 $table->uuid('article_id')->primary();
                 $table->string('title', 255);
-                $table->enum('status', Article::$statuses);
+                $table->enum('status', Article::$statuses)->default(Article::STATUS_DRAFT);
                 $table->text('content');
                 $table->text('excerpt')->nullable();
                 $table->string('primary_image')->nullable();

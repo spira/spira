@@ -6,16 +6,16 @@ module common.models {
 
     export class UserProfile implements IModel {
 
-        public dob:string;
-        public mobile:string;
-        public phone:string;
-        public gender:string;
-        public about:string;
-        public facebook:string;
-        public twitter:string;
-        public pinterest:string;
-        public instagram:string;
-        public website:string;
+        public dob:string = undefined;
+        public mobile:string = undefined;
+        public phone:string = undefined;
+        public gender:string = undefined;
+        public about:string = undefined;
+        public facebook:string = undefined;
+        public twitter:string = undefined;
+        public pinterest:string = undefined;
+        public instagram:string = undefined;
+        public website:string = undefined;
 
         public static genderOptions:IGenderOption[] = [
             {label: 'Male', value: 'M'},
