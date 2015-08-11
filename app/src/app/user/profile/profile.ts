@@ -101,6 +101,10 @@ namespace app.user.profile {
 
         }
 
+        public genderOptions():common.models.IGenderOption[] {
+            return common.models.UserProfile.genderOptions;
+        }
+
         public updateProfile():void {
             this.userService.updateProfile(this.user)
                 .then(() => {

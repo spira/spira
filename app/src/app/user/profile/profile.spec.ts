@@ -82,8 +82,20 @@ namespace app.user.profile {
 
         });
 
+        describe('Internal Functions', () => {
 
-        describe('interactions', () => {
+            it('should return a list of gender options', () => {
+
+                let genderOptions = ProfileController.genderOptions();
+
+                expect(genderOptions).to.deep.equal(common.models.UserProfile.genderOptions);
+
+            });
+
+        });
+
+
+        describe('User Interactions', () => {
 
             it('should be able to update the profile', () => {
 
@@ -97,7 +109,7 @@ namespace app.user.profile {
 
             });
 
-            it('should display an error message on failure', () => {
+            it('should display an error message on profile update failure', () => {
 
                 ProfileController.user.email = 'invalid@email.com';
 

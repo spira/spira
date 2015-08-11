@@ -33,7 +33,7 @@
                 <md-input-container class="md-icon-float">
                     <md-radio-group-label>ARE YOU</md-radio-group-label>
                     <md-radio-group ng-model="ProfileController.user._userProfile.gender">
-                        <md-radio-button ng-repeat="option in common.models.UserProfile.genderOptions"
+                        <md-radio-button ng-repeat="option in ProfileController.genderOptions()"
                                          ng-value="option.value">
                             {{ option.label }}
                         </md-radio-button>
