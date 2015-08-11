@@ -460,18 +460,10 @@ class AuthTest extends TestCase
     public function testTokenToCookie()
     {
         $controller = Mockery::mock('App\Http\Controllers\AuthController');
-        $request = Mockery::mock('Illuminate\Http\Request');
 
-        // Test with 3 segment host
-        $request->shouldReceive('getHost')->once()->andReturn('api.spira.io');
-        $cookie = $controller->tokenToCookie('token', $request);
+        $cookie = $controller->tokenToCookie('token');
+
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Cookie', $cookie);
-        $this->assertEquals('spira.io', $cookie->getDomain());
-
-        // Test with 4 segment host
-        $request->shouldReceive('getHost')->once()->andReturn('local.api.spira.io');
-        $cookie = $controller->tokenToCookie('token', $request);
-        $this->assertEquals('spira.io', $cookie->getDomain());
     }
 
     public function testSingleSignOnVanillaNoParameters()

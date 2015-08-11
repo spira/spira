@@ -90,17 +90,15 @@ class AuthController extends EntityController
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($token)
-            ->withCookie($this->tokenToCookie($token, $request));
+            ->withCookie($this->tokenToCookie($token));
     }
 
     /**
      * Refresh a login token.
      *
-     * @param Request $request
-     *
      * @return ApiResponse
      */
-    public function refresh(Request $request)
+    public function refresh()
     {
         $token = $this->jwtAuth->getTokenFromRequest();
 
@@ -112,7 +110,7 @@ class AuthController extends EntityController
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($token)
-            ->withCookie($this->tokenToCookie($token, $request));
+            ->withCookie($this->tokenToCookie($token));
     }
 
     /**
@@ -145,7 +143,7 @@ class AuthController extends EntityController
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($token)
-            ->withCookie($this->tokenToCookie($token, $request));
+            ->withCookie($this->tokenToCookie($token));
     }
 
     /**
@@ -246,21 +244,15 @@ class AuthController extends EntityController
      * Prepare the token to be passed as cookie.
      *
      * @param  string  $token
-     * @param  Request $request
      *
      * @return Cookie
      */
-    protected function tokenToCookie($token, Request $request)
+    protected function tokenToCookie($token)
     {
-        // Get the domain
-        $segments = explode('.', $request->getHost());
-        if (count($segments) > 1) {
-            $segments = array_slice($segments, -2);
-        }
-        $domain = implode('.', $segments);
-
         // Set expiration to browser session
         $expiration = 0;
+
+        $domain = env('COOKIE_DOMAIN');
 
         return new Cookie('JwtAuthToken', $token, $expiration, '/', $domain, false, false);
     }
