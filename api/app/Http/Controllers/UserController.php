@@ -175,6 +175,14 @@ class UserController extends EntityController
             $model->setProfile($profile);
         }
 
+        // Extract the credentials and update if necessary
+        $credentialUpdateDetails = $request->get('_user_credentials', []);
+        if (!empty($credentialUpdateDetails)) {
+            $credentials = UserCredential::findOrNew($id);
+            $credentials->fill($credentialUpdateDetails);
+            $model->setCredential($credentials);
+        }
+
         $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
 
         $token = $jwtAuth->fromUser($model);

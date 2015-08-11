@@ -110,6 +110,11 @@ namespace app.user.profile {
         }
 
         public updateProfile():void {
+
+            if(_.isEmpty(this.user._userCredential)) {
+                delete this.user._userCredential;
+            }
+
             this.userService.updateProfile(this.user)
                 .then(() => {
                     this.$mdToast.show({

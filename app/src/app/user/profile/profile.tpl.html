@@ -58,6 +58,36 @@
         </md-content>
 
         <md-content layout-padding>
+            <h3>Password</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <md-input-container class="md-icon-float" layout>
+                    <label for="editProfileForm.password">Password</label>
+                    <md-icon>email</md-icon>
+                    <input id="editProfileForm.password" ng-model="ProfileController.user._userCredentials.password" name="password" type="password" md-maxlength="50" ng-minlength="6">
+                    <ng-messages for="editProfileForm.password.$error">
+                        <ng-message when="minlength">Your password must be at least 6 characters long.</ng-message>
+                    </ng-messages>
+                </md-input-container>
+                <md-input-container class="md-icon-float" layout>
+                    <label for="editProfileForm.passwordRepeat">Repeat Password</label>
+                    <md-icon>email</md-icon>
+                    <input id="editProfileForm.passwordRepeat"
+                           ng-model="ProfileController.user._userCredentials.passwordRepeat"
+                           name="passwordRepeat"
+                           type="password"
+                           md-maxlength="50"
+                           ng-minlength="6"
+                           ui-validate="'$value === ProfileController.user._userCredentials.password'"
+                           ui-validate-watch="'ProfileController.user._userCredentials.password'">
+                    <ng-messages for="editProfileForm.passwordRepeat.$error">
+                        <ng-message when="minlength">Your password must be at least 6 characters long.</ng-message>
+                        <ng-message when="validator">The passwords entered are not identical.</ng-message>
+                    </ng-messages>
+                </md-input-container>
+            </md-whiteframe>
+        </md-content>
+
+        <md-content layout-padding>
             <h3>Profile</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-input-container>

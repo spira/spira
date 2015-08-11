@@ -36,7 +36,8 @@
     "angular-http-progress": "*",
     "angular-jwt-auth": "*",
     "moment-timezone": "~0.4.0",
-    "ngInfiniteScroll": "~1.2.1"
+    "ngInfiniteScroll": "~1.2.1",
+    "angular-ui-validate": "~1.1.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.3",
