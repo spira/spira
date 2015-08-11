@@ -269,7 +269,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected function getCache()
     {
-        if (!$this->cache){
+        if (!$this->cache) {
             $this->cache = \App::make(Cache::class);
         }
 

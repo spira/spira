@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 /**
  * @property string $permalink
  * @property Article article

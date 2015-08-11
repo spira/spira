@@ -36,11 +36,11 @@ class ChildEntityController extends ApiController
     {
         $this->parentModel = $parentModel;
 
-        if (!$this->relationName){
+        if (!$this->relationName) {
             throw new \InvalidArgumentException('You should specify relationName in '.static::class);
         }
 
-        if (!method_exists($parentModel,$this->relationName)){
+        if (!method_exists($parentModel, $this->relationName)) {
             throw new \InvalidArgumentException('Relation '.$this->relationName.', acquired by '.
                 static::class.', does not exist in '.get_class($parentModel)
             );
@@ -75,7 +75,7 @@ class ChildEntityController extends ApiController
     public function getOne($id, $childId)
     {
         $model = $this->findParentEntity($id);
-        $childModel = $this->findOrFailChildEntity($childId,$model);
+        $childModel = $this->findOrFailChildEntity($childId, $model);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -115,7 +115,7 @@ class ChildEntityController extends ApiController
     public function putOne($id, $childId, Request $request)
     {
         $model = $this->findParentEntity($id);
-        $childModel = $this->findOrNewChildEntity($childId,$model);
+        $childModel = $this->findOrNewChildEntity($childId, $model);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -174,7 +174,7 @@ class ChildEntityController extends ApiController
     public function patchOne($id, $childId, Request $request)
     {
         $model = $this->findParentEntity($id);
-        $childModel = $this->findOrFailChildEntity($childId,$model);
+        $childModel = $this->findOrFailChildEntity($childId, $model);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -194,7 +194,7 @@ class ChildEntityController extends ApiController
         $requestCollection = $request->data;
 
         $model = $this->findParentEntity($id);
-        $childModels = $this->findOrFailChildrenCollection($requestCollection,$model);
+        $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
 
         foreach ($requestCollection as $requestEntity) {
             $id = $requestEntity[$this->getChildModel()->getKeyName()];
@@ -234,7 +234,7 @@ class ChildEntityController extends ApiController
     {
         $requestCollection = $request->data;
         $model = $this->findParentEntity($id);
-        $childModels = $this->findOrFailChildrenCollection($requestCollection,$model);
+        $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
         foreach ($childModels as $childModel) {
             $childModel->delete();
         }
@@ -339,5 +339,4 @@ class ChildEntityController extends ApiController
 
         return $models;
     }
-
 }

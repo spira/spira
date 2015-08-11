@@ -8,7 +8,6 @@
 
 namespace App\Helpers;
 
-
 use Spira\Repository\Model\BaseModel;
 use Spira\Repository\Validation\ValidationException;
 use Spira\Repository\Validation\ValidationExceptionCollection;

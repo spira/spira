@@ -11,10 +11,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Spira\Repository\Collection\Collection;
 
-
 abstract class ChildBaseModel extends BaseModel
 {
-
     /**
      * @param Builder $query
      * @param BaseModel $parent
@@ -35,7 +33,7 @@ abstract class ChildBaseModel extends BaseModel
      */
     public function findByIdAndParent($id, BaseModel $parent)
     {
-        $query = $this->attachParentModelToQuery($this->newQuery(),$parent);
+        $query = $this->attachParentModelToQuery($this->newQuery(), $parent);
         return $query->findOrFail($id);
     }
 
@@ -46,13 +44,13 @@ abstract class ChildBaseModel extends BaseModel
      */
     public function findManyByIdsAndParent($ids, BaseModel $parent)
     {
-        $query = $this->attachParentModelToQuery($this->newQuery(),$parent);
+        $query = $this->attachParentModelToQuery($this->newQuery(), $parent);
         return $query->findMany($ids);
     }
 
     public function findAllByParent(BaseModel $parent)
     {
-        $query = $this->attachParentModelToQuery($this->newQuery(),$parent);
+        $query = $this->attachParentModelToQuery($this->newQuery(), $parent);
         return $query->get();
     }
 }

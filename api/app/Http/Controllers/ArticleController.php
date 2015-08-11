@@ -22,6 +22,6 @@ class ArticleController extends EntityController
      */
     public function __construct(Article $model, ArticleTransformer $transformer)
     {
-        parent::__construct($model,$transformer);
+        parent::__construct($model, $transformer);
     }
 }

@@ -8,11 +8,9 @@
 
 namespace App\Http\Middleware;
 
-
 use Closure;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Http\Request;
-
 
 class TransactionMiddleware
 {
@@ -35,9 +33,9 @@ class TransactionMiddleware
     public function handle(Request $request, Closure $next)
     {
         $this->connectionResolver->connection()->beginTransaction();
-        try{
+        try {
             $response = $next($request);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->connectionResolver->connection()->rollBack();
             throw $e;
         }

@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 class SecondTestEntity extends BaseModel
 {
     public $table = 'second_test_entities';

@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 class ArticleMeta extends BaseModel
 {
     /**
