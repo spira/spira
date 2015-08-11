@@ -3,6 +3,10 @@
 namespace App\Services\SingleSignOn;
 
 use Illuminate\Http\Request;
+use App\Services\SingleSignOn\Exceptions\VanillaException;
+use App\Services\SingleSignOn\Exceptions\VanillaAccessDeniedException;
+use App\Services\SingleSignOn\Exceptions\VanillaInvalidClientException;
+use App\Services\SingleSignOn\Exceptions\VanillaInvalidRequestException;
 
 class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnContract
 {
@@ -120,59 +124,31 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
 
         // Check if there are any errors in the request, when using signatures.
         if ($secure) {
-            if (!$this->request->has('client_id')) {
+            try {
+                $this->validateRequest();
+            } catch (VanillaException $e) {
                 $error = [
-                    'error' => 'invalid_request',
-                    'message' => 'The client_id parameter is missing.'
+                    'error' => $e->getType(),
+                    'message' => $e->getMessage()
                 ];
-            } elseif ($this->request->get('client_id') != $this->clientId) {
-                $error = [
-                    'error' => 'invalid_client',
-                    'message' => "Unknown client {$this->request->get('client_id')}."
-                ];
-            } elseif (!$this->request->has('timestamp') && !$this->request->has('signature')) {
-                if (is_array($user) && count($user) > 0) {
-                    // This isn't really an error, but we are only going to
-                    // return public information when no signature is sent.
-                    $error = [
-                        'name' => $user['name'],
-                        'photourl' => @$user['photourl']
-                    ];
-                } else {
-                    $error = [
-                        'name' => '',
-                        'photourl' => ''
-                    ];
-                }
-            } elseif (!$this->request->has('timestamp') || !is_numeric($this->request->get('timestamp'))) {
-                $error = [
-                    'error' => 'invalid_request',
-                    'message' => 'The timestamp parameter is missing or invalid.'
-                ];
-            } elseif (!$this->request->has('signature')) {
-                $error = [
-                    'error' => 'invalid_request',
-                    'message' => 'Missing signature parameter.'
-                ];
-            } elseif (($diff = abs($this->request->get('timestamp') - $this->timestamp())) > self::TIMEOUT) {
-                // Make sure the timestamp hasn't timed out.
-                $error = [
-                    'error' => 'invalid_request',
-                    'message' => 'The timestamp is invalid.'
-                ];
-            } else {
-                $signature = $this->hash($this->request->get('timestamp').$this->secret, $secure);
-                if ($signature != $this->request->get('signature')) {
-                    $error = [
-                        'error' => 'access_denied',
-                        'message' => 'Signature invalid.'
-                    ];
-                }
             }
         }
 
         if (isset($error)) {
             $result = $error;
+        } elseif (!$this->request->has('timestamp') && !$this->request->has('signature')) {
+            if (is_array($user) && count($user) > 0) {
+                // We are only going to return public information when no signature is sent.
+                $result = [
+                    'name' => $user['name'],
+                    'photourl' => @$user['photourl']
+                ];
+            } else {
+                $result = [
+                    'name' => '',
+                    'photourl' => ''
+                ];
+            }
         } elseif (is_array($user) && count($user) > 0) {
             if ($secure === null) {
                 $result = $user;
@@ -254,16 +230,6 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     }
 
     /**
-     * Get current timestamp.
-     *
-     * @return int
-     */
-    protected function timestamp()
-    {
-        return time();
-    }
-
-    /**
      * Generate an SSO string suitible for passing in the url for embedded SSO.
      *
      * @param  array   $user
@@ -293,5 +259,133 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     public function setSecure($secure)
     {
         $this->secure = $secure;
+    }
+
+    /**
+     * Run the request through the validation rules.
+     *
+     * @return void
+     */
+    protected function validateRequest()
+    {
+        $validators = [
+            'hasClientId' => null,
+            'knownClientId' => null,
+            'timestamp' => 'signed',
+            'hasSignature' => 'signed',
+            'notExpiredTimestamp' => 'signed',
+            'signature' => 'signed',
+        ];
+
+        foreach ($validators as $validator => $condition) {
+            if ($condition) {
+                $method = camel_case('validCondition_'.$condition);
+
+                if (!$this->{$method}()) {
+                    continue;
+                }
+            }
+
+            $method = camel_case('valid_'.$validator);
+            $this->{$method}();
+        }
+    }
+
+    /**
+     * Condition to ensure that it is a signed request.
+     *
+     * Vanilla makes requests that isn't signed when retrieving public info.
+     *
+     * @return bool
+     */
+    protected function validConditionSigned()
+    {
+        return ($this->request->has('timestamp') || $this->request->has('signature'));
+    }
+
+    /**
+     * Validate that the request has a client id.
+     *
+     * @throws VanillaInvalidRequestException
+     *
+     * @return void
+     */
+    protected function validHasClientId()
+    {
+        if (!$this->request->has('client_id')) {
+            throw new VanillaInvalidRequestException('The client_id parameter is missing.');
+        }
+    }
+
+    /**
+     * Validate that the request has a known client id.
+     *
+     * @throws VanillaInvalidRequestException
+     *
+     * @return void
+     */
+    protected function validKnownClientId()
+    {
+        if ($this->request->get('client_id') != $this->clientId) {
+            throw new VanillaInvalidClientException("Unknown client {$this->request->get('client_id')}.");
+        }
+    }
+
+    /**
+     * Validate that the timestamp exists and is in correct format.
+     *
+     * @throws VanillaInvalidRequestException
+     *
+     * @return void
+     */
+    protected function validTimestamp()
+    {
+        if (!$this->request->has('timestamp') || !is_numeric($this->request->get('timestamp'))) {
+            throw new VanillaInvalidRequestException('The timestamp parameter is missing or invalid.');
+        }
+    }
+
+    /**
+     * Validate that signature exists.
+     *
+     * @throws VanillaInvalidRequestException
+     *
+     * @return void
+     */
+    protected function validHasSignature()
+    {
+        if (!$this->request->has('signature')) {
+            throw new VanillaInvalidRequestException('Missing signature parameter.');
+        }
+    }
+
+    /**
+     * Validate that timestamp is not expired.
+     *
+     * @throws VanillaInvalidRequestException
+     *
+     * @return void
+     */
+    protected function validNotExpiredTimestamp()
+    {
+        if ((abs($this->request->get('timestamp') - time())) > self::TIMEOUT) {
+            throw new VanillaInvalidRequestException('The timestamp is invalid.');
+        }
+    }
+
+    /**
+     * Validate signature.
+     *
+     * @throws VanillaAccessDeniedException
+     *
+     * @return void
+     */
+    protected function validSignature()
+    {
+        $signature = $this->hash($this->request->get('timestamp').$this->secret, $this->secure);
+
+        if ($signature != $this->request->get('signature')) {
+            throw new VanillaAccessDeniedException('Signature invalid.');
+        }
     }
 }

@@ -57,6 +57,18 @@ class SingleSignOnTest extends TestCase
         $this->assertContains('foobar', $roles);
     }
 
+    public function testMissingClient()
+    {
+        $user = null;
+        $request = $this->mockRequest();
+
+        $requester = SingleSignOnFactory::create('vanilla', $request, $user);
+        $response = $requester->getResponse();
+
+        $this->assertContains('invalid_request', $response);
+        $this->assertContains('client_id parameter is missing', $response);
+    }
+
     public function testInvalidClient()
     {
         $user = null;
@@ -170,6 +182,48 @@ class SingleSignOnTest extends TestCase
         $this->assertObjectHasAttribute('name', $response);
         $this->assertObjectNotHasAttribute('client_id', $response);
         $this->assertObjectNotHasAttribute('signature', $response);
+    }
+
+    public function testPublicWithUser()
+    {
+        $roles = new Collection([['name' => 'admin'], ['name' => 'guest'], ['name' => 'foobar']]);
+        $user = (object) [
+            'user_id' => '',
+            'username' => 'foobar',
+            'email' => 'foo@bar.com',
+            'avatar_img_url' => 'http://foobar',
+            'roles' => $roles,
+        ];
+
+        $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
+        $request = $this->mockRequest($clientId);
+
+        $requester = SingleSignOnFactory::create('vanilla', $request, $user);
+        $response = $requester->getResponse();
+
+        $response = json_decode($response);
+
+        $this->assertObjectHasAttribute('name', $response);
+        $this->assertObjectHasAttribute('photourl', $response);
+        $this->assertObjectNotHasAttribute('email', $response);
+        $this->assertObjectNotHasAttribute('uniqueid', $response);
+    }
+
+    public function testPublicWithNoUser()
+    {
+        $user = null;
+        $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
+        $request = $this->mockRequest($clientId);
+
+        $requester = SingleSignOnFactory::create('vanilla', $request, $user);
+        $response = $requester->getResponse();
+
+        $response = json_decode($response);
+
+        $this->assertObjectHasAttribute('name', $response);
+        $this->assertObjectHasAttribute('photourl', $response);
+        $this->assertEmpty($response->name);
+        $this->assertEmpty($response->photourl);
     }
 
     public function testCallback()
