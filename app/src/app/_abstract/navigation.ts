@@ -5,19 +5,44 @@ namespace app.abstract.navigation {
     export class AbstractNavigationController {
 
         public navigableStates:global.IState[] = [];
+        public navigableStateIndex:number;
 
-        static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
+        static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state', '$rootScope'];
         public loggedInUser:common.models.User;
 
         constructor(protected stateHelperService:common.providers.StateHelperService,
                     private $window:global.IWindowService,
                     protected ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    public $state:ng.ui.IStateService) {
+                    public $state:ng.ui.IStateService,
+                    private $rootScope:ng.IRootScopeService) {
 
             this.navigableStates = this.getNavigationStates();
             this.loggedInUser = <common.models.User>(<any>ngJwtAuthService).user;
+
+            this.defineNavigableStateIndex();
+
+            this.$rootScope.$on('navigation', (event:ng.IAngularEvent, message) => {
+
+                if (message == 'recalculateNavigableStateIndex'){
+                    this.defineNavigableStateIndex();
+                }
+            });
+
         }
 
+        /**
+         * Set the value for the current index of the navigation state
+         */
+        public defineNavigableStateIndex():void {
+            this.navigableStateIndex = _.findIndex(this.navigableStates, (state) => {
+                return this.$state.current.name == state.name;
+            });
+        }
+
+        /**
+         * Get all the navigation states
+         * @returns {global.IState[]}
+         */
         protected getNavigationStates():global.IState[] {
 
             let childStates = <global.IState[]>this.stateHelperService.getChildStates(app.guest.namespace);
@@ -26,6 +51,11 @@ namespace app.abstract.navigation {
 
         }
 
+        /**
+         * Sort the states based on their `sortAfter` attribute
+         * @param states
+         * @returns {any}
+         */
         protected sortNavigationStates(states:global.IState[]):global.IState[] {
 
             //using the state.data.sortAfter key build a topology and sort it
@@ -44,6 +74,11 @@ namespace app.abstract.navigation {
 
         }
 
+        /**
+         * Filter the states that are navigable
+         * @param states
+         * @returns {global.IState[]}
+         */
         protected getNavigableStates(states:global.IState[]):global.IState[] {
 
             let navigable = _.chain(states)
