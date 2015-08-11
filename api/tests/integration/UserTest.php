@@ -298,6 +298,52 @@ class UserTest extends TestCase
         $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
     }
 
+    public function testPatchOneByAdminUserPassword()
+    {
+        $user = $this->createUser('admin');
+        $userToUpdate = $this->createUser('guest');
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            '_userCredentials' => [
+                'password' => 'foobarfoobar'
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedCredentials = UserCredential::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
+    }
+    
+    public function testPatchOneBySelfUserPassword()
+    {
+        $user = $this->createUser('guest');
+        $userToUpdate = $user;
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            '_userCredentials' => [
+                'password' => 'foobarfoobar'
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedCredentials = UserCredential::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
+    }
+
     public function testPatchOneByGuestUser()
     {
         $user = $this->createUser('guest');
