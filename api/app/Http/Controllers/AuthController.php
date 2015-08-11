@@ -226,6 +226,10 @@ class AuthController extends EntityController
      */
     public function singleSignOn($requester, Request $request)
     {
+        // A single sign on request might have different requirements and
+        // methods how to deal with a non logged in user. So we get the user
+        // if possible, and if not we pass in a null user and let the the
+        // requester class deal with it according to the requester's definitions
         if ($token = $request->cookie('JwtAuthToken')) {
             $user = $this->jwtAuth->toUser($token);
         } else {
