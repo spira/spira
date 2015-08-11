@@ -28,6 +28,13 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     protected $secret;
 
     /**
+     * Security scheme to use.
+     *
+     * @var string|bool
+     */
+    protected $secure = 'sha1';
+
+    /**
      * Assign dependencies.
      *
      * @param  Request  $request
@@ -50,7 +57,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     public function getResponse()
     {
-        return $this->response($this->formatUser(), 'sha1');
+        return $this->response($this->formatUser(), $this->secure);
     }
 
     /**
@@ -145,7 +152,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
             } elseif (!$this->request->has('signature')) {
                 $error = [
                     'error' => 'invalid_request',
-                    'message' => 'Missing  signature parameter.'
+                    'message' => 'Missing signature parameter.'
                 ];
             } elseif (($diff = abs($this->request->get('timestamp') - $this->timestamp())) > self::TIMEOUT) {
                 // Make sure the timestamp hasn't timed out.
@@ -199,9 +206,9 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         $data = array_change_key_case($data);
         ksort($data);
 
-        foreach ($data as $Key => $Value) {
-            if ($Value === null) {
-                $data[$Key] = '';
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                $data[$key] = '';
             }
         }
 
@@ -274,5 +281,17 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         $hash = hash_hmac('sha1', "$string $timestamp", $this->secret);
 
         return "$string $hash $timestamp hmacsha1";
+    }
+
+    /**
+     * Set the security to use.
+     *
+     * @param  string|bool  $secure
+     *
+     * @return  void
+     */
+    public function setSecure($secure)
+    {
+        $this->secure = $secure;
     }
 }
