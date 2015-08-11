@@ -82,19 +82,6 @@ namespace app.user.profile {
 
         });
 
-        describe('Internal Functions', () => {
-
-            it('should return a list of gender options', () => {
-
-                let genderOptions = ProfileController.genderOptions();
-
-                expect(genderOptions).to.deep.equal(common.models.UserProfile.genderOptions);
-
-            });
-
-        });
-
-
         describe('User Interactions', () => {
 
             it('should be able to update the profile', () => {

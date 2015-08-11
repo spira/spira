@@ -94,15 +94,12 @@ namespace app.user.profile {
             private $mdToast:ng.material.IToastService,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
-            public userProfile:common.models.UserProfile
+            public userProfile:common.models.UserProfile,
+            public genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions
         ) {
 
             user._userProfile = userProfile;
 
-        }
-
-        public genderOptions():common.models.IGenderOption[] {
-            return common.models.UserProfile.genderOptions;
         }
 
         public updateProfile():void {
