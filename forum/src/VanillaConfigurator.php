@@ -109,9 +109,9 @@ class VanillaConfigurator
         $UserModel->defineSchema();
 
         $user = [
-            'Name' => 'admin',
-            'Email' => 'admin@admin.com',
-            'Password' => 'password'
+            'Name' => getenv('VANILLA_ADMIN_NAME'),
+            'Email' => getenv('VANILLA_ADMIN_EMAIL'),
+            'Password' => getenv('VANILLA_ADMIN_PASSWORD')
         ];
 
         $AdminUserID = $UserModel->SaveAdminUser($user);
