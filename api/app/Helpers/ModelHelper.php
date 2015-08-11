@@ -40,22 +40,4 @@ class ModelHelper
 
         return $models;
     }
-
-
-    /**
-     * Delete a collection of entities.
-     *
-     * @param  BaseModel[] $models
-     * @throws \Exception
-     * @return bool
-     */
-    public static function deleteMany($models)
-    {
-        /** @var BaseModel $models */
-        foreach ($models as $model) {
-            $model->delete();
-        }
-
-        return true;
-    }
 }

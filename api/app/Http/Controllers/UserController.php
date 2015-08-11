@@ -109,7 +109,7 @@ class UserController extends EntityController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+        $this->validateId($id, $this->getKeyName(), $this->validateIdRule);
         if ($this->repository->exists($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -142,7 +142,7 @@ class UserController extends EntityController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
+        $this->validateId($id, $this->getKeyName(), $this->validateIdRule);
         $model = $this->repository->find($id);
 
         // Check if the email is being changed, and initialize confirmation

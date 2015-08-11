@@ -9,9 +9,10 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
-use App\Helpers\ModelHelper;
 use App\Models\ChildBaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
@@ -22,23 +23,28 @@ class ChildEntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateParentRequestRule = 'uuid';
-    protected $validateChildRequestRule = 'uuid';
+    protected $validateParentIdRule = 'uuid';
+    protected $validateChildIdRule = 'uuid';
+    protected $relationName = null;
 
     /**
      * @var BaseModel
      */
     protected $parentModel;
 
-    /**
-     * @var ChildBaseModel
-     */
-    protected $childModel;
-
-    public function __construct(BaseModel $parentModel, ChildBaseModel $childModel, TransformerInterface $transformer)
+    public function __construct(BaseModel $parentModel, TransformerInterface $transformer)
     {
         $this->parentModel = $parentModel;
-        $this->childModel = $childModel;
+
+        if (!$this->relationName){
+            throw new \InvalidArgumentException('You should specify relationName in '.static::class);
+        }
+
+        if (!method_exists($parentModel,$this->relationName)){
+            throw new \InvalidArgumentException('Relation '.$this->relationName.', acquired by '.
+                static::class.', does not exist in '.get_class($parentModel)
+            );
+        }
         parent::__construct($transformer);
     }
 
@@ -51,14 +57,8 @@ class ChildEntityController extends ApiController
      */
     public function getAll($id)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $childEntities = $this->getAllChildEntitiesByParent($model);
+        $model = $this->findParentEntity($id);
+        $childEntities = $this->findAllChildren($model);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -74,25 +74,12 @@ class ChildEntityController extends ApiController
      */
     public function getOne($id, $childId)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $this->validateId($childId, $this->getChildModel()->getKeyName(), $this->validateChildRequestRule);
-
-        try{
-            $childModel = $this->getChildEntityByIdAndParent($childId, $model);
-        }catch (ModelNotFoundException $e){
-            throw $this->notFoundException($this->getChildModel()->getKeyName());
-        }
+        $model = $this->findParentEntity($id);
+        $childModel = $this->findOrFailChildEntity($childId,$model);
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($childModel)
-            ;
+            ->item($childModel);
     }
 
     /**
@@ -107,17 +94,10 @@ class ChildEntityController extends ApiController
      */
     public function postOne($id, Request $request)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
+        $model = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
         $childModel->fill($request->all());
-        $childModel->attachParent($model);
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -134,24 +114,10 @@ class ChildEntityController extends ApiController
      */
     public function putOne($id, $childId, Request $request)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $this->validateId($childId, $this->getChildModel()->getKeyName(), $this->validateChildRequestRule);
-        try{
-            $childModel = $this->getChildEntityByIdAndParent($childId, $model);
-        }catch (ModelNotFoundException $e){
-            $childModel = $this->getChildModel()->newInstance();
-        }
-
-        /** @var ChildBaseModel $childModel */
+        $model = $this->findParentEntity($id);
+        $childModel = $this->findOrNewChildEntity($childId,$model);
         $childModel->fill($request->all());
-        $childModel->attachParent($model);
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -164,23 +130,19 @@ class ChildEntityController extends ApiController
      * @param string $id
      * @param  Request $request
      * @return ApiResponse
+     * @TODO save many collection validation exception to be implemented
      */
     public function putMany($id, Request $request)
     {
         $requestCollection = $request->data;
 
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
+        $model = $this->findParentEntity($id);
 
         $childKey = $this->getChildModel()->getKeyName();
-        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildRequestRule);
+        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildIdRule);
         $childModels = [];
         if (!empty($ids)) {
-            $childModels = $this->getManyChildEntitiesByIdsAndParent($ids,$model);
+            $childModels = $this->getRelation($model)->findMany($ids);
         }
 
         $putModels = [];
@@ -191,12 +153,10 @@ class ChildEntityController extends ApiController
             } else {
                 $childModel = $this->getChildModel()->newInstance();
             }
-            /** @var ChildBaseModel $childModel */
             $childModel->fill($requestEntity);
-            $childModel->attachParent($model);
+            $this->getRelation($model)->save($childModel);
             $putModels[] = $childModel;
         }
-        ModelHelper::saveMany($putModels);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -213,25 +173,10 @@ class ChildEntityController extends ApiController
      */
     public function patchOne($id, $childId, Request $request)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $this->validateId($childId, $this->getChildModel()->getKeyName(), $this->validateChildRequestRule);
-
-        try{
-            $childModel = $this->getChildEntityByIdAndParent($childId, $model);
-        }catch (ModelNotFoundException $e){
-            throw $this->notFoundException($this->getChildModel()->getKeyName());
-        }
-
-        /** @var ChildBaseModel $childModel */
+        $model = $this->findParentEntity($id);
+        $childModel = $this->findOrFailChildEntity($childId,$model);
         $childModel->fill($request->all());
-        $childModel->attachParent($model);
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()->noContent();
     }
@@ -242,40 +187,22 @@ class ChildEntityController extends ApiController
      * @param string $id
      * @param  Request $request
      * @return ApiResponse
+     * @TODO save many collection validation exception to be implemented
      */
     public function patchMany($id, Request $request)
     {
         $requestCollection = $request->data;
 
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $childKey = $this->getChildModel()->getKeyName();
-
-        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildRequestRule);
-        $childModels = [];
-        if (!empty($ids)) {
-            $childModels = $this->getManyChildEntitiesByIdsAndParent($ids,$model);
-        }
-
-        if (!empty($childModels) && $childModels->count() !== count($ids)) {
-            throw $this->notFoundManyException($ids, $childModels, $childKey);
-        }
+        $model = $this->findParentEntity($id);
+        $childModels = $this->findOrFailChildrenCollection($requestCollection,$model);
 
         foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$childKey];
+            $id = $requestEntity[$this->getChildModel()->getKeyName()];
             $childModel = $childModels->get($id);
-
-            /** @var ChildBaseModel $childModel */
             $childModel->fill($requestEntity);
-            $childModel->attachParent($model);
         }
 
-        ModelHelper::saveMany($childModels);
+        $this->getRelation($model)->saveMany($childModels);
 
         return $this->getResponse()->noContent();
     }
@@ -289,21 +216,8 @@ class ChildEntityController extends ApiController
      */
     public function deleteOne($id, $childId)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
-        }
-
-        $this->validateId($childId, $this->getChildModel()->getKeyName(), $this->validateChildRequestRule);
-
-        try{
-            $childModel = $this->getChildEntityByIdAndParent($childId, $model);
-        }catch (ModelNotFoundException $e){
-            throw $this->notFoundException($this->getChildModel()->getKeyName());
-        }
-
+        $model = $this->findParentEntity($id);
+        $childModel = $this->findOrFailChildEntity($childId, $model);
         $childModel->delete();
 
         return $this->getResponse()->noContent();
@@ -319,28 +233,11 @@ class ChildEntityController extends ApiController
     public function deleteMany($id, Request $request)
     {
         $requestCollection = $request->data;
-
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentRequestRule);
-        try {
-            $model =  $this->getParentEntityById($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getParentModel()->getKeyName());
+        $model = $this->findParentEntity($id);
+        $childModels = $this->findOrFailChildrenCollection($requestCollection,$model);
+        foreach ($childModels as $childModel) {
+            $childModel->delete();
         }
-
-        $childKey = $this->getChildModel()->getKeyName();
-
-        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildRequestRule);
-        $childModels = [];
-        if (!empty($ids)) {
-            $childModels = $this->getManyChildEntitiesByIdsAndParent($ids,$model);
-        }
-
-
-        if (!empty($childModels) && $childModels->count() !== count($ids)) {
-            throw $this->notFoundManyException($ids, $childModels, $childKey);
-        }
-
-        ModelHelper::deleteMany($childModels);
 
         return $this->getResponse()->noContent();
     }
@@ -358,45 +255,89 @@ class ChildEntityController extends ApiController
      */
     public function getChildModel()
     {
-        return $this->childModel;
+        return $this->getRelation($this->parentModel)->getRelated();
     }
+
+    /**
+     * @param BaseModel $model
+     * @return HasOneOrMany|Builder
+     */
+    protected function getRelation(BaseModel $model)
+    {
+        return $model->{$this->relationName}();
+    }
+
 
     /**
      * @param $id
      * @return BaseModel
      */
-    protected function getParentEntityById($id)
+    protected function findParentEntity($id)
     {
-        return $this->getParentModel()->findOrFail($id);
+        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->validateParentIdRule);
+        try {
+            return $this->getParentModel()->findByIdentifier($id);
+        } catch (ModelNotFoundException $e) {
+            throw $this->notFoundException($this->getParentModel()->getKeyName());
+        }
     }
 
     /**
      * @param $id
-     * @param $parent
+     * @param BaseModel $parent
      * @return BaseModel
      */
-    protected function getChildEntityByIdAndParent($id, $parent)
+    protected function findOrNewChildEntity($id, BaseModel $parent)
     {
-        return $this->getChildModel()->findByIdAndParent($id,$parent);
+        $this->validateId($id, $this->getChildModel()->getKeyName(), $this->validateChildIdRule);
+
+        try {
+            return $this->getRelation($parent)->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->getChildModel()->newInstance();
+        }
     }
 
     /**
-     * @param $ids
-     * @param $parent
-     * @return Collection
+     * @param $id
+     * @param BaseModel $parent
+     * @return BaseModel
      */
-    protected function getManyChildEntitiesByIdsAndParent($ids, $parent)
+    protected function findOrFailChildEntity($id, BaseModel $parent)
     {
-        return $this->getChildModel()->findManyByIdsAndParent($ids,$parent);
+        $this->validateId($id, $this->getChildModel()->getKeyName(), $this->validateChildIdRule);
+
+        try {
+            return $this->getRelation($parent)->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw $this->notFoundException($this->getChildModel()->getKeyName());
+        }
     }
 
     /**
      * @param $parent
      * @return Collection
      */
-    protected function getAllChildEntitiesByParent($parent)
+    protected function findAllChildren($parent)
     {
-        return $this->getChildModel()->findAllByParent($parent);
+        return $this->getRelation($parent)->getResults();
+    }
+
+    /**
+     * @param $requestCollection
+     * @param BaseModel $parent
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function findOrFailChildrenCollection($requestCollection, BaseModel $parent)
+    {
+        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->validateChildIdRule);
+        $models = $this->getRelation($parent)->findMany($ids);
+
+        if (count($ids) !== $models->count()) {
+            throw $this->notFoundManyException($ids, $models, $this->getChildModel()->getKeyName());
+        }
+
+        return $models;
     }
 
 }

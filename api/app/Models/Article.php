@@ -90,8 +90,9 @@ class Article extends BaseModel
     /**
      * @param string $id article_id or permalink
      * @return Article
+     * @throws ModelNotFoundException
      */
-    public function findByPermalink($id)
+    public function findByIdentifier($id)
     {
         //if the id is a uuid, try that or fail.
         if (Uuid::isValid($id)) {

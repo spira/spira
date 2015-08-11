@@ -10,29 +10,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
-use App\Models\ArticlePermalink;
-use Spira\Repository\Model\BaseModel;
 
 class ArticlePermalinkController extends ChildEntityController
 {
-    protected $validateParentRequestRule = 'required|string';
-    protected $validateChildRequestRule = 'required|string';
+    protected $validateParentIdRule = 'required|string';
+    protected $validateChildIdRule = 'required|string';
+    protected $relationName = 'permalinks';
 
-    public function __construct(Article $parentModel, ArticlePermalink $childModel, EloquentModelTransformer $transformer)
+    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
-        parent::__construct($parentModel, $childModel, $transformer);
+        parent::__construct($parentModel, $transformer);
     }
-
-    /**
-     * @param $id
-     * @return BaseModel
-     */
-    protected function getParentEntityById($id)
-    {
-        /** @var Article $model */
-        $model = $this->getParentModel();
-        return $model->findByPermalink($id);
-    }
-
-
 }

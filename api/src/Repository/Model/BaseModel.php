@@ -10,6 +10,7 @@ namespace Spira\Repository\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
@@ -440,6 +441,16 @@ abstract class BaseModel extends Model
         }
 
         return parent::setRelation($relationName, $value);
+    }
+
+    /**
+     * @param mixed $id
+     * @return BaseModel
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        return $this->findOrFail($id);
     }
 
     /**

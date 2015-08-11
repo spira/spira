@@ -10,12 +10,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Spira\Repository\Model\BaseModel;
 
 class ArticleController extends EntityController
 {
-    protected $validateRequestRule = 'required|string';
+    protected $validateIdRule = 'required|string';
 
     /**
      * Assign dependencies.
@@ -26,18 +24,4 @@ class ArticleController extends EntityController
     {
         parent::__construct($model,$transformer);
     }
-
-    /**
-     * @param $id
-     * @return BaseModel
-     * @throws ModelNotFoundException
-     */
-    protected function getEntityById($id)
-    {
-        /** @var Article $model */
-        $model = $this->getModel();
-        return $model->findByPermalink($id);
-    }
-
-
 }

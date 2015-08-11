@@ -9,18 +9,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
 
 class ChildTestController extends ChildEntityController
 {
-    protected $validateParentRequestRule = 'uuid';
-    protected $validateChildRequestRule = 'uuid';
+    protected $validateParentIdRule = 'uuid';
+    protected $validateChildIdRule = 'uuid';
+    protected $relationName = 'testMany';
 
-    public function __construct(TestEntity $parentModel, SecondTestEntity $childModel, EloquentModelTransformer $transformer)
+    public function __construct(TestEntity $parentModel, EloquentModelTransformer $transformer)
     {
-        parent::__construct($parentModel, $childModel, $transformer);
+        parent::__construct($parentModel, $transformer);
     }
-
-
 }

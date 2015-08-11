@@ -8,8 +8,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-
 
 /**
  * @property string $permalink
@@ -19,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @package App\Models
  *
  */
-class ArticlePermalink extends ChildBaseModel
+class ArticlePermalink extends BaseModel
 {
     public $table = 'article_permalinks';
 
@@ -30,28 +28,5 @@ class ArticlePermalink extends ChildBaseModel
     public function article()
     {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');
-    }
-
-
-
-    /**
-     * @param Builder $query
-     * @param BaseModel $parent
-     * @return Builder
-     */
-    protected function attachParentModelToQuery(Builder $query, BaseModel $parent)
-    {
-        $query->where('article_id','=',$parent->article_id);
-        return $query;
-    }
-
-
-    /**
-     * @param BaseModel $parent
-     * @return void
-     */
-    public function attachParent(BaseModel $parent)
-    {
-        $this->article_id = $parent->article_id;
     }
 }
