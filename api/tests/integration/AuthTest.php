@@ -157,9 +157,9 @@ class AuthTest extends TestCase
             new JwtId('foo'),
         ];
 
-        $this->validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
-        $this->validator->shouldReceive('setRefreshFlow->check');
-        $payload = new Payload($claims, $this->validator, true);
+        $validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
+        $validator->shouldReceive('setRefreshFlow->check');
+        $payload = new Payload($claims, $validator, true);
 
         $cfg = $this->app->config->get('jwt');
         $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
@@ -455,5 +455,39 @@ class AuthTest extends TestCase
         $user = User::find($decoded['sub']);
         $socialLogin = $user->socialLogins->first()->toArray();
         $this->assertEquals('facebook', $socialLogin['provider']);
+    }
+
+    public function testTokenToCooie()
+    {
+        $controller = Mockery::mock('App\Http\Controllers\AuthController');
+        $request = Mockery::mock('Illuminate\Http\Request');
+
+        // Test with 3 segment host
+        $request->shouldReceive('getHost')->once()->andReturn('api.spira.io');
+        $cookie = $controller->tokenToCookie('token', $request);
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Cookie', $cookie);
+        $this->assertEquals('spira.io', $cookie->getDomain());
+
+        // Test with 4 segment host
+        $request->shouldReceive('getHost')->once()->andReturn('local.api.spira.io');
+        $cookie = $controller->tokenToCookie('token', $request);
+        $this->assertEquals('spira.io', $cookie->getDomain());
+    }
+
+    public function testSingleSignOnVanillaNoParameters()
+    {
+        $this->get('/auth/sso/vanilla');
+
+        $this->assertResponseStatus(200);
+        $this->assertContains('parameter is missing', $this->response->getContent());
+    }
+
+    public function testSingleSignOnVanillaValidClient()
+    {
+        $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
+        $this->call('GET', '/auth/sso/vanilla', $params);
+
+        $this->assertResponseStatus(200);
+        $this->assertContains('name', $this->response->getContent());
     }
 }

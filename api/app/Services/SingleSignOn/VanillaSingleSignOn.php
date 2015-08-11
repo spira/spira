@@ -179,9 +179,9 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         $json = json_encode($result);
 
         if ($this->request->has('callback')) {
-            printf('%s(%s)', $this->request->get('callback'), $json);
+            return sprintf('%s(%s)', $this->request->get('callback'), $json);
         } else {
-            echo $json;
+            return $json;
         }
     }
 

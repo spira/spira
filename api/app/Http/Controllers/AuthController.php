@@ -246,7 +246,7 @@ class AuthController extends EntityController
      *
      * @return Cookie
      */
-    protected function tokenToCookie($token, $request)
+    protected function tokenToCookie($token, Request $request)
     {
         // Get the domain
         $segments = explode('.', $request->getHost());
