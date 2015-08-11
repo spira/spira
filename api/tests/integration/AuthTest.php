@@ -23,7 +23,7 @@ class AuthTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -49,7 +49,7 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -63,7 +63,7 @@ class AuthTest extends TestCase
 
     public function testLoginEmptyPassword()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -79,7 +79,7 @@ class AuthTest extends TestCase
 
     public function testLoginUserMissCredentials()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -93,7 +93,7 @@ class AuthTest extends TestCase
 
     public function testFailedTokenEncoding()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -110,7 +110,7 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user, ['method' => 'password']);
 
         $this->callRefreshToken($token);
@@ -145,7 +145,7 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $claims = [
             new UserClaim($user),
@@ -174,7 +174,7 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidTokenSignature()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
@@ -216,7 +216,7 @@ class AuthTest extends TestCase
     public function testToken()
     {
         $token = 'foobar';
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -248,7 +248,7 @@ class AuthTest extends TestCase
     public function testTokenInvalid()
     {
         $token = 'foobar';
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -267,7 +267,7 @@ class AuthTest extends TestCase
     public function testMakeLoginToken()
     {
         $repo = $this->app->make('App\Repositories\UserRepository');
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $token = $repo->makeLoginToken($user->user_id);
 
@@ -368,7 +368,7 @@ class AuthTest extends TestCase
 
     public function testProviderCallbackExistingUser()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
