@@ -457,7 +457,7 @@ class AuthTest extends TestCase
         $this->assertEquals('facebook', $socialLogin['provider']);
     }
 
-    public function testTokenToCooie()
+    public function testTokenToCookie()
     {
         $controller = Mockery::mock('App\Http\Controllers\AuthController');
         $request = Mockery::mock('Illuminate\Http\Request');
@@ -489,5 +489,44 @@ class AuthTest extends TestCase
 
         $this->assertResponseStatus(200);
         $this->assertContains('name', $this->response->getContent());
+    }
+
+    public function testSingleSignOnVanillaWithUser()
+    {
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+
+        $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
+        $cookies = ['JwtAuthToken' => $token];
+        $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(200);
+        $this->assertContains($user->username, $response->name);
+        $this->assertObjectNotHasAttribute('email', $response);
+        $this->assertObjectNotHasAttribute('uniqueid', $response);
+    }
+
+    public function testSingleSignOnVanillaWithUserAndSignature()
+    {
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+        $timestamp = time();
+
+        $params = [
+            'client_id' => env('VANILLA_JSCONNECT_CLIENT_ID'),
+            'timestamp' => $timestamp,
+            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET'))
+        ];
+
+        $cookies = ['JwtAuthToken' => $token];
+        $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(200);
+        $this->assertContains($user->user_id, $response->uniqueid);
+        $this->assertContains($user->email, $response->email);
     }
 }

@@ -65,7 +65,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         } else {
             return [
                 'uniqueid' => $this->user->user_id,
-                'name' => $this->user->full_name,
+                'name' => $this->user->username,
                 'email' => $this->user->email,
                 'photourl' => $this->user->avatar_img_url,
                 'roles' => $this->getMappedRoles()
