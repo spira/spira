@@ -211,6 +211,28 @@ class UserController extends EntityController
     }
 
     /**
+     * Get full user details
+     *
+     * @param string $id
+     * @return \Spira\Responder\Response\ApiResponse
+     */
+    public function getOne($id) {
+        $this->validateId($id, $this->getKeyName());
+
+        $user = User::find($id);
+
+        $userData = $user->toArray();
+
+        $userData['_user_credentials'] = $user->userCredential->toArray();
+
+        $userData['_social_logins'] = $user->socialLogins->toArray();
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($userData);
+    }
+
+    /**
      * Get the user's profile.
      *
      * @param $id
