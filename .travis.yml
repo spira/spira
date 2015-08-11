@@ -15,6 +15,8 @@ env:
     - VANILLADATABASE_PORT_3306_TCP_ADDR=127.0.0.1
     - MYSQL_USER=travis
     - MYSQL_PASSWORD=
+    - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
+    - VANILLA_JSCONNECT_SECRET=a-secret-phrase-random-string
 
 before_install:
   - sudo apt-get update -qq
