@@ -4,7 +4,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Timezones;
 use Spira\Responder\Response\ApiResponse;
 
-class TimezoneController extends EntityController
+class TimezoneController extends ApiController
 {
     /**
      * Assign dependencies.
@@ -15,7 +15,7 @@ class TimezoneController extends EntityController
     public function __construct(Timezones $timezones, EloquentModelTransformer $transformer)
     {
         $this->timezones = $timezones;
-        $this->transformer = $transformer;
+        parent::__construct($transformer);
     }
 
     /**
