@@ -73,32 +73,44 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
             }
         }
 
+        return $this->formatResponse($this->getUser());
+    }
+
+    /**
+     * Get the user array trimmed according to request.
+     *
+     * @return array
+     */
+    protected function getUser()
+    {
         $user = $this->formatUser();
 
-        if (!$this->request->has('timestamp') && !$this->request->has('signature')) {
-            if (is_array($user) && count($user) > 0) {
-                // We are only going to return public information when no signature is sent.
-                $result = [
-                    'name' => $user['name'],
-                    'photourl' => @$user['photourl']
-                ];
-            } else {
-                $result = [
-                    'name' => '',
-                    'photourl' => ''
-                ];
-            }
-        } elseif (is_array($user) && count($user) > 0) {
-            if ($this->secure === null) {
-                $result = $user;
-            } else {
-                $result = $this->sign($user, $this->secure, true);
-            }
-        } else {
-            $result = ['name' => '', 'photourl' => ''];
+        // If no user is to be returned, Vanilla expects name and photourl
+        // with empty values
+        if (empty($user)) {
+            return [
+                'name' => '',
+                'photourl' => ''
+            ];
         }
 
-        return $this->formatResponse($result);
+        // When no signature and timestamp is sent, only return public information
+        if (!$this->request->has('timestamp') && !$this->request->has('signature')) {
+            return [
+                'name' => $user['name'],
+                'photourl' => @$user['photourl']
+            ];
+        }
+
+        // If security is disabled (when running the SSO in test mode for instance)
+        // the user is returned with all information, but without signing the
+        // data set.
+        if ($this->secure === null) {
+            return $user;
+        }
+
+        // Return the complete user with signed data set
+        return $this->sign($user, $this->secure, true);
     }
 
     /**
