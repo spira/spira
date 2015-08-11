@@ -111,14 +111,9 @@ namespace app.user.profile {
 
         public updateProfile():void {
 
-            console.log(this.user);
-
-            if(_.isEmpty(this.user._userCredential.password)) {
-                console.log('removing');
+            if(_.isEmpty(this.user._userCredential)) {
                 delete this.user._userCredential;
             }
-
-            console.log(this.user);
 
             this.userService.updateProfile(this.user)
                 .then(() => {
