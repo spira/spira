@@ -45,7 +45,7 @@ queuerunner:
 mailcatcher:
   image: schickling/mailcatcher
 
-php:  
+php:
   image: spira/docker-hhvm
   volumes_from:
     - spira
@@ -59,7 +59,15 @@ php:
     - .qa.env
   privileged: true
 
-web:  
+apimock:
+  image: spira/docker-drakov
+  volumes_from:
+    - spira
+  env_file:
+    - .common.env
+    - .local.env
+
+web:
   image: spira/docker-nginx
   volumes_from:
     - spira
@@ -67,9 +75,11 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
+    - apimock:apimock
   ports:
     - "80:80"
     - "8080:8080"
+    - "8008:8008"
   env_file:
     - .common.env
     - .qa.env
