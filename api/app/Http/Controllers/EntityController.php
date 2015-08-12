@@ -274,9 +274,8 @@ abstract class EntityController extends ApiController
 
     private function getEntityWithNested(BaseModel $model, Request $request)
     {
-
         $nested = $request->headers->get('With-Nested');
-        if (!$nested){
+        if (!$nested) {
             return $model;
         }
 
@@ -284,13 +283,10 @@ abstract class EntityController extends ApiController
 
         try {
             $model->load($requestedRelations);
-        }catch(\BadMethodCallException $e){
-
+        } catch (\BadMethodCallException $e) {
             throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
         }
 
         return $model;
-
-
     }
 }

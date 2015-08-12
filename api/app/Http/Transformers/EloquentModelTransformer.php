@@ -69,8 +69,6 @@ class EloquentModelTransformer extends BaseTransformer
             $array = $this->addSelfKey($object, $array);
 
             $array = $this->nestRelations($object, $array);
-
-
         }
 
         return $array;
@@ -197,21 +195,17 @@ class EloquentModelTransformer extends BaseTransformer
      */
     private function nestRelations($object, $array)
     {
-        if (count($object['relations']) > 0){
-
-            foreach($object['relations'] as $relation => $childModelOrCollection){
-
+        if (count($object['relations']) > 0) {
+            foreach ($object['relations'] as $relation => $childModelOrCollection) {
                 $childTransformed = null;
-                if ($childModelOrCollection instanceof Collection){
+                if ($childModelOrCollection instanceof Collection) {
                     $childTransformed = $this->transformCollection($childModelOrCollection);
-                }else{
+                } else {
                     $childTransformed = $this->transformItem($childModelOrCollection);
                 }
 
                 $array = $array + ['_' . $relation => $childTransformed];
-
             }
-
         }
 
         return $array;
