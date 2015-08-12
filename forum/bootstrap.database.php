@@ -7,12 +7,14 @@ if (!function_exists('anchor')) {
     /**
      * Builds and returns an anchor tag.
      */
-    function anchor($Text, $Destination = '', $CssClass = '', $Attributes = array(), $ForceAnchor = false) {
+    function anchor($Text, $Destination = '', $CssClass = '', $Attributes = array(), $ForceAnchor = false)
+    {
         if (!is_array($CssClass) && $CssClass != '') {
             $CssClass = array('class' => $CssClass);
         }
 
-        // $Destination = str_replace('/forum/', '', parse_url($Destination)['path']);
+        // Test to strip away domain, port number and prefix before building the path
+        $Destination = str_replace('/forum/', '', parse_url($Destination)['path']);
 
         if ($Destination == '' && $ForceAnchor === false) {
             return $Text;
