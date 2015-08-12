@@ -2,6 +2,9 @@
     exit();
 }
 
+// Database
+$Configuration['Database']['Dummy'] = true;
+
 // EnabledApplications
 $Configuration['EnabledApplications']['Conversations'] = 'conversations';
 $Configuration['EnabledApplications']['Vanilla'] = 'vanilla';
