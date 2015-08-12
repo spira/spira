@@ -400,7 +400,7 @@ gulp.task('test:forum', 'tests the forum', [], function(){
 
 });
 
-gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api']);
+gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api', 'test:forum']);
 
 gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
     gulp.src(paths.dest.coverage)
