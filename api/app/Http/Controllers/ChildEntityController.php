@@ -9,13 +9,14 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
-use App\Models\ChildBaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
+use Spira\Repository\Validation\ValidationException;
+use Spira\Repository\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
@@ -96,6 +97,7 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
+        $this->validateRequest($request->all(),$childModel);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -116,6 +118,7 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $model);
+        $this->validateRequest($request->all(),$childModel);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -130,37 +133,45 @@ class ChildEntityController extends ApiController
      * @param string $id
      * @param  Request $request
      * @return ApiResponse
-     * @TODO save many collection validation exception to be implemented
      */
     public function putMany($id, Request $request)
     {
         $requestCollection = $request->data;
-
         $model = $this->findParentEntity($id);
+        $childModels = $this->findChildrenCollection($requestCollection,$model);
 
-        $childKey = $this->getChildModel()->getKeyName();
-        $ids = $this->getIds($requestCollection, $childKey, $this->validateChildIdRule);
-        $childModels = [];
-        if (!empty($ids)) {
-            $childModels = $this->getRelation($model)->findMany($ids);
-        }
-
-        $putModels = [];
+        $error = false;
+        $errors = [];
         foreach ($requestCollection as $requestEntity) {
-            $id = isset($requestEntity[$childKey])?$requestEntity[$childKey]:null;
+            $id = $this->getIdOrNull($requestEntity, $this->getChildModel()->getKeyName());
             if ($id && !empty($childModels) && $childModels->has($id)) {
                 $childModel = $childModels->get($id);
             } else {
                 $childModel = $this->getChildModel()->newInstance();
+                $childModels->add($childModel);
             }
-            $childModel->fill($requestEntity);
-            $this->getRelation($model)->save($childModel);
-            $putModels[] = $childModel;
+
+            try {
+                $this->validateRequest($requestEntity, $childModel);
+                if (!$error){
+                    $childModel->fill($requestEntity);
+                }
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $error = true;
+                $errors[] = $e;
+            }
         }
+
+        if ($error){
+            throw new ValidationExceptionCollection($errors);
+        }
+
+        $this->getRelation($model)->saveMany($childModels);
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->createdCollection($putModels);
+            ->createdCollection($childModels);
     }
 
     /**
@@ -175,6 +186,7 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
+        $this->validateRequest($request->all(),$this->getChildModel());
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -187,19 +199,33 @@ class ChildEntityController extends ApiController
      * @param string $id
      * @param  Request $request
      * @return ApiResponse
-     * @TODO save many collection validation exception to be implemented
      */
     public function patchMany($id, Request $request)
     {
         $requestCollection = $request->data;
-
         $model = $this->findParentEntity($id);
         $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
 
+        $error = false;
+        $errors = [];
         foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$this->getChildModel()->getKeyName()];
+            $id = $this->getIdOrNull($requestEntity, $this->getChildModel()->getKeyName());
             $childModel = $childModels->get($id);
-            $childModel->fill($requestEntity);
+
+            try {
+                $this->validateRequest($requestEntity, $childModel);
+                if (!$error){
+                    $childModel->fill($requestEntity);
+                }
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $error = true;
+                $errors[] = $e;
+            }
+        }
+
+        if ($error){
+            throw new ValidationExceptionCollection($errors);
         }
 
         $this->getRelation($model)->saveMany($childModels);
@@ -251,7 +277,7 @@ class ChildEntityController extends ApiController
     }
 
     /**
-     * @return ChildBaseModel
+     * @return BaseModel
      */
     public function getChildModel()
     {
@@ -331,10 +357,28 @@ class ChildEntityController extends ApiController
     protected function findOrFailChildrenCollection($requestCollection, BaseModel $parent)
     {
         $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->validateChildIdRule);
-        $models = $this->getRelation($parent)->findMany($ids);
 
-        if (count($ids) !== $models->count()) {
+        if (!empty($ids)) {
+            $models = $this->getRelation($parent)->findMany($ids);
+        }else{
+            $models = $this->getChildModel()->newCollection();
+        }
+
+        if ($models && count($ids) !== $models->count()) {
             throw $this->notFoundManyException($ids, $models, $this->getChildModel()->getKeyName());
+        }
+
+        return $models;
+    }
+
+    protected function findChildrenCollection($requestCollection, BaseModel $parent)
+    {
+        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->validateChildIdRule);
+
+        if (!empty($ids)) {
+            $models = $this->getRelation($parent)->findMany($ids);
+        }else{
+            $models = $this->getChildModel()->newCollection();
         }
 
         return $models;

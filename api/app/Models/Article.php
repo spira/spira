@@ -58,7 +58,7 @@ class Article extends BaseModel
         }
 
         return [
-            'article_id' => 'uuid|createOnly',
+            'article_id' => 'uuid|createOnly:'.($this->article_id?:'NULL'),
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
@@ -76,12 +76,19 @@ class Article extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::validated(function (Article $model) {
+        static::saving(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
                 $articlePermalink = new ArticlePermalink();
                 $articlePermalink->permalink = $model->permalink;
-                $model->permalinks->add($articlePermalink);
                 $articlePermalink->save();
+            }
+            return true;
+        });
+
+        static::saved(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+                $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
+                $model->permalinks()->save($articlePermalink);
             }
             return true;
         });

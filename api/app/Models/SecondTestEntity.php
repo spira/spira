@@ -28,4 +28,13 @@ class SecondTestEntity extends BaseModel
             'check_entity_id' => 'uuid',
             'value' => 'required|string'
         ];
+
+    public function getValidationRules()
+    {
+        return [
+            'entity_id' => 'uuid|createOnly:'.($this->entity_id?:'NULL'),
+            'check_entity_id' => 'uuid',
+            'value' => 'required|string'
+        ];
+    }
 }

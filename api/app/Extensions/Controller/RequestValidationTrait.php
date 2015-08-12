@@ -10,8 +10,10 @@ namespace App\Extensions\Controller;
 
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Routing\ValidatesRequests;
+use Spira\Repository\Model\BaseModel;
 use Spira\Repository\Validation\ValidationException;
 use Spira\Repository\Validation\ValidationExceptionCollection;
+use Spira\Repository\Validation\Validator;
 
 trait RequestValidationTrait
 {
@@ -49,6 +51,16 @@ trait RequestValidationTrait
         }
 
         return $ids;
+    }
+
+    /**
+     * @param $requestEntity
+     * @param $keyName
+     * @return null
+     */
+    protected function getIdOrNull($requestEntity, $keyName)
+    {
+        return isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
     }
 
 
@@ -109,4 +121,29 @@ trait RequestValidationTrait
             }
         }
     }
+
+    /**
+     * @param $requestEntity
+     * @param BaseModel $model
+     * @return bool
+     */
+    public function validateRequest($requestEntity, BaseModel $model)
+    {
+        $validationRules = $model->getValidationRules();
+        if ($model->exists){
+            $validationRules = array_intersect_key($validationRules, $requestEntity);
+        }
+        $validation = $this->getValidationFactory()->make($requestEntity, $validationRules);
+        if (!$validation instanceof Validator) {
+            throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
+        }
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation->messages());
+        }
+
+        return true;
+    }
+
 }
+

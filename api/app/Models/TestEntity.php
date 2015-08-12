@@ -43,18 +43,21 @@ class TestEntity extends BaseModel
         'updated_at' => 'datetime',
     ];
 
-    protected $validationRules = [
-        'entity_id' => 'uuid|createOnly',
-        'varchar' => 'required|string',
-        'hash'    => 'required|string',
-        'integer' => 'required|integer',
-        'decimal' => 'required|float',
-        'boolean' => 'required|boolean',
-        'text'    => 'required|string',
-        'date'    => 'required|date',
-        'multi_word_column_title' => 'required|boolean',
-        'hidden'  => 'required|boolean'
-    ];
+    public function getValidationRules()
+    {
+        return [
+            'entity_id' => 'uuid|createOnly:'.($this->entity_id?:'NULL'),
+            'varchar' => 'required|string',
+            'hash'    => 'required|string',
+            'integer' => 'required|integer',
+            'decimal' => 'required|float',
+            'boolean' => 'required|boolean',
+            'text'    => 'required|string',
+            'date'    => 'required|date',
+            'multi_word_column_title' => 'required|boolean',
+            'hidden'  => 'required|boolean'
+        ];
+    }
 
 
     public function testOne()

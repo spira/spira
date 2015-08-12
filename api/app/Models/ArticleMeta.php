@@ -21,6 +21,8 @@ class ArticleMeta extends BaseModel
 
     protected $fillable = ['article_id', 'meta_name', 'meta_content', 'meta_property'];
 
+    protected $guarded = ['meta_name'];
+
     public function getValidationRules()
     {
         $metaUniqueRule = 'unique:article_metas,meta_name';
@@ -31,7 +33,7 @@ class ArticleMeta extends BaseModel
         }
         $metaUniqueRule.= ',article_id,'.$this->article_id;
         return [
-            'article_id' => 'uuid|createOnly',
+            'article_id' => 'uuid|createOnly:'.($this->meta_name?:'NULL'),
             'meta_name' => 'required|string|createOnly|'.$metaUniqueRule,
             'meta_content' => 'string',
             'meta_property' => 'string'

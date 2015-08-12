@@ -9,10 +9,12 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
-use App\Helpers\ModelHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Spira\Repository\Collection\Collection;
 use Spira\Repository\Model\BaseModel;
+use Spira\Repository\Validation\ValidationException;
+use Spira\Repository\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
@@ -82,6 +84,7 @@ abstract class EntityController extends ApiController
     public function postOne(Request $request)
     {
         $model = $this->getModel()->newInstance();
+        $this->validateRequest($request->all(),$model);
         $model->fill($request->all());
         $model->save();
 
@@ -100,6 +103,7 @@ abstract class EntityController extends ApiController
     public function putOne($id, Request $request)
     {
         $model = $this->findOrNewEntity($id);
+        $this->validateRequest($request->all(),$model);
         $model->fill($request->all());
         $model->save();
 
@@ -117,32 +121,42 @@ abstract class EntityController extends ApiController
     public function putMany(Request $request)
     {
         $requestCollection = $request->data;
+        $models = $this->findCollection($requestCollection);
 
-        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
-        $models = [];
-        if (!empty($ids)) {
-            $models = $this->getModel()->findMany($ids);
-        }
+        $error = false;
+        $errors = [];
 
-        $putModels = [];
-        $keyName = $this->getModel()->getKeyName();
         foreach ($requestCollection as $requestEntity) {
-            $id = isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
-            if ($id && !empty($models) && $models->has($id)) {
+            $id = $this->getIdOrNull($requestEntity, $this->getModel()->getKeyName());
+            if ($id && $models->has($id)) {
                 $model = $models->get($id);
             } else {
                 $model = $this->getModel()->newInstance();
+                $models->add($model);
             }
-            /** @var BaseModel $model */
-            $model->fill($requestEntity);
-            $putModels[] = $model;
+
+            try {
+                $this->validateRequest($requestEntity, $model);
+                if (!$error){
+                    $model->fill($requestEntity);
+                    $model->save();
+                }
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $error = true;
+                $errors[] = $e;
+            }
+
+
         }
 
-        ModelHelper::saveMany($putModels);
+        if ($error){
+            throw new ValidationExceptionCollection($errors);
+        }
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->createdCollection($putModels);
+            ->createdCollection($models);
     }
 
     /**
@@ -155,8 +169,9 @@ abstract class EntityController extends ApiController
     public function patchOne($id, Request $request)
     {
         $model = $this->findOrFailEntity($id);
+        $this->validateRequest($request->all(),$model);
         $model->fill($request->all());
-        $model->push();
+        $model->save();
 
         return $this->getResponse()->noContent();
     }
@@ -172,13 +187,28 @@ abstract class EntityController extends ApiController
         $requestCollection = $request->data;
         $models = $this->findOrFailCollection($requestCollection);
 
+        $error = false;
+        $errors = [];
         foreach ($requestCollection as $requestEntity) {
             $id = $requestEntity[$this->getModel()->getKeyName()];
             $model = $models->get($id);
-            $model->fill($requestEntity);
+
+            try {
+                $this->validateRequest($requestEntity, $model);
+                if (!$error){
+                    $model->fill($requestEntity);
+                    $model->save();
+                }
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $error = true;
+                $errors[] = $e;
+            }
         }
 
-        ModelHelper::saveMany($models->all());
+        if ($error){
+            throw new ValidationExceptionCollection($errors);
+        }
 
         return $this->getResponse()->noContent();
     }
@@ -241,28 +271,65 @@ abstract class EntityController extends ApiController
         }
     }
 
+    /**
+     * @return int
+     */
     protected function countEntities()
     {
         return $this->getModel()->count();
     }
 
+    /**
+     * @param null $limit
+     * @param null $offset
+     * @return Collection
+     */
     protected function getAllEntities($limit = null, $offset = null)
     {
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
 
+    /**
+     * @param $requestCollection
+     * @return Collection
+     */
     protected function findOrFailCollection($requestCollection)
     {
         $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
-        $models = $this->getModel()->findMany($ids);
 
-        if (count($ids) !== $models->count()) {
+        if (!empty($ids)) {
+            $models = $models = $this->getModel()->findMany($ids);
+        }else{
+            $models = $this->getModel()->newCollection();
+        }
+
+        if ($models && count($ids) !== $models->count()) {
             throw $this->notFoundManyException($ids, $models, $this->getModel()->getKeyName());
         }
 
         return $models;
     }
 
+    /**
+     * @param $requestCollection
+     * @return Collection
+     */
+    protected function findCollection($requestCollection)
+    {
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
+
+        if (!empty($ids)) {
+            $models = $models = $this->getModel()->findMany($ids);
+        }else{
+            $models = $this->getModel()->newCollection();
+        }
+
+        return $models;
+    }
+
+    /**
+     * @return BaseModel
+     */
     protected function getModel()
     {
         return $this->model;
