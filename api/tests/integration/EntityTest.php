@@ -1,10 +1,8 @@
 <?php
 
+use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
 
-/**
- * @property \App\Repositories\BaseRepository $repository
- */
 class EntityTest extends TestCase
 {
     public function setUp()
@@ -19,9 +17,6 @@ class EntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\TestEntity::flushEventListeners();
         App\Models\TestEntity::boot();
-
-        // Get a repository instance, for assertions
-        $this->repository = $this->app->make('App\Repositories\TestRepository');
     }
 
     /**
@@ -87,7 +82,7 @@ class EntityTest extends TestCase
     public function testGetAllPaginatedSimpleRange()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
-        $totalCount = $this->repository->count();
+        $totalCount =TestEntity::count();
         $this->get('/test/entities/pages', ['Range'=>'entities=0-19']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
@@ -111,7 +106,7 @@ class EntityTest extends TestCase
     public function testPaginationOutOfRange()
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
-        $totalCount = $this->repository->count();
+        $totalCount = TestEntity::count();
         $this->get('/test/entities/pages', ['Range'=>'entities='.$totalCount.'-']);
         $this->assertResponseStatus(416);
     }
@@ -119,7 +114,7 @@ class EntityTest extends TestCase
     public function testPaginationMoreThanInRepo()
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
-        $totalCount = $this->repository->count();
+        $totalCount = TestEntity::count();
         $this->get('/test/entities/pages', ['Range'=>'entities='.($totalCount-2).'-'.($totalCount+20)]);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
@@ -136,7 +131,7 @@ class EntityTest extends TestCase
     public function testPaginationGetLast()
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
-        $totalCount = $this->repository->count();
+        $totalCount = TestEntity::count();
         $this->get('/test/entities/pages', ['Range'=>'entities=-5']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
@@ -244,14 +239,14 @@ class EntityTest extends TestCase
         $id = $entity->entity_id;
         $entity = $this->prepareEntity($entity);
 
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->put('/test/entities/'.$id, $entity);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount + 1, $this->repository->count());
+        $this->assertEquals($rowCount + 1, TestEntity::count());
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
     }
@@ -298,14 +293,14 @@ class EntityTest extends TestCase
             return array_add($this->prepareEntity($entity), 'entity_id', (string) Uuid::uuid4());
         }, $entities->all());
 
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->put('/test/entities', ['data' => $entities]);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount + 5, $this->repository->count());
+        $this->assertEquals($rowCount + 5, TestEntity::count());
         $this->assertTrue(is_array($object));
         $this->assertCount(5, $object);
         $this->assertStringStartsWith('http', $object[0]->_self);
@@ -319,7 +314,7 @@ class EntityTest extends TestCase
             return array_add($this->prepareEntity($entity), 'entity_id', 'foobar');
         }, $entities->all());
 
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->put('/test/entities', ['data' => $entities]);
 
@@ -328,7 +323,7 @@ class EntityTest extends TestCase
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
-        $this->assertEquals($rowCount, $this->repository->count());
+        $this->assertEquals($rowCount, TestEntity::count());
     }
 
     public function testPatchOne()
@@ -337,7 +332,7 @@ class EntityTest extends TestCase
 
         $this->patch('/test/entities/'.$entity->entity_id, ['varchar' => 'foobar']);
 
-        $entity = $this->repository->find($entity->entity_id);
+        $entity = TestEntity::find($entity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -365,7 +360,7 @@ class EntityTest extends TestCase
 
         $this->patch('/test/entities', ['data' => $data]);
 
-        $entity = $this->repository->find($entities->random()->entity_id);
+        $entity = TestEntity::find($entities->random()->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -393,19 +388,19 @@ class EntityTest extends TestCase
     public function testDeleteOne()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->delete('/test/entities/'.$entity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($rowCount - 1, $this->repository->count());
+        $this->assertEquals($rowCount - 1, TestEntity::count());
     }
 
     public function testDeleteOneInvalidId()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->delete('/test/entities/'.'c4b3c8d3-fa8b-4cf6-828a-072bcf7dc371');
 
@@ -413,25 +408,25 @@ class EntityTest extends TestCase
 
         $this->assertObjectHasAttribute('entityId', $object->invalid);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
-        $this->assertEquals($rowCount, $this->repository->count());
+        $this->assertEquals($rowCount, TestEntity::count());
     }
 
     public function testDeleteMany()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create()->all();
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
 
         $this->delete('/test/entities', ['data' => $entities]);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($rowCount - 5, $this->repository->count());
+        $this->assertEquals($rowCount - 5, TestEntity::count());
     }
 
     public function testDeleteManyInvalidId()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
-        $rowCount = $this->repository->count();
+        $rowCount = TestEntity::count();
         $entities->first()->entity_id = (string) Uuid::uuid4();
         $entities->last()->entity_id = (string) Uuid::uuid4();
 
@@ -444,7 +439,7 @@ class EntityTest extends TestCase
         $this->assertNull($object->invalid[1]);
         $this->assertObjectHasAttribute('entityId', $object->invalid[4]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
-        $this->assertEquals($rowCount, $this->repository->count());
+        $this->assertEquals($rowCount, TestEntity::count());
     }
 
 
