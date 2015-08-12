@@ -26,7 +26,7 @@ namespace app.user.profile {
                 instagram:'',
                 website:''
             },
-            user:common.models.User = <common.models.User>{
+            fullUserInfo:common.models.User = <common.models.User>{
                 userId:'007a61cb-3143-3f40-8436-dfab437c1871',
                 email:'john.doe@example.com',
                 firstName:'John',
@@ -40,7 +40,7 @@ namespace app.user.profile {
                 userType:'guest'
             },
             userService = {
-                updateProfile: (user:common.models.User) => {
+                updateUser: (user:common.models.User) => {
                     if (user.email == 'invalid@email.com') {
                         return $q.reject({data: {message: 'this failure message'}});
                     }
@@ -66,8 +66,8 @@ namespace app.user.profile {
 
                 ProfileController = $controller(app.user.profile.namespace + '.controller', {
                     $scope: $scope,
-                    userService:userService,
-                    user:user,
+                    userService: userService,
+                    fullUserInfo: fullUserInfo,
                     $mdToast: $mdToast,
                     countries: countries,
                     timezones: timezones,
@@ -88,9 +88,9 @@ namespace app.user.profile {
 
             it('should be able to update the profile', () => {
 
-                ProfileController.user.email = 'valid@email.com';
+                ProfileController.fullUserInfo.email = 'valid@email.com';
 
-                ProfileController.updateProfile();
+                ProfileController.updateUser();
 
                 $scope.$apply();
 
@@ -100,9 +100,9 @@ namespace app.user.profile {
 
             it('should display an error message on profile update failure', () => {
 
-                ProfileController.user.email = 'invalid@email.com';
+                ProfileController.fullUserInfo.email = 'invalid@email.com';
 
-                ProfileController.updateProfile();
+                ProfileController.updateUser();
 
                 $scope.$apply();
 

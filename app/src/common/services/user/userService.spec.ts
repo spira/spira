@@ -224,21 +224,7 @@
 
         });
 
-        describe('Profile', () => {
-
-            it('should be able to retrieve the profile', () => {
-
-                let user = _.clone(fixtures.user);
-
-                $httpBackend.expectGET('/api/users/' + user.userId + '/profile').respond(userProfile);
-
-                let profilePromise = userService.getProfile(user);
-
-                expect(profilePromise).eventually.to.be.fulfilled;
-                expect(profilePromise).eventually.to.deep.equal(userProfile);
-
-                $httpBackend.flush();
-            });
+        describe('Update Details', () => {
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
@@ -258,7 +244,7 @@
                         return data.firstName == 'FooBar' && data._userProfile.dob == '1995-01-01' && data._userProfile.about == 'Ipsum';
                     }).respond(204);
 
-                let profileUpdatePromise = userService.updateProfile(user);
+                let profileUpdatePromise = userService.updateUser(user);
 
                 expect(profileUpdatePromise).eventually.to.be.fulfilled;
 

@@ -176,7 +176,7 @@ class UserController extends EntityController
         }
 
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->get('_user_credentials', []);
+        $credentialUpdateDetails = $request->get('_user_credential', []);
         if (!empty($credentialUpdateDetails)) {
             $credentials = UserCredential::findOrNew($id);
             $credentials->fill($credentialUpdateDetails);
@@ -223,33 +223,14 @@ class UserController extends EntityController
 
         $userData = $user->toArray();
 
-        $userData['_user_credentials'] = $user->userCredential->toArray();
+        $userData['_user_credential'] = $user->userCredential->toArray();
 
         $userData['_social_logins'] = $user->socialLogins->toArray();
+
+        $userData['_user_profile'] = $user->userProfile->toArray();
 
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($userData);
-    }
-
-    /**
-     * Get the user's profile.
-     *
-     * @param $id
-     * @return \Illuminate\Http\Response
-     */
-    public function getProfile($id)
-    {
-        $this->validateId($id, $this->getKeyName());
-
-        $userProfile = UserProfile::find($id);
-
-        if (is_null($userProfile)) {
-            return $this->getResponse()->noContent();
-        }
-
-        return $this->getResponse()
-            ->transformer($this->transformer)
-            ->item($userProfile);
     }
 }
