@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\BadRequestException;
 use App\Extensions\Controller\RequestValidationTrait;
 use App\Helpers\ModelHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -64,12 +65,15 @@ abstract class EntityController extends ApiController
      * @param  string $id
      * @return ApiResponse
      */
-    public function getOne($id)
+    public function getOne(Request $request, $id)
     {
         $model = $this->findOrFailEntity($id);
+
+        $item = $this->getEntityWithNested($model, $request);
+
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($model)
+            ->item($item)
         ;
     }
 
@@ -266,5 +270,27 @@ abstract class EntityController extends ApiController
     protected function getModel()
     {
         return $this->model;
+    }
+
+    private function getEntityWithNested(BaseModel $model, Request $request)
+    {
+
+        $nested = $request->headers->get('With-Nested');
+        if (!$nested){
+            return $model;
+        }
+
+        $requestedRelations = explode(', ', $nested);
+
+        try {
+            $model->load($requestedRelations);
+        }catch(\BadMethodCallException $e){
+
+            throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
+        }
+
+        return $model;
+
+
     }
 }
