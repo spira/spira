@@ -50,8 +50,8 @@ mailcatcher:
   image: schickling/mailcatcher
 
 php:
-#  image: spira/docker-hhvm
-  image: spira/docker-phpfpm
+  image: spira/docker-hhvm
+#  image: spira/docker-phpfpm
   volumes_from:
     - data
   links:
