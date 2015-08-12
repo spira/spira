@@ -2,30 +2,63 @@ namespace common.services.notification {
 
     export const namespace = 'common.services.notification';
 
-    export class NotificationService {
+    export class Toast {
 
-        static $inject:string[] = ['$mdToast'];
+        private toastOptions:any = {};
 
-        constructor(private $mdToast:ng.material.IToastService) {
+        constructor(private message:string, private $mdToast:ng.material.IToastService, private $rootScope:global.IRootScope) {
+            this.toastOptions = {
+                hideDelay: 2000,
+                position: 'top',
+                template: '<md-toast class="md-toast-fixed">' + message + '</md-toast>',
+            };
+        }
+
+
+        /**
+         * Override or add toast options
+         *
+         * @param toastOptions
+         * @returns {common.services.notification.Toast}
+         */
+        public options(toastOptions:any) {
+
+            _.merge(this.toastOptions, toastOptions);
+            if(_.has(toastOptions, 'parent')) {
+                this.toastOptions.template = '<md-toast>' + this.message + '</md-toast>';
+            }
+
+            return this;
 
         }
 
-        public showToast(message:string, parent:string = ''):void {
+        /**
+         * Show the toast
+         */
+        public pop():void {
 
-            let options:any = {
-                hideDelay: 2000,
-                position: 'top'
-            };
+            this.$mdToast.show(this.toastOptions);
 
-            if(_.isEmpty(parent)) { // Show a fixed toast
-                options.template = '<md-toast class="md-toast-fixed">' + message + '</md-toast>';
-            }
-            else { // Show a normal toast on the parent element
-                options.template = '<md-toast>' + message + '</md-toast>';
-                options.parent = parent;
-            }
+        }
 
-            this.$mdToast.show(options);
+    }
+
+    export class NotificationService {
+
+        static $inject:string[] = ['$mdToast', '$rootScope'];
+
+        constructor(private $mdToast:ng.material.IToastService, private $rootScope:global.IRootScope) {
+
+        }
+
+        /**
+         * Get an instance of Toast
+         *
+         * @param message
+         * @return {common.services.notification.Toast}
+         */
+        public toast(message:string):Toast {
+            return new Toast(message, this.$mdToast, this.$rootScope);
         }
 
     }
