@@ -385,6 +385,21 @@ gulp.task('test:api', 'unit tests the api', [], function(){
 
 });
 
+gulp.task('test:forum', 'tests the forum', [], function(){
+
+    return gulp.src('forum/phpunit.xml')
+        .pipe(plugins.phpunit('./forum/vendor/bin/phpunit', {
+            notify: true
+        }))
+        .on('error', function(err){
+            plugins.notify.onError(testNotification('fail', 'phpunit'));
+            throw err;
+        })
+        .pipe(plugins.notify(testNotification('pass', 'phpunit')))
+    ;
+
+});
+
 gulp.task('test', 'executes all unit and integration tests', ['test:app', 'test:api']);
 
 gulp.task('coveralls', 'generates code coverage for the frontend', [], function(){
