@@ -271,7 +271,10 @@ class ArticleTest extends TestCase
 
     public function testGetPermalinks()
     {
-        $entity = factory(Article::class)->create();
+        $entities = factory(Article::class, 2)->create()->all();
+        $this->addPermalinksToArticles($entities);
+        $this->repository->saveMany($entities);
+        $entity = current($entities);
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 

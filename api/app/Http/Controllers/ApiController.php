@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\BaseRepository;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
@@ -17,24 +16,16 @@ abstract class ApiController extends Controller
 {
     protected $paginatorDefaultLimit = 10;
     protected $paginatorMaxLimit = 50;
-    protected $validateRequestRule = 'uuid';
-
-    /**
-     * Model Repository.
-     *
-     * @var BaseRepository
-     */
-    protected $repository;
 
     /**
      * @var TransformerInterface
      */
     protected $transformer;
 
-    public function __construct(BaseRepository $repository, TransformerInterface $transformer)
+    public function __construct(TransformerInterface $transformer)
     {
-        $this->repository = $repository;
         $this->transformer = $transformer;
+        $this->middleware('transaction');
     }
 
     /**
@@ -43,22 +34,6 @@ abstract class ApiController extends Controller
     public function getResponse()
     {
         return new ApiResponse();
-    }
-
-    /**
-     * @return BaseRepository
-     */
-    public function getRepository()
-    {
-        return $this->repository;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getKeyName()
-    {
-        return $this->getRepository()->getKeyName();
     }
 
     /**

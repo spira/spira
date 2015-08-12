@@ -4,7 +4,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Countries;
 use Symfony\Component\HttpFoundation\Response;
 
-class CountriesController extends EntityController
+class CountriesController extends ApiController
 {
     /**
      * Assign dependencies.
@@ -15,7 +15,7 @@ class CountriesController extends EntityController
     public function __construct(Countries $countries, EloquentModelTransformer $transformer)
     {
         $this->countries = $countries;
-        $this->transformer = $transformer;
+        parent::__construct($transformer);
     }
 
     /**

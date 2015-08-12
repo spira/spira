@@ -9,16 +9,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Repositories\ArticleRepository;
+use App\Models\Article;
 
 class ArticlePermalinkController extends ChildEntityController
 {
-    protected $validateRequestRule = 'required|string';
-    protected $validateChildRequestRule = 'required|string';
+    protected $validateParentIdRule = 'required|string';
+    protected $validateChildIdRule = 'required|string';
     protected $relationName = 'permalinks';
 
-    public function __construct(ArticleRepository $repository, EloquentModelTransformer $transformer)
+    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
-        parent::__construct($repository, $transformer);
+        parent::__construct($parentModel, $transformer);
     }
 }

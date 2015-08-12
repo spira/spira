@@ -21,7 +21,7 @@ use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class AuthController extends EntityController
+class AuthController extends ApiController
 {
     /**
      * The application instance.
@@ -57,8 +57,8 @@ class AuthController extends EntityController
     {
         $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
-        $this->transformer = $transformer;
         $this->app = $app;
+        parent::__construct($transformer);
     }
 
     /**

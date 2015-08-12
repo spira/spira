@@ -17,7 +17,6 @@ use App\Jobs\SendPasswordResetEmail;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
-use App\Repositories\UserRepository as Repository;
 use Illuminate\Contracts\Cache\Repository as Cache;
 
 class UserController extends EntityController
@@ -48,7 +47,7 @@ class UserController extends EntityController
     /**
      * Assign dependencies.
      *
-     * @param  Repository $repository
+     * @param  User $model
      * @param  Lock $lock
      * @param  JWTAuth $jwtAuth
      * @param  Request $request
@@ -56,7 +55,7 @@ class UserController extends EntityController
      * @param  Cache $cache
      */
     public function __construct(
-        Repository $repository,
+        User $model,
         Lock $lock,
         JWTAuth $jwtAuth,
         Request $request,
@@ -67,7 +66,7 @@ class UserController extends EntityController
         $this->jwtAuth = $jwtAuth;
         $this->cache = $cache;
         $this->permissions($request);
-        parent::__construct($repository, $transformer);
+        parent::__construct($model, $transformer);
     }
 
     /**
@@ -109,16 +108,17 @@ class UserController extends EntityController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        if ($this->repository->exists($id)) {
+        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
+        if ($this->getModel()->find($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
             );
         }
 
-        $model = $this->repository->getNewModel();
+        /** @var User $model */
+        $model = $this->getModel()->newInstance();
         $model->fill($request->all());
-        $this->repository->save($model);
+        $model->save();
 
         // Finally create the credentials
         $model->setCredential(new UserCredential($credential));
@@ -130,7 +130,7 @@ class UserController extends EntityController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->createdItem($model, $this->transformer);
+            ->createdItem($model);
     }
 
     /**
@@ -142,8 +142,8 @@ class UserController extends EntityController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-        $model = $this->repository->find($id);
+        /** @var User $model */
+        $model = $this->findOrFailEntity($id);
 
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
@@ -165,11 +165,12 @@ class UserController extends EntityController
         }
 
         $model->fill($request->except('email'));
-        $this->repository->save($model);
+        $model->save();
 
         // Extract the profile and update if necessary
         $profileUpdateDetails = $request->get('_user_profile', []);
         if (!empty($profileUpdateDetails)) {
+            /** @var UserProfile $profile */
             $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
             $profile->fill($profileUpdateDetails);
             $model->setProfile($profile);
@@ -190,13 +191,16 @@ class UserController extends EntityController
      */
     public function resetPassword($email)
     {
+        /** @var User $model */
+        $model = $this->getModel();
+
         try {
-            $user = $this->repository->findByEmail($email);
+            $user = $model->findByEmail($email);
         } catch (ModelNotFoundException $e) {
             throw new NotFoundHttpException('Sorry, this email does not exist in our database.', $e);
         }
 
-        $token = $this->repository->makeLoginToken($user->user_id);
+        $token = $model->makeLoginToken($user->user_id);
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
         return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
@@ -210,7 +214,7 @@ class UserController extends EntityController
      */
     public function getProfile($id)
     {
-        $this->validateId($id, $this->getKeyName());
+        $this->validateId($id, $this->getModel()->getKeyName());
 
         $userProfile = UserProfile::find($id);
 

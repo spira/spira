@@ -8,7 +8,9 @@
 
 namespace Spira\Repository\Model;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
@@ -26,13 +28,13 @@ use Spira\Repository\Validation\Validator;
  * @package Spira\Repository\Model
  *
  * @method static int count
+ * @method BaseModel find($id)
+ * @method BaseModel findOrFail($id)
  * @method static Collection get
- * @method static BaseModel findOrFail
- * @method static BaseModel find
- * @method static Collection findMany
- * @method static BaseModel where
- * @method static BaseModel skip offset
- * @method static BaseModel take limit
+ * @method static Collection findMany($ids)
+ * @method static Builder where($value,$operator,$operand)
+ * @method static BaseModel skip($offset)
+ * @method static BaseModel take($limit)
  *
  */
 abstract class BaseModel extends Model
@@ -206,10 +208,10 @@ abstract class BaseModel extends Model
 
             if ($this->isCollection($models)) {
                 /** @var Collection $models */
-                $models = $models->all(true);
+                $modelsArray = $models->all(true);
                 $error = false;
                 $errors = [];
-                foreach (array_filter($models) as $model) {
+                foreach (array_filter($modelsArray) as $model) {
                     /** @var BaseModel $model */
                     $model->preserveKeys($relation);
                     try {
@@ -439,6 +441,16 @@ abstract class BaseModel extends Model
         }
 
         return parent::setRelation($relationName, $value);
+    }
+
+    /**
+     * @param mixed $id
+     * @return BaseModel
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        return $this->findOrFail($id);
     }
 
     /**

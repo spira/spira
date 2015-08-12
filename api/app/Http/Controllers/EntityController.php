@@ -9,15 +9,30 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
+use App\Helpers\ModelHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Repository\Model\BaseModel;
+use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
 
 abstract class EntityController extends ApiController
 {
     use RequestValidationTrait;
+
+    protected $validateIdRule = 'uuid';
+
+    /**
+     * @var BaseModel
+     */
+    protected $model;
+
+    public function __construct(BaseModel $model, TransformerInterface $transformer)
+    {
+        $this->model = $model;
+        parent::__construct($transformer);
+    }
 
     /**
      * Get all entities.
@@ -28,15 +43,15 @@ abstract class EntityController extends ApiController
     {
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->collection($this->getRepository()->all());
+            ->collection($this->getAllEntities());
     }
 
     public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
     {
-        $count = $this->getRepository()->count();
+        $count = $this->countEntities();
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getRepository()->all(['*'], $offset, $limit);
+        $collection = $this->getAllEntities($limit, $offset);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -51,14 +66,7 @@ abstract class EntityController extends ApiController
      */
     public function getOne($id)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-
-        try {
-            $model = $this->getRepository()->find($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getKeyName());
-        }
-
+        $model = $this->findOrFailEntity($id);
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($model)
@@ -73,9 +81,9 @@ abstract class EntityController extends ApiController
      */
     public function postOne(Request $request)
     {
-        $model = $this->getRepository()->getNewModel();
+        $model = $this->getModel()->newInstance();
         $model->fill($request->all());
-        $this->getRepository()->save($model);
+        $model->save();
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -91,15 +99,9 @@ abstract class EntityController extends ApiController
      */
     public function putOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-
-        try {
-            $model = $this->getRepository()->find($id);
-        } catch (ModelNotFoundException $e) {
-            $model = $this->getRepository()->getNewModel();
-        }
+        $model = $this->findOrNewEntity($id);
         $model->fill($request->all());
-        $this->getRepository()->save($model);
+        $model->save();
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -116,30 +118,31 @@ abstract class EntityController extends ApiController
     {
         $requestCollection = $request->data;
 
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
         $models = [];
         if (!empty($ids)) {
-            $models = $this->getRepository()->findMany($ids);
+            $models = $this->getModel()->findMany($ids);
         }
 
         $putModels = [];
+        $keyName = $this->getModel()->getKeyName();
         foreach ($requestCollection as $requestEntity) {
-            $id = isset($requestEntity[$this->getKeyName()])?$requestEntity[$this->getKeyName()]:null;
+            $id = isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
             if ($id && !empty($models) && $models->has($id)) {
                 $model = $models->get($id);
             } else {
-                $model = $this->getRepository()->getNewModel();
+                $model = $this->getModel()->newInstance();
             }
             /** @var BaseModel $model */
             $model->fill($requestEntity);
             $putModels[] = $model;
         }
 
-        $models = $this->getRepository()->saveMany($putModels);
+        ModelHelper::saveMany($putModels);
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->createdCollection($models);
+            ->createdCollection($putModels);
     }
 
     /**
@@ -151,16 +154,9 @@ abstract class EntityController extends ApiController
      */
     public function patchOne($id, Request $request)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-
-        try {
-            $model = $this->getRepository()->find($id);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getKeyName());
-        }
-
+        $model = $this->findOrFailEntity($id);
         $model->fill($request->all());
-        $this->getRepository()->save($model);
+        $model->push();
 
         return $this->getResponse()->noContent();
     }
@@ -174,21 +170,15 @@ abstract class EntityController extends ApiController
     public function patchMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
-        $models = $this->getRepository()->findMany($ids);
-        if ($models->count() !== count($ids)) {
-            throw $this->notFoundManyException($ids, $models, $this->getKeyName());
-        }
+        $models = $this->findOrFailCollection($requestCollection);
 
         foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$this->getKeyName()];
+            $id = $requestEntity[$this->getModel()->getKeyName()];
             $model = $models->get($id);
-
-            /** @var BaseModel $model */
             $model->fill($requestEntity);
         }
 
-        $this->getRepository()->saveMany($models);
+        ModelHelper::saveMany($models->all());
 
         return $this->getResponse()->noContent();
     }
@@ -201,15 +191,7 @@ abstract class EntityController extends ApiController
      */
     public function deleteOne($id)
     {
-        $this->validateId($id, $this->getKeyName(), $this->validateRequestRule);
-
-        try {
-            $model = $this->getRepository()->find($id);
-            $this->getRepository()->delete($model);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getKeyName());
-        }
-
+        $this->findOrFailEntity($id)->delete();
         return $this->getResponse()->noContent();
     }
 
@@ -222,14 +204,67 @@ abstract class EntityController extends ApiController
     public function deleteMany(Request $request)
     {
         $requestCollection = $request->data;
-        $ids = $this->getIds($requestCollection, $this->getKeyName(), $this->validateRequestRule);
-        $models = $this->getRepository()->findMany($ids);
+        $models = $this->findOrFailCollection($requestCollection);
+        foreach ($models as $model) {
+            $model->delete();
+        }
+        return $this->getResponse()->noContent();
+    }
+
+    /**
+     * @param $id
+     * @return BaseModel
+     */
+    protected function findOrNewEntity($id)
+    {
+        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
+
+        try {
+            return $this->getModel()->findByIdentifier($id);
+        } catch (ModelNotFoundException $e) {
+            return $this->getModel()->newInstance();
+        }
+    }
+
+    /**
+     * @param $id
+     * @return BaseModel
+     */
+    protected function findOrFailEntity($id)
+    {
+        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
+
+        try {
+            return $this->getModel()->findByIdentifier($id);
+        } catch (ModelNotFoundException $e) {
+            throw $this->notFoundException($this->getModel()->getKeyName());
+        }
+    }
+
+    protected function countEntities()
+    {
+        return $this->getModel()->count();
+    }
+
+    protected function getAllEntities($limit = null, $offset = null)
+    {
+        return $this->getModel()->take($limit)->skip($offset)->get();
+    }
+
+    protected function findOrFailCollection($requestCollection)
+    {
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
+        $models = $this->getModel()->findMany($ids);
 
         if (count($ids) !== $models->count()) {
-            throw $this->notFoundManyException($ids, $models, $this->getKeyName());
+            throw $this->notFoundManyException($ids, $models, $this->getModel()->getKeyName());
         }
 
-        $this->getRepository()->deleteMany($models);
-        return $this->getResponse()->noContent();
+        return $models;
+    }
+
+    protected function getModel()
+    {
+        return $this->model;
     }
 }
