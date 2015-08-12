@@ -13,7 +13,6 @@ use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\NotImplementedException;
-use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
@@ -89,8 +88,7 @@ class AuthController extends EntityController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token)
-            ->withCookie($this->tokenToCookie($token));
+            ->item($token);
     }
 
     /**
@@ -109,8 +107,7 @@ class AuthController extends EntityController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token)
-            ->withCookie($this->tokenToCookie($token));
+            ->item($token);
     }
 
     /**
@@ -142,8 +139,7 @@ class AuthController extends EntityController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token)
-            ->withCookie($this->tokenToCookie($token));
+            ->item($token);
     }
 
     /**
@@ -237,24 +233,6 @@ class AuthController extends EntityController
         $requester = SingleSignOnFactory::create($requester, $request, $user);
 
         return $requester->getResponse();
-    }
-
-
-    /**
-     * Prepare the token to be passed as cookie.
-     *
-     * @param  string  $token
-     *
-     * @return Cookie
-     */
-    protected function tokenToCookie($token)
-    {
-        // Set expiration to browser session
-        $expiration = 0;
-
-        $domain = env('COOKIE_DOMAIN');
-
-        return new Cookie('JwtAuthToken', $token, $expiration, '/', $domain, false, false);
     }
 
     /**

@@ -457,15 +457,6 @@ class AuthTest extends TestCase
         $this->assertEquals('facebook', $socialLogin['provider']);
     }
 
-    public function testTokenToCookie()
-    {
-        $controller = Mockery::mock('App\Http\Controllers\AuthController');
-
-        $cookie = $controller->tokenToCookie('token');
-
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Cookie', $cookie);
-    }
-
     public function testSingleSignOnVanillaNoParameters()
     {
         $this->get('/auth/sso/vanilla');
