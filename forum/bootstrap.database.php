@@ -7,6 +7,4 @@ $databaseConfig = [
     'Database.Password' => getenv('VANILLADATABASE_ENV_MYSQL_PASSWORD'),
 ];
 
-saveToConfig($databaseConfig, null, true);
-
-echo "Database configured: " . print_r($databaseConfig);
+saveToConfig($databaseConfig, null, ['Save' => false]);

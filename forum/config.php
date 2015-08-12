@@ -2,12 +2,6 @@
     exit();
 }
 
-// Database
-$Configuration['Database']['Name'] = getenv('VANILLADATABASE_ENV_MYSQL_DATABASE');
-$Configuration['Database']['Host'] = getenv('VANILLADATABASE_PORT_3306_TCP_ADDR');
-$Configuration['Database']['User'] = getenv('VANILLADATABASE_ENV_MYSQL_USER');
-$Configuration['Database']['Password'] = getenv('VANILLADATABASE_ENV_MYSQL_PASSWORD');
-
 // EnabledApplications
 $Configuration['EnabledApplications']['Conversations'] = 'conversations';
 $Configuration['EnabledApplications']['Vanilla'] = 'vanilla';

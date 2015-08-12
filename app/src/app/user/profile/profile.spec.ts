@@ -9,7 +9,6 @@ namespace app.user.profile {
             countries:common.services.countries.ICountryDefinition,
             timezones:common.services.timezones.ITimezoneDefinition,
             $q:ng.IQService,
-            genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions,
             userCredential:global.IUserCredential = <global.IUserCredential>{
                 userCredentialId:'007a61cb-3143-3f40-8436-dfab437c1871',
                 password:'Password'
