@@ -33,8 +33,8 @@ class ArticleMeta extends BaseModel
         }
         $metaUniqueRule.= ',article_id,'.$this->article_id;
         return [
-            'article_id' => 'uuid|createOnly:'.($this->meta_name?:'NULL'),
-            'meta_name' => 'required|string|createOnly|'.$metaUniqueRule,
+            'article_id' => 'uuid|createOnly:'.($this->article_id?:'NULL'),
+            'meta_name' => 'required|string|createOnly:'.($this->meta_name?:'NULL').'|'.$metaUniqueRule,
             'meta_content' => 'string',
             'meta_property' => 'string'
         ];

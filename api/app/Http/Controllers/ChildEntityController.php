@@ -97,9 +97,10 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
+        $this->attachChildToParent($model,$childModel);
         $this->validateRequest($request->all(),$childModel);
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $childModel->save();
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -118,9 +119,10 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $model);
+        $this->attachChildToParent($model,$childModel);
         $this->validateRequest($request->all(),$childModel);
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $childModel->save();
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -152,6 +154,7 @@ class ChildEntityController extends ApiController
             }
 
             try {
+                $this->attachChildToParent($model,$childModel);
                 $this->validateRequest($requestEntity, $childModel);
                 if (!$error){
                     $childModel->fill($requestEntity);
@@ -186,9 +189,10 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
+        $this->attachChildToParent($model,$childModel);
         $this->validateRequest($request->all(),$this->getChildModel());
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $childModel->save();
 
         return $this->getResponse()->noContent();
     }
@@ -213,6 +217,7 @@ class ChildEntityController extends ApiController
             $childModel = $childModels->get($id);
 
             try {
+                $this->attachChildToParent($model,$childModel);
                 $this->validateRequest($requestEntity, $childModel);
                 if (!$error){
                     $childModel->fill($requestEntity);
@@ -382,5 +387,17 @@ class ChildEntityController extends ApiController
         }
 
         return $models;
+    }
+
+    /**
+     * We need to attach each child model explicitly
+     * as this might be needed in composite key validation
+     * @param BaseModel $parent
+     * @param BaseModel $child
+     */
+    protected function attachChildToParent(BaseModel $parent, BaseModel $child)
+    {
+        $relation = $this->getRelation($parent);
+        $child->setAttribute($relation->getPlainForeignKey(), $relation->getParentKey());
     }
 }
