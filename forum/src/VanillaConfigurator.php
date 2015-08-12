@@ -49,10 +49,10 @@ class VanillaConfigurator
         define('DS', '/');
         define('APPLICATION', 'Vanilla');
         define('APPLICATION_VERSION', $this->getVersion());
-        define('PATH_ROOT', getcwd().'/public');
+        define('PATH_ROOT', getcwd().'/public/forum');
 
         // Boostrap Vanilla
-        require_once('public/bootstrap.php');
+        require_once('public/forum/bootstrap.php');
     }
 
     /**
@@ -70,9 +70,9 @@ class VanillaConfigurator
         ini_set('display_errors', 0);
 
         // Create the database tables
-        require_once('public/applications/dashboard/settings/structure.php');
-        require_once('public/applications/vanilla/settings/structure.php');
-        require_once('public/applications/conversations/settings/structure.php');
+        require_once('public/forum/applications/dashboard/settings/structure.php');
+        require_once('public/forum/applications/vanilla/settings/structure.php');
+        require_once('public/forum/applications/conversations/settings/structure.php');
     }
 
     /**
@@ -175,7 +175,7 @@ class VanillaConfigurator
      */
     protected function getVersion()
     {
-        $lines = file('public/index.php');
+        $lines = file('public/forum/index.php');
 
         foreach ($lines as $line) {
             $pattern = '/\'APPLICATION_VERSION\', \'([a-z0-9.]*)\'/';

@@ -19,7 +19,7 @@ class VanillaTest extends PHPUnit_Framework_TestCase
             ),
         ]);
 
-        $response = $client->get('/');
+        $response = $client->get('/forum/');
         $body = (string) $response->getBody();
 
         $this->assertEquals(200, $response->getStatusCode());

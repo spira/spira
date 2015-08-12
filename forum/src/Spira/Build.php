@@ -37,18 +37,19 @@ class Build
     protected function buildVanillaApp()
     {
         // Copy the main application to public
-        $this->recurseCopy('vendor/vanilla/vanilla', 'public');
+        mkdir('public');
+        $this->recurseCopy('vendor/vanilla/vanilla', 'public/forum');
 
         // Copy the API module inside the application directory
-        $this->recurseCopy('vendor/kasperisager/vanilla-api', 'public/applications/api');
+        $this->recurseCopy('vendor/kasperisager/vanilla-api', 'public/forum/applications/api');
 
         // Copy the SSO plugin to the plugins directory
-        $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
+        $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/forum/plugins/jsconnect');
 
         // Copy the initial configuration to conf directory
-        copy('config.php', 'public/conf/config.php');
+        copy('config.php', 'public/forum/conf/config.php');
 
-        copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
+        copy('bootstrap.database.php', 'public/forum/conf/bootstrap.early.php');
 
         // Setup Vanilla
         (new VanillaConfigurator)->start();
