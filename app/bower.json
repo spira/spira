@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "angular": "~1.4",
-    "angular-animate": "~1.4",
+    "angular-animate": "1.4.4-build.4168+sha.92e41ac",
     "angular-sanitize": "~1.4",
     "angular-messages": "~1.4",
     "angular-i18n": "~1.4",
@@ -30,7 +30,7 @@
     "lil-uuid": "~0.1.0",
     "font-awesome": "~4.3.0",
     "highlightjs": "~8.5.0",
-    "angular-material": "~0.10.0",
+    "angular-material": "~0.10",
     "toposort": "~0.3.1",
     "angular-rest-adapter": "*",
     "angular-http-progress": "*",
@@ -43,6 +43,6 @@
     "chance": "~0.7.6"
   },
   "resolutions": {
-    "angular": "~1.4"
+    "angular": "1.4.4-build.4168+sha.92e41ac"
   }
 }
