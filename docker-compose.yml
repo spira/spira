@@ -78,7 +78,6 @@ web:
   ports:
     - "80:80"
     - "8080:8080"
-    - "8008:8008"
   env_file:
     - .common.env
     - .local.env
