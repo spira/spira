@@ -12,7 +12,11 @@ namespace app.guest.login {
                     deferredCreds.promise.then(null, null, (creds) => {
                         if (creds.password == 'fail') {
                             deferred.notify(new NgJwtAuth.NgJwtAuthCredentialsFailedException('error'));
-                        } else {
+                        }
+                        else if (creds.password == 'differentemail') {
+                            deferred.resolve({email:'foofoo'});
+                        }
+                        else {
                             deferred.resolve('success');
                             deferredCreds.resolve(creds);
                         }
@@ -59,7 +63,7 @@ namespace app.guest.login {
                         deferredCredentials: deferredCredentials,
                         loginSuccess: loginSuccess,
                     });
-                })
+                });
 
                 sinon.spy($mdDialog, 'hide');
                 sinon.spy($mdDialog, 'cancel');
@@ -134,6 +138,29 @@ namespace app.guest.login {
                     return loginSuccess.promise.then(() => {
 
                         expect($mdDialog.hide).to.have.been.called;
+
+                    });
+
+                });
+
+                it('should show a please confirm email dialog when logged in with an unconfirmed email', function () {
+
+                    let creds = {
+                        username: 'foo',
+                        password: 'differentemail',
+                    };
+
+                    LoginController.login(creds.username, creds.password);
+
+                    expect(deferredCredentials.promise).eventually.to.become(creds);
+
+                    expect(loginSuccess.promise).eventually.to.become({email:'foofoo'});
+
+                    $scope.$apply();
+
+                    return loginSuccess.promise.then(() => {
+
+                        expect($mdDialog.show).to.have.been.called;
 
                     });
 
