@@ -31,7 +31,7 @@ namespace app.guest.login {
                 $rootScope:ng.IRootScopeService,
                 $timeout:ng.ITimeoutService,
                 $mdDialog:ng.material.IDialogService,
-                $mdToast:ng.material.IToastService,
+                notificationService:common.services.notification.NotificationService,
                 authService:NgJwtAuth.NgJwtAuthService,
                 deferredCredentials:ng.IDeferred<any>,
                 loginSuccess:{promise:ng.IPromise<any>}
@@ -40,16 +40,13 @@ namespace app.guest.login {
             beforeEach(() => {
 
                 module('app');
-            });
 
-            beforeEach(()=> {
-
-                inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _$mdToast_, _$q_, _$timeout_) => {
+                inject(($controller, _$rootScope_, _ngJwtAuthService_, _$mdDialog_, _notificationService_, _$q_, _$timeout_) => {
                     $rootScope = _$rootScope_;
                     $scope = $rootScope.$new();
                     $timeout = _$timeout_;
                     $mdDialog = _$mdDialog_;
-                    $mdToast = _$mdToast_;
+                    notificationService = _notificationService_;
                     authService = _ngJwtAuthService_;
                     $q = _$q_;
                     deferredCredentials = $q.defer();
@@ -63,14 +60,11 @@ namespace app.guest.login {
                         loginSuccess: loginSuccess,
                     });
                 })
-            });
-
-            beforeEach(() => {
 
                 sinon.spy($mdDialog, 'hide');
                 sinon.spy($mdDialog, 'cancel');
                 sinon.spy($mdDialog, 'show');
-                sinon.spy($mdToast, 'show');
+                sinon.spy(notificationService, 'toast');
 
             });
 
@@ -79,7 +73,7 @@ namespace app.guest.login {
                 (<any>$mdDialog).hide.restore();
                 (<any>$mdDialog).cancel.restore();
                 (<any>$mdDialog).show.restore();
-                (<any>$mdToast).show.restore();
+                (<any>notificationService).toast.restore();
 
             });
 
@@ -187,7 +181,7 @@ namespace app.guest.login {
                         progressSpy.should.have.been.calledWith(credsFail);
                         progressSpy.should.have.been.calledWith(credsPass);
                         progressSpy.should.have.been.calledTwice;
-                        expect($mdToast.show).to.have.been.calledOnce;
+                        expect(notificationService.toast).to.have.been.calledOnce;
                     });
 
                 });
@@ -206,7 +200,7 @@ namespace app.guest.login {
                     return loginSuccess.promise.then(function () {
                         progressSpy.should.have.been.calledWith(credsFail);
                         progressSpy.should.have.been.calledWith(credsPass);
-                        expect($mdToast.show).to.have.been.calledTwice;
+                        expect(notificationService.toast).to.have.been.calledTwice;
                     });
 
                 })
