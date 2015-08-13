@@ -24,17 +24,8 @@ class SecondTestEntity extends BaseModel
     protected $fillable = ['entity_id', 'check_entity_id', 'value'];
 
     protected $validationRules = [
-            'entity_id' => 'uuid|createOnly',
+            'entity_id' => 'uuid',
             'check_entity_id' => 'uuid',
             'value' => 'required|string'
         ];
-
-    public function getValidationRules()
-    {
-        return [
-            'entity_id' => 'uuid|createOnly:'.($this->entity_id?:'NULL'),
-            'check_entity_id' => 'uuid',
-            'value' => 'required|string'
-        ];
-    }
 }

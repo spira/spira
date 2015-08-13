@@ -122,17 +122,19 @@ trait RequestValidationTrait
         }
     }
 
+
     /**
      * @param $requestEntity
-     * @param BaseModel $model
+     * @param array $validationRules
+     * @param bool $limitToRequest
      * @return bool
      */
-    public function validateRequest($requestEntity, BaseModel $model)
+    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false, $attachedRules = [])
     {
-        $validationRules = $model->getValidationRules();
-        if ($model->exists){
+        if ($limitToRequest){
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
+
         $validation = $this->getValidationFactory()->make($requestEntity, $validationRules);
         if (!$validation instanceof Validator) {
             throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
@@ -145,5 +147,9 @@ trait RequestValidationTrait
         return true;
     }
 
+    public function getIdOverrideRule($id)
+    {
+        return 'same:'.$id;
+    }
 }
 
