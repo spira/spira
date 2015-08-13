@@ -26,7 +26,7 @@
     "angular-highlightjs": "~0.4.1",
     "jquery": "~2.1.3",
     "moment": "~2.10",
-    "lodash": "~3.9",
+    "lodash": "~3.10",
     "lil-uuid": "~0.1.0",
     "font-awesome": "~4.3.0",
     "highlightjs": "~8.5.0",
@@ -43,6 +43,7 @@
     "chance": "~0.7.6"
   },
   "resolutions": {
-    "angular": "~1.4"
+    "angular": "~1.4",
+    "lodash": "~3.10"
   }
 }
