@@ -220,29 +220,36 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Create an email confirmation token for a user.
      *
-     * @param  string  $email
-     *
+     * @param $newEmail
+     * @param $oldEmail
      * @return string
      */
-    public function createEmailConfirmToken($email)
+    public function createEmailConfirmToken($newEmail, $oldEmail)
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
 
-        Cache::put('email_confirmation_'.$token, $email, 1440);
+        Cache::put('email_confirmation_' . $token, $newEmail, 1440);
+
+        Cache::put($newEmail, $oldEmail, 1440);
 
         return $token;
     }
 
-
     /**
-     * Store an email change request in cache which allows us to log the user in with both emails.
+     * Get an email address from supplied token.
      *
-     * @param $newEmail
-     * @param $oldEmail
+     * @param $token
+     * @return mixed
      */
-    public static function storeEmailChangeRequest($newEmail, $oldEmail)
+    public function getEmailFromToken($token)
     {
-        Cache::put($newEmail, $oldEmail, 1440);
+        $newEmail = Cache::pull('email_confirmation_' . $token, false);
+
+        if($newEmail) {
+            Cache::forget($newEmail);
+        }
+
+        return $newEmail;
     }
 
     /**

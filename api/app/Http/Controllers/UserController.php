@@ -137,11 +137,7 @@ class UserController extends EntityController
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
         if ($email && $model->email != $email) {
-            $token = $model->createEmailConfirmToken($email);
-
-            User::storeEmailChangeRequest($email, $model->email);
-
-            $this->cache->put($email, $model->email, 1440);
+            $token = $model->createEmailConfirmToken($email, $model->email);
 
             $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
             $request->merge(['email_confirmed' => null]);
@@ -149,7 +145,7 @@ class UserController extends EntityController
 
         // Change in email has been confirmed, set the new email
         if ($token = $request->headers->get('email-confirm-token')) {
-            if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
+            if (!$email = $model->getEmailFromToken($token)) {
                 throw new ValidationException(
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
