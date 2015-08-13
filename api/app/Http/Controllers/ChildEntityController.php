@@ -31,6 +31,11 @@ class ChildEntityController extends ApiController
     /**
      * @var BaseModel
      */
+    protected $cacheChildModel;
+
+    /**
+     * @var BaseModel
+     */
     protected $parentModel;
 
     public function __construct(BaseModel $parentModel, TransformerInterface $transformer)
@@ -97,10 +102,9 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
-        $this->attachChildToParent($model,$childModel);
-        $this->validateRequest($request->all(),$childModel);
+        $this->validateRequest($request->all(),$this->getValidationRules());
         $childModel->fill($request->all());
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -111,7 +115,7 @@ class ChildEntityController extends ApiController
      * Put an entity.
      *
      * @param  string $id
-     * @param $childId
+     * @param string $childId
      * @param  Request $request
      * @return ApiResponse
      */
@@ -119,10 +123,13 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $model);
-        $this->attachChildToParent($model,$childModel);
-        $this->validateRequest($request->all(),$childModel);
+        $validationRules = $this->getValidationRules();
+        if ($childModel->exists){
+            $validationRules = $this->addIdOverrideValidationRule($validationRules,$childId);
+        }
+        $this->validateRequest($request->all(),$validationRules, $childModel->exists);
         $childModel->fill($request->all());
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->transformer)
@@ -154,8 +161,7 @@ class ChildEntityController extends ApiController
             }
 
             try {
-                $this->attachChildToParent($model,$childModel);
-                $this->validateRequest($requestEntity, $childModel);
+                $this->validateRequest($request->all(),$this->getValidationRules(), $model->exists);
                 if (!$error){
                     $childModel->fill($requestEntity);
                 }
@@ -189,10 +195,10 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
-        $this->attachChildToParent($model,$childModel);
-        $this->validateRequest($request->all(),$this->getChildModel());
+        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(),$childId);
+        $this->validateRequest($request->all(),$validationRules, true);
         $childModel->fill($request->all());
-        $childModel->save();
+        $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()->noContent();
     }
@@ -217,8 +223,7 @@ class ChildEntityController extends ApiController
             $childModel = $childModels->get($id);
 
             try {
-                $this->attachChildToParent($model,$childModel);
-                $this->validateRequest($requestEntity, $childModel);
+                $this->validateRequest($request->all(),$this->getValidationRules(), true);
                 if (!$error){
                     $childModel->fill($requestEntity);
                 }
@@ -286,7 +291,10 @@ class ChildEntityController extends ApiController
      */
     public function getChildModel()
     {
-        return $this->getRelation($this->parentModel)->getRelated();
+        if (is_null($this->cacheChildModel)){
+            $this->cacheChildModel = $this->getRelation($this->parentModel)->getRelated();
+        }
+        return $this->cacheChildModel;
     }
 
     /**
@@ -389,15 +397,20 @@ class ChildEntityController extends ApiController
         return $models;
     }
 
-    /**
-     * We need to attach each child model explicitly
-     * as this might be needed in composite key validation
-     * @param BaseModel $parent
-     * @param BaseModel $child
-     */
-    protected function attachChildToParent(BaseModel $parent, BaseModel $child)
+    protected function getValidationRules()
     {
-        $relation = $this->getRelation($parent);
-        $child->setAttribute($relation->getPlainForeignKey(), $relation->getParentKey());
+        return $this->getChildModel()->getValidationRules();
+    }
+
+    protected function addIdOverrideValidationRule($validationRules, $id)
+    {
+        $rule = 'equals:'.$id;
+        $keyName = $this->getChildModel()->getKeyName();
+        if (isset($validationRules[$keyName])){
+            $rule='|'.$rule;
+        }
+
+        $validationRules[$keyName].= $rule;
+        return $validationRules;
     }
 }

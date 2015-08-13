@@ -52,19 +52,14 @@ class Article extends BaseModel
 
     public function getValidationRules()
     {
-        $permalinkRule = 'string|unique:article_permalinks,permalink';
-        if (!is_null($this->permalink)) {
-            $permalinkRule.=','.$this->permalink.',permalink';
-        }
-
         return [
-            'article_id' => 'uuid|createOnly:'.($this->article_id?:'NULL'),
+            'article_id' => 'uuid',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
             'status' => 'in:' . implode(',', self::$statuses),
-            'permalink' => $permalinkRule
+            'permalink' => 'string|unique:article_permalinks,permalink'
         ];
     }
 

@@ -19,22 +19,14 @@ class ArticleMeta extends BaseModel
 
     protected $primaryKey = 'meta_name';
 
-    protected $fillable = ['article_id', 'meta_name', 'meta_content', 'meta_property'];
+    protected $fillable = ['meta_name', 'meta_content', 'meta_property'];
 
     protected $guarded = ['meta_name'];
 
     public function getValidationRules()
     {
-        $metaUniqueRule = 'unique:article_metas,meta_name';
-        if ($this->exists) {
-            $metaUniqueRule.=','.$this->meta_name.',meta_name';
-        } else {
-            $metaUniqueRule.=',NULL,NULL';
-        }
-        $metaUniqueRule.= ',article_id,'.$this->article_id;
         return [
-            'article_id' => 'uuid|createOnly:'.($this->article_id?:'NULL'),
-            'meta_name' => 'required|string|createOnly:'.($this->meta_name?:'NULL').'|'.$metaUniqueRule,
+            'meta_name' => 'required|string',
             'meta_content' => 'string',
             'meta_property' => 'string'
         ];

@@ -178,9 +178,13 @@ class ArticleTest extends TestCase
 
         $rowCount = Article::count();
 
-        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['permalink'],$preparedEntity['articleId']);
+
+        $this->put('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
+
         $this->assertResponseStatus(201);
         $this->assertEquals($rowCount, Article::count());
         $this->assertTrue(is_object($object));
@@ -195,10 +199,10 @@ class ArticleTest extends TestCase
     {
         $entity = factory(Article::class)->create();
         $id = $entity->article_id;
-
         $entity->title = 'foo';
-
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['permalink'],$preparedEntity['articleId']);
+        $this->patch('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
@@ -218,7 +222,9 @@ class ArticleTest extends TestCase
         $linksCount = $entity->permalinks->count();
         $entity->permalink = 'foo_bar';
 
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['articleId']);
+        $this->patch('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 

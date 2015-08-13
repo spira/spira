@@ -20,20 +20,12 @@ class SpiraValidator extends Validator
         return false;
     }
 
-    public function validateCreateOnly($attribute, $value, $parameters)
+    public function validateEquals($attribute, $value, $parameters)
     {
-        $this->requireParameterCount(1,$parameters, 'createOnly');
-        $original = $parameters[0];
+        $this->requireParameterCount(1,$parameters, 'equals');
+        $compare = $parameters[0];
 
-        if (strtolower($original) == 'null') {
-            $original = null;
-        }
-
-        if (is_null($original)) {
-            return true;
-        }
-
-        if ($original == $value) {
+        if ($compare == $value) {
             return true;
         }
 
