@@ -28,28 +28,18 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         $stateParams:IStateParams,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                        $mdToast:ng.material.IToastService,
+                        notificationService:common.services.notification.NotificationService,
                         $location:ng.ILocationService
                     ) => {
                         if(!_.isEmpty($stateParams.emailConfirmationToken)) {
                             userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
                                 .then(() => {
-                                    $mdToast.show(
-                                        $mdToast.simple()
-                                            .hideDelay(2000)
-                                            .position('top right')
-                                            .content('Your email has successfully been updated')
-                                    );
+                                    notificationService.toast('Your email has successfully been updated').pop();
 
                                     $location.search('emailConfirmationToken', null);
 
                                 }, (err) => {
-                                    $mdToast.show(
-                                        $mdToast.simple()
-                                            .hideDelay(2000)
-                                            .position('top right')
-                                            .content('Your email has not been updated, please try again')
-                                    );
+                                    notificationService.toast('Your email has not been updated, please try again').pop();
                                 });
                         }
                     },
@@ -94,11 +84,11 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'user', '$mdToast', 'countries', 'timezones', 'userProfile', 'genderOptions'];
+        static $inject = ['userService', 'user', 'notificationService', 'countries', 'timezones', 'userProfile', 'genderOptions'];
         constructor(
             private userService:common.services.user.UserService,
             public user:common.models.User,
-            private $mdToast:ng.material.IToastService,
+            private notificationService:common.services.notification.NotificationService,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public userProfile:common.models.UserProfile,
@@ -112,18 +102,10 @@ namespace app.user.profile {
         public updateProfile():void {
             this.userService.updateProfile(this.user)
                 .then(() => {
-                    this.$mdToast.show({
-                        hideDelay:2000,
-                        position:'top',
-                        template:'<md-toast>Profile update was successful.</md-toast>'
-                    });
+                    this.notificationService.toast('Profile update was successful').pop();
                 },
                 (err) => {
-                    this.$mdToast.show({
-                        hideDelay:2000,
-                        position:'top',
-                        template:'<md-toast>Profile update was unsuccessful, please try again.</md-toast>'
-                    });
+                    this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
                 })
         }
     }
