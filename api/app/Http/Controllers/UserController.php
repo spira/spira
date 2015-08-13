@@ -137,9 +137,11 @@ class UserController extends EntityController
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
         if ($email && $model->email != $email) {
-            $token = $model->createEmailConfirmToken($email, $model->email);
 
-            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
+            $emailConfirmToken = $model->createEmailConfirmToken($email, $model->email);
+            $loginToken = $this->repository->makeLoginToken($model->user_id);
+
+            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $emailConfirmToken, $loginToken));
             $request->merge(['email_confirmed' => null]);
         }
 
@@ -186,8 +188,8 @@ class UserController extends EntityController
             throw new NotFoundHttpException('Sorry, this email does not exist in our database.', $e);
         }
 
-        $token = $this->repository->makeLoginToken($user->user_id);
-        $this->dispatch(new SendPasswordResetEmail($user, $token));
+        $loginToken = $this->repository->makeLoginToken($user->user_id);
+        $this->dispatch(new SendPasswordResetEmail($user, $loginToken));
 
         return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
     }

@@ -21,7 +21,7 @@ namespace common.services.auth {
 
                 return this.$q.all([
                     this.processQueryToken(),
-                    this.processPasswordResetToken()
+                    this.processLoginToken()
                 ]);
 
             }).catch((e) => {
@@ -99,19 +99,19 @@ namespace common.services.auth {
          * Check the url for password reset token and process it
          * @returns {any}
          */
-        private processPasswordResetToken():ng.IPromise<any> {
+        private processLoginToken():ng.IPromise<any> {
 
             let queryParams = this.$location.search();
-            if (_.isEmpty(queryParams.passwordResetToken)) {
+            if (_.isEmpty(queryParams.loginToken)) {
                 return this.$q.when(true); //immediately resolve
             }
 
-            let token = queryParams.passwordResetToken;
-            this.$location.search('passwordResetToken', null);
+            let token = queryParams.loginToken;
+            this.$location.search('loginToken', null);
 
             return this.ngJwtAuthService.exchangeToken(token)
                 .catch((err) => {
-                    this.notificationService.toast('Sorry, you have already tried to reset your password using this link').options({position:'top right'}).pop();
+                    this.notificationService.toast('Sorry, you have already tried to log in using this link').options({position:'top right'}).pop();
                 });
         }
 

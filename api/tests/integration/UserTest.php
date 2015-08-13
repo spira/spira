@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\UserCredential;
 use App\Models\UserProfile;
+use Illuminate\Support\Facades\Cache;
 
 class UserTest extends TestCase
 {
@@ -438,7 +439,7 @@ class UserTest extends TestCase
         preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
         $tokenUrl = trim($matches[0][0]);
         $parsed = parse_url($tokenUrl);
-        $token = str_replace('passwordResetToken=', '', $parsed['query']);
+        $token = str_replace('loginToken=', '', $parsed['query']);
 
         // Use it the first time
         $this->get('/auth/jwt/token', [
@@ -482,7 +483,11 @@ class UserTest extends TestCase
         preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
         $tokenUrl = $matches[0][0];
         $parsed = parse_url($tokenUrl);
-        $emailToken = str_replace('emailConfirmationToken=', '', $parsed['query']);
+        $tokens = explode('&amp;', $parsed['query']);
+        $emailToken = str_replace('emailConfirmationToken=', '', $tokens[0]);
+        $loginToken = str_replace('loginToken=', '', $tokens[1]);
+        // Ensure the login token is valid
+        $this->assertEquals($user->user_id, Cache::get('login_token_' . $loginToken, false));
         // Confirm the email change
         $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];

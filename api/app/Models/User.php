@@ -230,7 +230,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
 
         Cache::put('email_confirmation_' . $token, $newEmail, 1440);
 
-        Cache::put($newEmail, $oldEmail, 1440);
+        Cache::put('email_change_' . $newEmail, $oldEmail, 1440);
 
         return $token;
     }
@@ -246,7 +246,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         $newEmail = Cache::pull('email_confirmation_' . $token, false);
 
         if($newEmail) {
-            Cache::forget($newEmail);
+            Cache::forget('email_change_' . $newEmail);
         }
 
         return $newEmail;
@@ -260,6 +260,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public static function findCurrentEmail($newEmail)
     {
-        return Cache::get($newEmail, false); // Return false on cache miss
+        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
     }
 }
