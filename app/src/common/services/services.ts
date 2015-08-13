@@ -9,6 +9,7 @@ namespace common.services {
         namespace+'.countries',
         namespace+'.timezones',
         namespace+'.pagination',
+        namespace+'.notification',
     ]);
 
 }

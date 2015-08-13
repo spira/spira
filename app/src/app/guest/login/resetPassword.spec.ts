@@ -8,7 +8,7 @@ namespace app.guest.resetPassword {
             $timeout:ng.ITimeoutService,
             $rootScope:ng.IRootScopeService,
             $q:ng.IQService,
-            $mdToast:ng.material.IToastService,
+            notificationService:common.services.notification.NotificationService,
             userService = {
                 resetPassword: (email:string) => {
                     if (email == 'invalid@email.com') {
@@ -27,18 +27,18 @@ namespace app.guest.resetPassword {
 
         beforeEach(()=> {
 
-            inject(($controller, _$rootScope_, _$mdDialog_, _$timeout_, _$q_, _$mdToast_) => {
+            inject(($controller, _$rootScope_, _$mdDialog_, _$timeout_, _$q_, _notificationService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $mdDialog = _$mdDialog_;
                 $timeout = _$timeout_;
-                $mdToast = _$mdToast_;
+                notificationService = _notificationService_;
                 $q = _$q_;
 
                 ResetPasswordController = $controller(app.guest.resetPassword.namespace + '.controller', {
                     $mdDialog: $mdDialog,
                     userService: userService,
-                    $mdToast: $mdToast,
+                    notificationService: notificationService,
                     defaultEmail: null,
                 });
             })
@@ -49,7 +49,7 @@ namespace app.guest.resetPassword {
             sinon.spy($mdDialog, 'hide');
             sinon.spy($mdDialog, 'cancel');
             sinon.spy($mdDialog, 'show');
-            sinon.spy($mdToast, 'show');
+            sinon.spy(notificationService, 'toast');
 
         });
 
@@ -58,6 +58,7 @@ namespace app.guest.resetPassword {
             (<any>$mdDialog).hide.restore();
             (<any>$mdDialog).cancel.restore();
             (<any>$mdDialog).show.restore();
+            (<any>notificationService).toast.restore();
 
         });
 
@@ -67,7 +68,7 @@ namespace app.guest.resetPassword {
 
                 ResetPasswordController.cancelResetPasswordDialog();
 
-                $timeout.flush(); //flush timeout as the modal is delayed
+                $timeout.flush(); // Flush timeout as the modal is delayed
 
                 expect($mdDialog.cancel).to.have.been.called;
 
@@ -81,7 +82,7 @@ namespace app.guest.resetPassword {
 
                 $scope.$apply();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/this failure message/)));
+                expect(notificationService.toast).to.have.been.calledWith('this failure message');
 
             });
 
@@ -93,7 +94,7 @@ namespace app.guest.resetPassword {
 
                 $scope.$apply();
 
-                expect($mdToast.show).to.have.been.called.and.not.to.be.calledWith(sinon.match.has("template", sinon.match(/this failure message/)));
+                expect(notificationService.toast).to.have.been.called.and.not.to.be.calledWith('this failure message');
 
             });
         });
