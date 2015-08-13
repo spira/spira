@@ -506,7 +506,7 @@ class UserTest extends TestCase
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
         $cache = $this->app->make('Illuminate\Contracts\Cache\Repository');
-        $emailToken = $user->makeConfirmationToken($user->email, $cache);
+        $emailToken = $user->createEmailConfirmToken($user->email);
         $this->patch('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Email-Confirm-Token' => $emailToken

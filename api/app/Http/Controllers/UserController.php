@@ -18,7 +18,6 @@ use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
 use App\Repositories\UserRepository as Repository;
-use Illuminate\Contracts\Cache\Repository as Cache;
 
 class UserController extends EntityController
 {
@@ -39,13 +38,6 @@ class UserController extends EntityController
     protected $jwtAuth;
 
     /**
-     * Cache repository.
-     *
-     * @var Cache
-     */
-    protected $cache;
-
-    /**
      * Assign dependencies.
      *
      * @param  Repository $repository
@@ -53,19 +45,16 @@ class UserController extends EntityController
      * @param  JWTAuth $jwtAuth
      * @param  Request $request
      * @param  EloquentModelTransformer $transformer
-     * @param  Cache $cache
      */
     public function __construct(
         Repository $repository,
         Lock $lock,
         JWTAuth $jwtAuth,
         Request $request,
-        EloquentModelTransformer $transformer,
-        Cache $cache
+        EloquentModelTransformer $transformer
     ) {
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->cache = $cache;
         $this->permissions($request);
         parent::__construct($repository, $transformer);
     }
@@ -148,7 +137,12 @@ class UserController extends EntityController
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
         if ($email && $model->email != $email) {
-            $token = $model->makeConfirmationToken($email, $this->cache);
+            $token = $model->createEmailConfirmToken($email);
+
+            User::storeEmailChangeRequest($email, $model->email);
+
+            $this->cache->put($email, $model->email, 1440);
+
             $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
             $request->merge(['email_confirmed' => null]);
         }

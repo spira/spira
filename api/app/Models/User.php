@@ -4,8 +4,8 @@ use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Facades\Cache;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
@@ -218,17 +218,41 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     * Make an email confirmation token for a user.
+     * Create an email confirmation token for a user.
      *
      * @param  string  $email
-     * @param  Cache   $cache
      *
      * @return string
      */
-    public function makeConfirmationToken($email, Cache $cache)
+    public function createEmailConfirmToken($email)
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $cache->put('email_confirmation_'.$token, $email, 1440);
+
+        Cache::put('email_confirmation_'.$token, $email, 1440);
+
         return $token;
+    }
+
+
+    /**
+     * Store an email change request in cache which allows us to log the user in with both emails.
+     *
+     * @param $newEmail
+     * @param $oldEmail
+     */
+    public static function storeEmailChangeRequest($newEmail, $oldEmail)
+    {
+        Cache::put($newEmail, $oldEmail, 1440);
+    }
+
+    /**
+     * Check to see if the user has made a change email request. Return the current email associated with the new email.
+     *
+     * @param $newEmail
+     * @return mixed
+     */
+    public static function findCurrentEmail($newEmail)
+    {
+        return Cache::get($newEmail, false); // Return false on cache miss
     }
 }
