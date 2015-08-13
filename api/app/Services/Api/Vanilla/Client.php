@@ -46,6 +46,9 @@ class Client
     {
         $this->client = $client;
 
+        $this->secret = getenv('VANILLA_API_SECRET');
+        $this->baseUrl = getenv('FORUM_HOST').'/api/';
+
         $this->client->setBaseUrl($this->baseUrl);
     }
 

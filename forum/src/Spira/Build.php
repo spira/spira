@@ -48,6 +48,7 @@ class Build
         // Copy the initial configuration to conf directory
         copy('config.php', 'public/conf/config.php');
 
+        // Setup the database variables to be bootstrapped into memory
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
 
         // Setup Vanilla

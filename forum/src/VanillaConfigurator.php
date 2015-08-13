@@ -29,6 +29,8 @@ class VanillaConfigurator
         $this->enableApplications();
 
         $this->configureJsConnect();
+
+        $this->configureApiModule();
     }
 
     /**
@@ -48,7 +50,7 @@ class VanillaConfigurator
         // Define initial constants
         define('DS', '/');
         define('APPLICATION', 'Vanilla');
-        define('APPLICATION_VERSION', $this->getVersion());
+        define('APPLICATION_VERSION', $this->getVanillaVersion());
         define('PATH_ROOT', getcwd().'/public');
 
         // Boostrap Vanilla
@@ -169,16 +171,58 @@ class VanillaConfigurator
     }
 
     /**
-     * Get Vanilla version from Vanilla's index.php.
+     * Enable and setup API module.
+     *
+     * @return void
+     */
+    protected function configureApiModule()
+    {
+        saveToConfig([
+            'EnabledApplications.api' => 'api',
+            'API.Secret' => getenv('VANILLA_API_SECRET'),
+            'API.Version' => $this->getApiVersion(),
+        ]);
+    }
+
+    /**
+     * Get Vanilla version string.
      *
      * @return string
      */
-    protected function getVersion()
+    protected function getVanillaVersion()
     {
-        $lines = file('public/index.php');
+        $file = 'public/index.php';
+        $pattern = '/\'APPLICATION_VERSION\', \'([a-z0-9.]*)\'/';
+
+        return $this->getStringFromFile($file, $pattern);
+    }
+
+    /**
+     * Get API version string.
+     *
+     * @return string
+     */
+    protected function getApiVersion()
+    {
+        $file = 'public/applications/api/settings/about.php';
+        $pattern = '/\'Version\'.*\'([0-9.]*)\'/';
+
+        return $this->getStringFromFile($file, $pattern);
+    }
+
+    /**
+     * Get string from a file.
+     *
+     * @param string $file
+     * @param string $pattern
+     *
+     * @return string
+     */
+    protected function getStringFromFile($file, $pattern)
+    {
+        $lines = file($file);
 
         foreach ($lines as $line) {
-            $pattern = '/\'APPLICATION_VERSION\', \'([a-z0-9.]*)\'/';
             preg_match($pattern, $line, $matches);
             if ($matches) {
                 return $matches[1];
