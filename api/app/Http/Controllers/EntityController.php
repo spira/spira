@@ -23,7 +23,7 @@ abstract class EntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateIdRule = 'uuid';
+    protected $validateIdRule = null;
 
     /**
      * @var BaseModel
@@ -252,7 +252,7 @@ abstract class EntityController extends ApiController
      */
     protected function findOrNewEntity($id)
     {
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
+        $this->validateId($id, $this->getModel()->getKeyName(), $this->getIdValidationRule());
 
         try {
             return $this->getModel()->findByIdentifier($id);
@@ -267,7 +267,7 @@ abstract class EntityController extends ApiController
      */
     protected function findOrFailEntity($id)
     {
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
+        $this->validateId($id, $this->getModel()->getKeyName(), $this->getIdValidationRule());
 
         try {
             return $this->getModel()->findByIdentifier($id);
@@ -300,7 +300,7 @@ abstract class EntityController extends ApiController
      */
     protected function findOrFailCollection($requestCollection)
     {
-        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->getIdValidationRule());
 
         if (!empty($ids)) {
             $models = $models = $this->getModel()->findMany($ids);
@@ -321,7 +321,7 @@ abstract class EntityController extends ApiController
      */
     protected function findCollection($requestCollection)
     {
-        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->validateIdRule);
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->getIdValidationRule());
 
         if (!empty($ids)) {
             $models = $models = $this->getModel()->findMany($ids);
@@ -338,6 +338,24 @@ abstract class EntityController extends ApiController
     protected function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * Get id validation rule from model validation rules
+     * Can be overriden by validateIdRule property
+     * @return null|string
+     */
+    protected function getIdValidationRule()
+    {
+        if ($this->validateIdRule){
+            return $this->validateIdRule;
+        }
+
+        if (isset($this->getValidationRules()[$this->getModel()->getKeyName()])){
+            return $this->getValidationRules()[$this->getModel()->getKeyName()];
+        }
+
+        return null;
     }
 
     protected function getValidationRules()

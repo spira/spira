@@ -13,8 +13,6 @@ use App\Models\Article;
 
 class ArticlePermalinkController extends ChildEntityController
 {
-    protected $validateParentIdRule = 'required|string';
-    protected $validateChildIdRule = 'required|string';
     protected $relationName = 'permalinks';
 
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
