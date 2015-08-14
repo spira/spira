@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Socialite\SocialiteManager;
 use Log;
 use RuntimeException;
 use Spira\Responder\Response\ApiResponse;
@@ -147,7 +148,7 @@ class AuthController extends ApiController
      * Redirect the user to the Provider authentication page.
      *
      * @param  string     $provider
-     * @param  Socialite  $socialite
+     * @param  Socialite|SocialiteManager  $socialite
      *
      * @return ApiResponse
      */
@@ -162,7 +163,7 @@ class AuthController extends ApiController
      * Obtain the user information from Provider.
      *
      * @param  string          $provider
-     * @param  Socialite       $socialite
+     * @param  Socialite|SocialiteManager       $socialite
      * @param  UserRepository  $repository
      *
      * @throws UnprocessableEntityException
