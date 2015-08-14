@@ -23,7 +23,7 @@ class SecondTestEntity extends BaseModel
      */
     protected $fillable = ['entity_id', 'check_entity_id', 'value'];
 
-    protected $validationRules = [
+    protected static $validationRules = [
             'entity_id' => 'uuid',
             'check_entity_id' => 'uuid',
             'value' => 'required|string'

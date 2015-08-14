@@ -43,7 +43,7 @@ class TestEntity extends BaseModel
         'updated_at' => 'datetime',
     ];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
         return [
             'entity_id' => 'uuid',
