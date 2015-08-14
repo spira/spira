@@ -1,28 +1,27 @@
-///<reference path="../../../../src/global.d.ts" />
+namespace app.guest.forum {
 
-namespace app.guest.sandbox {
+    export const namespace = 'app.guest.forum';
 
-    export const namespace = 'app.guest.sandbox';
-
-    class SandboxConfig {
+    class ForumConfig {
 
         static $inject = ['stateHelperServiceProvider'];
-        constructor(private stateHelperServiceProvider){
+
+        constructor(private stateHelperServiceProvider) {
 
             let state:global.IState = {
-                url: '/sandbox',
-                views: {
-                    "main@app.guest": {
-                        controller: namespace+'.controller',
-                        templateUrl: 'templates/app/guest/sandbox/sandbox.tpl.html'
+                resolve: /*@ngInject*/{
+                    redirect: ($window:ng.IWindowService, $location:ng.ILocationService) => {
+
+                        let protocol = $location.protocol(),
+                            host = $location.host().replace(/local(\.app)?/, 'local.forum');
+
+                        $window.location.href = `${protocol}://${host}`;
                     }
                 },
-                resolve: /*@ngInject*/{
-
-                },
                 data: {
-                    title: "Sandbox",
-                    role: 'public',
+                    title: "Forum",
+                    loggedIn: true,
+                    role: 'user',
                     icon: 'extension',
                     navigation: true,
                     sortAfter: app.guest.articles.namespace,
@@ -35,44 +34,7 @@ namespace app.guest.sandbox {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-        callApi(apiEndpoint:string):void;
-        promptLogin():void;
-        apiResult: any;
-    }
-
-    class SandboxController {
-
-        static $inject = ['$scope', 'ngRestAdapter', 'ngJwtAuthService', '$window'];
-        constructor(
-            private $scope : IScope,
-            private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
-            private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            private $window:ng.IWindowService
-        ) {
-
-            $scope.callApi = _.bind(this.callApi, this); //bind method to scope
-
-            //$scope.promptLogin = () => ngJwtAuthService.promptLogin();
-
-        }
-
-        public callApi(apiEndpoint):void {
-
-            this.ngRestAdapter
-                .api('/api-mock')
-                .get(apiEndpoint)
-                .then((result) => {
-                    this.$scope.apiResult = result;
-                })
-            ;
-
-        }
-    }
-
     angular.module(namespace, [])
-        .config(SandboxConfig)
-        .controller(namespace+'.controller', SandboxController);
+        .config(ForumConfig);
 
 }
