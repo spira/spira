@@ -44,6 +44,17 @@ class VanillaTest extends TestCase
         $this->assertEquals('Discussion', $discussion['Type']);
     }
 
+    public function testDiscussionsDifferentUser()
+    {
+        $client = App::make(Client::class);
+
+        $client->setUser('admin');
+
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+
+        $this->assertEquals('admin', $discussion['Discussion']['InsertName']);
+    }
+
     public function testDiscussionsFind()
     {
         $client = App::make(Client::class);

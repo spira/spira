@@ -36,6 +36,16 @@ class Client
     protected $client;
 
     /**
+     * The user to operate with. Defaults to Vanilla's internal system user.
+     *
+     * @var array
+     */
+    protected $user = [
+        'username' => 'system',
+        'email' => 'system@domain.com',
+    ];
+
+    /**
      * Map group name to class names.
      *
      * @var array
@@ -212,10 +222,15 @@ class Client
         $signer = [
           'method' => $method,
           'path' => $path,
-          'username'  => 'system',
+          'username'  => $this->user['username'],
+          'email'     => $this->user['email'],
           'timestamp' => time()
         ];
 
+        // Strip away any empty records (username/email might not be provided)
+        $signer = array_filter($signer);
+
+        // Merge them with potential other options
         $query = array_merge($query, $signer);
 
         // Create the signature token
@@ -228,5 +243,21 @@ class Client
         $options['query'] = $query;
 
         return $options;
+    }
+
+    /**
+     * Set the Vanilla user to operate with.
+     *
+     * @param  string $username
+     * @param  string $email
+     *
+     * @return void
+     */
+    public function setUser($username = null, $email = null)
+    {
+        $this->user = [
+            'username' => $username,
+            'email' => $email
+        ];
     }
 }
