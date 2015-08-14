@@ -133,7 +133,7 @@ class UserController extends EntityController
         }
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdItem($model);
     }
 
@@ -230,7 +230,7 @@ class UserController extends EntityController
         }
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($userProfile);
     }
 }

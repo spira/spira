@@ -87,7 +87,7 @@ class AuthController extends ApiController
         }
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -106,7 +106,7 @@ class AuthController extends ApiController
         $token = $this->jwtAuth->refresh($token);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -138,7 +138,7 @@ class AuthController extends ApiController
         $token = $this->jwtAuth->fromUser($user);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 

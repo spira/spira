@@ -11,18 +11,6 @@ abstract class BaseModel extends \Spira\Model\Model\BaseModel
 
     public $incrementing = false;
 
-    /**
-     * @return ValidationFactory
-     */
-    protected function getValidator()
-    {
-        if (is_null($this->validator)) {
-            $this->validator = \App::make('validator');
-        }
-
-        return $this->validator;
-    }
-
     public static function getTableName()
     {
         return with(new static())->getTable();
