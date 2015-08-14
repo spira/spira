@@ -9,10 +9,12 @@ class Discussion extends ApiAbstract
      *
      * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-all-discussions
      *
+     * @param int $page
+     *
      * @return array
      */
-    public function all()
+    public function all($page = 1)
     {
-        return $this->get('discussions');
+        return $this->get('discussions', ['page' => 'p'.$page]);
     }
 }
