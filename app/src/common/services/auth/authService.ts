@@ -1,4 +1,4 @@
-module common.services.auth {
+namespace common.services.auth {
 
     export const namespace = 'common.services.auth';
 
@@ -6,7 +6,7 @@ module common.services.auth {
 
         public initialisedPromise:ng.IPromise<any>;
 
-        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', '$mdToast'];
+        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService'];
 
         constructor(private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
@@ -14,7 +14,7 @@ module common.services.auth {
                     private $timeout:ng.ITimeoutService,
                     private $mdDialog:ng.material.IDialogService,
                     private $state:ng.ui.IStateService,
-                    private $mdToast:ng.material.IToastService
+                    private notificationService:common.services.notification.NotificationService
         ) {
 
             this.initialisedPromise = this.initialiseJwtAuthService().finally(() => {
@@ -45,6 +45,7 @@ module common.services.auth {
                     let dialogConfig:ng.material.IDialogOptions = {
                         templateUrl: 'templates/app/guest/login/login-dialog.tpl.html',
                         controller: 'app.guest.login.controller',
+                        controllerAs: 'LoginController',
                         clickOutsideToClose: true,
                         locals : {
                             deferredCredentials: deferredCredentials,
@@ -110,12 +111,7 @@ module common.services.auth {
 
             return this.ngJwtAuthService.exchangeToken(token)
                 .catch((err) => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .hideDelay(2000)
-                            .position('top right')
-                            .content("Sorry, you have already tried to reset your password using this link")
-                    );
+                    this.notificationService.toast('Sorry, you have already tried to reset your password using this link').options({position:'top right'}).pop();
                 });
         }
 

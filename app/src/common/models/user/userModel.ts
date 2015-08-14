@@ -1,22 +1,44 @@
-module common.models {
+namespace common.models {
 
-    export class User implements global.IUserData, IModel{
+    @common.decorators.changeAware
+    export class User extends AbstractModel implements global.IUserData {
 
-        public userId:string;
-        public email:string;
-        public firstName:string;
-        public lastName:string;
-        public _userCredential:global.IUserCredential;
-        public emailConfirmed:string;
+        public static adminType = 'admin';
+        public static guestType = 'guest';
+        public static userTypes:string[] = [User.adminType, User.guestType];
+
+        public userId:string = undefined;
+        public email:string = undefined;
+        public firstName:string = undefined;
+        public lastName:string = undefined;
+        public emailConfirmed:string = undefined;
+        public country:string = undefined;
+        public avatarImgUrl:string = undefined;
+        public timezoneIdentifier:string = undefined;
+        public _userCredential:global.IUserCredential = undefined;
+        public _userProfile:common.models.UserProfile = undefined;
+        public userType:string = undefined;
 
         constructor(data:global.IUserData) {
+            super(data);
 
             _.assign(this, data);
-
         }
 
-        public fullName() {
+        /**
+         * Get the user's full name
+         * @returns {string}
+         */
+        public fullName():string {
             return this.firstName + ' ' + this.lastName;
+        }
+
+        /**
+         * Check if the user is an administrator
+         * @returns {boolean}
+         */
+        public isAdmin():boolean {
+            return this.userType == User.adminType;
         }
 
     }

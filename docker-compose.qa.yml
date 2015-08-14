@@ -14,16 +14,12 @@ database:
   env_file:
     - .common.env
     - .qa.env
-  ports:
-    - "5432:5432"
 
-vanilla_database:
+vanilladatabase:
   image: mariadb:10.0
   env_file:
     - .common.env
     - .local.env
-  ports:
-    - "3306:3306"
 
 cache:
   image: redis
@@ -59,6 +55,14 @@ php:
     - .qa.env
   privileged: true
 
+apimock:
+  image: spira/docker-drakov
+  volumes_from:
+    - spira
+  env_file:
+    - .common.env
+    - .local.env
+
 web:  
   image: spira/docker-nginx
   volumes_from:
@@ -67,9 +71,9 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
+    - apimock:apimock
   ports:
     - "80:80"
-    - "8080:8080"
   env_file:
     - .common.env
     - .qa.env

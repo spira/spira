@@ -1,6 +1,6 @@
 ///<reference path="../../../../src/global.d.ts" />
 
-module app.guest.sandbox {
+namespace app.guest.sandbox {
 
     export const namespace = 'app.guest.sandbox';
 

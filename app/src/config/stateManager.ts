@@ -1,6 +1,6 @@
 ///<reference path="../../typings/tsd.d.ts" />
 
-module config.stateManager {
+namespace config.stateManager {
 
     export const namespace = 'config.stateManager';
 
@@ -49,13 +49,13 @@ module config.stateManager {
 
     class StateManagerInit {
 
-        static $inject = ['$rootScope', 'ngRestAdapter', 'ngJwtAuthService', '$state', '$mdToast', 'authService'];
+        static $inject = ['$rootScope', 'ngRestAdapter', 'ngJwtAuthService', '$state', 'notificationService', 'authService'];
 
         constructor(private $rootScope:ng.IRootScopeService,
                     private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $state:ng.ui.IStateService,
-                    private $mdToast:ng.material.IToastService,
+                    private notificationService:common.services.notification.NotificationService,
                     private authService:common.services.auth.AuthService
         ) {
 
@@ -114,12 +114,7 @@ module config.stateManager {
 
                     return this.$state.go(returnTo).then(() => {
 
-                        this.$mdToast.show(
-                            this.$mdToast.simple()
-                                .hideDelay(2000)
-                                .position('top right')
-                                .content("You are not permitted to access " + attemptedStateName)
-                        );
+                        this.notificationService.toast('You are not permitted to access ' + attemptedStateName).options({position:'top right'}).pop();
 
                     }); //go back home
                 })

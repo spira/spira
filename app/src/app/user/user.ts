@@ -1,7 +1,7 @@
 
 ///<reference path="../../../src/global.d.ts" />
 
-module app.user {
+namespace app.user {
 
     export const namespace = 'app.user';
 
@@ -22,6 +22,11 @@ module app.user {
                         templateUrl: 'templates/app/guest/navigation/navigation.tpl.html',
                         controller: app.guest.navigation.namespace+'.controller',
                         controllerAs: 'NavigationController',
+                    }
+                },
+                resolve: {
+                    user:(ngJwtAuthService:NgJwtAuth.NgJwtAuthService) => {
+                        return <common.models.User>ngJwtAuthService.getUser()
                     }
                 },
                 data: {

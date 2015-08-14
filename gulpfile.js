@@ -126,7 +126,8 @@ gulp.task('scripts:app', 'processes javascript & typescript files', [], function
             noExternalResolve: true,
             typescript: require('typescript'),
             declarationFiles: true,
-            sortOutput: true
+            sortOutput: true,
+            experimentalDecorators: true
         }, undefined, plugins.typescript.reporter.longReporter()));
 
     return plugins.merge2([
@@ -158,7 +159,8 @@ gulp.task('scripts:test', 'processes javascript & typescript tests', [], functio
             target: "ES5",
             noExternalResolve: true,
             typescript: require('typescript'),
-            declarationFiles: false
+            declarationFiles: false,
+            experimentalDecorators: true
         }, undefined, plugins.typescript.reporter.longReporter()))
     ;
 

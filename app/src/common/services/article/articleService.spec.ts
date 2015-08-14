@@ -104,7 +104,19 @@
 
             });
 
-        })
+        });
+
+        describe('New Article', () => {
+
+            it('should be able to get a new article with a UUID', () => {
+
+                let article = articleService.newArticle();
+
+                expect(article.articleId).to.be.ok;
+
+            });
+
+        });
 
     });
 

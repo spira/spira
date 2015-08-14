@@ -27,6 +27,18 @@
             return _.range(10).map(() => fixtures.user);
         }
     };
+    let userProfile:common.models.UserProfile = <common.models.UserProfile>{
+            dob:'1921-01-01',
+            mobile:'04123123',
+            phone:'',
+            gender:'M',
+            about:'Lorem',
+            facebook:'',
+            twitter:'',
+            pinterest:'',
+            instagram:'',
+            website:''
+        };
 
     const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
 
@@ -88,7 +100,7 @@
 
             });
 
-            it('should reject the promise getting users fails', () => {
+            it('should reject the promise if getting users fails', () => {
 
                 $httpBackend.expectGET('/api/users').respond(500);
 
@@ -112,9 +124,8 @@
 
                 it('should be able to create a new user and attempt login immediately',  () => {
 
-                    let user = _.clone(fixtures.user);
+                    let user = _.compactObject(fixtures.user);
                     delete user._self;
-
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
                         return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
@@ -207,6 +218,49 @@
                 let emailConfirmationPromise = userService.confirmEmail(user, emailToken);
 
                 expect(emailConfirmationPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+            });
+
+        });
+
+        describe('Profile', () => {
+
+            it('should be able to retrieve the profile', () => {
+
+                let user = _.clone(fixtures.user);
+
+                $httpBackend.expectGET('/api/users/' + user.userId + '/profile').respond(userProfile);
+
+                let profilePromise = userService.getProfile(user);
+
+                expect(profilePromise).eventually.to.be.fulfilled;
+                expect(profilePromise).eventually.to.deep.equal(userProfile);
+
+                $httpBackend.flush();
+            });
+
+            it('should be able to send a patch request to update the user details (including profile)', () => {
+
+                let user = _.clone(fixtures.user);
+
+                let profile = _.clone(userProfile);
+
+                profile.dob = '1995-01-01';
+                profile.about = 'Ipsum';
+                user.firstName = 'FooBar';
+
+                user._userProfile = profile;
+
+                $httpBackend.expectPATCH('/api/users/' + user.userId,
+                    (jsonData:string) => {
+                        let data:common.models.User = JSON.parse(jsonData);
+                        return data.firstName == 'FooBar' && data._userProfile.dob == '1995-01-01' && data._userProfile.about == 'Ipsum';
+                    }).respond(204);
+
+                let profileUpdatePromise = userService.updateProfile(user);
+
+                expect(profileUpdatePromise).eventually.to.be.fulfilled;
 
                 $httpBackend.flush();
             });

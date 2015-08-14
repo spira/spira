@@ -1,4 +1,4 @@
-module app.admin.media {
+namespace app.admin.media {
 
     export const namespace = 'app.admin.media';
 

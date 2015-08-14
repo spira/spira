@@ -21,8 +21,15 @@ class CreateUserProfilesTable extends Migration
             $table->uuid('user_id');
             $table->string('phone', 45)->nullable();
             $table->string('mobile', 45)->nullable();
-            $table->string('avatar_img_url')->nullable();
             $table->date('dob')->nullable();
+            $table->enum('gender', ['M', 'F', 'N/A'])->nullable();
+            $table->string('about', $modelClass::ABOUT_LENGTH)->nullable();
+            $table->string('facebook', 100)->nullable();
+            $table->string('twitter', 45)->nullable();
+            $table->string('pinterest', 100)->nullable();
+            $table->string('instagram', 100)->nullable();
+            $table->string('website', 100)->nullable();
+
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 

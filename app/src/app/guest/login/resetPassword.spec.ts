@@ -1,18 +1,18 @@
-describe('ResetPassword', () => {
+namespace app.guest.resetPassword {
 
-    describe('Configuration', () => {
+    describe('ResetPassword', () => {
 
-        let ResetPasswordController:ng.IControllerService,
+        let ResetPasswordController:ResetPasswordController,
             $scope:ng.IScope,
             $mdDialog:ng.material.IDialogService,
             $timeout:ng.ITimeoutService,
             $rootScope:ng.IRootScopeService,
             $q:ng.IQService,
-            $mdToast:ng.material.IToastService,
+            notificationService:common.services.notification.NotificationService,
             userService = {
-                resetPassword:(email:string) => {
-                    if(email == 'invalid@email.com') {
-                        return $q.reject({data:{message:'this failure message'}});
+                resetPassword: (email:string) => {
+                    if (email == 'invalid@email.com') {
+                        return $q.reject({data: {message: 'this failure message'}});
                     }
                     else {
                         return $q.when(true);
@@ -25,21 +25,21 @@ describe('ResetPassword', () => {
             module('app');
         });
 
-
         beforeEach(()=> {
 
-            inject(($controller, _$rootScope_, _$mdDialog_, _$timeout_, _$q_, _$mdToast_) => {
+            inject(($controller, _$rootScope_, _$mdDialog_, _$timeout_, _$q_, _notificationService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $mdDialog = _$mdDialog_;
                 $timeout = _$timeout_;
-                $mdToast = _$mdToast_;
+                notificationService = _notificationService_;
                 $q = _$q_;
 
-                ResetPasswordController = $controller(app.guest.resetPassword.namespace+'.controller', {
-                    $scope: $scope,
+                ResetPasswordController = $controller(app.guest.resetPassword.namespace + '.controller', {
                     $mdDialog: $mdDialog,
-                    userService: userService
+                    userService: userService,
+                    notificationService: notificationService,
+                    defaultEmail: null,
                 });
             })
         });
@@ -49,8 +49,7 @@ describe('ResetPassword', () => {
             sinon.spy($mdDialog, 'hide');
             sinon.spy($mdDialog, 'cancel');
             sinon.spy($mdDialog, 'show');
-            sinon.spy($mdToast, 'show');
-            sinon.spy($mdToast, 'simple');
+            sinon.spy(notificationService, 'toast');
 
         });
 
@@ -59,6 +58,7 @@ describe('ResetPassword', () => {
             (<any>$mdDialog).hide.restore();
             (<any>$mdDialog).cancel.restore();
             (<any>$mdDialog).show.restore();
+            (<any>notificationService).toast.restore();
 
         });
 
@@ -66,9 +66,9 @@ describe('ResetPassword', () => {
 
             it('should cancel dialog when requested', () => {
 
-                (<any>$scope).cancelResetPasswordDialog();
+                ResetPasswordController.cancelResetPasswordDialog();
 
-                $timeout.flush(); //flush timeout as the modal is delayed
+                $timeout.flush(); // Flush timeout as the modal is delayed
 
                 expect($mdDialog.cancel).to.have.been.called;
 
@@ -78,11 +78,11 @@ describe('ResetPassword', () => {
 
                 let email = 'invalid@email.com';
 
-                (<any>$scope).resetPassword(email);
+                ResetPasswordController.resetPassword(email);
 
                 $scope.$apply();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/this failure message/)));
+                expect(notificationService.toast).to.have.been.calledWith('this failure message');
 
             });
 
@@ -90,14 +90,15 @@ describe('ResetPassword', () => {
 
                 let email = 'valid@email.com';
 
-                (<any>$scope).resetPassword(email);
+                ResetPasswordController.resetPassword(email);
 
                 $scope.$apply();
 
-                expect($mdToast.show).to.have.been.called.and.not.to.be.calledWith(sinon.match.has("template", sinon.match(/this failure message/)));
+                expect(notificationService.toast).to.have.been.called.and.not.to.be.calledWith('this failure message');
 
             });
         });
+
     });
 
-});
+}

@@ -1,4 +1,4 @@
-module common.services.user {
+namespace common.services.user {
 
     export const namespace = 'common.services.user';
 
@@ -102,11 +102,15 @@ module common.services.user {
         /**
          * Brings up the reset password dialog
          */
-        public promptResetPassword():void {
+        public promptResetPassword(email:string = undefined):void {
             this.$mdDialog.show({
                 templateUrl: 'templates/app/guest/login/reset-password-dialog.tpl.html',
                 controller: 'app.guest.resetPassword.controller',
-                clickOutsideToClose: true
+                controllerAs: 'ResetPasswordController',
+                clickOutsideToClose: true,
+                locals: {
+                    defaultEmail : email
+                }
             });
         }
 
@@ -126,10 +130,35 @@ module common.services.user {
          * @param emailConfirmToken
          * @returns {ng.IHttpPromise<any>}
          */
-        public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any>{
+        public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any> {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
+                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => {
+                    return rejection.status == 422;
+                })
                 .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
+        }
+
+        /**
+         * Send request to update profile information
+         * @param user
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public updateProfile(user:common.models.User):ng.IPromise<any> {
+            return this.ngRestAdapter
+                .patch('/users/' + user.userId, user);
+        }
+
+        /**
+         * Get extra user profile information
+         * @param user
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public getProfile(user:common.models.User):ng.IPromise<common.models.UserProfile> {
+            return this.ngRestAdapter.get('/users/' + user.userId + '/profile')
+                .then((res) => {
+                    return new common.models.UserProfile(res.data);
+                });
         }
     }
 

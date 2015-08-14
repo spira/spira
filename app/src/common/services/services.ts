@@ -1,4 +1,4 @@
-module common.services {
+namespace common.services {
 
     export const namespace = 'common.services';
 
@@ -9,6 +9,7 @@ module common.services {
         namespace+'.countries',
         namespace+'.timezones',
         namespace+'.pagination',
+        namespace+'.notification',
     ]);
 
 }

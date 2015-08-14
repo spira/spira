@@ -1,4 +1,4 @@
-module app.guest.articles.post {
+namespace app.guest.articles.post {
 
     export const namespace = 'app.guest.articles.post';
 

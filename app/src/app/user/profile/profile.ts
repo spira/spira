@@ -1,6 +1,6 @@
 ///<reference path="../../../../src/global.d.ts" />
 
-module app.user.profile {
+namespace app.user.profile {
 
     export const namespace = 'app.user.profile';
 
@@ -16,6 +16,7 @@ module app.user.profile {
                 views: {
                     "main@app.user": {
                         controller: namespace+'.controller',
+                        controllerAs: 'ProfileController',
                         templateUrl: 'templates/app/user/profile/profile.tpl.html'
                     }
                 },
@@ -27,32 +28,45 @@ module app.user.profile {
                         userService:common.services.user.UserService,
                         $stateParams:IStateParams,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                        $mdToast:ng.material.IToastService
+                        notificationService:common.services.notification.NotificationService,
+                        $location:ng.ILocationService
                     ) => {
                         if(!_.isEmpty($stateParams.emailConfirmationToken)) {
                             userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
                                 .then(() => {
-                                    $mdToast.show(
-                                        $mdToast.simple()
-                                            .hideDelay(2000)
-                                            .position('top right')
-                                            .content('Your email has successfully been updated')
-                                    );
+                                    notificationService.toast('Your email has successfully been updated').pop();
+
+                                    $location.search('emailConfirmationToken', null);
+
                                 }, (err) => {
-                                    $mdToast.show(
-                                        $mdToast.simple()
-                                            .hideDelay(2000)
-                                            .position('top right')
-                                            .content('Your email has not been updated, please try again')
-                                    );
+                                    notificationService.toast('Your email has not been updated, please try again').pop();
                                 });
                         }
+                    },
+                    countries:(
+                        countriesService:common.services.countries.CountriesService
+                    ) => {
+                        return countriesService.getAllCountries()
+                    },
+                    timezones:(
+                        timezonesService:common.services.timezones.TimezonesService
+                    ) => {
+                        return timezonesService.getAllTimezones();
+                    },
+                    userProfile:(
+                        userService:common.services.user.UserService,
+                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+                    ) => {
+                        return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
+                    },
+                    genderOptions:() => {
+                        return common.models.UserProfile.genderOptions;
                     }
                 },
                 data: {
                     title: "User Profile",
-                    icon: 'extension',
-                    navigation: true,
+                        icon: 'extension',
+                        navigation: true,
                 }
             };
 
@@ -62,34 +76,45 @@ module app.user.profile {
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
-
     interface IStateParams extends ng.ui.IStateParamsService
     {
         onBoard?:boolean;
         emailConfirmationToken?:string;
     }
 
-    class ProfileController {
+    export class ProfileController {
 
-        static $inject = ['$scope', 'userService', '$stateParams'];
+        static $inject = ['userService', 'user', 'notificationService', 'countries', 'timezones', 'userProfile', 'genderOptions'];
         constructor(
-            private $scope : IScope,
             private userService:common.services.user.UserService,
-            private $stateParams:IStateParams
+            public user:common.models.User,
+            private notificationService:common.services.notification.NotificationService,
+            public countries:common.services.countries.ICountryDefinition,
+            public timezones:common.services.timezones.ITimezoneDefinition,
+            public userProfile:common.models.UserProfile,
+            public genderOptions:common.models.IGenderOption[]
         ) {
 
-            let runOnBoarding = $stateParams.onBoard;
-            //@todo complete controller
+            user._userProfile = userProfile;
 
         }
 
+        public updateProfile():void {
+            this.userService.updateProfile(this.user)
+                .then(() => {
+                    this.notificationService.toast('Profile update was successful').pop();
+                },
+                (err) => {
+                    this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
+                })
+        }
     }
 
     angular.module(namespace, [])
         .config(ProfileConfig)
         .controller(namespace+'.controller', ProfileController);
-
 }
+
+
+
+

@@ -1,4 +1,4 @@
-module app.guest.articles {
+namespace app.guest.articles {
 
     export const namespace = 'app.guest.articles';
 
@@ -24,6 +24,9 @@ module app.guest.articles {
                         return articlesPaginator.getNext();
                     }
                 },
+                onExit: ['articlesPaginator', (articlesPaginator:common.services.pagination.Paginator) => {
+                    articlesPaginator.reset();
+                }],
                 data: {
                     title: "Articles",
                     role: 'guest',

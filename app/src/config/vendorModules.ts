@@ -1,4 +1,4 @@
-module config.vendorModules {
+namespace config.vendorModules {
 
     export const namespace = 'config.vendorModules';
 

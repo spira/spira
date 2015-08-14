@@ -1,4 +1,4 @@
-module app.guest.home {
+namespace app.guest.home {
 
     export const namespace = 'app.guest.home';
 

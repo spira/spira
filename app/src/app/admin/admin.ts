@@ -1,7 +1,7 @@
 
 ///<reference path="../../../src/global.d.ts" />
 
-module app.admin {
+namespace app.admin {
 
     export const namespace = 'app.admin';
 

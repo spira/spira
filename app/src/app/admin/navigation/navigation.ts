@@ -1,4 +1,4 @@
-module app.admin.navigation{
+namespace app.admin.navigation {
 
     export const namespace = 'app.admin.navigation';
 
@@ -22,15 +22,15 @@ module app.admin.navigation{
             }
         ];
 
-        static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state'];
-        constructor(
-            stateHelperService:common.providers.StateHelperService,
-            $window:global.IWindowService,
-            ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-            $state:ng.ui.IStateService
-        ) {
+        static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state', '$rootScope'];
 
-            super(stateHelperService, $window, ngJwtAuthService, $state);
+        constructor(stateHelperService:common.providers.StateHelperService,
+                    $window:global.IWindowService,
+                    ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    $state:ng.ui.IStateService,
+                    $rootScope:ng.IRootScopeService) {
+
+            super(stateHelperService, $window, ngJwtAuthService, $state, $rootScope);
 
             let groupedStates = _.groupBy(this.navigableStates, 'data.navigationGroup');
 
@@ -41,12 +41,12 @@ module app.admin.navigation{
 
         }
 
-        protected getNavigationStates():global.IState[]{
+        protected getNavigationStates():global.IState[] {
 
             let childStates = this.stateHelperService.getChildStates(app.admin.namespace, 1);
 
             childStates = _.map(childStates, (state) => {
-                if (state.children){
+                if (state.children) {
                     state.children = _.compact(this.getNavigableStates(state.children));
                 }
                 return state;
@@ -59,6 +59,5 @@ module app.admin.navigation{
 
     angular.module(namespace, [])
         .controller(namespace + '.controller', AdminNavigationController);
-
 
 }

@@ -1,4 +1,4 @@
-module app {
+namespace app {
 
     export const namespace = 'app';
 
@@ -81,9 +81,10 @@ module app {
 
         static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
 
-        constructor(private $mdSidenav:ng.material.ISidenavService, public authService:NgJwtAuth.NgJwtAuthService, private $state:ng.ui.IStateService) {
+        constructor(private $mdSidenav:ng.material.ISidenavService,
+                    public ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+                    private $state:ng.ui.IStateService) {
         }
-
 
         /**
          * Toggle the admin side navigation
@@ -96,14 +97,26 @@ module app {
          * Toggle the registration sidenav
          * @param open
          */
-        public toggleRegistrationSidenav(open:boolean) {
-            if (_.isUndefined(open)) {
-                this.$mdSidenav('registration').toggle();
-                return;
+        public toggleRegistrationSidenav(open:boolean = !this.$mdSidenav('registration').isOpen()) {
+
+            if (open) {
+                this.$mdSidenav('registration').open();
+            } else {
+                this.$mdSidenav('registration').close();
             }
 
-            open ? this.$mdSidenav('registration').open() : this.$mdSidenav('registration').close();
+        }
 
+        public promptLogin():void {
+            this.ngJwtAuthService.promptLogin();
+        }
+
+        public logout():void {
+            this.ngJwtAuthService.logout();
+            let currentState:global.IState = <global.IState>this.$state.current;
+            if (currentState.name && currentState.data.loggedIn) {
+                this.$state.go('app.guest.home'); //go back to the homepage if we are currently in a logged in state
+            }
         }
 
         /**
@@ -111,7 +124,7 @@ module app {
          * @param $event
          * @returns {angular.IPromise<any>|IPromise<any>}
          */
-        public goToUserProfile($event:ng.IAngularEvent){
+        public goToUserProfile($event:ng.IAngularEvent) {
             return this.$state.go('app.user.profile', $event);
         }
 

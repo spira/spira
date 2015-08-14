@@ -2,7 +2,7 @@
 
 ///<reference path="../typings/tsd.d.ts" />
 
-declare module global {
+declare namespace global {
 
     export interface IState extends ng.ui.IState {
         data: {
@@ -35,6 +35,7 @@ declare module global {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
+        userType?:string;
         _userCredential? : IUserCredential;
     }
 
