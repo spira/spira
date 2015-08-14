@@ -67,7 +67,7 @@ class ChildEntityController extends ApiController
         $childEntities = $this->findAllChildren($model);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->collection($childEntities);
     }
 
@@ -84,7 +84,7 @@ class ChildEntityController extends ApiController
         $childModel = $this->findOrFailChildEntity($childId, $model);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($childModel);
     }
 
@@ -106,7 +106,7 @@ class ChildEntityController extends ApiController
         $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdItem($childModel);
     }
 
@@ -131,7 +131,7 @@ class ChildEntityController extends ApiController
         $this->getRelation($model)->save($childModel);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdItem($childModel);
     }
 
@@ -178,7 +178,7 @@ class ChildEntityController extends ApiController
         $this->getRelation($model)->saveMany($childModels);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdCollection($childModels);
     }
 

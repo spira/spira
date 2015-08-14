@@ -44,7 +44,7 @@ abstract class EntityController extends ApiController
     public function getAll()
     {
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->collection($this->getAllEntities());
     }
 
@@ -56,7 +56,7 @@ abstract class EntityController extends ApiController
         $collection = $this->getAllEntities($limit, $offset);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->paginatedCollection($collection, $offset, $count);
     }
 
@@ -70,7 +70,7 @@ abstract class EntityController extends ApiController
     {
         $model = $this->findOrFailEntity($id);
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($model)
         ;
     }
@@ -89,7 +89,7 @@ abstract class EntityController extends ApiController
         $model->save();
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdItem($model);
     }
 
@@ -112,7 +112,7 @@ abstract class EntityController extends ApiController
         $model->save();
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdItem($model);
     }
 
@@ -157,7 +157,7 @@ abstract class EntityController extends ApiController
         }
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->createdCollection($models);
     }
 
