@@ -29,15 +29,15 @@ abstract class ApiAbstract implements ApiInterface
     /**
      * Send a GET request with query parameters.
      *
-     * @param string $path           Request path.
-     * @param array  $parameters     GET parameters.
-     * @param array  $requestHeaders Request Headers.
+     * @param string $path
+     * @param array  $parameters
+     * @param array  $headers
      *
      * @return string
      */
-    protected function get($path, array $parameters = array(), $requestHeaders = array())
+    protected function get($path, array $parameters = [], array $headers = [])
     {
-        $response = $this->client->get($path, $parameters, $requestHeaders);
+        $response = $this->client->get($path, $parameters, $headers);
 
         return (string) $response->getBody();
     }

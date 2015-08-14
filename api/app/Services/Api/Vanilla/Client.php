@@ -36,6 +36,16 @@ class Client
     protected $client;
 
     /**
+     * Map group name to class names.
+     *
+     * @var array
+     */
+    protected $map = [
+        'configuration' => 'Configuration',
+        'discussions' => 'Discussion',
+    ];
+
+    /**
      * Assign dependencies.
      *
      * @param GuzzleClient $client
@@ -55,22 +65,22 @@ class Client
     /**
      * Retrieve the API group to call a method within.
      *
-     * @param string $name
+     * @param string $group
      *
      * @throws InvalidArgumentException
      *
      * @return ApiInterface
      */
-    public function api($name)
+    public function api($group)
     {
-        switch ($name) {
-            case 'configuration':
-                $api = new Api\Configuration($this);
-                break;
-            default:
-                throw new InvalidArgumentException(
-                    sprintf('Undefined API group called: "%s"', $name)
-                );
+        if (array_key_exists($group, $this->map)) {
+            $apiClass = sprintf('%s\\Api\\%s', __NAMESPACE__, $this->map[$group]);
+
+            $api = new $apiClass($this);
+        } else {
+            throw new InvalidArgumentException(
+                sprintf('Undefined API group called: "%s"', $group)
+            );
         }
 
         return $api;

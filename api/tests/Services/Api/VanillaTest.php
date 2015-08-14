@@ -16,12 +16,23 @@ class VanillaTest extends TestCase
         $test = $client->api('foobar');
     }
 
-    public function testVanilla()
+    public function testConfigurationCurrent()
     {
         $client = App::make(Client::class);
 
         $current = $client->api('configuration')->current();
 
         $this->assertContains('Title', $current);
+    }
+
+    public function testDiscussionsAll()
+    {
+        $client = App::make(Client::class);
+
+        $all = $client->api('discussions')->all();
+
+        $array = json_decode($all, true);
+
+        $this->assertArrayHasKey('Discussions', $array);
     }
 }
