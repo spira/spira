@@ -102,7 +102,7 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
-        $this->validateRequest($request->all(),$this->getValidationRules());
+        $this->validateRequest($request->all(), $this->getValidationRules());
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -124,10 +124,10 @@ class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $model);
         $validationRules = $this->getValidationRules();
-        if ($childModel->exists){
-            $validationRules = $this->addIdOverrideValidationRule($validationRules,$childId);
+        if ($childModel->exists) {
+            $validationRules = $this->addIdOverrideValidationRule($validationRules, $childId);
         }
-        $this->validateRequest($request->all(),$validationRules, $childModel->exists);
+        $this->validateRequest($request->all(), $validationRules, $childModel->exists);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -147,7 +147,7 @@ class ChildEntityController extends ApiController
     {
         $requestCollection = $request->data;
         $model = $this->findParentEntity($id);
-        $childModels = $this->findChildrenCollection($requestCollection,$model);
+        $childModels = $this->findChildrenCollection($requestCollection, $model);
 
         $error = false;
         $errors = [];
@@ -161,8 +161,8 @@ class ChildEntityController extends ApiController
             }
 
             try {
-                $this->validateRequest($request->all(),$this->getValidationRules(), $model->exists);
-                if (!$error){
+                $this->validateRequest($request->all(), $this->getValidationRules(), $model->exists);
+                if (!$error) {
                     $childModel->fill($requestEntity);
                 }
                 $errors[] = null;
@@ -172,7 +172,7 @@ class ChildEntityController extends ApiController
             }
         }
 
-        if ($error){
+        if ($error) {
             throw new ValidationExceptionCollection($errors);
         }
 
@@ -195,8 +195,8 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
-        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(),$childId);
-        $this->validateRequest($request->all(),$validationRules, true);
+        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $childId);
+        $this->validateRequest($request->all(), $validationRules, true);
         $childModel->fill($request->all());
         $this->getRelation($model)->save($childModel);
 
@@ -223,8 +223,8 @@ class ChildEntityController extends ApiController
             $childModel = $childModels->get($id);
 
             try {
-                $this->validateRequest($request->all(),$this->getValidationRules(), true);
-                if (!$error){
+                $this->validateRequest($request->all(), $this->getValidationRules(), true);
+                if (!$error) {
                     $childModel->fill($requestEntity);
                 }
                 $errors[] = null;
@@ -234,7 +234,7 @@ class ChildEntityController extends ApiController
             }
         }
 
-        if ($error){
+        if ($error) {
             throw new ValidationExceptionCollection($errors);
         }
 
@@ -291,7 +291,7 @@ class ChildEntityController extends ApiController
      */
     public function getChildModel()
     {
-        if (is_null($this->cacheChildModel)){
+        if (is_null($this->cacheChildModel)) {
             $this->cacheChildModel = $this->getRelation($this->parentModel)->getRelated();
         }
         return $this->cacheChildModel;
@@ -373,7 +373,7 @@ class ChildEntityController extends ApiController
 
         if (!empty($ids)) {
             $models = $this->getRelation($parent)->findMany($ids);
-        }else{
+        } else {
             $models = $this->getChildModel()->newCollection();
         }
 
@@ -390,7 +390,7 @@ class ChildEntityController extends ApiController
 
         if (!empty($ids)) {
             $models = $this->getRelation($parent)->findMany($ids);
-        }else{
+        } else {
             $models = $this->getChildModel()->newCollection();
         }
 
@@ -404,11 +404,11 @@ class ChildEntityController extends ApiController
      */
     protected function getValidateChildIdRule()
     {
-        if ($this->validateChildIdRule){
+        if ($this->validateChildIdRule) {
             return $this->validateChildIdRule;
         }
 
-        if (isset($this->getValidationRules()[$this->getChildModel()->getKeyName()])){
+        if (isset($this->getValidationRules()[$this->getChildModel()->getKeyName()])) {
             return $this->getValidationRules()[$this->getChildModel()->getKeyName()];
         }
 
@@ -422,11 +422,11 @@ class ChildEntityController extends ApiController
      */
     protected function getValidateParentIdRule()
     {
-        if ($this->validateParentIdRule){
+        if ($this->validateParentIdRule) {
             return $this->validateParentIdRule;
         }
         $parentValidationRules = $this->getParentModel()->getValidationRules();
-        if (isset($parentValidationRules[$this->getParentModel()->getKeyName()])){
+        if (isset($parentValidationRules[$this->getParentModel()->getKeyName()])) {
             return $parentValidationRules[$this->getParentModel()->getKeyName()];
         }
 
@@ -442,7 +442,7 @@ class ChildEntityController extends ApiController
     {
         $rule = 'equals:'.$id;
         $keyName = $this->getChildModel()->getKeyName();
-        if (isset($validationRules[$keyName])){
+        if (isset($validationRules[$keyName])) {
             $rule='|'.$rule;
         }
 

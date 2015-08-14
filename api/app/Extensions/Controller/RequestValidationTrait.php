@@ -10,7 +10,6 @@ namespace App\Extensions\Controller;
 
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Routing\ValidatesRequests;
-use Spira\Repository\Model\BaseModel;
 use Spira\Repository\Validation\ValidationException;
 use Spira\Repository\Validation\ValidationExceptionCollection;
 use Spira\Repository\Validation\Validator;
@@ -129,9 +128,9 @@ trait RequestValidationTrait
      * @param bool $limitToRequest
      * @return bool
      */
-    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false, $attachedRules = [])
+    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false)
     {
-        if ($limitToRequest){
+        if ($limitToRequest) {
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
 
@@ -152,4 +151,3 @@ trait RequestValidationTrait
         return 'same:'.$id;
     }
 }
-

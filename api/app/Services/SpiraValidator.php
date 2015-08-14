@@ -22,7 +22,7 @@ class SpiraValidator extends Validator
 
     public function validateEquals($attribute, $value, $parameters)
     {
-        $this->requireParameterCount(1,$parameters, 'equals');
+        $this->requireParameterCount(1, $parameters, 'equals');
         $compare = $parameters[0];
 
         if ($compare == $value) {
@@ -38,7 +38,7 @@ class SpiraValidator extends Validator
      * @param  string  $attribute
      * @param  string  $value
      * @param  array   $parameters
-     * @return void
+     * @return bool
      */
     protected function validateCountry($attribute, $value, $parameters)
     {
