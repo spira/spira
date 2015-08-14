@@ -25,6 +25,20 @@ class VanillaTest extends TestCase
         $this->assertArrayHasKey('Title', $current['Configuration']);
     }
 
+    public function testDifferentUser()
+    {
+        $client = App::make(Client::class);
+
+        $client->setUser('admin');
+
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+
+        $this->assertEquals('admin', $discussion['Discussion']['InsertName']);
+    }
+
+
+    // Discussions
+
     public function testDiscussionsAll()
     {
         $client = App::make(Client::class);
@@ -42,17 +56,6 @@ class VanillaTest extends TestCase
 
         $this->assertArrayHasKey('Discussion', $discussion);
         $this->assertEquals('Discussion', $discussion['Type']);
-    }
-
-    public function testDiscussionsDifferentUser()
-    {
-        $client = App::make(Client::class);
-
-        $client->setUser('admin');
-
-        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
-
-        $this->assertEquals('admin', $discussion['Discussion']['InsertName']);
     }
 
     public function testDiscussionsFind()
@@ -95,5 +98,51 @@ class VanillaTest extends TestCase
         }
 
         $this->fail('The discussion was not removed.');
+    }
+
+
+    // Comments
+    public function testCreateComment()
+    {
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $client->api('comments')->create($id, 'foobar');
+
+        $this->assertEquals($id, $comment['Comment']['DiscussionID']);
+    }
+
+    public function testUpdateComment()
+    {
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $client->api('comments')->create($id, 'foobar');
+        $id = $comment['Comment']['CommentID'];
+
+        $comment = $client->api('comments')->update($id, 'barfoo');
+
+        $this->assertEquals('barfoo', $comment['Comment']['Body']);
+    }
+
+    public function testRemoveComment()
+    {
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $client->api('comments')->create($discussionId, 'foobar');
+        $id = $comment['Comment']['CommentID'];
+
+        $comment = $client->api('comments')->remove($id);
+
+        $discussion = $client->api('discussions')->find($discussionId);
+
+        $this->assertCount(0, $discussion['Comments']);
     }
 }

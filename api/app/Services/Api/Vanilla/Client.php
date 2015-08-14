@@ -52,6 +52,7 @@ class Client
      */
     protected $map = [
         'configuration' => 'Configuration',
+        'comments' => 'Comment',
         'discussions' => 'Discussion',
     ];
 

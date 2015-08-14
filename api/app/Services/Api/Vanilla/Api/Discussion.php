@@ -51,7 +51,7 @@ class Discussion extends ApiAbstract
      */
     public function find($id)
     {
-        return $this->get('discussions/'.rawurlencode($id));
+        return $this->get('discussions/'.$id);
     }
 
     /**
@@ -72,7 +72,7 @@ class Discussion extends ApiAbstract
             'Body' => $body
         ];
 
-        return $this->put('discussions/'.rawurlencode($id), $parameters);
+        return $this->put('discussions/'.$id, $parameters);
     }
 
     /**
@@ -86,6 +86,6 @@ class Discussion extends ApiAbstract
      */
     public function remove($id)
     {
-        return $this->delete('discussions/'.rawurlencode($id));
+        return $this->delete('discussions/'.$id);
     }
 }
