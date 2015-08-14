@@ -306,6 +306,29 @@ class EntityTest extends TestCase
         $this->assertStringStartsWith('http', $object[0]->_self);
     }
 
+    public function testPutManySomeNew()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+
+
+        $entities = array_map(function ($entity){
+            return $this->prepareEntity($entity);
+        }, $entities->all());
+        $entities[0]['entityId'] = (string) Uuid::uuid4();
+        $entities[1]['entityId'] = (string) Uuid::uuid4();
+        $rowCount = TestEntity::count();
+
+        $this->put('/test/entities', ['data' => $entities]);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(201);
+        $this->assertEquals($rowCount + 2, TestEntity::count());
+        $this->assertTrue(is_array($object));
+        $this->assertCount(5, $object);
+        $this->assertStringStartsWith('http', $object[0]->_self);
+    }
+
     public function testPutManyNewInvalidId()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->make();
@@ -323,6 +346,27 @@ class EntityTest extends TestCase
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
+        $this->assertEquals($rowCount, TestEntity::count());
+    }
+
+    public function testPutManyNewInvalid()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->make();
+
+        $entities = array_map(function ($entity) {
+            return array_add($this->prepareEntity($entity), 'multi_word_column_title', 'foobar');
+        }, $entities->all());
+
+        $rowCount = TestEntity::count();
+
+        $this->put('/test/entities', ['data' => $entities]);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('multiWordColumnTitle', $object->invalid[0]);
+
+        $this->assertEquals('The multi word column title field must be true or false.', $object->invalid[0]->multiWordColumnTitle[0]->message);
         $this->assertEquals($rowCount, TestEntity::count());
     }
 
@@ -383,6 +427,24 @@ class EntityTest extends TestCase
 
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
+    }
+
+    public function testPatchManyInvalid()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+
+        $data = array_map(function ($entity) {
+            return [
+                'entity_id' => $entity->entity_id,
+                'multi_word_column_title' => 'foobar'
+            ];
+        }, $entities->all());
+
+        $this->patch('/test/entities', ['data' => $data]);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('multiWordColumnTitle', $object->invalid[0]);
+        $this->assertEquals('The multi word column title field must be true or false.', $object->invalid[0]->multiWordColumnTitle[0]->message);
     }
 
     public function testDeleteOne()
