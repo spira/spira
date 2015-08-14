@@ -115,6 +115,34 @@ class Client
     }
 
     /**
+     * Make a PUT request.
+     *
+     * @param string $path
+     * @param mixed  $body
+     * @param array  $headers
+     *
+     * @return \Guzzle\Http\Message\Request
+     */
+    public function put($path, $body, array $headers = [])
+    {
+        return $this->request($path, $body, 'PUT', $headers);
+    }
+
+    /**
+     * Make a PUT request.
+     *
+     * @param string $path
+     * @param mixed  $body
+     * @param array  $headers
+     *
+     * @return \Guzzle\Http\Message\Request
+     */
+    public function delete($path, $body = null, array $headers = [])
+    {
+        return $this->request($path, $body, 'DELETE', $headers);
+    }
+
+    /**
      * Send request with HTTP client.
      *
      * @param string $path
@@ -135,7 +163,7 @@ class Client
             $response = $this->client->send($request);
         } catch (ClientErrorResponseException $e) {
             var_dump($e->getMessage());
-            die;
+            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
         } catch (\RuntimeException $e) {
             throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
         }

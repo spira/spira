@@ -81,6 +81,46 @@ abstract class ApiAbstract implements ApiInterface
     }
 
     /**
+     * Send a PUT request with JSON-encoded parameters.
+     *
+     * @param string $path
+     * @param array  $parameters
+     * @param array  $headers
+     *
+     * @return  string
+     */
+    protected function put($path, array $parameters = [], array $headers = [])
+    {
+        $response = $this->client->put(
+            $path,
+            $this->createJsonBody($parameters),
+            $headers
+        );
+
+        return (string) $response->getBody();
+    }
+
+    /**
+     * Send a DELETE request with JSON-encoded parameters.
+     *
+     * @param string $path
+     * @param array  $parameters
+     * @param array  $headers
+     *
+     * @return  string
+     */
+    protected function delete($path, array $parameters = [], array $headers = [])
+    {
+        $response = $this->client->delete(
+            $path,
+            $this->createJsonBody($parameters),
+            $headers
+        );
+
+        return (string) $response->getBody();
+    }
+
+    /**
      * Create a JSON encoded version of an array of parameters.
      *
      * @param array $parameters
