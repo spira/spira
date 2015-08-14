@@ -6,6 +6,8 @@ use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
@@ -57,8 +59,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $validationRules = [
-        'user_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+        'user_id' => 'uuid',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
@@ -86,7 +88,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the credentials associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userCredential()
     {
@@ -96,7 +98,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the profile associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userProfile()
     {
@@ -106,7 +108,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the social logins associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */
     public function socialLogins()
     {
@@ -261,6 +263,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
 
             return $user;
         }
+
+        return null;
     }
 
     /**
@@ -300,7 +304,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         $user = $this->findOrFail($id);
 
         $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $this->cache->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
+        $this->getCache()->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
 
         return $token;
     }

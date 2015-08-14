@@ -23,7 +23,7 @@ class ArticleMeta extends BaseModel
 
     protected $guarded = ['meta_name'];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
         return [
             'meta_name' => 'required|string',

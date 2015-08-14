@@ -15,7 +15,7 @@ class ParserFactory
      *
      * @throws NotImplementedException
      *
-     * @return ParserContract
+     * @return AbstractParser
      */
     public static function parse(User $user, $provider)
     {

@@ -34,7 +34,7 @@ class JWTAuth extends JWTAuthBase
      * @throws UnauthorizedException
      * @throws UnprocessableEntityException
      * @throws RuntimeException
-     * @return \App\Model\User
+     * @return User
      */
     public function getUser()
     {

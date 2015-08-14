@@ -266,10 +266,9 @@ class AuthTest extends TestCase
 
     public function testMakeLoginToken()
     {
-        $repo = $this->app->make('App\Repositories\UserRepository');
         $user = factory(User::class)->create();
 
-        $token = $repo->makeLoginToken($user->user_id);
+        $token = $user->makeLoginToken($user->user_id);
 
         $id = Cache::pull('login_token_'.$token);
 

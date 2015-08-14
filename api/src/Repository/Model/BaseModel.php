@@ -27,8 +27,9 @@ use Spira\Repository\Validation\ValidationExceptionCollection;
  * @package Spira\Repository\Model
  *
  * @method static int count
- * @method BaseModel find($id)
- * @method BaseModel findOrFail($id)
+ * @method static BaseModel find($id)
+ * @method static BaseModel first()
+ * @method static BaseModel findOrFail($id)
  * @method static Collection get
  * @method static Collection findMany($ids)
  * @method static Builder where($value,$operator,$operand)
@@ -62,14 +63,14 @@ abstract class BaseModel extends Model
      */
     protected $relationErrors = [];
 
-    protected $validationRules = [];
+    protected static $validationRules = [];
 
     /**
      * @return array
      */
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        return $this->validationRules;
+        return static::$validationRules;
     }
 
     /**

@@ -50,7 +50,7 @@ class Article extends BaseModel
         'first_published' => 'datetime',
     ];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
         return [
             'article_id' => 'uuid',
@@ -58,7 +58,7 @@ class Article extends BaseModel
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', self::$statuses),
+            'status' => 'in:' . implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink'
         ];
     }
