@@ -334,7 +334,7 @@ class ArticleTest extends TestCase
 
         $articleCheck = Article::find($entity->article_id);
         $metaCheck = $articleCheck->metas->first();
-        $this->assertEquals($entity->article_id,$metaCheck->article->article_id);
+        $this->assertEquals($entity->article_id, $metaCheck->article->article_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
