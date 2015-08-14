@@ -311,7 +311,7 @@ class EntityTest extends TestCase
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
 
-        $entities = array_map(function ($entity){
+        $entities = array_map(function ($entity) {
             return $this->prepareEntity($entity);
         }, $entities->all());
         $entities[0]['entityId'] = (string) Uuid::uuid4();
