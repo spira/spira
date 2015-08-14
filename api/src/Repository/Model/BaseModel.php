@@ -21,7 +21,6 @@ use Spira\Repository\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Repository\Validation\ValidationExceptionCollection;
 
-
 /**
  * Class BaseModel
  * @package Spira\Repository\Model

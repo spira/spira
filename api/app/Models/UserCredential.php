@@ -1,6 +1,5 @@
 <?php namespace App\Models;
 
-
 class UserCredential extends BaseModel
 {
     /**

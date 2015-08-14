@@ -4,7 +4,6 @@ use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Repository\Collection\Collection;
 
-
 class ChildEntityTest extends TestCase
 {
     public function setUp()
@@ -21,7 +20,6 @@ class ChildEntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\SecondTestEntity::flushEventListeners();
         App\Models\SecondTestEntity::boot();
-
     }
 
     /**

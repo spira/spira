@@ -84,7 +84,7 @@ abstract class EntityController extends ApiController
     public function postOne(Request $request)
     {
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(),$this->getValidationRules());
+        $this->validateRequest($request->all(), $this->getValidationRules());
         $model->fill($request->all());
         $model->save();
 
@@ -104,8 +104,8 @@ abstract class EntityController extends ApiController
     {
         $model = $this->findOrNewEntity($id);
         $validationRules = $this->getValidationRules();
-        if ($model->exists){
-            $validationRules = $this->addIdOverrideValidationRule($validationRules,$id);
+        if ($model->exists) {
+            $validationRules = $this->addIdOverrideValidationRule($validationRules, $id);
         }
         $this->validateRequest($request->all(), $validationRules, $model->exists);
         $model->fill($request->all());
@@ -140,8 +140,8 @@ abstract class EntityController extends ApiController
             }
 
             try {
-                $this->validateRequest($requestEntity,$this->getValidationRules(), $model->exists);
-                if (!$error){
+                $this->validateRequest($requestEntity, $this->getValidationRules(), $model->exists);
+                if (!$error) {
                     $model->fill($requestEntity);
                     $model->save();
                 }
@@ -150,11 +150,9 @@ abstract class EntityController extends ApiController
                 $error = true;
                 $errors[] = $e;
             }
-
-
         }
 
-        if ($error){
+        if ($error) {
             throw new ValidationExceptionCollection($errors);
         }
 
@@ -173,8 +171,8 @@ abstract class EntityController extends ApiController
     public function patchOne($id, Request $request)
     {
         $model = $this->findOrFailEntity($id);
-        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(),$id);
-        $this->validateRequest($request->all(),$validationRules, true);
+        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);
+        $this->validateRequest($request->all(), $validationRules, true);
         $model->fill($request->all());
         $model->save();
 
@@ -199,8 +197,8 @@ abstract class EntityController extends ApiController
             $model = $models->get($id);
 
             try {
-                $this->validateRequest($requestEntity,$this->getValidationRules(), true);
-                if (!$error){
+                $this->validateRequest($requestEntity, $this->getValidationRules(), true);
+                if (!$error) {
                     $model->fill($requestEntity);
                     $model->save();
                 }
@@ -211,7 +209,7 @@ abstract class EntityController extends ApiController
             }
         }
 
-        if ($error){
+        if ($error) {
             throw new ValidationExceptionCollection($errors);
         }
 
@@ -304,7 +302,7 @@ abstract class EntityController extends ApiController
 
         if (!empty($ids)) {
             $models = $models = $this->getModel()->findMany($ids);
-        }else{
+        } else {
             $models = $this->getModel()->newCollection();
         }
 
@@ -325,7 +323,7 @@ abstract class EntityController extends ApiController
 
         if (!empty($ids)) {
             $models = $models = $this->getModel()->findMany($ids);
-        }else{
+        } else {
             $models = $this->getModel()->newCollection();
         }
 
@@ -347,11 +345,11 @@ abstract class EntityController extends ApiController
      */
     protected function getIdValidationRule()
     {
-        if ($this->validateIdRule){
+        if ($this->validateIdRule) {
             return $this->validateIdRule;
         }
 
-        if (isset($this->getValidationRules()[$this->getModel()->getKeyName()])){
+        if (isset($this->getValidationRules()[$this->getModel()->getKeyName()])) {
             return $this->getValidationRules()[$this->getModel()->getKeyName()];
         }
 
@@ -367,7 +365,7 @@ abstract class EntityController extends ApiController
     {
         $rule = 'equals:'.$id;
         $keyName = $this->getModel()->getKeyName();
-        if (isset($validationRules[$keyName])){
+        if (isset($validationRules[$keyName])) {
             $rule='|'.$rule;
         }
 

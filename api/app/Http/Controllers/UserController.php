@@ -118,17 +118,17 @@ class UserController extends EntityController
 
         /** @var User $model */
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(),$this->getValidationRules());
+        $this->validateRequest($request->all(), $this->getValidationRules());
         $model->fill($request->all());
         $model->save();
 
         // Finally create the credentials
-        $this->validateRequest($credential,UserCredential::getValidationRules());
+        $this->validateRequest($credential, UserCredential::getValidationRules());
         $model->setCredential(new UserCredential($credential));
 
         // Finally create the profile if it exists
         if (!empty($profile)) {
-            $this->validateRequest($profile,UserProfile::getValidationRules());
+            $this->validateRequest($profile, UserProfile::getValidationRules());
             $model->setProfile(new UserProfile($profile));
         }
 
@@ -167,8 +167,8 @@ class UserController extends EntityController
                 $model->email = $email;
             }
         }
-        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(),$id);
-        $this->validateRequest($request->except('email'),$validationRules,true);
+        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);
+        $this->validateRequest($request->except('email'), $validationRules, true);
         $model->fill($request->except('email'));
         $model->save();
 
@@ -177,7 +177,7 @@ class UserController extends EntityController
         if (!empty($profileUpdateDetails)) {
             /** @var UserProfile $profile */
             $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
-            $this->validateRequest($profileUpdateDetails,UserProfile::getValidationRules(),$profile->exists);
+            $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
             $profile->fill($profileUpdateDetails);
             $model->setProfile($profile);
         }

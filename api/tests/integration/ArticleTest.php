@@ -5,7 +5,6 @@ use App\Models\ArticlePermalink;
 
 class ArticleTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -18,7 +17,6 @@ class ArticleTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\Article::flushEventListeners();
         App\Models\Article::boot();
-
     }
 
     /**
@@ -179,7 +177,7 @@ class ArticleTest extends TestCase
         $rowCount = Article::count();
 
         $preparedEntity = $this->prepareEntity($entity);
-        unset($preparedEntity['permalink'],$preparedEntity['articleId']);
+        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
 
         $this->put('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
@@ -201,7 +199,7 @@ class ArticleTest extends TestCase
         $id = $entity->article_id;
         $entity->title = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
-        unset($preparedEntity['permalink'],$preparedEntity['articleId']);
+        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
         $this->patch('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
