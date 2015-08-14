@@ -113,7 +113,7 @@ class Client
      */
     public function request($path, $body = null, $method = 'GET', array $headers = [], array $options = [])
     {
-        $options = $this->sign($options);
+        $options = $this->sign($options, $method, $path);
 
         $request = $this->createRequest($method, $path, $body, $headers, $options);
 
@@ -154,15 +154,22 @@ class Client
     /**
      * Sign the request with the set user.
      *
-     * @param array $options
+     * @param array  $options
+     * @param string $method
+     * @param string $path
      *
      * @return array
      */
-    public function sign(array $options)
+    public function sign(array $options, $method, $path)
     {
         $query = array_key_exists('query', $options) ? $options['query'] : [];
 
+        // Sets the additional data to include in the signature. Method and path
+        // is added to prevent that a man in the middle attack could potentially
+        // modify the endpoint or HTTP method.
         $signer = [
+          'method' => $method,
+          'path' => $path,
           'username'  => 'system',
           'timestamp' => time()
         ];
