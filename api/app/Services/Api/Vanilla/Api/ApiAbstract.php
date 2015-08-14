@@ -2,8 +2,8 @@
 
 namespace App\Services\Api\Vanilla\Api;
 
+use Guzzle\Http\Message\Response;
 use App\Services\Api\Vanilla\Client;
-use Github\HttpClient\Message\ResponseMediator;
 
 abstract class ApiAbstract implements ApiInterface
 {
@@ -17,7 +17,7 @@ abstract class ApiAbstract implements ApiInterface
     /**
      * Assign dependencies.
      *
-     * @param Client $client
+     * @param  Client $client
      *
      * @return void
      */
@@ -29,27 +29,27 @@ abstract class ApiAbstract implements ApiInterface
     /**
      * Send a GET request with query parameters.
      *
-     * @param string $path
-     * @param array  $parameters
-     * @param array  $headers
+     * @param  string $path
+     * @param  array  $parameters
+     * @param  array  $headers
      *
-     * @return string
+     * @return array
      */
     protected function get($path, array $parameters = [], array $headers = [])
     {
         $response = $this->client->get($path, $parameters, $headers);
 
-        return (string) $response->getBody();
+        return $this->getContent($response);
     }
 
     /**
      * Send a POST request with JSON encoded parameters.
      *
-     * @param string $path
-     * @param array  $parameters
-     * @param array  $headers
+     * @param  string $path
+     * @param  array  $parameters
+     * @param  array  $headers
      *
-     * @return string
+     * @return array
      */
     protected function post($path, array $parameters = [], array $headers = [])
     {
@@ -63,11 +63,11 @@ abstract class ApiAbstract implements ApiInterface
     /**
      * Send a POST request with raw data.
      *
-     * @param string $path
-     * @param mixed  $body
-     * @param array  $headers
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  array  $headers
      *
-     * @return string
+     * @return array
      */
     protected function postRaw($path, $body, array $headers = [])
     {
@@ -77,17 +77,17 @@ abstract class ApiAbstract implements ApiInterface
             $headers
         );
 
-        return (string) $response->getBody();
+        return $this->getContent($response);
     }
 
     /**
      * Send a PUT request with JSON-encoded parameters.
      *
-     * @param string $path
-     * @param array  $parameters
-     * @param array  $headers
+     * @param  string $path
+     * @param  array  $parameters
+     * @param  array  $headers
      *
-     * @return  string
+     * @return array
      */
     protected function put($path, array $parameters = [], array $headers = [])
     {
@@ -97,17 +97,17 @@ abstract class ApiAbstract implements ApiInterface
             $headers
         );
 
-        return (string) $response->getBody();
+        return $this->getContent($response);
     }
 
     /**
      * Send a DELETE request with JSON-encoded parameters.
      *
-     * @param string $path
-     * @param array  $parameters
-     * @param array  $headers
+     * @param  string $path
+     * @param  array  $parameters
+     * @param  array  $headers
      *
-     * @return  string
+     * @return array|mixed
      */
     protected function delete($path, array $parameters = [], array $headers = [])
     {
@@ -117,13 +117,13 @@ abstract class ApiAbstract implements ApiInterface
             $headers
         );
 
-        return (string) $response->getBody();
+        return $this->getContent($response);
     }
 
     /**
      * Create a JSON encoded version of an array of parameters.
      *
-     * @param array $parameters
+     * @param  array $parameters
      *
      * @return null|string
      */
@@ -134,5 +134,24 @@ abstract class ApiAbstract implements ApiInterface
             : json_encode($parameters, empty($parameters)
                 ? JSON_FORCE_OBJECT
                 : 0);
+    }
+
+    /**
+     * Extracts the content from the response.
+     *
+     * @param  Response $response
+     *
+     * @return array|mixed
+     */
+    protected function getContent(Response $response)
+    {
+        $body = $response->getBody(true);
+        $content = json_decode($body, true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            return $body;
+        }
+
+        return $content;
     }
 }

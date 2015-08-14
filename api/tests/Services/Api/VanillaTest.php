@@ -22,7 +22,7 @@ class VanillaTest extends TestCase
 
         $current = $client->api('configuration')->current();
 
-        $this->assertContains('Title', $current);
+        $this->assertArrayHasKey('Title', $current['Configuration']);
     }
 
     public function testDiscussionsAll()
@@ -31,33 +31,27 @@ class VanillaTest extends TestCase
 
         $all = $client->api('discussions')->all();
 
-        $array = json_decode($all, true);
-
-        $this->assertArrayHasKey('Discussions', $array);
+        $this->assertArrayHasKey('Discussions', $all);
     }
 
     public function testDiscussionsCreate()
     {
         $client = App::make(Client::class);
 
-        $all = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
 
-        $array = json_decode($all, true);
-
-        $this->assertArrayHasKey('Discussion', $array);
-        $this->assertEquals('Discussion', $array['Type']);
+        $this->assertArrayHasKey('Discussion', $discussion);
+        $this->assertEquals('Discussion', $discussion['Type']);
     }
 
     public function testDiscussionsFind()
     {
         $client = App::make(Client::class);
 
-        $all = $client->api('discussions')->create('Foo', 'Bar', 1);
-        $array = json_decode($all, true);
-        $id = $array['Discussion']['DiscussionID'];
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
 
         $discussion = $client->api('discussions')->find($id);
-        $discussion = json_decode($discussion, true);
 
         $this->assertEquals($id, $discussion['Discussion']['DiscussionID']);
     }
@@ -66,12 +60,10 @@ class VanillaTest extends TestCase
     {
         $client = App::make(Client::class);
 
-        $all = $client->api('discussions')->create('Foo', 'Bar', 1);
-        $array = json_decode($all, true);
-        $id = $array['Discussion']['DiscussionID'];
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
 
         $discussion = $client->api('discussions')->update($id, 'Foobar', 'Foo');
-        $discussion = json_decode($discussion, true);
 
         $this->assertEquals('Foobar', $discussion['Discussion']['Name']);
     }
@@ -80,9 +72,8 @@ class VanillaTest extends TestCase
     {
         $client = App::make(Client::class);
 
-        $all = $client->api('discussions')->create('Foo', 'Bar', 1);
-        $array = json_decode($all, true);
-        $id = $array['Discussion']['DiscussionID'];
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
 
         $client->api('discussions')->remove($id);
 

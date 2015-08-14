@@ -7,9 +7,9 @@ class Discussion extends ApiAbstract
     /**
      * List all discussions.
      *
-     * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-all-discussions
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-all-discussions
      *
-     * @param int $page
+     * @param  int $page
      *
      * @return array
      */
@@ -21,11 +21,11 @@ class Discussion extends ApiAbstract
     /**
      * Create a new discussion.
      *
-     * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#create-a-new-discussion
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#create-a-new-discussion
      *
-     * @param string $name
-     * @param string $body
-     * @param int    $categoryId
+     * @param  string $name
+     * @param  string $body
+     * @param  int    $categoryId
      *
      * @return array
      */
@@ -43,9 +43,9 @@ class Discussion extends ApiAbstract
     /**
      * Create a discussion.
      *
-     * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-a-discussion
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-a-discussion
      *
-     * @param int $id
+     * @param  int $id
      *
      * @return array
      */
@@ -57,11 +57,11 @@ class Discussion extends ApiAbstract
     /**
      * Update a discussion.
      *
-     * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#update-a-discussion
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#update-a-discussion
      *
-     * @param int    $id
-     * @param string $name
-     * @param string $body
+     * @param  int    $id
+     * @param  string $name
+     * @param  string $body
      *
      * @return array
      */
@@ -78,9 +78,9 @@ class Discussion extends ApiAbstract
     /**
      * Remove a discussion.
      *
-     * @link https://github.com/kasperisager/vanilla-api/wiki/Endpoints#remove-a-discussion
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#remove-a-discussion
      *
-     * @param int $id
+     * @param  int $id
      *
      * @return array
      */

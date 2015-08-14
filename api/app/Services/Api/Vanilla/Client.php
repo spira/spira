@@ -48,7 +48,7 @@ class Client
     /**
      * Assign dependencies.
      *
-     * @param GuzzleClient $client
+     * @param  GuzzleClient $client
      *
      * @return void
      */
@@ -65,7 +65,7 @@ class Client
     /**
      * Retrieve the API group to call a method within.
      *
-     * @param string $group
+     * @param  string $group
      *
      * @throws InvalidArgumentException
      *
@@ -89,9 +89,9 @@ class Client
     /**
      * Make a GET request.
      *
-     * @param string  $path
-     * @param array   $parameters
-     * @param array   $headers
+     * @param  string $path
+     * @param  array  $parameters
+     * @param  array  $headers
      *
      * @return \Guzzle\Http\Message\Request
      */
@@ -103,9 +103,9 @@ class Client
     /**
      * Make a POST request.
      *
-     * @param string $path
-     * @param mixed  $body
-     * @param array  $headers
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  array  $headers
      *
      * @return \Guzzle\Http\Message\Request
      */
@@ -117,9 +117,9 @@ class Client
     /**
      * Make a PUT request.
      *
-     * @param string $path
-     * @param mixed  $body
-     * @param array  $headers
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  array  $headers
      *
      * @return \Guzzle\Http\Message\Request
      */
@@ -131,9 +131,9 @@ class Client
     /**
      * Make a PUT request.
      *
-     * @param string $path
-     * @param mixed  $body
-     * @param array  $headers
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  array  $headers
      *
      * @return \Guzzle\Http\Message\Request
      */
@@ -145,11 +145,11 @@ class Client
     /**
      * Send request with HTTP client.
      *
-     * @param string $path
-     * @param mixed  $body
-     * @param string $method
-     * @param array  $headers
-     * @param array  $options
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  string $method
+     * @param  array  $headers
+     * @param  array  $options
      *
      * @return \Guzzle\Http\Message\Response
      */
@@ -174,11 +174,11 @@ class Client
     /**
      * Create request with HTTP client.
      *
-     * @param string $method
-     * @param string $path
-     * @param mixed  $body
-     * @param array  $headers
-     * @param array  $options
+     * @param  string $method
+     * @param  string $path
+     * @param  mixed  $body
+     * @param  array  $headers
+     * @param  array  $options
      *
      * @return \Guzzle\Http\Message\Request
      */
@@ -196,9 +196,9 @@ class Client
     /**
      * Sign the request with the set user.
      *
-     * @param array  $options
-     * @param string $method
-     * @param string $path
+     * @param  array  $options
+     * @param  string $method
+     * @param  string $path
      *
      * @return array
      */
