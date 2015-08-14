@@ -503,7 +503,7 @@ class AuthTest extends TestCase
             'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET'))
         ];
 
-        $cookies = ['JwtAuthToken' => $token];
+        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
         $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
 
         $response = json_decode($this->response->getContent());
