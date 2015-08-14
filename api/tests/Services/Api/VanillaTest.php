@@ -35,4 +35,16 @@ class VanillaTest extends TestCase
 
         $this->assertArrayHasKey('Discussions', $array);
     }
+
+    public function testDiscussionsCreate()
+    {
+        $client = App::make(Client::class);
+
+        $all = $client->api('discussions')->create('Foo', 'Bar', 1);
+
+        $array = json_decode($all, true);
+
+        $this->assertArrayHasKey('Discussion', $array);
+        $this->assertEquals('Discussion', $array['Type']);
+    }
 }

@@ -87,17 +87,31 @@ class Client
     }
 
     /**
-     * Prepare a GET request.
+     * Make a GET request.
      *
      * @param string  $path
-     * @param array $parameters
-     * @param array $headers
+     * @param array   $parameters
+     * @param array   $headers
      *
      * @return \Guzzle\Http\Message\Request
      */
     public function get($path, array $parameters = [], array $headers = [])
     {
         return $this->request($path, null, 'GET', $headers, ['query' => $parameters]);
+    }
+
+    /**
+     * Make a POST request.
+     *
+     * @param string $path
+     * @param mixed  $body
+     * @param array  $headers
+     *
+     * @return \Guzzle\Http\Message\Request
+     */
+    public function post($path, $body = null, array $headers = [])
+    {
+        return $this->request($path, $body, 'POST', $headers);
     }
 
     /**
