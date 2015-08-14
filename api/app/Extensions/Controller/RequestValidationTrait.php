@@ -134,20 +134,13 @@ trait RequestValidationTrait
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
 
+        /** @var Validator $validation */
         $validation = $this->getValidationFactory()->make($requestEntity, $validationRules);
-        if (!$validation instanceof Validator) {
-            throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
-        }
 
         if ($validation->fails()) {
             throw new ValidationException($validation->messages());
         }
 
         return true;
-    }
-
-    public function getIdOverrideRule($id)
-    {
-        return 'same:'.$id;
     }
 }

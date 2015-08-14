@@ -70,6 +70,13 @@ class TransformerTest extends TestCase
         $this->assertTrue(is_array($item));
     }
 
+    public function testTransfomerService()
+    {
+        $checkArray = ['item'=>'foo'];
+        $transformed = $this->transformer->getService()->item(new \Illuminate\Database\Eloquent\Collection($checkArray));
+        $this->assertEquals($checkArray,$transformed);
+    }
+
     public function testNonArrayableItem()
     {
         $array = ['foo' => 'bar'];

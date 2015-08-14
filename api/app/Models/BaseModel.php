@@ -3,7 +3,6 @@
 use Carbon\Carbon;
 use Bosnadev\Database\Traits\UuidTrait;
 use DateTime;
-use Illuminate\Validation\Factory as ValidationFactory;
 
 abstract class BaseModel extends \Spira\Model\Model\BaseModel
 {

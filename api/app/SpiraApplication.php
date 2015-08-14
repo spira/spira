@@ -20,7 +20,9 @@ class SpiraApplication extends Application
         ini_set('display_errors', 0);
         if ('cli' !== php_sapi_name() && (!ini_get('log_errors') || ini_get('error_log'))) {
             // CLI - display errors only if they're not already logged to STDERR
+            // @codeCoverageIgnoreStart
             ini_set('display_errors', 1);
+            // @codeCoverageIgnoreEnd
         }
     }
 
