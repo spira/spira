@@ -342,7 +342,6 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
-
     }
 
     public function testPutMetas()
