@@ -13,10 +13,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
-use Spira\Repository\Collection\Collection;
-use Spira\Repository\Model\BaseModel;
-use Spira\Repository\Validation\ValidationException;
-use Spira\Repository\Validation\ValidationExceptionCollection;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Model\BaseModel;
+use Spira\Model\Validation\ValidationException;
+use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
@@ -96,7 +96,6 @@ class ChildEntityController extends ApiController
      * @return ApiResponse
      * @throws \Exception
      * @throws \Exception|null
-     * @throws \Spira\Repository\Repository\RepositoryException
      */
     public function postOne($id, Request $request)
     {

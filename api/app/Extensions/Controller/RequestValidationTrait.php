@@ -10,9 +10,9 @@ namespace App\Extensions\Controller;
 
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Routing\ValidatesRequests;
-use Spira\Repository\Validation\ValidationException;
-use Spira\Repository\Validation\ValidationExceptionCollection;
-use Spira\Repository\Validation\Validator;
+use Spira\Model\Validation\ValidationException;
+use Spira\Model\Validation\ValidationExceptionCollection;
+use Spira\Model\Validation\Validator;
 
 trait RequestValidationTrait
 {

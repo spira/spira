@@ -2,7 +2,7 @@
 
 use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 
 class ChildEntityTest extends TestCase
 {

@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Validation\Validator;
+use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
 {
