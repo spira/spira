@@ -425,9 +425,9 @@ class ChildEntityController extends ApiController
         if ($this->validateParentIdRule){
             return $this->validateParentIdRule;
         }
-
-        if (isset($this->getParentModel()->getValidationRules()[$this->getParentModel()->getKeyName()])){
-            return $this->getParentModel()->getValidationRules()[$this->getParentModel()->getKeyName()];
+        $parentValidationRules = $this->getParentModel()->getValidationRules();
+        if (isset($parentValidationRules[$this->getParentModel()->getKeyName()])){
+            return $parentValidationRules[$this->getParentModel()->getKeyName()];
         }
 
         return null;
