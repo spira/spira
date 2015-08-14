@@ -7,7 +7,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Spira\Repository\Validation\ValidationException;
+use Spira\Model\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;

@@ -78,12 +78,9 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $this->get('/articles/'.$entity->article_id);
 
@@ -108,12 +105,10 @@ class ArticleTest extends TestCase
 
     public function testGetOneByPermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
+
         $permalink = $entity->permalinks->first();
         $this->get('/articles/'.$permalink->permalink);
 
@@ -209,12 +204,9 @@ class ArticleTest extends TestCase
 
     public function testPatchOneNewPermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
@@ -233,12 +225,9 @@ class ArticleTest extends TestCase
 
     public function testPatchOneRemovePermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
@@ -281,12 +270,9 @@ class ArticleTest extends TestCase
 
     public function testGetPermalinks()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
@@ -309,12 +295,9 @@ class ArticleTest extends TestCase
 
     public function testGetMetas()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addMetasToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
 
@@ -330,13 +313,10 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        $articles = factory(Article::class, 2)->create()->all();
-        $this->addMetasToArticles($articles);
-        foreach ($articles as $oneEntity) {
-            $oneEntity->push();
-        }
+        $article = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$article]);
+        $article->push();
 
-        $article = current($articles);
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
 
         $entities = array_map(function ($entity) {

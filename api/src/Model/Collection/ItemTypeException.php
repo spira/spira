@@ -6,7 +6,7 @@
  * Time: 14:02
  */
 
-namespace Spira\Repository\Collection;
+namespace Spira\Model\Collection;
 
 class ItemTypeException extends \Exception
 {

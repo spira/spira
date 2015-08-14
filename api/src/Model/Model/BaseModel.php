@@ -6,7 +6,7 @@
  * Time: 19:24
  */
 
-namespace Spira\Repository\Model;
+namespace Spira\Model\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,14 +16,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
-use Spira\Repository\Collection\Collection;
-use Spira\Repository\Validation\ValidationException;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
-use Spira\Repository\Validation\ValidationExceptionCollection;
+use Spira\Model\Validation\ValidationExceptionCollection;
 
 /**
  * Class BaseModel
- * @package Spira\Repository\Model
+ * @package Spira\Model\Model
  *
  * @method static int count
  * @method static BaseModel find($id)

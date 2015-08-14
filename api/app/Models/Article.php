@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 
 /**
  *

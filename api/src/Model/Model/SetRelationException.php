@@ -6,7 +6,7 @@
  * Time: 14:29
  */
 
-namespace Spira\Repository\Model;
+namespace Spira\Model\Model;
 
 class SetRelationException extends \Exception
 {

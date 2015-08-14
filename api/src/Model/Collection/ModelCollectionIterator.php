@@ -6,9 +6,9 @@
  * Time: 19:59
  */
 
-namespace Spira\Repository\Collection;
+namespace Spira\Model\Collection;
 
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Model\BaseModel;
 
 class ModelCollectionIterator extends \FilterIterator
 {
@@ -18,7 +18,7 @@ class ModelCollectionIterator extends \FilterIterator
     private $items = [];
 
     /**
-     * @param \Iterator $items
+     * @param \Iterator|array $items
      */
     public function __construct($items)
     {
