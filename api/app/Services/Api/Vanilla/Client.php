@@ -4,6 +4,8 @@ namespace App\Services\Api\Vanilla;
 
 use InvalidArgumentException;
 use Guzzle\Http\Client as GuzzleClient;
+use Guzzle\Http\Exception\RequestException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class Client
 {
@@ -71,6 +73,10 @@ class Client
         $this->baseUrl = getenv('FORUM_HOST').'/api/';
 
         $this->client->setBaseUrl($this->baseUrl);
+        $this->client->getEventDispatcher()->addListener(
+            'request.error',
+            [new Error, 'onRequestError']
+        );
     }
 
     /**
@@ -162,6 +168,8 @@ class Client
      * @param  array  $headers
      * @param  array  $options
      *
+     * @throws ServiceUnavailableHttpException
+     *
      * @return \Guzzle\Http\Message\Response
      */
     public function request($path, $body = null, $method = 'GET', array $headers = [], array $options = [])
@@ -172,11 +180,8 @@ class Client
 
         try {
             $response = $this->client->send($request);
-        } catch (ClientErrorResponseException $e) {
-            var_dump($e->getMessage());
-            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
-        } catch (\RuntimeException $e) {
-            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+        } catch (RequestException $e) {
+            throw new ServiceUnavailableHttpException(null, $e->getMessage(), $e, $e->getCode());
         }
 
         return $response;
@@ -221,11 +226,11 @@ class Client
         // is added to prevent that a man in the middle attack could potentially
         // modify the endpoint or HTTP method.
         $signer = [
-          'method' => $method,
-          'path' => $path,
-          'username'  => $this->user['username'],
-          'email'     => $this->user['email'],
-          'timestamp' => time()
+            'method' => $method,
+            'path' => $path,
+            'username'  => $this->user['username'],
+            'email'     => $this->user['email'],
+            'timestamp' => time()
         ];
 
         // Strip away any empty records (username/email might not be provided)

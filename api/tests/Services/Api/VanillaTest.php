@@ -4,6 +4,7 @@ use App\Services\Api\Vanilla\Client;
 
 class VanillaTest extends TestCase
 {
+    // Exceptions
     public function testInvalidApiGroup()
     {
         $this->setExpectedExceptionRegExp(
@@ -16,15 +17,61 @@ class VanillaTest extends TestCase
         $test = $client->api('foobar');
     }
 
-    public function testConfigurationCurrent()
+    public function testUnauthorizedAccess()
     {
+        $this->setExpectedExceptionRegExp(
+            Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException::class,
+            '/unauthorized/i',
+            0
+        );
+
         $client = App::make(Client::class);
 
-        $current = $client->api('configuration')->current();
+        $client->setUser('foobar');
 
-        $this->assertArrayHasKey('Title', $current['Configuration']);
+        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
     }
 
+    public function testBadRequest()
+    {
+        $this->setExpectedExceptionRegExp(
+            Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class,
+            '/bad request/i',
+            0
+        );
+
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->create('', '', 1);
+    }
+
+    public function testNotFound()
+    {
+        $this->setExpectedExceptionRegExp(
+            Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
+            '/not found/i',
+            0
+        );
+
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->find(0);
+    }
+
+    public function testNotAllowed()
+    {
+        $this->setExpectedExceptionRegExp(
+            Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException::class,
+            '/method not allowed/i',
+            0
+        );
+
+        $client = App::make(Client::class);
+
+        $discussion = $client->api('discussions')->find('foobar');
+    }
+
+    // Generic
     public function testDifferentUser()
     {
         $client = App::make(Client::class);
@@ -36,9 +83,17 @@ class VanillaTest extends TestCase
         $this->assertEquals('admin', $discussion['Discussion']['InsertName']);
     }
 
+    // Configuration
+    public function testConfigurationCurrent()
+    {
+        $client = App::make(Client::class);
+
+        $current = $client->api('configuration')->current();
+
+        $this->assertArrayHasKey('Title', $current['Configuration']);
+    }
 
     // Discussions
-
     public function testDiscussionsAll()
     {
         $client = App::make(Client::class);
@@ -99,7 +154,6 @@ class VanillaTest extends TestCase
 
         $this->fail('The discussion was not removed.');
     }
-
 
     // Comments
     public function testCreateComment()
