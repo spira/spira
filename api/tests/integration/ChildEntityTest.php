@@ -199,7 +199,6 @@ class ChildEntityTest extends TestCase
 
         $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
         $this->assertResponseStatus(422);
-
     }
 
     public function testPutManyNew()
