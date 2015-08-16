@@ -31,6 +31,8 @@ class VanillaConfigurator
         $this->configureJsConnect();
 
         $this->configureApiModule();
+
+        $this->modifyDatabaseSchema();
     }
 
     /**
@@ -187,6 +189,23 @@ class VanillaConfigurator
         saveToConfig([
             'EnabledApplications.apiextended' => 'apiextended',
         ]);
+    }
+
+    /**
+     * Make final database schema adjustments.
+     *
+     * @return void
+     */
+    protected function modifyDatabaseSchema()
+    {
+        // Change the allowed length of ForeignID from 32 to 36 characters to
+        // allow usage of UUID4 strings.
+        $db = Gdn::database();
+        $construct = $db->structure();
+
+        $construct->table('Discussion');
+        $construct->column('ForeignID', 'varchar(36)', true, 'index');
+        $construct->set(false, false);
     }
 
     /**

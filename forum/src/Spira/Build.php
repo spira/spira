@@ -54,6 +54,9 @@ class Build
         // Setup the database variables to be bootstrapped into memory
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
 
+        // Override general functions
+        copy('bootstrap.before.php', 'public/conf/bootstrap.before.php');
+
         // Setup Vanilla
         (new VanillaConfigurator)->start();
     }
