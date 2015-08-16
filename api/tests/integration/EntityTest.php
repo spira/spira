@@ -285,6 +285,40 @@ class EntityTest extends TestCase
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
     }
 
+    public function testPutManyNoIds()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->make();
+        $entities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $entities->all());
+        foreach ($entities as &$entity) {
+            unset($entity['entityId']);
+            unset($entity['_self']);
+        }
+
+        $this->put('/test/entities', ['data' => $entities]);
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(201);
+
+        $this->assertTrue(is_array($object));
+        $this->assertCount(5, $object);
+    }
+
+    public function testPatchManyNoIds()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+
+        $data = array_map(function ($entity) {
+            return [
+                'varchar'   => 'foobar',
+            ];
+        }, $entities->all());
+
+        $this->patch('/test/entities', ['data' => $data]);
+        $this->assertResponseStatus(422);
+
+    }
+
     public function testPutManyNew()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->make();
@@ -369,6 +403,8 @@ class EntityTest extends TestCase
         $this->assertEquals('The multi word column title field must be true or false.', $object->invalid[0]->multiWordColumnTitle[0]->message);
         $this->assertEquals($rowCount, TestEntity::count());
     }
+
+
 
     public function testPatchOne()
     {

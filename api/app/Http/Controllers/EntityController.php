@@ -303,7 +303,7 @@ abstract class EntityController extends ApiController
         if (!empty($ids)) {
             $models = $models = $this->getModel()->findMany($ids);
         } else {
-            $models = $this->getModel()->newCollection();
+            throw $this->notFoundManyException($ids, $this->getModel()->newCollection(), $this->getModel()->getKeyName());
         }
 
         if ($models && count($ids) !== $models->count()) {
@@ -349,18 +349,28 @@ abstract class EntityController extends ApiController
             return $this->validateIdRule;
         }
 
-        if (isset($this->getValidationRules()[$this->getModel()->getKeyName()])) {
-            return $this->getValidationRules()[$this->getModel()->getKeyName()];
+        $validationRules = $this->getValidationRules();
+
+        if (isset($validationRules[$this->getModel()->getKeyName()])) {
+            return $validationRules[$this->getModel()->getKeyName()];
         }
 
         return null;
     }
 
+    /**
+     * @return array
+     */
     protected function getValidationRules()
     {
         return $this->getModel()->getValidationRules();
     }
 
+    /**
+     * @param $validationRules
+     * @param $id
+     * @return mixed
+     */
     protected function addIdOverrideValidationRule($validationRules, $id)
     {
         $rule = 'equals:'.$id;

@@ -160,7 +160,7 @@ class ChildEntityController extends ApiController
             }
 
             try {
-                $this->validateRequest($request->all(), $this->getValidationRules(), $model->exists);
+                $this->validateRequest($requestEntity, $this->getValidationRules(), $childModel->exists);
                 if (!$error) {
                     $childModel->fill($requestEntity);
                 }
@@ -222,7 +222,7 @@ class ChildEntityController extends ApiController
             $childModel = $childModels->get($id);
 
             try {
-                $this->validateRequest($request->all(), $this->getValidationRules(), true);
+                $this->validateRequest($requestEntity, $this->getValidationRules(), true);
                 if (!$error) {
                     $childModel->fill($requestEntity);
                 }
@@ -374,6 +374,7 @@ class ChildEntityController extends ApiController
             $models = $this->getRelation($parent)->findMany($ids);
         } else {
             $models = $this->getChildModel()->newCollection();
+            throw $this->notFoundManyException($ids, $models, $this->getChildModel()->getKeyName());
         }
 
         if ($models && count($ids) !== $models->count()) {
@@ -406,9 +407,9 @@ class ChildEntityController extends ApiController
         if ($this->validateChildIdRule) {
             return $this->validateChildIdRule;
         }
-
-        if (isset($this->getValidationRules()[$this->getChildModel()->getKeyName()])) {
-            return $this->getValidationRules()[$this->getChildModel()->getKeyName()];
+        $childValidationRules = $this->getValidationRules();
+        if (isset($childValidationRules[$this->getChildModel()->getKeyName()])) {
+            return $childValidationRules[$this->getChildModel()->getKeyName()];
         }
 
         return null;
