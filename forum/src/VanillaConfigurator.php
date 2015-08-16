@@ -182,6 +182,11 @@ class VanillaConfigurator
             'API.Secret' => getenv('VANILLA_API_SECRET'),
             'API.Version' => $this->getApiVersion(),
         ]);
+
+        // And enable the extended API module
+        saveToConfig([
+            'EnabledApplications.apiextended' => 'apiextended',
+        ]);
     }
 
     /**
