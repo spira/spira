@@ -163,6 +163,45 @@ class ChildEntityTest extends TestCase
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
     }
 
+    public function testPutManyNoIds()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = factory(App\Models\SecondTestEntity::class, 5)->make();
+        $childEntities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $childEntities->all());
+        foreach ($childEntities as &$childEntity) {
+            unset($childEntity['entityId']);
+            unset($childEntity['_self']);
+        }
+
+        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(201);
+
+        $this->assertTrue(is_array($object));
+        $this->assertCount(5, $object);
+    }
+
+    public function testPatchManyNoIds()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = $entity->testMany;
+        $data = array_map(function ($entity) {
+            return [
+                'value'   => 'foobar',
+            ];
+        }, $childEntities->all());
+
+        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->assertResponseStatus(422);
+
+    }
+
     public function testPutManyNew()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
@@ -205,6 +244,30 @@ class ChildEntityTest extends TestCase
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
+    }
+
+    public function testPutManyNewInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = factory(App\Models\SecondTestEntity::class, 5)->make();
+        $childEntities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $childEntities->all());
+
+        foreach ($childEntities as &$childEntity) {
+            unset($childEntity['value']);
+        }
+
+        $rowCount = TestEntity::count();
+
+        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+
+        $object = json_decode($this->response->getContent());
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('value', $object->invalid[0]);
+        $this->assertEquals($rowCount, TestEntity::count());
     }
 
     public function testPatchOne()
@@ -278,6 +341,26 @@ class ChildEntityTest extends TestCase
 
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
+    }
+
+    public function testPatchManyNewInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = $entity->testMany;
+        $data = array_map(function ($entity) {
+            return [
+                'entityId' => $entity->entity_id,
+                'value'   => null,
+            ];
+        }, $childEntities->all());
+
+        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('value', $object->invalid[0]);
     }
 
     public function testDeleteOne()
