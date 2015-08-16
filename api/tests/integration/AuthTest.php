@@ -23,7 +23,7 @@ class AuthTest extends TestCase
 
     public function testLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -49,7 +49,7 @@ class AuthTest extends TestCase
 
     public function testFailedLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -63,7 +63,7 @@ class AuthTest extends TestCase
 
     public function testLoginEmptyPassword()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -79,7 +79,7 @@ class AuthTest extends TestCase
 
     public function testLoginUserMissCredentials()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $this->get('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
@@ -93,7 +93,7 @@ class AuthTest extends TestCase
 
     public function testFailedTokenEncoding()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
@@ -110,7 +110,7 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user, ['method' => 'password']);
 
         $this->callRefreshToken($token);
@@ -145,7 +145,7 @@ class AuthTest extends TestCase
 
     public function testRefreshExpiredToken()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $claims = [
             new UserClaim($user),
@@ -157,9 +157,9 @@ class AuthTest extends TestCase
             new JwtId('foo'),
         ];
 
-        $this->validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
-        $this->validator->shouldReceive('setRefreshFlow->check');
-        $payload = new Payload($claims, $this->validator, true);
+        $validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
+        $validator->shouldReceive('setRefreshFlow->check');
+        $payload = new Payload($claims, $validator, true);
 
         $cfg = $this->app->config->get('jwt');
         $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
@@ -174,7 +174,7 @@ class AuthTest extends TestCase
 
     public function testRefreshInvalidTokenSignature()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         // Replace the signature with an invalid string
@@ -216,7 +216,7 @@ class AuthTest extends TestCase
     public function testToken()
     {
         $token = 'foobar';
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -248,7 +248,7 @@ class AuthTest extends TestCase
     public function testTokenInvalid()
     {
         $token = 'foobar';
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
         $this->get('/auth/jwt/token', [
@@ -267,7 +267,7 @@ class AuthTest extends TestCase
     public function testMakeLoginToken()
     {
         $repo = $this->app->make('App\Repositories\UserRepository');
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $token = $repo->makeLoginToken($user->user_id);
 
@@ -368,7 +368,7 @@ class AuthTest extends TestCase
 
     public function testProviderCallbackExistingUser()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
         $socialUser = Mockery::mock('Laravel\Socialite\Contracts\User');
         $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
@@ -376,6 +376,7 @@ class AuthTest extends TestCase
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
+        $socialUser->name = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->user')
             ->once()
@@ -385,7 +386,6 @@ class AuthTest extends TestCase
             ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
-
 
         $this->assertResponseStatus(302);
 
@@ -421,6 +421,7 @@ class AuthTest extends TestCase
         $socialUser->email = $user->email;
         $socialUser->token = 'foobar';
         $socialUser->avatar = 'foobar';
+        $socialUser->name = 'foobar';
         $socialUser->user = ['first_name' => 'foo', 'last_name' => 'bar'];
         $mock->shouldReceive('with->user')
             ->once()
@@ -430,8 +431,6 @@ class AuthTest extends TestCase
             ->andReturn('http://foo.bar');
 
         $this->get('/auth/social/facebook/callback');
-
-
 
         $this->assertResponseStatus(302);
 
@@ -456,5 +455,61 @@ class AuthTest extends TestCase
         $user = User::find($decoded['sub']);
         $socialLogin = $user->socialLogins->first()->toArray();
         $this->assertEquals('facebook', $socialLogin['provider']);
+    }
+
+    public function testSingleSignOnVanillaNoParameters()
+    {
+        $this->get('/auth/sso/vanilla');
+
+        $this->assertResponseStatus(200);
+        $this->assertContains('parameter is missing', $this->response->getContent());
+    }
+
+    public function testSingleSignOnVanillaValidClient()
+    {
+        $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
+        $this->call('GET', '/auth/sso/vanilla', $params);
+
+        $this->assertResponseStatus(200);
+        $this->assertContains('name', $this->response->getContent());
+    }
+
+    public function testSingleSignOnVanillaWithUser()
+    {
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+
+        $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
+        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(200);
+        $this->assertContains($user->username, $response->name);
+        $this->assertObjectNotHasAttribute('email', $response);
+        $this->assertObjectNotHasAttribute('uniqueid', $response);
+    }
+
+    public function testSingleSignOnVanillaWithUserAndSignature()
+    {
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+        $timestamp = time();
+
+        $params = [
+            'client_id' => env('VANILLA_JSCONNECT_CLIENT_ID'),
+            'timestamp' => $timestamp,
+            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET'))
+        ];
+
+        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(200);
+        $this->assertContains($user->user_id, $response->uniqueid);
+        $this->assertContains($user->email, $response->email);
     }
 }

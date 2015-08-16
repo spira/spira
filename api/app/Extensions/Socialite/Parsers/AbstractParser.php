@@ -7,6 +7,8 @@ use Illuminate\Contracts\Support\Arrayable;
 
 abstract class AbstractParser implements Arrayable
 {
+    use UsernameTrait;
+
     /**
      * User object to parse.
      *
@@ -19,7 +21,7 @@ abstract class AbstractParser implements Arrayable
      *
      * @var array
      */
-    protected $attributes = ['token', 'email', 'first_name', 'last_name', 'avatar_img_url'];
+    protected $attributes = ['token', 'email', 'username', 'first_name', 'last_name', 'avatar_img_url'];
 
     /**
      * Initialize the parser.
@@ -80,9 +82,16 @@ abstract class AbstractParser implements Arrayable
         $this->attributes = array_fill_keys($this->attributes, '');
 
         foreach (array_keys($this->attributes) as $attribute) {
+            // Get the attribute
             $method = camel_case('get_'.$attribute.'_attribute');
             if (method_exists($this, $method)) {
-                $this->attributes[$attribute] = $this->$method();
+                $this->attributes[$attribute] = $value = $this->$method();
+            }
+
+            // Filter the attribute
+            $method = camel_case('filter_'.$attribute.'_attribute');
+            if (method_exists($this, $method)) {
+                $this->attributes[$attribute] = $this->$method($value);
             }
         }
     }

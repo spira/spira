@@ -25,6 +25,16 @@ class FacebookParser extends AbstractParser
     }
 
     /**
+     * Get the user's username.
+     *
+     * @return string
+     */
+    protected function getUsernameAttribute()
+    {
+        return $this->user->name;
+    }
+
+    /**
      * Get the user's first name.
      *
      * @return string

@@ -41,7 +41,7 @@ queuerunner:
 mailcatcher:
   image: schickling/mailcatcher
 
-php:  
+php:
   image: spira/docker-hhvm
   volumes_from:
     - spira
@@ -63,7 +63,7 @@ apimock:
     - .common.env
     - .local.env
 
-web:  
+web:
   image: spira/docker-nginx
   volumes_from:
     - spira

@@ -16,6 +16,13 @@ class Countries extends Dataset
     protected $client;
 
     /**
+     * API endpoint to retrieve countries.
+     *
+     * @var string
+     */
+    protected $endpoint = 'https://restcountries.eu/rest/v1/all';
+
+    /**
      * Assign dependencies.
      *
      * @param  Client          $client
@@ -38,7 +45,7 @@ class Countries extends Dataset
     {
         try {
             $client = new $this->client;
-            $response = $client->get('https://restcountries.eu/rest/v1/all');
+            $response = $client->get($this->getEndpoint());
         } catch (ClientException $e) {
             throw new ServiceUnavailableException;
         }
@@ -53,5 +60,15 @@ class Countries extends Dataset
         }
 
         return $countries;
+    }
+
+    /**
+     * Get API endpoint.
+     *
+     * @return  string
+     */
+    protected function getEndpoint()
+    {
+        return $this->endpoint;
     }
 }

@@ -46,7 +46,8 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 $factory->define(App\Models\User::class, function ($faker) {
     return [
         'user_id' => $faker->uuid,
-        'email' => $faker->email,
+        'username' => $faker->unique()->userName,
+        'email' => $faker->unique()->email,
         'email_confirmed' => $faker->optional(0.9)->dateTimeThisYear(),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,

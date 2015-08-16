@@ -181,4 +181,47 @@ class SocialiteTest extends TestCase
         $this->assertNull($mock->foobar);
         $this->assertEquals('foobar', $mock->token);
     }
+
+    public function testUniqueUsername()
+    {
+        // Insert some test users to
+        $this->createUser(['username' => 'Foo Baz']);
+        $this->createUser(['username' => 'Bar Foo']);
+        $this->createUser(['username' => 'BarFoo']);
+        $this->createUser(['username' => 'Bar Baz']);
+        $this->createUser(['username' => 'BarBaz']);
+        $this->createUser(['username' => 'Bar.Baz']);
+        $this->createUser(['username' => 'foo']);
+        $this->createUser(['username' => 'bar']);
+        $this->createUser(['username' => 'bar 1']);
+        $this->createUser(['username' => 'bar 2']);
+
+        $user = new User;
+        $user->map(['user' => ['first_name' => '', 'last_name' => '']]);
+
+        $user->name = 'Foo Bar';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('Foo Bar', $socialUser->username);
+
+        $user->name = 'Foo Baz';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('FooBaz', $socialUser->username);
+
+        $user->name = 'Bar Baz';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('Baz Bar', $socialUser->username);
+
+        $this->createUser(['username' => 'Baz Bar']);
+        $user->name = 'Bar Baz';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('BBaz', $socialUser->username);
+
+        $user->name = 'Foo';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('Foo 1', $socialUser->username);
+
+        $user->name = 'bar';
+        $socialUser = ParserFactory::parse($user, 'facebook');
+        $this->assertEquals('bar 3', $socialUser->username);
+    }
 }
