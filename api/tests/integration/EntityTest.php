@@ -316,7 +316,6 @@ class EntityTest extends TestCase
 
         $this->patch('/test/entities', ['data' => $data]);
         $this->assertResponseStatus(422);
-
     }
 
     public function testPutManyNew()
