@@ -83,4 +83,6 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
 
     $app->get('social/{provider}', 'AuthController@redirectToProvider');
     $app->get('social/{provider}/callback', 'AuthController@handleProviderCallback');
+
+    $app->get('sso/{requester}', 'AuthController@singleSignOn');
 });

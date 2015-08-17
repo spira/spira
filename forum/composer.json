@@ -1,0 +1,89 @@
+{
+    "type": "project",
+    "require": {
+        "vanilla/vanilla": "2.2-b1",
+        "vanilla/addons": "1.4.5",
+        "kasperisager/vanilla-api": "0.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "guzzlehttp/guzzle": "5.3.*"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "vanilla/vanilla",
+                "version": "2.2-b1",
+                "dist": {
+                    "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2b1.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "kasperisager/vanilla-api",
+                "version": "0.4.0",
+                "source": {
+                    "url": "https://github.com/kasperisager/vanilla-api.git",
+                    "type": "git",
+                    "reference": "v0.4.0"
+                },
+                "dist": {
+                    "url": "https://github.com/kasperisager/vanilla-api/archive/v0.4.0.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "vanilla/addons",
+                "version": "1.4.4",
+                "source": {
+                    "url": "https://github.com/vanilla/addons.git",
+                    "type": "git",
+                    "reference": "release/1507"
+                },
+                "dist": {
+                    "url": "https://github.com/vanilla/addons/archive/release/1506.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "vanilla/addons",
+                "version": "1.4.5",
+                "source": {
+                    "url": "https://github.com/vanilla/addons.git",
+                    "type": "git",
+                    "reference": "8cd6750c4dac56f69d56a35fbf91a5481d025cdd"
+                },
+                "dist": {
+                    "url": "https://github.com/vanilla/addons/archive/8cd6750c4dac56f69d56a35fbf91a5481d025cdd.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
+    "minimum-stability": "dev",
+    "config": {
+        "preferred-install": "dist"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        },
+        "psr-4": {
+            "Spira\\": "src/Spira/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "Spira\\Build::postInstall",
+        "post-update-cmd": ""
+    }
+}

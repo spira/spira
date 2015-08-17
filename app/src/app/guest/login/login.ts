@@ -17,6 +17,10 @@ namespace app.guest.login {
                     tokenExchange: '/token',
                     refresh: '/refresh',
                 },
+                cookie: {
+                    enabled: true,
+                    topLevelDomain: true,
+                }
             };
 
             ngJwtAuthServiceProvider.configure(config);
@@ -97,7 +101,7 @@ namespace app.guest.login {
                 null,
                 (err:Error) => {
                     if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException) {
-                        this.notificationService.toast(err.message).options({parent:'#loginDialog'}).pop();
+                        this.notificationService.toast(err.message).options({parent: '#loginDialog'}).pop();
                     } else {
                         console.error(err);
                     }

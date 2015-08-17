@@ -7,7 +7,7 @@ class UserModelTest extends TestCase
 {
     public function testUpdatingSocialLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $socialLogin = factory(SocialLogin::class)->make();
         $user->addSocialLogin($socialLogin);
 
@@ -27,7 +27,7 @@ class UserModelTest extends TestCase
 
     public function testAdditionalSocialLogin()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $socialLogin = factory(SocialLogin::class)->make();
         $newSocialLogin = factory(SocialLogin::class)->make();
 
