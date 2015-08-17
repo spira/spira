@@ -12,8 +12,10 @@ class ApiDiscussionController extends DiscussionController
      */
     public function getByForeignId($foreignId = '', $page = '')
     {
-        // Load the discussion record
-        $foreignId = ($this->isValidUuid($foreignId)) ? $foreignId : 0;
+        if (!$this->isValidUuid($foreignId)) {
+            throw new Gdn_UserException('Bad Request', 400);
+        }
+
         if (!array_key_exists('Discussion', $this->Data)) {
             $this->setData('Discussion', $this->DiscussionModel->getForeignID($foreignId), true);
         }
