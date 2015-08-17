@@ -3,6 +3,7 @@
 use App;
 use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
+use App\Models\SocialLogin;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -208,6 +209,30 @@ class UserController extends EntityController
         $this->dispatch(new SendPasswordResetEmail($user, $token));
 
         return $this->getResponse()->noContent(Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * Deletes a social login entry from the database
+     *
+     * @param $id
+     * @param $provider
+     * @return \Spira\Responder\Response\ApiResponse
+     */
+    public function unlinkSocialLogin($id, $provider)
+    {
+        if(!$socialLogin = SocialLogin::where('user_id', '=', $id)
+            ->where('provider', '=', $provider)
+            ->first()) {
+            throw new NotFoundHttpException('Sorry, this provider does not exist for this user.');
+        }
+
+        $socialLogin->delete();
+
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+
+        $token = $jwtAuth->fromUser($this->repository->find($id));
+
+        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
 
     /**

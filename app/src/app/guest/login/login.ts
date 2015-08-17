@@ -27,7 +27,7 @@ namespace app.guest.login {
 
     export class LoginController {
 
-        static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
+        static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService', 'authService'];
 
         constructor(private $rootScope:global.IRootScope,
                     private $mdDialog:ng.material.IDialogService,

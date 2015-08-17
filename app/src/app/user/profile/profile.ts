@@ -84,15 +84,16 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'user', 'notificationService', 'countries', 'timezones', 'userProfile', 'genderOptions'];
+        static $inject = ['userService', 'notificationService', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService'];
+
         constructor(
             private userService:common.services.user.UserService,
-            public user:common.models.User,
             private notificationService:common.services.notification.NotificationService,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public fullUserInfo:common.models.User,
-            public genderOptions:common.models.IGenderOption[]
+            public genderOptions:common.models.IGenderOption[],
+            private authService:common.services.auth.AuthService
         ) {
             // Hack to make this work for now
             this.fullUserInfo._userProfile.dob = '1921-01-01';
@@ -112,6 +113,32 @@ namespace app.user.profile {
                 (err) => {
                     this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
                 })
+        }
+
+        /**
+         * Register social login function for Profile Controller
+         * @param type
+         */
+        public socialLogin(type:string):void {
+
+            this.authService.socialLogin(type);
+
+        }
+
+        /**
+         * Register unlink social login function for Profile Controller
+         * @param type
+         */
+        public unlinkSocialLogin(type:string):void {
+
+            this.authService.unlinkSocialLogin(this.fullUserInfo, type)
+                .then(() => {
+                    // Typings for lodash must not have this callback shorthand
+                    (<any>_).remove(this.fullUserInfo._socialLogins, 'provider', type);
+
+                    this.notificationService.toast('Your ' + _.capitalize(type) + ' has been unlinked from your account').pop();
+                });
+
         }
     }
 

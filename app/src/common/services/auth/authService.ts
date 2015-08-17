@@ -6,7 +6,7 @@ namespace common.services.auth {
 
         public initialisedPromise:ng.IPromise<any>;
 
-        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService', '$window'];
+        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService', '$window', 'ngRestAdapter'];
 
         constructor(private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
@@ -15,7 +15,8 @@ namespace common.services.auth {
                     private $mdDialog:ng.material.IDialogService,
                     private $state:ng.ui.IStateService,
                     private notificationService:common.services.notification.NotificationService,
-                    private $window:ng.IWindowService
+                    private $window:ng.IWindowService,
+                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService
         ) {
 
             this.initialisedPromise = this.initialiseJwtAuthService().finally(() => {
@@ -78,6 +79,17 @@ namespace common.services.auth {
 
             this.$window.location.href = url;
 
+        }
+
+        /**
+         * Unlink a social login from a user
+         * @param user
+         * @param provider
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public unlinkSocialLogin(user:common.models.User, provider:string):ng.IPromise<any> {
+            return this.ngRestAdapter
+                .remove('/users/' + user.userId + '/socialLogin/' + provider);
         }
 
         /**
