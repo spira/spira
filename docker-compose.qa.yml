@@ -85,7 +85,7 @@ web:
     file: ./docker/common-services.yml
     service: web
   ports:
-    - "80:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
+    - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
   links:
     - php:php
     - logviewer:logviewer
