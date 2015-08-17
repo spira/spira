@@ -46,6 +46,7 @@ namespace app.guest {
         'app.guest.navigation',
         'app.guest.registration',
         'app.guest.articles',
+        'app.guest.forum',
         'app.guest.sandbox',
         'app.guest.error',
         'app.guest.login',

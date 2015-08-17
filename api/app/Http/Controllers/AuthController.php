@@ -18,12 +18,14 @@ use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
 use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
+use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends ApiController
 {
+    const JWT_AUTH_TOKEN_COOKIE = 'ngJwtAuthToken';
     /**
      * The application instance.
      *
@@ -211,7 +213,32 @@ class AuthController extends ApiController
     }
 
     /**
-     * Check so the provider exists.
+     * Provide a requester with user information for single sign on.
+     *
+     * @param  string  $requester
+     * @param  Request $request
+     *
+     * @return Response
+     */
+    public function singleSignOn($requester, Request $request)
+    {
+        // A single sign on request might have different requirements and
+        // methods how to deal with a non logged in user. So we get the user
+        // if possible, and if not we pass in a null user and let the the
+        // requester class deal with it according to the requester's definitions
+        if ($token = $request->cookie(self::JWT_AUTH_TOKEN_COOKIE)) {
+            $user = $this->jwtAuth->toUser($token);
+        } else {
+            $user = null;
+        }
+
+        $requester = SingleSignOnFactory::create($requester, $request, $user);
+
+        return $requester->getResponse();
+    }
+
+    /**
+     * Check so the social provider exists.
      *
      * @param  string  $provider
      *

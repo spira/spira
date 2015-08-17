@@ -1,0 +1,121 @@
+# Build configuration. This file is identical to the dev `docker-compose.yml` definition, except it exposes no ports to
+# allow multiple concurrent builds without concern of port collision
+
+data:
+  extends:
+    file: ./docker/common-services.yml
+    service: datavolume
+  env_file:
+    - ./docker/.local.env
+
+logviewer:
+  extends:
+    file: ./docker/common-services.yml
+    service: logviewer
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env
+
+database:
+  extends:
+    file: ./docker/common-services.yml
+    service: database
+  env_file:
+    - ./docker/.local.env
+
+vanilladatabase:
+  extends:
+    file: ./docker/common-services.yml
+    service: vanilladatabase
+  env_file:
+    - ./docker/.local.env
+
+cache:
+  extends:
+    file: ./docker/common-services.yml
+    service: cache
+  env_file:
+    - ./docker/.local.env
+
+queue:
+  extends:
+    file: ./docker/common-services.yml
+    service: queue
+  env_file:
+    - ./docker/.local.env
+
+queuerunner:
+  extends:
+    file: ./docker/common-services.yml
+    service: queuerunner
+  links:
+    - mailcatcher:mailcatcher
+    - queue:queue
+    - cache:cache
+    - database:database
+    - web:web
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env
+
+mailcatcher:
+  extends:
+    file: ./docker/common-services.yml
+    service: mailcatcher
+  env_file:
+    - ./docker/.local.env
+
+php:
+  extends:
+    file: ./docker/common-services.yml
+    service: php
+  links:
+    - database:database
+    - vanilladatabase:vanilladatabase
+    - cache:cache
+    - queue:queue
+    - mailcatcher:mailcatcher
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env
+
+web:
+  extends:
+    file: ./docker/common-services.yml
+    service: web
+  links:
+    - php:php
+    - logviewer:logviewer
+    - mailcatcher:mailcatcher
+    - apimock:apimock
+  volumes_from:
+    - data
+  env_file: ./docker/.local.env
+
+devtools:
+  extends:
+    file: ./docker/common-services.yml
+    service: devtools
+  links:
+    - web:web
+    - mailcatcher:mailcatcher
+    - database:database
+    - vanilladatabase:vanilladatabase
+    - cache:cache
+    - queue:queue
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env
+
+apimock:
+  extends:
+    file: ./docker/common-services.yml
+    service: apimock
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env

@@ -103,6 +103,47 @@ to the application with the authentication details to this route.
 + Response 302
 
     + Headers
-    
+
             Location: http://spira.io?jwtAuthToken={!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
+
+## Vanilla SSO [/auth/sso/vanilla]
+
+When a user visits vanilla forum, Vanilla pings this route to retrieve information
+about the current user. This route is to be used by Vanilla alone.
+
+If the user is logged in via Spira, the user has a button with the Spira username,
+Spira profile image for sign in. Pressing this signs in the user immediately to
+the forum.
+
+If sending the user to the url `http://forum.spira.io/sso` the user arrives
+signed in immediately without having to do manually initiate the single sign on
+operation.
+
+Optionally, a `Target` parameter with a relative path can be provided to specify
+where the user should ultimately land on the forum after sso id done.
+
+Example: `http://forum.spira.io/sso?Target=/categories`.
+
+This will make linking from other pages on the site to the forum a seamless
+experience.
+
+### Respond to Vanilla [GET]
+
++ Parameters
+    + client_id (required, string, `1145259210`) ... The shared client id to identify the site.
+    + timestamp (string, `1439186932`) ... For secure requests, Vanilla will send the timestamp of its request.
+    + signature (string, `02e45f687969c87e6de29c4305ac9847`) ... For secure requests, Vanilla will sign the timestamp parameter.
+    + callback (string, `/categories`) ... The name of the callback function Vanilla will perform on succesful sign on.
+
++ Response 200
+
+    + Body
+
+            {!!
+                json_encode(App\Services\SingleSignOn\SingleSignOnFactory::create(
+                  'vanilla',
+                  Request::instance(),
+                  $factory->get(\App\Models\User::class)->modified())->formatUser()
+                );
+            !!}
