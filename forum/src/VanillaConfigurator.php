@@ -26,11 +26,10 @@ class VanillaConfigurator
 
         $this->adminUser();
 
-        $this->enableApplications();
-
         $this->configureJsConnect();
-
         $this->configureApiModule();
+
+        $this->enableApplications();
 
         $this->modifyDatabaseSchema();
     }

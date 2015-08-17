@@ -1,29 +1,16 @@
 <?php
 
-class ApiDiscussionController extends VanillaController
+class ApiDiscussionController extends DiscussionController
 {
-    /**
-     * Models to include.
-     *
-     * @var array
-     */
-    public $Uses = ['DiscussionModel'];
-
-    /**
-     * Discussion object.
-     *
-     * @var DiscussionModel
-     */
-    public $DiscussionModel;
-
     /**
      * Get a single discussion.
      *
-     * @param  int $foreignId
+     * @param  int    $foreignId
+     * @param  string $page
      *
      * @return void
      */
-    public function getByForeignId($foreignId = '')
+    public function getByForeignId($foreignId = '', $page = '')
     {
         // Load the discussion record
         $foreignId = ($this->isValidUuid($foreignId)) ? $foreignId : 0;
@@ -35,7 +22,7 @@ class ApiDiscussionController extends VanillaController
             throw notFoundException('Discussion');
         }
 
-        $this->render();
+        $this->index($this->Discussion->DiscussionID, '', $page);
     }
 
     /**

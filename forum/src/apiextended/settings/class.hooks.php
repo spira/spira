@@ -14,6 +14,9 @@ class ApiExtendedHooks implements Gdn_IPlugin
         $sender::get('/foreign/[*:foreignID]', [
             'controller' => 'ApiDiscussion',
             'method'     => 'getbyforeignid',
+            'arguments'  => [
+                'Page' => val('Page', $data)
+            ]
         ]);
     }
 

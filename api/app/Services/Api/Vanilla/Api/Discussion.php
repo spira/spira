@@ -41,17 +41,31 @@ class Discussion extends ApiAbstract
     }
 
     /**
-     * Create a discussion.
+     * Find a discussion.
      *
      * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-a-discussion
      *
      * @param  int $id
+     * @param  int $page
      *
      * @return array
      */
-    public function find($id)
+    public function find($id, $page = 1)
     {
-        return $this->get('discussions/'.$id);
+        return $this->get('discussions/'.$id, ['page' => 'p'.$page]);
+    }
+
+    /**
+     * Find a discussion by foreign id.
+     *
+     * @param  string $id
+     * @param  int    $page
+     *
+     * @return array
+     */
+    public function findByForeignId($id, $page = 1)
+    {
+        return $this->get('discussions/foreign/'.$id, ['page' => 'p'.$page]);
     }
 
     /**
