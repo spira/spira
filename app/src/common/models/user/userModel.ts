@@ -17,6 +17,7 @@ namespace common.models {
         public timezoneIdentifier:string = undefined;
         public _userCredential:global.IUserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;
+        public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public userType:string = undefined;
 
         constructor(data:global.IUserData) {
@@ -41,6 +42,24 @@ namespace common.models {
             return this.userType == User.adminType;
         }
 
+
+        /**
+         * Checks to see if the user has Facebook login
+         * @returns {boolean}
+         */
+        public hasFacebookLogin():boolean {
+            // Typings for lodash must not have this callback shorthand
+            return (<any>_).some(this._socialLogins, 'provider', common.models.UserSocialLogin.facebookType);
+        }
+
+        /**
+         * Checks to see if the user has Google login
+         * @returns {boolean}
+         */
+        public hasGoogleLogin():boolean {
+            // Typings for lodash must not have this callback shorthand
+            return (<any>_).some(this._socialLogins, 'provider', common.models.UserSocialLogin.googleType);
+        }
     }
 
 }

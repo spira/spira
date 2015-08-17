@@ -108,10 +108,10 @@
                         <md-icon>accessibility</md-icon>
                         <div class="md-list-item-text">
                             <h3>Facebook</h3>
-                            <h4>{{ ProfileController.fullUserInfo._socialLogins.provider == 'facebook' ? 'Connected as: ' + ProfileController.fullUserInfo.fullName() : 'Not connected' }}</h4>
+                            <h4>{{ ProfileController.fullUserInfo.hasFacebookLogin() ? 'Connected as: ' + ProfileController.fullUserInfo.fullName() : 'Not connected' }}</h4>
                         </div>
                         <md-button ng-click="showEditPassword = !showEditPassword" class="md-raised" type="button">
-                            {{ ProfileController.fullUserInfo._socialLogins.provider == 'google' ? 'Remove' : 'Add' }}
+                            {{ ProfileController.fullUserInfo.hasFacebookLogin() ? 'Remove' : 'Add' }}
                         </md-button>
                     </md-list-item>
                     <md-divider></md-divider>
@@ -119,10 +119,10 @@
                         <md-icon>accessibility</md-icon>
                         <div class="md-list-item-text">
                             <h3>Google</h3>
-                            <h4>{{ ProfileController.fullUserInfo._socialLogins.provider == 'google' ? 'Connected as: ' + ProfileController.fullUserInfo.fullName() : 'Not connected' }}</h4>
+                            <h4>{{ ProfileController.fullUserInfo.hasGoogleLogin() ? 'Connected as: ' + ProfileController.fullUserInfo.fullName() : 'Not connected' }}</h4>
                         </div>
                         <md-button ng-click="showEditPassword = !showEditPassword" class="md-raised" type="button">
-                            {{ ProfileController.fullUserInfo._socialLogins.provider == 'google' ? 'Remove' : 'Add' }}
+                            {{ ProfileController.fullUserInfo.hasGoogleLogin() ? 'Remove' : 'Add' }}
                         </md-button>
                     </md-list-item>
                     <md-divider></md-divider>

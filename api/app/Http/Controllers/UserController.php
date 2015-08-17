@@ -223,11 +223,29 @@ class UserController extends EntityController
 
         $userData = $user->toArray();
 
-        $userData['_user_credential'] = $user->userCredential->toArray();
+        if(is_null($user->userCredential)) {
+            $userData['_user_credential'] = array();
+        }
+        else {
+            $userData['_user_credential'] = $user->userCredential->toArray();
+        }
 
-        $userData['_social_logins'] = $user->socialLogins->toArray();
+        if(is_null($user->socialLogins)) {
+            $userData['_social_logins'] = array();
+        }
+        else {
+            $userData['_social_logins'] = $user->socialLogins->toArray();
+        }
 
-        $userData['_user_profile'] = $user->userProfile->toArray();
+        if(is_null($user->userProfile)) {
+            $newProfile = new UserProfile;
+            $newProfile->user_id = $id;
+            $user->setProfile($newProfile);
+            $userData['_user_profile'] = $newProfile->toArray();
+        }
+        else {
+            $userData['_user_profile'] = $user->userProfile->toArray();
+        }
 
         return $this->getResponse()
             ->transformer($this->transformer)
