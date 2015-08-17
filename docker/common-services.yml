@@ -22,13 +22,11 @@ database:
   image: postgres:9.4
   env_file:
     - .common.env
-    - .local.env
 
 vanilladatabase:
   image: mariadb:10.0
   env_file:
     - .common.env
-    - .local.env
 
 cache:
   image: redis
@@ -40,7 +38,6 @@ queuerunner:
   image: spira/docker-artisan-queue-runner
   env_file:
     - .common.env
-    - .local.env
 
 mailcatcher:
   image: schickling/mailcatcher
@@ -50,14 +47,12 @@ php:
   env_file:
     - .common.env
     - .local.env
-    - .secret.env
   privileged: true
 
 web:
   image: spira/docker-nginx
   env_file:
     - .common.env
-    - .local.env
   privileged: true
 
 devtools:
@@ -67,11 +62,9 @@ devtools:
   privileged: true
   env_file:
     - .common.env
-    - .local.env
     - .secret.env
 
 apimock:
   image: spira/docker-drakov
   env_file:
     - .common.env
-    - .local.env

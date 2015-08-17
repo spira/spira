@@ -3,6 +3,8 @@ data:
   extends:
     file: ./docker/common-services.yml
     service: datavolume
+  env_file:
+    - ./docker/.local.env
 
 logviewer:
   extends:
@@ -10,6 +12,8 @@ logviewer:
     service: logviewer
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
 
 database:
   extends:
@@ -17,6 +21,8 @@ database:
     service: database
   ports:
     - "5432:5432"
+  env_file:
+    - ./docker/.local.env
 
 vanilladatabase:
   extends:
@@ -24,16 +30,22 @@ vanilladatabase:
     service: vanilladatabase
   ports:
     - "3306:3306"
+  env_file:
+    - ./docker/.local.env
 
 cache:
   extends:
     file: ./docker/common-services.yml
     service: cache
+  env_file:
+    - ./docker/.local.env
 
 queue:
   extends:
     file: ./docker/common-services.yml
     service: queue
+  env_file:
+    - ./docker/.local.env
 
 queuerunner:
   extends:
@@ -47,11 +59,15 @@ queuerunner:
     - web:web
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
 
 mailcatcher:
   extends:
     file: ./docker/common-services.yml
     service: mailcatcher
+  env_file:
+    - ./docker/.local.env
 
 php:
   extends:
@@ -65,6 +81,8 @@ php:
     - mailcatcher:mailcatcher
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
 
 web:
   extends:
@@ -80,6 +98,7 @@ web:
     - apimock:apimock
   volumes_from:
     - data
+  env_file: ./docker/.local.env
 
 devtools:
   extends:
@@ -94,6 +113,8 @@ devtools:
     - queue:queue
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
 
 apimock:
   extends:
@@ -101,3 +122,5 @@ apimock:
     service: apimock
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
