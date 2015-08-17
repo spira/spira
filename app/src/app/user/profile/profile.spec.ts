@@ -48,15 +48,19 @@ namespace app.user.profile {
                         return $q.when(true);
                     }
                 }
+            },
+            authService = {
+                socialLogin:(type:string, redirectState:string = '', redirectStateParams:Object = {}) => {
+                    return true;
+                },
+                unlinkSocialLogin:(user:common.models.User, provider:string) => {
+                    return $q.when(true);
+                },
             };
 
         beforeEach(() => {
 
             module('app');
-
-        });
-
-        beforeEach(() => {
 
             inject(($controller, _$rootScope_, _$q_, _notificationService_) => {
                 $rootScope = _$rootScope_;
@@ -72,21 +76,26 @@ namespace app.user.profile {
                     countries: countries,
                     timezones: timezones,
                     userProfile: userProfile,
-                    genderOptions: genderOptions
+                    genderOptions: genderOptions,
+                    authService: authService
                 });
-            })
-
-        });
-
-        beforeEach(() => {
+            });
 
             sinon.spy(notificationService, 'toast');
+
+            sinon.spy(authService, 'socialLogin');
+
+            sinon.spy(authService, 'unlinkSocialLogin');
 
         });
 
         afterEach(() => {
 
             (<any>notificationService).toast.restore();
+
+            (<any>authService).socialLogin.restore();
+
+            (<any>authService).unlinkSocialLogin.restore();
 
         });
 
@@ -114,6 +123,40 @@ namespace app.user.profile {
                 $scope.$apply();
 
                 expect(notificationService.toast).to.have.been.calledWith('Profile update was unsuccessful, please try again');
+
+            });
+
+            it('should be able to add a social network login method', () => {
+
+                ProfileController.socialLogin(common.models.UserSocialLogin.facebookType);
+
+                expect(authService.socialLogin).to.have.been.calledWith(common.models.UserSocialLogin.facebookType);
+
+            });
+
+            it('should be able to unlink a social network login method', () => {
+
+                let userLoginDataFacebook:common.models.UserSocialLogin = {
+                    userId:ProfileController.fullUserInfo.userId,
+                    provider:common.models.UserSocialLogin.facebookType,
+                    token:'eyJtZXRob2QiOiJnb29nbGUiLCJzdWIiOiJkODU2ZWI2OS1jYTU4LTQ2M2MtOWNlZS05MTRlMDlkOWZlNWYiLCJfdXNlci'
+                };
+
+                ProfileController.fullUserInfo._socialLogins = (<common.models.UserSocialLogin[]>[]);
+
+                ProfileController.fullUserInfo._socialLogins.push(userLoginDataFacebook);
+
+                let socialLoginCount = _.size(ProfileController.fullUserInfo._socialLogins);
+
+                ProfileController.unlinkSocialLogin(common.models.UserSocialLogin.facebookType);
+
+                expect(authService.unlinkSocialLogin).to.have.been.calledWith(ProfileController.fullUserInfo, common.models.UserSocialLogin.facebookType);
+
+                $scope.$apply();
+
+                expect(socialLoginCount).to.be.greaterThan(_.size(ProfileController.fullUserInfo._socialLogins));
+
+                expect(notificationService.toast).to.have.been.calledWith('Your ' + _.capitalize(common.models.UserSocialLogin.facebookType) + ' has been unlinked from your account');
 
             });
 
