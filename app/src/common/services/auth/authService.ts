@@ -6,7 +6,7 @@ namespace common.services.auth {
 
         public initialisedPromise:ng.IPromise<any>;
 
-        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', '$mdToast'];
+        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', '$mdToast', '$window'];
 
         constructor(private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
@@ -14,7 +14,8 @@ namespace common.services.auth {
                     private $timeout:ng.ITimeoutService,
                     private $mdDialog:ng.material.IDialogService,
                     private $state:ng.ui.IStateService,
-                    private $mdToast:ng.material.IToastService
+                    private $mdToast:ng.material.IToastService,
+                    private $window:ng.IWindowService
         ) {
 
             this.initialisedPromise = this.initialiseJwtAuthService().finally(() => {
@@ -60,6 +61,22 @@ namespace common.services.auth {
 
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
+
+        }
+
+        /**
+         * Login using a social network
+         * @param type
+         * @param redirectState
+         * @param redirectStateParams
+         */
+        public socialLogin(type:string, redirectState:string = this.$state.current.name, redirectStateParams:Object = this.$state.current.params):void {
+
+            let url = '/auth/social/' + type;
+
+            url += '?returnUrl=' + (<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
+
+            this.$window.location.href = url;
 
         }
 

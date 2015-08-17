@@ -224,14 +224,14 @@ class UserController extends EntityController
         $userData = $user->toArray();
 
         if(is_null($user->userCredential)) {
-            $userData['_user_credential'] = array();
+            $userData['_user_credential'] = false;
         }
         else {
             $userData['_user_credential'] = $user->userCredential->toArray();
         }
 
         if(is_null($user->socialLogins)) {
-            $userData['_social_logins'] = array();
+            $userData['_social_logins'] = false;
         }
         else {
             $userData['_social_logins'] = $user->socialLogins->toArray();
