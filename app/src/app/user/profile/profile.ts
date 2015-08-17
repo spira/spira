@@ -24,44 +24,41 @@ namespace app.user.profile {
                     onBoard: false
                 },
                 resolve: /*@ngInject*/{
-                    emailConfirmationToken:(
+                    emailConfirmed:(
                         userService:common.services.user.UserService,
                         $stateParams:IStateParams,
                         ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                         notificationService:common.services.notification.NotificationService,
-                        $location:ng.ILocationService
+                        $location:ng.ILocationService,
+                        $q:ng.IQService
                     ) => {
                         if(!_.isEmpty($stateParams.emailConfirmationToken)) {
-                            userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), $stateParams.emailConfirmationToken)
-                                .then(() => {
-                                    notificationService.toast('Your email has successfully been updated').pop();
 
-                                    $location.search('emailConfirmationToken', null);
+                            let emailToken = $stateParams.emailConfirmationToken;
+
+                            $location.search('emailConfirmationToken', null);
+
+                            return userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), emailToken)
+                                .then(() => {
+
+                                    _.delay(() => notificationService.toast('Your email has successfully been updated').pop(), 1000);
+
+                                    return true;
 
                                 }, (err) => {
-                                    notificationService.toast('Your email has not been updated, please try again').pop();
+                                    _.delay(() => notificationService.toast('Your email has not been updated, please try again').pop(), 1000);
+
+                                    return false;
                                 });
+
                         }
+
+                        return $q.when(false);
                     },
-                    countries:(
-                        countriesService:common.services.countries.CountriesService
-                    ) => {
-                        return countriesService.getAllCountries()
-                    },
-                    timezones:(
-                        timezonesService:common.services.timezones.TimezonesService
-                    ) => {
-                        return timezonesService.getAllTimezones();
-                    },
-                    userProfile:(
-                        userService:common.services.user.UserService,
-                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
-                    ) => {
-                        return userService.getProfile(<common.models.User>ngJwtAuthService.getUser())
-                    },
-                    genderOptions:() => {
-                        return common.models.UserProfile.genderOptions;
-                    }
+                    countries:(countriesService:common.services.countries.CountriesService) => countriesService.getAllCountries(),
+                    timezones:(timezonesService:common.services.timezones.TimezonesService) => timezonesService.getAllTimezones(),
+                    userProfile:(userService:common.services.user.UserService) => userService.getProfile(userService.getAuthUser()),
+                    genderOptions:() =>  common.models.UserProfile.genderOptions,
                 },
                 data: {
                     title: "User Profile",
@@ -84,16 +81,21 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'user', 'notificationService', 'countries', 'timezones', 'userProfile', 'genderOptions'];
+        static $inject = ['userService', 'user', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'userProfile', 'genderOptions'];
         constructor(
             private userService:common.services.user.UserService,
             public user:common.models.User,
             private notificationService:common.services.notification.NotificationService,
+            private emailConfirmed:boolean,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public userProfile:common.models.UserProfile,
             public genderOptions:common.models.IGenderOption[]
         ) {
+
+            if (emailConfirmed){
+                this.user = userService.getAuthUser(); //if the email has been confirmed, the auth user's email will have updated
+            }
 
             user._userProfile = userProfile;
 
