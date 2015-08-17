@@ -1,47 +1,49 @@
-# QA configuration - this is similar to the dev container except it uses the spira/spira container that was created
-# by the build script.
+# Build configuration. This file is identical to the dev `docker-compose.yml` definition, except it exposes no ports to
+# allow multiple concurrent builds without concern of port collision
 
-spira:
+data:
   extends:
     file: ./docker/common-services.yml
-    service: spira
+    service: datavolume
+  env_file:
+    - ./docker/.local.env
 
 logviewer:
   extends:
     file: ./docker/common-services.yml
     service: logviewer
   volumes_from:
-    - spira
+    - data
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 database:
   extends:
     file: ./docker/common-services.yml
     service: database
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 vanilladatabase:
   extends:
     file: ./docker/common-services.yml
     service: vanilladatabase
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 cache:
   extends:
     file: ./docker/common-services.yml
     service: cache
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 queue:
   extends:
     file: ./docker/common-services.yml
     service: queue
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 queuerunner:
   extends:
@@ -54,16 +56,16 @@ queuerunner:
     - database:database
     - web:web
   volumes_from:
-    - spira
+    - data
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 mailcatcher:
   extends:
     file: ./docker/common-services.yml
     service: mailcatcher
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 php:
   extends:
@@ -76,25 +78,22 @@ php:
     - queue:queue
     - mailcatcher:mailcatcher
   volumes_from:
-    - spira
+    - data
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 web:
   extends:
     file: ./docker/common-services.yml
     service: web
-  ports:
-    - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
   links:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
     - apimock:apimock
   volumes_from:
-    - spira
-  env_file:
-    - ./docker/.qa.env
+    - data
+  env_file: ./docker/.local.env
 
 devtools:
   extends:
@@ -108,15 +107,15 @@ devtools:
     - cache:cache
     - queue:queue
   volumes_from:
-    - spira
+    - data
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env
 
 apimock:
   extends:
     file: ./docker/common-services.yml
     service: apimock
   volumes_from:
-    - spira
+    - data
   env_file:
-    - ./docker/.qa.env
+    - ./docker/.local.env

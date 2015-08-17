@@ -1,5 +1,5 @@
-# QA configuration - this is similar to the dev container except it uses the spira/spira container that was created
-# by the build script.
+# Production configuration (!untested!) Same as QA, minus database containers as they are handled outside of the container
+#  ecosystem.
 
 spira:
   extends:
@@ -12,36 +12,16 @@ logviewer:
     service: logviewer
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
-
-database:
-  extends:
-    file: ./docker/common-services.yml
-    service: database
-  env_file:
-    - ./docker/.qa.env
-
-vanilladatabase:
-  extends:
-    file: ./docker/common-services.yml
-    service: vanilladatabase
-  env_file:
-    - ./docker/.qa.env
 
 cache:
   extends:
     file: ./docker/common-services.yml
     service: cache
-  env_file:
-    - ./docker/.qa.env
 
 queue:
   extends:
     file: ./docker/common-services.yml
     service: queue
-  env_file:
-    - ./docker/.qa.env
 
 queuerunner:
   extends:
@@ -51,41 +31,32 @@ queuerunner:
     - mailcatcher:mailcatcher
     - queue:queue
     - cache:cache
-    - database:database
     - web:web
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
 
 mailcatcher:
   extends:
     file: ./docker/common-services.yml
     service: mailcatcher
-  env_file:
-    - ./docker/.qa.env
 
 php:
   extends:
     file: ./docker/common-services.yml
     service: php
   links:
-    - database:database
-    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
 
 web:
   extends:
     file: ./docker/common-services.yml
     service: web
   ports:
-    - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
+    - "80:80" # for Production we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
   links:
     - php:php
     - logviewer:logviewer
@@ -93,8 +64,6 @@ web:
     - apimock:apimock
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
 
 devtools:
   extends:
@@ -103,14 +72,10 @@ devtools:
   links:
     - web:web
     - mailcatcher:mailcatcher
-    - database:database
-    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
 
 apimock:
   extends:
@@ -118,5 +83,3 @@ apimock:
     service: apimock
   volumes_from:
     - spira
-  env_file:
-    - ./docker/.qa.env
