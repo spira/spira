@@ -6,7 +6,7 @@ data:
     file: ./docker/common-services.yml
     service: datavolume
   volumes:
-      - %build_directory%:/data
+    - %build_directory%:/data
   env_file:
     - ./docker/.local.env
 
