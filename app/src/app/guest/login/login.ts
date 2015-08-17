@@ -17,6 +17,10 @@ namespace app.guest.login {
                     tokenExchange: '/token',
                     refresh: '/refresh',
                 },
+                cookie: {
+                    enabled: true,
+                    topLevelDomain: true,
+                }
             };
 
             ngJwtAuthServiceProvider.configure(config);
@@ -54,11 +58,11 @@ namespace app.guest.login {
 
         public socialLogin;
 
-        static $inject = ['$rootScope', '$mdDialog', '$mdToast', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
+        static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
 
         constructor(private $rootScope:global.IRootScope,
                     private $mdDialog:ng.material.IDialogService,
-                    private $mdToast:ng.material.IToastService,
+                    private notificationService:common.services.notification.NotificationService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
                     private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
@@ -82,13 +86,7 @@ namespace app.guest.login {
                 null,
                 (err:Error) => {
                     if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException) {
-                        this.$mdToast.show(
-                            (<any>this.$mdToast).simple() //<any> added so the parent method doesn't throw error, see https://github.com/borisyankov/DefinitelyTyped/issues/4843#issuecomment-124443371
-                                .hideDelay(2000)
-                                .position('top')
-                                .content(err.message)
-                                .parent('#loginDialog')
-                        );
+                        this.notificationService.toast(err.message).options({parent: '#loginDialog'}).pop();
                     } else {
                         console.error(err);
                     }

@@ -4,12 +4,12 @@ namespace app.guest.resetPassword {
 
     export class ResetPasswordController {
 
-        static $inject = ['$mdDialog', 'userService', '$mdToast', 'defaultEmail'];
+        static $inject = ['$mdDialog', 'userService', 'defaultEmail', 'notificationService'];
 
         constructor(private $mdDialog:ng.material.IDialogService,
                     private userService:common.services.user.UserService,
-                    private $mdToast:ng.material.IToastService,
-                    public email:string) {
+                    public email:string,
+                    private notificationService:common.services.notification.NotificationService) {
         }
 
         /**
@@ -20,20 +20,11 @@ namespace app.guest.resetPassword {
             return this.userService.resetPassword(email)
                 .then(() => {
                     this.cancelResetPasswordDialog();
-                    this.$mdToast.show({
-                        hideDelay: 2000,
-                        position: 'top',
-                        template: '<md-toast>Password reset instructions have been sent to your email.</md-toast>'
-                    });
+
+                    this.notificationService.toast('Password reset instructions have been sent to your email').pop();
                 })
                 .catch((error) => {
-
-                    this.$mdToast.show({
-                        hideDelay: 2000,
-                        position: 'top',
-                        parent: '#resetPasswordDialog',
-                        template: '<md-toast>' + error.data.message + '</md-toast>'
-                    });
+                    this.notificationService.toast(error.data.message).pop();
                 });
         }
 

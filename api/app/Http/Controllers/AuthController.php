@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends EntityController
 {
+    const JWT_AUTH_TOKEN_COOKIE = 'ngJwtAuthToken';
     /**
      * The application instance.
      *
@@ -224,7 +225,7 @@ class AuthController extends EntityController
         // methods how to deal with a non logged in user. So we get the user
         // if possible, and if not we pass in a null user and let the the
         // requester class deal with it according to the requester's definitions
-        if ($token = $request->cookie('JwtAuthToken')) {
+        if ($token = $request->cookie(self::JWT_AUTH_TOKEN_COOKIE)) {
             $user = $this->jwtAuth->toUser($token);
         } else {
             $user = null;
