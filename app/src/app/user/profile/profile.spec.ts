@@ -47,6 +47,9 @@ namespace app.user.profile {
                     else {
                         return $q.when(true);
                     }
+                },
+                getAuthUser: () => {
+                    return user;
                 }
             };
 
@@ -69,6 +72,7 @@ namespace app.user.profile {
                     userService:userService,
                     user:user,
                     notificationService:notificationService,
+                    emailConfirmed:$q.when(false), //@todo mock this properly for tests
                     countries: countries,
                     timezones: timezones,
                     userProfile: userProfile,
