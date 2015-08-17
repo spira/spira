@@ -1,9 +1,9 @@
 {
     "type": "project",
     "require": {
-        "vanilla/vanilla": "dev-master#71dc135745ea65c66444e67468e6a4670421bdac",
+        "vanilla/vanilla": "2.2-b1",
         "vanilla/addons": "1.4.5",
-        "kasperisager/vanilla-api": "dev-master#8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
+        "kasperisager/vanilla-api": "0.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
@@ -11,12 +11,19 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "git@github.com:vanilla/vanilla.git"
+            "type": "package",
+            "package": {
+                "name": "vanilla/vanilla",
+                "version": "2.2-b1",
+                "dist": {
+                    "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2b1.zip",
+                    "type": "zip"
+                }
+            }
         },
         {
             "type": "git",
-            "url": "git@github.com:kasperisager/vanilla-api.git"
+            "url": "https://github.com/kasperisager/vanilla-api.git"
         },
         {
             "type": "package",
@@ -24,7 +31,7 @@
                 "name": "vanilla/addons",
                 "version": "1.4.4",
                 "source": {
-                    "url": "git@github.com:vanilla/addons.git",
+                    "url": "https://github.com/vanilla/addons.git",
                     "type": "git",
                     "reference": "release/1507"
                 }
@@ -36,7 +43,7 @@
                 "name": "vanilla/addons",
                 "version": "1.4.5",
                 "source": {
-                    "url": "git@github.com:vanilla/addons.git",
+                    "url": "https://github.com/vanilla/addons.git",
                     "type": "git",
                     "reference": "8cd6750c4dac56f69d56a35fbf91a5481d025cdd"
                 }

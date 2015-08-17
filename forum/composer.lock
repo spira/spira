@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cbbbc07ad4e62458a68e0adef87903da",
+    "hash": "4bbc81ac7a1fa4037df518ad6c2c84fc",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -59,10 +59,10 @@
         },
         {
             "name": "kasperisager/vanilla-api",
-            "version": "dev-master",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:kasperisager/vanilla-api.git",
+                "url": "https://github.com/kasperisager/vanilla-api.git",
                 "reference": "8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
             },
             "require": {
@@ -86,34 +86,21 @@
             "version": "1.4.5",
             "source": {
                 "type": "git",
-                "url": "git@github.com:vanilla/addons.git",
+                "url": "https://github.com/vanilla/addons.git",
                 "reference": "8cd6750c4dac56f69d56a35fbf91a5481d025cdd"
             },
             "type": "library"
         },
         {
             "name": "vanilla/vanilla",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:vanilla/vanilla.git",
-                "reference": "71dc135745ea65c66444e67468e6a4670421bdac"
+            "version": "2.2-b1",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2b1.zip",
+                "reference": null,
+                "shasum": null
             },
-            "require-dev": {
-                "squizlabs/php_codesniffer": "1.5.*"
-            },
-            "type": "library",
-            "license": [
-                "GPLv2"
-            ],
-            "authors": [
-                {
-                    "name": "Todd Burry",
-                    "email": "todd@vanillaforums.com"
-                }
-            ],
-            "description": "Vanilla is a powerfully simple discussion forum you can easily customize to make as unique as your community.",
-            "time": "2015-06-18 21:43:45"
+            "type": "library"
         }
     ],
     "packages-dev": [
@@ -177,12 +164,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "fd861570a9c3c28d98f418feea1f43f6268bdfa0"
+                "reference": "8e6f5732242fe833eb5fd553648924a200e50492"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/fd861570a9c3c28d98f418feea1f43f6268bdfa0",
-                "reference": "fd861570a9c3c28d98f418feea1f43f6268bdfa0",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/8e6f5732242fe833eb5fd553648924a200e50492",
+                "reference": "8e6f5732242fe833eb5fd553648924a200e50492",
                 "shasum": ""
             },
             "require": {
@@ -221,7 +208,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-06-03 05:11:42"
+            "time": "2015-08-15 20:00:28"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -379,12 +366,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "5700f75b23b0dd3495c0f495fe33a5e6717ee160"
+                "reference": "80da5500014051b9e70740f183c5e5586f38f977"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/5700f75b23b0dd3495c0f495fe33a5e6717ee160",
-                "reference": "5700f75b23b0dd3495c0f495fe33a5e6717ee160",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/80da5500014051b9e70740f183c5e5586f38f977",
+                "reference": "80da5500014051b9e70740f183c5e5586f38f977",
                 "shasum": ""
             },
             "require": {
@@ -398,7 +385,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -431,7 +418,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-06-30 10:26:46"
+            "time": "2015-08-13 10:25:47"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -439,12 +426,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "40103f9b335f1d84daed099f180b9de12ba080e7"
+                "reference": "4fedb6ff05c7c502723ba5ee34edaa6ab4ce30be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/40103f9b335f1d84daed099f180b9de12ba080e7",
-                "reference": "40103f9b335f1d84daed099f180b9de12ba080e7",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/4fedb6ff05c7c502723ba5ee34edaa6ab4ce30be",
+                "reference": "4fedb6ff05c7c502723ba5ee34edaa6ab4ce30be",
                 "shasum": ""
             },
             "require": {
@@ -493,7 +480,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-04 03:45:55"
+            "time": "2015-08-16 12:44:10"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -630,12 +617,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9"
+                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
                 "shasum": ""
             },
             "require": {
@@ -671,7 +658,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-06-19 03:43:16"
+            "time": "2015-08-16 08:51:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -679,12 +666,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d"
+                "reference": "55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fd3050e26e3105f416d74c4d33aea659b406c59d",
-                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
+                "reference": "55bf1d6092b0e13a1f26bd5eaffeef3d8ad85ea7",
                 "shasum": ""
             },
             "require": {
@@ -743,7 +730,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-10 09:16:56"
+            "time": "2015-08-15 04:21:23"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1269,10 +1256,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "vanilla/vanilla": 20,
-        "kasperisager/vanilla-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
