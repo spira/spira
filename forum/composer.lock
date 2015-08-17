@@ -4,82 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4bbc81ac7a1fa4037df518ad6c2c84fc",
+    "hash": "11a7a9651cc5cd29bb8a2b5f4533e30f",
     "packages": [
         {
-            "name": "altorouter/altorouter",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dannyvankooten/AltoRouter.git",
-                "reference": "0290dc5073747bc44cfb9d1420a3c8d30430e118"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dannyvankooten/AltoRouter/zipball/0290dc5073747bc44cfb9d1420a3c8d30430e118",
-                "reference": "0290dc5073747bc44cfb9d1420a3c8d30430e118",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "AltoRouter.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Danny van Kooten",
-                    "email": "dannyvankooten@gmail.com",
-                    "homepage": "http://dannyvankooten.com/"
-                },
-                {
-                    "name": "Koen Punt",
-                    "homepage": "https://github.com/koenpunt"
-                },
-                {
-                    "name": "niahoo",
-                    "homepage": "https://github.com/niahoo"
-                }
-            ],
-            "description": "A lightning fast router for PHP",
-            "homepage": "https://github.com/dannyvankooten/AltoRouter",
-            "keywords": [
-                "lightweight",
-                "router",
-                "routing"
-            ],
-            "time": "2014-01-08 13:47:24"
-        },
-        {
             "name": "kasperisager/vanilla-api",
-            "version": "v0.4.0",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kasperisager/vanilla-api.git",
-                "reference": "8d5d1e9983ddbeb6d470c7515d7d1475a2048a3e"
+                "reference": "v0.4.0"
             },
-            "require": {
-                "altorouter/altorouter": "1.0.x"
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/kasperisager/vanilla-api/archive/v0.4.0.zip",
+                "reference": null,
+                "shasum": null
             },
-            "type": "library",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kasper Isager",
-                    "email": "kasperisager@gmail.com"
-                }
-            ],
-            "description": "RESTful API shim for Vanilla",
-            "time": "2015-02-04 08:59:55"
+            "type": "library"
         },
         {
             "name": "vanilla/addons",
@@ -88,6 +29,12 @@
                 "type": "git",
                 "url": "https://github.com/vanilla/addons.git",
                 "reference": "8cd6750c4dac56f69d56a35fbf91a5481d025cdd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/vanilla/addons/archive/8cd6750c4dac56f69d56a35fbf91a5481d025cdd.zip",
+                "reference": null,
+                "shasum": null
             },
             "type": "library"
         },
