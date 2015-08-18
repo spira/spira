@@ -22,6 +22,12 @@ class ArticlePermalink extends BaseModel
 
     protected $primaryKey = 'permalink';
 
+    protected static $validationRules = [
+        'permalink' => 'string|required',
+        'check_entity_id' => 'uuid',
+        'value' => 'required|string'
+    ];
+
     public function article()
     {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');

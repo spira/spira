@@ -6,9 +6,9 @@
  * Time: 19:41
  */
 
-namespace Spira\Repository\Collection;
+namespace Spira\Model\Collection;
 
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Model\BaseModel;
 
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {

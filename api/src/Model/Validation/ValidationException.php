@@ -1,6 +1,6 @@
 <?php
 
-namespace Spira\Repository\Validation;
+namespace Spira\Model\Validation;
 
 use Illuminate\Contracts\Support\MessageBag;
 use Spira\Responder\Contract\TransformableInterface;

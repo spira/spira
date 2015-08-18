@@ -20,7 +20,7 @@ class Manager extends BaseManager
      * Creates a new Lock instance for the given role.
      *
      * @param  \BeatSwitch\Lock\Roles\Role|string $role
-     * @return \BeatSwitch\Lock\Roles\RoleLock
+     * @return RoleLock
      */
     public function role($role)
     {

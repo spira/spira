@@ -12,10 +12,7 @@ namespace app.guest.forum {
                 resolve: /*@ngInject*/{
                     redirect: ($window:ng.IWindowService, $location:ng.ILocationService) => {
 
-                        let protocol = $location.protocol(),
-                            host = $location.host().replace(/local(\.app)?/, 'local.forum');
-
-                        $window.location.href = `${protocol}://${host}`;
+                        $window.location.href = `${$location.protocol()}://${$location.host()}/forum/sso`;
                     }
                 },
                 data: {

@@ -7,11 +7,6 @@ datavolume:
     - /data:/data
   privileged: true
 
-spira:
-  image: spira/spira
-  volumes:
-    - /data #note we are not mounting to host. otherwise it would be /qa/data
-
 logviewer:
   image: spira/docker-clarity
 

@@ -2,7 +2,7 @@
 
 use App\Services\TransformerService;
 use League\Fractal\TransformerAbstract;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 use Spira\Responder\Contract\TransformerInterface;
 
 abstract class BaseTransformer extends TransformerAbstract  implements TransformerInterface
