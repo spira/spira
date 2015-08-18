@@ -57,6 +57,13 @@ class ChildEntityTest extends TestCase
         $this->assertJsonMultipleEntries();
     }
 
+    public function testGetOneNotFoundParent()
+    {
+        $this->get('/test/entities/'.Uuid::uuid4().'/child/'.Uuid::uuid4());
+        $this->assertResponseStatus(422);
+        $this->shouldReturnJson();
+    }
+
     public function testGetOne()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
