@@ -43,11 +43,11 @@ class ChildEntityController extends ApiController
         $this->parentModel = $parentModel;
 
         if (!$this->relationName) {
-            throw new \InvalidArgumentException('You should specify relationName in '.static::class);
+            throw new \InvalidArgumentException('You must specify relationName in '.static::class);
         }
 
         if (!method_exists($parentModel, $this->relationName)) {
-            throw new \InvalidArgumentException('Relation '.$this->relationName.', acquired by '.
+            throw new \InvalidArgumentException('Relation '.$this->relationName.', required by '.
                 static::class.', does not exist in '.get_class($parentModel)
             );
         }
