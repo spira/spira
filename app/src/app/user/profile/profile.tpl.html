@@ -108,7 +108,7 @@
                         <md-icon>accessibility</md-icon>
                         <div class="md-list-item-text">
                             <h3>{{ providerType }}</h3>
-                            <h4>{{ ProfileController.fullUserInfo.hasSocialLogin(providerType) ? 'Connected as: ' + ProfileController.fullUserInfo.fullName() : 'Not connected' }}</h4>
+                            <h4>{{ ProfileController.fullUserInfo.hasSocialLogin(providerType) ? 'Connected' : 'Not connected' }}</h4>
                         </div>
                         <md-button ng-if="ProfileController.fullUserInfo.hasSocialLogin(providerType)" ng-click="ProfileController.unlinkSocialLogin(providerType)" class="md-raised" type="button">
                             Remove
