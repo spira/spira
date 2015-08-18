@@ -44,6 +44,7 @@ php:
   env_file:
     - .common.env
     - .local.env
+    - .secret.env
   privileged: true
 
 web:
