@@ -2,9 +2,9 @@
 # by the build script.
 
 spira:
-  extends:
-    file: ./docker/common-services.yml
-    service: spira
+  image: spira/spira:%spira_container_tag%
+  volumes:
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
 
 logviewer:
   extends:
