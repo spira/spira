@@ -212,7 +212,7 @@ class EntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->get('/test/entities/'.$entity->entity_id,['with-nested'=>'testMany']);
+        $this->get('/test/entities/'.$entity->entity_id, ['with-nested'=>'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -223,7 +223,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('_testMany', $object);
-        $this->assertEquals(5,count($object->_testMany));
+        $this->assertEquals(5, count($object->_testMany));
         foreach ($object->_testMany as $nestedObject) {
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');

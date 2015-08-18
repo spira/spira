@@ -8,8 +8,6 @@
 
 namespace Spira\Model\Model;
 
-
 class RelationDoesNotExistException extends \InvalidArgumentException
 {
-
 }
