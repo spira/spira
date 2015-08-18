@@ -56,6 +56,7 @@ class Client
         'configuration' => 'Configuration',
         'comments' => 'Comment',
         'discussions' => 'Discussion',
+        'users' => 'User',
     ];
 
     /**
