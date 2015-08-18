@@ -8,7 +8,7 @@
 
 namespace App\Helpers;
 
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Model\BaseModel;
 
 class RouteHelper
 {
