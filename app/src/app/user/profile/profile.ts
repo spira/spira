@@ -93,7 +93,8 @@ namespace app.user.profile {
             public timezones:common.services.timezones.ITimezoneDefinition,
             public fullUserInfo:common.models.User,
             public genderOptions:common.models.IGenderOption[],
-            private authService:common.services.auth.AuthService
+            private authService:common.services.auth.AuthService,
+            public providerTypes:string[] = common.models.UserSocialLogin.providerTypes
         ) {
             // Hack to make this work for now
             this.fullUserInfo._userProfile.dob = '1921-01-01';

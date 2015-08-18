@@ -42,7 +42,7 @@ namespace common.models {
 
         });
 
-        it('should be able to check if the user has Facebook login', () => {
+        it('should be able to check if the user has a social login', () => {
 
             let user = new User(_.clone(userData, true));
 
@@ -60,11 +60,11 @@ namespace common.models {
 
             user._socialLogins.push(userLoginDataFacebook, userLoginDataGoogle);
 
-            expect(user.hasFacebookLogin()).to.be.true;
+            expect(user.hasSocialLogin(common.models.UserSocialLogin.facebookType)).to.be.true;
 
         });
 
-        it('should be able to check if the user does not have a Facebook login', () => {
+        it('should be able to check if the user does not have a social login', () => {
 
             let user = new User(_.clone(userData, true));
 
@@ -76,45 +76,7 @@ namespace common.models {
 
             user._socialLogins.push(userLoginDataGoogle);
 
-            expect(user.hasFacebookLogin()).to.be.false;
-
-        });
-
-        it('should be able to check if the user has Google login', () => {
-
-            let user = new User(_.clone(userData, true));
-
-            let userLoginDataFacebook:common.models.UserSocialLogin = {
-                userId:user.userId,
-                provider:common.models.UserSocialLogin.facebookType,
-                token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
-
-            let userLoginDataGoogle:common.models.UserSocialLogin = {
-                userId:user.userId,
-                provider:common.models.UserSocialLogin.googleType,
-                token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
-
-            user._socialLogins.push(userLoginDataFacebook, userLoginDataGoogle);
-
-            expect(user.hasGoogleLogin()).to.be.true;
-
-        });
-
-        it('should be able to check if the user does not have a Google login', () => {
-
-            let user = new User(_.clone(userData, true));
-
-            let userLoginDataFacebook:common.models.UserSocialLogin = {
-                userId:user.userId,
-                provider:common.models.UserSocialLogin.facebookType,
-                token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
-
-            user._socialLogins.push(userLoginDataFacebook);
-
-            expect(user.hasGoogleLogin()).to.be.false;
+            expect(user.hasSocialLogin(common.models.UserSocialLogin.facebookType)).to.be.false;
 
         });
 

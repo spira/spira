@@ -42,23 +42,13 @@ namespace common.models {
             return this.userType == User.adminType;
         }
 
-
         /**
-         * Checks to see if the user has Facebook login
+         * Checks to see if the user has a social login
          * @returns {boolean}
          */
-        public hasFacebookLogin():boolean {
+        public hasSocialLogin(provider:string):boolean {
             // Typings for lodash must not have this callback shorthand
-            return (<any>_).some(this._socialLogins, 'provider', common.models.UserSocialLogin.facebookType);
-        }
-
-        /**
-         * Checks to see if the user has Google login
-         * @returns {boolean}
-         */
-        public hasGoogleLogin():boolean {
-            // Typings for lodash must not have this callback shorthand
-            return (<any>_).some(this._socialLogins, 'provider', common.models.UserSocialLogin.googleType);
+            return (<any>_).some(this._socialLogins, 'provider', provider);
         }
     }
 
