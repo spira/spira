@@ -275,7 +275,6 @@ class SingleSignOnTest extends TestCase
         $user = [
             'username' => null,
             'avatar_img_url' => null,
-            'client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')
         ];
 
         $callback = 'categories';
@@ -290,6 +289,8 @@ class SingleSignOnTest extends TestCase
         $hash = $ssoStringPieces[1];
         $timestamp = $ssoStringPieces[2];
         $algo = $ssoStringPieces[3];
+
+        $user['client_id'] = env('VANILLA_JSCONNECT_CLIENT_ID');
 
         $this->assertEquals(base64_encode(json_encode($user)), $string);
         $this->assertEquals(hash_hmac('sha1', "$string $timestamp", env('VANILLA_JSCONNECT_SECRET')), $hash);
