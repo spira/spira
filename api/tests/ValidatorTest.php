@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\SpiraValidator;
 use Rhumsaa\Uuid\Uuid;
 
 class ValidatorTest extends TestCase
@@ -9,6 +10,13 @@ class ValidatorTest extends TestCase
         parent::setUp();
 
         $this->validator = $this->app->make('validator');
+    }
+
+    public function testSpiraValidator()
+    {
+        $data = ['float' => 'foo'];
+        $validation = $this->validator->make($data, ['float'=>'float']);
+        $this->assertInstanceOf(SpiraValidator::class, $validation);
     }
 
     public function testPassingFloatValidation()
