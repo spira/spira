@@ -276,7 +276,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         $newEmail = Cache::pull('email_confirmation_' . $token, false);
 
-        if($newEmail) {
+        if ($newEmail) {
             Cache::forget('email_change_' . $newEmail);
         }
 

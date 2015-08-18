@@ -82,15 +82,14 @@ class AuthController extends EntityController
             'password' => $request->getPassword(),
         ];
 
-        if(!$token = $this->attemptLogin($credentials)) {
+        if (!$token = $this->attemptLogin($credentials)) {
             // Check to see if the user has recently requested to change their email and try to log in using it
-            if($oldEmail = User::findCurrentEmail($credentials['email'])) {
+            if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
                 $credentials['email'] = $oldEmail;
-                if(!$token = $this->attemptLogin($credentials)) {
+                if (!$token = $this->attemptLogin($credentials)) {
                     throw new UnauthorizedException('Credentials failed.');
                 }
-            }
-            else {
+            } else {
                 throw new UnauthorizedException('Credentials failed.');
             }
         }

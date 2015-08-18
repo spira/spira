@@ -138,7 +138,6 @@ class UserController extends EntityController
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
         if ($email && $model->email != $email) {
-
             $emailConfirmToken = $model->createEmailConfirmToken($email, $model->email);
             $loginToken = $this->repository->makeLoginToken($model->user_id);
 
