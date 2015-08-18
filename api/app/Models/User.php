@@ -43,6 +43,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $fillable = [
         'user_id',
+        'username',
         'first_name',
         'last_name',
         'email_confirmed',
@@ -59,6 +60,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $validationRules = [
         'user_id' => 'uuid|createOnly',
+        'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
@@ -111,6 +113,22 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public function socialLogins()
     {
         return $this->hasMany(SocialLogin::class);
+    }
+
+    /**
+     *
+     * @todo Replace these two methods with the hasMany relationship for roles
+     *       when implementing. For now they "simulate" the relationship so
+     *       functionality accessing roles will get a similar dataset as when
+     *       the relation is implemented
+     */
+    public function roles()
+    {
+        return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
+    }
+    public function getRolesAttribute()
+    {
+        return $this->roles();
     }
 
     /**
@@ -169,6 +187,19 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     public function getFullNameAttribute()
     {
         return sprintf('%s %s', $this->first_name, $this->last_name);
+    }
+
+    /**
+     * Scope a query by username.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string                                 $username
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUsername($query, $username)
+    {
+        return $query->where('username', 'ilike', $username);
     }
 
     /**

@@ -7,10 +7,23 @@ addons:
 
 services:
   - redis-server
+  - mysql
+
+env:
+  global:
+    - VANILLADATABASE_ENV_MYSQL_DATABASE=vanilla
+    - VANILLADATABASE_PORT_3306_TCP_ADDR=127.0.0.1
+    - VANILLADATABASE_ENV_MYSQL_USER=travis
+    - VANILLADATABASE_ENV_MYSQL_PASSWORD=
+    - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
+    - VANILLA_JSCONNECT_SECRET=a-secret-phrase-random-string
+    - VANILLA_SERVER_HOST=127.0.0.1
+    - VANILLA_SERVER_PORT=8008
 
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin beanstalkd
+  - mysql -e 'create database vanilla;'
 
 install:
   # Install phantomjs@2.0.0 (remove this when https://github.com/travis-ci/travis-ci/issues/3225 is resolved)
@@ -25,6 +38,7 @@ install:
   - travis_retry npm install --no-spin
   - travis_retry gulp bower:install
   - travis_retry composer self-update
+  - travis_retry composer install --no-interaction --working-dir forum
   - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
   - travis_retry gem install mailcatcher
@@ -35,6 +49,7 @@ before_script:
   - gulp build
   - php ./api/artisan migrate --seed
   - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
+  - php -S 127.0.0.1:8008 -t ./forum/public >& /dev/null & # start forum server
   - http-server ./app/build/ -p 8001 2>&1 >/dev/null & # start webserver
   - mailcatcher # start mailcatcher server
   - beanstalkd -d -l 127.0.0.1 -p 11300 # start queue listener
