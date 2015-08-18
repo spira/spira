@@ -274,21 +274,26 @@ class SingleSignOnTest extends TestCase
     {
         $user = [
             'username' => null,
-            'avatar_img_url' => null
+            'avatar_img_url' => null,
         ];
 
-        $requester = Mockery::mock(VanillaSingleSignOn::class);
-        $response = $requester->ssoString($user);
-        $data = explode(' ', $response);
+        $callback = 'categories';
+        $request = $this->mockRequest(false, false, false, $callback);
 
-        $string = $data[0];
-        $hash = $data[1];
-        $timestamp = $data[2];
-        $algo = $data[3];
-        $user['client_id'] = null;
+        $ssoClass = Mockery::mock(VanillaSingleSignOn::class, [$request, $user]);
+
+        $ssoString = $ssoClass->ssoString($user);
+        $ssoStringPieces = explode(' ', $ssoString);
+
+        $string = $ssoStringPieces[0];
+        $hash = $ssoStringPieces[1];
+        $timestamp = $ssoStringPieces[2];
+        $algo = $ssoStringPieces[3];
+
+        $user['client_id'] = env('VANILLA_JSCONNECT_CLIENT_ID');
 
         $this->assertEquals(base64_encode(json_encode($user)), $string);
-        $this->assertEquals(hash_hmac('sha1', "$string $timestamp", null), $hash);
+        $this->assertEquals(hash_hmac('sha1', "$string $timestamp", env('VANILLA_JSCONNECT_SECRET')), $hash);
         $this->assertEquals('hmacsha1', $algo);
     }
 }
