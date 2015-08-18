@@ -43,6 +43,12 @@ class EntityTest extends TestCase
         return $entity;
     }
 
+    protected function addRelatedEntities($model)
+    {
+        $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
+        $model->push();
+    }
+
     public function testGetAll()
     {
         $this->get('/test/entities');
@@ -199,6 +205,32 @@ class EntityTest extends TestCase
         $this->assertValidIso8601Date($object->updatedAt, 'updatedAt column is a valid ISO8601 date');
 
         $this->assertObjectNotHasAttribute('hidden', $object, 'Hidden is not hidden.');
+    }
+
+    public function testGetOneWithNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities/'.$entity->entity_id,['with-nested'=>'testMany']);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
+        $this->assertObjectHasAttribute('_testMany', $object);
+        $this->assertEquals(5,count($object->_testMany));
+        foreach ($object->_testMany as $nestedObject) {
+            $this->assertObjectHasAttribute('_self', $nestedObject);
+            $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+            $this->assertObjectHasAttribute('entityId', $nestedObject);
+            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+        }
     }
 
     public function testPostOneValid()
