@@ -399,7 +399,7 @@ abstract class BaseModel extends Model
     public function setWith(array $with)
     {
         foreach ($with as $relation) {
-            if (!method_exists($this,$relation)){
+            if (!method_exists($this, $relation)) {
                 $error = sprintf('Invalid `With-Nested` request - one or more of the following
                 relationships do not exist for %s:[%s]', get_class($this), $relation);
                 throw new RelationDoesNotExistException($error);
