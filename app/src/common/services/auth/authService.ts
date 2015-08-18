@@ -6,7 +6,7 @@ namespace common.services.auth {
 
         public initialisedPromise:ng.IPromise<any>;
 
-        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService'];
+        static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService', '$window', 'ngRestAdapter'];
 
         constructor(private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
@@ -14,7 +14,9 @@ namespace common.services.auth {
                     private $timeout:ng.ITimeoutService,
                     private $mdDialog:ng.material.IDialogService,
                     private $state:ng.ui.IStateService,
-                    private notificationService:common.services.notification.NotificationService
+                    private notificationService:common.services.notification.NotificationService,
+                    private $window:ng.IWindowService,
+                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService
         ) {
 
             this.initialisedPromise = this.initialiseJwtAuthService().finally(() => {
@@ -61,6 +63,33 @@ namespace common.services.auth {
                 })
                 .init(); //initialise the auth service (kicks off the timers etc)
 
+        }
+
+        /**
+         * Login using a social network
+         * @param type
+         * @param redirectState
+         * @param redirectStateParams
+         */
+        public socialLogin(type:string, redirectState:string = this.$state.current.name, redirectStateParams:Object = this.$state.current.params):void {
+
+            let url = '/auth/social/' + type;
+
+            url += '?returnUrl=' + (<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
+
+            this.$window.location.href = url;
+
+        }
+
+        /**
+         * Unlink a social login from a user
+         * @param user
+         * @param provider
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public unlinkSocialLogin(user:common.models.User, provider:string):ng.IPromise<any> {
+            return this.ngRestAdapter
+                .remove('/users/' + user.userId + '/socialLogin/' + provider);
         }
 
         /**

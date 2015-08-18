@@ -36,9 +36,14 @@ namespace app.guest.login {
                 $timeout:ng.ITimeoutService,
                 $mdDialog:ng.material.IDialogService,
                 notificationService:common.services.notification.NotificationService,
-                authService:NgJwtAuth.NgJwtAuthService,
+                ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                 deferredCredentials:ng.IDeferred<any>,
-                loginSuccess:{promise:ng.IPromise<any>}
+                loginSuccess:{promise:ng.IPromise<any>},
+                authService = {
+                    socialLogin:(type:string, redirectState:string = '', redirectStateParams:Object = {}) => {
+                        return true;
+                    }
+                }
                 ;
 
             beforeEach(() => {
@@ -51,7 +56,7 @@ namespace app.guest.login {
                     $timeout = _$timeout_;
                     $mdDialog = _$mdDialog_;
                     notificationService = _notificationService_;
-                    authService = _ngJwtAuthService_;
+                    ngJwtAuthService = _ngJwtAuthService_;
                     $q = _$q_;
                     deferredCredentials = $q.defer();
 
@@ -62,6 +67,7 @@ namespace app.guest.login {
                         $mdDialog: $mdDialog,
                         deferredCredentials: deferredCredentials,
                         loginSuccess: loginSuccess,
+                        authService: authService
                     });
                 });
 
@@ -69,6 +75,7 @@ namespace app.guest.login {
                 sinon.spy($mdDialog, 'cancel');
                 sinon.spy($mdDialog, 'show');
                 sinon.spy(notificationService, 'toast');
+                sinon.spy(authService, 'socialLogin');
 
             });
 
@@ -78,6 +85,7 @@ namespace app.guest.login {
                 (<any>$mdDialog).cancel.restore();
                 (<any>$mdDialog).show.restore();
                 (<any>notificationService).toast.restore();
+                (<any>authService).socialLogin.restore();
 
             });
 
@@ -89,7 +97,7 @@ namespace app.guest.login {
             it('should have initialised the auth service', () => {
 
                 $scope.$apply();
-                expect((<any>authService).refreshTimerPromise).to.be.ok;
+                expect((<any>ngJwtAuthService).refreshTimerPromise).to.be.ok;
 
             });
 
@@ -106,13 +114,13 @@ namespace app.guest.login {
 
                     $scope.$apply();
 
-                    expect(authService.loggedIn).to.be.false;
+                    expect(ngJwtAuthService.loggedIn).to.be.false;
 
                 });
 
                 it('should show the login dialog when prompted', () => {
 
-                    authService.promptLogin();
+                    ngJwtAuthService.promptLogin();
 
                     $timeout.flush(); //flush timeout as the modal is delayed
 
@@ -178,6 +186,13 @@ namespace app.guest.login {
                     //check to see if the reset password dialog has been opened
                     expect($mdDialog.show).to.have.been.calledWith(sinon.match.has('controller', 'app.guest.resetPassword.controller'));
 
+                });
+
+                it('should be able to log you in using a social network', () => {
+
+                    LoginController.socialLogin(common.models.UserSocialLogin.facebookType);
+
+                    expect(authService.socialLogin).to.have.been.calledWith(common.models.UserSocialLogin.facebookType);
                 });
             });
 

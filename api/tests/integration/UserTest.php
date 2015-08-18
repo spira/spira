@@ -96,21 +96,6 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
-    public function testGetProfileByAdminUser()
-    {
-        $user = $this->createUser();
-        $userToGet = $this->createUser(['user_type' => 'guest']);
-        $token = $this->tokenFromUser($user);
-
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
-        ]);
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-        $this->assertJsonArray();
-    }
-
     public function testGetProfileByGuestUser()
     {
         $this->markTestSkipped('Permissions have not been implemented properly yet.');
@@ -124,21 +109,6 @@ class UserTest extends TestCase
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
-    }
-
-    public function testGetProfileBySelfUser()
-    {
-        $user = $this->createUser(['user_type' => 'guest']);
-        $userToGet = $user;
-        $token = $this->tokenFromUser($user);
-
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
-        ]);
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-        $this->assertJsonArray();
     }
 
     public function testPutOne()
@@ -286,6 +256,52 @@ class UserTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $updatedUser->first_name);
         $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
+    }
+
+    public function testPatchOneByAdminUserPassword()
+    {
+        $user = $this->createUser(['user_type' => 'admin']);
+        $userToUpdate = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            '_userCredential' => [
+                'password' => 'foobarfoobar'
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedCredentials = UserCredential::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
+    }
+
+    public function testPatchOneBySelfUserPassword()
+    {
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToUpdate = $user;
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            '_userCredential' => [
+                'password' => 'foobarfoobar'
+            ]
+        ];
+
+        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $updatedCredentials = UserCredential::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+        $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
     }
 
     public function testPatchOneByGuestUser()
@@ -445,6 +461,19 @@ class UserTest extends TestCase
         $this->assertException('invalid', 401, 'UnauthorizedException');
     }
 
+    public function testResetPasswordMailInvalidEmail()
+    {
+        $this->clearMessages();
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->delete('/users/foo.bar.' . $user->email . '/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(404);
+    }
+
     public function testChangeEmail()
     {
         $this->clearMessages();
@@ -523,5 +552,13 @@ class UserTest extends TestCase
             'Email-Confirm-Token' => $emailToken
         ]);
         $this->assertResponseStatus(422);
+    }
+
+
+    public function testUnlinkSocialLogin()
+    {
+        $this->markTestSkipped(
+            'This function will be replaced in the near future.'
+        );
     }
 }

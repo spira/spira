@@ -139,24 +139,24 @@ namespace common.services.user {
         }
 
         /**
-         * Send request to update profile information
+         * Send request to update all user information
          * @param user
          * @returns {ng.IHttpPromise<any>}
          */
-        public updateProfile(user:common.models.User):ng.IPromise<any> {
+        public updateUser(user:common.models.User):ng.IPromise<any> {
             return this.ngRestAdapter
                 .patch('/users/' + user.userId, user);
         }
 
         /**
-         * Get extra user profile information
+         * Get full user information
          * @param user
          * @returns {ng.IHttpPromise<any>}
          */
-        public getProfile(user:common.models.User):ng.IPromise<common.models.UserProfile> {
-            return this.ngRestAdapter.get('/users/' + user.userId + '/profile')
+        public getUser(user:common.models.User):ng.IPromise<common.models.User> {
+            return this.ngRestAdapter.get('/users/' + user.userId)
                 .then((res) => {
-                    return new common.models.UserProfile(res.data);
+                    return new common.models.User(res.data);
                 });
         }
 

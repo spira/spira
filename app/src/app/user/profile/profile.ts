@@ -55,10 +55,25 @@ namespace app.user.profile {
 
                         return $q.when(false);
                     },
-                    countries:(countriesService:common.services.countries.CountriesService) => countriesService.getAllCountries(),
-                    timezones:(timezonesService:common.services.timezones.TimezonesService) => timezonesService.getAllTimezones(),
-                    userProfile:(userService:common.services.user.UserService) => userService.getProfile(userService.getAuthUser()),
-                    genderOptions:() =>  common.models.UserProfile.genderOptions,
+                    countries:(
+                        countriesService:common.services.countries.CountriesService
+                    ) => {
+                        return countriesService.getAllCountries()
+                    },
+                    timezones:(
+                        timezonesService:common.services.timezones.TimezonesService
+                    ) => {
+                        return timezonesService.getAllTimezones();
+                    },
+                    fullUserInfo:(
+                        userService:common.services.user.UserService,
+                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+                    ) => {
+                        return userService.getUser(<common.models.User>ngJwtAuthService.getUser())
+                    },
+                    genderOptions:() => {
+                        return common.models.UserProfile.genderOptions;
+                    }
                 },
                 data: {
                     title: "User Profile",
@@ -81,34 +96,69 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'user', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'userProfile', 'genderOptions'];
+        static $inject = ['userService', 'notificationService', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService'];
+
         constructor(
             private userService:common.services.user.UserService,
-            public user:common.models.User,
             private notificationService:common.services.notification.NotificationService,
             private emailConfirmed:boolean,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
-            public userProfile:common.models.UserProfile,
-            public genderOptions:common.models.IGenderOption[]
+            public fullUserInfo:common.models.User,
+            public genderOptions:common.models.IGenderOption[],
+            private authService:common.services.auth.AuthService,
+            public providerTypes:string[] = common.models.UserSocialLogin.providerTypes
         ) {
+            // Hack to make this work for now
+            this.fullUserInfo._userProfile.dob = '1921-01-01';
+            this.fullUserInfo.emailConfirmed = '2015-05-05';
 
-            if (emailConfirmed){
-                this.user = userService.getAuthUser(); //if the email has been confirmed, the auth user's email will have updated
+            if (emailConfirmed) {
+                let updatedUser = userService.getAuthUser();
+
+                this.fullUserInfo.email = updatedUser.email; //if the email has been confirmed, the auth user's email will have updated
             }
-
-            user._userProfile = userProfile;
-
         }
 
-        public updateProfile():void {
-            this.userService.updateProfile(this.user)
+        public updateUser():void {
+
+            if(_.isEmpty(this.fullUserInfo._userCredential)) {
+                delete this.fullUserInfo._userCredential;
+            }
+
+            this.userService.updateUser(this.fullUserInfo)
                 .then(() => {
                     this.notificationService.toast('Profile update was successful').pop();
                 },
                 (err) => {
                     this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
                 })
+        }
+
+        /**
+         * Register social login function for Profile Controller
+         * @param type
+         */
+        public socialLogin(type:string):void {
+
+            this.authService.socialLogin(type);
+
+        }
+
+        /**
+         * Register unlink social login function for Profile Controller
+         * @param type
+         */
+        public unlinkSocialLogin(type:string):void {
+
+            this.authService.unlinkSocialLogin(this.fullUserInfo, type)
+                .then(() => {
+                    // Typings for lodash must not have this callback shorthand
+                    (<any>_).remove(this.fullUserInfo._socialLogins, 'provider', type);
+
+                    this.notificationService.toast('Your ' + _.capitalize(type) + ' has been unlinked from your account').pop();
+                });
+
         }
     }
 

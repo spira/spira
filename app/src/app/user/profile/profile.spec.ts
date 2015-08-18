@@ -26,7 +26,7 @@ namespace app.user.profile {
                 instagram:'',
                 website:''
             },
-            user:common.models.User = <common.models.User>{
+            fullUserInfo:common.models.User = <common.models.User>{
                 userId:'007a61cb-3143-3f40-8436-dfab437c1871',
                 email:'john.doe@example.com',
                 firstName:'John',
@@ -40,7 +40,7 @@ namespace app.user.profile {
                 userType:'guest'
             },
             userService = {
-                updateProfile: (user:common.models.User) => {
+                updateUser: (user:common.models.User) => {
                     if (user.email == 'invalid@email.com') {
                         return $q.reject({data: {message: 'this failure message'}});
                     }
@@ -51,15 +51,19 @@ namespace app.user.profile {
                 getAuthUser: () => {
                     return user;
                 }
+            },
+            authService = {
+                socialLogin:(type:string, redirectState:string = '', redirectStateParams:Object = {}) => {
+                    return true;
+                },
+                unlinkSocialLogin:(user:common.models.User, provider:string) => {
+                    return $q.when(true);
+                },
             };
 
         beforeEach(() => {
 
             module('app');
-
-        });
-
-        beforeEach(() => {
 
             inject(($controller, _$rootScope_, _$q_, _notificationService_) => {
                 $rootScope = _$rootScope_;
@@ -70,27 +74,32 @@ namespace app.user.profile {
                 ProfileController = $controller(app.user.profile.namespace + '.controller', {
                     $scope: $scope,
                     userService:userService,
-                    user:user,
+                    fullUserInfo: fullUserInfo,
                     notificationService:notificationService,
                     emailConfirmed:$q.when(false), //@todo mock this properly for tests
                     countries: countries,
                     timezones: timezones,
                     userProfile: userProfile,
-                    genderOptions: genderOptions
+                    genderOptions: genderOptions,
+                    authService: authService
                 });
-            })
-
-        });
-
-        beforeEach(() => {
+            });
 
             sinon.spy(notificationService, 'toast');
+
+            sinon.spy(authService, 'socialLogin');
+
+            sinon.spy(authService, 'unlinkSocialLogin');
 
         });
 
         afterEach(() => {
 
             (<any>notificationService).toast.restore();
+
+            (<any>authService).socialLogin.restore();
+
+            (<any>authService).unlinkSocialLogin.restore();
 
         });
 
@@ -99,9 +108,9 @@ namespace app.user.profile {
 
             it('should be able to update the profile', () => {
 
-                ProfileController.user.email = 'valid@email.com';
+                ProfileController.fullUserInfo.email = 'valid@email.com';
 
-                ProfileController.updateProfile();
+                ProfileController.updateUser();
 
                 $scope.$apply();
 
@@ -111,13 +120,47 @@ namespace app.user.profile {
 
             it('should display an error message on profile update failure', () => {
 
-                ProfileController.user.email = 'invalid@email.com';
+                ProfileController.fullUserInfo.email = 'invalid@email.com';
 
-                ProfileController.updateProfile();
+                ProfileController.updateUser();
 
                 $scope.$apply();
 
                 expect(notificationService.toast).to.have.been.calledWith('Profile update was unsuccessful, please try again');
+
+            });
+
+            it('should be able to add a social network login method', () => {
+
+                ProfileController.socialLogin(common.models.UserSocialLogin.facebookType);
+
+                expect(authService.socialLogin).to.have.been.calledWith(common.models.UserSocialLogin.facebookType);
+
+            });
+
+            it('should be able to unlink a social network login method', () => {
+
+                let userLoginDataFacebook:common.models.UserSocialLogin = {
+                    userId:ProfileController.fullUserInfo.userId,
+                    provider:common.models.UserSocialLogin.facebookType,
+                    token:'eyJtZXRob2QiOiJnb29nbGUiLCJzdWIiOiJkODU2ZWI2OS1jYTU4LTQ2M2MtOWNlZS05MTRlMDlkOWZlNWYiLCJfdXNlci'
+                };
+
+                ProfileController.fullUserInfo._socialLogins = (<common.models.UserSocialLogin[]>[]);
+
+                ProfileController.fullUserInfo._socialLogins.push(userLoginDataFacebook);
+
+                let socialLoginCount = _.size(ProfileController.fullUserInfo._socialLogins);
+
+                ProfileController.unlinkSocialLogin(common.models.UserSocialLogin.facebookType);
+
+                expect(authService.unlinkSocialLogin).to.have.been.calledWith(ProfileController.fullUserInfo, common.models.UserSocialLogin.facebookType);
+
+                $scope.$apply();
+
+                expect(socialLoginCount).to.be.greaterThan(_.size(ProfileController.fullUserInfo._socialLogins));
+
+                expect(notificationService.toast).to.have.been.calledWith('Your ' + _.capitalize(common.models.UserSocialLogin.facebookType) + ' has been unlinked from your account');
 
             });
 
