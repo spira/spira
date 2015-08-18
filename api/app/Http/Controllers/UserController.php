@@ -220,7 +220,7 @@ class UserController extends EntityController
      */
     public function unlinkSocialLogin($id, $provider)
     {
-        if(!$socialLogin = SocialLogin::where('user_id', '=', $id)
+        if (!$socialLogin = SocialLogin::where('user_id', '=', $id)
             ->where('provider', '=', $provider)
             ->first()) {
             throw new NotFoundHttpException('Sorry, this provider does not exist for this user.');
@@ -241,34 +241,32 @@ class UserController extends EntityController
      * @param string $id
      * @return \Spira\Responder\Response\ApiResponse
      */
-    public function getOne($id) {
+    public function getOne($id)
+    {
         $this->validateId($id, $this->getKeyName());
 
         $user = User::find($id);
 
         $userData = $user->toArray();
 
-        if(is_null($user->userCredential)) {
+        if (is_null($user->userCredential)) {
             $userData['_user_credential'] = false;
-        }
-        else {
+        } else {
             $userData['_user_credential'] = $user->userCredential->toArray();
         }
 
-        if(is_null($user->socialLogins)) {
+        if (is_null($user->socialLogins)) {
             $userData['_social_logins'] = false;
-        }
-        else {
+        } else {
             $userData['_social_logins'] = $user->socialLogins->toArray();
         }
 
-        if(is_null($user->userProfile)) {
+        if (is_null($user->userProfile)) {
             $newProfile = new UserProfile;
             $newProfile->user_id = $id;
             $user->setProfile($newProfile);
             $userData['_user_profile'] = $newProfile->toArray();
-        }
-        else {
+        } else {
             $userData['_user_profile'] = $user->userProfile->toArray();
         }
 
