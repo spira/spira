@@ -95,21 +95,6 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
-    public function testGetProfileByAdminUser()
-    {
-        $user = $this->createUser();
-        $userToGet = $this->createUser(['user_type' => 'guest']);
-        $token = $this->tokenFromUser($user);
-
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
-        ]);
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-        $this->assertJsonArray();
-    }
-
     public function testGetProfileByGuestUser()
     {
         $this->markTestSkipped('Permissions have not been implemented properly yet.');
@@ -123,21 +108,6 @@ class UserTest extends TestCase
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
-    }
-
-    public function testGetProfileBySelfUser()
-    {
-        $user = $this->createUser(['user_type' => 'guest']);
-        $userToGet = $user;
-        $token = $this->tokenFromUser($user);
-
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
-        ]);
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-        $this->assertJsonArray();
     }
 
     public function testPutOne()
@@ -289,8 +259,8 @@ class UserTest extends TestCase
 
     public function testPatchOneByAdminUserPassword()
     {
-        $user = $this->createUser('admin');
-        $userToUpdate = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'admin']);
+        $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $update = [
@@ -309,10 +279,10 @@ class UserTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
     }
-    
+
     public function testPatchOneBySelfUserPassword()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
 
