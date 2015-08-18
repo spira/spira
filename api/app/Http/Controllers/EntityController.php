@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\RelationDoesNotExistException;
 use Spira\Model\Validation\ValidationException;
 use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
@@ -69,13 +70,12 @@ abstract class EntityController extends ApiController
      */
     public function getOne(Request $request, $id)
     {
+        $this->attachNested($request);
         $model = $this->findOrFailEntity($id);
 
-        $item = $this->getEntityWithNested($model, $request);
-
         return $this->getResponse()
-            ->transformer($this->transformer)
-            ->item($item)
+            ->transformer($this->getTransformer())
+            ->item($model)
         ;
     }
 
@@ -342,22 +342,28 @@ abstract class EntityController extends ApiController
         return $this->model;
     }
 
-    private function getEntityWithNested(BaseModel $model, Request $request)
+    /**
+     * Attaches nested relation to the base model
+     * So nested relations attaches on each request
+     * @param Request $request
+     * @return null
+     */
+    private function attachNested(Request $request)
     {
         $nested = $request->headers->get('With-Nested');
         if (!$nested) {
-            return $model;
+            return null;
         }
 
         $requestedRelations = explode(', ', $nested);
 
         try {
-            $model->load($requestedRelations);
-        } catch (\BadMethodCallException $e) {
-            throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
+            $this->getModel()->setWith($requestedRelations);
+        } catch (RelationDoesNotExistException $e) {
+            throw new BadRequestException($e->getMessage(), null, $e);
         }
 
-        return $model;
+        return null;
     }
 
     /**

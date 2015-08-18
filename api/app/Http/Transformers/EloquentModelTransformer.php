@@ -205,6 +205,7 @@ class EloquentModelTransformer extends BaseTransformer
                 }
 
                 $array = $array + ['_' . $relation => $childTransformed];
+                unset($array[$relation]);
             }
         }
 

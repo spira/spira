@@ -392,4 +392,20 @@ abstract class BaseModel extends Model
     {
         return spl_object_hash($this).'_'.$method;
     }
+
+    /**
+     * @param array $with
+     */
+    public function setWith(array $with)
+    {
+        foreach ($with as $relation) {
+            if (!method_exists($this,$relation)){
+                $error = sprintf('Invalid `With-Nested` request - one or more of the following
+                relationships do not exist for %s:[%s]', get_class($this), $relation);
+                throw new RelationDoesNotExistException($error);
+            }
+        }
+
+        $this->with = $with;
+    }
 }
