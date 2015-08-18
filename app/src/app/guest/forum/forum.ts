@@ -15,7 +15,7 @@ namespace app.guest.forum {
                         let protocol = $location.protocol(),
                             host = $location.host().replace(/local(\.app)?/, 'local.forum');
 
-                        $window.location.href = `${protocol}://${host}`;
+                        $window.location.href = `${protocol}://${host}/sso`;
                     }
                 },
                 data: {
