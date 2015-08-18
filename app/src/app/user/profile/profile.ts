@@ -41,12 +41,13 @@ namespace app.user.profile {
                             return userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), emailToken)
                                 .then(() => {
 
-                                    _.delay(() => notificationService.toast('Your email has successfully been updated').pop(), 1000);
+                                    notificationService.toast('Your email has successfully been updated').delay(1000).pop();
 
                                     return true;
 
                                 }, (err) => {
-                                    _.delay(() => notificationService.toast('Your email has not been updated, please try again').pop(), 1000);
+
+                                    notificationService.toast('Your email has not been updated, please try again').delay(1000).pop();
 
                                     return false;
                                 });
