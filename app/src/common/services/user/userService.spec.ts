@@ -83,9 +83,9 @@
 
         });
 
-        describe('All users', () => {
+        describe('Retrieving User/Users', () => {
 
-            it ('should return all users', () => {
+            it('should return all users', () => {
 
                 let users = _.clone(fixtures.users); //get a new user copy
 
@@ -109,6 +109,34 @@
                 expect(allUsersPromise).eventually.to.be.rejected;
 
                 $httpBackend.flush();
+
+            });
+
+            it('should be able to retrieve full info for one user', () => {
+
+                let user = _.clone(fixtures.user);
+
+                $httpBackend.expectGET('/api/users/' + user.userId).respond(200);
+
+                let userDetailsPromise = userService.getUser(user);
+
+                expect(userDetailsPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+
+            });
+
+            it('should return a new user created from user data', () => {
+
+                let userData = _.clone(fixtures.buildUser());
+
+                let user = userService.userFactory(userData);
+
+                expect(user).to.be.instanceOf(common.models.User);
+
+                expect(userData.email).to.equal(user.email);
+
+                expect(userData.userId).to.equal(user.userId);
 
             });
 
@@ -222,23 +250,25 @@
                 $httpBackend.flush();
             });
 
-        });
-
-        describe('Profile', () => {
-
-            it('should be able to retrieve the profile', () => {
+            it('should reject the promise if a bogus user id is passed through', () => {
 
                 let user = _.clone(fixtures.user);
+                user.userId = 'bogus-user-id';
 
-                $httpBackend.expectGET('/api/users/' + user.userId + '/profile').respond(userProfile);
+                const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
 
-                let profilePromise = userService.getProfile(user);
+                $httpBackend.expectPATCH('/api/users/' + user.userId).respond(422);
 
-                expect(profilePromise).eventually.to.be.fulfilled;
-                expect(profilePromise).eventually.to.deep.equal(userProfile);
+                let emailConfirmationPromise = userService.confirmEmail(user, emailToken);
+
+                expect(emailConfirmationPromise).eventually.to.be.rejected;
 
                 $httpBackend.flush();
             });
+
+        });
+
+        describe('Update Details', () => {
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
@@ -258,7 +288,7 @@
                         return data.firstName == 'FooBar' && data._userProfile.dob == '1995-01-01' && data._userProfile.about == 'Ipsum';
                     }).respond(204);
 
-                let profileUpdatePromise = userService.updateProfile(user);
+                let profileUpdatePromise = userService.updateUser(user);
 
                 expect(profileUpdatePromise).eventually.to.be.fulfilled;
 
@@ -266,6 +296,7 @@
             });
 
         });
+
     });
 
 
