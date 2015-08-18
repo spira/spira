@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel Lumen (5.1.3) (Laravel Components 5.1.*) on 2015-08-17.
+ * Generated for Laravel Lumen (5.1.3) (Laravel Components 5.1.*) on 2015-08-18.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
