@@ -1,0 +1,68 @@
+# This common-services.yml definition holds all the image definitions and environment linking for the images.
+# It is intended to use the docker-compose extends functionality to use these definitions to build a docker-compose file
+
+datavolume:
+  image: spira/docker-data
+  volumes:
+    - /data:/data
+  privileged: true
+
+spira:
+  image: spira/spira
+  volumes:
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
+
+logviewer:
+  image: spira/docker-clarity
+
+database:
+  image: postgres:9.4
+  env_file:
+    - .common.env
+
+vanilladatabase:
+  image: mariadb:10.0
+  env_file:
+    - .common.env
+
+cache:
+  image: redis
+
+queue:
+  image: spira/docker-beanstalkd
+
+queuerunner:
+  image: spira/docker-artisan-queue-runner
+  env_file:
+    - .common.env
+
+mailcatcher:
+  image: schickling/mailcatcher
+
+php:
+  image: spira/docker-hhvm
+  env_file:
+    - .common.env
+    - .local.env
+  privileged: true
+
+web:
+  image: spira/docker-nginx
+  env_file:
+    - .common.env
+  privileged: true
+
+devtools:
+#  image: spira/docker-dev-tools:latest #built version of latest phantomjs (build often fails)
+  image: spira/docker-dev-tools:phantomjs-2.0.0 #static binary of phantomjs 2.0.0
+#  image: spira/docker-dev-tools:phantomjs-1.9.8 #static bindary of phantomjs 1.9.8
+  working_dir: /data
+  privileged: true
+  env_file:
+    - .common.env
+    - .secret.env
+
+apimock:
+  image: spira/docker-drakov
+  env_file:
+    - .common.env

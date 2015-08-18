@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use App\Models\UserCredential;
 use App\Models\UserProfile;
+use App\Models\UserCredential;
 
 class UserTest extends TestCase
 {
@@ -24,20 +24,9 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
-    /**
-     * @param string $type
-     * @return User
-     */
-    protected function createUser($type = 'admin')
-    {
-        $user = factory(User::class)->create(['user_type' => $type]);
-        $user->setProfile(factory(UserProfile::class)->make());
-        return $user;
-    }
-
     public function testGetAllByAdminUser()
     {
-        factory(User::class, 10)->create();
+        $this->createUser([], 10);
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -53,7 +42,7 @@ class UserTest extends TestCase
 
     public function testGetAllByGuestUser()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
@@ -66,7 +55,7 @@ class UserTest extends TestCase
     public function testGetOneByAdminUser()
     {
         $user = $this->createUser();
-        $userToGet = $this->createUser('guest');
+        $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
@@ -80,8 +69,8 @@ class UserTest extends TestCase
 
     public function testGetOneByGuestUser()
     {
-        $user = $this->createUser('guest');
-        $userToGet = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->get('/users/'.$userToGet->user_id, [
@@ -93,7 +82,7 @@ class UserTest extends TestCase
 
     public function testGetOneBySelfUser()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $userToGet = $user;
         $token = $this->tokenFromUser($user);
 
@@ -106,11 +95,56 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
+    public function testGetProfileByAdminUser()
+    {
+        $user = $this->createUser();
+        $userToGet = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
+    public function testGetProfileByGuestUser()
+    {
+        $this->markTestSkipped('Permissions have not been implemented properly yet.');
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToGet = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGetProfileBySelfUser()
+    {
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToGet = $user;
+        $token = $this->tokenFromUser($user);
+
+        $this->get('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
+
     public function testPutOne()
     {
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
             ->append(
                 '_userCredential',
                 $factory->get(UserCredential::class)
@@ -147,7 +181,7 @@ class UserTest extends TestCase
     {
         $factory = $this->app->make('App\Services\ModelFactory');
         $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
             ->append(
                 '_userCredential',
                 $factory->get(UserCredential::class)
@@ -193,7 +227,7 @@ class UserTest extends TestCase
 
     public function testPutOneAlreadyExisting()
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $user['_userCredential'] = ['password' => 'password'];
 
         $transformerService = $this->app->make(App\Services\TransformerService::class);
@@ -208,8 +242,8 @@ class UserTest extends TestCase
 
     public function testPatchOneByAdminUserNoProfile()
     {
-        $user = $this->createUser('admin');
-        $userToUpdate = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'admin']);
+        $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $update = [
@@ -229,8 +263,8 @@ class UserTest extends TestCase
 
     public function testPatchOneByAdminUser()
     {
-        $user = $this->createUser('admin');
-        $userToUpdate = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'admin']);
+        $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $update = [
@@ -301,8 +335,8 @@ class UserTest extends TestCase
 
     public function testPatchOneByGuestUser()
     {
-        $user = $this->createUser('guest');
-        $userToUpdate = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->patch('/users/'.$userToUpdate->user_id, [], [
@@ -314,7 +348,7 @@ class UserTest extends TestCase
 
     public function testPatchOneBySelfUserNoProfile()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
 
@@ -335,7 +369,7 @@ class UserTest extends TestCase
 
     public function testPatchOneBySelfUser()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
 
@@ -361,7 +395,7 @@ class UserTest extends TestCase
 
     public function testPatchOneBySelfUserUUID()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
 
@@ -379,8 +413,8 @@ class UserTest extends TestCase
 
     public function testDeleteOneByAdminUser()
     {
-        $user = $this->createUser('admin');
-        $userToDelete = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'admin']);
+        $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->delete('/users/'.$userToDelete->user_id, [], [
@@ -398,8 +432,8 @@ class UserTest extends TestCase
 
     public function testDeleteOneByGuestUser()
     {
-        $user = $this->createUser('guest');
-        $userToDelete = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->delete('/users/'.$userToDelete->user_id, [], [
@@ -417,7 +451,7 @@ class UserTest extends TestCase
     public function testResetPasswordMail()
     {
         $this->clearMessages();
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->delete('/users/'.$user->email.'/password', [], [
@@ -459,7 +493,7 @@ class UserTest extends TestCase
     public function testChangeEmail()
     {
         $this->clearMessages();
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         // Ensure that the current email is considered confirmed.
         $user->email_confirmed = date('Y-m-d H:i:s');
         $user->save();
@@ -502,7 +536,7 @@ class UserTest extends TestCase
 
     public function testUpdateEmailConfirmed()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
@@ -520,7 +554,7 @@ class UserTest extends TestCase
 
     public function testUpdateEmailConfirmedInvalidToken()
     {
-        $user = $this->createUser('guest');
+        $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];

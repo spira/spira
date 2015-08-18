@@ -1,34 +1,52 @@
+# QA configuration - this is similar to the dev container except it uses the spira/spira container that was created
+# by the build script.
 
 spira:
-  image: spira/spira
-  volumes:
-    - /data #note we are not mounting to host. otherwise it would be /qa/data
+  extends:
+    file: ./docker/common-services.yml
+    service: spira
 
 logviewer:
-  image: spira/docker-clarity
+  extends:
+    file: ./docker/common-services.yml
+    service: logviewer
   volumes_from:
     - spira
+  env_file:
+    - ./docker/.qa.env
 
 database:
-  image: postgres:9.4
+  extends:
+    file: ./docker/common-services.yml
+    service: database
   env_file:
-    - .common.env
-    - .qa.env
+    - ./docker/.qa.env
 
 vanilladatabase:
-  image: mariadb:10.0
+  extends:
+    file: ./docker/common-services.yml
+    service: vanilladatabase
   env_file:
-    - .common.env
-    - .local.env
+    - ./docker/.qa.env
 
 cache:
-  image: redis
+  extends:
+    file: ./docker/common-services.yml
+    service: cache
+  env_file:
+    - ./docker/.qa.env
 
 queue:
-  image: spira/docker-beanstalkd
+  extends:
+    file: ./docker/common-services.yml
+    service: queue
+  env_file:
+    - ./docker/.qa.env
 
 queuerunner:
-  image: spira/docker-artisan-queue-runner
+  extends:
+    file: ./docker/common-services.yml
+    service: queuerunner
   links:
     - mailcatcher:mailcatcher
     - queue:queue
@@ -37,61 +55,68 @@ queuerunner:
     - web:web
   volumes_from:
     - spira
+  env_file:
+    - ./docker/.qa.env
 
 mailcatcher:
-  image: schickling/mailcatcher
+  extends:
+    file: ./docker/common-services.yml
+    service: mailcatcher
+  env_file:
+    - ./docker/.qa.env
 
-php:  
-  image: spira/docker-hhvm
-  volumes_from:
-    - spira
+php:
+  extends:
+    file: ./docker/common-services.yml
+    service: php
   links:
     - database:database
+    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
-  env_file:
-    - .common.env
-    - .qa.env
-  privileged: true
-
-apimock:
-  image: spira/docker-drakov
   volumes_from:
     - spira
   env_file:
-    - .common.env
-    - .local.env
+    - ./docker/.qa.env
 
-web:  
-  image: spira/docker-nginx
-  volumes_from:
-    - spira
+web:
+  extends:
+    file: ./docker/common-services.yml
+    service: web
+  ports:
+    - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
   links:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
     - apimock:apimock
-  ports:
-    - "80:80"
-  env_file:
-    - .common.env
-    - .qa.env
-  privileged: true
-
-# keep devtools as it is needed for image building
-devtools:
-  image: spira/docker-dev-tools:latest
-  working_dir: /data
   volumes_from:
     - spira
-  privileged: true
+  env_file:
+    - ./docker/.qa.env
+
+devtools:
+  extends:
+    file: ./docker/common-services.yml
+    service: devtools
   links:
     - web:web
     - mailcatcher:mailcatcher
     - database:database
+    - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
+  volumes_from:
+    - spira
   env_file:
-    - .common.env
-    - .qa.env
+    - ./docker/.qa.env
+
+apimock:
+  extends:
+    file: ./docker/common-services.yml
+    service: apimock
+  volumes_from:
+    - spira
+  env_file:
+    - ./docker/.qa.env

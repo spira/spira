@@ -1,39 +1,56 @@
 
 data:
-  image: spira/docker-data
-  volumes:
-    - /data:/data
-  privileged: true
+  extends:
+    file: ./docker/common-services.yml
+    service: datavolume
+  env_file:
+    - ./docker/.local.env
 
 logviewer:
-  image: spira/docker-clarity
+  extends:
+    file: ./docker/common-services.yml
+    service: logviewer
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
 
 database:
-  image: postgres:9.4
-  env_file:
-    - .common.env
-    - .local.env
+  extends:
+    file: ./docker/common-services.yml
+    service: database
   ports:
     - "5432:5432"
+  env_file:
+    - ./docker/.local.env
 
 vanilladatabase:
-  image: mariadb:10.0
-  env_file:
-    - .common.env
-    - .local.env
+  extends:
+    file: ./docker/common-services.yml
+    service: vanilladatabase
   ports:
     - "3306:3306"
+  env_file:
+    - ./docker/.local.env
 
 cache:
-  image: redis
+  extends:
+    file: ./docker/common-services.yml
+    service: cache
+  env_file:
+    - ./docker/.local.env
 
 queue:
-  image: spira/docker-beanstalkd
+  extends:
+    file: ./docker/common-services.yml
+    service: queue
+  env_file:
+    - ./docker/.local.env
 
 queuerunner:
-  image: spira/docker-artisan-queue-runner
+  extends:
+    file: ./docker/common-services.yml
+    service: queuerunner
   links:
     - mailcatcher:mailcatcher
     - queue:queue
@@ -43,57 +60,50 @@ queuerunner:
   volumes_from:
     - data
   env_file:
-    - .common.env
-    - .local.env
+    - ./docker/.local.env
 
 mailcatcher:
-  image: schickling/mailcatcher
+  extends:
+    file: ./docker/common-services.yml
+    service: mailcatcher
+  env_file:
+    - ./docker/.local.env
 
 php:
-  image: spira/docker-hhvm
-#  image: spira/docker-phpfpm
-  volumes_from:
-    - data
+  extends:
+    file: ./docker/common-services.yml
+    service: php
   links:
     - database:database
     - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
-  env_file:
-    - .common.env
-    - .local.env
-    - .secret.env
-  privileged: true
-
-web:
-  image: spira/docker-nginx
   volumes_from:
     - data
+  env_file:
+    - ./docker/.local.env
+
+web:
+  extends:
+    file: ./docker/common-services.yml
+    service: web
+  ports:
+    - "80:80"
+    - "8080:8080"
   links:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
     - apimock:apimock
-  ports:
-    - "80:80"
-    - "8080:8080"
-  env_file:
-    - .common.env
-    - .local.env
-  privileged: true
-
-devtools:
-  image: spira/docker-dev-tools:latest
-#  image: spira/docker-dev-tools:phantomjs-1.9.8
-  working_dir: /data
   volumes_from:
     - data
-  privileged: true
-  env_file:
-    - .common.env
-    - .local.env
-    - .secret.env
+  env_file: ./docker/.local.env
+
+devtools:
+  extends:
+    file: ./docker/common-services.yml
+    service: devtools
   links:
     - web:web
     - mailcatcher:mailcatcher
@@ -101,11 +111,16 @@ devtools:
     - vanilladatabase:vanilladatabase
     - cache:cache
     - queue:queue
-
-apimock:
-  image: spira/docker-drakov
   volumes_from:
     - data
   env_file:
-    - .common.env
-    - .local.env
+    - ./docker/.local.env
+
+apimock:
+  extends:
+    file: ./docker/common-services.yml
+    service: apimock
+  volumes_from:
+    - data
+  env_file:
+    - ./docker/.local.env

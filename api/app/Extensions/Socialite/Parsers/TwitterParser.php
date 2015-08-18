@@ -25,6 +25,16 @@ class TwitterParser extends AbstractParser
     }
 
     /**
+     * Get the user's username.
+     *
+     * @return string
+     */
+    protected function getUsernameAttribute()
+    {
+        return $this->user->nickname;
+    }
+
+    /**
      * Get the user's first name.
      *
      * @return string
