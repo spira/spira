@@ -532,4 +532,12 @@ class UserTest extends TestCase
         ]);
         $this->assertResponseStatus(422);
     }
+
+
+    public function testUnlinkSocialLogin()
+    {
+        $this->markTestSkipped(
+            'This function will be replaced in the near future.'
+        );
+    }
 }
