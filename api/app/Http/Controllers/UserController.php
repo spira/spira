@@ -255,7 +255,7 @@ class UserController extends EntityController
      */
     public function getOne($id)
     {
-        $this->validateId($id, $this->getKeyName());
+        $this->validateId($id, $this->getModel()->getKeyName());
 
         $user = User::find($id);
 
