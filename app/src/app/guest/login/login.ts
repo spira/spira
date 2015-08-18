@@ -29,36 +29,9 @@ namespace app.guest.login {
 
     }
 
-    class LoginInit {
-
-        static $inject = ['$rootScope', 'ngJwtAuthService', '$mdDialog', '$timeout', '$window', '$state', '$q', '$location'];
-
-        constructor(private $rootScope:global.IRootScope,
-                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    private $mdDialog:ng.material.IDialogService,
-                    private $timeout:ng.ITimeoutService,
-                    private $window:ng.IWindowService,
-                    private $state:ng.ui.IStateService,
-                    private $q:ng.IQService) {
-
-            $rootScope.socialLogin = (type:string, redirectState:string = $state.current.name, redirectStateParams:Object = $state.current.params) => {
-
-                let url = '/auth/social/' + type;
-
-                url += '?returnUrl=' + (<any>this.$window).encodeURIComponent(this.$state.href(redirectState, redirectStateParams));
-
-                this.$window.location.href = url;
-
-            }
-        }
-
-    }
-
     export class LoginController {
 
-        public socialLogin;
-
-        static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService'];
+        static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService', 'authService'];
 
         constructor(private $rootScope:global.IRootScope,
                     private $mdDialog:ng.material.IDialogService,
@@ -66,12 +39,20 @@ namespace app.guest.login {
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>,
                     private loginSuccess:{promise:ng.IPromise<NgJwtAuth.IUser>},
-                    private userService:common.services.user.UserService) {
+                    private userService:common.services.user.UserService,
+                    private authService:common.services.auth.AuthService
+        ) {
 
             this.handleLoginSuccessPromise();
 
-            this.socialLogin = $rootScope.socialLogin;
+        }
 
+        /**
+         * Register social login function for Login Controller
+         * @param type
+         */
+        public socialLogin(type:string):void {
+            this.authService.socialLogin(type);
         }
 
         /**
@@ -130,7 +111,6 @@ namespace app.guest.login {
 
     angular.module(namespace, [])
         .config(LoginConfig)
-        .run(LoginInit)
         .controller(namespace + '.controller', LoginController);
 
 }
