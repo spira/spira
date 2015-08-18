@@ -6,7 +6,7 @@
  * Time: 20:12
  */
 
-namespace Spira\Repository\Validation;
+namespace Spira\Model\Validation;
 
 use Spira\Responder\Contract\TransformableInterface;
 use Spira\Responder\Contract\TransformerInterface;

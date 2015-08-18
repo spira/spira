@@ -1,7 +1,5 @@
 <?php namespace App\Models;
 
-use Hash;
-
 class UserCredential extends BaseModel
 {
     /**
@@ -37,7 +35,7 @@ class UserCredential extends BaseModel
      *
      * @var array
      */
-    protected $validationRules = [
+    protected static $validationRules = [
         'password' => 'required|string',
     ];
 
@@ -49,6 +47,6 @@ class UserCredential extends BaseModel
      */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        $this->attributes['password'] = \Hash::make($value);
     }
 }

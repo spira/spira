@@ -37,7 +37,7 @@ class UserProfile extends BaseModel
      *
      * @var array
      */
-    protected $validationRules = [
+    protected static $validationRules = [
         'phone' => 'string',
         'mobile' => 'string',
         'dob' => 'date',

@@ -6,10 +6,26 @@ use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
+
+    /**
+     * Login token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $login_token_ttl = 1440;
+
+    /**
+     * Cache repository.
+     *
+     * @var Cache
+     */
+    protected $cache;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
@@ -44,8 +60,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $validationRules = [
-        'user_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+        'user_id' => 'uuid',
         'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
         'email_confirmed' => 'date',
@@ -74,7 +90,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the credentials associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userCredential()
     {
@@ -84,7 +100,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the profile associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userProfile()
     {
@@ -94,7 +110,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the social logins associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */
     public function socialLogins()
     {
@@ -260,6 +276,67 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
         $cache->put('email_confirmation_'.$token, $email, 1440);
+        return $token;
+    }
+
+
+    /**
+     * Get a user by single use login token.
+     *
+     * @param string $token
+     *
+     * @return mixed
+     */
+    public function findByLoginToken($token)
+    {
+        if ($id = $this->getCache()->pull('login_token_'.$token)) {
+            $user = $this->findOrFail($id);
+
+            return $user;
+        }
+
+        return null;
+    }
+
+    /**
+     * @todo remove this hack
+     * @return Cache
+     */
+    protected function getCache()
+    {
+        if (!$this->cache) {
+            $this->cache = \App::make(Cache::class);
+        }
+
+        return $this->cache;
+    }
+
+
+    /**
+     * Get a user by their email.
+     *
+     * @param $email
+     * @return mixed
+     */
+    public function findByEmail($email)
+    {
+        return $this->where('email', '=', $email)->firstOrFail();
+    }
+
+    /**
+     * Make a single use login token for a user.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
+    public function makeLoginToken($id)
+    {
+        $user = $this->findOrFail($id);
+
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        $this->getCache()->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
+
         return $token;
     }
 }
