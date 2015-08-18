@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Api\Vanilla\Client;
+use App\Services\Api\Vanilla\Api\User;
 use App\Services\Api\Vanilla\Api\Comment;
 use App\Services\Api\Vanilla\Api\Discussion;
 use App\Services\Api\Vanilla\Api\Configuration;
@@ -110,6 +111,28 @@ class VanillaApiTest extends TestCase
     /**
      * @test
      */
+    public function shouldGetDiscussionByForeignId()
+    {
+        $expected = [
+            'Discussion' => ['DiscussionID' => 123, 'ForeignID' => '7e57d004-2b97-0e7a-b45f-5387367791cd'],
+            'CategoryID' => 1,
+            'Category' => [],
+            'Comments' => [],
+            'Page' => 1
+        ];
+
+        $api = $this->getApiMock(Discussion::class);
+        $api->expects($this->once())
+            ->method('get')
+            ->with('discussions/foreign/7e57d004-2b97-0e7a-b45f-5387367791cd', ['page' => 'p1'])
+            ->will($this->returnValue($expected));
+
+        $this->assertEquals($expected, $api->findByForeignId('7e57d004-2b97-0e7a-b45f-5387367791cd'));
+    }
+
+    /**
+     * @test
+     */
     public function shouldUpdateDiscussion()
     {
         $input = [
@@ -189,5 +212,41 @@ class VanillaApiTest extends TestCase
             ->with('discussions/comments/456');
 
         $api->remove(456);
+    }
+
+
+    // Users
+
+    /**
+     * @test
+     */
+    public function shouldGetUsers()
+    {
+        $api = $this->getApiMock(User::class);
+        $api->expects($this->once())
+            ->method('get')
+            ->with('users');
+
+        $api->all();
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateUser()
+    {
+        $input = [
+            'Name' => $username = 'Some name',
+            'Email' => $email = 'some@email.com',
+            'Password' => $password = 'password',
+            'RoleID' => [8]
+        ];
+
+        $api = $this->getApiMock(User::class);
+        $api->expects($this->once())
+            ->method('post')
+            ->with('users', $input);
+
+        $api->create($username, $email, $password);
     }
 }
