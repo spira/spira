@@ -3,6 +3,7 @@
 use App;
 use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
+use App\Models\SocialLogin;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -175,6 +176,14 @@ class UserController extends EntityController
             $model->setProfile($profile);
         }
 
+        // Extract the credentials and update if necessary
+        $credentialUpdateDetails = $request->get('_user_credential', []);
+        if (!empty($credentialUpdateDetails)) {
+            $credentials = UserCredential::findOrNew($id);
+            $credentials->fill($credentialUpdateDetails);
+            $model->setCredential($credentials);
+        }
+
         $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
 
         $token = $jwtAuth->fromUser($model);
@@ -203,23 +212,66 @@ class UserController extends EntityController
     }
 
     /**
-     * Get the user's profile.
+     * Deletes a social login entry from the database
      *
      * @param $id
-     * @return \Illuminate\Http\Response
+     * @param $provider
+     * @return \Spira\Responder\Response\ApiResponse
      */
-    public function getProfile($id)
+    public function unlinkSocialLogin($id, $provider)
+    {
+        if (!$socialLogin = SocialLogin::where('user_id', '=', $id)
+            ->where('provider', '=', $provider)
+            ->first()) {
+            throw new NotFoundHttpException('Sorry, this provider does not exist for this user.');
+        }
+
+        $socialLogin->delete();
+
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+
+        $token = $jwtAuth->fromUser($this->repository->find($id));
+
+        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
+    }
+
+    /**
+     * Get full user details
+     *
+     * @param string $id
+     * @return \Spira\Responder\Response\ApiResponse
+     */
+    public function getOne($id)
     {
         $this->validateId($id, $this->getKeyName());
 
-        $userProfile = UserProfile::find($id);
+        $user = User::find($id);
 
-        if (is_null($userProfile)) {
-            return $this->getResponse()->noContent();
+        $userData = $user->toArray();
+
+        if (is_null($user->userCredential)) {
+            $userData['_user_credential'] = false;
+        } else {
+            $userData['_user_credential'] = $user->userCredential->toArray();
+        }
+
+        if (is_null($user->socialLogins)) {
+            $userData['_social_logins'] = false;
+        } else {
+            $userData['_social_logins'] = $user->socialLogins->toArray();
+        }
+
+        if (is_null($user->userProfile)) {
+            $newProfile = new UserProfile;
+            $newProfile->user_id = $id;
+            $user->setProfile($newProfile);
+            $userData['_user_profile'] = $newProfile->toArray();
+        } else {
+            $userData['_user_profile'] = $user->userProfile->toArray();
         }
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($userProfile);
+            ->item($userData);
     }
 }

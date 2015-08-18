@@ -110,11 +110,12 @@ namespace config.stateManager {
 
                     let returnTo = fromState.name ? fromState.name : 'app.guest.home';
 
-                    let attemptedStateName = this.$state.href(toState, toParams);
+                    let attemptedStateHref = this.$state.href(toState, toParams),
+                        attemptedStatePhrase = toState.data.title + (attemptedStateHref ? ` (${attemptedStateHref})` : '');
 
                     return this.$state.go(returnTo).then(() => {
 
-                        this.notificationService.toast('You are not permitted to access ' + attemptedStateName).options({position:'top right'}).pop();
+                        this.notificationService.toast('You are not permitted to access ' + attemptedStatePhrase).options({position:'top right'}).pop();
 
                     }); //go back home
                 })
