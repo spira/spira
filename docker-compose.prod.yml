@@ -2,9 +2,9 @@
 #  ecosystem.
 
 spira:
-  extends:
-    file: ./docker/common-services.yml
-    service: spira
+  image: spira/spira:%spira_container_tag%
+  volumes:
+    - /data
 
 logviewer:
   extends:

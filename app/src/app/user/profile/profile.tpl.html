@@ -1,38 +1,38 @@
 <div layout-padding>
     <h2>User Profile</h2>
 
-    <form novalidate name="editProfileForm" ng-submit="ProfileController.updateProfile()">
+    <form novalidate name="editProfileForm" ng-submit="ProfileController.updateUser()">
         <md-content layout-padding>
             <h3>About You</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-input-container class="md-icon-float">
-                    <label for="editProfileForm.firstName">First Name</label>
+                    <label for="editProfileFormFirstName">First Name</label>
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.firstName" ng-model="ProfileController.user.firstName" name="firstName" type="text" md-maxlength="45">
+                    <input id="editProfileFormFirstName" ng-model="ProfileController.fullUserInfo.firstName" name="firstName" type="text" md-maxlength="45">
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
-                    <label for="editProfileForm.lastName">Last Name</label>
+                    <label for="editProfileFormLastName">Last Name</label>
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.lastName" ng-model="ProfileController.user.lastName" name="lastName" type="text" md-maxlength="45">
+                    <input id="editProfileFormLastName" ng-model="ProfileController.fullUserInfo.lastName" name="lastName" type="text" md-maxlength="45">
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
                     <md-select-label>WHERE DO YOU LIVE</md-select-label>
-                    <md-select ng-model="ProfileController.user.country" aria-label="Country">
+                    <md-select ng-model="ProfileController.fullUserInfo.country" aria-label="Country">
                         <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
                     </md-select>
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
-                    <label for="editProfileForm.dob">WHEN WERE YOU BORN</label>
+                    <label for="editProfileFormDob">WHEN WERE YOU BORN</label>
                     <md-icon>account_box</md-icon>
-                    <input id="editProfileForm.dob" ng-model="ProfileController.user._userProfile.dob" name="dob" type="text">
+                    <input id="editProfileFormDob" ng-model="ProfileController.fullUserInfo._userProfile.dob" name="dob" type="text">
                 </md-input-container>
 
                 <md-input-container class="md-icon-float">
                     <md-radio-group-label>ARE YOU</md-radio-group-label>
-                    <md-radio-group ng-model="ProfileController.user._userProfile.gender">
+                    <md-radio-group ng-model="ProfileController.fullUserInfo._userProfile.gender">
                         <md-radio-button ng-repeat="option in ProfileController.genderOptions"
                                          ng-value="option.value">
                             {{ option.label }}
@@ -47,8 +47,8 @@
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-input-container class="md-icon-float" layout>
                     <md-icon>email</md-icon>
-                    <input id="editProfileForm.email" ng-model="ProfileController.user.email" name="email" type="email" ng-required="true" aria-label="Email" md-maxlength="100">
-                    <ng-messages for="editProfileForm.email.$error">
+                    <input id="editProfileFormEmail" ng-model="ProfileController.fullUserInfo.email" name="email" type="email" ng-required="true" aria-label="Email" md-maxlength="100">
+                    <ng-messages for="editProfileFormEmail.$error">
                         <ng-message when="required">This is required.</ng-message>
                         <ng-message when="email">This is not a valid email.</ng-message>
                     </ng-messages>
@@ -61,30 +61,30 @@
             <h3>Profile</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-input-container>
-                    <label for="editProfileForm.about">TELL EVERYONE A LITTLE ABOUT YOURSELF</label>
-                    <textarea id="editProfileForm.about" columns="1" ng-model="ProfileController.user._userProfile.about" name="about" md-maxlength="120"></textarea>
+                    <label for="editProfileFormAbout">TELL EVERYONE A LITTLE ABOUT YOURSELF</label>
+                    <textarea id="editProfileFormAbout" columns="1" ng-model="ProfileController.fullUserInfo._userProfile.about" name="about" md-maxlength="120"></textarea>
                 </md-input-container>
 
                 <label>YOUR SOCIAL CHANNELS</label>
                 <md-input-container md-no-float>
                     <md-icon>accessibility</md-icon>
-                    <input id="editProfileForm.facebook" ng-model="ProfileController.user._userProfile.facebook" name="facebook" type="text" aria-label="Facebook" md-maxlength="100" placeholder="https://www.facebook.com/your.profile">
+                    <input id="editProfileFormFacebook" ng-model="ProfileController.fullUserInfo._userProfile.facebook" name="facebook" type="text" aria-label="Facebook" md-maxlength="100" placeholder="https://www.facebook.com/your.profile">
                 </md-input-container>
                 <md-input-container md-no-float>
                     <md-icon>accessibility</md-icon>
-                    <input id="editProfileForm.twitter" ng-model="ProfileController.user._userProfile.twitter" name="twitter" type="text" aria-label="Twitter" md-maxlength="45" placeholder="@yourUsername">
+                    <input id="editProfileFormTwitter" ng-model="ProfileController.fullUserInfo._userProfile.twitter" name="twitter" type="text" aria-label="Twitter" md-maxlength="45" placeholder="@yourUsername">
                 </md-input-container>
                 <md-input-container md-no-float>
                     <md-icon>accessibility</md-icon>
-                    <input id="editProfileForm.pinterest" ng-model="ProfileController.user._userProfile.pinterest" name="pinterest" type="text" aria-label="Pinterest" md-maxlength="100" placeholder="https://www.pinterest.com/yourusername">
+                    <input id="editProfileFormPinterest" ng-model="ProfileController.fullUserInfo._userProfile.pinterest" name="pinterest" type="text" aria-label="Pinterest" md-maxlength="100" placeholder="https://www.pinterest.com/yourusername">
                 </md-input-container>
                 <md-input-container md-no-float>
                     <md-icon>accessibility</md-icon>
-                    <input id="editProfileForm.instagram" ng-model="ProfileController.user._userProfile.instagram" name="instagram" type="text" aria-label="Instagram" md-maxlength="100" placeholder="https://www.instagram.com/yourusername">
+                    <input id="editProfileFormInstagram" ng-model="ProfileController.fullUserInfo._userProfile.instagram" name="instagram" type="text" aria-label="Instagram" md-maxlength="100" placeholder="https://www.instagram.com/yourusername">
                 </md-input-container>
                 <md-input-container md-no-float>
                     <md-icon>accessibility</md-icon>
-                    <input id="editProfileForm.website" ng-model="ProfileController.user._userProfile.website" name="website" type="text" aria-label="Your Website" md-maxlength="100" placeholder="https://www.yourwebsite.com">
+                    <input id="editProfileFormWebsite" ng-model="ProfileController.fullUserInfo._userProfile.website" name="website" type="text" aria-label="Your Website" md-maxlength="100" placeholder="https://www.yourwebsite.com">
                 </md-input-container>
             </md-whiteframe>
         </md-content>
@@ -93,15 +93,76 @@
             <h3>Preferences</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                 <md-select-label>TIMEZONE</md-select-label>
-                <md-select ng-model="ProfileController.user.timezoneIdentifier" aria-label="Timezone">
+                <md-select ng-model="ProfileController.fullUserInfo.timezoneIdentifier" aria-label="Timezone">
                     <md-option ng-value="timezone.timezoneIdentifier" ng-repeat="timezone in ProfileController.timezones">{{ timezone.timezoneIdentifier }}</md-option>
                 </md-select>
             </md-whiteframe>
         </md-content>
 
+        <md-content layout-padding>
+            <h3>Access</h3>
+            <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                <label>LOGIN METHODS</label>
+                <md-list>
+                    <md-list-item class="md-2-line" ng-repeat="providerType in ProfileController.providerTypes">
+                        <md-icon>accessibility</md-icon>
+                        <div class="md-list-item-text">
+                            <h3>{{ providerType }}</h3>
+                            <h4>{{ ProfileController.fullUserInfo.hasSocialLogin(providerType) ? 'Connected' : 'Not connected' }}</h4>
+                        </div>
+                        <md-button ng-if="ProfileController.fullUserInfo.hasSocialLogin(providerType)" ng-click="ProfileController.unlinkSocialLogin(providerType)" class="md-raised" type="button">
+                            Remove
+                        </md-button>
+                        <md-button ng-if="!ProfileController.fullUserInfo.hasSocialLogin(providerType)" ng-click="ProfileController.socialLogin(providerType)" class="md-raised" type="button">
+                            Add
+                        </md-button>
+                        <md-divider></md-divider>
+                    </md-list-item>
+
+                    <md-list-item class="md-2-line">
+                        <md-icon>accessibility</md-icon>
+                        <div class="md-list-item-text">
+                            <h3>Password</h3>
+                            <h4>{{ ProfileController.fullUserInfo._userCredential ? 'Password set' : 'Never created' }}</h4>
+                        </div>
+                        <md-button ng-click="showEditPassword = !showEditPassword" class="md-raised" type="button">
+                            {{ ProfileController.fullUserInfo._userCredential ? 'Edit' : 'Add' }}
+                        </md-button>
+                    </md-list-item>
+                </md-list>
+                <div ng-if="showEditPassword">
+                    <md-input-container class="md-icon-float" layout>
+                        <label for="editProfileFormPassword">Password</label>
+                        <md-icon>email</md-icon>
+                        <input id="editProfileFormPassword" ng-model="ProfileController.fullUserInfo._userCredential.password" name="password" type="password" md-maxlength="50" ng-minlength="6">
+                        <ng-messages for="editProfileFormPassword.$error">
+                            <ng-message when="minlength">Your password must be at least 6 characters long.</ng-message>
+                        </ng-messages>
+                    </md-input-container>
+                    <md-input-container class="md-icon-float" layout>
+                        <label for="editProfileFormPasswordRepeat">Repeat Password</label>
+                        <md-icon>email</md-icon>
+                        <input id="editProfileFormPasswordRepeat"
+                               ng-model="ProfileController.fullUserInfo._userCredential.passwordRepeat"
+                               name="passwordRepeat"
+                               type="password"
+                               md-maxlength="50"
+                               ng-minlength="6"
+                               ui-validate="'$value === ProfileController.fullUserInfo._userCredential.password'"
+                               ui-validate-watch="'ProfileController.fullUserInfo._userCredential.password'">
+                        <ng-messages for="editProfileFormPasswordRepeat.$error">
+                            <ng-message when="minlength">Your password must be at least 6 characters long.</ng-message>
+                            <ng-message when="validator">The passwords entered are not identical.</ng-message>
+                        </ng-messages>
+                    </md-input-container>
+                </div>
+
+            </md-whiteframe>
+        </md-content>
+
         <div class="md-actions">
             <md-button class="md-primary md-raised" ng-disabled="editProfileForm.$invalid" type="submit">Save</md-button>
-            <md-button class="md-raised">Cancel</md-button>
+            <md-button class="md-raised" type="button">Cancel</md-button>
         </div>
     </form>
 </div>

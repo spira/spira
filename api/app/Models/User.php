@@ -60,7 +60,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $validationRules = [
+    protected static $validationRules = [
         'user_id' => 'uuid',
         'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
