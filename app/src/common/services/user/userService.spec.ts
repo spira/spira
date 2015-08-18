@@ -83,9 +83,9 @@
 
         });
 
-        describe('All users', () => {
+        describe('Retrieving User/Users', () => {
 
-            it ('should return all users', () => {
+            it('should return all users', () => {
 
                 let users = _.clone(fixtures.users); //get a new user copy
 
@@ -109,6 +109,34 @@
                 expect(allUsersPromise).eventually.to.be.rejected;
 
                 $httpBackend.flush();
+
+            });
+
+            it('should be able to retrieve full info for one user', () => {
+
+                let user = _.clone(fixtures.user);
+
+                $httpBackend.expectGET('/api/users/' + user.userId).respond(200);
+
+                let userDetailsPromise = userService.getUser(user);
+
+                expect(userDetailsPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+
+            });
+
+            it('should return a new user created from user data', () => {
+
+                let userData = _.clone(fixtures.buildUser());
+
+                let user = userService.userFactory(userData);
+
+                expect(user).to.be.instanceOf(common.models.User);
+
+                expect(userData.email).to.equal(user.email);
+
+                expect(userData.userId).to.equal(user.userId);
 
             });
 
@@ -222,6 +250,22 @@
                 $httpBackend.flush();
             });
 
+            it('should reject the promise if a bogus user id is passed through', () => {
+
+                let user = _.clone(fixtures.user);
+                user.userId = 'bogus-user-id';
+
+                const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
+
+                $httpBackend.expectPATCH('/api/users/' + user.userId).respond(422);
+
+                let emailConfirmationPromise = userService.confirmEmail(user, emailToken);
+
+                expect(emailConfirmationPromise).eventually.to.be.rejected;
+
+                $httpBackend.flush();
+            });
+
         });
 
         describe('Update Details', () => {
@@ -252,6 +296,7 @@
             });
 
         });
+
     });
 
 

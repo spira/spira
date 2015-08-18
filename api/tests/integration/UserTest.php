@@ -460,6 +460,19 @@ class UserTest extends TestCase
         $this->assertException('invalid', 401, 'UnauthorizedException');
     }
 
+    public function testResetPasswordMailInvalidEmail()
+    {
+        $this->clearMessages();
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->delete('/users/foo.bar.' . $user->email . '/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        ]);
+
+        $this->assertResponseStatus(404);
+    }
+
     public function testChangeEmail()
     {
         $this->clearMessages();
