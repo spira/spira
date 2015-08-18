@@ -10,8 +10,9 @@ namespace App\Extensions\Controller;
 
 use Illuminate\Database\Eloquent\Collection;
 use Laravel\Lumen\Routing\ValidatesRequests;
-use Spira\Repository\Validation\ValidationException;
-use Spira\Repository\Validation\ValidationExceptionCollection;
+use Spira\Model\Validation\ValidationException;
+use Spira\Model\Validation\ValidationExceptionCollection;
+use Spira\Model\Validation\Validator;
 
 trait RequestValidationTrait
 {
@@ -49,6 +50,16 @@ trait RequestValidationTrait
         }
 
         return $ids;
+    }
+
+    /**
+     * @param $requestEntity
+     * @param $keyName
+     * @return null
+     */
+    protected function getIdOrNull($requestEntity, $keyName)
+    {
+        return isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
     }
 
 
@@ -108,5 +119,28 @@ trait RequestValidationTrait
                 throw new ValidationException($validation->getMessageBag());
             }
         }
+    }
+
+
+    /**
+     * @param $requestEntity
+     * @param array $validationRules
+     * @param bool $limitToRequest
+     * @return bool
+     */
+    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false)
+    {
+        if ($limitToRequest) {
+            $validationRules = array_intersect_key($validationRules, $requestEntity);
+        }
+
+        /** @var Validator $validation */
+        $validation = $this->getValidationFactory()->make($requestEntity, $validationRules);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation->messages());
+        }
+
+        return true;
     }
 }

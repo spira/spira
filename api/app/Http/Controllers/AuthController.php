@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Log;
+use App\Extensions\JWTAuth\JWTManager;
+use App\Extensions\Socialite\SocialiteManager;
+use App\Models\User;
 use RuntimeException;
 use Spira\Responder\Response\ApiResponse;
 use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -35,7 +36,7 @@ class AuthController extends ApiController
     /**
      * JWT Auth Package.
      *
-     * @var JWTAuth
+     * @var \App\Extensions\JWTAuth\JWTAuth|JWTManager
      */
     protected $jwtAuth;
 
@@ -88,12 +89,12 @@ class AuthController extends ApiController
         }
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
     /**
-     * Refresh a login token.
+     * Refresh a login token
      *
      * @return ApiResponse
      */
@@ -107,7 +108,7 @@ class AuthController extends ApiController
         $token = $this->jwtAuth->refresh($token);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -115,14 +116,14 @@ class AuthController extends ApiController
      * Login with a single use token.
      *
      * @param  Request         $request
-     * @param  UserRepository  $userRepository
+     * @param  User  $userModel
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      *
      * @return ApiResponse
      */
-    public function token(Request $request, UserRepository $userRepository)
+    public function token(Request $request, User $userModel)
     {
         $header = $request->headers->get('authorization');
         if (!starts_with(strtolower($header), 'token')) {
@@ -132,14 +133,14 @@ class AuthController extends ApiController
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
-        if (!$user = $userRepository->findByLoginToken($token)) {
+        if (!$user = $userModel->findByLoginToken($token)) {
             throw new UnauthorizedException('Token invalid.');
         }
 
         $token = $this->jwtAuth->fromUser($user);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -147,7 +148,7 @@ class AuthController extends ApiController
      * Redirect the user to the Provider authentication page.
      *
      * @param  string     $provider
-     * @param  Socialite  $socialite
+     * @param  Socialite|SocialiteManager  $socialite
      *
      * @return ApiResponse
      */
@@ -162,14 +163,14 @@ class AuthController extends ApiController
      * Obtain the user information from Provider.
      *
      * @param  string          $provider
-     * @param  Socialite       $socialite
-     * @param  UserRepository  $repository
+     * @param  Socialite|SocialiteManager       $socialite
+     * @param  User  $userModel
      *
      * @throws UnprocessableEntityException
      *
      * @return ApiResponse
      */
-    public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repository)
+    public function handleProviderCallback($provider, Socialite $socialite, User $userModel)
     {
         $this->validateProvider($provider);
 
@@ -183,7 +184,7 @@ class AuthController extends ApiController
             // The app is connected with the service, but the 3rd party service
             // is not configured or allowed to return email addresses, so we
             // can't process the data further. Let's throw an exception.
-            Log::critical('Provider '.$provider.' does not return email.');
+            \Log::critical('Provider '.$provider.' does not return email.');
             throw new UnprocessableEntityException('User object has no email');
         }
 
@@ -192,11 +193,11 @@ class AuthController extends ApiController
 
         // Get or create the Spira user from the social login
         try {
-            $user = $repository->findByEmail($socialUser->email);
+            $user = $userModel->findByEmail($socialUser->email);
         } catch (ModelNotFoundException $e) {
-            $user = $repository->getNewModel();
+            $user = $userModel->newInstance();
             $user->fill(array_merge($socialUser->toArray(), ['user_type' => 'guest']));
-            $user = $repository->save($user);
+            $user->save();
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);

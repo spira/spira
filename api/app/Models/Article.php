@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 
 /**
  *
@@ -50,21 +50,16 @@ class Article extends BaseModel
         'first_published' => 'datetime',
     ];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        $permalinkRule = 'string|unique:article_permalinks,permalink';
-        if (!is_null($this->permalink)) {
-            $permalinkRule.=','.$this->permalink.',permalink';
-        }
-
         return [
-            'article_id' => 'uuid|createOnly',
+            'article_id' => 'uuid',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', self::$statuses),
-            'permalink' => $permalinkRule
+            'status' => 'in:' . implode(',', static::$statuses),
+            'permalink' => 'string|unique:article_permalinks,permalink'
         ];
     }
 
@@ -76,12 +71,19 @@ class Article extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::validated(function (Article $model) {
+        static::saving(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
                 $articlePermalink = new ArticlePermalink();
                 $articlePermalink->permalink = $model->permalink;
-                $model->permalinks->add($articlePermalink);
                 $articlePermalink->save();
+            }
+            return true;
+        });
+
+        static::saved(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+                $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
+                $model->permalinks()->save($articlePermalink);
             }
             return true;
         });

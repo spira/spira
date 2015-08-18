@@ -6,9 +6,9 @@
  * Time: 19:22
  */
 
-namespace Spira\Repository\Validation;
+namespace Spira\Model\Validation;
 
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Model\BaseModel;
 
 class Validator extends \Illuminate\Validation\Validator
 {

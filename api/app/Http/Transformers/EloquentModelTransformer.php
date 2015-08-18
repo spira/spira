@@ -11,8 +11,8 @@ namespace App\Http\Transformers;
 use App\Helpers\RouteHelper;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
-use Spira\Repository\Collection\Collection;
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Model\BaseModel;
 use Traversable;
 
 class EloquentModelTransformer extends BaseTransformer

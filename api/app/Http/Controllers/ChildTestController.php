@@ -13,8 +13,6 @@ use App\Models\TestEntity;
 
 class ChildTestController extends ChildEntityController
 {
-    protected $validateParentIdRule = 'uuid';
-    protected $validateChildIdRule = 'uuid';
     protected $relationName = 'testMany';
 
     public function __construct(TestEntity $parentModel, EloquentModelTransformer $transformer)

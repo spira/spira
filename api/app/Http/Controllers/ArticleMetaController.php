@@ -13,8 +13,6 @@ use App\Models\Article;
 
 class ArticleMetaController extends ChildEntityController
 {
-    protected $validateParentIdRule = 'required|string';
-    protected $validateChildIdRule = 'required|string';
     protected $relationName = 'metas';
 
 
