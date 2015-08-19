@@ -301,7 +301,6 @@ class EntityTest extends TestCase
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(400);
-
     }
 
     public function testPostOneValid()

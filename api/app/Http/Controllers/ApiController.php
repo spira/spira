@@ -74,5 +74,4 @@ abstract class ApiController extends Controller
 
         return $modelOrCollection;
     }
-
 }
