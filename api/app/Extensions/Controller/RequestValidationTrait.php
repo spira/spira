@@ -153,6 +153,7 @@ trait RequestValidationTrait
      */
     public function validateRequestCollection($requestCollection, $validationRules, $limitToKeysPresent = false){
 
+        $errorCaught = false;
         $errors = [];
 
         foreach ($requestCollection as $requestEntity) {
@@ -162,10 +163,11 @@ trait RequestValidationTrait
                 $errors[] = null;
             } catch (ValidationException $e) {
                 $errors[] = $e;
+                $errorCaught = true;
             }
         }
 
-        if ($errors) {
+        if ($errorCaught) {
             throw new ValidationExceptionCollection($errors);
         }
 
