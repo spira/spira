@@ -73,8 +73,8 @@ class EntityTest extends TestCase
         $this->assertJsonMultipleEntries();
 
         $asserted = false;
-        foreach($objects as $object){
-            if (count($object->_testMany) == 5){
+        foreach ($objects as $object) {
+            if (count($object->_testMany) == 5) {
                 $asserted = true;
                 $this->assertEquals(5, count($object->_testMany));
                 foreach ($object->_testMany as $nestedObject) {
@@ -87,7 +87,7 @@ class EntityTest extends TestCase
             }
         }
 
-        $this->assertTrue($asserted,'There was nested entity inside answer');
+        $this->assertTrue($asserted, 'There was nested entity inside answer');
     }
 
     public function testGetAllPaginated()
