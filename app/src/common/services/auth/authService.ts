@@ -136,7 +136,6 @@ namespace common.services.auth {
             }
 
             let token = queryParams.loginToken;
-            this.$location.search('loginToken', null);
 
             return this.ngJwtAuthService.exchangeToken(token)
                 .catch((err) => {

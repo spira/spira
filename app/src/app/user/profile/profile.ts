@@ -36,8 +36,6 @@ namespace app.user.profile {
 
                             let emailToken = $stateParams.emailConfirmationToken;
 
-                            $location.search('emailConfirmationToken', null);
-
                             return userService.confirmEmail(<common.models.User>ngJwtAuthService.getUser(), emailToken)
                                 .then(() => {
 
