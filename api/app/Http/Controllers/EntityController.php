@@ -391,5 +391,4 @@ abstract class EntityController extends ApiController
         $validationRules[$keyName].= $rule;
         return $validationRules;
     }
-
 }
