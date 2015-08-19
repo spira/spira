@@ -59,6 +59,37 @@ class EntityTest extends TestCase
         $this->assertJsonMultipleEntries();
     }
 
+    public function testGetAllWithNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities', ['with-nested'=>'testMany']);
+        $objects = json_decode($this->response->getContent());
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+
+        $asserted = false;
+        foreach($objects as $object){
+            if (count($object->_testMany) == 5){
+                $asserted = true;
+                $this->assertEquals(5, count($object->_testMany));
+                foreach ($object->_testMany as $nestedObject) {
+                    $this->assertObjectHasAttribute('_self', $nestedObject);
+                    $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+                    $this->assertObjectHasAttribute('entityId', $nestedObject);
+                    $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+                    $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+                }
+            }
+        }
+
+        $this->assertTrue($asserted,'There was nested entity inside answer');
+    }
+
     public function testGetAllPaginated()
     {
         $defaultLimit = 10;
@@ -71,6 +102,33 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->assertEquals($defaultLimit, count($object));
+    }
+
+    public function testGetAllPaginatedWithNested()
+    {
+        $defaultLimit = 10;
+        $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
+        foreach ($entities as $entity) {
+            $this->addRelatedEntities($entity);
+        }
+
+        $this->get('/test/entities/pages', ['Range'=>'entities=-10','with-nested'=>'testMany']);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertEquals($defaultLimit, count($object));
+        $object = current($object);
+
+        $this->assertObjectHasAttribute('_testMany', $object);
+        $this->assertEquals(5, count($object->_testMany));
+        foreach ($object->_testMany as $nestedObject) {
+            $this->assertObjectHasAttribute('_self', $nestedObject);
+            $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+            $this->assertObjectHasAttribute('entityId', $nestedObject);
+            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+        }
     }
 
     public function testGetAllPaginatedNoRangeHeader()
