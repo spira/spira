@@ -26,16 +26,19 @@ class Discussion extends ApiAbstract
      * @param  string $name
      * @param  string $body
      * @param  int    $categoryId
+     * @param  array  $additional
      *
      * @return array
      */
-    public function create($name, $body, $categoryId)
+    public function create($name, $body, $categoryId, array $additional = [])
     {
         $parameters = [
             'Name' => $name,
             'Body' => $body,
             'CategoryID' => $categoryId
         ];
+
+        $parameters = array_merge($parameters, $additional);
 
         return $this->post('discussions', $parameters);
     }
