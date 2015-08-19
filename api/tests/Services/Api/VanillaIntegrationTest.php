@@ -288,8 +288,4 @@ class VanillaIntegrationTest extends TestCase
         // Clean up
         $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
-
-
-    // Users
-
 }
