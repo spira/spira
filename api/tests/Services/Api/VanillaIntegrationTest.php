@@ -4,6 +4,20 @@ use App\Services\Api\Vanilla\Client;
 
 class VanillaIntegrationTest extends TestCase
 {
+    /**
+     * API client.
+     *
+     * @var Client
+     */
+    protected $client;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->client = App::make(Client::class);
+    }
+
     // Exceptions
 
     /**
@@ -13,9 +27,7 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotGetApiInstance()
     {
-        $client = App::make(Client::class);
-
-        $test = $client->api('do_not_exist');
+        $test = $this->client->api('do_not_exist');
     }
 
     /**
@@ -25,11 +37,9 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotCreateWithoutAuthorizedUser()
     {
-        $client = App::make(Client::class);
+        $this->client->setUser('no_user');
 
-        $client->setUser('no_user');
-
-        $discussion = $client->api('discussions')->create('Foo', 'Bar', 1);
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
     }
 
     /**
@@ -39,9 +49,7 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotCreateEmptyDiscussion()
     {
-        $client = App::make(Client::class);
-
-        $discussion = $client->api('discussions')->create('', '', 1);
+        $discussion = $this->client->api('discussions')->create('', '', 1);
     }
 
     /**
@@ -51,9 +59,7 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotFindNonExistingDiscussion()
     {
-        $client = App::make(Client::class);
-
-        $discussion = $client->api('discussions')->find(0);
+        $discussion = $this->client->api('discussions')->find(0);
     }
 
     /**
@@ -63,8 +69,24 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotFindDiscussionWithInvalidIdFormat()
     {
-        $client = App::make(Client::class);
+        $discussion = $this->client->api('discussions')->find('foobar');
+    }
 
-        $discussion = $client->api('discussions')->find('foobar');
+
+    // Generic
+
+    /**
+     * @test
+     */
+    public function shouldCreateDiscussionWithAdminUser()
+    {
+        $this->client->setUser('admin');
+
+        $discussion = $this->client->api('discussions')->create('Some name', 'Some body', 1);
+
+        $this->assertEquals('admin', $discussion['Discussion']['InsertName']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 }
