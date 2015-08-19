@@ -24,6 +24,6 @@ class VanillaTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertContains('Recent Discussions', $body);
-        $this->assertContains('BAM! You’ve got a sweet forum', $body);
+        $this->assertContains('Community Software by Vanilla Forums', $body);
     }
 }
