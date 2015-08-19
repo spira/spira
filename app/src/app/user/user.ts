@@ -25,8 +25,8 @@ namespace app.user {
                     }
                 },
                 resolve: {
-                    user:(ngJwtAuthService:NgJwtAuth.NgJwtAuthService) => {
-                        return <common.models.User>ngJwtAuthService.getUser()
+                    user:(userService:common.services.user.UserService):common.models.User => {
+                        return userService.getAuthUser();
                     }
                 },
                 data: {

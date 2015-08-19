@@ -108,6 +108,83 @@ class AuthTest extends TestCase
         $this->assertException('token', 500, 'RuntimeException');
     }
 
+    public function testLoginNewEmailAfterChange()
+    {
+        $user = factory(User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
+        $user->createEmailConfirmToken('foo@bar.net', $user->email);
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => 'foo@bar.net',
+            'PHP_AUTH_PW'   => 'password',
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertResponseOk();
+        $this->assertEquals('application/json', $this->response->headers->get('content-type'));
+        $this->assertArrayHasKey('token', $array);
+        $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+
+        // Test that decoding the token, will match the decoded body
+        $token = new Token($array['token']);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+        $this->assertEquals($decoded, $array['decodedTokenBody']);
+    }
+
+    public function testLoginNewEmailAfterChangeWrongPassword()
+    {
+        $user = factory(User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
+        $user->createEmailConfirmToken('foo@bar.net', $user->email);
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => 'foo@bar.net',
+            'PHP_AUTH_PW'   => '',
+        ]);
+
+        $body = json_decode($this->response->getContent());
+        $this->assertResponseStatus(401);
+        $this->assertContains('failed', $body->message);
+    }
+
+    public function testLoginOldEmailAfterChange()
+    {
+        $user = factory(User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
+        $user->createEmailConfirmToken('foo@bar.net', $user->email);
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => $user->email,
+            'PHP_AUTH_PW'   => 'password',
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+        $this->assertResponseOk();
+        $this->assertEquals('application/json', $this->response->headers->get('content-type'));
+        $this->assertArrayHasKey('token', $array);
+        $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+
+        // Test that decoding the token, will match the decoded body
+        $token = new Token($array['token']);
+        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
+        $decoded = $jwtAuth->decode($token)->toArray();
+        $this->assertEquals($decoded, $array['decodedTokenBody']);
+    }
+
     public function testRefresh()
     {
         $user = $this->createUser();

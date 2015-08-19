@@ -30,6 +30,17 @@ class Build
     }
 
     /**
+     * Runs after a composer update.
+     *
+     * @param   Event   $event  [description]
+     * @return  void
+     */
+    public static function buildForum(Event $event)
+    {
+        self::getInstance()->setupVanilla();
+    }
+
+    /**
      * Combine the retrieved packages to the required application.
      *
      * @return void
@@ -45,13 +56,9 @@ class Build
         // Copy the SSO plugin to the plugins directory
         $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
 
-        // Copy the initial configuration to conf directory
-        copy('config.php', 'public/conf/config.php');
-
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
 
-        // Setup Vanilla
-        (new VanillaConfigurator)->start();
+        $this->setupVanilla();
     }
 
     /**
@@ -85,5 +92,15 @@ class Build
     protected static function getInstance()
     {
         return new Build;
+    }
+
+    /**
+     * Run the vanilla setup functions
+     */
+    protected function setupVanilla()
+    {
+        copy('config.php', 'public/conf/config.php'); //also overwrites the config file for a repeated migration (for qa)
+
+        (new VanillaConfigurator)->start();
     }
 }

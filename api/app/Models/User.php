@@ -4,32 +4,25 @@ use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
 
-    /**
-     * Login token time to live in minutes.
-     *
-     * @var int
-     */
-    protected $login_token_ttl = 1440;
-
-    /**
-     * Cache repository.
-     *
-     * @var Cache
-     */
-    protected $cache;
-
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
+    
+    /**
+     * Login/email confirm token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $token_ttl = 1440;
 
     /**
      * The primary key for the model.
@@ -265,22 +258,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     * Make an email confirmation token for a user.
-     *
-     * @param  string  $email
-     * @param  Cache   $cache
-     *
-     * @return string
-     */
-    public function makeConfirmationToken($email, Cache $cache)
-    {
-        $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $cache->put('email_confirmation_'.$token, $email, 1440);
-        return $token;
-    }
-
-
-    /**
      * Get a user by single use login token.
      *
      * @param string $token
@@ -289,7 +266,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public function findByLoginToken($token)
     {
-        if ($id = $this->getCache()->pull('login_token_'.$token)) {
+        if ($id = Cache::pull('login_token_'.$token)) {
             $user = $this->findOrFail($id);
 
             return $user;
@@ -297,20 +274,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
 
         return null;
     }
-
-    /**
-     * @todo remove this hack
-     * @return Cache
-     */
-    protected function getCache()
-    {
-        if (!$this->cache) {
-            $this->cache = \App::make(Cache::class);
-        }
-
-        return $this->cache;
-    }
-
 
     /**
      * Get a user by their email.
@@ -335,8 +298,54 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         $user = $this->findOrFail($id);
 
         $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $this->getCache()->put('login_token_'.$token, $user->user_id, $this->login_token_ttl);
+        Cache::put('login_token_'.$token, $user->user_id, $this->token_ttl);
 
         return $token;
+    }
+
+    /**
+     * Create an email confirmation token for a user.
+     *
+     * @param $newEmail
+     * @param $oldEmail
+     * @return string
+     */
+    public function createEmailConfirmToken($newEmail, $oldEmail)
+    {
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+
+        Cache::put('email_confirmation_' . $token, $newEmail, $this->token_ttl);
+
+        Cache::put('email_change_' . $newEmail, $oldEmail, $this->token_ttl);
+
+        return $token;
+    }
+
+    /**
+     * Get an email address from supplied token.
+     *
+     * @param $token
+     * @return mixed
+     */
+    public function getEmailFromToken($token)
+    {
+        $newEmail = Cache::pull('email_confirmation_' . $token, false);
+
+        if ($newEmail) {
+            Cache::forget('email_change_' . $newEmail);
+        }
+
+        return $newEmail;
+    }
+
+    /**
+     * Check to see if the user has made a change email request. Return the current email associated with the new email.
+     *
+     * @param $newEmail
+     * @return mixed
+     */
+    public static function findCurrentEmail($newEmail)
+    {
+        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
     }
 }

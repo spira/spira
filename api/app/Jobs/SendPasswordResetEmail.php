@@ -16,11 +16,11 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
     protected $user;
 
     /**
-     * Token for confirmation.
+     * Token for logging in.
      *
      * @var string
      */
-    protected $token;
+    protected $loginToken;
 
     /**
      * Create a new job instance.
@@ -29,10 +29,10 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
      * @param  string  $token
      * @return void
      */
-    public function __construct(User $user, $token)
+    public function __construct(User $user, $loginToken)
     {
         $this->user = $user;
-        $this->token = $token;
+        $this->loginToken = $loginToken;
     }
 
     /**
@@ -45,7 +45,7 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
     {
         $mailer->send('emails.resetPassword', [
             'user' => $this->user,
-            'passwordResetRedirectionUrl' => Config::get('hosts.app') . '/profile?passwordResetToken='.$this->token
+            'passwordResetRedirectionUrl' => Config::get('hosts.app') . '/profile?loginToken='.$this->loginToken
         ], function ($m) {
             $m->to($this->user->email, $this->user->full_name)
                 ->subject('Password Reset');

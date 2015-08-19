@@ -1,3 +1,44 @@
-<h2>User Admin</h2>
+<div layout-padding>
 
-<pre highlight="">{{UsersController.allUsers|json}}</pre>
+    <h2>Users</h2>
+
+    <md-fab-toolbar class="md-right">
+        <md-fab-trigger class="align-with-text">
+            <md-button aria-label="menu" class="md-fab md-primary">
+                <md-icon>menu</md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-toolbar>
+            <md-fab-actions class="md-toolbar-tools">
+                <md-button aria-label="Search" class="md-fab md-primary md-hue-2">
+                    <md-icon>search</md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-toolbar>
+    </md-fab-toolbar>
+
+    <md-list>
+        <md-list-item class="md-2-line" ng-repeat="user in UsersController.users">
+            <img ng-src="{{ user.avatarImgUrl }}" alt="{{ user.fullName() }}" class="md-avatar"/>
+            <div class="md-list-item-text">
+                <h3> {{ user.username }} </h3>
+                <p> {{ user.email }} </p>
+            </div>
+            <md-divider ></md-divider>
+        </md-list-item>
+    </md-list>
+
+</div>
+
+
+<md-toolbar>
+    <md-tabs md-selected="UsersController.currentPageIndex">
+
+        <md-tab ng-repeat="pageNumber in UsersController.pages" ui-sref="app.admin.users({page:pageNumber})">
+            <md-tab-label>
+                <span>{{pageNumber}}</span>
+            </md-tab-label>
+        </md-tab>
+
+    </md-tabs>
+</md-toolbar>

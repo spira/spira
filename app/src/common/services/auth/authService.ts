@@ -23,7 +23,7 @@ namespace common.services.auth {
 
                 return this.$q.all([
                     this.processQueryToken(),
-                    this.processPasswordResetToken()
+                    this.processLoginToken()
                 ]);
 
             }).catch((e) => {
@@ -128,19 +128,26 @@ namespace common.services.auth {
          * Check the url for password reset token and process it
          * @returns {any}
          */
-        private processPasswordResetToken():ng.IPromise<any> {
+        private processLoginToken():ng.IPromise<any> {
 
             let queryParams = this.$location.search();
-            if (_.isEmpty(queryParams.passwordResetToken)) {
+            if (_.isEmpty(queryParams.loginToken)) {
                 return this.$q.when(true); //immediately resolve
             }
 
-            let token = queryParams.passwordResetToken;
-            this.$location.search('passwordResetToken', null);
+            let token = queryParams.loginToken;
+
+            /*
+                We do not remove the loginToken from the URL params at this point because that would cause a state
+                reload causing whichever state we're navigating to to fully load twice (all resolves are called again);
+                this results in unneeded XHRs. The loginToken is safely removed in the constructor of
+                ProfileController, this means that the state we navigate to when we use the loginToken will always be
+                profile. See profile.ts.
+             */
 
             return this.ngJwtAuthService.exchangeToken(token)
                 .catch((err) => {
-                    this.notificationService.toast('Sorry, you have already tried to reset your password using this link').options({position:'top right'}).pop();
+                    this.notificationService.toast('Sorry, you have already tried to log in using this link').options({position:'top right'}).pop();
                 });
         }
 
