@@ -40,13 +40,13 @@ trait HelpersTrait
         $faker = Faker::create();
         $unique = $faker->unique();
 
-        $binder = function($value){
+        $binder = function ($value) {
             $this->unqiue = $value;
         };
 
-        $unqiueBinder = $binder->bindTo($unique,$unique);
+        $unqiueBinder = $binder->bindTo($unique, $unique);
         $unqiueBinder($this->uniques);
-        
+
         return $faker;
     }
 
