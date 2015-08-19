@@ -22,7 +22,6 @@ use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Models\User;
 
 class AuthController extends ApiController
 {

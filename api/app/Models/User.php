@@ -283,4 +283,32 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
 
         return $token;
     }
+
+    /**
+     * Get an email address from supplied token.
+     *
+     * @param $token
+     * @return mixed
+     */
+    public function getEmailFromToken($token)
+    {
+        $newEmail = Cache::pull('email_confirmation_' . $token, false);
+
+        if ($newEmail) {
+            Cache::forget('email_change_' . $newEmail);
+        }
+
+        return $newEmail;
+    }
+
+    /**
+     * Check to see if the user has made a change email request. Return the current email associated with the new email.
+     *
+     * @param $newEmail
+     * @return mixed
+     */
+    public static function findCurrentEmail($newEmail)
+    {
+        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
+    }
 }
