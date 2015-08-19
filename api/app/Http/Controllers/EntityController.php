@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
-use Spira\Model\Model\RelationDoesNotExistException;
 use Spira\Model\Validation\ValidationException;
 use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
