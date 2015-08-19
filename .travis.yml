@@ -19,6 +19,9 @@ env:
     - VANILLA_JSCONNECT_SECRET=a-secret-phrase-random-string
     - VANILLA_SERVER_HOST=127.0.0.1
     - VANILLA_SERVER_PORT=8008
+    - VANILLA_ADMIN_NAME=admin
+    - VANILLA_ADMIN_EMAIL=admin@admin.com
+    - VANILLA_ADMIN_PASSWORD=password
 
 before_install:
   - sudo apt-get update -qq
