@@ -122,40 +122,27 @@ abstract class EntityController extends ApiController
     public function putMany(Request $request)
     {
         $requestCollection = $request->data;
-        $models = $this->findCollection($requestCollection);
 
-        $error = false;
-        $errors = [];
+        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+
+        $modelCollection = $this->findCollection($requestCollection);
 
         foreach ($requestCollection as $requestEntity) {
             $id = $this->getIdOrNull($requestEntity, $this->getModel()->getKeyName());
-            if ($id && $models->has($id)) {
-                $model = $models->get($id);
-            } else {
+
+            $model = $modelCollection->get($id, false);
+
+            if (!$model){
                 $model = $this->getModel()->newInstance();
-                $models->add($model);
+                $modelCollection->add($model);
             }
 
-            try {
-                $this->validateRequest($requestEntity, $this->getValidationRules(), $model->exists);
-                if (!$error) {
-                    $model->fill($requestEntity);
-                    $model->save();
-                }
-                $errors[] = null;
-            } catch (ValidationException $e) {
-                $error = true;
-                $errors[] = $e;
-            }
-        }
-
-        if ($error) {
-            throw new ValidationExceptionCollection($errors);
+            $model->fill($requestEntity)->save();
         }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdCollection($models);
+            ->createdCollection($modelCollection);
     }
 
     /**
