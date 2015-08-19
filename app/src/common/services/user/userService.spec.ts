@@ -85,33 +85,6 @@
 
         describe('Retrieving User/Users', () => {
 
-            it('should return all users', () => {
-
-                let users = _.clone(fixtures.users); //get a new user copy
-
-                $httpBackend.expectGET('/api/users').respond(users);
-
-                let allUsersPromise = userService.getAllUsers();
-
-                expect(allUsersPromise).eventually.to.be.fulfilled;
-                expect(allUsersPromise).eventually.to.deep.equal(users);
-
-                $httpBackend.flush();
-
-            });
-
-            it('should reject the promise if getting users fails', () => {
-
-                $httpBackend.expectGET('/api/users').respond(500);
-
-                let allUsersPromise = userService.getAllUsers();
-
-                expect(allUsersPromise).eventually.to.be.rejected;
-
-                $httpBackend.flush();
-
-            });
-
             it('should be able to retrieve full info for one user', () => {
 
                 let user = _.clone(fixtures.user);
@@ -130,7 +103,7 @@
 
                 let userData = _.clone(fixtures.buildUser());
 
-                let user = userService.userFactory(userData);
+                let user = common.services.user.UserService.userFactory(userData);
 
                 expect(user).to.be.instanceOf(common.models.User);
 
@@ -149,6 +122,37 @@
                 expect(authService.getUser).to.have.been.called;
 
                 (<any>authService).getUser.restore();
+
+            });
+
+            describe('Retrieve a user paginator', () => {
+
+                beforeEach(() => {
+
+                    sinon.spy(ngRestAdapter, 'get');
+
+                });
+
+                afterEach(() => {
+                    (<any>ngRestAdapter.get).restore();
+                });
+
+                let users = _.clone(fixtures.users); // Get a set of users
+
+                it('should return the first set of users', () => {
+
+                    $httpBackend.expectGET('/api/users').respond(_.take(users, 10));
+
+                    let usersPaginator = userService.getUsersPaginator();
+
+                    let firstSet = usersPaginator.getNext(10);
+
+                    expect(firstSet).eventually.to.be.fulfilled;
+                    expect(firstSet).eventually.to.deep.equal(_.take(users, 10));
+
+                    $httpBackend.flush();
+
+                });
 
             });
 

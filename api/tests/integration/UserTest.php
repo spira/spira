@@ -25,29 +25,31 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
-    public function testGetAllByAdminUser()
+    public function testGetAllPaginatedByAdminUser()
     {
         $this->createUser([], 10);
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Range' => 'entities=0-19'
         ]);
 
-        $this->assertResponseOk();
+        $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
     }
 
-    public function testGetAllByGuestUser()
+    public function testGetAllPaginatedByGuestUser()
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Range' => 'entities=0-19'
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');

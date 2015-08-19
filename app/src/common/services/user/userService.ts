@@ -4,12 +4,16 @@ namespace common.services.user {
 
     export class UserService {
 
-        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog'];
+        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog', 'paginationService'];
+
+        private cachedPaginator:common.services.pagination.Paginator;
 
         constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
-                    private $mdDialog:ng.material.IDialogService) {
+                    private $mdDialog:ng.material.IDialogService,
+                    private paginationService:common.services.pagination.PaginationService
+        ) {
 
         }
 
@@ -18,25 +22,24 @@ namespace common.services.user {
          * @param userData
          * @returns {common.services.user.User}
          */
-        public userFactory(userData:global.IUserData):common.models.User {
+        public static userFactory(userData:global.IUserData):common.models.User {
             return new common.models.User(userData);
         }
 
         /**
-         * Get all users from the API
-         * @returns {any}
+         * Get the users paginator
+         * @returns {Paginator}
          */
-        public getAllUsers():ng.IPromise<common.models.User[]> {
+        public getUsersPaginator():common.services.pagination.Paginator {
 
-            return this.ngRestAdapter.get('/users')
-                .then((res) => {
+            // Cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator){
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/users')
+                    .setModelFactory(UserService.userFactory);
+            }
 
-                    return _.map(res.data, (userData:global.IUserData) => {
-                        return new common.models.User(userData);
-                    });
-                })
-            ;
-
+            return this.cachedPaginator;
         }
 
         /**

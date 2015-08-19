@@ -75,7 +75,7 @@ class UserController extends EntityController
         $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
         $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
 
-        $this->middleware('permission:readAll', ['only' => 'getAll']);
+        $this->middleware('permission:readAll', ['only' => 'getAllPaginated']);
         $this->middleware('permission:readOne', ['only' => 'getOne']);
         $this->middleware('permission:update', ['only' => 'patchOne']);
         $this->middleware('permission:delete', ['only' => 'deleteOne']);
