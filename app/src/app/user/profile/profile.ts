@@ -20,6 +20,7 @@ namespace app.user.profile {
                         templateUrl: 'templates/app/user/profile/profile.tpl.html'
                     }
                 },
+                reloadOnSearch: false, // Do not reload state when we remove the emailConfirmationToken or loginToken
                 params: <IStateParams> {
                     onBoard: false
                 },
@@ -98,7 +99,7 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes'];
+        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes', '$location'];
 
         constructor(
             private userService:common.services.user.UserService,
@@ -109,13 +110,27 @@ namespace app.user.profile {
             public fullUserInfo:common.models.User,
             public genderOptions:common.models.IGenderOption[],
             private authService:common.services.auth.AuthService,
-            public providerTypes:string[]
+            public providerTypes:string[],
+            private $location:ng.ILocationService
         ) {
             if (this.emailConfirmed) {
                 let updatedUser = userService.getAuthUser();
 
-                this.fullUserInfo.email = updatedUser.email; //if the email has been confirmed, the auth user's email will have updated
+                // If the email has been confirmed, the auth user's email will have updated
+                this.fullUserInfo.email = updatedUser.email;
             }
+
+            /*
+                Remove loginToken/emailConfirmationToken if present in the URL params. We need to do this so they are
+                not reused. Removing these will not reload state because 'reloadOnSearch' is set to false for this
+                state. Unfortunately these can not be removed in the resolves. loginToken can not be removed in
+                authService.ts:processLoginToken() for reasons undetermined.
+             */
+
+            this.$location.search('loginToken', null);
+
+            this.$location.search('emailConfirmationToken', null);
+
         }
 
         /**

@@ -11,6 +11,7 @@ namespace app.user.profile {
             genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions,
             providerTypes:string[] = common.models.UserSocialLogin.providerTypes,
             notificationService:common.services.notification.NotificationService,
+            $location:ng.ILocationService,
             userCredential:global.IUserCredential = <global.IUserCredential>{
                 userCredentialId:'007a61cb-3143-3f40-8436-dfab437c1871',
                 password:'Password'
@@ -66,11 +67,12 @@ namespace app.user.profile {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _$q_, _notificationService_) => {
+            inject(($controller, _$rootScope_, _$q_, _notificationService_, _$location_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $q = _$q_;
                 notificationService = _notificationService_;
+                $location = _$location_;
 
                 ProfileController = $controller(app.user.profile.namespace + '.controller', {
                     $scope: $scope,
@@ -82,7 +84,8 @@ namespace app.user.profile {
                     fullUserInfo: fullUserInfo,
                     genderOptions: genderOptions,
                     authService: authService,
-                    providerTypes: providerTypes
+                    providerTypes: providerTypes,
+                    $location: $location
                 });
             });
 
