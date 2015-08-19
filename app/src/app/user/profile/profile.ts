@@ -74,6 +74,9 @@ namespace app.user.profile {
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;
+                    },
+                    providerTypes:() => {
+                        return common.models.UserSocialLogin.providerTypes;
                     }
                 },
                 data: {
@@ -97,7 +100,7 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'notificationService', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService'];
+        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes'];
 
         constructor(
             private userService:common.services.user.UserService,
@@ -108,19 +111,18 @@ namespace app.user.profile {
             public fullUserInfo:common.models.User,
             public genderOptions:common.models.IGenderOption[],
             private authService:common.services.auth.AuthService,
-            public providerTypes:string[] = common.models.UserSocialLogin.providerTypes
+            public providerTypes:string[]
         ) {
-            // Hack to make this work for now
-            this.fullUserInfo._userProfile.dob = '1921-01-01';
-            this.fullUserInfo.emailConfirmed = '2015-05-05';
-
-            if (emailConfirmed) {
+            if (this.emailConfirmed) {
                 let updatedUser = userService.getAuthUser();
 
                 this.fullUserInfo.email = updatedUser.email; //if the email has been confirmed, the auth user's email will have updated
             }
         }
 
+        /**
+         * Edit profile form submit function
+         */
         public updateUser():void {
 
             if(_.isEmpty(this.fullUserInfo._userCredential)) {

@@ -238,7 +238,7 @@ class UserController extends EntityController
 
         $user = User::find($id);
 
-        $userData = $user->toArray();
+        $userData = $this->transformer->transformItem($user);
 
         if (is_null($user->userCredential)) {
             $userData['_user_credential'] = false;
@@ -252,14 +252,17 @@ class UserController extends EntityController
             $userData['_social_logins'] = $user->socialLogins->toArray();
         }
 
+        $userProfile = null;
+
         if (is_null($user->userProfile)) {
-            $newProfile = new UserProfile;
-            $newProfile->user_id = $id;
-            $user->setProfile($newProfile);
-            $userData['_user_profile'] = $newProfile->toArray();
+            $userProfile = new UserProfile;
+            $userProfile->user_id = $id;
+            $user->setProfile($userProfile);
         } else {
-            $userData['_user_profile'] = $user->userProfile->toArray();
+            $userProfile = $user->userProfile;
         }
+
+        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
 
         return $this->getResponse()
             ->transformer($this->transformer)

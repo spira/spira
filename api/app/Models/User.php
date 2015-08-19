@@ -15,6 +15,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
+    const EMAIL_CONFIRM_CACHE_TIME = 1440;
+
     /**
      * The primary key for the model.
      *
@@ -259,9 +261,9 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
 
-        Cache::put('email_confirmation_' . $token, $newEmail, 1440);
+        Cache::put('email_confirmation_' . $token, $newEmail, self::EMAIL_CONFIRM_CACHE_TIME);
 
-        Cache::put('email_change_' . $newEmail, $oldEmail, 1440);
+        Cache::put('email_change_' . $newEmail, $oldEmail, self::EMAIL_CONFIRM_CACHE_TIME);
 
         return $token;
     }

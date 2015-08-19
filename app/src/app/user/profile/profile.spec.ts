@@ -9,6 +9,7 @@ namespace app.user.profile {
             timezones:common.services.timezones.ITimezoneDefinition,
             $q:ng.IQService,
             genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions,
+            providerTypes:string[] = common.models.UserSocialLogin.providerTypes,
             notificationService:common.services.notification.NotificationService,
             userCredential:global.IUserCredential = <global.IUserCredential>{
                 userCredentialId:'007a61cb-3143-3f40-8436-dfab437c1871',
@@ -74,14 +75,14 @@ namespace app.user.profile {
                 ProfileController = $controller(app.user.profile.namespace + '.controller', {
                     $scope: $scope,
                     userService:userService,
-                    fullUserInfo: fullUserInfo,
                     notificationService:notificationService,
                     emailConfirmed:$q.when(false), //@todo mock this properly for tests
                     countries: countries,
                     timezones: timezones,
-                    userProfile: userProfile,
+                    fullUserInfo: fullUserInfo,
                     genderOptions: genderOptions,
-                    authService: authService
+                    authService: authService,
+                    providerTypes: providerTypes
                 });
             });
 
