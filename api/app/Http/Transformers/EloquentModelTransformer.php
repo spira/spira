@@ -119,15 +119,6 @@ class EloquentModelTransformer extends BaseTransformer
     }
 
     /**
-     * @param $var
-     * @return bool
-     */
-    protected function isIterable($var)
-    {
-        return (is_array($var) || $var instanceof Traversable);
-    }
-
-    /**
      * Rename an array key while preserving array order.
      *
      * @param  array   $array
