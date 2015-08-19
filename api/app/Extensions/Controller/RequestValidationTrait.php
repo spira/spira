@@ -151,13 +151,12 @@ trait RequestValidationTrait
      * @param bool|false $limitToKeysPresent
      * @return bool
      */
-    public function validateRequestCollection($requestCollection, $validationRules, $limitToKeysPresent = false){
-
+    public function validateRequestCollection($requestCollection, $validationRules, $limitToKeysPresent = false)
+    {
         $errorCaught = false;
         $errors = [];
 
         foreach ($requestCollection as $requestEntity) {
-
             try {
                 $this->validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
                 $errors[] = null;
@@ -172,7 +171,5 @@ trait RequestValidationTrait
         }
 
         return true;
-
     }
-
 }
