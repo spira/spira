@@ -143,7 +143,7 @@ class UserController extends EntityController
         $email = $request->get('email');
         if ($email && $model->email != $email) {
             $emailConfirmToken = $model->createEmailConfirmToken($email, $model->email);
-            $loginToken = $this->repository->makeLoginToken($model->user_id);
+            $loginToken = $model->makeLoginToken($model->user_id);
 
             $this->dispatch(new SendEmailConfirmationEmail($model, $email, $emailConfirmToken, $loginToken));
             $request->merge(['email_confirmed' => null]);
