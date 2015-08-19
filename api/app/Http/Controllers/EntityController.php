@@ -102,8 +102,9 @@ abstract class EntityController extends ApiController
      */
     public function putOne($id, Request $request)
     {
+
         $model = $this->findOrNewEntity($id);
-        $this->validateRequest($request->all(), $model->getValidationRules());
+        $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getModel()->getValidationRules(), $id));
 
         $model->fill($request->all())
             ->save();
@@ -124,21 +125,13 @@ abstract class EntityController extends ApiController
         $requestCollection = $request->data;
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+        $existingModels = $this->findCollection($requestCollection);
 
-        $modelCollection = $this->findCollection($requestCollection);
-
-        foreach ($requestCollection as $requestEntity) {
-            $id = $this->getIdOrNull($requestEntity, $this->getModel()->getKeyName());
-
-            $model = $modelCollection->get($id, false);
-
-            if (!$model){
-                $model = $this->getModel()->newInstance();
-                $modelCollection->add($model);
-            }
-
-            $model->fill($requestEntity)->save();
-        }
+        $modelCollection = $this->getModel()
+            ->hydrateRequestCollection($requestCollection, $existingModels)
+            ->each(function(BaseModel $model){
+                return $model->save();
+            });
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

@@ -297,11 +297,7 @@ class EntityTest extends TestCase
         }
 
         $this->put('/test/entities', ['data' => $entities]);
-        $object = json_decode($this->response->getContent());
-        $this->assertResponseStatus(201);
-
-        $this->assertTrue(is_array($object));
-        $this->assertCount(5, $object);
+        $this->assertResponseStatus(422);
     }
 
     public function testPatchManyNoIds()
