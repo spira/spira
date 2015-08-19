@@ -253,7 +253,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
         $this->assertTrue(is_integer($object->integer), 'Integer column type is integer');
-        $this->assertTrue(is_float($object->decimal), 'Decimal column type is integer');
+        $this->assertTrue(is_float($object->decimal) || is_integer($object->decimal), 'Decimal column type is integer');
         $this->assertNull($object->nullable, 'Nullable column type is null');
         $this->assertTrue(is_string($object->text), 'Text column type is text');
         $this->assertValidIso8601Date($object->date, 'Date column type is a valid ISO8601 date');
