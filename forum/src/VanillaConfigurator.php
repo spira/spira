@@ -158,7 +158,7 @@ class VanillaConfigurator
             'AssociationHashMethod' => 'md5',
             'AuthenticationSchemeAlias' => 'jsconnect',
             'Name' => 'Spira',
-            'AuthenticateUrl' => getenv('API_HOST').'/auth/sso/vanilla',
+            'AuthenticateUrl' => 'http://' . getenv('HOSTNAME_BASE') . '/api/auth/sso/vanilla',
             'Attributes' => serialize([
                 'HashType' => 'sha1',
                 'TestMode' => false,

@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\UserProfile;
+use Illuminate\Support\Facades\Cache;
 use App\Models\UserCredential;
 
 class UserTest extends TestCase
@@ -24,29 +25,31 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
-    public function testGetAllByAdminUser()
+    public function testGetAllPaginatedByAdminUser()
     {
         $this->createUser([], 10);
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Range' => 'entities=0-19'
         ]);
 
-        $this->assertResponseOk();
+        $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
     }
 
-    public function testGetAllByGuestUser()
+    public function testGetAllPaginatedByGuestUser()
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
         $this->get('/users', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'Range' => 'entities=0-19'
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -443,7 +446,7 @@ class UserTest extends TestCase
         preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
         $tokenUrl = trim($matches[0][0]);
         $parsed = parse_url($tokenUrl);
-        $token = str_replace('passwordResetToken=', '', $parsed['query']);
+        $token = str_replace('loginToken=', '', $parsed['query']);
 
         // Use it the first time
         $this->get('/auth/jwt/token', [
@@ -500,7 +503,11 @@ class UserTest extends TestCase
         preg_match_all('/https?:\/\/\S(?:(?![\'"]).)*/', $source, $matches);
         $tokenUrl = $matches[0][0];
         $parsed = parse_url($tokenUrl);
-        $emailToken = str_replace('emailConfirmationToken=', '', $parsed['query']);
+        $tokens = explode('&amp;', $parsed['query']);
+        $emailToken = str_replace('emailConfirmationToken=', '', $tokens[0]);
+        $loginToken = str_replace('loginToken=', '', $tokens[1]);
+        // Ensure the login token is valid
+        $this->assertEquals($user->user_id, Cache::get('login_token_' . $loginToken, false));
         // Confirm the email change
         $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];
@@ -523,8 +530,8 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
-        $cache = $this->app->make('Illuminate\Contracts\Cache\Repository');
-        $emailToken = $user->makeConfirmationToken($user->email, $cache);
+        // For the purposes of this test, the old email does not matter.
+        $emailToken = $user->createEmailConfirmToken($user->email, 'foo@bar.com');
         $this->patch('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Email-Confirm-Token' => $emailToken
@@ -541,7 +548,6 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
-
         $emailToken = 'foobar';
         $this->patch('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,

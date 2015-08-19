@@ -19,7 +19,6 @@ use App\Jobs\SendPasswordResetEmail;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use App\Extensions\Lock\Manager as Lock;
-use Illuminate\Contracts\Cache\Repository as Cache;
 
 class UserController extends EntityController
 {
@@ -40,13 +39,6 @@ class UserController extends EntityController
     protected $jwtAuth;
 
     /**
-     * Cache repository.
-     *
-     * @var Cache
-     */
-    protected $cache;
-
-    /**
      * Assign dependencies.
      *
      * @param  User $model
@@ -54,19 +46,16 @@ class UserController extends EntityController
      * @param  JWTAuth $jwtAuth
      * @param  Request $request
      * @param  EloquentModelTransformer $transformer
-     * @param  Cache $cache
      */
     public function __construct(
         User $model,
         Lock $lock,
         JWTAuth $jwtAuth,
         Request $request,
-        EloquentModelTransformer $transformer,
-        Cache $cache
+        EloquentModelTransformer $transformer
     ) {
         $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->cache = $cache;
         $this->permissions($request);
         parent::__construct($model, $transformer);
     }
@@ -86,7 +75,7 @@ class UserController extends EntityController
         $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
         $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
 
-        $this->middleware('permission:readAll', ['only' => 'getAll']);
+        $this->middleware('permission:readAll', ['only' => 'getAllPaginated']);
         $this->middleware('permission:readOne', ['only' => 'getOne']);
         $this->middleware('permission:update', ['only' => 'patchOne']);
         $this->middleware('permission:delete', ['only' => 'deleteOne']);
@@ -153,14 +142,16 @@ class UserController extends EntityController
         // Check if the email is being changed, and initialize confirmation
         $email = $request->get('email');
         if ($email && $model->email != $email) {
-            $token = $model->makeConfirmationToken($email, $this->cache);
-            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $token));
+            $emailConfirmToken = $model->createEmailConfirmToken($email, $model->email);
+            $loginToken = $model->makeLoginToken($model->user_id);
+
+            $this->dispatch(new SendEmailConfirmationEmail($model, $email, $emailConfirmToken, $loginToken));
             $request->merge(['email_confirmed' => null]);
         }
 
         // Change in email has been confirmed, set the new email
         if ($token = $request->headers->get('email-confirm-token')) {
-            if (!$email = $this->cache->pull('email_confirmation_'.$token)) {
+            if (!$email = $model->getEmailFromToken($token)) {
                 throw new ValidationException(
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
@@ -259,7 +250,7 @@ class UserController extends EntityController
 
         $user = User::find($id);
 
-        $userData = $user->toArray();
+        $userData = $this->transformer->transformItem($user);
 
         if (is_null($user->userCredential)) {
             $userData['_user_credential'] = false;
@@ -273,14 +264,17 @@ class UserController extends EntityController
             $userData['_social_logins'] = $user->socialLogins->toArray();
         }
 
+        $userProfile = null;
+
         if (is_null($user->userProfile)) {
-            $newProfile = new UserProfile;
-            $newProfile->user_id = $id;
-            $user->setProfile($newProfile);
-            $userData['_user_profile'] = $newProfile->toArray();
+            $userProfile = new UserProfile;
+            $userProfile->user_id = $id;
+            $user->setProfile($userProfile);
         } else {
-            $userData['_user_profile'] = $user->userProfile->toArray();
+            $userProfile = $user->userProfile;
         }
+
+        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
