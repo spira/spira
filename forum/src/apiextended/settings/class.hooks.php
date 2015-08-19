@@ -18,6 +18,11 @@ class ApiExtendedHooks implements Gdn_IPlugin
                 'Page' => val('Page', $data)
             ]
         ]);
+
+        $sender::delete('/foreign/[*:foreignID]', [
+            'controller' => 'ApiDiscussion',
+            'method' => 'deletebyforeignid'
+        ]);
     }
 
     /**

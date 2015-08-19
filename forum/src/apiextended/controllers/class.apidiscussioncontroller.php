@@ -5,7 +5,7 @@ class ApiDiscussionController extends DiscussionController
     /**
      * Get a single discussion.
      *
-     * @param  int    $foreignId
+     * @param  string $foreignId
      * @param  string $page
      *
      * @throws Gdn_UserException
@@ -27,6 +27,30 @@ class ApiDiscussionController extends DiscussionController
         }
 
         $this->index($this->Discussion->DiscussionID, '', $page);
+    }
+
+    /**
+     * Delete a single discussion.
+     *
+     * @param  string $foreignId
+     *
+     * @throws Gdn_UserException
+     *
+     * @return void
+     */
+    public function deleteByForeignId($foreignId = '')
+    {
+        if (!$this->isValidUuid($foreignId)) {
+            throw new Gdn_UserException('Bad Request', 400);
+        }
+
+        $discussion = $this->DiscussionModel->getForeignID($foreignId);
+
+        if (!is_object($discussion)) {
+            throw notFoundException('Discussion');
+        }
+
+        $this->delete($discussion->DiscussionID);
     }
 
     /**

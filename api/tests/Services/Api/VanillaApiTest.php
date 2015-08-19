@@ -160,6 +160,20 @@ class VanillaApiTest extends TestCase
         $api->remove(123);
     }
 
+    /**
+     * @test
+     */
+    public function shouldRemoveDiscussionByForeignId()
+    {
+        $api = $this->getApiMock(Discussion::class);
+
+        $api->expects($this->once())
+            ->method('delete')
+            ->with('discussions/foreign/123');
+
+        $api->removeByForeignId(123);
+    }
+
 
     // Comments
 

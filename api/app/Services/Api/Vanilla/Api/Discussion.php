@@ -105,4 +105,16 @@ class Discussion extends ApiAbstract
     {
         return $this->delete('discussions/'.$id);
     }
+
+    /**
+     * Remove a discussion by foreign id.
+     *
+     * @param  string $id
+     *
+     * @return array
+     */
+    public function removeByForeignId($id)
+    {
+        return $this->delete('discussions/foreign/'.$id);
+    }
 }

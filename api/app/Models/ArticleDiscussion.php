@@ -57,12 +57,8 @@ class ArticleDiscussion
      */
     public function delete()
     {
-        $discussion = $this->client->api('discussions')->findByForeignId(
+        $this->client->api('discussions')->removeByForeignId(
             $this->article->article_id
-        );
-
-        $this->client->api('discussions')->remove(
-            $discussion['Discussion']['DiscussionID']
         );
     }
 }

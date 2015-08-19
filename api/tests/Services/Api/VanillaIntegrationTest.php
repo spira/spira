@@ -1,5 +1,6 @@
 <?php
 
+use Rhumsaa\Uuid\Uuid;
 use App\Services\Api\Vanilla\Client;
 
 class VanillaIntegrationTest extends TestCase
@@ -250,6 +251,21 @@ class VanillaIntegrationTest extends TestCase
         $this->client->api('discussions')->remove($id);
 
         $this->client->api('discussions')->find($id);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function shouldDeleteDiscussionByForeignId()
+    {
+        $id = (string) Uuid::uuid4();
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1, ['ForeignID' => $id]);
+
+        $this->client->api('discussions')->removeByForeignId($id);
+
+        $this->client->api('discussions')->find($discussion['Discussion']['DiscussionID']);
     }
 
 
