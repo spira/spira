@@ -31,6 +31,8 @@ namespace app.guest.login {
 
     export class LoginController {
 
+        private credentials:NgJwtAuth.ICredentials;
+
         static $inject = ['$rootScope', '$mdDialog', 'notificationService', 'ngJwtAuthService', 'deferredCredentials', 'loginSuccess', 'userService', 'authService'];
 
         constructor(private $rootScope:global.IRootScope,
@@ -63,7 +65,20 @@ namespace app.guest.login {
             //register error handling and close on success
             this.loginSuccess.promise
                 .then(
-                (user) => this.$mdDialog.hide(user), //on success hide the dialog, pass through the returned user object
+                (user) => {
+                    this.$mdDialog.hide(user); //on success hide the dialog, pass through the returned user object
+
+                    //user has logged on with an unconfirmed email
+                    if(user.email != this.credentials.username) {
+                        this.$mdDialog.show(this.$mdDialog.alert()
+                            .clickOutsideToClose(false)
+                            .title('Please confirm your email')
+                            .content('You have signed in using an unconfirmed email address. Please note that your email address will not be changed until you have confirmed your email.')
+                            .ok('Continue')
+                            .ariaLabel('Confirm Email')
+                        );
+                    }
+                },
                 null,
                 (err:Error) => {
                     if (err instanceof NgJwtAuth.NgJwtAuthCredentialsFailedException) {
@@ -90,12 +105,12 @@ namespace app.guest.login {
          */
         public login(username, password) {
 
-            let credentials:NgJwtAuth.ICredentials = {
+            this.credentials = {
                 username: username,
                 password: password,
             };
 
-            this.deferredCredentials.notify(credentials); //resolve the deferred credentials with the passed creds
+            this.deferredCredentials.notify(this.credentials); //resolve the deferred credentials with the passed creds
 
         }
 

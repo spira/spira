@@ -140,6 +140,18 @@
 
             });
 
+            it('should be able to get a user from auth', () => {
+
+                sinon.spy(authService, 'getUser');
+
+                userService.getAuthUser();
+
+                expect(authService.getUser).to.have.been.called;
+
+                (<any>authService).getUser.restore();
+
+            });
+
         });
 
         describe('User Registration', () => {

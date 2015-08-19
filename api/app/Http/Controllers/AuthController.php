@@ -50,13 +50,17 @@ class AuthController extends ApiController
     /**
      * Assign dependencies.
      *
-     * @param  Auth                  $auth
-     * @param  JWTAuth               $jwtAuth
-     * @param  AuthTokenTransformer  $transformer
-     * @param  Application           $app
-     *
+     * @param Auth $auth
+     * @param JWTAuth $jwtAuth
+     * @param AuthTokenTransformer $transformer
+     * @param Application $app
+     * @param Cache $cache
      */
-    public function __construct(Auth $auth, JWTAuth $jwtAuth, AuthTokenTransformer $transformer, Application $app)
+    public function __construct(
+        Auth $auth,
+        JWTAuth $jwtAuth,
+        AuthTokenTransformer $transformer,
+        Application $app)
     {
         $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
@@ -65,7 +69,7 @@ class AuthController extends ApiController
     }
 
     /**
-     * Get a login token.
+     * Log in a user.
      *
      * @param Request $request
      *
@@ -78,8 +82,33 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
+        if (!$token = $this->attemptLogin($credentials)) {
+            // Check to see if the user has recently requested to change their email and try to log in using it
+            if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
+                $credentials['email'] = $oldEmail;
+                if (!$token = $this->attemptLogin($credentials)) {
+                    throw new UnauthorizedException('Credentials failed.');
+                }
+            } else {
+                throw new UnauthorizedException('Credentials failed.');
+            }
+        }
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($token);
+    }
+
+    /**
+     * Attempt to login and get token.
+     *
+     * @param $credentials
+     * @return bool|string
+     */
+    private function attemptLogin($credentials)
+    {
         if (!$this->auth->attempt($credentials)) {
-            throw new UnauthorizedException('Credentials failed.');
+            return false;
         }
 
         try {
@@ -88,9 +117,7 @@ class AuthController extends ApiController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->item($token);
+        return $token;
     }
 
     /**
