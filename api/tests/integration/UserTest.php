@@ -35,7 +35,8 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Range' => 'entities=0-19'
         ]);
-
+        $object = json_decode($this->response->getContent());
+        var_dump($object);exit;
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
