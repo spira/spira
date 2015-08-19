@@ -171,15 +171,13 @@ abstract class EntityController extends ApiController
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
 
-        $models = $this->findOrFailCollection($requestCollection);
+        $existingModels = $this->findOrFailCollection($requestCollection);
 
-        foreach ($requestCollection as $requestEntity) {
-            $id = $requestEntity[$this->getModel()->getKeyName()];
-            $model = $models->get($id);
-
-            $model->fill($requestEntity);
-            $model->save();
-        }
+        $this->getModel()
+            ->hydrateRequestCollection($requestCollection, $existingModels)
+            ->each(function(BaseModel $model){
+                return $model->save();
+            });
 
         return $this->getResponse()->noContent();
     }
@@ -206,11 +204,11 @@ abstract class EntityController extends ApiController
     public function deleteMany(Request $request)
     {
         $requestCollection = $request->data;
-        $models = $this->findOrFailCollection($requestCollection);
 
-        $models->each(function(BaseModel $model){
-            $model->delete();
-        });
+        $this->findOrFailCollection($requestCollection)
+            ->each(function(BaseModel $model){
+                $model->delete();
+            });
 
         return $this->getResponse()->noContent();
     }
