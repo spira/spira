@@ -13,25 +13,16 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
 {
     use Authenticatable, LockAware;
 
-    /**
-     * Login token time to live in minutes.
-     *
-     * @var int
-     */
-    protected $login_token_ttl = 1440;
-
-    /**
-     * Cache repository.
-     *
-     * @var Cache
-     */
-    protected $cache;
-
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
-
-    const EMAIL_CONFIRM_CACHE_TIME = 1440;
+    
+    /**
+     * Login/email confirm token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $token_ttl = 1440;
 
     /**
      * The primary key for the model.
@@ -267,6 +258,68 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
+     * Make an email confirmation token for a user.
+     *
+     * @param  string  $email
+     * @param  Cache   $cache
+     *
+     * @return string
+     */
+    public function makeConfirmationToken($email, Cache $cache)
+    {
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        Cache::put('email_confirmation_'.$token, $email, 1440);
+        return $token;
+    }
+
+
+    /**
+     * Get a user by single use login token.
+     *
+     * @param string $token
+     *
+     * @return mixed
+     */
+    public function findByLoginToken($token)
+    {
+        if ($id = Cache::pull('login_token_'.$token)) {
+            $user = $this->findOrFail($id);
+
+            return $user;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a user by their email.
+     *
+     * @param $email
+     * @return mixed
+     */
+    public function findByEmail($email)
+    {
+        return $this->where('email', '=', $email)->firstOrFail();
+    }
+
+    /**
+     * Make a single use login token for a user.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
+    public function makeLoginToken($id)
+    {
+        $user = $this->findOrFail($id);
+
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        Cache::put('login_token_'.$token, $user->user_id, $this->token_ttl);
+
+        return $token;
+    }
+
+    /**
      * Create an email confirmation token for a user.
      *
      * @param $newEmail
@@ -277,9 +330,9 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
 
-        Cache::put('email_confirmation_' . $token, $newEmail, self::EMAIL_CONFIRM_CACHE_TIME);
+        Cache::put('email_confirmation_' . $token, $newEmail, $this->token_ttl);
 
-        Cache::put('email_change_' . $newEmail, $oldEmail, self::EMAIL_CONFIRM_CACHE_TIME);
+        Cache::put('email_change_' . $newEmail, $oldEmail, $this->token_ttl);
 
         return $token;
     }
