@@ -137,6 +137,25 @@ class AuthTest extends TestCase
         $this->assertEquals($decoded, $array['decodedTokenBody']);
     }
 
+    public function testLoginNewEmailAfterChangeWrongPassword()
+    {
+        $user = factory(User::class)->create();
+        $credential = factory(App\Models\UserCredential::class)->make();
+        $credential->user_id = $user->user_id;
+        $credential->save();
+
+        $user->createEmailConfirmToken('foo@bar.net', $user->email);
+
+        $this->get('/auth/jwt/login', [
+            'PHP_AUTH_USER' => 'foo@bar.net',
+            'PHP_AUTH_PW'   => '',
+        ]);
+
+        $body = json_decode($this->response->getContent());
+        $this->assertResponseStatus(401);
+        $this->assertContains('failed', $body->message);
+    }
+
     public function testLoginOldEmailAfterChange()
     {
         $user = factory(User::class)->create();

@@ -107,9 +107,23 @@ namespace app.user.profile {
         describe('User Interactions', () => {
 
 
-            it('should be able to update the profile', () => {
+            it('should be able to update the user', () => {
 
                 ProfileController.fullUserInfo.email = 'valid@email.com';
+
+                ProfileController.updateUser();
+
+                $scope.$apply();
+
+                expect(notificationService.toast).to.have.been.calledWith('Profile update was successful');
+
+            });
+
+            it('should be able to update the user with an empty profile', () => {
+
+                ProfileController.fullUserInfo.email = 'valid@email.com';
+
+                ProfileController.fullUserInfo._userProfile = null;
 
                 ProfileController.updateUser();
 
