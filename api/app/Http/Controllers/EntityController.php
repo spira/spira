@@ -47,7 +47,7 @@ abstract class EntityController extends ApiController
     public function getAll(Request $request)
     {
         $collection = $this->getAllEntities();
-        $collection = $this->getEntityWithNested($collection,$request);
+        $collection = $this->getEntityWithNested($collection, $request);
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
@@ -400,13 +400,12 @@ abstract class EntityController extends ApiController
      */
     private function getEntityWithNested($model, Request $request)
     {
-
-        if ((!$model instanceof BaseModel) && (!$model instanceof Collection)){
+        if ((!$model instanceof BaseModel) && (!$model instanceof Collection)) {
             throw new \InvalidArgumentException('Model must be instance of Model or Collection');
         }
 
         $nested = $request->headers->get('With-Nested');
-        if (!$nested){
+        if (!$nested) {
             return $model;
         }
 
@@ -414,13 +413,10 @@ abstract class EntityController extends ApiController
 
         try {
             $model->load($requestedRelations);
-        }catch(\BadMethodCallException $e){
-
+        } catch (\BadMethodCallException $e) {
             throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
         }
 
         return $model;
-
-
     }
 }
