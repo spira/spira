@@ -21,32 +21,15 @@ trait RequestValidationTrait
     /**
      * @param $entityCollection
      * @param string $keyName
-     * @param string|null $rule
      * @return array
-     * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection, $keyName, $rule = null)
+    public function getIds($entityCollection, $keyName)
     {
         $ids = [];
-        $errors = [];
-        $error = false;
         foreach ($entityCollection as $requestEntity) {
             if (isset($requestEntity[$keyName]) && $requestEntity[$keyName]) {
-                try {
-                    $id = $requestEntity[$keyName];
-                    $this->validateId($id, $keyName, $rule);
-                    $ids[] = $id;
-                    $errors[] = null;
-                } catch (ValidationException $e) {
-                    $error = true;
-                    $errors[] = $e;
-                }
-            } else {
-                $errors[] = null;
+                $ids[] = $requestEntity[$keyName];
             }
-        }
-        if ($error) {
-            throw new ValidationExceptionCollection($errors);
         }
 
         return $ids;
@@ -103,22 +86,6 @@ trait RequestValidationTrait
         }
 
         throw new ValidationExceptionCollection($errors);
-    }
-
-    /**
-     * @param $id
-     * @param string $keyName
-     * @param string|null $rule
-     * @throw ValidationException
-     */
-    protected function validateId($id, $keyName, $rule = null)
-    {
-        if (!is_null($rule)) {
-            $validation = $this->getValidationFactory()->make([$keyName=>$id], [$keyName=>$rule]);
-            if ($validation->fails()) {
-                throw new ValidationException($validation->getMessageBag());
-            }
-        }
     }
 
 

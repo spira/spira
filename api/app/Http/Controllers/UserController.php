@@ -99,7 +99,6 @@ class UserController extends EntityController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
         if ($this->getModel()->find($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -179,6 +178,7 @@ class UserController extends EntityController
         $credentialUpdateDetails = $request->get('_user_credential', []);
         if (!empty($credentialUpdateDetails)) {
             $credentials = UserCredential::findOrNew($id);
+            /** @var UserCredential $credentials */
             $credentials->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
@@ -222,7 +222,6 @@ class UserController extends EntityController
      */
     public function unlinkSocialLogin($id, $provider)
     {
-        $this->validateId($id, $this->getModel()->getKeyName());
         if (!$socialLogin = SocialLogin::where('user_id', '=', $id)
             ->where('provider', '=', $provider)
             ->first()) {
@@ -230,10 +229,10 @@ class UserController extends EntityController
         }
 
         $socialLogin->delete();
-
+        /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
 
-        $token = $jwtAuth->fromUser($this->repository->find($id));
+        $token = $jwtAuth->fromUser(User::find($id));
 
         return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
@@ -246,8 +245,7 @@ class UserController extends EntityController
      */
     public function getOne($id)
     {
-        $this->validateId($id, $this->getModel()->getKeyName());
-
+        /** @var User $user */
         $user = User::find($id);
 
         $userData = $this->transformer->transformItem($user);

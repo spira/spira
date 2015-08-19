@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
-use Spira\Model\Validation\ValidationException;
-use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 use Spira\Responder\Response\ApiResponse;
@@ -103,7 +101,9 @@ abstract class EntityController extends ApiController
     public function putOne($id, Request $request)
     {
         $model = $this->findOrNewEntity($id);
-        $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getModel()->getValidationRules(), $id));
+
+        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);
+        $this->validateRequest($request->all(), $validationRules);
 
         $model->fill($request->all())
             ->save();
@@ -169,7 +169,6 @@ abstract class EntityController extends ApiController
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
-
         $existingModels = $this->findOrFailCollection($requestCollection);
 
         $this->getModel()
@@ -218,8 +217,6 @@ abstract class EntityController extends ApiController
      */
     protected function findOrNewEntity($id)
     {
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->getIdValidationRule());
-
         try {
             return $this->getModel()->findByIdentifier($id);
         } catch (ModelNotFoundException $e) {
@@ -233,8 +230,6 @@ abstract class EntityController extends ApiController
      */
     protected function findOrFailEntity($id)
     {
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->getIdValidationRule());
-
         try {
             return $this->getModel()->findByIdentifier($id);
         } catch (ModelNotFoundException $e) {
@@ -266,7 +261,7 @@ abstract class EntityController extends ApiController
      */
     protected function findOrFailCollection($requestCollection)
     {
-        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->getIdValidationRule());
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName());
 
         if (empty($ids)) {
             throw $this->notFoundManyException($ids, $this->getModel()->newCollection(), $this->getModel()->getKeyName());
@@ -287,8 +282,7 @@ abstract class EntityController extends ApiController
      */
     protected function findCollection($requestCollection)
     {
-        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->getIdValidationRule());
-
+        $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName());
         return $this->getModel()->findMany($ids); //if $ids is empty, findMany returns an empty collection
     }
 
@@ -300,25 +294,6 @@ abstract class EntityController extends ApiController
         return $this->model;
     }
 
-    /**
-     * Get id validation rule from model validation rules
-     * Can be overriden by validateIdRule property
-     * @return null|string
-     */
-    protected function getIdValidationRule()
-    {
-        if ($this->validateIdRule) {
-            return $this->validateIdRule;
-        }
-
-        $validationRules = $this->getValidationRules();
-
-        if (isset($validationRules[$this->getModel()->getKeyName()])) {
-            return $validationRules[$this->getModel()->getKeyName()];
-        }
-
-        return null;
-    }
 
     /**
      * @return array
