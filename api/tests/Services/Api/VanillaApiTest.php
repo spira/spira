@@ -17,8 +17,6 @@ class VanillaApiTest extends TestCase
 
         $client = new Client($guzzleClient);
 
-        $client->setUser('foobar');
-
         return $this->getMockBuilder($apiClass)
             ->setMethods(['get', 'post', 'postRaw', 'delete', 'put'])
             ->setConstructorArgs([$client])

@@ -72,6 +72,72 @@ class VanillaIntegrationTest extends TestCase
         $discussion = $this->client->api('discussions')->find('foobar');
     }
 
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException
+     */
+    public function shouldNotAccessApiService()
+    {
+        $env = getenv('FORUM_HOST');
+        putenv('FORUM_HOST=http://foo.bar');
+
+        $client = App::make(Client::class);
+
+        // Restore the env variable
+        putenv('FORUM_HOST='.$env);
+
+        $client->api('discussions')->all();
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function shouldHandleUnknownError()
+    {
+        $response = $this->getMock('Guzzle\Http\Message\Response', ['getStatusCode'], [420]);
+        $response
+            ->method('getStatusCode')
+            ->willReturn(420);
+
+        $request = $this->getMock('Guzzle\Http\Message\Request', [], [null, null]);
+        $request
+            ->method('getResponse')
+            ->willReturn($response);
+
+        $error = new App\Services\Api\Vanilla\Error;
+        $event = new Guzzle\Common\Event;
+        $event['request'] = $request;
+
+        $error->onRequestError($event);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnNoneJsonBodyUnmodified()
+    {
+        $body = 'foobar';
+
+        $response = $this->getMock('Guzzle\Http\Message\Response', [], [0]);
+        $response
+            ->method('getBody')
+            ->willReturn($body);
+
+        $guzzleClient = $this->getMock('Guzzle\Http\Client', ['send']);
+        $guzzleClient
+            ->expects($this->any())
+            ->method('send')
+            ->willReturn($response);
+
+        $client = new Client($guzzleClient);
+        $response = $client->api('discussions')->all();
+
+        $this->assertEquals($body, $response);
+    }
+
 
     // Generic
 
@@ -89,4 +155,141 @@ class VanillaIntegrationTest extends TestCase
         // Clean up
         $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
+
+
+    // Discussions
+
+    /**
+     * @test
+     */
+    public function shouldGetDiscussions()
+    {
+        $all = $this->client->api('discussions')->all();
+
+        $this->assertArrayHasKey('Discussions', $all);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateDiscussion()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+
+        $this->assertArrayHasKey('Discussion', $discussion);
+        $this->assertEquals('Discussion', $discussion['Type']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetDiscussion()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $discussion = $this->client->api('discussions')->find($id);
+
+        $this->assertEquals($id, $discussion['Discussion']['DiscussionID']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUpdateDiscussion()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $discussion = $this->client->api('discussions')->update($id, 'Foobar', 'Foo');
+
+        $this->assertEquals('Foobar', $discussion['Discussion']['Name']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function shouldDeleteDiscussion()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $this->client->api('discussions')->remove($id);
+
+        $this->client->api('discussions')->find($id);
+    }
+
+
+    // Comments
+
+    /**
+     * @test
+     */
+    public function shouldCreateComment()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $this->client->api('comments')->create($id, 'foobar');
+
+        $this->assertEquals($id, $comment['Comment']['DiscussionID']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUpdateComment()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $id = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $this->client->api('comments')->create($id, 'foobar');
+        $id = $comment['Comment']['CommentID'];
+
+        $comment = $this->client->api('comments')->update($id, 'barfoo');
+
+        $this->assertEquals('barfoo', $comment['Comment']['Body']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldDeleteComment()
+    {
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        $comment = $this->client->api('comments')->create($discussionId, 'foobar');
+        $id = $comment['Comment']['CommentID'];
+
+        $comment = $this->client->api('comments')->remove($id);
+
+        $discussion = $this->client->api('discussions')->find($discussionId);
+
+        $this->assertCount(0, $discussion['Comments']);
+
+        // Clean up
+        $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+
+    // Users
+
 }
