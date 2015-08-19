@@ -99,7 +99,6 @@ class Build
      */
     protected function setupVanilla()
     {
-
         copy('config.php', 'public/conf/config.php'); //also overwrites the config file for a repeated migration (for qa)
 
         (new VanillaConfigurator)->start();
