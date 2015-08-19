@@ -102,7 +102,6 @@ abstract class EntityController extends ApiController
      */
     public function putOne($id, Request $request)
     {
-
         $model = $this->findOrNewEntity($id);
         $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getModel()->getValidationRules(), $id));
 
@@ -129,7 +128,7 @@ abstract class EntityController extends ApiController
 
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function(BaseModel $model){
+            ->each(function (BaseModel $model) {
                 return $model->save();
             });
 
@@ -175,7 +174,7 @@ abstract class EntityController extends ApiController
 
         $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function(BaseModel $model){
+            ->each(function (BaseModel $model) {
                 return $model->save();
             });
 
@@ -206,7 +205,7 @@ abstract class EntityController extends ApiController
         $requestCollection = $request->data;
 
         $this->findOrFailCollection($requestCollection)
-            ->each(function(BaseModel $model){
+            ->each(function (BaseModel $model) {
                 $model->delete();
             });
 

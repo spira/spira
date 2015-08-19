@@ -404,16 +404,15 @@ abstract class BaseModel extends Model
      */
     public function hydrateRequestCollection(array $requestCollection, Collection $existingModels = null)
     {
-
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
             $model = null;
             $entityId = $item[$keyName];
 
-            if ($existingModels){
+            if ($existingModels) {
                 $model = $existingModels->get($entityId, $this->newInstance());
-            }else{
+            } else {
                 $this->findOrNew($entityId);
             }
 
@@ -424,6 +423,4 @@ abstract class BaseModel extends Model
 
         return $this->newCollection($models);
     }
-
-
 }
