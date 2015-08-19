@@ -41,13 +41,16 @@ abstract class EntityController extends ApiController
     /**
      * Get all entities.
      *
+     * @param Request $request
      * @return ApiResponse
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
+        $collection = $this->getAllEntities();
+        $collection = $this->getEntityWithNested($collection,$request);
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->collection($this->getAllEntities());
+            ->collection($collection);
     }
 
     public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
@@ -56,6 +59,7 @@ abstract class EntityController extends ApiController
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
         $collection = $this->getAllEntities($limit, $offset);
+        $collection = $this->getEntityWithNested($collection, $request->getRequest());
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -65,13 +69,14 @@ abstract class EntityController extends ApiController
     /**
      * Get one entity.
      *
+     * @param Request $request
      * @param  string $id
      * @return ApiResponse
      */
     public function getOne(Request $request, $id)
     {
-        $this->attachNested($request);
         $model = $this->findOrFailEntity($id);
+        $model = $this->getEntityWithNested($model, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -342,29 +347,6 @@ abstract class EntityController extends ApiController
         return $this->model;
     }
 
-    /**
-     * Attaches nested relation to the base model
-     * So nested relations attaches on each request
-     * @param Request $request
-     * @return null
-     */
-    private function attachNested(Request $request)
-    {
-        $nested = $request->headers->get('With-Nested');
-        if (!$nested) {
-            return null;
-        }
-
-        $requestedRelations = explode(', ', $nested);
-
-        try {
-            $this->getModel()->setWith($requestedRelations);
-        } catch (RelationDoesNotExistException $e) {
-            throw new BadRequestException($e->getMessage(), null, $e);
-        }
-
-        return null;
-    }
 
     /**
      * Get id validation rule from model validation rules
@@ -409,5 +391,36 @@ abstract class EntityController extends ApiController
 
         $validationRules[$keyName].= $rule;
         return $validationRules;
+    }
+
+    /**
+     * @param Collection|BaseModel $model
+     * @param Request $request
+     * @return mixed
+     */
+    private function getEntityWithNested($model, Request $request)
+    {
+
+        if ((!$model instanceof BaseModel) && (!$model instanceof Collection)){
+            throw new \InvalidArgumentException('Model must be instance of Model or Collection');
+        }
+
+        $nested = $request->headers->get('With-Nested');
+        if (!$nested){
+            return $model;
+        }
+
+        $requestedRelations = explode(', ', $nested);
+
+        try {
+            $model->load($requestedRelations);
+        }catch(\BadMethodCallException $e){
+
+            throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
+        }
+
+        return $model;
+
+
     }
 }
