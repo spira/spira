@@ -103,13 +103,10 @@ abstract class EntityController extends ApiController
     public function putOne($id, Request $request)
     {
         $model = $this->findOrNewEntity($id);
-        $validationRules = $this->getValidationRules();
-        if ($model->exists) {
-            $validationRules = $this->addIdOverrideValidationRule($validationRules, $id);
-        }
-        $this->validateRequest($request->all(), $validationRules, $model->exists);
-        $model->fill($request->all());
-        $model->save();
+        $this->validateRequest($request->all(), $model->getValidationRules());
+
+        $model->fill($request->all())
+            ->save();
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -321,13 +318,7 @@ abstract class EntityController extends ApiController
     {
         $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName(), $this->getIdValidationRule());
 
-        if (!empty($ids)) {
-            $models = $models = $this->getModel()->findMany($ids);
-        } else {
-            $models = $this->getModel()->newCollection();
-        }
-
-        return $models;
+        return $this->getModel()->findMany($ids); //if $ids is empty, findMany returns an empty collection
     }
 
     /**
