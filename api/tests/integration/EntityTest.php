@@ -291,6 +291,19 @@ class EntityTest extends TestCase
         }
     }
 
+    public function testGetOneWithInvalidNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities/'.$entity->entity_id, ['with-nested'=>'not-a-valid-nesting']);
+        $object = json_decode($this->response->getContent());
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(400);
+
+    }
+
     public function testPostOneValid()
     {
         $entity = factory(App\Models\TestEntity::class)->make();
