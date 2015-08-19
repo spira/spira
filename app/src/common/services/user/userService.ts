@@ -133,10 +133,9 @@ namespace common.services.user {
         public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any> {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
-                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => {
-                    return rejection.status == 422;
-                })
-                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
+                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => rejection.status == 422)
+                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken})
+            ;
         }
 
         /**
@@ -160,6 +159,15 @@ namespace common.services.user {
                     return new common.models.User(res.data);
                 });
         }
+
+        /**
+         * Get the auth user
+         * @returns {common.models.User}
+         */
+        public getAuthUser():common.models.User {
+            return <common.models.User>this.ngJwtAuthService.getUser();
+        }
+
     }
 
     angular.module(namespace, [])
