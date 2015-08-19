@@ -64,7 +64,7 @@ class Article extends BaseModel
     }
 
     /**
-     * Listen for save event
+     * Bootstrap model with event listeners.
      *
      * Saving permalink to history
      */
@@ -85,6 +85,20 @@ class Article extends BaseModel
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
                 $model->permalinks()->save($articlePermalink);
             }
+            return true;
+        });
+
+        static::created(function (Article $article) {
+            $articleDiscussion = new ArticleDiscussion($article);
+            $articleDiscussion->create();
+
+            return true;
+        });
+
+        static::deleted(function (Article $article) {
+            $articleDiscussion = new ArticleDiscussion($article);
+            $articleDiscussion->delete();
+
             return true;
         });
     }
