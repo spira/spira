@@ -30,6 +30,17 @@ class Build
     }
 
     /**
+     * Runs after a composer update.
+     *
+     * @param   Event   $event  [description]
+     * @return  void
+     */
+    public static function buildForum(Event $event)
+    {
+        self::getInstance()->setupVanilla();
+    }
+
+    /**
      * Combine the retrieved packages to the required application.
      *
      * @return void
@@ -50,8 +61,7 @@ class Build
 
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
 
-        // Setup Vanilla
-        (new VanillaConfigurator)->start();
+        $this->setupVanilla();
     }
 
     /**
@@ -85,5 +95,13 @@ class Build
     protected static function getInstance()
     {
         return new Build;
+    }
+
+    /**
+     * Run the vanilla setup functions
+     */
+    protected function setupVanilla()
+    {
+        (new VanillaConfigurator)->start();
     }
 }

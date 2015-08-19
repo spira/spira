@@ -83,6 +83,7 @@
         }
     },
     "scripts": {
+        "build-forum": "Spira\\Build::buildForum",
         "post-install-cmd": "Spira\\Build::postInstall",
         "post-update-cmd": ""
     }
