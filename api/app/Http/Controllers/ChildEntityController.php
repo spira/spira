@@ -99,11 +99,13 @@ class ChildEntityController extends ApiController
      */
     public function postOne($id, Request $request)
     {
-        $model = $this->findParentEntity($id);
+        $parent = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
+
         $this->validateRequest($request->all(), $this->getValidationRules());
+
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -120,15 +122,14 @@ class ChildEntityController extends ApiController
      */
     public function putOne($id, $childId, Request $request)
     {
-        $model = $this->findParentEntity($id);
-        $childModel = $this->findOrNewChildEntity($childId, $model);
-        $validationRules = $this->getValidationRules();
-        if ($childModel->exists) {
-            $validationRules = $this->addIdOverrideValidationRule($validationRules, $childId);
-        }
-        $this->validateRequest($request->all(), $validationRules, $childModel->exists);
+        $parent = $this->findParentEntity($id);
+        $childModel = $this->findOrNewChildEntity($childId, $parent);
+
+
+        $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getValidationRules(), $childId));
+
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -144,38 +145,17 @@ class ChildEntityController extends ApiController
      */
     public function putMany($id, Request $request)
     {
+        $parent = $this->findParentEntity($id);
+
         $requestCollection = $request->data;
-        $model = $this->findParentEntity($id);
-        $childModels = $this->findChildrenCollection($requestCollection, $model);
+        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
-        $error = false;
-        $errors = [];
-        foreach ($requestCollection as $requestEntity) {
-            $id = $this->getIdOrNull($requestEntity, $this->getChildModel()->getKeyName());
-            if ($id && !empty($childModels) && $childModels->has($id)) {
-                $childModel = $childModels->get($id);
-            } else {
-                $childModel = $this->getChildModel()->newInstance();
-                $childModels->add($childModel);
-            }
+        $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
 
-            try {
-                $this->validateRequest($requestEntity, $this->getValidationRules(), $childModel->exists);
-                if (!$error) {
-                    $childModel->fill($requestEntity);
-                }
-                $errors[] = null;
-            } catch (ValidationException $e) {
-                $error = true;
-                $errors[] = $e;
-            }
-        }
+        $childModels = $this->getChildModel()
+            ->hydrateRequestCollection($requestCollection, $existingChildModels);
 
-        if ($error) {
-            throw new ValidationExceptionCollection($errors);
-        }
-
-        $this->getRelation($model)->saveMany($childModels);
+        $this->getRelation($parent)->saveMany($childModels);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -192,12 +172,15 @@ class ChildEntityController extends ApiController
      */
     public function patchOne($id, $childId, Request $request)
     {
-        $model = $this->findParentEntity($id);
-        $childModel = $this->findOrFailChildEntity($childId, $model);
+        $parent = $this->findParentEntity($id);
+        $childModel = $this->findOrFailChildEntity($childId, $parent);
+
         $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $childId);
+
         $this->validateRequest($request->all(), $validationRules, true);
+
         $childModel->fill($request->all());
-        $this->getRelation($model)->save($childModel);
+        $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()->noContent();
     }
@@ -212,32 +195,18 @@ class ChildEntityController extends ApiController
     public function patchMany($id, Request $request)
     {
         $requestCollection = $request->data;
-        $model = $this->findParentEntity($id);
-        $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
+        $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
-        $error = false;
-        $errors = [];
-        foreach ($requestCollection as $requestEntity) {
-            $id = $this->getIdOrNull($requestEntity, $this->getChildModel()->getKeyName());
-            $childModel = $childModels->get($id);
+        $parent = $this->findParentEntity($id);
+        $existingChildModels = $this->findOrFailChildrenCollection($requestCollection, $parent);
 
-            try {
-                $this->validateRequest($requestEntity, $this->getValidationRules(), true);
-                if (!$error) {
-                    $childModel->fill($requestEntity);
-                }
-                $errors[] = null;
-            } catch (ValidationException $e) {
-                $error = true;
-                $errors[] = $e;
-            }
-        }
+        $childModels = $this->getChildModel()
+            ->hydrateRequestCollection($requestCollection, $existingChildModels)
+            ->each(function (BaseModel $model) {
+                return $model->save();
+            });
 
-        if ($error) {
-            throw new ValidationExceptionCollection($errors);
-        }
-
-        $this->getRelation($model)->saveMany($childModels);
+        $this->getRelation($parent)->saveMany($childModels);
 
         return $this->getResponse()->noContent();
     }
@@ -253,6 +222,7 @@ class ChildEntityController extends ApiController
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
+
         $childModel->delete();
 
         return $this->getResponse()->noContent();
@@ -269,10 +239,10 @@ class ChildEntityController extends ApiController
     {
         $requestCollection = $request->data;
         $model = $this->findParentEntity($id);
-        $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
-        foreach ($childModels as $childModel) {
-            $childModel->delete();
-        }
+
+        $this->findOrFailChildrenCollection($requestCollection, $model)->each(function (BaseModel $model) {
+            $model->delete();
+        });
 
         return $this->getResponse()->noContent();
     }
@@ -370,12 +340,12 @@ class ChildEntityController extends ApiController
     {
         $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
 
-        if (!empty($ids)) {
-            $models = $this->getRelation($parent)->findMany($ids);
-        } else {
+        if (empty($ids)) {
             $models = $this->getChildModel()->newCollection();
             throw $this->notFoundManyException($ids, $models, $this->getChildModel()->getKeyName());
         }
+
+        $models = $this->getRelation($parent)->findMany($ids);
 
         if ($models && count($ids) !== $models->count()) {
             throw $this->notFoundManyException($ids, $models, $this->getChildModel()->getKeyName());
@@ -388,11 +358,7 @@ class ChildEntityController extends ApiController
     {
         $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
 
-        if (!empty($ids)) {
-            $models = $this->getRelation($parent)->findMany($ids);
-        } else {
-            $models = $this->getChildModel()->newCollection();
-        }
+        $models = $this->getRelation($parent)->findMany($ids);
 
         return $models;
     }

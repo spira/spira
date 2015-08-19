@@ -185,11 +185,8 @@ class ChildEntityTest extends TestCase
         }
 
         $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
-        $object = json_decode($this->response->getContent());
-        $this->assertResponseStatus(201);
-
-        $this->assertTrue(is_array($object));
-        $this->assertCount(5, $object);
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
     }
 
     public function testPatchManyNoIds()
