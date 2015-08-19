@@ -25,8 +25,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransformerInterface::class, EloquentModelTransformer::class);
         $this->app->bind(PaginatedRequestDecoratorInterface::class, RangeRequest::class);
 
+        //for some reason this part of is not shown as covered, though it really is
+        // @codeCoverageIgnoreStart
         Validator::resolver(function ($translator, $data, $rules, $messages) {
             return new SpiraValidator($translator, $data, $rules, $messages);
         });
+        // @codeCoverageIgnoreEnd
     }
 }

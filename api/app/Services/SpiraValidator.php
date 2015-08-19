@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Validation\Validator;
+use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
 {
@@ -20,14 +20,12 @@ class SpiraValidator extends Validator
         return false;
     }
 
-    public function validateCreateOnly($attribute, $value, $parameters)
+    public function validateEquals($attribute, $value, $parameters)
     {
-        $original = $this->model->getOriginal($attribute);
-        if (is_null($original)) {
-            return true;
-        }
+        $this->requireParameterCount(1, $parameters, 'equals');
+        $compare = $parameters[0];
 
-        if ($original == $value) {
+        if ($compare == $value) {
             return true;
         }
 
@@ -40,7 +38,7 @@ class SpiraValidator extends Validator
      * @param  string  $attribute
      * @param  string  $value
      * @param  array   $parameters
-     * @return void
+     * @return bool
      */
     protected function validateCountry($attribute, $value, $parameters)
     {

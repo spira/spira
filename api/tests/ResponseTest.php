@@ -14,6 +14,16 @@ class ResponseTest extends TestCase
         $this->assertEquals($url, $response->headers->get('location'));
     }
 
+    public function testCreatedWithRedirect()
+    {
+        $url = 'http:://foo.bar';
+        $response = new ApiResponse;
+        $response->created($url);
+
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertEquals($url, $response->headers->get('location'));
+    }
+
     public function testRedirectNoUrl()
     {
         $this->setExpectedExceptionRegExp(
