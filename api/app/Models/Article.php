@@ -90,14 +90,14 @@ class Article extends BaseModel
 
         static::created(function (Article $article) {
             $articleDiscussion = new ArticleDiscussion($article);
-            $articleDiscussion->create();
+            $articleDiscussion->newDiscussion();
 
             return true;
         });
 
         static::deleted(function (Article $article) {
             $articleDiscussion = new ArticleDiscussion($article);
-            $articleDiscussion->delete();
+            $articleDiscussion->deleteDiscussion();
 
             return true;
         });

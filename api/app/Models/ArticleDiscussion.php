@@ -5,7 +5,7 @@ namespace App\Models;
 use App;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
-class ArticleDiscussion
+class ArticleDiscussion extends BaseModel
 {
     /**
      * Article discussion belongs to.
@@ -40,7 +40,7 @@ class ArticleDiscussion
      *
      * @return void
      */
-    public function create()
+    public function newDiscussion()
     {
         $this->client->api('discussions')->create(
             $this->article->title,
@@ -55,7 +55,7 @@ class ArticleDiscussion
      *
      * @return void
      */
-    public function delete()
+    public function deleteDiscussion()
     {
         $this->client->api('discussions')->removeByForeignId(
             $this->article->article_id
