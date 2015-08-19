@@ -125,12 +125,12 @@ trait RequestValidationTrait
     /**
      * @param $requestEntity
      * @param array $validationRules
-     * @param bool $limitToRequest
+     * @param bool $limitToKeysPresent
      * @return bool
      */
-    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false)
+    public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
     {
-        if ($limitToRequest) {
+        if ($limitToKeysPresent) {
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
 
@@ -143,4 +143,34 @@ trait RequestValidationTrait
 
         return true;
     }
+
+    /**
+     * Validate a request collection
+     * @param $requestCollection
+     * @param $validationRules
+     * @param bool|false $limitToKeysPresent
+     * @return bool
+     */
+    public function validateRequestCollection($requestCollection, $validationRules, $limitToKeysPresent = false){
+
+        $errors = [];
+
+        foreach ($requestCollection as $requestEntity) {
+
+            try {
+                $this->validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $errors[] = $e;
+            }
+        }
+
+        if ($errors) {
+            throw new ValidationExceptionCollection($errors);
+        }
+
+        return true;
+
+    }
+
 }
