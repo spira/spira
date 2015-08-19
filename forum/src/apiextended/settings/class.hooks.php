@@ -3,7 +3,7 @@
 class ApiExtendedHooks implements Gdn_IPlugin
 {
     /**
-     * Register extra DiscussionsAPI API endpoints
+     * Register extra DiscussionsAPI endpoints.
      *
      * @param  DiscussionsAPI $sender
      *
@@ -13,10 +13,26 @@ class ApiExtendedHooks implements Gdn_IPlugin
     {
         $sender::get('/foreign/[*:foreignID]', [
             'controller' => 'ApiDiscussion',
-            'method'     => 'getbyforeignid',
-            'arguments'  => [
+            'method' => 'getbyforeignid',
+            'arguments' => [
                 'Page' => val('Page', $data)
             ]
+        ]);
+    }
+
+    /**
+     * Register extra UsersAPI endpoints.
+     *
+     * @param  UsersAPI $sender
+     *
+     * @return void
+     */
+    public function UsersAPI_register_handler($sender)
+    {
+        $sender::post('/sso', [
+            'controller' => 'ApiUser',
+            'method' => 'sso',
+            'authenticate' => true,
         ]);
     }
 

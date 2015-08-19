@@ -8,6 +8,8 @@ class ApiDiscussionController extends DiscussionController
      * @param  int    $foreignId
      * @param  string $page
      *
+     * @throws Gdn_UserException
+     *
      * @return void
      */
     public function getByForeignId($foreignId = '', $page = '')
