@@ -46,7 +46,7 @@ abstract class EntityController extends ApiController
     public function getAll(Request $request)
     {
         $collection = $this->getAllEntities();
-        $collection = $this->getEntityWithNested($collection, $request);
+        $collection = $this->getWithNested($collection, $request);
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
@@ -58,7 +58,7 @@ abstract class EntityController extends ApiController
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
         $collection = $this->getAllEntities($limit, $offset);
-        $collection = $this->getEntityWithNested($collection, $request->getRequest());
+        $collection = $this->getWithNested($collection, $request->getRequest());
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -75,7 +75,7 @@ abstract class EntityController extends ApiController
     public function getOne(Request $request, $id)
     {
         $model = $this->findOrFailEntity($id);
-        $model = $this->getEntityWithNested($model, $request);
+        $model = $this->getWithNested($model, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -392,30 +392,4 @@ abstract class EntityController extends ApiController
         return $validationRules;
     }
 
-    /**
-     * @param Collection|BaseModel $model
-     * @param Request $request
-     * @return mixed
-     */
-    private function getEntityWithNested($model, Request $request)
-    {
-        if ((!$model instanceof BaseModel) && (!$model instanceof Collection)) {
-            throw new \InvalidArgumentException('Model must be instance of Model or Collection');
-        }
-
-        $nested = $request->headers->get('With-Nested');
-        if (!$nested) {
-            return $model;
-        }
-
-        $requestedRelations = explode(', ', $nested);
-
-        try {
-            $model->load($requestedRelations);
-        } catch (\BadMethodCallException $e) {
-            throw new BadRequestException(sprintf('Invalid `With-Nested` request - one or more of the following relationships do not exist for %s:[%s]', get_class($model), $nested), null, $e);
-        }
-
-        return $model;
-    }
 }
