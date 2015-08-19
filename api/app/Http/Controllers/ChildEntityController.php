@@ -15,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
-use Spira\Model\Validation\ValidationException;
-use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
@@ -176,7 +174,6 @@ class ChildEntityController extends ApiController
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
         $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $childId);
-
         $this->validateRequest($request->all(), $validationRules, true);
 
         $childModel->fill($request->all());
@@ -201,10 +198,7 @@ class ChildEntityController extends ApiController
         $existingChildModels = $this->findOrFailChildrenCollection($requestCollection, $parent);
 
         $childModels = $this->getChildModel()
-            ->hydrateRequestCollection($requestCollection, $existingChildModels)
-            ->each(function (BaseModel $model) {
-                return $model->save();
-            });
+            ->hydrateRequestCollection($requestCollection, $existingChildModels);
 
         $this->getRelation($parent)->saveMany($childModels);
 
@@ -282,7 +276,6 @@ class ChildEntityController extends ApiController
      */
     protected function findParentEntity($id)
     {
-        $this->validateId($id, $this->getParentModel()->getKeyName(), $this->getValidateParentIdRule());
         try {
             return $this->getParentModel()->findByIdentifier($id);
         } catch (ModelNotFoundException $e) {
@@ -297,8 +290,6 @@ class ChildEntityController extends ApiController
      */
     protected function findOrNewChildEntity($id, BaseModel $parent)
     {
-        $this->validateId($id, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
-
         try {
             return $this->getRelation($parent)->findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -313,8 +304,6 @@ class ChildEntityController extends ApiController
      */
     protected function findOrFailChildEntity($id, BaseModel $parent)
     {
-        $this->validateId($id, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
-
         try {
             return $this->getRelation($parent)->findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -338,7 +327,7 @@ class ChildEntityController extends ApiController
      */
     protected function findOrFailChildrenCollection($requestCollection, BaseModel $parent)
     {
-        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
+        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName());
 
         if (empty($ids)) {
             $models = $this->getChildModel()->newCollection();
@@ -354,9 +343,14 @@ class ChildEntityController extends ApiController
         return $models;
     }
 
+    /**
+     * @param $requestCollection
+     * @param BaseModel $parent
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     protected function findChildrenCollection($requestCollection, BaseModel $parent)
     {
-        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName(), $this->getValidateChildIdRule());
+        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName());
 
         $models = $this->getRelation($parent)->findMany($ids);
 
@@ -364,46 +358,18 @@ class ChildEntityController extends ApiController
     }
 
     /**
-     * Get id validation rule from child model validation rules
-     * Can be overriden by validateChildIdRule property
-     * @return null|string
+     * @return array
      */
-    protected function getValidateChildIdRule()
-    {
-        if ($this->validateChildIdRule) {
-            return $this->validateChildIdRule;
-        }
-        $childValidationRules = $this->getValidationRules();
-        if (isset($childValidationRules[$this->getChildModel()->getKeyName()])) {
-            return $childValidationRules[$this->getChildModel()->getKeyName()];
-        }
-
-        return null;
-    }
-
-    /**
-     * Get id validation rule from parent model validation rules
-     * Can be overriden by validateParentIdRule property
-     * @return null|string
-     */
-    protected function getValidateParentIdRule()
-    {
-        if ($this->validateParentIdRule) {
-            return $this->validateParentIdRule;
-        }
-        $parentValidationRules = $this->getParentModel()->getValidationRules();
-        if (isset($parentValidationRules[$this->getParentModel()->getKeyName()])) {
-            return $parentValidationRules[$this->getParentModel()->getKeyName()];
-        }
-
-        return null;
-    }
-
     protected function getValidationRules()
     {
         return $this->getChildModel()->getValidationRules();
     }
 
+    /**
+     * @param $validationRules
+     * @param $id
+     * @return mixed
+     */
     protected function addIdOverrideValidationRule($validationRules, $id)
     {
         $rule = 'equals:'.$id;

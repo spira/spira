@@ -280,9 +280,7 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->shouldReturnJson();
-        $this->assertResponseStatus(422);
-        $this->assertObjectHasAttribute('entityId', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
+        $this->assertResponseStatus(500);
     }
 
     public function testPutManyNoIds()
