@@ -117,6 +117,28 @@ class VanillaIntegrationTest extends TestCase
     /**
      * @test
      */
+    public function shouldNotThrowExceptionOnNoneErrors()
+    {
+        $response = $this->getMock('Guzzle\Http\Message\Response', [], [0]);
+        $response
+            ->method('isError')
+            ->willReturn(false);
+
+        $request = $this->getMock('Guzzle\Http\Message\Request', [], [null, null]);
+        $request
+            ->method('getResponse')
+            ->willReturn($response);
+
+        $error = new App\Services\Api\Vanilla\Error;
+        $event = new Guzzle\Common\Event;
+        $event['request'] = $request;
+
+        $this->assertNull($error->onRequestError($event));
+    }
+
+    /**
+     * @test
+     */
     public function shouldReturnNoneJsonBodyUnmodified()
     {
         $body = 'foobar';
