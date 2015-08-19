@@ -6,33 +6,34 @@
  * Time: 19:24
  */
 
-namespace Spira\Repository\Model;
+namespace Spira\Model\Model;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
-use Spira\Repository\Collection\Collection;
-use Spira\Repository\Validation\ValidationException;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
-use Illuminate\Validation\Factory as ValidationFactory;
-use Spira\Repository\Validation\ValidationExceptionCollection;
-use Spira\Repository\Validation\Validator;
+use Spira\Model\Validation\ValidationExceptionCollection;
 
 /**
  * Class BaseModel
- * @package Spira\Repository\Model
+ * @package Spira\Model\Model
  *
  * @method static int count
+ * @method static BaseModel find($id)
+ * @method static BaseModel first()
+ * @method static BaseModel findOrFail($id)
  * @method static Collection get
- * @method static BaseModel findOrFail
- * @method static BaseModel find
- * @method static Collection findMany
- * @method static BaseModel where
- * @method static BaseModel skip offset
- * @method static BaseModel take limit
+ * @method static Collection findMany($ids)
+ * @method static Builder where($value,$operator,$operand)
+ * @method static BaseModel skip($offset)
+ * @method static BaseModel take($limit)
  *
  */
 abstract class BaseModel extends Model
@@ -52,11 +53,6 @@ abstract class BaseModel extends Model
     public $exceptionOnError = true;
 
     /**
-     * @var ValidationFactory
-     */
-    protected $validator;
-
-    /**
      * @var MessageBag|null
      */
     protected $errors;
@@ -66,20 +62,15 @@ abstract class BaseModel extends Model
      */
     protected $relationErrors = [];
 
-    protected $validationRules = [];
+    protected static $validationRules = [];
 
     /**
      * @return array
      */
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        return $this->validationRules;
+        return static::$validationRules;
     }
-
-    /**
-     * @return ValidationFactory
-     */
-    abstract protected function getValidator();
 
     /**
      * @return MessageBag|null
@@ -206,10 +197,10 @@ abstract class BaseModel extends Model
 
             if ($this->isCollection($models)) {
                 /** @var Collection $models */
-                $models = $models->all(true);
+                $modelsArray = $models->all(true);
                 $error = false;
                 $errors = [];
-                foreach (array_filter($models) as $model) {
+                foreach (array_filter($modelsArray) as $model) {
                     /** @var BaseModel $model */
                     $model->preserveKeys($relation);
                     try {
@@ -313,66 +304,8 @@ abstract class BaseModel extends Model
             return $this->delete();
         }
 
-        $result = true;
-        if ($this->fireModelEvent('validating') !== false) {
-            $result = $this->validate();
-        }
-
-        if (!$result && $this->exceptionOnError) {
-            throw new ValidationException($this->getErrors());
-        }
-
-        if ($this->fireModelEvent('validated') === false) {
-            return false;
-        }
-
-
         return parent::save($options);
     }
-
-    public function validate()
-    {
-        /** @var Validator $validation */
-        $validation = $this->getValidator()->make($this->attributes, $this->getValidationRules());
-        if (!$validation instanceof Validator) {
-            throw new \InvalidArgumentException('Validator must be instance of '.Validator::class);
-        }
-        $validation->setModel($this);
-        $this->errors = [];
-        if ($validation->fails()) {
-            $this->errors = $validation->messages();
-            return false;
-        } else {
-            $this->errors = new MessageBag();
-        }
-
-        return true;
-    }
-
-    /**
-     * Register a validating model event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @param  int  $priority
-     * @return void
-     */
-    public static function validating($callback, $priority = 0)
-    {
-        static::registerModelEvent('validating', $callback, $priority);
-    }
-
-    /**
-     * Register a validated model event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @param  int  $priority
-     * @return void
-     */
-    public static function validated($callback, $priority = 0)
-    {
-        static::registerModelEvent('validated', $callback, $priority);
-    }
-
 
     /**
      * Create a new Eloquent Collection instance.
@@ -439,6 +372,16 @@ abstract class BaseModel extends Model
         }
 
         return parent::setRelation($relationName, $value);
+    }
+
+    /**
+     * @param mixed $id
+     * @return BaseModel
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        return $this->findOrFail($id);
     }
 
     /**

@@ -1,7 +1,9 @@
 <?php namespace App\Models;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
-use Spira\Repository\Collection\Collection;
+use Rhumsaa\Uuid\Uuid;
+use Spira\Model\Collection\Collection;
 
 /**
  *
@@ -48,21 +50,16 @@ class Article extends BaseModel
         'first_published' => 'datetime',
     ];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        $permalinkRule = 'string|unique:article_permalinks,permalink';
-        if (!is_null($this->permalink)) {
-            $permalinkRule.=','.$this->permalink.',permalink';
-        }
-
         return [
-            'article_id' => 'uuid|createOnly',
+            'article_id' => 'uuid',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', self::$statuses),
-            'permalink' => $permalinkRule
+            'status' => 'in:' . implode(',', static::$statuses),
+            'permalink' => 'string|unique:article_permalinks,permalink'
         ];
     }
 
@@ -74,15 +71,42 @@ class Article extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::validated(function (Article $model) {
+        static::saving(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
                 $articlePermalink = new ArticlePermalink();
                 $articlePermalink->permalink = $model->permalink;
-                $model->permalinks->add($articlePermalink);
                 $articlePermalink->save();
             }
             return true;
         });
+
+        static::saved(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+                $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
+                $model->permalinks()->save($articlePermalink);
+            }
+            return true;
+        });
+    }
+
+    /**
+     * @param string $id article_id or permalink
+     * @return Article
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return parent::findOrFail($id);
+        }
+
+        //otherwise attempt treat the id as a permalink and first try the model, then try the history
+        try {
+            return $this->where('permalink', '=', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
+            return ArticlePermalink::findOrFail($id)->article;
+        }
     }
 
     public function setPermalinkAttribute($permalink)

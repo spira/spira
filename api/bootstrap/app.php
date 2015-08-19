@@ -66,7 +66,8 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'permission' => 'App\Http\Middleware\PermissionMiddleware'
+    'permission' => 'App\Http\Middleware\PermissionMiddleware',
+    'transaction' => App\Http\Middleware\TransactionMiddleware::class
 ]);
 
 /*

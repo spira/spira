@@ -3,25 +3,12 @@
 use Carbon\Carbon;
 use Bosnadev\Database\Traits\UuidTrait;
 use DateTime;
-use Illuminate\Validation\Factory as ValidationFactory;
 
-abstract class BaseModel extends \Spira\Repository\Model\BaseModel
+abstract class BaseModel extends \Spira\Model\Model\BaseModel
 {
     use UuidTrait;
 
     public $incrementing = false;
-
-    /**
-     * @return ValidationFactory
-     */
-    protected function getValidator()
-    {
-        if (is_null($this->validator)) {
-            $this->validator = \App::make('validator');
-        }
-
-        return $this->validator;
-    }
 
     public static function getTableName()
     {

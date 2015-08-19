@@ -9,20 +9,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTransformer;
-use App\Repositories\ArticleRepository;
+use App\Models\Article;
 
 class ArticleController extends EntityController
 {
-    protected $validateRequestRule = 'required|string';
+    protected $validateIdRule = 'required|string';
 
     /**
      * Assign dependencies.
-     * @param ArticleRepository $repository
+     * @param Article $model
      * @param ArticleTransformer $transformer
      */
-    public function __construct(ArticleRepository $repository, ArticleTransformer $transformer)
+    public function __construct(Article $model, ArticleTransformer $transformer)
     {
-        $this->repository = $repository;
-        $this->transformer = $transformer;
+        parent::__construct($model, $transformer);
     }
 }

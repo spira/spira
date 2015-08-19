@@ -5,11 +5,27 @@ use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
+
+    /**
+     * Login token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $login_token_ttl = 1440;
+
+    /**
+     * Cache repository.
+     *
+     * @var Cache
+     */
+    protected $cache;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
@@ -46,8 +62,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $validationRules = [
-        'user_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+        'user_id' => 'uuid',
         'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
         'email_confirmed' => 'date',
@@ -76,7 +92,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the credentials associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userCredential()
     {
@@ -86,7 +102,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the profile associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userProfile()
     {
@@ -96,7 +112,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the social logins associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */
     public function socialLogins()
     {
@@ -266,33 +282,5 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         Cache::put('email_change_' . $newEmail, $oldEmail, self::EMAIL_CONFIRM_CACHE_TIME);
 
         return $token;
-    }
-
-    /**
-     * Get an email address from supplied token.
-     *
-     * @param $token
-     * @return mixed
-     */
-    public function getEmailFromToken($token)
-    {
-        $newEmail = Cache::pull('email_confirmation_' . $token, false);
-
-        if ($newEmail) {
-            Cache::forget('email_change_' . $newEmail);
-        }
-
-        return $newEmail;
-    }
-
-    /**
-     * Check to see if the user has made a change email request. Return the current email associated with the new email.
-     *
-     * @param $newEmail
-     * @return mixed
-     */
-    public static function findCurrentEmail($newEmail)
-    {
-        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
     }
 }

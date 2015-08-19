@@ -2,15 +2,9 @@
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
-use App\Repositories\ArticleRepository;
 
 class ArticleTest extends TestCase
 {
-    /**
-     * @var ArticleRepository
-     */
-    private $repository;
-
     public function setUp()
     {
         parent::setUp();
@@ -23,9 +17,6 @@ class ArticleTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\Article::flushEventListeners();
         App\Models\Article::boot();
-
-        // Get a repository instance, for assertions
-        $this->repository = $this->app->make(ArticleRepository::class);
     }
 
     /**
@@ -71,7 +62,10 @@ class ArticleTest extends TestCase
         $entity = current($entities);
         $entity->excerpt = null;
         $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
+        foreach ($entities as $oneEntity) {
+            $oneEntity->push();
+        }
+
         $this->get('/articles', ['Range'=>'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -84,10 +78,9 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $this->get('/articles/'.$entity->article_id);
 
@@ -110,12 +103,12 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
     }
 
-    public function testGetOneByPermalink()
+    public function testGetOneByFirstPermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
+
         $permalink = $entity->permalinks->first();
         $this->get('/articles/'.$permalink->permalink);
 
@@ -138,6 +131,35 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
     }
 
+    public function testGetOneByLastPermalink()
+    {
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
+
+        $permalink = $entity->permalinks->last();
+        $this->get('/articles/'.$permalink->permalink);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
+        $this->assertObjectHasAttribute('articleId', $object);
+        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->articleId);
+        $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
+
+        $this->assertTrue(is_string($object->title));
+        $this->assertTrue(is_string($object->content));
+        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+    }
+
+
     public function testPostOne()
     {
         $entity = factory(Article::class)->make();
@@ -158,14 +180,14 @@ class ArticleTest extends TestCase
         $entity = factory(Article::class)->make();
         $id = $entity->article_id;
 
-        $rowCount = $this->repository->count();
+        $rowCount = Article::count();
 
         $this->put('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount + 1, $this->repository->count());
+        $this->assertEquals($rowCount + 1, Article::count());
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
     }
@@ -176,17 +198,21 @@ class ArticleTest extends TestCase
         $id = $entity->article_id;
         $entity->title = 'foo';
 
-        $rowCount = $this->repository->count();
+        $rowCount = Article::count();
 
-        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
+
+        $this->put('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
+
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount, $this->repository->count());
+        $this->assertEquals($rowCount, Article::count());
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
 
-        $checkEntity = $this->repository->find($id);
+        $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->title, $entity->title);
     }
 
@@ -195,42 +221,42 @@ class ArticleTest extends TestCase
     {
         $entity = factory(Article::class)->create();
         $id = $entity->article_id;
-
         $entity->title = 'foo';
-
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
+        $this->patch('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
-        $checkEntity = $this->repository->find($id);
+        $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->title, $entity->title);
     }
 
     public function testPatchOneNewPermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
         $entity->permalink = 'foo_bar';
 
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $preparedEntity = $this->prepareEntity($entity);
+        unset($preparedEntity['articleId']);
+        $this->patch('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
-        $checkEntity = $this->repository->find($id);
+        $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->permalink, $entity->permalink);
         $this->assertEquals($checkEntity->permalinks->count(), $linksCount+1);
     }
 
     public function testPatchOneRemovePermalink()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $id = $entity->article_id;
         $linksCount = $entity->permalinks->count();
@@ -240,7 +266,7 @@ class ArticleTest extends TestCase
         $this->patch('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
-        $checkEntity = $this->repository->find($id);
+        $checkEntity = Article::find($id);
         $this->assertNull($checkEntity->permalink);
         $this->assertEquals($checkEntity->permalinks->count(), $linksCount);
     }
@@ -249,7 +275,9 @@ class ArticleTest extends TestCase
     {
         $entities = factory(Article::class, 4)->create()->all();
         $this->addPermalinksToArticles($entities);
-        $this->repository->saveMany($entities);
+        foreach ($entities as $oneEntity) {
+            $oneEntity->push();
+        }
 
         $entity = $entities[0];
         $id = $entity->article_id;
@@ -257,7 +285,7 @@ class ArticleTest extends TestCase
         $entityPermalinksCount = $entity->permalinks->count();
         $this->assertEquals($entityPermalinksCount, ArticlePermalink::where('article_id', '=', $id)->count());
 
-        $rowCount = $this->repository->count();
+        $rowCount = Article::count();
 
         $permalinksTotalCount = ArticlePermalink::all()->count();
         $this->delete('/articles/'.$id);
@@ -265,13 +293,15 @@ class ArticleTest extends TestCase
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($rowCount - 1, $this->repository->count());
+        $this->assertEquals($rowCount - 1, Article::count());
         $this->assertEquals($permalinksTotalCount - $entityPermalinksCount, $permalinksTotalCountAfterDelete);
     }
 
     public function testGetPermalinks()
     {
         $entity = factory(Article::class)->create();
+        $this->addPermalinksToArticles([$entity]);
+        $entity->push();
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
@@ -294,14 +324,17 @@ class ArticleTest extends TestCase
 
     public function testGetMetas()
     {
-        $entities = factory(Article::class, 2)->create()->all();
-        $this->addMetasToArticles($entities);
-        $this->repository->saveMany($entities);
-        $entity = current($entities);
+        $entity = factory(Article::class)->create();
+        $this->addMetasToArticles([$entity]);
+        $entity->push();
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
 
         $this->get('/articles/'.$entity->article_id.'/meta');
+
+        $articleCheck = Article::find($entity->article_id);
+        $metaCheck = $articleCheck->metas->first();
+        $this->assertEquals($entity->article_id, $metaCheck->article->article_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -313,11 +346,10 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        $articles = factory(Article::class, 2)->create()->all();
-        $this->addMetasToArticles($articles);
-        $this->repository->saveMany($articles);
+        $article = factory(Article::class)->create();
+        $this->addMetasToArticles([$article]);
+        $article->push();
 
-        $article = current($articles);
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
 
         $entities = array_map(function ($entity) {
@@ -330,8 +362,9 @@ class ArticleTest extends TestCase
         }
 
         $this->put('/articles/'.$article->article_id.'/meta', ['data' => $entities]);
+
         $this->assertResponseStatus(201);
-        $updatedArticle = $this->repository->find($article->article_id);
+        $updatedArticle = Article::find($article->article_id);
 
         $this->assertEquals($metaCount+2, $updatedArticle->metas->count());
         $counter = 0;
@@ -347,12 +380,14 @@ class ArticleTest extends TestCase
     {
         $articles = factory(Article::class, 2)->create()->all();
         $this->addMetasToArticles($articles);
-        $this->repository->saveMany($articles);
+        foreach ($articles as $oneEntity) {
+            $oneEntity->push();
+        }
         $article = current($articles);
         $metaEntity = $article->metas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
         $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
-        $updatedArticle = $this->repository->find($article->article_id);
+        $updatedArticle = Article::find($article->article_id);
         $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
     }
 }
