@@ -6,7 +6,7 @@ namespace common.services.notification {
 
         private toastOptions:any = {};
 
-        private timeOut:number = 0;
+        private timeOut:number;
 
         constructor(
             private message:string,
@@ -57,7 +57,7 @@ namespace common.services.notification {
          */
         public pop():void {
 
-            if(this.timeOut > 0) {
+            if(_.isNumber(this.timeOut)) {
                 // See: https://docs.angularjs.org/api/ng/service/$timeout. ITimeoutService does not have final param
                 // which is passed into your function.
                 (<any>this.$timeout)(this.$mdToast.show, this.timeOut, true, this.toastOptions);
