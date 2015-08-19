@@ -249,4 +249,23 @@ class VanillaApiTest extends TestCase
 
         $api->create($username, $email, $password);
     }
+
+    /**
+     * @test
+     */
+    public function shouldLinkSsoUser()
+    {
+        $input = [
+            'UniqueID' => $id = '123',
+            'Name' => $username = 'Some name',
+            'Email' => $email = 'some@email.com',
+        ];
+
+        $api = $this->getApiMock(User::class);
+        $api->expects($this->once())
+            ->method('post')
+            ->with('users/sso', $input);
+
+        $api->sso($id, $username, $email);
+    }
 }
