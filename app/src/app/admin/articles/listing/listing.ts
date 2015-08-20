@@ -58,10 +58,7 @@ namespace app.admin.articles.listing {
 
             this.articles = articles;
 
-            let perPage = articlesPaginator.getCount();
-
-            this.pages = _.range(1, Math.ceil(articlesPaginator.entityCountTotal/perPage) + 1);
-
+            this.pages = articlesPaginator.getPages();
 
             this.currentPageIndex = this.$stateParams.page - 1;
         }
