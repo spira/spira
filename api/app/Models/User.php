@@ -2,6 +2,7 @@
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Cache;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
+
+    use ElasticquentTrait;
+
     use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';

@@ -10,7 +10,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
-use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
 
 class ArticleController extends EntityController
 {
@@ -25,14 +24,5 @@ class ArticleController extends EntityController
     {
         parent::__construct($model, $transformer);
     }
-
-//    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
-//    {
-//
-////        Article::addAllToIndex();
-////        dd(Article::search('Quia'));
-//
-//        return parent::getAllPaginated($request);
-//    }
 
 }

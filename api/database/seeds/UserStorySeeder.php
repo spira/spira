@@ -28,6 +28,9 @@ class UserStorySeeder extends Seeder
         for ($i=0; $i < 99; $i++) {
             $this->createUser();
         }
+
+        User::addAllToIndex(); //push all users to elastic search
+
     }
 
     /**

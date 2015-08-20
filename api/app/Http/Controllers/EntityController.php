@@ -9,12 +9,13 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
 use Spira\Responder\Contract\TransformerInterface;
-use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
+use Spira\Responder\Paginator\RangeRequest;
 use Spira\Responder\Response\ApiResponse;
 
 abstract class EntityController extends ApiController
@@ -42,7 +43,7 @@ abstract class EntityController extends ApiController
      */
     public function getAll(Request $request)
     {
-        $collection = $this->getAllEntities();
+        $collection = $this->getAllEntities($request);
         $collection = $this->getWithNested($collection, $request);
         
         return $this->getResponse()
@@ -50,14 +51,17 @@ abstract class EntityController extends ApiController
             ->collection($collection);
     }
 
-    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
+    public function getAllPaginated(Request $request, RangeRequest $rangeRequest)
     {
         $count = $this->countEntities();
-        $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
-        $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getAllEntities($limit, $offset);
-        
-        $collection = $this->getWithNested($collection, $request->getRequest());
+        $limit = $rangeRequest->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
+        $offset = $rangeRequest->isGetLast()?$count-$limit:$rangeRequest->getOffset();
+
+        $collection = $this->getAllEntities($request, $limit, $offset);
+
+//        dd($collection);
+
+        $collection = $this->getWithNested($collection, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -259,12 +263,22 @@ abstract class EntityController extends ApiController
     }
 
     /**
+     * @param Request $request
      * @param null $limit
      * @param null $offset
      * @return Collection
      */
-    protected function getAllEntities($limit = null, $offset = null)
+    protected function getAllEntities(Request $request, $limit = null, $offset = null)
     {
+
+        if ($request->has('q')){
+            $queryString = $request->query('q');
+
+            /* @var ElasticquentTrait $model */
+            $model = $this->getModel();
+            return $model->search($queryString);
+        }
+
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
 

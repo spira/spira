@@ -55,8 +55,8 @@ abstract class ApiController extends Controller
      */
     protected function getWithNested($modelOrCollection, Request $request)
     {
-        if ((!$modelOrCollection instanceof BaseModel) && (!$modelOrCollection instanceof Collection)) {
-            throw new \InvalidArgumentException('Model must be instance of Model or Collection');
+        if ((!$modelOrCollection instanceof BaseModel) && (!$modelOrCollection instanceof \Illuminate\Database\Eloquent\Collection)) {
+            throw new \InvalidArgumentException(sprintf('Model must be instance of %s or %s. %s given.', BaseModel::class, \Illuminate\Database\Eloquent\Collection::class, get_class($modelOrCollection)));
         }
 
         $nested = $request->headers->get('With-Nested');
