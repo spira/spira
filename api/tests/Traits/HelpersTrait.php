@@ -33,13 +33,19 @@ trait HelpersTrait
         // As the array of already used faker data is protected in Faker and
         // has no accessor method, we'll rely on ReflectionObject to modify
         // the property before letting faker generate data.
+
+        //though reflected object should be added to the faker itself somehow
+        // which is hacky
+        //so we decided to overcome it with bindTo hack
         $faker = Faker::create();
         $unique = $faker->unique();
 
-        $object = new ReflectionObject($unique);
-        $property = $object->getProperty('uniques');
-        $property->setAccessible(true);
-        $property->setValue($unique, $this->uniques);
+        $binder = function ($value) {
+            $this->unqiue = $value;
+        };
+
+        $unqiueBinder = $binder->bindTo($unique, $unique);
+        $unqiueBinder($this->uniques);
 
         return $faker;
     }
