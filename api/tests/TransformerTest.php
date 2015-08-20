@@ -97,10 +97,10 @@ class TransformerTest extends TestCase
         $data = $this->transformer->transformItem($entity);
 
         $this->assertArrayHasKey('_self', $data);
-        $this->assertArrayHasKey('testOne', $data);
-        $this->assertArrayHasKey('testMany', $data);
-        $this->assertArrayHasKey('_self', $data['testOne']);
-        foreach ($data['testMany'] as $value) {
+        $this->assertArrayHasKey('_testOne', $data);
+        $this->assertArrayHasKey('_testMany', $data);
+        $this->assertArrayHasKey('_self', $data['_testOne']);
+        foreach ($data['_testMany'] as $value) {
             $this->assertArrayHasKey('_self', $value);
         }
     }
