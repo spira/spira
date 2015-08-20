@@ -124,7 +124,6 @@ class ChildEntityController extends ApiController
      */
     public function putOne(Request $request, $id, $childId)
     {
-
         $parent = $this->findParentEntity($id);
 
         $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
