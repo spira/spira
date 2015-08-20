@@ -55,6 +55,8 @@ namespace app.admin.users {
 
         public currentPageIndex:number;
 
+        public searchTerm:string;
+
         static $inject = ['usersPaginator', 'initUsers', '$stateParams'];
 
         constructor(
@@ -71,6 +73,12 @@ namespace app.admin.users {
             this.pages = _.range(1, Math.ceil(usersPaginator.entityCountTotal/perPage) + 1);
 
             this.currentPageIndex = this.$stateParams.page - 1;
+
+        }
+
+        public search():void {
+
+
 
         }
 
