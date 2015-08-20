@@ -44,7 +44,7 @@ abstract class EntityController extends ApiController
      */
     public function getAll(Request $request)
     {
-        $collection = $this->getAllEntities($request);
+        $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
         
         return $this->getResponse()
