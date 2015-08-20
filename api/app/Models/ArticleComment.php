@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App;
+use Illuminate\Support\Collection;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
 class ArticleComment extends BaseModel
@@ -60,5 +61,31 @@ class ArticleComment extends BaseModel
         $this->client->api('discussions')->removeByForeignId(
             $this->article->article_id
         );
+    }
+
+    /**
+     * Get the collection of comments.
+     *
+     * @return Collection
+     */
+    public function getResults()
+    {
+        // First a minimal call to the discussion for the total comment count
+        $discussion = $this->client->api('discussions')->findByForeignId(
+            $this->article->article_id,
+            1,
+            1
+        );
+
+        $commentCount = $discussion['Discussion']['CountComments'];
+
+        // Now get the entire batch of comments
+        $discussion = $this->client->api('discussions')->findByForeignId(
+            $this->article->article_id,
+            1,
+            $commentCount
+        );
+
+        return new Collection($discussion['Comments']);
     }
 }
