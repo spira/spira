@@ -43,6 +43,12 @@ class EntityTest extends TestCase
         return $entity;
     }
 
+    protected function addRelatedEntities($model)
+    {
+        $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
+        $model->push();
+    }
+
     public function testGetAll()
     {
         $this->get('/test/entities');
@@ -51,6 +57,37 @@ class EntityTest extends TestCase
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
+    }
+
+    public function testGetAllWithNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities', ['with-nested'=>'testMany']);
+        $objects = json_decode($this->response->getContent());
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+        $this->assertJsonMultipleEntries();
+
+        $asserted = false;
+        foreach ($objects as $object) {
+            if (count($object->_testMany) == 5) {
+                $asserted = true;
+                $this->assertEquals(5, count($object->_testMany));
+                foreach ($object->_testMany as $nestedObject) {
+                    $this->assertObjectHasAttribute('_self', $nestedObject);
+                    $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+                    $this->assertObjectHasAttribute('entityId', $nestedObject);
+                    $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+                    $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+                }
+            }
+        }
+
+        $this->assertTrue($asserted, 'There was nested entity inside answer');
     }
 
     public function testGetAllPaginated()
@@ -65,6 +102,33 @@ class EntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->assertEquals($defaultLimit, count($object));
+    }
+
+    public function testGetAllPaginatedWithNested()
+    {
+        $defaultLimit = 10;
+        $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
+        foreach ($entities as $entity) {
+            $this->addRelatedEntities($entity);
+        }
+
+        $this->get('/test/entities/pages', ['Range'=>'entities=-10','with-nested'=>'testMany']);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertEquals($defaultLimit, count($object));
+        $object = current($object);
+
+        $this->assertObjectHasAttribute('_testMany', $object);
+        $this->assertEquals(5, count($object->_testMany));
+        foreach ($object->_testMany as $nestedObject) {
+            $this->assertObjectHasAttribute('_self', $nestedObject);
+            $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+            $this->assertObjectHasAttribute('entityId', $nestedObject);
+            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+        }
     }
 
     public function testGetAllPaginatedNoRangeHeader()
@@ -189,7 +253,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
         $this->assertTrue(is_integer($object->integer), 'Integer column type is integer');
-        $this->assertTrue(is_float($object->decimal), 'Decimal column type is integer');
+        $this->assertTrue(is_float($object->decimal) || is_integer($object->decimal), 'Decimal column type is integer');
         $this->assertNull($object->nullable, 'Nullable column type is null');
         $this->assertTrue(is_string($object->text), 'Text column type is text');
         $this->assertValidIso8601Date($object->date, 'Date column type is a valid ISO8601 date');
@@ -199,6 +263,44 @@ class EntityTest extends TestCase
         $this->assertValidIso8601Date($object->updatedAt, 'updatedAt column is a valid ISO8601 date');
 
         $this->assertObjectNotHasAttribute('hidden', $object, 'Hidden is not hidden.');
+    }
+
+    public function testGetOneWithNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities/'.$entity->entity_id, ['with-nested'=>'testMany']);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+        $this->assertObjectHasAttribute('_self', $object);
+        $this->assertTrue(is_string($object->_self), '_self is a string');
+
+        $this->assertObjectHasAttribute('_testMany', $object);
+        $this->assertEquals(5, count($object->_testMany));
+        foreach ($object->_testMany as $nestedObject) {
+            $this->assertObjectHasAttribute('_self', $nestedObject);
+            $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
+            $this->assertObjectHasAttribute('entityId', $nestedObject);
+            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
+            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+        }
+    }
+
+    public function testGetOneWithInvalidNested()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $this->get('/test/entities/'.$entity->entity_id, ['with-nested'=>'not-a-valid-nesting']);
+        $object = json_decode($this->response->getContent());
+
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(400);
     }
 
     public function testPostOneValid()
