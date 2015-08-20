@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Cache;
 
 class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
 {
-
     use ElasticquentTrait;
 
     use Authenticatable, LockAware;

@@ -30,7 +30,6 @@ class UserStorySeeder extends Seeder
         }
 
         User::reindex(); //push all users to elastic search
-
     }
 
     /**
