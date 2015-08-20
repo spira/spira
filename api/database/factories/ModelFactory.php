@@ -131,6 +131,12 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
     ];
 });
 
+$factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
+    return [
+        'tag' => $faker->unique()->slug,
+    ];
+});
+
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     return [
