@@ -99,7 +99,7 @@ class UserTest extends TestCase
 
     public function testGetProfileByGuestUser()
     {
-        $this->markTestSkipped('Permissions have not been implemented properly yet.');
+        $this->markTestSkipped('Permissions have not been implemented yet.');
 
         $user = $this->createUser(['user_type' => 'guest']);
         $userToGet = $this->createUser(['user_type' => 'guest']);
@@ -555,11 +555,4 @@ class UserTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-
-    public function testUnlinkSocialLogin()
-    {
-        $this->markTestSkipped(
-            'This function will be replaced in the near future.'
-        );
-    }
 }
