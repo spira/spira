@@ -38,7 +38,7 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
     public function transformCollection($collection)
     {
         if ($collection instanceof Collection) {
-            $collection = $collection->all();
+            $collection = $collection->all(); //remove the items marked as deleted
         }
 
         return $this->getService()->collection($collection, $this);
