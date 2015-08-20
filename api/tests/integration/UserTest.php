@@ -25,6 +25,9 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
+    /**
+     * @group failing
+     */
     public function testGetAllPaginatedByAdminUser()
     {
         $this->createUser([], 10);
@@ -50,6 +53,9 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Range' => 'entities=0-19'
         ]);
+
+        $body = json_decode($this->response->getContent());
+        dd($body);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
