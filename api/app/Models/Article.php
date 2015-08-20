@@ -89,14 +89,14 @@ class Article extends BaseModel
         });
 
         static::created(function (Article $article) {
-            $articleComment = new ArticleComment($article);
+            $articleComment = (new ArticleComment)->setArticle($article);
             $articleComment->newDiscussion();
 
             return true;
         });
 
         static::deleted(function (Article $article) {
-            $articleComment = new ArticleComment($article);
+            $articleComment = (new ArticleComment)->setArticle($article);
             $articleComment->deleteDiscussion();
 
             return true;
@@ -163,6 +163,6 @@ class Article extends BaseModel
      */
     public function comments()
     {
-        return new ArticleComment($this);
+        return (new ArticleComment)->setArticle($this);
     }
 }

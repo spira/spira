@@ -46,27 +46,13 @@ class ArticleComment extends BaseModel
     ];
 
     /**
-     * Assign dependencies.
-     *
-     * @param  Article $article
-     *
-     * @return void
-     */
-    public function __construct(Article $article)
-    {
-        $this->article = $article;
-
-        $this->client = App::make(VanillaClient::class);
-    }
-
-    /**
      * Create a discussion thread for the article.
      *
      * @return void
      */
     public function newDiscussion()
     {
-        $this->client->api('discussions')->create(
+        $this->getClient()->api('discussions')->create(
             $this->article->title,
             $this->article->excerpt,
             1,
@@ -81,7 +67,7 @@ class ArticleComment extends BaseModel
      */
     public function deleteDiscussion()
     {
-        $this->client->api('discussions')->removeByForeignId(
+        $this->getClient()->api('discussions')->removeByForeignId(
             $this->article->article_id
         );
     }
@@ -94,7 +80,7 @@ class ArticleComment extends BaseModel
     public function getResults()
     {
         // First a minimal call to the discussion for the total comment count
-        $discussion = $this->client->api('discussions')->findByForeignId(
+        $discussion = $this->getClient()->api('discussions')->findByForeignId(
             $this->article->article_id,
             1,
             1
@@ -103,7 +89,7 @@ class ArticleComment extends BaseModel
         $commentCount = $discussion['Discussion']['CountComments'];
 
         // Now get the entire batch of comments
-        $discussion = $this->client->api('discussions')->findByForeignId(
+        $discussion = $this->getClient()->api('discussions')->findByForeignId(
             $this->article->article_id,
             1,
             $commentCount
@@ -114,7 +100,7 @@ class ArticleComment extends BaseModel
         foreach ($discussion['Comments'] as $comment) {
             $comment = $this->vanillaCommentToEloquent($comment);
 
-            $articleComment = new ArticleComment($this->article);
+            $articleComment = new ArticleComment;
             $articleComment->fill($comment);
 
             $comments->push($articleComment);
@@ -150,5 +136,33 @@ class ArticleComment extends BaseModel
         }
 
         return $comment;
+    }
+
+    /**
+     * Sets the article the discussion belongs to.
+     *
+     * @param  Article $article
+     *
+     * @return ArticleComment
+     */
+    public function setArticle(Article $article)
+    {
+        $this->article = $article;
+
+        return $this;
+    }
+
+    /**
+     * Get Vanilla API client.
+     *
+     * @return VanillaClient
+     */
+    protected function getClient()
+    {
+        if (!$this->client) {
+            $this->client = App::make(VanillaClient::class);
+        }
+
+        return $this->client;
     }
 }
