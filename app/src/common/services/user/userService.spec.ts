@@ -89,7 +89,9 @@
 
                 let user = _.clone(fixtures.user);
 
-                $httpBackend.expectGET('/api/users/' + user.userId).respond(200);
+                $httpBackend.expectGET('/api/users/' + user.userId,
+                    (headers) => /userCredential, userProfile, socialLogins/.test(headers['With-Nested'])
+                ).respond(200);
 
                 let userDetailsPromise = userService.getUser(user);
 

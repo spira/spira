@@ -157,7 +157,9 @@ namespace common.services.user {
          * @returns {ng.IHttpPromise<any>}
          */
         public getUser(user:common.models.User):ng.IPromise<common.models.User> {
-            return this.ngRestAdapter.get('/users/' + user.userId)
+            return this.ngRestAdapter.get('/users/' + user.userId, {
+                    'With-Nested' : 'userCredential, userProfile, socialLogins'
+                })
                 .then((res) => {
                     return new common.models.User(res.data);
                 });
