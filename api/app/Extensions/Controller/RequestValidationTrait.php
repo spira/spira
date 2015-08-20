@@ -38,16 +38,6 @@ trait RequestValidationTrait
         return $ids;
     }
 
-    /**
-     * @param $requestEntity
-     * @param $keyName
-     * @return null
-     */
-    protected function getIdOrNull($requestEntity, $keyName)
-    {
-        return isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
-    }
-
 
     /**
      * Build notFoundException
