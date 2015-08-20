@@ -40,6 +40,13 @@ cache:
   env_file:
     - ./docker/.local.env
 
+elasticsearch:
+  extends:
+    file: ./docker/common-services.yml
+    service: elasticsearch
+  env_file:
+    - ./docker/.local.env
+
 queue:
   extends:
     file: ./docker/common-services.yml

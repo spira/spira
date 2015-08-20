@@ -18,7 +18,8 @@
         "league/flysystem": "^1.0",
         "tymon/jwt-auth": "0.5.*",
         "beatswitch/lock": "^0.1.0",
-        "laravel/socialite": "^2.0"
+        "laravel/socialite": "^2.0",
+        "elasticquent/elasticquent": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
