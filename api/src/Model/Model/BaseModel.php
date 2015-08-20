@@ -411,7 +411,10 @@ abstract class BaseModel extends Model
             $entityId = $item[$keyName];
 
             if ($existingModels) {
-                $model = $existingModels->get($entityId, $this->newInstance());
+                //get the model from the collection, or create a new instance
+                $model = $existingModels->get($entityId, function () { //using a closure, so new instance is only created when the default is required
+                    return $this->newInstance();
+                });
             } else {
                 $this->findOrNew($entityId);
             }
