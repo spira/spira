@@ -155,19 +155,18 @@ trait RequestValidationTrait
     protected function checkEntityIdMatchesRoute(Request $request, $id, BaseModel $model, $requireEntityKey = true)
     {
         $keyName = $model->getKeyName();
-        if (!$request->has($keyName)){
-            if (!$requireEntityKey){
+        if (!$request->has($keyName)) {
+            if (!$requireEntityKey) {
                 return true; //it is ok if the key is not set (for patch requests etc)
-            }else{
+            } else {
                 throw new BadRequestException("Request entity must include entity id ($keyName) for ".get_class($model));
             }
         }
 
-        if ($request->input($keyName) !== $id){
+        if ($request->input($keyName) !== $id) {
             throw new BadRequestException("Provided entity body does not match route parameter. The entity key cannot be updated");
         }
 
         return true;
     }
-
 }
