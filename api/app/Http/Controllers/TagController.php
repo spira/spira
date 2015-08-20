@@ -8,10 +8,8 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Tag;
-
 
 class TagController extends EntityController
 {

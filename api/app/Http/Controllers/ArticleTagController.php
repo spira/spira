@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
 use App\Models\BaseModel;
@@ -39,12 +38,12 @@ class ArticleTagController extends ChildEntityController
         $requestCollection = $request->data;
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
-        $existingChildModels = Tag::whereIn('tag',$this->getIds($requestCollection,'tag'))->get();
+        $existingChildModels = Tag::whereIn('tag', $this->getIds($requestCollection, 'tag'))->get();
 
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels)
-            ->each(function(BaseModel $model){
-                if (!$model->exists){
+            ->each(function (BaseModel $model) {
+                if (!$model->exists) {
                     $model->save();
                 }
             });
@@ -56,6 +55,4 @@ class ArticleTagController extends ChildEntityController
             ->transformer($this->getTransformer())
             ->createdCollection($childModels);
     }
-
-
 }

@@ -37,7 +37,8 @@ class Tag extends BaseModel
      * @param $model
      * @return bool|void
      */
-    protected function provideUuidKey($model) {
+    protected function provideUuidKey($model)
+    {
         return true;
     }
 
@@ -48,9 +49,9 @@ class Tag extends BaseModel
      */
     public function findByIdentifier($id)
     {
-        try{
-            return $this->where('tag','=',$id)->firstOrFail();
-        }catch (ModelNotFoundException $e){
+        try {
+            return $this->where('tag', '=', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
             return $this->findOrFail($id);
         }
     }

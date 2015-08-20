@@ -14,7 +14,7 @@ class CreateTagsAndArticleTagsTable extends Migration
     public function up()
     {
         Schema::create(Tag::getTableName(), function (Blueprint $table) {
-                $table->integer('tag_id',true,true);
+                $table->integer('tag_id', true, true);
                 $table->string('tag', 255)->unique();
             }
         );
@@ -34,8 +34,6 @@ class CreateTagsAndArticleTagsTable extends Migration
                     ->onDelete('cascade');
             }
         );
-
-
     }
 
     /**

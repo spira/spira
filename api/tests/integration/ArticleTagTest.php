@@ -84,7 +84,7 @@ class ArticleTagTest extends TestCase
         $newTags = array_map(function ($entity) {
             return $this->prepareEntity($entity);
         }, factory(\App\Models\Tag::class, 4)->make()->all());
-        array_push($newTags,$this->prepareEntity($existingTagWillStay));
+        array_push($newTags, $this->prepareEntity($existingTagWillStay));
 
         $this->put('/articles/'.$entity->article_id.'/tags', ['data' => $newTags]);
 
@@ -95,14 +95,13 @@ class ArticleTagTest extends TestCase
 
         $this->assertArrayHasKey($existingTagWillStay->tag_id, $updatedTags);
         foreach ($previousTagsWillBeRemoved as $removedTag) {
-            if ($removedTag->tag_id == $existingTagWillStay->tag_id){
+            if ($removedTag->tag_id == $existingTagWillStay->tag_id) {
                 continue;
             }
             $this->assertArrayNotHasKey($removedTag->tag_id, $updatedTags);
         }
 
         $this->assertEquals(5, count($updatedTags));
-
     }
 
     public function testGetTagGlobal()
@@ -151,7 +150,6 @@ class ArticleTagTest extends TestCase
         $this->assertObjectHasAttribute('invalid', $object);
         $this->assertObjectHasAttribute('tag', $object->invalid);
         $this->assertEquals('The tag may only contain letters, numbers, dashes and spaces.', $object->invalid->tag[0]->message);
-
     }
 
     public function testPatchTagGlobal()
@@ -197,7 +195,5 @@ class ArticleTagTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals(3, Article::find($entity->article_id)->tags->count());
-
     }
-
 }
