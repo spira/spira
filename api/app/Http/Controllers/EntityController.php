@@ -37,13 +37,17 @@ abstract class EntityController extends ApiController
     /**
      * Get all entities.
      *
+     * @param Request $request
      * @return ApiResponse
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
+        $collection = $this->getAllEntities();
+        $collection = $this->getWithNested($collection, $request);
+        
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->collection($this->getAllEntities());
+            ->collection($collection);
     }
 
     public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
@@ -52,6 +56,8 @@ abstract class EntityController extends ApiController
         $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
         $collection = $this->getAllEntities($limit, $offset);
+        
+        $collection = $this->getWithNested($collection, $request->getRequest());
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -61,12 +67,15 @@ abstract class EntityController extends ApiController
     /**
      * Get one entity.
      *
+     * @param Request $request
      * @param  string $id
      * @return ApiResponse
      */
-    public function getOne($id)
+    public function getOne(Request $request, $id)
     {
         $model = $this->findOrFailEntity($id);
+        $model = $this->getWithNested($model, $request);
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($model)
@@ -293,6 +302,7 @@ abstract class EntityController extends ApiController
     {
         return $this->model;
     }
+
 
 
     /**
