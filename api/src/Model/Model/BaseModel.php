@@ -392,4 +392,35 @@ abstract class BaseModel extends Model
     {
         return spl_object_hash($this).'_'.$method;
     }
+
+
+    /**
+     * Create a collection of models from a request collection
+     * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity
+     *
+     * @param  array $requestCollection
+     * @param Collection $existingModels
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function hydrateRequestCollection(array $requestCollection, Collection $existingModels = null)
+    {
+        $keyName = $this->getKeyName();
+        $models = array_map(function ($item) use ($keyName, $existingModels) {
+
+            $model = null;
+            $entityId = $item[$keyName];
+
+            if ($existingModels) {
+                $model = $existingModels->get($entityId, $this->newInstance());
+            } else {
+                $this->findOrNew($entityId);
+            }
+
+            $model->fill($item);
+
+            return $model;
+        }, $requestCollection);
+
+        return $this->newCollection($models);
+    }
 }
