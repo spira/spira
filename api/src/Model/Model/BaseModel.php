@@ -431,14 +431,12 @@ abstract class BaseModel extends Model
      * @param mixed $value
      * @return Carbon|static
      */
-    protected function asDateTime($value){
-
-        if (is_array($value) && isset($value['date'])){
+    protected function asDateTime($value)
+    {
+        if (is_array($value) && isset($value['date'])) {
             return Carbon::parse($value['date'], $value['timezone']);
         }
 
         return parent::asDateTime($value);
-
     }
-
 }
