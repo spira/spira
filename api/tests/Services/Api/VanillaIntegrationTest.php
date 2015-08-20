@@ -268,6 +268,37 @@ class VanillaIntegrationTest extends TestCase
         $this->client->api('discussions')->find($discussion['Discussion']['DiscussionID']);
     }
 
+    /**
+     * @test
+     */
+    public function shoulePaginateCommentsInDiscussion()
+    {
+        // Create discussion thread
+        $id = (string) Uuid::uuid4();
+        $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1, ['ForeignID' => $id]);
+        for ($i=0; $i < 20; $i++) {
+            $comment = $this->client->api('comments')->create(
+                $discussion['Discussion']['DiscussionID'],
+                'Comment #'.$i
+            );
+        }
+
+        $discussion = $this->client->api('discussions')->findByForeignId($id, 1);
+        $this->assertEquals(20, $discussion['Discussion']['CountComments']);
+        $this->assertEquals(10, $discussion['CommentsPerPage']);
+        $this->assertEquals(1, $discussion['Page']);
+        $this->assertCount(10, $discussion['Comments']);
+
+        $discussion = $this->client->api('discussions')->findByForeignId($id, 2, 5);
+        $this->assertEquals(20, $discussion['Discussion']['CountComments']);
+        $this->assertEquals(5, $discussion['CommentsPerPage']);
+        $this->assertEquals(2, $discussion['Page']);
+        $this->assertCount(5, $discussion['Comments']);
+
+        // Clean up
+        $this->client->api('discussions')->removeByForeignId($id);
+    }
+
 
     // Comments
 

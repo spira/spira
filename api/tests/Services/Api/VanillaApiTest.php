@@ -122,7 +122,7 @@ class VanillaApiTest extends TestCase
         $api = $this->getApiMock(Discussion::class);
         $api->expects($this->once())
             ->method('get')
-            ->with('discussions/foreign/7e57d004-2b97-0e7a-b45f-5387367791cd', ['page' => 'p1'])
+            ->with('discussions/foreign/7e57d004-2b97-0e7a-b45f-5387367791cd', ['page' => 'p1', 'perPage' => 10])
             ->will($this->returnValue($expected));
 
         $this->assertEquals($expected, $api->findByForeignId('7e57d004-2b97-0e7a-b45f-5387367791cd'));

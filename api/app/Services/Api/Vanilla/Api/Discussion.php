@@ -63,12 +63,16 @@ class Discussion extends ApiAbstract
      *
      * @param  string $id
      * @param  int    $page
+     * @param  int    $perPage
      *
      * @return array
      */
-    public function findByForeignId($id, $page = 1)
+    public function findByForeignId($id, $page = 1, $perPage = 10)
     {
-        return $this->get('discussions/foreign/'.$id, ['page' => 'p'.$page]);
+        return $this->get(
+            'discussions/foreign/'.$id,
+            ['page' => 'p'.$page, 'perPage' => $perPage]
+        );
     }
 
     /**

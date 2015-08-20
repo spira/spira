@@ -28,7 +28,7 @@ class ApiDiscussionController extends DiscussionController
         }
 
         // Override the per page value with a custom setting
-        saveToConfig('Vanilla.Comments.PerPage', $perPage, false);
+        saveToConfig('Vanilla.Comments.PerPage', (int) $perPage, false);
         $commentsPerPage = c('Vanilla.Comments.PerPage');
 
         // Add comments per page to the response
