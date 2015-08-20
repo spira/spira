@@ -554,5 +554,4 @@ class UserTest extends TestCase
         ]);
         $this->assertResponseStatus(422);
     }
-
 }
