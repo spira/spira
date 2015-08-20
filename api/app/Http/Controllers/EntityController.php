@@ -54,14 +54,13 @@ abstract class EntityController extends ApiController
 
     public function getAllPaginated(Request $request, RangeRequest $rangeRequest)
     {
-
         $totalCount = $this->countEntities();
         $limit = $rangeRequest->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
         $offset = $rangeRequest->isGetLast()?$totalCount-$limit:$rangeRequest->getOffset();
 
         if ($request->has('q')) {
             $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
-        }else{
+        } else {
             $collection = $this->getAllEntities($limit, $offset, $totalCount);
         }
 
@@ -275,7 +274,6 @@ abstract class EntityController extends ApiController
      */
     protected function getAllEntities($limit = null, $offset = null, &$totalCount = null)
     {
-
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
 
@@ -297,11 +295,11 @@ abstract class EntityController extends ApiController
             ],
         ], null, null, $limit, $offset);
 
-        if($searchResults->totalHits() === 0){
+        if ($searchResults->totalHits() === 0) {
             throw new NotFoundHttpException(sprintf("No results found for query %s on model %s", $queryString, get_class($model)));
         }
 
-        if(isset($totalCount) && $searchResults->totalHits() < $totalCount){
+        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
             $totalCount = $searchResults->totalHits();
         }
 
