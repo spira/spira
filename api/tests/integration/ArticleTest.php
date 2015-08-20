@@ -454,4 +454,30 @@ class ArticleTest extends TestCase
         $this->assertEquals($article->article_id, $discussion['Discussion']['ForeignID']);
         $client->api('discussions')->findByForeignId($article->article_id);
     }
+
+    /**
+     * @test
+     */
+    public function shouldGetCommentsForArticle()
+    {
+        $article = factory(Article::class)->create();
+        $content = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $content);
+
+        $this->get('/articles/'.$article->article_id.'/comments');
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array);
+        $this->assertEquals($content, $array[0]['content']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
 }
