@@ -18,7 +18,6 @@ use Spira\Model\Collection\Collection;
  */
 class Article extends BaseModel
 {
-
     use ElasticquentTrait;
 
     const defaultExcerptWordCount = 30;
