@@ -5,7 +5,7 @@ namespace App\Models;
 use App;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
-class ArticleDiscussion extends BaseModel
+class ArticleComment extends BaseModel
 {
     /**
      * Article discussion belongs to.
