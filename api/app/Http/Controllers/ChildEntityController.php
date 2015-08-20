@@ -99,7 +99,7 @@ class ChildEntityController extends ApiController
      * @throws \Exception
      * @throws \Exception|null
      */
-    public function postOne($id, Request $request)
+    public function postOne(Request $request, $id)
     {
         $parent = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
@@ -122,11 +122,13 @@ class ChildEntityController extends ApiController
      * @param  Request $request
      * @return ApiResponse
      */
-    public function putOne($id, $childId, Request $request)
+    public function putOne(Request $request, $id, $childId)
     {
-        $parent = $this->findParentEntity($id);
-        $childModel = $this->findOrNewChildEntity($childId, $parent);
 
+        $parent = $this->findParentEntity($id);
+
+        $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
+        $childModel = $this->findOrNewChildEntity($childId, $parent);
 
         $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getValidationRules(), $childId));
 
@@ -145,7 +147,7 @@ class ChildEntityController extends ApiController
      * @param  Request $request
      * @return ApiResponse
      */
-    public function putMany($id, Request $request)
+    public function putMany(Request $request, $id)
     {
         $parent = $this->findParentEntity($id);
 
@@ -172,9 +174,11 @@ class ChildEntityController extends ApiController
      * @param  Request $request
      * @return ApiResponse
      */
-    public function patchOne($id, $childId, Request $request)
+    public function patchOne(Request $request, $id, $childId)
     {
         $parent = $this->findParentEntity($id);
+
+        $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
         $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $childId);
@@ -193,7 +197,7 @@ class ChildEntityController extends ApiController
      * @param  Request $request
      * @return ApiResponse
      */
-    public function patchMany($id, Request $request)
+    public function patchMany(Request $request, $id)
     {
         $requestCollection = $request->data;
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
@@ -233,7 +237,7 @@ class ChildEntityController extends ApiController
      * @param  Request  $request
      * @return ApiResponse
      */
-    public function deleteMany($id, Request $request)
+    public function deleteMany(Request $request, $id)
     {
         $requestCollection = $request->data;
         $model = $this->findParentEntity($id);

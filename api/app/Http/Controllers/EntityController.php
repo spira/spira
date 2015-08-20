@@ -107,8 +107,10 @@ abstract class EntityController extends ApiController
      * @param  Request  $request
      * @return ApiResponse
      */
-    public function putOne($id, Request $request)
+    public function putOne(Request $request, $id)
     {
+        $this->checkEntityIdMatchesRoute($request, $id, $this->getModel());
+
         $model = $this->findOrNewEntity($id);
 
         $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);
@@ -153,8 +155,10 @@ abstract class EntityController extends ApiController
      * @param  Request  $request
      * @return ApiResponse
      */
-    public function patchOne($id, Request $request)
+    public function patchOne(Request $request, $id)
     {
+        $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
+
         $model = $this->findOrFailEntity($id);
 
         $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);

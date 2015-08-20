@@ -204,7 +204,7 @@ class ArticleTest extends TestCase
         $this->put('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
 
-        $this->assertResponseStatus(422);
+        $this->assertResponseStatus(400);
     }
 
 
