@@ -7,12 +7,13 @@ class ApiDiscussionController extends DiscussionController
      *
      * @param  string $foreignId
      * @param  string $page
+     * @param  int    $perPage
      *
      * @throws Gdn_UserException
      *
      * @return void
      */
-    public function getByForeignId($foreignId = '', $page = '')
+    public function getByForeignId($foreignId = '', $page = '', $perPage = 10)
     {
         if (!$this->isValidUuid($foreignId)) {
             throw new Gdn_UserException('Bad Request', 400);
@@ -25,6 +26,13 @@ class ApiDiscussionController extends DiscussionController
         if (!is_object($this->Discussion)) {
             throw notFoundException('Discussion');
         }
+
+        // Override the per page value with a custom setting
+        saveToConfig('Vanilla.Comments.PerPage', $perPage, false);
+        $commentsPerPage = c('Vanilla.Comments.PerPage');
+
+        // Add comments per page to the response
+        $this->setData('CommentsPerPage', $commentsPerPage);
 
         $this->index($this->Discussion->DiscussionID, '', $page);
     }
