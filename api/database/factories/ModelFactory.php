@@ -131,6 +131,17 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
     ];
 });
 
+$factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $faker) {
+    return [
+        'comment_id' => $faker->unique()->randomNumber,
+        'content' => $faker->paragraph,
+        'created_at' => $faker->dateTime,
+        'author_name' => $faker->name,
+        'author_email' => $faker->email,
+        'author_photo' => $faker->optional(0.5)->imageUrl
+    ];
+});
+
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     return [
