@@ -155,4 +155,14 @@ class Article extends BaseModel
     {
         return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
     }
+
+    /**
+     * Get comment relationship.
+     *
+     * @return ArticleComment
+     */
+    public function comments()
+    {
+        return new ArticleComment($this);
+    }
 }
