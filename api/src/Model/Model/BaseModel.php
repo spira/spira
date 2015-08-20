@@ -408,7 +408,7 @@ abstract class BaseModel extends Model
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
             $model = null;
-            $entityId = $item[$keyName];
+            $entityId = isset($item[$keyName])?$item[$keyName]:null;
 
             if ($existingModels) {
                 $model = $existingModels->get($entityId, $this->newInstance());
