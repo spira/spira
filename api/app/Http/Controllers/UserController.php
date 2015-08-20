@@ -88,7 +88,7 @@ class UserController extends EntityController
      * @param  Request  $request
      * @return Response
      */
-    public function putOne($id, Request $request)
+    public function putOne(Request $request, $id)
     {
         // Extract the credentials
         $credential = $request->get('_user_credential', []);
@@ -99,7 +99,6 @@ class UserController extends EntityController
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
 
-        $this->validateId($id, $this->getModel()->getKeyName(), $this->validateIdRule);
         if ($this->getModel()->find($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -134,7 +133,7 @@ class UserController extends EntityController
      * @param  Request  $request
      * @return Response
      */
-    public function patchOne($id, Request $request)
+    public function patchOne(Request $request, $id)
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
@@ -179,6 +178,7 @@ class UserController extends EntityController
         $credentialUpdateDetails = $request->get('_user_credential', []);
         if (!empty($credentialUpdateDetails)) {
             $credentials = UserCredential::findOrNew($id);
+            /** @var UserCredential $credentials */
             $credentials->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
@@ -222,7 +222,6 @@ class UserController extends EntityController
      */
     public function unlinkSocialLogin($id, $provider)
     {
-        $this->validateId($id, $this->getModel()->getKeyName());
         if (!$socialLogin = SocialLogin::where('user_id', '=', $id)
             ->where('provider', '=', $provider)
             ->first()) {
@@ -230,11 +229,54 @@ class UserController extends EntityController
         }
 
         $socialLogin->delete();
-
+        /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
 
-        $token = $jwtAuth->fromUser($this->repository->find($id));
+        $token = $jwtAuth->fromUser(User::find($id));
 
         return $this->getResponse()->header('Authorization-Update', $token)->noContent();
+    }
+
+    /**
+     * Get full user details
+     *
+     * @param Request $request
+     * @param string $id
+     * @return \Spira\Responder\Response\ApiResponse
+     */
+    public function getOne(Request $request, $id)
+    {
+        /** @var User $user */
+        $user = User::find($id);
+
+        $userData = $this->transformer->transformItem($user);
+
+        if (is_null($user->userCredential)) {
+            $userData['_user_credential'] = false;
+        } else {
+            $userData['_user_credential'] = $user->userCredential->toArray();
+        }
+
+        if (is_null($user->socialLogins)) {
+            $userData['_social_logins'] = false;
+        } else {
+            $userData['_social_logins'] = $user->socialLogins->toArray();
+        }
+
+        $userProfile = null;
+
+        if (is_null($user->userProfile)) {
+            $userProfile = new UserProfile;
+            $userProfile->user_id = $id;
+            $user->setProfile($userProfile);
+        } else {
+            $userProfile = $user->userProfile;
+        }
+
+        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->item($userData);
     }
 }

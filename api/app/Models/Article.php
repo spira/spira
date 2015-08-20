@@ -53,7 +53,7 @@ class Article extends BaseModel
     public static function getValidationRules()
     {
         return [
-            'article_id' => 'uuid',
+            'article_id' => 'required|uuid',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',

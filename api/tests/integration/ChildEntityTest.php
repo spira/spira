@@ -147,10 +147,11 @@ class ChildEntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
 
-        $this->assertResponseStatus(422);
+        $this->assertResponseStatus(400);
         $this->assertTrue(is_object($object));
 
-        $this->assertEquals('The entity id can not be changed.', $object->invalid->entityId[0]->message);
+        $this->assertObjectHasAttribute('message', $object);
+        $this->assertEquals("Provided entity body does not match route parameter. The entity key cannot be updated", $object->message);
     }
 
     public function testPutOneNewInvalidId()
@@ -165,9 +166,7 @@ class ChildEntityTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->shouldReturnJson();
-        $this->assertResponseStatus(422);
-        $this->assertObjectHasAttribute('entityId', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
+        $this->assertResponseStatus(500);
     }
 
     public function testPutManyNoIds()
@@ -185,11 +184,8 @@ class ChildEntityTest extends TestCase
         }
 
         $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
-        $object = json_decode($this->response->getContent());
-        $this->assertResponseStatus(201);
-
-        $this->assertTrue(is_array($object));
-        $this->assertCount(5, $object);
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(422);
     }
 
     public function testPatchManyNoIds()

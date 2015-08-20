@@ -8,8 +8,11 @@
 
 namespace App\Extensions\Controller;
 
+use App\Exceptions\BadRequestException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\ValidatesRequests;
+use Spira\Model\Model\BaseModel;
 use Spira\Model\Validation\ValidationException;
 use Spira\Model\Validation\ValidationExceptionCollection;
 use Spira\Model\Validation\Validator;
@@ -21,45 +24,18 @@ trait RequestValidationTrait
     /**
      * @param $entityCollection
      * @param string $keyName
-     * @param string|null $rule
      * @return array
-     * @throws ValidationExceptionCollection
      */
-    protected function getIds($entityCollection, $keyName, $rule = null)
+    public function getIds($entityCollection, $keyName)
     {
         $ids = [];
-        $errors = [];
-        $error = false;
         foreach ($entityCollection as $requestEntity) {
             if (isset($requestEntity[$keyName]) && $requestEntity[$keyName]) {
-                try {
-                    $id = $requestEntity[$keyName];
-                    $this->validateId($id, $keyName, $rule);
-                    $ids[] = $id;
-                    $errors[] = null;
-                } catch (ValidationException $e) {
-                    $error = true;
-                    $errors[] = $e;
-                }
-            } else {
-                $errors[] = null;
+                $ids[] = $requestEntity[$keyName];
             }
-        }
-        if ($error) {
-            throw new ValidationExceptionCollection($errors);
         }
 
         return $ids;
-    }
-
-    /**
-     * @param $requestEntity
-     * @param $keyName
-     * @return null
-     */
-    protected function getIdOrNull($requestEntity, $keyName)
-    {
-        return isset($requestEntity[$keyName])?$requestEntity[$keyName]:null;
     }
 
 
@@ -105,32 +81,16 @@ trait RequestValidationTrait
         throw new ValidationExceptionCollection($errors);
     }
 
-    /**
-     * @param $id
-     * @param string $keyName
-     * @param string|null $rule
-     * @throw ValidationException
-     */
-    protected function validateId($id, $keyName, $rule = null)
-    {
-        if (!is_null($rule)) {
-            $validation = $this->getValidationFactory()->make([$keyName=>$id], [$keyName=>$rule]);
-            if ($validation->fails()) {
-                throw new ValidationException($validation->getMessageBag());
-            }
-        }
-    }
-
 
     /**
      * @param $requestEntity
      * @param array $validationRules
-     * @param bool $limitToRequest
+     * @param bool $limitToKeysPresent
      * @return bool
      */
-    public function validateRequest($requestEntity, $validationRules, $limitToRequest = false)
+    public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
     {
-        if ($limitToRequest) {
+        if ($limitToKeysPresent) {
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
 
@@ -139,6 +99,62 @@ trait RequestValidationTrait
 
         if ($validation->fails()) {
             throw new ValidationException($validation->messages());
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate a request collection
+     * @param $requestCollection
+     * @param $validationRules
+     * @param bool|false $limitToKeysPresent
+     * @return bool
+     */
+    public function validateRequestCollection($requestCollection, $validationRules, $limitToKeysPresent = false)
+    {
+        $errorCaught = false;
+        $errors = [];
+
+        foreach ($requestCollection as $requestEntity) {
+            try {
+                $this->validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
+                $errors[] = null;
+            } catch (ValidationException $e) {
+                $errors[] = $e;
+                $errorCaught = true;
+            }
+        }
+
+        if ($errorCaught) {
+            throw new ValidationExceptionCollection($errors);
+        }
+
+        return true;
+    }
+
+
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @param BaseModel $model
+     * @param bool|true $requireEntityKey
+     * @return bool
+     */
+    protected function checkEntityIdMatchesRoute(Request $request, $id, BaseModel $model, $requireEntityKey = true)
+    {
+        $keyName = $model->getKeyName();
+        if (!$request->has($keyName)) {
+            if (!$requireEntityKey) {
+                return true; //it is ok if the key is not set (for patch requests etc)
+            } else {
+                throw new BadRequestException("Request entity must include entity id ($keyName) for ".get_class($model));
+            }
+        }
+
+        if ($request->input($keyName) !== $id) {
+            throw new BadRequestException("Provided entity body does not match route parameter. The entity key cannot be updated");
         }
 
         return true;
