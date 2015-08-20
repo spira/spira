@@ -49,16 +49,6 @@ class ValidatorTest extends TestCase
         $this->assertStringEndsWith('must be an UUID string.', $validation->messages()->get('uuid')[0]);
     }
 
-    public function testCamelCaseTransform()
-    {
-        $this->markTestSkipped('can be tested in testEntity');
-        $data = ['multi_word_column_title' => 0.12];
-
-        $validation = $this->validator->make($data, ['multi_word_column_title'=>'required|boolean']);
-        $this->assertFalse($validation->passes());
-        $validation->passes();
-    }
-
     public function testPassingCountryValidation()
     {
         $data = ['country' => 'SE'];

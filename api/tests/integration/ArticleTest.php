@@ -192,28 +192,19 @@ class ArticleTest extends TestCase
         $this->assertStringStartsWith('http', $object->_self);
     }
 
-    public function testPutCollidingIds()
+    public function testPutMissingIdInBody()
     {
         $entity = factory(Article::class)->create();
         $id = $entity->article_id;
         $entity->title = 'foo';
-
-        $rowCount = Article::count();
 
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['permalink'], $preparedEntity['articleId']);
 
         $this->put('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
-        $object = json_decode($this->response->getContent());
 
-        $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount, Article::count());
-        $this->assertTrue(is_object($object));
-        $this->assertStringStartsWith('http', $object->_self);
-
-        $checkEntity = Article::find($id);
-        $this->assertEquals($checkEntity->title, $entity->title);
+        $this->assertResponseStatus(400);
     }
 
 
