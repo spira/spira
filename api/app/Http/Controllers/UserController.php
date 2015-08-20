@@ -88,7 +88,7 @@ class UserController extends EntityController
      * @param  Request  $request
      * @return Response
      */
-    public function putOne($id, Request $request)
+    public function putOne(Request $request, $id)
     {
         // Extract the credentials
         $credential = $request->get('_user_credential', []);
@@ -133,7 +133,7 @@ class UserController extends EntityController
      * @param  Request  $request
      * @return Response
      */
-    public function patchOne($id, Request $request)
+    public function patchOne(Request $request, $id)
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
