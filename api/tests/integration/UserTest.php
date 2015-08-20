@@ -36,9 +36,6 @@ class UserTest extends TestCase
             'Range' => 'entities=0-19'
         ]);
 
-        $body = json_decode($this->response->getContent());
-        dd($body);
-
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
