@@ -8,6 +8,7 @@
 
 namespace Spira\Model\Model;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -423,4 +424,21 @@ abstract class BaseModel extends Model
 
         return $this->newCollection($models);
     }
+
+
+    /**
+     * Handle case where the value might be from Cabon::toArray
+     * @param mixed $value
+     * @return Carbon|static
+     */
+    protected function asDateTime($value){
+
+        if (is_array($value) && isset($value['date'])){
+            return Carbon::parse($value['date'], $value['timezone']);
+        }
+
+        return parent::asDateTime($value);
+
+    }
+
 }

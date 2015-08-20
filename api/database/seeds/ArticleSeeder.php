@@ -30,6 +30,6 @@ class ArticleSeeder extends Seeder
             })
         ;
 
-        Article::addAllToIndex(); //push all articles to elastic search
+        Article::reindex(); //push all articles to elastic search
     }
 }

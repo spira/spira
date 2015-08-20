@@ -29,7 +29,7 @@ class UserStorySeeder extends Seeder
             $this->createUser();
         }
 
-        User::addAllToIndex(); //push all users to elastic search
+        User::reindex(); //push all users to elastic search
 
     }
 
