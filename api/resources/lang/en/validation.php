@@ -75,7 +75,6 @@ return [
     "timezone"             => "The :attribute must be a valid zone.",
     'uuid'                 => "The :attribute must be an UUID string.",
     'float'                => "The :attribute must be a float.",
-    'equals'               => "The :attribute can not be changed.",
     'not_found'            => "The selected :attribute is invalid.",
     'country'              => 'The :attribute must be a valid country code.',
     'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
