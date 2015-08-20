@@ -1,10 +1,11 @@
 <md-content layout-padding>
 
     <md-input-container>
+        <!-- No options for input to have clear button yet, could hack at it or wait for md-autocomplete to get type="search" -->
         <label for="searchInput">Search</label>
         <input id="searchInput"
-               ng-model="UsersController.searchTerm"
-               ng-change="UsersController.search()"
+               ng-model="searchTerm"
+               ng-change="UsersController.search(searchTerm)"
                ng-model-options='{ debounce: 1000 }'>
     </md-input-container>
 
