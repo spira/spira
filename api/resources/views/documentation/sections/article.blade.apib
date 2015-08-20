@@ -165,4 +165,28 @@ Note that this route returns paginated results as defined in the `Content-Range`
                     ->json()
             !!}
 
+### Post a comment for article [POST]
+#### Restrictions
+* Allowed - [all]
 
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->showOnly(['content'])
+                    ->json();
+            !!}
+
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->json()
+            !!}
