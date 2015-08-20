@@ -240,10 +240,11 @@ class UserController extends EntityController
     /**
      * Get full user details
      *
+     * @param Request $request
      * @param string $id
      * @return \Spira\Responder\Response\ApiResponse
      */
-    public function getOne($id)
+    public function getOne(Request $request, $id)
     {
         /** @var User $user */
         $user = User::find($id);

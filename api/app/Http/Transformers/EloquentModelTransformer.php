@@ -11,6 +11,7 @@ namespace App\Http\Transformers;
 use App\Helpers\RouteHelper;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
+use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
 use Traversable;
 
@@ -65,7 +66,9 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            $this->addSelfKey($object, $array);
+            $array = $this->addSelfKey($object, $array);
+
+            $array = $this->nestRelations($object, $array);
         }
 
         return $array;
@@ -106,33 +109,13 @@ class EloquentModelTransformer extends BaseTransformer
      * @param BaseModel $model
      * @param $array
      */
-    protected function addSelfKey(BaseModel $model, &$array)
+    protected function addSelfKey(BaseModel $model, $array)
     {
         if ($route = RouteHelper::getRoute($model)) {
-            $array['_self'] = $route;
+            $array = ['_self' => $route] + $array;
         }
 
-        foreach ($model->getRelations() as $key => $value) {
-            $camelCaseKey = camel_case($key);
-            if ($value instanceof BaseModel && isset($array[$camelCaseKey])) {
-                $this->addSelfKey($value, $array[$camelCaseKey]);
-            } elseif ($this->isIterable($value)) {
-                foreach ($value as $index => $relatedModel) {
-                    if ($relatedModel instanceof BaseModel && isset($array[$camelCaseKey][$index])) {
-                        $this->addSelfKey($relatedModel, $array[$camelCaseKey][$index]);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $var
-     * @return bool
-     */
-    protected function isIterable($var)
-    {
-        return (is_array($var) || $var instanceof Traversable);
+        return $array;
     }
 
     /**
@@ -193,5 +176,30 @@ class EloquentModelTransformer extends BaseTransformer
         $prefix = starts_with($str, '_') ? '_' : '';
 
         return $prefix.camel_case($str);
+    }
+
+    /**
+     * Get the objects nested entities transformed
+     * @param $object
+     * @param $array
+     * @return mixed
+     */
+    private function nestRelations($object, $array)
+    {
+        if (count($object['relations']) > 0) {
+            foreach ($object['relations'] as $relation => $childModelOrCollection) {
+                $childTransformed = null;
+                if ($childModelOrCollection instanceof Collection) {
+                    $childTransformed = $this->transformCollection($childModelOrCollection);
+                } else {
+                    $childTransformed = $this->transformItem($childModelOrCollection);
+                }
+
+                $array = $array + ['_' . $relation => $childTransformed];
+                unset($array[$relation]);
+            }
+        }
+
+        return $array;
     }
 }

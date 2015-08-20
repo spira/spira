@@ -55,7 +55,9 @@ namespace common.services.article {
          */
         public getArticle(identifier:string):ng.IPromise<common.models.Article> {
 
-            return this.ngRestAdapter.get('/articles/'+identifier)
+            return this.ngRestAdapter.get('/articles/'+identifier, {
+                'With-Nested' : 'permalinks, metas'
+            })
                 .then((res) => ArticleService.articleFactory(res.data));
 
         }

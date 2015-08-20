@@ -56,13 +56,15 @@ class ChildEntityController extends ApiController
     /**
      * Get all entities.
      *
+     * @param Request $request
      * @param string $id
      * @return ApiResponse
      */
-    public function getAll($id)
+    public function getAll(Request $request, $id)
     {
         $model = $this->findParentEntity($id);
         $childEntities = $this->findAllChildren($model);
+        $childEntities = $this->getWithNested($childEntities, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -72,14 +74,16 @@ class ChildEntityController extends ApiController
     /**
      * Get one entity.
      *
+     * @param Request $request
      * @param  string $id
      * @param string $childId
      * @return ApiResponse
      */
-    public function getOne($id, $childId)
+    public function getOne(Request $request, $id, $childId)
     {
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
+        $childModel = $this->getWithNested($childModel, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
