@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App;
-use Illuminate\Support\Collection;
+use Spira\Model\Collection\Collection;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
 class ArticleComment extends BaseModel
