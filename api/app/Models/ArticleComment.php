@@ -23,6 +23,29 @@ class ArticleComment extends BaseModel
     protected $client;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'comment_id',
+        'content',
+        'created_at',
+        'author_name',
+        'author_email',
+        'author_photo'
+    ];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
+    /**
      * Assign dependencies.
      *
      * @param  Article $article
@@ -86,6 +109,46 @@ class ArticleComment extends BaseModel
             $commentCount
         );
 
-        return new Collection($discussion['Comments']);
+        // Convert the comments to model objects
+        $comments = new Collection;
+        foreach ($discussion['Comments'] as $comment) {
+            $comment = $this->vanillaCommentToEloquent($comment);
+
+            $articleComment = new ArticleComment($this->article);
+            $articleComment->fill($comment);
+
+            $comments->push($articleComment);
+        }
+
+        return $comments;
+    }
+
+    /**
+     * Convert a comment from Vanilla to be ready to fill an Eloquent model.
+     *
+     * @param  array  $data
+     *
+     * @return void
+     */
+    protected function vanillaCommentToEloquent(array $data)
+    {
+        $map = [
+            'CommentID' => 'comment_id',
+            'Body' => 'content',
+            'DateInserted' => 'created_at',
+            'InsertName' => 'author_name',
+            'InsertEmail' => 'author_email',
+            'InsertPhoto' => 'author_photo'
+        ];
+
+        $comment = [];
+
+        foreach ($data as $key => $value) {
+            if (array_key_exists($key, $map)) {
+                $comment[$map[$key]] = $value;
+            }
+        }
+
+        return $comment;
     }
 }

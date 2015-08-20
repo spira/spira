@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Http\Transformers\ArticleCommentTransformer;
+use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleCommentController extends ChildEntityController
 {
@@ -17,12 +17,12 @@ class ArticleCommentController extends ChildEntityController
     /**
      * Set dependencies.
      *
-     * @param  Article                   $parentModel
-     * @param  ArticleCommentTransformer $transformer
+     * @param  Article                  $parentModel
+     * @param  EloquentModelTransformer $transformer
      *
      * @return void
      */
-    public function __construct(Article $parentModel, ArticleCommentTransformer $transformer)
+    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
     }
