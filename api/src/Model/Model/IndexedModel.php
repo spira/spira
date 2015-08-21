@@ -19,10 +19,7 @@ abstract class IndexedModel extends BaseModel
     }
 
     /**
-     * Type Exists.
-     *
-     * Does this type exist?
-     *
+     * Check if index exists
      * @return bool
      */
     public static function indexExists()
@@ -35,4 +32,29 @@ abstract class IndexedModel extends BaseModel
 
         return $instance->getElasticSearchClient()->indices()->exists($params);
     }
+
+    /**
+     * Remove all of this entity from the index
+     * @return bool
+     */
+    public static function removeAllFromIndex()
+    {
+        return self::mappingExists() && self::deleteMapping();
+    }
+
+    /**
+     * Get the count of this entity in the index
+     * @return mixed
+     */
+    public function countIndex()
+    {
+        $instance = new static;
+
+        $params = array(
+            'index' => $instance->getIndexName(),
+        );
+
+        return $instance->getElasticSearchClient()->count($params);
+    }
+
 }
