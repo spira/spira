@@ -17,4 +17,22 @@ abstract class IndexedModel extends BaseModel
     {
         return new IndexedCollection($models, static::class);
     }
+
+    /**
+     * Type Exists.
+     *
+     * Does this type exist?
+     *
+     * @return bool
+     */
+    public static function indexExists()
+    {
+        $instance = new static;
+
+        $params = array(
+            'index' => $instance->getIndexName(),
+        );
+
+        return $instance->getElasticSearchClient()->indices()->exists($params);
+    }
 }
