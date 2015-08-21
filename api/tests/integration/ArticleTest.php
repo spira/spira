@@ -476,8 +476,42 @@ class ArticleTest extends TestCase
 
         $this->assertCount(1, $array);
         $this->assertEquals($content, $array[0]['content']);
+        $this->assertResponseStatus(200);
 
         // Clean up by removing the discussion created
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPostCommentForArticle()
+    {
+        $content = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['content' => $content], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+        $array = json_decode($this->response->getContent(), true);
+
+        $array = $this->response->getContent();
+
+        $this->assertResponseStatus(200);
+
+        // Clean up by removing the discussion created
+        $client = App::make(VanillaClient::class);
+        $client->api('discussions')->removeByForeignId($article->article_id);
+
+        // @todo We have no API method to remove the created user in Vanilla,
+        // should probably add that to not flood the user table during repeated testing.
+    }
+
+    public function shouldNotPostCommentForArticle()
+    {
+        // @todo test invalid input data / not logged in
     }
 }
