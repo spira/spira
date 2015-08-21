@@ -294,7 +294,7 @@ abstract class EntityController extends ApiController
         ], null, null, $limit, $offset);
 
         if ($searchResults->totalHits() === 0) {
-            throw new NotFoundHttpException(sprintf("No results found for query %s on model %s", $queryString, get_class($model)));
+            throw new NotFoundHttpException(sprintf("No results found with query `%s` for model `%s`", $queryString, get_class($model)));
         }
 
         if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
