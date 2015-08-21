@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Tymon\JWTAuth\JWTAuth;
-use App\Http\Transformers\EloquentModelTransformer;
-
 use Illuminate\Http\Request;
+use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleCommentController extends ChildEntityController
 {
