@@ -650,7 +650,6 @@ class EntityTest extends TestCase
 
     public function testEntitySearch()
     {
-
         TestEntity::deleteIndex();
 
         $searchEntity = factory(App\Models\TestEntity::class)->create([
@@ -672,8 +671,5 @@ class EntityTest extends TestCase
         $this->assertCount(1, $collection);
 
         $this->assertEquals($searchEntity->entity_id, $collection[0]->entityId);
-
     }
-
-
 }
