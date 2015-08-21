@@ -129,7 +129,7 @@ class ChildEntityController extends ApiController
         $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->all(), $this->addIdOverrideValidationRule($this->getValidationRules(), $childId));
+        $this->validateRequest($request->all(), $this->getValidationRules());
 
         $childModel->fill($request->all());
         $this->getRelation($parent)->save($childModel);
@@ -180,8 +180,7 @@ class ChildEntityController extends ApiController
         $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $childId);
-        $this->validateRequest($request->all(), $validationRules, true);
+        $this->validateRequest($request->all(), $this->getValidationRules(), true);
 
         $childModel->fill($request->all());
         $this->getRelation($parent)->save($childModel);
@@ -370,22 +369,5 @@ class ChildEntityController extends ApiController
     protected function getValidationRules()
     {
         return $this->getChildModel()->getValidationRules();
-    }
-
-    /**
-     * @param $validationRules
-     * @param $id
-     * @return mixed
-     */
-    protected function addIdOverrideValidationRule($validationRules, $id)
-    {
-        $rule = 'equals:'.$id;
-        $keyName = $this->getChildModel()->getKeyName();
-        if (isset($validationRules[$keyName])) {
-            $rule='|'.$rule;
-        }
-
-        $validationRules[$keyName].= $rule;
-        return $validationRules;
     }
 }
