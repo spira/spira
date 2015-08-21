@@ -675,7 +675,6 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-
         TestEntity::reindex();
 
         sleep(1); //give the elastic search agent time to index
