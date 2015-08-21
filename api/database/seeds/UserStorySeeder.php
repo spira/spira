@@ -15,7 +15,7 @@ class UserStorySeeder extends Seeder
      */
     public function run()
     {
-        User::deleteMapping(); //remove all entries from index
+        User::removeAllFromIndex(); //remove all entries from index
 
         $faker = Faker::create('au_AU');
 
