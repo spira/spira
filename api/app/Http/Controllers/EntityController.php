@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
+use App\Models\User;
 use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -288,13 +289,12 @@ abstract class EntityController extends ApiController
         $model = $this->getModel();
 
         $searchResults = $model->searchByQuery([
-            'match' => [
-                '_all' => $queryString,
-            ],
+            'match_phrase' => [
+                '_all' => $queryString
+            ]
         ], null, null, $limit, $offset);
 
         if ($searchResults->totalHits() === 0) {
-            dd($searchResults);
             throw new NotFoundHttpException(sprintf("No results found with query `%s` for model `%s`", $queryString, get_class($model)));
         }
 
