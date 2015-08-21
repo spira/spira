@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Tymon\JWTAuth\JWTAuth;
 use App\Http\Transformers\EloquentModelTransformer;
+
+use Illuminate\Http\Request;
 
 class ArticleCommentController extends ChildEntityController
 {
@@ -15,15 +18,57 @@ class ArticleCommentController extends ChildEntityController
     protected $relationName = 'comments';
 
     /**
+     * JWT Auth.
+     *
+     * @var JWTAuth
+     */
+    protected $jwtAuth;
+
+    /**
      * Set dependencies.
      *
      * @param  Article                  $parentModel
      * @param  EloquentModelTransformer $transformer
+     * @param  JWTAuth                  $jwtAuth
      *
      * @return void
      */
-    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
-    {
+    public function __construct(
+        Article $parentModel,
+        EloquentModelTransformer $transformer,
+        JWTAuth $jwtAuth
+    ) {
+        $this->jwtAuth = $jwtAuth;
+
         parent::__construct($parentModel, $transformer);
+    }
+
+    /**
+     * Post a new comment.
+     *
+     * @param  Request $request
+     * @param  string  $id
+     *
+     * @return ApiResponse
+     */
+    public function postOne(Request $request, $id)
+    {
+        // Add the current user to the rquest
+        if ($user = $this->jwtAuth->user()) {
+            $request->merge(['user_id' => $user->user_id]);
+        }
+
+        $this->validateRequest($request->all(), $this->getValidationRules());
+
+        $parent = $this->findParentEntity($id);
+        $childModel = $this->getRelation($parent);
+        $childModel = $childModel->save($request->all(), $user);
+
+        // If we respond with createdItem() it would be an empty response, so
+        // we respond with item() instead to provide the data from the new
+        // comment
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->item($childModel);
     }
 }

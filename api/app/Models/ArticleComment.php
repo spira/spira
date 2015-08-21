@@ -46,6 +46,19 @@ class ArticleComment extends BaseModel
     ];
 
     /**
+     * Get validation rules.
+     *
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return [
+            'user_id' => 'required|uuid',
+            'content' => 'required|string',
+        ];
+    }
+
+    /**
      * Create a discussion thread for the article.
      *
      * @return void
@@ -70,6 +83,58 @@ class ArticleComment extends BaseModel
         $this->getClient()->api('discussions')->removeByForeignId(
             $this->article->article_id
         );
+    }
+
+    /**
+     * Get the discussion thread id for the article.
+     *
+     * @return int
+     */
+    protected function getDiscussionId()
+    {
+        $discussion = $this->getClient()->api('discussions')->findByForeignId(
+            $this->article->article_id
+        );
+
+        return $discussion['Discussion']['DiscussionID'];
+    }
+
+    /**
+     * Save a new comment to Vanilla.
+     *
+     * @param  array     $options
+     * @param  User|null $user
+     *
+     * @return ArticleComment
+     */
+    public function save(array $options = [], User $user = null)
+    {
+        $this->fill($options);
+        $id = $this->getDiscussionId();
+
+        // Get/create corresponding user from Vanilla
+        $vanillaUser = $this->getClient()->api('users')->sso(
+            $user->user_id,
+            $user->username,
+            $user->email,
+            $user->avatar_image
+        );
+
+        // Set as active user in Vanilla client
+        $this->getClient()->setUser($vanillaUser['User']['Name']);
+
+        // Create the comment in Vanilla
+        $comment = $this->getClient()->api('comments')->create(
+            $id,
+            $this->content
+        );
+
+        // And return it as an Eloquent Model
+        $comment = $this->vanillaCommentToEloquent($comment['Comment']);
+        $articleComment = new ArticleComment;
+        $articleComment->fill($comment);
+
+        return $articleComment;
     }
 
     /**
@@ -107,6 +172,16 @@ class ArticleComment extends BaseModel
         }
 
         return $comments;
+    }
+
+    /**
+     * Allow a parent model to get this model via relation.
+     *
+     * @return ArticleComment
+     */
+    public function getRelated()
+    {
+        return $this;
     }
 
     /**
