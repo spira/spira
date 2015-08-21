@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\BadRequestException;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Model\Collection\Collection;
@@ -55,8 +56,8 @@ abstract class ApiController extends Controller
      */
     protected function getWithNested($modelOrCollection, Request $request)
     {
-        if ((!$modelOrCollection instanceof BaseModel) && (!$modelOrCollection instanceof \Illuminate\Database\Eloquent\Collection)) {
-            throw new \InvalidArgumentException(sprintf('Model must be instance of %s or %s. %s given.', BaseModel::class, \Illuminate\Database\Eloquent\Collection::class, get_class($modelOrCollection)));
+        if ((!$modelOrCollection instanceof BaseModel) && (!$modelOrCollection instanceof EloquentCollection)) {
+            throw new \InvalidArgumentException(sprintf('Model must be instance of %s or %s. %s given.', BaseModel::class, EloquentCollection::class, get_class($modelOrCollection)));
         }
 
         $nested = $request->headers->get('With-Nested');

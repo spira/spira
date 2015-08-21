@@ -21,6 +21,7 @@ use Spira\Model\Collection\Collection;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Model\Validation\ValidationExceptionCollection;
+use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * Class BaseModel
@@ -403,7 +404,7 @@ abstract class BaseModel extends Model
      * @param \Illuminate\Database\Eloquent\Collection $existingModels
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function hydrateRequestCollection(array $requestCollection, \Illuminate\Database\Eloquent\Collection $existingModels = null)
+    public function hydrateRequestCollection(array $requestCollection, EloquentCollection $existingModels = null)
     {
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
