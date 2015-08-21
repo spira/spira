@@ -2,18 +2,16 @@
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
-use Elasticquent\ElasticquentTrait;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
-use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\IndexedModel;
 
-class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
+class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
 {
-    use ElasticquentTrait;
 
     use Authenticatable, LockAware;
 

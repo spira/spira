@@ -9,7 +9,7 @@ use Spira\Model\Model\IndexedModel;
  *
  * @property Collection $testMany
  */
-class TestEntity extends BaseModel
+class TestEntity extends IndexedModel
 {
 
     /**

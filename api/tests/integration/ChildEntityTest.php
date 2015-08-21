@@ -325,9 +325,6 @@ class ChildEntityTest extends TestCase
         }
     }
 
-    /**
-     * @group failing
-     */
     public function testPatchManyInvalidId()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
