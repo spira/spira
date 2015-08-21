@@ -26,9 +26,9 @@ abstract class IndexedModel extends BaseModel
     {
         $instance = new static;
 
-        $params = array(
+        $params = [
             'index' => $instance->getIndexName(),
-        );
+        ];
 
         return $instance->getElasticSearchClient()->indices()->exists($params);
     }
@@ -50,11 +50,10 @@ abstract class IndexedModel extends BaseModel
     {
         $instance = new static;
 
-        $params = array(
+        $params = [
             'index' => $instance->getIndexName(),
-        );
+        ];
 
         return $instance->getElasticSearchClient()->count($params);
     }
-
 }
