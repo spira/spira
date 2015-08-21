@@ -6,5 +6,5 @@ use Elasticquent\ElasticquentCollectionTrait;
 
 class IndexedCollection extends Collection
 {
-   use ElasticquentCollectionTrait;
+    use ElasticquentCollectionTrait;
 }

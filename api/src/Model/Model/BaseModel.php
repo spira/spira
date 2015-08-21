@@ -41,7 +41,6 @@ use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
  */
 abstract class BaseModel extends Model
 {
-
     use UuidTrait;
     /**
      * @var Relation[]
@@ -135,7 +134,6 @@ abstract class BaseModel extends Model
         }
 
         parent::setAttribute($key, $value);
-
     }
 
     
@@ -488,12 +486,12 @@ abstract class BaseModel extends Model
 
         switch ($this->getCastType($key)) {
             case 'date':
-                if (is_array($value)){
+                if (is_array($value)) {
                     return $this->asDateTime($value);
                 }
                 return Carbon::createFromFormat('Y-m-d', $value);
             case 'datetime':
-                if (is_array($value)){
+                if (is_array($value)) {
                     return $this->asDateTime($value);
                 }
                 return Carbon::createFromFormat('Y-m-d H:i:s', $value);
@@ -501,5 +499,4 @@ abstract class BaseModel extends Model
                 return $value;
         }
     }
-
 }
