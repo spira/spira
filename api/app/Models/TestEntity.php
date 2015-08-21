@@ -1,7 +1,8 @@
 <?php namespace App\Models;
 
-use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\Collection;
+use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\IndexedModel;
 
 /**
  * Class TestEntity
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection;
 class TestEntity extends BaseModel
 {
 
-    use ElasticquentTrait;
     /**
      * The database table used by the model.
      *

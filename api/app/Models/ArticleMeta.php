@@ -8,6 +8,8 @@
 
 namespace App\Models;
 
+use Spira\Model\Model\BaseModel;
+
 class ArticleMeta extends BaseModel
 {
     /**

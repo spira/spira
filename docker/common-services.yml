@@ -35,7 +35,8 @@ mailcatcher:
   image: schickling/mailcatcher
 
 php:
-  image: spira/docker-hhvm
+#  image: spira/docker-hhvm
+  image: spira/docker-phpfpm
   env_file:
     - .common.env
     - .local.env

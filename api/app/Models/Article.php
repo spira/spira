@@ -1,10 +1,11 @@
 <?php namespace App\Models;
 
-use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
+use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\IndexedModel;
 
 /**
  *
@@ -18,7 +19,6 @@ use Spira\Model\Collection\Collection;
  */
 class Article extends BaseModel
 {
-    use ElasticquentTrait;
 
     const defaultExcerptWordCount = 30;
 

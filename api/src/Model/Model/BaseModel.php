@@ -8,6 +8,7 @@
 
 namespace Spira\Model\Model;
 
+use Bosnadev\Database\Traits\UuidTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,8 @@ use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
  */
 abstract class BaseModel extends Model
 {
+
+    use UuidTrait;
     /**
      * @var Relation[]
      */
@@ -53,6 +56,9 @@ abstract class BaseModel extends Model
     protected $isDeleted = false;
 
     public $exceptionOnError = true;
+
+    public $incrementing = false;
+
 
     /**
      * @var MessageBag|null
@@ -72,6 +78,15 @@ abstract class BaseModel extends Model
     public static function getValidationRules()
     {
         return static::$validationRules;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
     }
 
     /**
@@ -106,10 +121,21 @@ abstract class BaseModel extends Model
                 $this->addPreviousValueToDeleteStack($models);
                 $this->isValueCompatibleWithRelation($key, $value);
                 $this->relations[$key] = $value;
+
+                return;
             }
-        } else {
-            parent::setAttribute($key, $value);
         }
+
+        if (in_array($key, $this->getDates()) && $value) {
+            if (!$value instanceof Carbon && ! $value instanceof \DateTime) {
+                $value = new Carbon($value);
+                $this->attributes[$key] = $value;
+                return;
+            }
+        }
+
+        parent::setAttribute($key, $value);
+
     }
 
     
@@ -399,10 +425,9 @@ abstract class BaseModel extends Model
     /**
      * Create a collection of models from a request collection
      * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity
-     *
-     * @param  array $requestCollection
-     * @param \Illuminate\Database\Eloquent\Collection $existingModels
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param array $requestCollection
+     * @param EloquentCollection|null $existingModels
+     * @return Collection
      */
     public function hydrateRequestCollection(array $requestCollection, EloquentCollection $existingModels = null)
     {
@@ -443,4 +468,38 @@ abstract class BaseModel extends Model
 
         return parent::asDateTime($value);
     }
+
+    /**
+     * Cast an attribute to a native PHP type.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        // Run the parent cast rules in the parent method
+        $value = parent::castAttribute($key, $value);
+
+        if (is_null($value)) {
+            return $value;
+        }
+
+        switch ($this->getCastType($key)) {
+            case 'date':
+                if (is_array($value)){
+                    return $this->asDateTime($value);
+                }
+                return Carbon::createFromFormat('Y-m-d', $value);
+            case 'datetime':
+                if (is_array($value)){
+                    return $this->asDateTime($value);
+                }
+                return Carbon::createFromFormat('Y-m-d H:i:s', $value);
+            default:
+                return $value;
+        }
+    }
+
 }
