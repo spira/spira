@@ -14,7 +14,7 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        Article::deleteIndex(); //clear all entries in elastic search
+        Article::indexExists() && Article::deleteIndex(); //clear all entries in elastic search
 
         factory(Article::class, 50)
             ->create()
