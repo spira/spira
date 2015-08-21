@@ -400,10 +400,10 @@ abstract class BaseModel extends Model
      * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity
      *
      * @param  array $requestCollection
-     * @param Collection $existingModels
+     * @param \Illuminate\Database\Eloquent\Collection $existingModels
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function hydrateRequestCollection(array $requestCollection, Collection $existingModels = null)
+    public function hydrateRequestCollection(array $requestCollection, \Illuminate\Database\Eloquent\Collection $existingModels = null)
     {
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
