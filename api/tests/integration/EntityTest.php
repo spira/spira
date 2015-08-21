@@ -650,7 +650,7 @@ class EntityTest extends TestCase
 
     public function testEntitySearch()
     {
-        TestEntity::deleteIndex();
+        TestEntity::removeAllFromIndex();
 
         $searchEntity = factory(App\Models\TestEntity::class)->create([
             'varchar' => 'searchforthisstring'
@@ -671,5 +671,19 @@ class EntityTest extends TestCase
         $this->assertCount(1, $collection);
 
         $this->assertEquals($searchEntity->entity_id, $collection[0]->entityId);
+    }
+
+    public function testEntitySearchNoResults()
+    {
+
+        TestEntity::reindex();
+
+        sleep(1); //give the elastic search agent time to index
+
+        $this->get('/test/entities/pages?q=thisstringwontreturnresults', ['Range'=>'entities=0-9']);
+
+        $this->assertResponseStatus(404);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
     }
 }
