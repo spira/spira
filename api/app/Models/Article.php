@@ -18,7 +18,6 @@ use Spira\Model\Model\IndexedModel;
  */
 class Article extends IndexedModel
 {
-
     const defaultExcerptWordCount = 30;
 
 

@@ -12,7 +12,6 @@ use Spira\Model\Model\IndexedModel;
 
 class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
 {
-
     use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
