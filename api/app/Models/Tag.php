@@ -9,14 +9,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Rhumsaa\Uuid\Uuid;
 
 class Tag extends BaseModel
 {
     public $table = 'tags';
 
     protected $primaryKey = 'tag_id';
-
-    public $incrementing = true;
 
     public $timestamps = false;
 
@@ -25,22 +24,12 @@ class Tag extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['tag'];
+    protected $fillable = ['tag_id','tag'];
 
     protected static $validationRules = [
-            'tag' => 'required|string|alphaDashSpace'
+            'tag_id' => 'uuid',
+            'tag' => 'required|string|alphaDashSpace|max:20'
         ];
-
-    /**
-     * Provide a UUID
-     *
-     * @param $model
-     * @return bool|void
-     */
-    protected function provideUuidKey($model)
-    {
-        return true;
-    }
 
     /**
      * @param mixed $id
@@ -49,10 +38,11 @@ class Tag extends BaseModel
      */
     public function findByIdentifier($id)
     {
-        try {
-            return $this->where('tag', '=', $id)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return $this->findOrFail($id);
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return parent::findOrFail($id);
         }
+
+        return $this->where('tag', '=', $id)->firstOrFail();
     }
 }

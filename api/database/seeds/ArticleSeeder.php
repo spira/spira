@@ -17,14 +17,12 @@ class ArticleSeeder extends Seeder
             ->create()
             ->each(function (\App\Models\Article $article) {
                 $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
-                foreach ($permalinks as $permalink) {
-                    $article->permalinks->add($permalink);
-                }
-                $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
-                foreach ($metas as $meta) {
-                    $article->metas->add($meta);
-                }
-                $article->push();
+                $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
+                $tags = factory(\App\Models\Tag::class, 2)->make()->all();
+                $article->save();
+                $article->metas()->saveMany($metas);
+                $article->permalinks()->saveMany($permalinks);
+                $article->tags()->saveMany($tags);
             })
         ;
     }
