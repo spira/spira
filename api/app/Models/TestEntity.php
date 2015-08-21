@@ -11,7 +11,6 @@ use Spira\Model\Model\IndexedModel;
  */
 class TestEntity extends IndexedModel
 {
-
     /**
      * The database table used by the model.
      *
