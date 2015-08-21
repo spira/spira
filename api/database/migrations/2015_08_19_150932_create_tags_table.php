@@ -18,8 +18,6 @@ class CreateTagsTable extends Migration
                 $table->string('tag', 20)->unique();
             }
         );
-
-
     }
 
     /**
