@@ -1,3 +1,30 @@
-<h2>Meta</h2>
-
-<h3>TODO</h3>
+<div layout-padding>
+    <h2>User Profile</h2>
+    <md-content layout-padding>
+        <h3>Meta Tags</h3>
+        <md-list>
+            <md-list-item class="md-2-line" ng-repeat="metaTag in MetaController.metas">
+                <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+                    <md-input-container class="md-icon-float">
+                        <md-icon>accessibility</md-icon>
+                        <input ng-model="metaTag.metaName" name="metaName" type="text" aria-label="metaName" md-maxlength="100">
+                    </md-input-container>
+                    <md-input-container class="md-icon-float">
+                        <md-icon>accessibility</md-icon>
+                        <input ng-model="metaTag.metaContent" name="metaContent" type="text" aria-label="metaContent" md-maxlength="100">
+                    </md-input-container>
+                    <md-input-container class="md-icon-float">
+                        <md-icon>accessibility</md-icon>
+                        <input ng-model="metaTag.metaProperty" name="metaProperty" type="text" aria-label="metaProperty" md-maxlength="100">
+                    </md-input-container>
+                </md-whiteframe>
+            </md-list-item>
+        </md-list>
+        <md-button ng-click="MetaController.add()" class="md-raised" type="button">
+            Add
+        </md-button>
+        <md-button ng-click="MetaController.save()" class="md-raised" type="button">
+            Save
+        </md-button>
+    </md-content>
+</div>

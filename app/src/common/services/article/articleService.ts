@@ -80,6 +80,20 @@ namespace common.services.article {
 
         }
 
+        /**
+         * Save article metas
+         * @param article
+         * @param metas
+         * @returns ng.IPromise<common.models.ArticleMeta[]>
+         */
+        public saveMetas(article:common.models.Article, metas:common.models.ArticleMeta[]):ng.IPromise<common.models.ArticleMeta[]> {
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metas)
+                .then((res) => {
+                    return metas;
+                });
+        }
+
     }
 
     angular.module(namespace, [])

@@ -9,6 +9,7 @@ namespace common.models {
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
+        public _metas:common.models.ArticleMeta[];
 
         constructor(data:any) {
 

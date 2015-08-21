@@ -4,8 +4,37 @@ namespace app.admin.articles.article.meta {
 
     export class MetaController {
 
-        static $inject = ['article'];
-        constructor(public article:common.models.Article) {
+        public metas:common.models.ArticleMeta[];
+
+        static $inject = ['article', 'articleService'];
+
+        constructor(public article:common.models.Article, private articleService:common.services.article.ArticleService) {
+
+            this.metas = article._metas;
+
+        }
+
+        /**
+         * Add a new meta tag to article.
+         */
+        public add():void {
+
+            this.metas.push(
+                new common.models.ArticleMeta({
+                    metaName:'',
+                    metaContent:'',
+                    metaProperty:''
+                })
+            );
+
+        }
+
+        /**
+         * Save all metas.
+         */
+        public save():void {
+
+            this.articleService.saveMetas(this.article, this.metas);
 
         }
 
