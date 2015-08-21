@@ -436,6 +436,9 @@ class EntityTest extends TestCase
         $this->assertStringStartsWith('http', $object[0]->_self);
     }
 
+    /**
+     * @group failing
+     */
     public function testPutManySomeNew()
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();

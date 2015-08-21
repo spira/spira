@@ -8,6 +8,8 @@
 
 namespace App\Models;
 
+use Spira\Model\Model\BaseModel;
+
 class SecondTestEntity extends BaseModel
 {
     public $table = 'second_test_entities';
