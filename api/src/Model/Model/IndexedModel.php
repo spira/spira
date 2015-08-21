@@ -17,5 +17,4 @@ abstract class IndexedModel extends BaseModel
     {
         return new IndexedCollection($models, static::class);
     }
-
 }
