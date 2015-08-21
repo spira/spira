@@ -20,7 +20,7 @@ Validator::resolver(function ($translator, $data, $rules, $messages) {
     return new \App\Services\SpiraValidator($translator, $data, $rules, $messages);
 });
 
-$factory->define(App\Models\TestEntity::class, function ($faker) {
+$factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker) {
     return [
         'entity_id' => $faker->uuid,
         'varchar' => $faker->word,

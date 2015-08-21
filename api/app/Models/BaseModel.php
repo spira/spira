@@ -34,8 +34,14 @@ abstract class BaseModel extends \Spira\Model\Model\BaseModel
 
         switch ($this->getCastType($key)) {
             case 'date':
+                if (is_array($value)){
+                    return $this->asDateTime($value);
+                }
                 return Carbon::createFromFormat('Y-m-d', $value);
             case 'datetime':
+                if (is_array($value)){
+                    return $this->asDateTime($value);
+                }
                 return Carbon::createFromFormat('Y-m-d H:i:s', $value);
             default:
                 return $value;

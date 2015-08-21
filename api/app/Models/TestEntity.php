@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class TestEntity extends BaseModel
 {
+
+    use ElasticquentTrait;
     /**
      * The database table used by the model.
      *
