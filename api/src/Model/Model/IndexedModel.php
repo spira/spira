@@ -1,16 +1,21 @@
 <?php namespace Spira\Model\Model;
 
 use Elasticquent\ElasticquentTrait;
+use Spira\Model\Collection\IndexedCollection;
 
 abstract class IndexedModel extends BaseModel
 {
-    use ElasticquentTrait {
-        newCollection as newElasticquentCollection;
-    }
+    use ElasticquentTrait;
 
-
-    public function newCollection()
+    /**
+     * Create a new Eloquent Collection instance with ElasticquentCollectionTrait.
+     *
+     * @param  array  $models
+     * @return IndexedCollection
+     */
+    public function newCollection(array $models = [])
     {
-        return parent::newCollection();
+        return new IndexedCollection($models, static::class);
     }
+
 }
