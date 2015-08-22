@@ -115,7 +115,7 @@ class ArticleTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('_tags', $object);
-        $this->assertEquals(4,count($object->_tags));
+        $this->assertEquals(4, count($object->_tags));
     }
 
     public function testGetOneByFirstPermalink()

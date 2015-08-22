@@ -12,7 +12,6 @@ use App\Models\Article;
 
 class ArticleTransformer extends EloquentModelTransformer
 {
-
     public $nestedMap = [
         'tags' => ArticleTagTransformer::class
     ];

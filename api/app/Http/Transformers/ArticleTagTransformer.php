@@ -27,5 +27,4 @@ class ArticleTagTransformer extends EloquentModelTransformer
 
         return parent::transformCollection($collection);
     }
-
 }

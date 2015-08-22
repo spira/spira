@@ -16,7 +16,7 @@ class AuthTokenTransformer extends EloquentModelTransformer
      */
     public function transformItem($object)
     {
-        if (is_string($object)){
+        if (is_string($object)) {
             return $this->transformToken($object);
         }
 
@@ -46,5 +46,4 @@ class AuthTokenTransformer extends EloquentModelTransformer
     {
         throw new NotImplementedException('Collections are not used for tokens.');
     }
-
 }
