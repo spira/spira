@@ -72,7 +72,7 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            if ($this->addSelfKey){
+            if ($this->addSelfKey) {
                 $array = $this->addSelfKey($object, $array);
             }
 
@@ -197,7 +197,7 @@ class EloquentModelTransformer extends BaseTransformer
         /** @var BaseModel $object */
         if (count($object['relations']) > 0) {
             foreach ($object['relations'] as $relation => $childModelOrCollection) {
-                if (in_array($relation,$object->getHidden())){
+                if (in_array($relation, $object->getHidden())) {
                     continue;
                 }
                 $transformer = $this->getTransformerForNested($relation);
@@ -223,9 +223,9 @@ class EloquentModelTransformer extends BaseTransformer
      */
     private function getTransformerForNested($relationName, $default = EloquentModelTransformer::class)
     {
-        if (isset($this->nestedMap[$relationName])){
+        if (isset($this->nestedMap[$relationName])) {
             $className = $this->nestedMap[$relationName];
-        }else{
+        } else {
             $className = $default;
         }
 
