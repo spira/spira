@@ -1,0 +1,70 @@
+# Group Article Tags
+Tags are generic mechanism of tagging particular article and find articles having one and the same tag.
+
+## Tag Entity [/tags]
+
+### Create tag entity [POST]
+
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
++ Response 201
+
+## Exiting Tag Entity Actions [/tags/{tagId}]
+
++ Parameters
+    + tagId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `tag` of the tag to perform action with.
+
+
+### Retrieve a tag [GET]
+
+#### Restrictions
+* Allowed - [admin]
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\Tag::class) !!}
+
+### Update the tag [PATCH]
+
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->showOnly(['tag'])
+                    ->json()
+            !!}
+
+
++ Response 204
+
+
+### Delete the tag [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Response 204

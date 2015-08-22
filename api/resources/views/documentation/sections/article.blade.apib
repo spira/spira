@@ -26,7 +26,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\Article::class)
-                    ->hide(['content'])
+                    ->setTransformer(App\Http\Transformers\ArticleTransformer::class)
                     ->count(10)
                     ->json()
             !!}
@@ -145,4 +145,22 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Allowed - [admin, self]
 
 + Response 204
+
+## Article Tags [/articles/{articleId}/tags]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's tags data [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->setTransformer(App\Http\Transformers\ArticleTagTransformer::class)
+                    ->count(3)
+                    ->json()
+            !!}
 

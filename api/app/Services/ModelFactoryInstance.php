@@ -244,8 +244,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         if (!$this->transformer) {
             $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
-
-        $transformedEntity = $this->transformerService->{$this->entityType}($entity, $this->transformer);
+        $method = 'transform'.ucfirst($this->entityType);
+        $transformedEntity = $this->transformer->{$method}($entity);
 
         $transformedEntity = array_except($transformedEntity, $this->hide); //allow the definer to specify transformed values to hide
 

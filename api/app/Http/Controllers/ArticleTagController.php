@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
+use App\Http\Transformers\ArticleTagTransformer;
 use App\Models\Article;
 use App\Models\BaseModel;
 use App\Models\Tag;
@@ -19,7 +19,7 @@ class ArticleTagController extends ChildEntityController
 {
     protected $relationName = 'tags';
 
-    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
+    public function __construct(Article $parentModel, ArticleTagTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
     }
