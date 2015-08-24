@@ -10,6 +10,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Rhumsaa\Uuid\Uuid;
+use Spira\Model\Model\BaseModel;
 
 class Tag extends BaseModel
 {
