@@ -23,6 +23,7 @@ $app->withFacades();
 $app->withEloquent();
 
 $app->configure('hosts');
+$app->configure('elasticquent');
 
 /*
 |--------------------------------------------------------------------------
