@@ -133,8 +133,8 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
 
 $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $faker) {
     return [
-        'comment_id' => $faker->unique()->randomNumber,
-        'content' => $faker->paragraph,
+        'article_comment_id' => $faker->unique()->randomNumber,
+        'body' => $faker->paragraph,
         'created_at' => $faker->dateTime,
         'author_name' => $faker->name,
         'author_email' => $faker->email,

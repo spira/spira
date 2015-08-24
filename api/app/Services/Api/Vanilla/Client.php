@@ -88,6 +88,8 @@ class Client
     /**
      * Retrieve the API group to call a method within.
      *
+     * @api
+     *
      * @param  string $group
      *
      * @throws InvalidArgumentException
@@ -112,6 +114,8 @@ class Client
     /**
      * Make a GET request.
      *
+     * @internal
+     *
      * @param  string $path
      * @param  array  $parameters
      * @param  array  $headers
@@ -125,6 +129,8 @@ class Client
 
     /**
      * Make a POST request.
+     *
+     * @internal
      *
      * @param  string $path
      * @param  mixed  $body
@@ -140,6 +146,8 @@ class Client
     /**
      * Make a PUT request.
      *
+     * @internal
+     *
      * @param  string $path
      * @param  mixed  $body
      * @param  array  $headers
@@ -154,6 +162,8 @@ class Client
     /**
      * Make a PUT request.
      *
+     * @internal
+     *
      * @param  string $path
      * @param  mixed  $body
      * @param  array  $headers
@@ -167,6 +177,8 @@ class Client
 
     /**
      * Send request with HTTP client.
+     *
+     * @internal
      *
      * @param  string $path
      * @param  mixed  $body
@@ -226,6 +238,8 @@ class Client
     /**
      * Sign the request with the set user.
      *
+     * @internal
+     *
      * @param  array  $options
      * @param  string $method
      * @param  string $path
@@ -267,6 +281,8 @@ class Client
 
     /**
      * Set the Vanilla user to operate with.
+     *
+     * @api
      *
      * @param  string $username
      * @param  string $email
