@@ -49,7 +49,7 @@ install:
 
 before_script:
 
-  - php -S 127.0.0.1:8008 -t ./forum/public >& /dev/null & # start forum server
+  - php -S 127.0.0.1:8008 ./forum/server.php >& /dev/null & # start forum server
   - psql -c 'create database spira;' -U postgres
   - gulp build
   - php ./api/artisan migrate --seed

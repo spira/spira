@@ -71,12 +71,7 @@ class Client
         $this->client = $client;
 
         $this->secret = getenv('VANILLA_API_SECRET');
-
-        // If we run in a continous integrated enviroment for testing, the forum
-        // server will be running on a CLI server which doesn't support pretty
-        // urls, so in that case we use another base url.
-        $base = getenv('CI') ? '/index.php' : '/api/';
-        $this->baseUrl = getenv('FORUM_HOST').$base;
+        $this->baseUrl = getenv('HOSTNAME_FORUM').'/api/';
 
         $this->client->setBaseUrl($this->baseUrl);
         $this->client->getEventDispatcher()->addListener(
@@ -193,15 +188,6 @@ class Client
     public function request($path, $body = null, $method = 'GET', array $headers = [], array $options = [])
     {
         $options = $this->sign($options, $method, $path);
-
-        // If we run in a continous integrated enviroment for testing, the forum
-        // server will be running on a CLI server which doesn't support pretty
-        // urls, so in that case we change the path to be a query parameter.
-        if (getenv('CI')) {
-            $options['query']['p'] = 'api/'.$path;
-            $path = '';
-        }
-
         $request = $this->createRequest($method, $path, $body, $headers, $options);
 
         try {

@@ -170,16 +170,39 @@ class ArticleComment extends BaseModel
             $commentCount
         );
 
-        // Convert the comments to model objects
-        $comments = new Collection;
-        foreach ($discussion['Comments'] as $comment) {
-            $comment = $this->vanillaCommentToEloquent($comment);
+        $comments = $this->prepareCommentsForHydrate($discussion['Comments']);
+        $comments = $this->hydrateRequestCollection($comments, new Collection);
 
-            $articleComment = new ArticleComment;
-            $articleComment->fill($comment);
+        return $comments;
+    }
 
-            $comments->push($articleComment);
-        }
+    /**
+     * Convert a comment from Vanilla to be ready to hydrate Eloquent model.
+     *
+     * @param  array  $comments
+     *
+     * @return array
+     */
+    protected function prepareCommentsForHydrate(array $comments = [])
+    {
+        $map = [
+            'CommentID' => 'article_comment_id',
+            'Body' => 'body',
+            'DateInserted' => 'created_at',
+            'InsertName' => 'author_name',
+            'InsertEmail' => 'author_email',
+            'InsertPhoto' => 'author_photo'
+        ];
+
+        $comments = array_map(function ($comment) use ($map) {
+            foreach ($comment as $key => $value) {
+                if (array_key_exists($key, $map)) {
+                    $comment[$map[$key]] = $value;
+                }
+            }
+
+            return $comment;
+        }, $comments);
 
         return $comments;
     }
@@ -270,35 +293,6 @@ class ArticleComment extends BaseModel
         }
 
         return $models;
-    }
-
-    /**
-     * Convert a comment from Vanilla to be ready to fill an Eloquent model.
-     *
-     * @param  array  $data
-     *
-     * @return void
-     */
-    protected function vanillaCommentToEloquent(array $data)
-    {
-        $map = [
-            'CommentID' => 'article_comment_id',
-            'Body' => 'body',
-            'DateInserted' => 'created_at',
-            'InsertName' => 'author_name',
-            'InsertEmail' => 'author_email',
-            'InsertPhoto' => 'author_photo'
-        ];
-
-        $comment = [];
-
-        foreach ($data as $key => $value) {
-            if (array_key_exists($key, $map)) {
-                $comment[$map[$key]] = $value;
-            }
-        }
-
-        return $comment;
     }
 
     /**
