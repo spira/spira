@@ -142,4 +142,9 @@ class Article extends IndexedModel
     {
         return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_article');
+    }
 }
