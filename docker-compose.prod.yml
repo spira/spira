@@ -18,6 +18,11 @@ cache:
     file: ./docker/common-services.yml
     service: cache
 
+elasticsearch:
+  extends:
+    file: ./docker/common-services.yml
+    service: elasticsearch
+
 queue:
   extends:
     file: ./docker/common-services.yml
@@ -48,6 +53,7 @@ php:
     - cache:cache
     - queue:queue
     - mailcatcher:mailcatcher
+    - elasticsearch:elasticsearch
   volumes_from:
     - spira
 

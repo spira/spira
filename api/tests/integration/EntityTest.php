@@ -647,4 +647,42 @@ class EntityTest extends TestCase
         $this->assertJsonArray();
         $this->assertEquals(urldecode($object->test), $compareString);
     }
+
+    public function testEntitySearch()
+    {
+        TestEntity::removeAllFromIndex();
+
+        $searchEntity = factory(App\Models\TestEntity::class)->create([
+            'varchar' => 'searchforthisstring'
+        ]);
+
+        TestEntity::addAllToIndex();
+
+        sleep(1); //give the elastic search agent time to index (!)
+
+        $this->get('/test/entities/pages?q=searchforthisstring', ['Range'=>'entities=0-9']);
+
+        $collection = json_decode($this->response->getContent());
+        $this->assertResponseStatus(206);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+
+
+        $this->assertCount(1, $collection);
+
+        $this->assertEquals($searchEntity->entity_id, $collection[0]->entityId);
+    }
+
+    public function testEntitySearchNoResults()
+    {
+        TestEntity::reindex();
+
+        sleep(1); //give the elastic search agent time to index
+
+        $this->get('/test/entities/pages?q=thisstringwontreturnresults', ['Range'=>'entities=0-9']);
+
+        $this->assertResponseStatus(404);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+    }
 }

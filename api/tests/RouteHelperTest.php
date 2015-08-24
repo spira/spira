@@ -20,7 +20,7 @@ class RouteHelperTest extends TestCase
 
     public function testBadRoute()
     {
-        $baseModel = m::mock('App\Models\BaseModel')->makePartial();
+        $baseModel = m::mock('Spira\Model\Model\BaseModel')->makePartial();
         \App\Helpers\RouteHelper::getRoute($baseModel);
         $this->assertTrue(\App\Helpers\RouteHelper::$badRoutes[get_class($baseModel)]);
     }

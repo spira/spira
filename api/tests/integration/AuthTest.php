@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Tymon\JWTAuth\Claims\Expiration;
 use Tymon\JWTAuth\Claims\IssuedAt;
 use Tymon\JWTAuth\Claims\Issuer;

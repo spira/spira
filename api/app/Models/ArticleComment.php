@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App;
+use Spira\Model\Model\BaseModel;
 use Spira\Model\Collection\Collection;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
@@ -23,13 +24,20 @@ class ArticleComment extends BaseModel
     protected $client;
 
     /**
+     * Models to constrain with on parent collections.
+     *
+     * @var array
+     */
+    protected $eagerConstraints = [];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'comment_id',
-        'content',
+        'article_comment_id',
+        'body',
         'created_at',
         'author_name',
         'author_email',
@@ -140,6 +148,8 @@ class ArticleComment extends BaseModel
     /**
      * Get the collection of comments.
      *
+     * @see \Illuminate\Database\Eloquent\Relations\HasMany::getResults()
+     *
      * @return Collection
      */
     public function getResults()
@@ -185,6 +195,84 @@ class ArticleComment extends BaseModel
     }
 
     /**
+     * Set the constraints for an eager load of the relation.
+     *
+     * @see \Illuminate\Database\Eloquent\Relations\HasOneOrMany::addEagerConstraints()
+     *
+     * @param  array  $models
+     *
+     * @return void
+     */
+    public function addEagerConstraints($models)
+    {
+        $this->eagerConstraints = $models;
+    }
+
+    /**
+     * Initialize the relation on a set of models.
+     *
+     * @see \Illuminate\Database\Eloquent\Relations\HasMany::initRelation()
+     *
+     * @param  array   $models
+     * @param  string  $relation
+     *
+     * @return array
+     */
+    public function initRelation(array $models, $relation)
+    {
+        foreach ($models as $model) {
+            $model->setRelation($relation, $this->newCollection());
+        }
+
+        return $models;
+    }
+
+    /**
+     * Get the relationship for eager loading.
+     *
+     * @see \Illuminate\Database\Eloquent\Relations\Relation::getEager()
+     *
+     * @return Collection
+     */
+    public function getEager()
+    {
+        $results = new Collection;
+
+        foreach ($this->eagerConstraints as $model) {
+            $comment = new ArticleComment;
+            $comment->setArticle($model);
+            $results->offsetSet($model->getKey(), $comment->getResults());
+        }
+
+        return $results;
+    }
+
+    /**
+     * Match the eagerly loaded results to their parents.
+     *
+     * @see \Illuminate\Database\Eloquent\Relations\HasMany::match()
+     *
+     * @param  array       $models
+     * @param  Collection  $results
+     * @param  string      $relation
+     *
+     * @return array
+     */
+    public function match(array $models, Collection $results, $relation)
+    {
+        foreach ($models as $model) {
+            $key = $model->getKey();
+            if ($results->offsetExists($key)) {
+                $value = $results->offsetGet($key);
+
+                $model->setRelation($relation, $value);
+            }
+        }
+
+        return $models;
+    }
+
+    /**
      * Convert a comment from Vanilla to be ready to fill an Eloquent model.
      *
      * @param  array  $data
@@ -194,8 +282,8 @@ class ArticleComment extends BaseModel
     protected function vanillaCommentToEloquent(array $data)
     {
         $map = [
-            'CommentID' => 'comment_id',
-            'Body' => 'content',
+            'CommentID' => 'article_comment_id',
+            'Body' => 'body',
             'DateInserted' => 'created_at',
             'InsertName' => 'author_name',
             'InsertEmail' => 'author_email',

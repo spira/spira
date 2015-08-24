@@ -381,7 +381,7 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
-        $this->assertResponseStatus(422);
+        $this->assertResponseStatus(400);
     }
 
     public function testDeleteOneByAdminUser()

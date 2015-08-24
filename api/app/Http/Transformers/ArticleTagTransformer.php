@@ -1,20 +1,18 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: redjik
- * Date: 03.08.15
- * Time: 0:05
+ * User: ivanmatveev
+ * Date: 21.08.15
+ * Time: 17:15
  */
 
 namespace App\Http\Transformers;
 
-use App\Models\Article;
+use App\Models\Tag;
 
-class ArticleTransformer extends EloquentModelTransformer
+class ArticleTagTransformer extends EloquentModelTransformer
 {
-    public $nestedMap = [
-        'tags' => ArticleTagTransformer::class
-    ];
+    public $addSelfKey = true;
 
     /**
      * @param $collection
@@ -22,9 +20,9 @@ class ArticleTransformer extends EloquentModelTransformer
      */
     public function transformCollection($collection)
     {
-        /** @var Article[] $collection */
+        /** @var Tag[] $collection */
         foreach ($collection as $item) {
-            $item->addHidden('content');
+            $item->addHidden(['tag_id','pivot']);
         }
 
         return parent::transformCollection($collection);

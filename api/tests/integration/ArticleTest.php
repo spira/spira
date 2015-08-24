@@ -117,6 +117,21 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
+    public function testGetOneWithNestedTags()
+    {
+        $entity = factory(Article::class)->create();
+        $tags = factory(\App\Models\Tag::class, 4)->create();
+        $entity->tags()->sync($tags->lists('tag_id')->toArray());
+
+        $this->get('/articles/'.$entity->article_id, ['with-nested'=> 'tags']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_tags', $object);
+        $this->assertEquals(4, count($object->_tags));
+    }
+
     public function testGetOneByFirstPermalink()
     {
         $entity = factory(Article::class)->create();
@@ -461,7 +476,7 @@ class ArticleTest extends TestCase
     public function shouldGetCommentsForArticle()
     {
         $article = factory(Article::class)->create();
-        $content = 'A comment';
+        $body = 'A comment';
 
         // Get the discussion
         $client = App::make(VanillaClient::class);
@@ -469,14 +484,39 @@ class ArticleTest extends TestCase
         $discussionId = $discussion['Discussion']['DiscussionID'];
 
         // Add Comment
-        $client->api('comments')->create($discussionId, $content);
+        $client->api('comments')->create($discussionId, $body);
 
         $this->get('/articles/'.$article->article_id.'/comments');
         $array = json_decode($this->response->getContent(), true);
 
         $this->assertCount(1, $array);
-        $this->assertEquals($content, $array[0]['content']);
-        $this->assertResponseStatus(200);
+        $this->assertEquals($body, $array[0]['body']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetCommentsForArticleUsingWithNestedHeader()
+    {
+        $article = factory(Article::class)->create();
+        $body = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $body);
+
+        $this->get('/articles/'.$article->article_id, ['With-Nested' => 'comments']);
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array['_comments']);
+        $this->assertEquals($body, $array['_comments'][0]['body']);
 
         // Clean up by removing the discussion created
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);

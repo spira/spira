@@ -20,7 +20,7 @@ Validator::resolver(function ($translator, $data, $rules, $messages) {
     return new \App\Services\SpiraValidator($translator, $data, $rules, $messages);
 });
 
-$factory->define(App\Models\TestEntity::class, function ($faker) {
+$factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker) {
     return [
         'entity_id' => $faker->uuid,
         'varchar' => $faker->word,
@@ -133,12 +133,19 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
 
 $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $faker) {
     return [
-        'comment_id' => $faker->unique()->randomNumber,
-        'content' => $faker->paragraph,
+        'article_comment_id' => $faker->unique()->randomNumber,
+        'body' => $faker->paragraph,
         'created_at' => $faker->dateTime,
         'author_name' => $faker->name,
         'author_email' => $faker->email,
         'author_photo' => $faker->optional(0.5)->imageUrl
+    ];
+});
+
+$factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
+    return [
+        'tag_id' => $faker->uuid,
+        'tag' => $faker->unique()->lexify('????????'),
     ];
 });
 
@@ -148,7 +155,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'status' => $faker->randomElement(App\Models\Article::$statuses),
-        'content' => $content = implode("\n\n", $faker->paragraphs(3)),
+        'content' => $content = $faker->realText(500),
         'excerpt' => Str::words($content, 30, ''),
         'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,

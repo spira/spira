@@ -46,6 +46,16 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
 
     $app->get('{id}/comments', 'App\Http\Controllers\ArticleCommentController@getAll');
     $app->post('{id}/comments', 'App\Http\Controllers\ArticleCommentController@postOne');
+
+    $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
+    $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
+});
+
+$app->group(['prefix' => 'tags'], function (Application $app) {
+    $app->get('{id}', ['as'=>\App\Models\Tag::class, 'uses'=>'App\Http\Controllers\TagController@getOne']);
+    $app->post('/', 'App\Http\Controllers\TagController@postOne');
+    $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');
+    $app->delete('{id}', 'App\Http\Controllers\TagController@deleteOne');
 });
 
 $app->group(['prefix' => 'test'], function (Application $app) {

@@ -158,8 +158,8 @@ class UserController extends EntityController
                 $model->email = $email;
             }
         }
-        $validationRules = $this->addIdOverrideValidationRule($this->getValidationRules(), $id);
-        $this->validateRequest($request->except('email'), $validationRules, true);
+        $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
+        $this->validateRequest($request->except('email'), $this->getValidationRules(), true);
         $model->fill($request->except('email'));
         $model->save();
 
