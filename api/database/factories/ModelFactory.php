@@ -134,7 +134,7 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
 $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
     return [
         'tag_id' => $faker->uuid,
-        'tag' => $faker->unique()->word,
+        'tag' => $faker->unique()->lexify('????????'),
     ];
 });
 
