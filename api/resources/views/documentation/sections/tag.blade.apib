@@ -4,9 +4,7 @@ Tags are generic mechanism of tagging particular article and find articles havin
 ## Tag Entity [/tags]
 
 ### Create tag entity [POST]
-
-#### Restrictions
-* Allowed - [admin]
+It is recommended to use the PUT method with `entityId` in route, as the same action is used for updating the entity
 
 + Request
     + Body
@@ -17,7 +15,7 @@ Tags are generic mechanism of tagging particular article and find articles havin
                     ->json()
             !!}
 
-+ Request
++ Response 201 (application/json)
     + Body
 
             {!!
@@ -25,8 +23,6 @@ Tags are generic mechanism of tagging particular article and find articles havin
                     ->showOnly(['_self'])
                     ->json()
             !!}
-
-+ Response 201
 
 ## Exiting Tag Entity Actions [/tags/{tagId}]
 
@@ -36,13 +32,33 @@ Tags are generic mechanism of tagging particular article and find articles havin
 
 ### Retrieve a tag [GET]
 
-#### Restrictions
-* Allowed - [admin]
 + Response 200 (application/json)
 
     + Body
 
             {!! $factory->json(\App\Models\Tag::class) !!}
+
+### Create tag entity [PUT]
+
+#### Restrictions
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
 
 ### Update the tag [PATCH]
 

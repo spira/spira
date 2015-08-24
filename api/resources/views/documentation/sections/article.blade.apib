@@ -140,11 +140,13 @@ Note that this route returns paginated results as defined in the `Content-Range`
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
     + metaName (required, string, `twitter`) ... Meta data name
+
 ### DELETE article's meta data single record [DELETE]
 #### Restrictions
 * Allowed - [admin, self]
 
 + Response 204
+
 
 ## Article Tags [/articles/{articleId}/tags]
 + Parameters
@@ -161,6 +163,26 @@ Note that this route returns paginated results as defined in the `Content-Range`
                 $factory->get(\App\Models\Tag::class)
                     ->setTransformer(App\Http\Transformers\ArticleTagTransformer::class)
                     ->count(3)
+                    ->json()
+            !!}
+
+### Add tags to article [PUT]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
                     ->json()
             !!}
 

@@ -27,9 +27,9 @@ class Tag extends BaseModel
     protected $fillable = ['tag_id','tag'];
 
     protected static $validationRules = [
-            'tag_id' => 'uuid',
-            'tag' => 'required|string|alphaDashSpace|max:20'
-        ];
+        'tag_id' => 'required|uuid',
+        'tag' => 'required|string|alphaDashSpace|max:20'
+    ];
 
     /**
      * @param mixed $id
