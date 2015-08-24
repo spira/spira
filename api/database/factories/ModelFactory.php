@@ -134,7 +134,7 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
 $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
     return [
         'tag_id' => $faker->uuid,
-        'tag' => preg_replace('/[^\pL\pN\s._-]/u', '', $faker->unique()->text(20)),
+        'tag' => $faker->unique()->word,
     ];
 });
 
@@ -144,7 +144,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
         'status' => $faker->randomElement(App\Models\Article::$statuses),
-        'content' => $content = implode("\n\n", $faker->paragraphs(3)),
+        'content' => $content = $faker->realText(500),
         'excerpt' => Str::words($content, 30, ''),
         'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
