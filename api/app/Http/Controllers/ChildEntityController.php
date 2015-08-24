@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
@@ -268,7 +269,7 @@ class ChildEntityController extends ApiController
 
     /**
      * @param BaseModel $model
-     * @return HasOneOrMany|Builder
+     * @return HasOneOrMany|BelongsToMany|Builder
      */
     protected function getRelation(BaseModel $model)
     {
