@@ -8,6 +8,8 @@
 
 namespace App\Models;
 
+use Spira\Model\Model\BaseModel;
+
 /**
  * @property string $permalink
  * @property Article article

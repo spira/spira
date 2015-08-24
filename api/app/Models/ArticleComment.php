@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App;
+use Spira\Model\Model\BaseModel;
 use Spira\Model\Collection\Collection;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 

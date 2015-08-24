@@ -117,6 +117,21 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
+    public function testGetOneWithNestedTags()
+    {
+        $entity = factory(Article::class)->create();
+        $tags = factory(\App\Models\Tag::class, 4)->create();
+        $entity->tags()->sync($tags->lists('tag_id')->toArray());
+
+        $this->get('/articles/'.$entity->article_id, ['with-nested'=> 'tags']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_tags', $object);
+        $this->assertEquals(4, count($object->_tags));
+    }
+
     public function testGetOneByFirstPermalink()
     {
         $entity = factory(Article::class)->create();

@@ -38,7 +38,7 @@ class ChildEntityTest extends TestCase
         return $entity;
     }
 
-    protected function addRelatedEntities($model)
+    protected function addRelatedEntities(\Spira\Model\Model\BaseModel $model)
     {
         $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
         $model->push();

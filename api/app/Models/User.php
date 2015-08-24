@@ -8,8 +8,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Spira\Model\Model\IndexedModel;
 
-class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
+class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
 

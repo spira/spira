@@ -8,6 +8,8 @@
 
 namespace Spira\Model\Model;
 
+use Bosnadev\Database\Traits\UuidTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,6 +22,7 @@ use Spira\Model\Collection\Collection;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Model\Validation\ValidationExceptionCollection;
+use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * Class BaseModel
@@ -38,6 +41,7 @@ use Spira\Model\Validation\ValidationExceptionCollection;
  */
 abstract class BaseModel extends Model
 {
+    use UuidTrait;
     /**
      * @var Relation[]
      */
@@ -51,6 +55,9 @@ abstract class BaseModel extends Model
     protected $isDeleted = false;
 
     public $exceptionOnError = true;
+
+    public $incrementing = false;
+
 
     /**
      * @var MessageBag|null
@@ -70,6 +77,15 @@ abstract class BaseModel extends Model
     public static function getValidationRules()
     {
         return static::$validationRules;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
     }
 
     /**
@@ -104,10 +120,20 @@ abstract class BaseModel extends Model
                 $this->addPreviousValueToDeleteStack($models);
                 $this->isValueCompatibleWithRelation($key, $value);
                 $this->relations[$key] = $value;
+
+                return;
             }
-        } else {
-            parent::setAttribute($key, $value);
         }
+
+        if (in_array($key, $this->getDates()) && $value) {
+            if (!$value instanceof Carbon && ! $value instanceof \DateTime) {
+                $value = new Carbon($value);
+                $this->attributes[$key] = $value;
+                return;
+            }
+        }
+
+        parent::setAttribute($key, $value);
     }
 
     
@@ -397,21 +423,23 @@ abstract class BaseModel extends Model
     /**
      * Create a collection of models from a request collection
      * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity
-     *
-     * @param  array $requestCollection
-     * @param Collection $existingModels
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param array $requestCollection
+     * @param EloquentCollection|null $existingModels
+     * @return Collection
      */
-    public function hydrateRequestCollection(array $requestCollection, Collection $existingModels = null)
+    public function hydrateRequestCollection(array $requestCollection, EloquentCollection $existingModels = null)
     {
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
             $model = null;
-            $entityId = $item[$keyName];
+            $entityId = isset($item[$keyName])?$item[$keyName]:null;
 
             if ($existingModels) {
-                $model = $existingModels->get($entityId, $this->newInstance());
+                //get the model from the collection, or create a new instance
+                $model = $existingModels->get($entityId, function () { //using a closure, so new instance is only created when the default is required
+                    return $this->newInstance();
+                });
             } else {
                 $this->findOrNew($entityId);
             }
@@ -422,5 +450,53 @@ abstract class BaseModel extends Model
         }, $requestCollection);
 
         return $this->newCollection($models);
+    }
+
+
+    /**
+     * Handle case where the value might be from Cabon::toArray
+     * @param mixed $value
+     * @return Carbon|static
+     */
+    protected function asDateTime($value)
+    {
+        if (is_array($value) && isset($value['date'])) {
+            return Carbon::parse($value['date'], $value['timezone']);
+        }
+
+        return parent::asDateTime($value);
+    }
+
+    /**
+     * Cast an attribute to a native PHP type.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        // Run the parent cast rules in the parent method
+        $value = parent::castAttribute($key, $value);
+
+        if (is_null($value)) {
+            return $value;
+        }
+
+        switch ($this->getCastType($key)) {
+            case 'date':
+                if (is_array($value)) {
+                    return $this->asDateTime($value);
+                }
+                return Carbon::createFromFormat('Y-m-d', $value);
+            case 'datetime':
+                if (is_array($value)) {
+                    return $this->asDateTime($value);
+                }
+                return Carbon::createFromFormat('Y-m-d H:i:s', $value);
+            default:
+                return $value;
+        }
     }
 }

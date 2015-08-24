@@ -55,22 +55,34 @@ namespace app.admin.users {
 
         public currentPageIndex:number;
 
-        static $inject = ['usersPaginator', 'initUsers', '$stateParams'];
+        static $inject = ['usersPaginator', 'initUsers', '$stateParams', 'notificationService'];
 
         constructor(
             private usersPaginator:common.services.pagination.Paginator,
             users,
-            public $stateParams:IUsersListingStateParams
-
+            public $stateParams:IUsersListingStateParams,
+            private notificationService:common.services.notification.NotificationService
         ) {
 
             this.users = users;
 
-            let perPage = usersPaginator.getCount();
-
-            this.pages = _.range(1, Math.ceil(usersPaginator.entityCountTotal/perPage) + 1);
+            this.pages = usersPaginator.getPages();
 
             this.currentPageIndex = this.$stateParams.page - 1;
+
+        }
+
+        /**
+         * Search for users and update the user set.
+         */
+        public search(searchTerm:string):void {
+
+            this.usersPaginator.query(searchTerm)
+                .then((users) => {
+                    this.users = users;
+                }).finally(() => { //@todo handle case where search returns no results
+                    this.pages = this.usersPaginator.getPages();
+                });
 
         }
 

@@ -107,7 +107,7 @@ to the application with the authentication details to this route.
             Location: http://spira.io?jwtAuthToken={!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 
-## Vanilla SSO [/auth/sso/vanilla]
+## Vanilla SSO [/auth/sso/vanilla{?client_id,timestamp,signature,callback}]
 
 When a user visits vanilla forum, Vanilla pings this route to retrieve information
 about the current user. This route is to be used by Vanilla alone.

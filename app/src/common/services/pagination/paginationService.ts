@@ -18,10 +18,14 @@ namespace common.services.pagination {
         private count:number = Paginator.defaultCount;
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
+        private queryString:string = '';
 
         public entityCountTotal:number;
 
-        constructor(private url:string, private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
+        constructor(private url:string,
+                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    private $q:ng.IQService,
+                    private $window:ng.IWindowService) {
 
             this.modelFactory = (data:any) => data; //set a default factory that just returns the data
 
@@ -34,7 +38,7 @@ namespace common.services.pagination {
          */
         private static conditionalSkipInterceptor(rejection: ng.IHttpPromiseCallbackArg<any>): boolean {
 
-            return rejection.status == 416;
+            return _.contains([416, 404], rejection.status);
         }
         /**
          * Build the range header
@@ -68,16 +72,49 @@ namespace common.services.pagination {
                 last = this.entityCountTotal - 1;
             }
 
+            let url = this.url;
+            if(!_.isEmpty(this.queryString)) {
+                url += '?q=' + (<any>this.$window).encodeURIComponent(this.queryString);
+            }
+
             return this.ngRestAdapter
                 .skipInterceptor(Paginator.conditionalSkipInterceptor)
-                .get(this.url, {
+                .get(url, {
                     Range: Paginator.getRangeHeader(index, last)
                 }).then((response:ng.IHttpPromiseCallbackArg<any>) => {
                     this.processContentRangeHeader(response.headers);
                     return _.map(response.data, (modelData) => this.modelFactory(modelData));
-                }).catch(() => {
+                }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {
+                    if(response.status == 404){ //no content
+                        this.entityCountTotal = 0;
+                        return this.$q.reject(new PaginatorException("Search returned no results!"));
+                    }
                     return this.$q.reject(new PaginatorException("No more results found!"));
                 });
+
+        }
+
+        /**
+         * Return an array of numbers which indicates how many pages of results there are.
+         * @returns {number[]}
+         */
+        public getPages():number[] {
+
+            return _.range(1, Math.ceil(this.entityCountTotal/this.getCount()) + 1);
+
+        }
+
+        /**
+         * Set the index back to 0 and get a response from the collection endpoint with added query param. If an empty
+         * string is passed through the results are not filtered.
+         * @param query
+         * @returns {IPromise<TResult>}
+         */
+        public query(query:string):ng.IPromise<any[]> {
+
+            this.queryString = query;
+
+            return this.reset().getResponse(this.count);
 
         }
 
@@ -198,9 +235,11 @@ namespace common.services.pagination {
 
     export class PaginationService {
 
-        static $inject:string[] = ['ngRestAdapter', '$q'];
+        static $inject:string[] = ['ngRestAdapter', '$q', '$window'];
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private $q:ng.IQService) {
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    private $q:ng.IQService,
+                    private $window:ng.IWindowService) {
 
         }
 
@@ -210,7 +249,7 @@ namespace common.services.pagination {
          * @returns {common.services.pagination.Paginator}
          */
         public getPaginatorInstance(url:string):Paginator {
-            return new Paginator(url, this.ngRestAdapter, this.$q);
+            return new Paginator(url, this.ngRestAdapter, this.$q, this.$window);
         }
 
     }

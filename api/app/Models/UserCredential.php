@@ -1,5 +1,7 @@
 <?php namespace App\Models;
 
+use Spira\Model\Model\BaseModel;
+
 class UserCredential extends BaseModel
 {
     /**

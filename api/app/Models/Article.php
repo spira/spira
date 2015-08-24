@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
+use Spira\Model\Model\IndexedModel;
 
 /**
  *
@@ -15,7 +16,7 @@ use Spira\Model\Collection\Collection;
  * @package App\Models
  *
  */
-class Article extends BaseModel
+class Article extends IndexedModel
 {
     const defaultExcerptWordCount = 30;
 
@@ -164,5 +165,10 @@ class Article extends BaseModel
     public function comments()
     {
         return (new ArticleComment)->setArticle($this);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_article');
     }
 }

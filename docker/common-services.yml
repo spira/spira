@@ -36,6 +36,7 @@ mailcatcher:
 
 php:
   image: spira/docker-hhvm
+#  image: spira/docker-phpfpm
   env_file:
     - .common.env
     - .local.env
@@ -60,5 +61,11 @@ devtools:
 
 apimock:
   image: spira/docker-drakov
+  env_file:
+    - .common.env
+
+
+elasticsearch:
+  image: elasticsearch:1.7.1
   env_file:
     - .common.env
