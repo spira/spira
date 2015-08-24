@@ -138,6 +138,16 @@ $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
+    return [
+            'image_id' => $faker->uuid,
+            'public_id' => $faker->unique()->word,
+            'version' => time(),
+            'format' => 'png',
+            'alt' => $faker->slug()
+    ];
+});
+
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     return [
