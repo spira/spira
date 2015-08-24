@@ -80,13 +80,13 @@ class VanillaIntegrationTest extends TestCase
      */
     public function shouldNotAccessApiService()
     {
-        $env = getenv('FORUM_HOST');
-        putenv('FORUM_HOST=http://foo.bar');
+        $env = getenv('HOSTNAME_FORUM');
+        putenv('HOSTNAME_FORUM=http://foo.bar');
 
         $client = App::make(Client::class);
 
         // Restore the env variable
-        putenv('FORUM_HOST='.$env);
+        putenv('HOSTNAME_FORUM='.$env);
 
         $client->api('discussions')->all();
     }

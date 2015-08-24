@@ -76,7 +76,7 @@ class Client
         // server will be running on a CLI server which doesn't support pretty
         // urls, so in that case we use another base url.
         $base = getenv('CI') ? '/index.php' : '/api/';
-        $this->baseUrl = getenv('FORUM_HOST').$base;
+        $this->baseUrl = getenv('HOSTNAME_FORUM').$base;
 
         $this->client->setBaseUrl($this->baseUrl);
         $this->client->getEventDispatcher()->addListener(
