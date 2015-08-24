@@ -129,11 +129,15 @@ abstract class ApiAbstract implements ApiInterface
      */
     protected function createJsonBody(array $parameters)
     {
-        return (count($parameters) === 0)
-            ? null
-            : json_encode($parameters, empty($parameters)
-                ? JSON_FORCE_OBJECT
-                : 0);
+        if (count($parameters) === 0) {
+            return null;
+        }
+
+        if (empty($parameters)) {
+            return json_encode($parameters, JSON_FORCE_OBJECT);
+        }
+
+        return json_encode($parameters);
     }
 
     /**
