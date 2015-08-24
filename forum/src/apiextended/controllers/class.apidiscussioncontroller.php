@@ -70,7 +70,7 @@ class ApiDiscussionController extends DiscussionController
      */
     protected function isValidUuid($uuid)
     {
-        $pattern = '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}';
+        $pattern = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
 
         return (bool) preg_match('/^'.$pattern.'$/', $uuid);
     }
