@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Article;
+use App\Models\ArticleMeta;
+use App\Models\Tag;
 use App\Models\ArticlePermalink;
 use Illuminate\Database\Seeder;
 
@@ -12,18 +15,21 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        //$faker = Faker::create('au_AU');
-        factory(App\Models\Article::class, 50)
+        Article::removeAllFromIndex(); //clear all entries in elastic search
+
+        factory(Article::class, 50)
             ->create()
-            ->each(function (\App\Models\Article $article) {
+            ->each(function (Article $article) {
                 $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
-                $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
-                $tags = factory(\App\Models\Tag::class, 2)->make()->all();
+                $metas = factory(ArticleMeta::class, 2)->make()->all();
+                $tags = factory(Tag::class, 2)->make()->all();
                 $article->save();
                 $article->metas()->saveMany($metas);
                 $article->permalinks()->saveMany($permalinks);
                 $article->tags()->saveMany($tags);
             })
         ;
+
+        Article::addAllToIndex(); //push all articles to elastic search
     }
 }

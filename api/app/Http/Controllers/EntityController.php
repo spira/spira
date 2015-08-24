@@ -9,13 +9,16 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
+use App\Models\User;
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
 use Spira\Responder\Contract\TransformerInterface;
-use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
+use Spira\Responder\Paginator\RangeRequest;
 use Spira\Responder\Response\ApiResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
 {
@@ -50,18 +53,23 @@ abstract class EntityController extends ApiController
             ->collection($collection);
     }
 
-    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
+    public function getAllPaginated(Request $request, RangeRequest $rangeRequest)
     {
-        $count = $this->countEntities();
-        $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
-        $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getAllEntities($limit, $offset);
-        
-        $collection = $this->getWithNested($collection, $request->getRequest());
+        $totalCount = $this->countEntities();
+        $limit = $rangeRequest->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
+        $offset = $rangeRequest->isGetLast()?$totalCount-$limit:$rangeRequest->getOffset();
+
+        if ($request->has('q')) {
+            $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
+        } else {
+            $collection = $this->getAllEntities($limit, $offset, $totalCount);
+        }
+
+        $collection = $this->getWithNested($collection, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->paginatedCollection($collection, $offset, $count);
+            ->paginatedCollection($collection, $offset, $totalCount);
     }
 
     /**
@@ -257,13 +265,44 @@ abstract class EntityController extends ApiController
     }
 
     /**
+     * @param Request $request
      * @param null $limit
      * @param null $offset
+     * @param null $totalCount
      * @return Collection
      */
-    protected function getAllEntities($limit = null, $offset = null)
+    protected function getAllEntities($limit = null, $offset = null, &$totalCount = null)
     {
         return $this->getModel()->take($limit)->skip($offset)->get();
+    }
+
+    /**
+     * @param $queryString
+     * @param null $limit
+     * @param null $offset
+     * @param null $totalCount
+     * @return \Elasticquent\ElasticquentResultCollection
+     */
+    protected function searchAllEntities($queryString, $limit = null, $offset = null, &$totalCount = null)
+    {
+        /* @var ElasticquentTrait $model */
+        $model = $this->getModel();
+
+        $searchResults = $model->searchByQuery([
+            'match_phrase' => [
+                '_all' => $queryString
+            ]
+        ], null, null, $limit, $offset);
+
+        if ($searchResults->totalHits() === 0) {
+            throw new NotFoundHttpException(sprintf("No results found with query `%s` for model `%s`", $queryString, get_class($model)));
+        }
+
+        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
+            $totalCount = $searchResults->totalHits();
+        }
+
+        return $searchResults;
     }
 
     /**

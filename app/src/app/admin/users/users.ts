@@ -80,8 +80,9 @@ namespace app.admin.users {
             this.usersPaginator.query(searchTerm)
                 .then((users) => {
                     this.users = users;
+                }).finally(() => { //@todo handle case where search returns no results
                     this.pages = this.usersPaginator.getPages();
-                })
+                });
 
         }
 

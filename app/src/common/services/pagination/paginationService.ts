@@ -38,7 +38,7 @@ namespace common.services.pagination {
          */
         private static conditionalSkipInterceptor(rejection: ng.IHttpPromiseCallbackArg<any>): boolean {
 
-            return rejection.status == 416;
+            return _.contains([416, 404], rejection.status);
         }
         /**
          * Build the range header
@@ -84,7 +84,11 @@ namespace common.services.pagination {
                 }).then((response:ng.IHttpPromiseCallbackArg<any>) => {
                     this.processContentRangeHeader(response.headers);
                     return _.map(response.data, (modelData) => this.modelFactory(modelData));
-                }).catch(() => {
+                }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {
+                    if(response.status == 404){ //no content
+                        this.entityCountTotal = 0;
+                        return this.$q.reject(new PaginatorException("Search returned no results!"));
+                    }
                     return this.$q.reject(new PaginatorException("No more results found!"));
                 });
 

@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTagTransformer;
 use App\Models\Article;
-use App\Models\BaseModel;
+use Spira\Model\Model\BaseModel;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Spira\Responder\Response\ApiResponse;

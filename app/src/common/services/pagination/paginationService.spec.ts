@@ -389,6 +389,8 @@ interface mockEntity {
 
                     $httpBackend.flush();
 
+                    expect(results).eventually.to.be.fulfilled;
+
                 });
 
                 it('should be able to query with an empty string', () => {
@@ -403,6 +405,25 @@ interface mockEntity {
                     let results = paginator.query('');
 
                     $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                });
+
+                it('should reset the count when there are no search results', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection?q=findnothing', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                    .respond(404);
+
+                    let results = paginator.query('findnothing');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
 
                 });
 

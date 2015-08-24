@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Spira\Model\Model\BaseModel;
 
 class SocialLogin extends BaseModel
 {

@@ -12,7 +12,7 @@ use App\Models\Tag;
 
 class ArticleTagTransformer extends EloquentModelTransformer
 {
-    public $addSelfKey = false;
+    public $addSelfKey = true;
 
     /**
      * @param $collection
