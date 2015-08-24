@@ -13,6 +13,6 @@ $uri = ltrim($uri, '/');
 $_GET['p'] = $uri;
 
 // "Bootstrap" the root path to make sure we get the public folder
-define('PATH_ROOT', getcwd().'/public');
+define('PATH_ROOT', dirname(__FILE__).'/public');
 
 require_once __DIR__.'/public/index.php';
