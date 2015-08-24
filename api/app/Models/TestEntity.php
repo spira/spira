@@ -1,13 +1,15 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\IndexedModel;
 
 /**
  * Class TestEntity
  *
  * @property Collection $testMany
  */
-class TestEntity extends BaseModel
+class TestEntity extends IndexedModel
 {
     /**
      * The database table used by the model.

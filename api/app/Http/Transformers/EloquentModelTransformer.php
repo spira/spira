@@ -13,11 +13,17 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
+use Spira\Responder\Contract\TransformerInterface;
 use Traversable;
 
 class EloquentModelTransformer extends BaseTransformer
 {
     public static $badRoutes = [];
+
+    public $addSelfKey = true;
+
+    public $nestedMap = [];
+
     /**
      * Turn the object into a format adjusted array.
      *
@@ -66,7 +72,9 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            $array = $this->addSelfKey($object, $array);
+            if ($this->addSelfKey) {
+                $array = $this->addSelfKey($object, $array);
+            }
 
             $array = $this->nestRelations($object, $array);
         }
@@ -186,13 +194,18 @@ class EloquentModelTransformer extends BaseTransformer
      */
     private function nestRelations($object, $array)
     {
+        /** @var BaseModel $object */
         if (count($object['relations']) > 0) {
             foreach ($object['relations'] as $relation => $childModelOrCollection) {
+                if (in_array($relation, $object->getHidden())) {
+                    continue;
+                }
+                $transformer = $this->getTransformerForNested($relation);
                 $childTransformed = null;
                 if ($childModelOrCollection instanceof Collection) {
-                    $childTransformed = $this->transformCollection($childModelOrCollection);
+                    $childTransformed = $transformer->transformCollection($childModelOrCollection);
                 } else {
-                    $childTransformed = $this->transformItem($childModelOrCollection);
+                    $childTransformed = $transformer->transformItem($childModelOrCollection);
                 }
 
                 $array = $array + ['_' . $relation => $childTransformed];
@@ -201,5 +214,21 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         return $array;
+    }
+
+    /**
+     * @param string $relationName
+     * @param string $default
+     * @return TransformerInterface
+     */
+    private function getTransformerForNested($relationName, $default = EloquentModelTransformer::class)
+    {
+        if (isset($this->nestedMap[$relationName])) {
+            $className = $this->nestedMap[$relationName];
+        } else {
+            $className = $default;
+        }
+
+        return new $className($this->getService());
     }
 }
