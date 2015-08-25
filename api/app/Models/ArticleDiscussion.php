@@ -33,6 +33,16 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     protected $eagerConstraints = [];
 
     /**
+     * Get validation rules for a comment.
+     *
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return ArticleComment::getValidationRules();
+    }
+
+    /**
      * Create a discussion thread for the article.
      *
      * @return void
@@ -57,6 +67,69 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         $this->getClient()->api('discussions')->removeByForeignId(
             $this->article->article_id
         );
+    }
+
+    /**
+     * Get the discussion thread id for the article.
+     *
+     * @return int
+     */
+    protected function getDiscussionId()
+    {
+        $discussion = $this->getClient()->api('discussions')->findByForeignId(
+            $this->article->article_id
+        );
+
+        return $discussion['Discussion']['DiscussionID'];
+    }
+
+    /**
+     * Save a new comment to Vanilla.
+     *
+     * @param  array     $options
+     * @param  User|null $user
+     *
+     * @return ArticleComment
+     */
+    public function save(array $options = [], User $user = null)
+    {
+        // Get a model for the comment
+        $articleComment = (new ArticleComment)
+            ->fill($options)
+            ->setAuthor($user);
+
+        // Get/create corresponding user from Vanilla
+        $vanillaUser = $this->getClient()->api('users')->sso(
+            $user->user_id,
+            $user->username,
+            $user->email,
+            $user->avatar_image
+        );
+
+        // Set as active user in Vanilla client
+        $this->getClient()->setUser($vanillaUser['User']['Name']);
+
+        // Create the comment in Vanilla
+        $id = $this->getDiscussionId();
+        $comment = $this->getClient()->api('comments')->create(
+            $id,
+            $articleComment->body
+        );
+
+        // Get ID from vanilla into model
+        $articleComment->article_comment_id = $comment['Comment']['CommentID'];
+
+        return $articleComment;
+    }
+
+    /**
+     * Allow a parent model to get this model via relation.
+     *
+     * @return ArticleComment
+     */
+    public function getRelated()
+    {
+        return $this;
     }
 
     /**

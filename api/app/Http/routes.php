@@ -45,6 +45,7 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->delete('{id}/meta/{childId}', 'App\Http\Controllers\ArticleMetaController@deleteOne');
 
     $app->get('{id}/comments', 'App\Http\Controllers\ArticleCommentController@getAll');
+    $app->post('{id}/comments', 'App\Http\Controllers\ArticleCommentController@postOne');
 
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');

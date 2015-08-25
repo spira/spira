@@ -521,4 +521,64 @@ class ArticleTest extends TestCase
         // Clean up by removing the discussion created
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
+
+    /**
+     * @test
+     */
+    public function shouldPostCommentForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertResponseStatus(200);
+        $this->assertEquals($body, $array['body']);
+
+        // Clean up Vanilla by removing the discussion and user created
+        $client = App::make(VanillaClient::class);
+        $client->api('discussions')->removeByForeignId($article->article_id);
+        $user = $client->api('users')->sso($array['_author']['userId'], '', '');
+        $client->api('users')->remove($user['User']['UserID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotPostCommentWithoutBodyForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => ''], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertArrayHasKey('body', $array['invalid']);
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotPostCommentWithoutAuthedUserForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body]);
+
+        $this->assertResponseStatus(401);
+    }
 }
