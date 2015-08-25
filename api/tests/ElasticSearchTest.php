@@ -1,0 +1,77 @@
+<?php
+
+use App\Models\TestEntity;
+/**
+ * Class ElasticSearchTest
+ * @group failing
+ */
+class ElasticSearchTest extends TestCase
+{
+
+    public function setUp()
+    {
+        parent::setUp();
+        TestEntity::flushEventListeners();
+        TestEntity::boot(); //run event listeners
+    }
+
+    /**
+     * Test model is automatically added to index on save
+     */
+    public function testElasticSearchAddToIndex()
+    {
+        /** @var TestEntity $testEntity */
+        $testEntity = factory(TestEntity::class)->create();
+
+        sleep(1); //elastic search takes some time to index
+
+        $search = $testEntity->searchByQuery([
+            'match' => [
+                'entity_id' => $testEntity->entity_id,
+            ]
+        ]);
+
+
+        $this->assertEquals(1, $search->totalHits());
+    }
+
+    public function testElasticSearchRemoveFromIndex()
+    {
+        /** @var TestEntity $testEntity */
+        $testEntity = factory(TestEntity::class)->create();
+
+        $testEntity->delete();
+
+        sleep(1); //elastic search takes some time to index
+
+        $search = $testEntity->searchByQuery([
+            'match' => [
+                'entity_id' => $testEntity->entity_id,
+            ]
+        ]);
+
+
+        $this->assertEquals(0, $search->totalHits());
+    }
+
+    public function testElasticSearchUpdateIndex()
+    {
+        /** @var TestEntity $testEntity */
+        $testEntity = factory(TestEntity::class)->create();
+
+        $testEntity->setAttribute('varchar', 'searchforthisvalue');
+        $testEntity->save();
+
+
+        sleep(1); //elastic search takes some time to index
+
+        $search = $testEntity->searchByQuery([
+            'match' => [
+                'varchar' => 'searchforthisvalue',
+            ]
+        ]);
+
+        $this->assertEquals(1, $search->totalHits());
+    }
+
+}
