@@ -200,6 +200,12 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
                     ->count(3)
                     ->json()
             !!}
@@ -227,5 +233,11 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
                     ->json()
             !!}

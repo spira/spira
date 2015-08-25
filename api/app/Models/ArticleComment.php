@@ -35,7 +35,7 @@ class ArticleComment extends BaseModel
     {
         return [
             'user_id' => 'required|uuid',
-            'content' => 'required|string',
+            'body' => 'required|string',
         ];
     }
 
