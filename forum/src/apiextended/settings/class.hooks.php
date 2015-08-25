@@ -39,6 +39,14 @@ class ApiExtendedHooks implements Gdn_IPlugin
             'method' => 'sso',
             'authenticate' => true,
         ]);
+
+        $sender::delete('/hotfix/[i:UserID]', [
+            'controller' => 'ApiUser',
+            'method'     => 'delete',
+            'arguments'  => [
+                'Method' => val('Method', $data)
+            ]
+        ]);
     }
 
     /**

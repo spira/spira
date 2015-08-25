@@ -27,16 +27,31 @@ class ArticleComment extends BaseModel
     ];
 
     /**
+     * Get validation rules.
+     *
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return [
+            'user_id' => 'required|uuid',
+            'body' => 'required|string',
+        ];
+    }
+
+    /**
      * Set comment author.
      *
      * @param  User $user
      *
-     * @return void
+     * @return $this
      */
     public function setAuthor(User $user)
     {
         $attributes = ['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'];
 
         $this->_author = array_only($user->toArray(), $attributes);
+
+        return $this;
     }
 }

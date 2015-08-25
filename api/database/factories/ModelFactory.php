@@ -136,9 +136,6 @@ $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $f
         'article_comment_id' => $faker->unique()->randomNumber,
         'body' => $faker->paragraph,
         'created_at' => $faker->dateTime,
-        'author_name' => $faker->name,
-        'author_email' => $faker->email,
-        'author_photo' => $faker->optional(0.5)->imageUrl
     ];
 });
 

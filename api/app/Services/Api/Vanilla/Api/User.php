@@ -29,4 +29,31 @@ class User extends ApiAbstract
 
         return $this->post('users/sso', $parameters);
     }
+
+    /**
+     * Remove a user.
+     *
+     * The method to remove a user can be "keep", "wipe" or "delete".
+     * - keep: Delete the user but keep user's content.
+     * - wipe: Delete the user, keep user's content but blank it.
+     * - delete: Delete the user and remove all user's content.
+     *
+     * The linked method in the API is currently broken and does not work so for
+     * now we call a hotfixed version in the extended API.
+     *
+     * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#remove-a-user
+     *
+     * @param  int    $id
+     * @param  string $method
+     *
+     * @return array
+     */
+    public function remove($id, $method = 'delete')
+    {
+        $parameters = [
+            'Method' => $method
+        ];
+
+        return $this->delete('users/hotfix/'.$id, $parameters);
+    }
 }
