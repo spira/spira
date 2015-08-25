@@ -41,8 +41,8 @@ class TestEntity extends IndexedModel
     protected $casts = [
         'decimal'    => 'float',
         'date'       => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     public static function getValidationRules()

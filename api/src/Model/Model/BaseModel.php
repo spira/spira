@@ -58,6 +58,11 @@ abstract class BaseModel extends Model
 
     public $incrementing = false;
 
+    protected $casts = [
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+    ];
+
 
     /**
      * @var MessageBag|null
@@ -454,17 +459,29 @@ abstract class BaseModel extends Model
 
 
     /**
-     * Handle case where the value might be from Cabon::toArray
+     * Handle case where the value might be from Carbon::toArray
      * @param mixed $value
      * @return Carbon|static
      */
     protected function asDateTime($value)
     {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        if ($value instanceof \DateTime) {
+            return Carbon::instance($value);
+        }
+
         if (is_array($value) && isset($value['date'])) {
             return Carbon::parse($value['date'], $value['timezone']);
         }
 
-        return parent::asDateTime($value);
+        try {
+            return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
+        } catch (\InvalidArgumentException $e) {
+            return parent::asDateTime($value);
+        }
     }
 
     /**
@@ -486,15 +503,15 @@ abstract class BaseModel extends Model
 
         switch ($this->getCastType($key)) {
             case 'date':
-                if (is_array($value)) {
-                    return $this->asDateTime($value);
+
+                try {
+                    return $this->asDateTime($value); //otherwise try the alternatives
+                } catch (\InvalidArgumentException $e) {
+                    return Carbon::createFromFormat('Y-m-d', $value); //if it is the true base ISO8601 date format, parse it
                 }
-                return Carbon::createFromFormat('Y-m-d', $value);
+
             case 'datetime':
-                if (is_array($value)) {
-                    return $this->asDateTime($value);
-                }
-                return Carbon::createFromFormat('Y-m-d H:i:s', $value);
+                return $this->asDateTime($value); //try the catchall method for date translation
             default:
                 return $value;
         }
