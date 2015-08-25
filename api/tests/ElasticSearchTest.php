@@ -3,7 +3,6 @@
 use App\Models\TestEntity;
 /**
  * Class ElasticSearchTest
- * @group failing
  */
 class ElasticSearchTest extends TestCase
 {
@@ -13,6 +12,8 @@ class ElasticSearchTest extends TestCase
         parent::setUp();
         TestEntity::flushEventListeners();
         TestEntity::boot(); //run event listeners
+
+        TestEntity::removeAllFromIndex();
     }
 
     /**
@@ -33,6 +34,8 @@ class ElasticSearchTest extends TestCase
 
 
         $this->assertEquals(1, $search->totalHits());
+
+        $testEntity->delete(); //clean up so it doesn't remain in the index
     }
 
     public function testElasticSearchRemoveFromIndex()
@@ -72,6 +75,8 @@ class ElasticSearchTest extends TestCase
         ]);
 
         $this->assertEquals(1, $search->totalHits());
+
+        $testEntity->delete(); //clean up so it doesn't remain in the index
     }
 
 }
