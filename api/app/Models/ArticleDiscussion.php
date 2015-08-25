@@ -33,6 +33,16 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     protected $eagerConstraints = [];
 
     /**
+     * Get validation rules for a comment.
+     *
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return ArticleComment::getValidationRules();
+    }
+
+    /**
      * Create a discussion thread for the article.
      *
      * @return void

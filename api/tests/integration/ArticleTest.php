@@ -538,8 +538,6 @@ class ArticleTest extends TestCase
         ]);
         $array = json_decode($this->response->getContent(), true);
 
-        $array = $this->response->getContent();
-
         $this->assertResponseStatus(200);
 
         // Clean up by removing the discussion created
