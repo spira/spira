@@ -5,7 +5,7 @@ namespace App\Services\Api\Vanilla\Api;
 use Guzzle\Http\Message\Response;
 use App\Services\Api\Vanilla\Client;
 
-abstract class ApiAbstract implements ApiInterface
+abstract class ApiAbstract
 {
     /**
      * The client.
