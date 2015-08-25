@@ -192,9 +192,9 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
-
     public function testPostOne()
     {
+        /** @var Article $entity */
         $entity = factory(Article::class)->make();
 
         $this->post('/articles', $this->prepareEntity($entity));

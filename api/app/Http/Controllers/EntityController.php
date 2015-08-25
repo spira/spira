@@ -8,16 +8,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Extensions\Controller\RequestValidationTrait;
-use App\Models\User;
-use Elasticquent\ElasticquentTrait;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
-use Spira\Responder\Contract\TransformerInterface;
-use Spira\Responder\Paginator\RangeRequest;
+use Elasticquent\ElasticquentTrait;
+use Spira\Model\Collection\Collection;
 use Spira\Responder\Response\ApiResponse;
+use Spira\Responder\Paginator\RangeRequest;
+use Spira\Responder\Contract\TransformerInterface;
+use App\Extensions\Controller\RequestValidationTrait;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
