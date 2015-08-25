@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
+use App\Exceptions\UnauthorizedException;
 use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleCommentController extends ChildEntityController
@@ -52,9 +53,11 @@ class ArticleCommentController extends ChildEntityController
      */
     public function postOne(Request $request, $id)
     {
-        // Add the current user to the rquest
+        // Add the current user to the request
         if ($user = $this->jwtAuth->user()) {
             $request->merge(['user_id' => $user->user_id]);
+        } else {
+            throw new UnauthorizedException('Not logged in.');
         }
 
         $this->validateRequest($request->all(), $this->getValidationRules());

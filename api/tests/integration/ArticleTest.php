@@ -548,8 +548,37 @@ class ArticleTest extends TestCase
         $client->api('users')->remove($user['User']['UserID']);
     }
 
-    public function shouldNotPostCommentForArticle()
+    /**
+     * @test
+     */
+    public function shouldNotPostCommentWithoutBodyForArticle()
     {
-        // @todo test invalid input data / not logged in
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => ''], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertArrayHasKey('body', $array['invalid']);
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotPostCommentWithoutAuthedUserForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body]);
+
+        $this->assertResponseStatus(401);
     }
 }
