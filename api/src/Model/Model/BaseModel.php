@@ -58,6 +58,11 @@ abstract class BaseModel extends Model
 
     public $incrementing = false;
 
+    protected $casts = [
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+    ];
+
 
     /**
      * @var MessageBag|null
@@ -454,7 +459,7 @@ abstract class BaseModel extends Model
 
 
     /**
-     * Handle case where the value might be from Cabon::toArray
+     * Handle case where the value might be from Carbon::toArray
      * @param mixed $value
      * @return Carbon|static
      */
@@ -491,10 +496,12 @@ abstract class BaseModel extends Model
                 }
                 return Carbon::createFromFormat('Y-m-d', $value);
             case 'datetime':
-                if (is_array($value)) {
-                    return $this->asDateTime($value);
+
+                try {
+                    return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
+                }catch (\InvalidArgumentException $e){
+                    return $this->asDateTime($value); //try the catchall method for date translation
                 }
-                return Carbon::createFromFormat('Y-m-d H:i:s', $value);
             default:
                 return $value;
         }

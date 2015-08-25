@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use \Illuminate\Support\Debug\Dumper;
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
@@ -51,4 +51,24 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
+
+
+    public function assertResponseStatus($code)
+    {
+        try {
+            parent::assertResponseStatus($code);
+        }catch(\PHPUnit_Framework_ExpectationFailedException $e){
+            $content = $this->response->getContent();
+
+            $json = json_decode($content);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $content = $json;
+            }
+
+            (new Dumper)->dump($content);
+            throw $e;
+        }
+    }
+
 }
