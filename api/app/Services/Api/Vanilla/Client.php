@@ -70,8 +70,8 @@ class Client
     {
         $this->client = $client;
 
-        $this->secret = getenv('VANILLA_API_SECRET');
-        $this->baseUrl = getenv('HOSTNAME_FORUM').'/api/';
+        $this->secret = env('VANILLA_API_SECRET');
+        $this->baseUrl = 'http://'.env('HOSTNAME_FORUM').'/api/';
 
         $this->client->setBaseUrl($this->baseUrl);
         $this->client->getEventDispatcher()->addListener(
