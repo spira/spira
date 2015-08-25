@@ -61,7 +61,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         try {
             parent::assertResponseStatus($code);
-        }catch(\PHPUnit_Framework_ExpectationFailedException $e){
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
             $content = $this->response->getContent();
 
             $json = json_decode($content);
@@ -75,5 +75,4 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
             throw $e;
         }
     }
-
 }

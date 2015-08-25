@@ -676,7 +676,6 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-
         $this->get('/test/entities/pages?q=thisstringwontreturnresults', ['Range'=>'entities=0-9']);
 
         $this->assertResponseStatus(404);
