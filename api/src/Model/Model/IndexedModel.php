@@ -10,7 +10,7 @@ abstract class IndexedModel extends BaseModel
     /**
      * Create a new Eloquent Collection instance with ElasticquentCollectionTrait.
      *
-     * @param  array  $models
+     * @param  array $models
      * @return IndexedCollection
      */
     public function newCollection(array $models = [])
@@ -56,4 +56,32 @@ abstract class IndexedModel extends BaseModel
 
         return $instance->getElasticSearchClient()->count($params);
     }
+
+    protected static function boot()
+    {
+        parent::boot(); //register the parent event handlers first
+
+        static::created(
+            function (IndexedModel $model) {
+                $model->addToIndex();
+                return true;
+            }, PHP_INT_MAX
+        );
+
+        static::deleted(
+            function (IndexedModel $model) {
+                $model->removeFromIndex();
+                return true;
+            }, PHP_INT_MAX
+        );
+
+        static::updated(
+            function (IndexedModel $model) {
+                $model->updateIndex();
+                return true;
+            }, PHP_INT_MAX
+        );
+
+    }
+
 }
