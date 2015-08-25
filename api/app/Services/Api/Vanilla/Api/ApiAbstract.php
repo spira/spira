@@ -133,10 +133,6 @@ abstract class ApiAbstract implements ApiInterface
             return null;
         }
 
-        if (empty($parameters)) {
-            return json_encode($parameters, JSON_FORCE_OBJECT);
-        }
-
         return json_encode($parameters);
     }
 

@@ -90,15 +90,15 @@ class Article extends IndexedModel
         });
 
         static::created(function (Article $article) {
-            $articleComment = (new ArticleComment)->setArticle($article);
-            $articleComment->newDiscussion();
+            $articleDiscussion = (new ArticleDiscussion)->setArticle($article);
+            $articleDiscussion->createDiscussion();
 
             return true;
         });
 
         static::deleted(function (Article $article) {
-            $articleComment = (new ArticleComment)->setArticle($article);
-            $articleComment->deleteDiscussion();
+            $articleDiscussion = (new ArticleDiscussion)->setArticle($article);
+            $articleDiscussion->deleteDiscussion();
 
             return true;
         });
@@ -164,7 +164,7 @@ class Article extends IndexedModel
      */
     public function comments()
     {
-        return (new ArticleComment)->setArticle($this);
+        return (new ArticleDiscussion)->setArticle($this);
     }
 
     public function tags()
