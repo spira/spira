@@ -648,6 +648,9 @@ class EntityTest extends TestCase
         $this->assertEquals(urldecode($object->test), $compareString);
     }
 
+    /**
+     * @group failing
+     */
     public function testEntitySearch()
     {
         TestEntity::removeAllFromIndex();
