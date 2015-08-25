@@ -53,10 +53,17 @@ class Build
         // Copy the API module inside the application directory
         $this->recurseCopy('vendor/kasperisager/vanilla-api', 'public/applications/api');
 
+        // Copy the API Extended module inside the application directory
+        $this->recurseCopy('src/apiextended', 'public/applications/apiextended');
+
         // Copy the SSO plugin to the plugins directory
         $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
 
+        // Setup the database variables to be bootstrapped into memory
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
+
+        // Override general functions
+        copy('bootstrap.before.php', 'public/conf/bootstrap.before.php');
 
         $this->setupVanilla();
     }

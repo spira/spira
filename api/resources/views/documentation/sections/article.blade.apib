@@ -12,13 +12,13 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Unpublished - Allowed - [admin, self]
 + Request
     + Headers
-    
+
             Range: entities=0-
-            
+
 + Response 200 (application/json)
 
     + Headers
-    
+
             Accept-Ranges: entities
             Content-Range: entities 0-9/200
 
@@ -48,7 +48,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!! $factory->json(\App\Models\Article::class) !!}
-            
+
 ### Create/update article entity [PUT]
 
 #### Restrictions
@@ -56,7 +56,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!! $factory->json(\App\Models\Article::class) !!}
 
 + Response 201
@@ -68,14 +68,14 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!!
                 $factory->get(\App\Models\Article::class)
                     ->hide(['_self'])
                     ->showOnly(['content'])
                     ->json()
             !!}
-            
+
 
 + Response 204
 
@@ -89,37 +89,37 @@ Note that this route returns paginated results as defined in the `Content-Range`
 ## Article Permalinks [/articles/{articleId}/permalinks]
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
-    
+
 ### Retrieve all article's permalinks [GET]
 #### Restrictions
 * Allowed - [admin, self]
 
 + Response 200 (application/json)
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticlePermalink::class)                    
+                $factory->get(\App\Models\ArticlePermalink::class)
                     ->count(3)
                     ->json()
             !!}
-            
+
 ## Article Meta [/articles/{articleId}/meta]
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
-    
+
 ### Retrieve all article's meta data [GET]
 #### Restrictions
 * Allowed - [all]
 
 + Response 200 (application/json)
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticleMeta::class)                    
+                $factory->get(\App\Models\ArticleMeta::class)
                     ->count(3)
                     ->json()
             !!}
-            
+
 ### Bulk create/update article meta data [PUT]
 
 #### Restrictions
@@ -127,9 +127,9 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticleMeta::class)                    
+                $factory->get(\App\Models\ArticleMeta::class)
                     ->count(3)
                     ->json()
             !!}
@@ -146,7 +146,6 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Allowed - [admin, self]
 
 + Response 204
-
 
 ## Article Tags [/articles/{articleId}/tags]
 + Parameters
@@ -186,3 +185,21 @@ Note that this route returns paginated results as defined in the `Content-Range`
                     ->json()
             !!}
 
+
+## Article Comments [/articles/{articleId}/comments]
+
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the article to get comments for.
+
+### Retrieve all comments for article [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->count(3)
+                    ->json()
+            !!}

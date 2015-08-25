@@ -2,6 +2,7 @@
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
+use App\Services\Api\Vanilla\Client as VanillaClient;
 
 class ArticleTest extends TestCase
 {
@@ -56,6 +57,15 @@ class ArticleTest extends TestCase
         }
     }
 
+    protected function cleanupDiscussions(array $articles)
+    {
+        foreach ($articles as $article) {
+            // Deleting the article will trigger the deleted event that removes
+            // the discussion
+            $article->delete();
+        }
+    }
+
     public function testGetAllPaginated()
     {
         $entities = factory(Article::class, 5)->create()->all();
@@ -74,6 +84,8 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertNotNull($object[0]->excerpt);
         $this->assertObjectNotHasAttribute('content', $object[0]);
+
+        $this->cleanupDiscussions($entities);
     }
 
     public function testGetOne()
@@ -101,6 +113,8 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testGetOneWithNestedTags()
@@ -144,6 +158,8 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testGetOneByLastPermalink()
@@ -172,6 +188,8 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+
+        $this->cleanupDiscussions([$entity]);
     }
 
 
@@ -188,6 +206,8 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(201);
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
+
+        $this->cleanupDiscussions([Article::find($entity->article_id)]);
     }
 
     public function testPutOneNew()
@@ -205,6 +225,8 @@ class ArticleTest extends TestCase
         $this->assertEquals($rowCount + 1, Article::count());
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
+
+        $this->cleanupDiscussions([Article::find($entity->article_id)]);
     }
 
     public function testPutMissingIdInBody()
@@ -235,6 +257,8 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->title, $entity->title);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPatchOneNewPermalink()
@@ -256,6 +280,8 @@ class ArticleTest extends TestCase
         $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->permalink, $entity->permalink);
         $this->assertEquals($checkEntity->permalinks->count(), $linksCount+1);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPatchOneRemovePermalink()
@@ -275,6 +301,8 @@ class ArticleTest extends TestCase
         $checkEntity = Article::find($id);
         $this->assertNull($checkEntity->permalink);
         $this->assertEquals($checkEntity->permalinks->count(), $linksCount);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testDeleteOne()
@@ -285,7 +313,7 @@ class ArticleTest extends TestCase
             $oneEntity->push();
         }
 
-        $entity = $entities[0];
+        $entity = array_shift($entities);
         $id = $entity->article_id;
 
         $entityPermalinksCount = $entity->permalinks->count();
@@ -301,6 +329,8 @@ class ArticleTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, Article::count());
         $this->assertEquals($permalinksTotalCount - $entityPermalinksCount, $permalinksTotalCountAfterDelete);
+
+        $this->cleanupDiscussions($entities);
     }
 
     public function testGetPermalinks()
@@ -319,6 +349,8 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testGetPermalinksNotFoundArticle()
@@ -348,6 +380,8 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPutMetas()
@@ -380,6 +414,8 @@ class ArticleTest extends TestCase
             }
         }
         $this->assertEquals($counter, $metaCount);
+
+        $this->cleanupDiscussions([$article]);
     }
 
     public function deleteMeta()
@@ -395,5 +431,94 @@ class ArticleTest extends TestCase
         $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
         $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
+
+        $this->cleanupDiscussions($articles);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateDiscussionWhenArticleCreated()
+    {
+        $article = factory(Article::class)->create();
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+
+        $this->assertEquals($article->title, $discussion['Discussion']['Name']);
+        $this->assertEquals($article->article_id, $discussion['Discussion']['ForeignID']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function shouldDeleteDiscussionWhenArticleDeleted()
+    {
+        $client = App::make(VanillaClient::class);
+
+        $article = factory(Article::class)->create();
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $article->delete();
+
+        $this->assertEquals($article->article_id, $discussion['Discussion']['ForeignID']);
+        $client->api('discussions')->findByForeignId($article->article_id);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetCommentsForArticle()
+    {
+        $article = factory(Article::class)->create();
+        $body = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $body);
+
+        $this->get('/articles/'.$article->article_id.'/comments');
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array);
+        $this->assertEquals($body, $array[0]['body']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldGetCommentsForArticleUsingWithNestedHeader()
+    {
+        $article = factory(Article::class)->create();
+        $body = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $body);
+
+        $this->get('/articles/'.$article->article_id, ['With-Nested' => 'comments']);
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array['_comments']);
+        $this->assertEquals($body, $array['_comments'][0]['body']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 }
