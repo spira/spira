@@ -38,6 +38,9 @@ class User extends ApiAbstract
      * - wipe: Delete the user, keep user's content but blank it.
      * - delete: Delete the user and remove all user's content.
      *
+     * The linked method in the API is currently broken and does not work so for
+     * now we call a hotfixed version in the extended API.
+     *
      * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#remove-a-user
      *
      * @param  int    $id
@@ -51,6 +54,6 @@ class User extends ApiAbstract
             'Method' => $method
         ];
 
-        return $this->delete('users/'.$id, $parameters);
+        return $this->delete('users/hotfix/'.$id, $parameters);
     }
 }

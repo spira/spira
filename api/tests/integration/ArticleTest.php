@@ -539,13 +539,13 @@ class ArticleTest extends TestCase
         $array = json_decode($this->response->getContent(), true);
 
         $this->assertResponseStatus(200);
+        $this->assertEquals($body, $array['body']);
 
-        // Clean up by removing the discussion created
+        // Clean up Vanilla by removing the discussion and user created
         $client = App::make(VanillaClient::class);
         $client->api('discussions')->removeByForeignId($article->article_id);
-
-        // @todo We have no API method to remove the created user in Vanilla,
-        // should probably add that to not flood the user table during repeated testing.
+        $user = $client->api('users')->sso($array['_author']['userId'], '', '');
+        $client->api('users')->remove($user['User']['UserID']);
     }
 
     public function shouldNotPostCommentForArticle()

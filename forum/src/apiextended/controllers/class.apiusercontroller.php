@@ -39,4 +39,20 @@ class ApiUserController extends UserController
         $this->setData('User', $user, false);
         $this->render();
     }
+
+    /**
+     * Delete hotfix.
+     *
+     * The API module transforms the method to uppercase, which makes Vanilla
+     * not recognize it.
+     *
+     * @param  int    $UserID
+     * @param  string $Method
+     *
+     * @return void
+     */
+    public function delete($UserID = '', $Method = '')
+    {
+        parent::delete($UserID, strtolower($Method));
+    }
 }
