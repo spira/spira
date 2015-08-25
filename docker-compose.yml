@@ -98,7 +98,6 @@ web:
     service: web
   ports:
     - "80:80"
-    - "8008"
     - "8080:8080"
   links:
     - php:php
