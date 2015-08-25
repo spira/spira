@@ -15,9 +15,6 @@ class ArticleComment extends BaseModel
         'article_comment_id',
         'body',
         'created_at',
-        'author_name',
-        'author_email',
-        'author_photo'
     ];
 
     /**
@@ -28,4 +25,18 @@ class ArticleComment extends BaseModel
     protected $casts = [
         'created_at' => 'datetime',
     ];
+
+    /**
+     * Set comment author.
+     *
+     * @param  User $user
+     *
+     * @return void
+     */
+    public function setAuthor(User $user)
+    {
+        $attributes = ['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'];
+
+        $this->_author = array_only($user->toArray(), $attributes);
+    }
 }

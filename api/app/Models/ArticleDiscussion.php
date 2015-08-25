@@ -7,6 +7,7 @@ use Spira\Model\Model\BaseModel;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\VirtualRelationInterface;
 use App\Services\Api\Vanilla\Client as VanillaClient;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
 {
@@ -77,6 +78,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         // And turn them into a collection of models
         $comments = $this->prepareCommentsForHydrate($discussion['Comments']);
         $comments = (new ArticleComment)->hydrateRequestCollection($comments, new Collection);
+        $comments = $this->setCommentAuthors($comments, $discussion['Comments']);
 
         return $comments;
     }
@@ -110,9 +112,6 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
             'CommentID' => 'article_comment_id',
             'Body' => 'body',
             'DateInserted' => 'created_at',
-            'InsertName' => 'author_name',
-            'InsertEmail' => 'author_email',
-            'InsertPhoto' => 'author_photo'
         ];
 
         $comments = array_map(function ($comment) use ($map) {
@@ -126,6 +125,37 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         }, $comments);
 
         return $comments;
+    }
+
+    /**
+     * Set authors for collection of comments.
+     *
+     * @param Collection $commentModels
+     * @param array      $comments
+     *
+     * @return Collection
+     */
+    protected function setCommentAuthors(Collection $commentModels, array $comments)
+    {
+        foreach ($commentModels as $model) {
+            $id = $model->article_comment_id;
+
+            $comment = array_where($comments, function ($key, $value) use ($id) {
+                return $value['CommentID'] == $id;
+            });
+
+            $email = reset($comment)['InsertEmail'];
+
+            try {
+                $user = (new User)->findByEmail($email);
+            } catch (ModelNotFoundException $e) {
+                $user = new User;
+            }
+
+            $model->setAuthor($user);
+        }
+
+        return $commentModels;
     }
 
     /**
