@@ -482,8 +482,6 @@ abstract class BaseModel extends Model
             return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
         }catch (\InvalidArgumentException $e){
             return parent::asDateTime($value);
-        }catch(\Exception $e){
-            dd($value);
         }
 
     }
