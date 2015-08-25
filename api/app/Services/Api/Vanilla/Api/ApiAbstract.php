@@ -5,7 +5,7 @@ namespace App\Services\Api\Vanilla\Api;
 use Guzzle\Http\Message\Response;
 use App\Services\Api\Vanilla\Client;
 
-abstract class ApiAbstract implements ApiInterface
+abstract class ApiAbstract
 {
     /**
      * The client.
@@ -131,10 +131,6 @@ abstract class ApiAbstract implements ApiInterface
     {
         if (count($parameters) === 0) {
             return null;
-        }
-
-        if (empty($parameters)) {
-            return json_encode($parameters, JSON_FORCE_OBJECT);
         }
 
         return json_encode($parameters);
