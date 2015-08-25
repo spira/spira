@@ -232,39 +232,6 @@ class VanillaApiTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetUsers()
-    {
-        $api = $this->getApiMock(User::class);
-        $api->expects($this->once())
-            ->method('get')
-            ->with('users');
-
-        $api->all();
-    }
-
-    /**
-     * @test
-     */
-    public function shouldCreateUser()
-    {
-        $input = [
-            'Name' => $username = 'Some name',
-            'Email' => $email = 'some@email.com',
-            'Password' => $password = 'password',
-            'RoleID' => [8]
-        ];
-
-        $api = $this->getApiMock(User::class);
-        $api->expects($this->once())
-            ->method('post')
-            ->with('users', $input);
-
-        $api->create($username, $email, $password);
-    }
-
-    /**
-     * @test
-     */
     public function shouldLinkSsoUser()
     {
         $input = [
