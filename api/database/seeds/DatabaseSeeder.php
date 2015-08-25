@@ -12,11 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
-        //check if an index has been created, and create one if not
-        if (!TestEntity::indexExists()) {
-            TestEntity::createIndex();
+        if (TestEntity::indexExists()) {
+            TestEntity::deleteIndex();
+            $this->command->info('ElasticSearch index deleted');
         }
+        TestEntity::createIndex();
+        $this->command->info('ElasticSearch index created');
 
         $this->call('UserStorySeeder');
         $this->command->info('User story seeded!');

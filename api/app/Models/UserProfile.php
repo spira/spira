@@ -59,5 +59,7 @@ class UserProfile extends BaseModel
      */
     protected $casts = [
         'dob' => 'date',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 }
