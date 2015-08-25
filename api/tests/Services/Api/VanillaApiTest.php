@@ -261,7 +261,7 @@ class VanillaApiTest extends TestCase
 
         $api->expects($this->once())
             ->method('delete')
-            ->with('users/456', $input);
+            ->with('users/hotfix/456', $input);
 
         $api->remove(456);
     }
