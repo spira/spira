@@ -174,9 +174,9 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
     }
 
-
     public function testPostOne()
     {
+        /** @var Article $entity */
         $entity = factory(Article::class)->make();
 
         $this->post('/articles', $this->prepareEntity($entity));

@@ -1,5 +1,6 @@
 <?php namespace Spira\Model\Model;
 
+use Carbon\Carbon;
 use Elasticquent\ElasticquentTrait;
 use Spira\Model\Collection\IndexedCollection;
 
@@ -55,6 +56,20 @@ abstract class IndexedModel extends BaseModel
         ];
 
         return $instance->getElasticSearchClient()->count($params);
+    }
+
+    public function getIndexDocumentData() {
+
+        $modelArray = $this->toArray();
+
+        foreach($modelArray as $attribute => &$value){
+            if ($value instanceof Carbon){
+                $value = $value->toIso8601String();
+            }
+        }
+
+        return $modelArray;
+
     }
 
     protected static function boot()

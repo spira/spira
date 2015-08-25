@@ -49,6 +49,8 @@ class Article extends IndexedModel
 
     protected $casts = [
         'first_published' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     public static function getValidationRules()
