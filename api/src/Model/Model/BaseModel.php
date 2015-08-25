@@ -469,7 +469,12 @@ abstract class BaseModel extends Model
             return Carbon::parse($value['date'], $value['timezone']);
         }
 
-        return parent::asDateTime($value);
+        try {
+            return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
+        }catch (\InvalidArgumentException $e){
+            return parent::asDateTime($value);
+        }
+
     }
 
     /**
@@ -491,17 +496,15 @@ abstract class BaseModel extends Model
 
         switch ($this->getCastType($key)) {
             case 'date':
-                if (is_array($value)) {
-                    return $this->asDateTime($value);
-                }
-                return Carbon::createFromFormat('Y-m-d', $value);
-            case 'datetime':
 
                 try {
-                    return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
+                    return Carbon::createFromFormat('Y-m-d', $value); //if it is the true base ISO8601 date format, parse it
                 }catch (\InvalidArgumentException $e){
-                    return $this->asDateTime($value); //try the catchall method for date translation
+                    return $this->asDateTime($value); //otherwise try the alternatives
                 }
+
+            case 'datetime':
+                return $this->asDateTime($value); //try the catchall method for date translation
             default:
                 return $value;
         }

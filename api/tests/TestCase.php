@@ -53,6 +53,10 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
 
+    /**
+     * Assert status code, and on failure print the output to assist debugging
+     * @param int $code
+     */
     public function assertResponseStatus($code)
     {
         try {
@@ -62,11 +66,12 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
 
             $json = json_decode($content);
 
+            //check to see if the response was valid json, if so assign the object to $content
             if (json_last_error() === JSON_ERROR_NONE) {
                 $content = $json;
             }
 
-            (new Dumper)->dump($content);
+            (new Dumper)->dump($content); //dump the data (not exiting like dd() as there could be further errors that give context)
             throw $e;
         }
     }
