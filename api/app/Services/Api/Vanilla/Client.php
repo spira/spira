@@ -71,25 +71,13 @@ class Client
         $this->client = $client;
 
         $this->secret = env('VANILLA_API_SECRET');
-        $this->baseUrl = 'http://'.$this->getHostname().'/api/';
+        $this->baseUrl = 'http://'.env('FORUMSERVER_HOST').':'.env('FORUMSERVER_PORT').'/api/';
 
         $this->client->setBaseUrl($this->baseUrl);
         $this->client->getEventDispatcher()->addListener(
             'request.error',
             [new Error, 'onRequestError']
         );
-    }
-
-    /**
-     * Get the hostname, with support for Spira docker containers.
-     *
-     * @return string
-     */
-    protected function getHostname()
-    {
-        return env('WEB_PORT_8008_TCP_ADDR')
-            ? env('WEB_PORT_8008_TCP_ADDR').':8008'
-            : env('HOSTNAME_FORUM');
     }
 
     /**
