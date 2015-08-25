@@ -247,4 +247,22 @@ class VanillaApiTest extends TestCase
 
         $api->sso($id, $username, $email);
     }
+
+    /**
+     * @test
+     */
+    public function shouldRemoveUser()
+    {
+        $input = [
+            'Method' => 'delete'
+        ];
+
+        $api = $this->getApiMock(User::class);
+
+        $api->expects($this->once())
+            ->method('delete')
+            ->with('users/456', $input);
+
+        $api->remove(456);
+    }
 }
