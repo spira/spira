@@ -83,8 +83,10 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      */
     public function save(array $options = [], User $user = null)
     {
-        $this->fill($options);
-        $id = $this->getDiscussionId();
+        // Get a model for the comment
+        $articleComment = (new ArticleComment)
+            ->fill($options)
+            ->setAuthor($user);
 
         // Get/create corresponding user from Vanilla
         $vanillaUser = $this->getClient()->api('users')->sso(
@@ -98,19 +100,17 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         $this->getClient()->setUser($vanillaUser['User']['Name']);
 
         // Create the comment in Vanilla
+        $id = $this->getDiscussionId();
         $comment = $this->getClient()->api('comments')->create(
             $id,
-            $this->content
+            $articleComment->body
         );
 
-        // And return it as an Eloquent Model
-        $comment = $this->vanillaCommentToEloquent($comment['Comment']);
-        $articleComment = new ArticleComment;
-        $articleComment->fill($comment);
+        // Get ID from vanilla into model
+        $articleComment->article_comment_id = $comment['Comment']['CommentID'];
 
         return $articleComment;
     }
-
 
     /**
      * Allow a parent model to get this model via relation.

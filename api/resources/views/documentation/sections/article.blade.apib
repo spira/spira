@@ -217,7 +217,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\ArticleComment::class)
-                    ->showOnly(['content'])
+                    ->showOnly(['body'])
                     ->json();
             !!}
 

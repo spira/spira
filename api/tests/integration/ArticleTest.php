@@ -527,13 +527,13 @@ class ArticleTest extends TestCase
      */
     public function shouldPostCommentForArticle()
     {
-        $content = 'A comment';
+        $body = 'A comment';
         $article = factory(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->post('/articles/'.$article->article_id.'/comments', ['content' => $content], [
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
         $array = json_decode($this->response->getContent(), true);
