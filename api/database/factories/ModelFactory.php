@@ -141,10 +141,12 @@ $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
 $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
     return [
             'image_id' => $faker->uuid,
-            'public_id' => $faker->unique()->word,
+            'public_id' => $faker->unique()->lexify('????????????????????'),
             'version' => time(),
-            'format' => 'png',
-            'alt' => $faker->slug()
+            'folder' => $faker->lexify('????????'),
+            // http://cloudinary.com/documentation/image_transformations#format_conversion
+            'format' => $faker->randomElement(['jpg', 'png', 'gif', 'bmp', 'tiff', 'ico', 'pdf', 'eps', 'psd', 'svg', 'WebP']),
+            'alt' => $faker->sentence
     ];
 });
 

@@ -56,6 +56,18 @@ $app->group(['prefix' => 'tags'], function (Application $app) {
     $app->delete('{id}', 'App\Http\Controllers\TagController@deleteOne');
 });
 
+$app->group(['prefix' => 'images'], function (Application $app) {
+    $app->get('/', 'App\Http\Controllers\ImageController@getAllPaginated');
+    $app->get('{id}', ['as'=>\App\Models\Image::class, 'uses'=>'App\Http\Controllers\ImageController@getOne']);
+    $app->put('{id}', 'App\Http\Controllers\ImageController@putOne');
+    $app->patch('{id}', 'App\Http\Controllers\ImageController@patchOne');
+    $app->delete('{id}', 'App\Http\Controllers\ImageController@deleteOne');
+
+
+    // @TODO add version, same way as permalinks ??
+    // $app->get('{id}/versions', 'App\Http\Controllers\ImageVersionsController@getAll');
+});
+
 $app->group(['prefix' => 'test'], function (Application $app) {
 
     $app->get('/internal-exception', 'App\Http\Controllers\TestController@internalException');
