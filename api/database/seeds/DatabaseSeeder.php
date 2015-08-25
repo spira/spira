@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         if (TestEntity::indexExists()) {
             TestEntity::deleteIndex();
             $this->command->info('ElasticSearch index deleted');

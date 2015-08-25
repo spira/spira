@@ -15,7 +15,6 @@ class UserStorySeeder extends Seeder
      */
     public function run()
     {
-
         $faker = Faker::create('au_AU');
 
         $this->createUser([
@@ -29,7 +28,6 @@ class UserStorySeeder extends Seeder
         for ($i=0; $i < 99; $i++) {
             $this->createUser();
         }
-
     }
 
     /**

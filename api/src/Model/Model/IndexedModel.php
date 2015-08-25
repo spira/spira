@@ -58,18 +58,17 @@ abstract class IndexedModel extends BaseModel
         return $instance->getElasticSearchClient()->count($params);
     }
 
-    public function getIndexDocumentData() {
-
+    public function getIndexDocumentData()
+    {
         $modelArray = $this->toArray();
 
-        foreach($modelArray as $attribute => &$value){
-            if ($value instanceof Carbon){
+        foreach ($modelArray as $attribute => &$value) {
+            if ($value instanceof Carbon) {
                 $value = $value->toIso8601String();
             }
         }
 
         return $modelArray;
-
     }
 
     protected static function boot()
@@ -96,7 +95,5 @@ abstract class IndexedModel extends BaseModel
                 return true;
             }, PHP_INT_MAX
         );
-
     }
-
 }

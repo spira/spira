@@ -1,12 +1,12 @@
 <?php
 
 use App\Models\TestEntity;
+
 /**
  * Class ElasticSearchTest
  */
 class ElasticSearchTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -78,5 +78,4 @@ class ElasticSearchTest extends TestCase
 
         $testEntity->delete(); //clean up so it doesn't remain in the index
     }
-
 }

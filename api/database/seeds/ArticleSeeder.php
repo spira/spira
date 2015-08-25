@@ -15,7 +15,6 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-
         factory(Article::class, 50)
             ->create()
             ->each(function (Article $article) {
@@ -28,6 +27,5 @@ class ArticleSeeder extends Seeder
                 $article->tags()->saveMany($tags);
             })
         ;
-
     }
 }
