@@ -15,7 +15,6 @@ class UserStorySeeder extends Seeder
      */
     public function run()
     {
-        User::removeAllFromIndex(); //remove all entries from index
 
         $faker = Faker::create('au_AU');
 
@@ -31,7 +30,6 @@ class UserStorySeeder extends Seeder
             $this->createUser();
         }
 
-        User::addAllToIndex(); //push all users to elastic search
     }
 
     /**

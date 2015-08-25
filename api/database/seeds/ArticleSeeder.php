@@ -15,7 +15,6 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        Article::removeAllFromIndex(); //clear all entries in elastic search
 
         factory(Article::class, 50)
             ->create()
@@ -30,6 +29,5 @@ class ArticleSeeder extends Seeder
             })
         ;
 
-        Article::addAllToIndex(); //push all articles to elastic search
     }
 }
