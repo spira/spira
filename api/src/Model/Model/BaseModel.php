@@ -465,14 +465,25 @@ abstract class BaseModel extends Model
      */
     protected function asDateTime($value)
     {
+        if ($value instanceof Carbon){
+            return $value;
+        }
+
+        if ($value instanceof \DateTime){
+            return Carbon::instance($value);
+        }
+
         if (is_array($value) && isset($value['date'])) {
             return Carbon::parse($value['date'], $value['timezone']);
         }
 
         try {
+
             return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
         }catch (\InvalidArgumentException $e){
             return parent::asDateTime($value);
+        }catch(\Exception $e){
+            dd($value);
         }
 
     }
@@ -498,9 +509,9 @@ abstract class BaseModel extends Model
             case 'date':
 
                 try {
-                    return Carbon::createFromFormat('Y-m-d', $value); //if it is the true base ISO8601 date format, parse it
-                }catch (\InvalidArgumentException $e){
                     return $this->asDateTime($value); //otherwise try the alternatives
+                }catch (\InvalidArgumentException $e){
+                    return Carbon::createFromFormat('Y-m-d', $value); //if it is the true base ISO8601 date format, parse it
                 }
 
             case 'datetime':
