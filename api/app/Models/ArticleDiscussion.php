@@ -5,9 +5,10 @@ namespace App\Models;
 use App;
 use Spira\Model\Model\BaseModel;
 use Spira\Model\Collection\Collection;
+use Spira\Model\Model\VirtualRelationInterface;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
-class ArticleDiscussion extends BaseModel
+class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
 {
     /**
      * Article discussion belongs to.
@@ -67,25 +68,33 @@ class ArticleDiscussion extends BaseModel
     public function getResults()
     {
         // First a minimal call to the discussion for the total comment count
-        $discussion = $this->getClient()->api('discussions')->findByForeignId(
-            $this->article->article_id,
-            1,
-            1
-        );
-
-        $commentCount = $discussion['Discussion']['CountComments'];
+        $discussion = $this->getDiscussion($this->article->article_id, 1);
+        $count = $discussion['Discussion']['CountComments'];
 
         // Now get the entire batch of comments
-        $discussion = $this->getClient()->api('discussions')->findByForeignId(
-            $this->article->article_id,
-            1,
-            $commentCount
-        );
+        $discussion = $this->getDiscussion($this->article->article_id, $count);
 
+        // And turn them into a collection of models
         $comments = $this->prepareCommentsForHydrate($discussion['Comments']);
         $comments = (new ArticleComment)->hydrateRequestCollection($comments, new Collection);
 
         return $comments;
+    }
+
+    /**
+     * Get a discussion by querying Vanilla.
+     *
+     * @param  string $id
+     * @param  int    $count
+     *
+     * @return array
+     */
+    protected function getDiscussion($id, $count)
+    {
+        return $this
+            ->getClient()
+            ->api('discussions')
+            ->findByForeignId($id, 1, $count);
     }
 
     /**

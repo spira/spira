@@ -90,15 +90,17 @@ class Article extends IndexedModel
         });
 
         static::created(function (Article $article) {
-            $articleDiscussion = (new ArticleDiscussion)->setArticle($article);
-            $articleDiscussion->createDiscussion();
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->createDiscussion();
 
             return true;
         });
 
         static::deleted(function (Article $article) {
-            $articleDiscussion = (new ArticleDiscussion)->setArticle($article);
-            $articleDiscussion->deleteDiscussion();
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->deleteDiscussion();
 
             return true;
         });
