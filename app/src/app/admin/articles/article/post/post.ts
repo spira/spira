@@ -39,7 +39,7 @@ namespace app.admin.articles.article.post {
                     return tagModel;
 
                 })
-            .value();
+                .value();
 
         }
 
