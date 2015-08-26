@@ -35,6 +35,7 @@ use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
  * @method static Collection get
  * @method static Collection findMany($ids)
  * @method static Builder where($value,$operator,$operand)
+ * @method static Builder whereIn($column,$ids)
  * @method static BaseModel skip($offset)
  * @method static BaseModel take($limit)
  *
