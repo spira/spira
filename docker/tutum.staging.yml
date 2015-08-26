@@ -47,7 +47,6 @@ php:
     - XDEBUG_ENABLED=false
   links:
     - cache
-    - mailcatcher
     - queue
   privileged: true
   tags:
@@ -111,9 +110,6 @@ web:
     - HOSTNAME_FORUM=forum.staging.iqstech.net
     - NGINX_VHOSTS=vhosts/nginx/production/*.conf
   links:
-    - apimock
-    - logviewer
-    - mailcatcher
     - php
   ports:
     - "80:80"
