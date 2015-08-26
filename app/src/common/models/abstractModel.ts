@@ -29,13 +29,13 @@ namespace common.models {
                 if (_.has(data, key)){
 
                     if (_.isArray(data[key])){
-                        data[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model));
+                        this[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model));
                     }else{
-                        data[key] = this.hydrateModel(data[key], model);
+                        this[key] = this.hydrateModel(data[key], model);
                     }
 
                 }else{
-                    data[key] = null;
+                    this[key] = null;
                 }
 
             });

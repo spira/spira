@@ -4,11 +4,11 @@ namespace common.services.article {
 
     export class ArticleService {
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q'];
 
         private cachedPaginator:common.services.pagination.Paginator;
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private paginationService:common.services.pagination.PaginationService) {
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService, private paginationService:common.services.pagination.PaginationService, private $q:ng.IQService) {
         }
 
         /**
@@ -72,10 +72,28 @@ namespace common.services.article {
 
             let method = newArticle? 'put' : 'patch';
 
-            return this.ngRestAdapter[method]('/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged())
-                .then((res) => {
+            let changes = (<common.decorators.IChangeAwareDecorator>article).getChanged();
+
+            return this.ngRestAdapter[method]('/articles/'+article.articleId, changes)
+                .then(() => this.saveArticleTags(article))
+                .then(() => {
                     (<common.decorators.IChangeAwareDecorator>article).resetChangedProperties(); //reset so next save only saves the changed ones
                     return article;
+                });
+
+        }
+
+        private saveArticleTags(article:common.models.Article):ng.IPromise<common.models.Tag[]|boolean>{
+
+            let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged();
+
+            if (!_.has(changes, '_tags')){
+                return this.$q.when(false);
+            }
+
+            return this.ngRestAdapter.put('/articles/'+article.articleId+'/tags', changes._tags)
+                .then(() => {
+                    return article._tags;
                 });
 
         }

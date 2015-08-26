@@ -21,15 +21,8 @@ namespace common.models {
             super(data);
 
             _.assign(this, data);
-            //if (data._tags && _.isArray(data._tags)){
-            //    this._tags = _.map(data._tags, (tagData) => {
-            //        return new common.models.Tag(tagData);
-            //    });
-            //}
 
             this.hydrateNested(data);
-
-
         }
 
         /**

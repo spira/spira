@@ -20,7 +20,10 @@ namespace app.admin.articles.article.post {
 
         }
 
-        public updateArticleTags(){
+        /**
+         * Update the article tags on the article model. If new, create a new Tag model.
+         */
+        public updateArticleTags():void{
 
             this.article._tags = _.chain(this.tags)
                 .map((tag:string):common.models.Tag => {
@@ -37,8 +40,6 @@ namespace app.admin.articles.article.post {
 
                 })
             .value();
-
-            console.log('article tags updated to ', this.article._tags);
 
         }
 
