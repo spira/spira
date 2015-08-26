@@ -15,7 +15,7 @@ class CreateArticleImageTable extends Migration
         Schema::create('image_article', function (Blueprint $table) {
             $table->uuid('image_id');
             $table->uuid('article_id');
-            $table->enum('group_type',['primary','carousel','extra']);
+            $table->enum('group_type',['primary','thumbnail','carousel']);
             $table->smallInteger('position',false,true)->default(1);
 
             $table->primary(['image_id','article_id','group_type']);

@@ -186,3 +186,61 @@ Note that this route returns paginated results as defined in the `Content-Range`
                     ->json()
             !!}
 
+## Article Images [/articles/{articleId}/images]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's images [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Image::class)
+                    ->count(3)
+                    ->json()
+            !!}
+
+## Article Images with group [/articles/{articleId}/images/{group}]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+    + group (required, string, `primary`) ... `group` image belongs to
+
+### Retrieve all article's images [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Image::class)
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Add images to article [PUT]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Image::class)
+                    ->count(3)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Image::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+

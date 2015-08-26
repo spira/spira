@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
@@ -120,7 +121,7 @@ class Article extends IndexedModel
     }
 
     /**
-     * If there is no defined exerpt for the text, create it from the content
+     * If there is no defined excerpt for the text, create it from the content
      * @param $excerpt
      * @return string
      */
@@ -146,5 +147,13 @@ class Article extends IndexedModel
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tag_article');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function images()
+    {
+        return $this->belongsToMany(Image::class, 'image_article')->withPivot('group_type');
     }
 }

@@ -47,6 +47,11 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
 
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
+
+    $app->get('{id}/images', 'App\Http\Controllers\ArticleImageController@getAll');
+    $app->get('{id}/images/{group}', 'App\Http\Controllers\ArticleImageController@getAll');
+    $app->put('{id}/images', 'App\Http\Controllers\ArticleImageController@putMany');
+    $app->delete('{id}/image/{childId}/{group}', 'App\Http\Controllers\ArticleImageController@deleteOne');
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
