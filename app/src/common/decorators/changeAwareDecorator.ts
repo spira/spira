@@ -75,8 +75,12 @@ namespace common.decorators {
 
                 let value = val; //store the value locally
 
+                if (_.isFunction(val)){
+                    return; //don't try to track functions for changes
+                }
+
                 Object.defineProperty(obj, propName, {
-                    enumerable: !_.isFunction(value),
+                    enumerable: true,
                     get: function() {
                         return value;
                     },

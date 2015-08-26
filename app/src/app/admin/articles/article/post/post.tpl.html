@@ -40,11 +40,13 @@
     </md-input-container>
 
     <md-chips
-            ng-init="ArticleController.article.tags = []"
-            ng-model="ArticleController.article.tags"
-            readonly="false"
-            placeholder="Enter a tag"
-            delete-button-label="Remove Tag"
-            delete-hint="Press delete to remove tag"
-            secondary-placeholder="+Tag"></md-chips>
+        ng-model="PostController.tags"
+        ng-change="PostController.updateArticleTags()"
+        readonly="false"
+        placeholder="Enter a tag"
+        delete-button-label="Remove Tag"
+        delete-hint="Press delete to remove tag"
+        secondary-placeholder="+Tag"></md-chips>
 
+<pre highlight="">{{PostController.tags|json}}</pre>
+<pre highlight="">{{PostController.article._tags|json}}</pre>

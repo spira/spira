@@ -4,8 +4,41 @@ namespace app.admin.articles.article.post {
 
     export class PostController {
 
-        static $inject = ['article'];
-        constructor(public article:common.models.Article) {
+        public tags:string[];
+
+        static $inject = ['article', 'tagService', '$scope'];
+        constructor(public article:common.models.Article, private tagService:common.services.tag.TagService, private $scope:ng.IScope) {
+
+
+            this.tags = _.pluck(article._tags, 'tag');
+
+            $scope.$watchCollection(() => this.tags, (newValue, oldValue) => {
+                if (!_.isEqual(newValue, oldValue)){
+                    this.updateArticleTags();
+                }
+            });
+
+        }
+
+        public updateArticleTags(){
+
+            this.article._tags = _.chain(this.tags)
+                .map((tag:string):common.models.Tag => {
+                    let tagModel:common.models.Tag;
+
+                    if (tagModel = _.find(this.article._tags, {tag: tag})){
+                        return tagModel;
+                    }
+
+                    tagModel = this.tagService.newTag();
+                    tagModel.tag = tag;
+
+                    return tagModel;
+
+                })
+            .value();
+
+            console.log('article tags updated to ', this.article._tags);
 
         }
 
