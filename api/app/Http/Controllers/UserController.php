@@ -177,6 +177,12 @@ class UserController extends EntityController
         // Extract the credentials and update if necessary
         $credentialUpdateDetails = $request->get('_user_credential', []);
         if (!empty($credentialUpdateDetails)) {
+            // Invalidate token for the user when user changes their password
+            if ($this->jwtAuth->user()->user_id == $model->user_id) {
+                $token = $this->jwtAuth->getTokenFromRequest();
+                $this->jwtAuth->invalidate($token);
+            }
+
             $credentials = UserCredential::findOrNew($id);
             /** @var UserCredential $credentials */
             $credentials->fill($credentialUpdateDetails);

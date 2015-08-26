@@ -304,6 +304,13 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
+
+        // Assert token is invalid
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+        $blacklist = $jwtAuth->getBlacklist();
+        $payload = $jwtAuth->getJWTProvider()->decode($token);
+        $payload = $jwtAuth->getPayloadFactory()->setRefreshFlow(false)->make($payload);
+        $this->assertTrue($blacklist->has($payload));
     }
 
     public function testPatchOneByGuestUser()
