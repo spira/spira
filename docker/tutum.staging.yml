@@ -13,6 +13,11 @@ cache:
   tags:
     - staging
 
+elasticsearch:
+  image: elasticsearch:1.7.1
+  tags:
+    - staging
+
 php:
   image: spira/docker-hhvm:latest
   environment:
@@ -46,6 +51,7 @@ php:
   links:
     - cache
     - queue
+    - elasticsearch
   privileged: true
   tags:
     - staging
@@ -91,6 +97,7 @@ queuerunner:
     - cache
     - queue
     - web
+    - elasticsearch
   tags:
     - staging
   volumes_from:
