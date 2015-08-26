@@ -26,8 +26,6 @@ php:
     - HOSTNAME_APP=app.staging.iqstech.net
     - HOSTNAME_BASE=staging.iqstech.net
     - HOSTNAME_FORUM=forum.staging.iqstech.net
-    - HOSTNAME_LOGS=logs.staging.iqstech.net
-    - HOSTNAME_MAILCATCHER=mailcatcher.staging.iqstech.net
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
@@ -72,8 +70,6 @@ queuerunner:
     - HOSTNAME_APP=app.staging.iqstech.net
     - HOSTNAME_BASE=staging.iqstech.net
     - HOSTNAME_FORUM=forum.staging.iqstech.net
-    - HOSTNAME_LOGS=logs.staging.iqstech.net
-    - HOSTNAME_MAILCATCHER=mailcatcher.staging.iqstech.net
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
