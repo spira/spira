@@ -5,6 +5,7 @@ use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
+use App\Extensions\Revisionable\ExtendsRevisionableTrait as Revisionable;
 
 /**
  *
@@ -18,8 +19,9 @@ use Spira\Model\Model\IndexedModel;
  */
 class Article extends IndexedModel
 {
-    const defaultExcerptWordCount = 30;
+    use Revisionable;
 
+    const defaultExcerptWordCount = 30;
 
     /**
      * Article statuses. ! WARNING these statuses define the enum types in the migration, don't remove any!
