@@ -441,10 +441,7 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions($articles);
     }
 
-    /**
-     * @test
-     */
-    public function shouldCreateDiscussionWhenArticleCreated()
+    public function testShouldCreateDiscussionWhenArticleCreated()
     {
         $article = factory(Article::class)->create();
 
@@ -460,11 +457,9 @@ class ArticleTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function shouldDeleteDiscussionWhenArticleDeleted()
+    public function testShouldDeleteDiscussionWhenArticleDeleted()
     {
         $client = App::make(VanillaClient::class);
 
@@ -476,10 +471,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->findByForeignId($article->article_id);
     }
 
-    /**
-     * @test
-     */
-    public function shouldGetCommentsForArticle()
+    public function testShouldGetCommentsForArticle()
     {
         $article = factory(Article::class)->create();
         $body = 'A comment';
@@ -502,10 +494,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldGetCommentsForArticleUsingWithNestedHeader()
+    public function testShouldGetCommentsForArticleUsingWithNestedHeader()
     {
         $article = factory(Article::class)->create();
         $body = 'A comment';
@@ -528,10 +517,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldPostCommentForArticle()
+    public function testShouldPostCommentForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
@@ -554,10 +540,7 @@ class ArticleTest extends TestCase
         $client->api('users')->remove($user['User']['UserID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldNotPostCommentWithoutBodyForArticle()
+    public function testShouldNotPostCommentWithoutBodyForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
@@ -575,10 +558,7 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-    /**
-     * @test
-     */
-    public function shouldNotPostCommentWithoutAuthedUserForArticle()
+    public function testShouldNotPostCommentWithoutAuthedUserForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
