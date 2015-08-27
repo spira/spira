@@ -26,11 +26,11 @@ namespace common.models {
             _.forIn(this.nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
 
                 let key = '_' + nestedKey;
-                if (_.has(data, key)){
+                if (_.has(data, key) && !_.isNull(data[key])){
 
                     if (_.isArray(data[key])){
                         this[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model));
-                    }else{
+                    }else if (_.isObject(data[key])){
                         this[key] = this.hydrateModel(data[key], model);
                     }
 
