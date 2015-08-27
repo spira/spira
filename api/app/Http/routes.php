@@ -30,7 +30,6 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->delete('{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
 });
 
-
 $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('/', 'App\Http\Controllers\ArticleController@getAllPaginated');
     $app->get('{id}', ['as'=>\App\Models\Article::class, 'uses'=>'App\Http\Controllers\ArticleController@getOne']);
@@ -44,6 +43,9 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('{id}/meta', 'App\Http\Controllers\ArticleMetaController@getAll');
     $app->put('{id}/meta', 'App\Http\Controllers\ArticleMetaController@putMany');
     $app->delete('{id}/meta/{childId}', 'App\Http\Controllers\ArticleMetaController@deleteOne');
+
+    $app->get('{id}/comments', 'App\Http\Controllers\ArticleCommentController@getAll');
+    $app->post('{id}/comments', 'App\Http\Controllers\ArticleCommentController@postOne');
 
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');

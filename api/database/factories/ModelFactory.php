@@ -131,6 +131,14 @@ $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $fake
     ];
 });
 
+$factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $faker) {
+    return [
+        'article_comment_id' => $faker->unique()->randomNumber,
+        'body' => $faker->paragraph,
+        'created_at' => $faker->dateTime,
+    ];
+});
+
 $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
     return [
         'tag_id' => $faker->uuid,

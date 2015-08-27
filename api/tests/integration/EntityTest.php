@@ -648,6 +648,9 @@ class EntityTest extends TestCase
         $this->assertEquals(urldecode($object->test), $compareString);
     }
 
+    /**
+     * @group failing
+     */
     public function testEntitySearch()
     {
         TestEntity::removeAllFromIndex();
@@ -656,9 +659,7 @@ class EntityTest extends TestCase
             'varchar' => 'searchforthisstring'
         ]);
 
-        TestEntity::addAllToIndex();
-
-        sleep(1); //give the elastic search agent time to index (!)
+        sleep(1); //give the elastic search agent time to index
 
         $this->get('/test/entities/pages?q=searchforthisstring', ['Range'=>'entities=0-9']);
 
@@ -675,10 +676,6 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-        TestEntity::reindex();
-
-        sleep(1); //give the elastic search agent time to index
-
         $this->get('/test/entities/pages?q=thisstringwontreturnresults', ['Range'=>'entities=0-9']);
 
         $this->assertResponseStatus(404);

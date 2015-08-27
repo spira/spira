@@ -79,6 +79,8 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
      */
     protected $casts = [
         'email_confirmed' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     /**

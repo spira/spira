@@ -50,6 +50,8 @@ class Article extends IndexedModel
 
     protected $casts = [
         'first_published' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     public static function getValidationRules()
@@ -66,7 +68,7 @@ class Article extends IndexedModel
     }
 
     /**
-     * Listen for save event
+     * Bootstrap model with event listeners.
      *
      * Saving permalink to history
      */
@@ -87,6 +89,22 @@ class Article extends IndexedModel
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
                 $model->permalinks()->save($articlePermalink);
             }
+            return true;
+        });
+
+        static::created(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->createDiscussion();
+
+            return true;
+        });
+
+        static::deleted(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->deleteDiscussion();
+
             return true;
         });
     }
@@ -142,6 +160,16 @@ class Article extends IndexedModel
     public function metas()
     {
         return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
+    }
+
+    /**
+     * Get comment relationship.
+     *
+     * @return ArticleComment
+     */
+    public function comments()
+    {
+        return (new ArticleDiscussion)->setArticle($this);
     }
 
     public function tags()
