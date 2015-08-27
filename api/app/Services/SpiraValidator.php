@@ -5,9 +5,9 @@ use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
 {
-    public function validateFloat($attribute, $value, $parameters)
+    public function validateDecimal($attribute, $value, $parameters)
     {
-        return is_float($value + 0);
+        return is_float($value) || is_int($value);
     }
 
     public function validateUuid($attribute, $value, $parameters)

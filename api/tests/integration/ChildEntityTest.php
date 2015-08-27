@@ -4,6 +4,10 @@ use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 
+/**
+ * Class ChildEntityTest
+ * @group integration
+ */
 class ChildEntityTest extends TestCase
 {
     public function setUp()
@@ -49,7 +53,7 @@ class ChildEntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->get('/test/entities/'.$entity->entity_id.'/children');
+        $this->getJson('/test/entities/'.$entity->entity_id.'/children');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -59,7 +63,7 @@ class ChildEntityTest extends TestCase
 
     public function testGetOneNotFoundParent()
     {
-        $this->get('/test/entities/'.Uuid::uuid4().'/child/'.Uuid::uuid4());
+        $this->getJson('/test/entities/'.Uuid::uuid4().'/child/'.Uuid::uuid4());
         $this->assertResponseStatus(422);
         $this->shouldReturnJson();
     }
@@ -70,7 +74,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = $entity->testMany->first();
 
-        $this->get('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
+        $this->getJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -125,7 +129,7 @@ class ChildEntityTest extends TestCase
 
         $rowCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
 
         $object = json_decode($this->response->getContent());
 
@@ -143,7 +147,7 @@ class ChildEntityTest extends TestCase
         $prevId = $childEntity['entityId'];
         $childEntity['entityId'] = (string) Uuid::uuid4();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$prevId, $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$prevId, $childEntity);
 
         $object = json_decode($this->response->getContent());
 
@@ -162,7 +166,7 @@ class ChildEntityTest extends TestCase
         $childEntity = $this->prepareEntity($childEntity);
         $childEntity['entityId'] = 'foobar';
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
 
         $object = json_decode($this->response->getContent());
         $this->shouldReturnJson();
@@ -183,7 +187,7 @@ class ChildEntityTest extends TestCase
             unset($childEntity['_self']);
         }
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
     }
@@ -200,7 +204,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
         $this->assertResponseStatus(422);
     }
 
@@ -216,7 +220,7 @@ class ChildEntityTest extends TestCase
 
         $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
 
@@ -238,7 +242,7 @@ class ChildEntityTest extends TestCase
 
         $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
 
@@ -264,7 +268,7 @@ class ChildEntityTest extends TestCase
 
         $rowCount = TestEntity::count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
         $this->assertCount(5, $object->invalid);
@@ -278,7 +282,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = $entity->testMany->first();
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id, ['value' => 'foobar']);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id, ['value' => 'foobar']);
 
         $entity = TestEntity::find($entity->entity_id);
         /** @var Collection $childEntities */
@@ -295,7 +299,7 @@ class ChildEntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('entityId', $object->invalid);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
@@ -314,7 +318,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
         $entity = TestEntity::find($entity->entity_id);
 
@@ -338,7 +342,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
         $object = json_decode($this->response->getContent());
 
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
@@ -358,7 +362,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
         $object = json_decode($this->response->getContent());
 
         $this->assertCount(5, $object->invalid);
@@ -372,7 +376,7 @@ class ChildEntityTest extends TestCase
         $childEntity = $entity->testMany->first();
         $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -385,7 +389,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4());
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4());
 
         $object = json_decode($this->response->getContent());
 
@@ -408,7 +412,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -433,7 +437,7 @@ class ChildEntityTest extends TestCase
         }, $childEntities->all());
 
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
         $object = json_decode($this->response->getContent());
 
