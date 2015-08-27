@@ -5,7 +5,7 @@ use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
-use App\Extensions\Revisionable\ExtendsRevisionableTrait as Revisionable;
+use App\Extensions\Revisionable\ChangeloggableTrait;
 
 /**
  *
@@ -19,7 +19,7 @@ use App\Extensions\Revisionable\ExtendsRevisionableTrait as Revisionable;
  */
 class Article extends IndexedModel
 {
-    use Revisionable;
+    use ChangeloggableTrait;
 
     const defaultExcerptWordCount = 30;
 

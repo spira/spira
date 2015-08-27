@@ -5,7 +5,7 @@ namespace App\Extensions\Revisionable;
 use App;
 use Venturecraft\Revisionable\RevisionableTrait;
 
-trait ExtendsRevisionableTrait
+trait ChangeloggableTrait
 {
     use RevisionableTrait;
 
