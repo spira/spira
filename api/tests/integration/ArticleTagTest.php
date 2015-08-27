@@ -4,6 +4,10 @@ use App\Models\Article;
 use App\Models\Tag;
 use Spira\Model\Collection\Collection;
 
+/**
+ * Class ArticleTagTest
+ * @group integration
+ */
 class ArticleTagTest extends TestCase
 {
     public function setUp()
@@ -53,7 +57,7 @@ class ArticleTagTest extends TestCase
         $this->addTagsToArticles([$entity]);
 
         $count = Article::find($entity->article_id)->tags->count();
-        $this->get('/articles/'.$entity->article_id.'/tags');
+        $this->getJson('/articles/'.$entity->article_id.'/tags');
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -86,7 +90,7 @@ class ArticleTagTest extends TestCase
         }, factory(\App\Models\Tag::class, 4)->make()->all());
         array_push($newTags, $this->prepareEntity($existingTagWillStay));
 
-        $this->put('/articles/'.$entity->article_id.'/tags', ['data' => $newTags]);
+        $this->putJson('/articles/'.$entity->article_id.'/tags', $newTags);
 
         $this->assertResponseStatus(201);
 
@@ -107,7 +111,7 @@ class ArticleTagTest extends TestCase
     public function testGetTagGlobal()
     {
         $tag = factory(\App\Models\Tag::class)->create();
-        $this->get('/tags/'.$tag->tag);
+        $this->getJson('/tags/'.$tag->tag);
 
         $object = json_decode($this->response->getContent());
 
@@ -158,7 +162,7 @@ class ArticleTagTest extends TestCase
         $id = $tag->tag_id;
         $tag->tag = 'foo';
 
-        $this->patch('/tags/'.$id, $this->prepareEntity($tag));
+        $this->patchJson('/tags/'.$id, $this->prepareEntity($tag));
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
@@ -172,7 +176,7 @@ class ArticleTagTest extends TestCase
         $id = $tag->tag_id;
         $tag->tag = '%$@""';
 
-        $this->patch('/tags/'.$id, $this->prepareEntity($tag));
+        $this->patchJson('/tags/'.$id, $this->prepareEntity($tag));
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
@@ -190,7 +194,7 @@ class ArticleTagTest extends TestCase
         $tag = $entity->tags->first();
 
 
-        $this->delete('/tags/'.$tag->tag_id);
+        $this->deleteJson('/tags/'.$tag->tag_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();

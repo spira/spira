@@ -91,10 +91,10 @@ class UserController extends EntityController
     public function putOne(Request $request, $id)
     {
         // Extract the credentials
-        $credential = $request->get('_user_credential', []);
+        $credential = $request->input('_user_credential', []);
 
         // Extract the profile
-        $profile = $request->get('_user_profile', []);
+        $profile = $request->input('_user_profile', []);
 
         // Set new users to guest
         $request->merge(['user_type' =>'guest']);
@@ -139,7 +139,7 @@ class UserController extends EntityController
         $model = $this->findOrFailEntity($id);
 
         // Check if the email is being changed, and initialize confirmation
-        $email = $request->get('email');
+        $email = $request->input('email');
         if ($email && $model->email != $email) {
             $emailConfirmToken = $model->createEmailConfirmToken($email, $model->email);
             $loginToken = $model->makeLoginToken($model->user_id);
@@ -164,7 +164,7 @@ class UserController extends EntityController
         $model->save();
 
         // Extract the profile and update if necessary
-        $profileUpdateDetails = $request->get('_user_profile', []);
+        $profileUpdateDetails = $request->input('_user_profile', []);
         if (!empty($profileUpdateDetails)) {
             /** @var UserProfile $profile */
             $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
@@ -175,7 +175,7 @@ class UserController extends EntityController
 
         /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->get('_user_credential', []);
+        $credentialUpdateDetails = $request->input('_user_credential', []);
         if (!empty($credentialUpdateDetails)) {
             // Invalidate token for the user when user changes their password
             if ($this->jwtAuth->user()->user_id == $model->user_id) {

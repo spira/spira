@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 
 class TransformInputDataMiddleware
 {
@@ -16,24 +17,8 @@ class TransformInputDataMiddleware
      */
     public function handle($request, Closure $next)
     {
-        foreach ($request->all() as $key => $value) {
-
-            // Handle snakecase conversion in sub arrays
-            if (is_array($value)) {
-                $value = $this->renameKeys($value);
-                $request->offsetSet($key, $value);
-            }
-
-            // Find any potential camelCase keys in the 'root' array, and convert
-            // them to snake_case
-            if (!ctype_lower($key)) {
-                // Only convert if the key will change
-                if ($key != snake_case($key)) {
-                    $request->offsetSet(snake_case($key), $value);
-                    $request->offsetUnset($key);
-                }
-            }
-        }
+        $this->transformRequestInput($request, $request->all());
+        $this->transformRequestInput($request, $request->json());
 
         return $next($request);
     }
@@ -62,5 +47,30 @@ class TransformInputDataMiddleware
         }
 
         return $newArray;
+    }
+
+    /**
+     * @param $request
+     */
+    protected function transformRequestInput(Request $request, $input)
+    {
+        foreach ($input as $key => $value) {
+
+            // Handle snakecase conversion in sub arrays
+            if (is_array($value)) {
+                $value = $this->renameKeys($value);
+                $request->offsetSet($key, $value);
+            }
+
+            // Find any potential camelCase keys in the 'root' array, and convert
+            // them to snake_case
+            if (!ctype_lower($key)) {
+                // Only convert if the key will change
+                if ($key != snake_case($key)) {
+                    $request->offsetSet(snake_case($key), $value);
+                    $request->offsetUnset($key);
+                }
+            }
+        }
     }
 }
