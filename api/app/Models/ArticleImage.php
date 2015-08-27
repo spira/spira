@@ -2,17 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
- * Date: 25.08.15
- * Time: 2:03
+ * Date: 27.08.15
+ * Time: 12:07
  */
 
 namespace App\Models;
 
+
 use Spira\Model\Model\BaseModel;
 
-class Image extends BaseModel
+class ArticleImage extends BaseModel
 {
-    public $table = 'images';
+    public $table = 'article_image_id';
 
     protected $primaryKey = 'image_id';
 
@@ -23,16 +24,15 @@ class Image extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['image_id','public_id', 'version', 'format', 'folder', 'alt', 'title'];
+    protected $fillable = ['article_image_id','image_id','article_id', 'image_type', 'position', 'alt', 'title'];
 
     protected static $validationRules = [
+        'article_image_id' => 'required|uuid',
         'image_id' => 'required|uuid',
-        'public_id' => 'required|string|alphaDashSpace|max:255',
-        'version' => 'required|numeric',
-        'format' => 'required|string',
-        'folder' => 'string|max:10',
+        'article_id' => 'required|uuid',
+        'position' => 'numeric',
+        'image_type' => 'string',
         'alt' => 'string|max:255',
         'title' => 'string|max:255',
     ];
-
 }

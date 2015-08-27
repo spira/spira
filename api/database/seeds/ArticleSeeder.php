@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Article;
+use App\Models\ArticleImage;
 use App\Models\ArticleMeta;
 use App\Models\Image;
 use App\Models\Tag;
@@ -22,16 +23,18 @@ class ArticleSeeder extends Seeder
                 $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
                 $metas = factory(ArticleMeta::class, 2)->make()->all();
                 $tags = factory(Tag::class, 2)->make()->all();
-                $image1 = $entity = factory(Image::class)->create();
-                $image2 = $entity = factory(Image::class)->create();
-                $image3 = $entity = factory(Image::class)->create();
+                $images = $entity = factory(Image::class, 10)->create();
                 $article->save();
                 $article->metas()->saveMany($metas);
                 $article->permalinks()->saveMany($permalinks);
                 $article->tags()->saveMany($tags);
-                $article->images()->save($image1,['group_type'=>'primary']);
-                $article->images()->save($image2,['group_type'=>'thumbnail']);
-                $article->images()->save($image3,['group_type'=>'carousel']);
+                foreach ($images as $image) {
+                    $imageArticle = factory(ArticleImage::class)->create();
+                    $imageArticle->article_id = $article->article_id;
+                    $imageArticle->image_id = $image->image_id;
+                    $imageArticle->save();
+                }
+
             })
         ;
     }

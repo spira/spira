@@ -154,7 +154,18 @@ $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
             'folder' => $faker->lexify('????????'),
             // http://cloudinary.com/documentation/image_transformations#format_conversion
             'format' => $faker->randomElement(['jpg', 'png', 'gif', 'bmp', 'tiff', 'ico', 'pdf', 'eps', 'psd', 'svg', 'WebP']),
-            'alt' => $faker->sentence
+            'alt' => $faker->sentence,
+            'title' => $faker->sentence
+    ];
+});
+
+$factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $faker) {
+    return [
+        'article_image_id' => $faker->uuid,
+        'image_type' => $faker->randomElement(['primary','thumbnail','carousel']),
+        'position' => $faker->numberBetween(1,35000),
+        'alt' => $faker->sentence,
+        'title' => $faker->sentence
     ];
 });
 

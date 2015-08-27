@@ -12,13 +12,16 @@ class CreateArticleImageTable extends Migration
      */
     public function up()
     {
-        Schema::create('image_article', function (Blueprint $table) {
+        Schema::create('article_image', function (Blueprint $table) {
+            $table->uuid('article_image_id')->primary();
             $table->uuid('image_id');
             $table->uuid('article_id');
-            $table->enum('group_type',['primary','thumbnail','carousel']);
+            $table->enum('image_type',['primary','thumbnail','carousel']);
+            $table->string('alt',255)->nullable();
+            $table->string('title',255)->nullable();
             $table->smallInteger('position',false,true)->default(1);
 
-            $table->primary(['image_id','article_id','group_type']);
+            $table->index(['image_id','article_id']);
 
             $table->foreign('article_id')
                 ->references('article_id')->on(\App\Models\Article::getTableName())

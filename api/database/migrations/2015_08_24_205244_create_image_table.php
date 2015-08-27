@@ -20,6 +20,7 @@ class CreateImageTable extends Migration
                 $table->string('format',4);
                 $table->string('folder',10)->nullable();
                 $table->string('alt',255)->nullable();
+                $table->string('title',255)->nullable();
 
                 $table->unique(['public_id','version']);
 

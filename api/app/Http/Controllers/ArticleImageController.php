@@ -5,23 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
 use Spira\Responder\Response\ApiResponse;
 
 class ArticleImageController extends ChildEntityController
 {
-    public function getAll(Request $request, $id, $group = null)
-    {
-        $model = $this->findParentEntity($id);
-        $childEntities = $this->findAllChildren($model, $group);
-        $childEntities = $this->getWithNested($childEntities, $request);
-
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->collection($childEntities);
-    }
-
     /**
      * Put many entities.
      *
@@ -73,22 +61,6 @@ class ArticleImageController extends ChildEntityController
         $childModel->pivot->delete();
 
         return $this->getResponse()->noContent();
-    }
-
-
-    /**
-     * @param $parent
-     * @param null $group
-     * @return Collection
-     */
-    protected function findAllChildren($parent, $group = null)
-    {
-        $relation = $this->getRelation($parent);
-        if (!is_null($group)){
-            $relation->wherePivot('group_type','=',$group);
-        }
-
-        return $relation->getResults();
     }
 
     /**
