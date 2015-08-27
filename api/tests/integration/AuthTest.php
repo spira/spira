@@ -3,6 +3,7 @@
 use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Claims\Expiration;
 use Tymon\JWTAuth\Claims\IssuedAt;
 use Tymon\JWTAuth\Claims\Issuer;
@@ -428,7 +429,7 @@ class AuthTest extends TestCase
         $key = 'oauth_return_url_'.$array['state'];
         $url = Cache::get($key);
 
-        $this->assertEquals($url, $returnUrl);
+        $this->assertEquals($returnUrl, $url);
     }
 
     public function testProviderCallbackNoEmail()

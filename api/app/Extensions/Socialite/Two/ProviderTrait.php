@@ -33,7 +33,7 @@ trait ProviderTrait
      */
     protected function storeReturnUrl($state)
     {
-        if ($url = $this->request->get('return_url')) {
+        if ($url = $this->request->input('return_url')) {
             $key = 'oauth_return_url_'.$state;
             Cache::put($key, $url, ProviderContract::CACHE_TTL);
         }
@@ -46,7 +46,7 @@ trait ProviderTrait
      */
     public function getCachedReturnUrl()
     {
-        $key = 'oauth_return_url_'.$this->request->get('state');
+        $key = 'oauth_return_url_'.$this->request->input('state');
 
         // If we have no return url stored, redirect back to root page
         $url = Cache::get($key, Config::get('hosts.app'));

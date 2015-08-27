@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Cache;
 use App\Models\UserCredential;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class UserTest

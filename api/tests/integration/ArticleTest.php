@@ -215,9 +215,6 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([Article::find($entity->article_id)]);
     }
 
-    /**
-     * @group error
-     */
     public function testPutOneNew()
     {
         $entity = factory(Article::class)->make();
