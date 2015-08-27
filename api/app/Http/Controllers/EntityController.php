@@ -138,7 +138,7 @@ abstract class EntityController extends ApiController
      */
     public function putMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
         $existingModels = $this->findCollection($requestCollection);
@@ -183,7 +183,7 @@ abstract class EntityController extends ApiController
      */
     public function patchMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
@@ -219,7 +219,7 @@ abstract class EntityController extends ApiController
      */
     public function deleteMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->findOrFailCollection($requestCollection)
             ->each(function (BaseModel $model) {
