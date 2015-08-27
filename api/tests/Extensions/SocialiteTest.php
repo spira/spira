@@ -12,7 +12,6 @@ use League\OAuth1\Client\Credentials\TemporaryCredentials;
 
 /**
  * Class SocialiteTest
- * group failing
  */
 class SocialiteTest extends TestCase
 {
