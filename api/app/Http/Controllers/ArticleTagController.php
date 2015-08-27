@@ -35,7 +35,8 @@ class ArticleTagController extends ChildEntityController
     {
         $parent = $this->findParentEntity($id);
 
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
+
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
         $existingChildModels = Tag::whereIn('tag', $this->getIds($requestCollection, 'tag'))->get();
