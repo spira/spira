@@ -29,7 +29,7 @@ class ArticleSeeder extends Seeder
                 $article->permalinks()->saveMany($permalinks);
                 $article->tags()->saveMany($tags);
                 foreach ($images as $image) {
-                    $imageArticle = factory(ArticleImage::class)->create();
+                    $imageArticle = factory(ArticleImage::class)->make();
                     $imageArticle->article_id = $article->article_id;
                     $imageArticle->image_id = $image->image_id;
                     $imageArticle->save();

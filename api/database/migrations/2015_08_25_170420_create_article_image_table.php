@@ -21,7 +21,7 @@ class CreateArticleImageTable extends Migration
             $table->string('title',255)->nullable();
             $table->smallInteger('position',false,true)->default(1);
 
-            $table->index(['image_id','article_id']);
+            $table->unique(['image_id','article_id','image_type']);
 
             $table->foreign('article_id')
                 ->references('article_id')->on(\App\Models\Article::getTableName())

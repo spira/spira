@@ -13,11 +13,13 @@ use Spira\Model\Model\BaseModel;
 
 class ArticleImage extends BaseModel
 {
-    public $table = 'article_image_id';
+    public $table = 'article_image';
 
-    protected $primaryKey = 'image_id';
+    protected $primaryKey = 'article_image_id';
 
     public $timestamps = false;
+
+    public $with = ['image'];
 
     /**
      * The attributes that are mass assignable.
@@ -35,4 +37,14 @@ class ArticleImage extends BaseModel
         'alt' => 'string|max:255',
         'title' => 'string|max:255',
     ];
+
+    public function image()
+    {
+        return $this->hasOne(Image::class,'image_id','image_id');
+    }
+
+    public function article()
+    {
+        return $this->hasOne(Article::class);
+    }
 }

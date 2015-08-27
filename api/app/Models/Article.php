@@ -182,6 +182,11 @@ class Article extends IndexedModel
      */
     public function images()
     {
-        return $this->belongsToMany(Image::class, 'image_article')->withPivot('group_type');
+        return $this->belongsToMany(Image::class, 'image_article');
+    }
+
+    public function imagesPivot()
+    {
+        return $this->hasMany(ArticleImage::class);
     }
 }
