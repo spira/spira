@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Image;
 
@@ -12,5 +11,4 @@ class ImageController extends EntityController
     {
         parent::__construct($model, $transformer);
     }
-
 }

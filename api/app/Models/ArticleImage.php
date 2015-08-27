@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 use Spira\Model\Model\BaseModel;
 
 class ArticleImage extends BaseModel
@@ -40,7 +39,7 @@ class ArticleImage extends BaseModel
 
     public function image()
     {
-        return $this->hasOne(Image::class,'image_id','image_id');
+        return $this->hasOne(Image::class, 'image_id', 'image_id');
     }
 
     public function article()

@@ -34,5 +34,4 @@ class Image extends BaseModel
         'alt' => 'string|max:255',
         'title' => 'string|max:255',
     ];
-
 }

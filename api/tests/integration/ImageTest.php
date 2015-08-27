@@ -121,7 +121,5 @@ class ImageTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, Image::count());
-
     }
-
 }

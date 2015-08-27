@@ -67,7 +67,7 @@ class ArticleImageTest extends TestCase
         $this->assertJsonMultipleEntries();
 
         $this->assertEquals(5, count($object));
-        $this->assertObjectHasAttribute('_image',current($object));
+        $this->assertObjectHasAttribute('_image', current($object));
     }
 
     public function testPutManyNew()
@@ -152,5 +152,4 @@ class ArticleImageTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($childCount - 5, \App\Models\Article::find($article->article_id)->imagesPivot->count());
     }
-
 }

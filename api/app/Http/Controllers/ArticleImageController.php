@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
 
-
 class ArticleImageController extends ChildEntityController
 {
     protected $relationName = 'imagesPivot';
@@ -14,6 +13,4 @@ class ArticleImageController extends ChildEntityController
     {
         parent::__construct($parentModel, $transformer);
     }
-
-
 }
