@@ -4,9 +4,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 /**
- * The class is intentionally named in singular, CreateRevisionTable, to not get
- * a duplicate collision witt the class CreateRevisionsTable in
- * venturecraft/revisionable.
+ * The class is intentionally named in singular, to not get a duplicate
+ * collision with the class CreateRevisionsTable in venturecraft/revisionable.
  */
 class CreateRevisionTable extends Migration
 {
