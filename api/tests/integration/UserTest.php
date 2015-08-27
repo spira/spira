@@ -4,7 +4,12 @@ use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Cache;
 use App\Models\UserCredential;
+use Illuminate\Support\Facades\Hash;
 
+/**
+ * Class UserTest
+ * @group integration
+ */
 class UserTest extends TestCase
 {
     use MailcatcherTrait;
@@ -31,7 +36,7 @@ class UserTest extends TestCase
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users', [
+        $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Range' => 'entities=0-19'
         ]);
@@ -47,7 +52,7 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users', [
+        $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Range' => 'entities=0-19'
         ]);
@@ -61,7 +66,7 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
+        $this->getJson('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -76,7 +81,7 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
+        $this->getJson('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -89,7 +94,7 @@ class UserTest extends TestCase
         $userToGet = $user;
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
+        $this->getJson('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -106,7 +111,7 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
+        $this->getJson('/users/'.$userToGet->user_id.'/profile', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -137,7 +142,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $response = json_decode($this->response->getContent());
 
@@ -168,7 +173,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $response = json_decode($this->response->getContent());
 
@@ -192,7 +197,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
@@ -207,7 +212,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = array_except($transformer->transform($user), ['_self', 'userType']);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
@@ -223,7 +228,7 @@ class UserTest extends TestCase
             'firstName' => 'foobar'
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -247,7 +252,7 @@ class UserTest extends TestCase
             ]
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -272,7 +277,7 @@ class UserTest extends TestCase
             ]
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -295,7 +300,7 @@ class UserTest extends TestCase
             ]
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -319,7 +324,7 @@ class UserTest extends TestCase
         $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->patch('/users/'.$userToUpdate->user_id, [], [
+        $this->patchJson('/users/'.$userToUpdate->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -336,7 +341,7 @@ class UserTest extends TestCase
             'firstName' => 'foobar'
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -360,7 +365,7 @@ class UserTest extends TestCase
             ]
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -384,7 +389,7 @@ class UserTest extends TestCase
             'firstName' => 'foobar'
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -397,7 +402,7 @@ class UserTest extends TestCase
         $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$userToDelete->user_id, [], [
+        $this->deleteJson('/users/'.$userToDelete->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -416,7 +421,7 @@ class UserTest extends TestCase
         $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$userToDelete->user_id, [], [
+        $this->deleteJson('/users/'.$userToDelete->user_id, [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -434,7 +439,7 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$user->email.'/password', [], [
+        $this->deleteJson('/users/'.$user->email.'/password', [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -456,14 +461,14 @@ class UserTest extends TestCase
         $token = str_replace('loginToken=', '', $parsed['query']);
 
         // Use it the first time
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertResponseOk();
 
         // Use it the second time
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
@@ -476,7 +481,7 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/foo.bar.' . $user->email . '/password', [], [
+        $this->deleteJson('/users/foo.bar.' . $user->email . '/password', [], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
 
@@ -493,7 +498,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         // Make a request to change email
         $update = ['email' => 'foo@bar.com'];
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token
         ]);
         // Ensure that we get the right response
@@ -518,7 +523,7 @@ class UserTest extends TestCase
         // Confirm the email change
         $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'email-confirm-token' => $emailToken
         ]);
@@ -539,7 +544,7 @@ class UserTest extends TestCase
         $update = ['emailConfirmed' => $datetime];
         // For the purposes of this test, the old email does not matter.
         $emailToken = $user->createEmailConfirmToken($user->email, 'foo@bar.com');
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Email-Confirm-Token' => $emailToken
         ]);
@@ -556,7 +561,7 @@ class UserTest extends TestCase
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
         $emailToken = 'foobar';
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Email-Confirm-Token' => $emailToken
         ]);

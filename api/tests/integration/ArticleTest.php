@@ -4,6 +4,11 @@ use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
+/**
+ * Class ArticleTest
+ * @group integration
+ * @group failing
+ */
 class ArticleTest extends TestCase
 {
     public function setUp()
@@ -76,7 +81,7 @@ class ArticleTest extends TestCase
             $oneEntity->push();
         }
 
-        $this->get('/articles', ['Range'=>'entities=0-19']);
+        $this->getJson('/articles', ['Range'=>'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -94,7 +99,7 @@ class ArticleTest extends TestCase
         $this->addPermalinksToArticles([$entity]);
         $entity->push();
 
-        $this->get('/articles/'.$entity->article_id);
+        $this->getJson('/articles/'.$entity->article_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -123,7 +128,7 @@ class ArticleTest extends TestCase
         $tags = factory(\App\Models\Tag::class, 4)->create();
         $entity->tags()->sync($tags->lists('tag_id')->toArray());
 
-        $this->get('/articles/'.$entity->article_id, ['with-nested'=> 'tags']);
+        $this->getJson('/articles/'.$entity->article_id, ['with-nested'=> 'tags']);
         $this->assertResponseOk();
         $this->shouldReturnJson();
 
@@ -139,7 +144,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $permalink = $entity->permalinks->first();
-        $this->get('/articles/'.$permalink->permalink);
+        $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -169,7 +174,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $permalink = $entity->permalinks->last();
-        $this->get('/articles/'.$permalink->permalink);
+        $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -217,7 +222,8 @@ class ArticleTest extends TestCase
 
         $rowCount = Article::count();
 
-        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $requestData = $this->prepareEntity($entity);
+        $this->putJson('/articles/'.$id, $requestData);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -238,7 +244,7 @@ class ArticleTest extends TestCase
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['permalink'], $preparedEntity['articleId']);
 
-        $this->put('/articles/'.$id, $preparedEntity);
+        $this->putJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
 
         $this->assertResponseStatus(400);
@@ -252,7 +258,7 @@ class ArticleTest extends TestCase
         $entity->title = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['permalink'], $preparedEntity['articleId']);
-        $this->patch('/articles/'.$id, $preparedEntity);
+        $this->patchJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
@@ -273,7 +279,7 @@ class ArticleTest extends TestCase
 
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['articleId']);
-        $this->patch('/articles/'.$id, $preparedEntity);
+        $this->patchJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
@@ -295,7 +301,7 @@ class ArticleTest extends TestCase
 
         $entity->permalink = '';
 
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $this->patchJson('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
@@ -322,7 +328,7 @@ class ArticleTest extends TestCase
         $rowCount = Article::count();
 
         $permalinksTotalCount = ArticlePermalink::all()->count();
-        $this->delete('/articles/'.$id);
+        $this->deleteJson('/articles/'.$id);
         $permalinksTotalCountAfterDelete = ArticlePermalink::all()->count();
 
         $this->assertResponseStatus(204);
@@ -341,7 +347,7 @@ class ArticleTest extends TestCase
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
-        $this->get('/articles/'.$entity->article_id.'/permalinks');
+        $this->getJson('/articles/'.$entity->article_id.'/permalinks');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -355,7 +361,7 @@ class ArticleTest extends TestCase
 
     public function testGetPermalinksNotFoundArticle()
     {
-        $this->get('/articles/foo_bar/permalinks');
+        $this->getJson('/articles/foo_bar/permalinks');
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
     }
@@ -368,7 +374,7 @@ class ArticleTest extends TestCase
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
 
-        $this->get('/articles/'.$entity->article_id.'/meta');
+        $this->getJson('/articles/'.$entity->article_id.'/meta');
 
         $articleCheck = Article::find($entity->article_id);
         $metaCheck = $articleCheck->metas->first();
@@ -401,7 +407,7 @@ class ArticleTest extends TestCase
             $entities[] = $this->prepareEntity($meta);
         }
 
-        $this->put('/articles/'.$article->article_id.'/meta', ['data' => $entities]);
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
@@ -428,17 +434,14 @@ class ArticleTest extends TestCase
         $article = current($articles);
         $metaEntity = $article->metas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
-        $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
         $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
 
         $this->cleanupDiscussions($articles);
     }
 
-    /**
-     * @test
-     */
-    public function shouldCreateDiscussionWhenArticleCreated()
+    public function testShouldCreateDiscussionWhenArticleCreated()
     {
         $article = factory(Article::class)->create();
 
@@ -454,11 +457,9 @@ class ArticleTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function shouldDeleteDiscussionWhenArticleDeleted()
+    public function testShouldDeleteDiscussionWhenArticleDeleted()
     {
         $client = App::make(VanillaClient::class);
 
@@ -470,10 +471,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->findByForeignId($article->article_id);
     }
 
-    /**
-     * @test
-     */
-    public function shouldGetCommentsForArticle()
+    public function testShouldGetCommentsForArticle()
     {
         $article = factory(Article::class)->create();
         $body = 'A comment';
@@ -486,7 +484,7 @@ class ArticleTest extends TestCase
         // Add Comment
         $client->api('comments')->create($discussionId, $body);
 
-        $this->get('/articles/'.$article->article_id.'/comments');
+        $this->getJson('/articles/'.$article->article_id.'/comments');
         $array = json_decode($this->response->getContent(), true);
 
         $this->assertCount(1, $array);
@@ -496,10 +494,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldGetCommentsForArticleUsingWithNestedHeader()
+    public function testShouldGetCommentsForArticleUsingWithNestedHeader()
     {
         $article = factory(Article::class)->create();
         $body = 'A comment';
@@ -512,7 +507,7 @@ class ArticleTest extends TestCase
         // Add Comment
         $client->api('comments')->create($discussionId, $body);
 
-        $this->get('/articles/'.$article->article_id, ['With-Nested' => 'comments']);
+        $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'comments']);
         $array = json_decode($this->response->getContent(), true);
 
         $this->assertCount(1, $array['_comments']);
@@ -522,10 +517,7 @@ class ArticleTest extends TestCase
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldPostCommentForArticle()
+    public function testShouldPostCommentForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
@@ -548,10 +540,7 @@ class ArticleTest extends TestCase
         $client->api('users')->remove($user['User']['UserID']);
     }
 
-    /**
-     * @test
-     */
-    public function shouldNotPostCommentWithoutBodyForArticle()
+    public function testShouldNotPostCommentWithoutBodyForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
@@ -569,10 +558,7 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-    /**
-     * @test
-     */
-    public function shouldNotPostCommentWithoutAuthedUserForArticle()
+    public function testShouldNotPostCommentWithoutAuthedUserForArticle()
     {
         $body = 'A comment';
         $article = factory(Article::class)->create();
