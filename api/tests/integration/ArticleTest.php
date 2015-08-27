@@ -528,6 +528,9 @@ class ArticleTest extends TestCase
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
 
+    /**
+     * @test
+     */
     public function shouldPostCommentForArticle()
     {
         $body = 'A comment';
