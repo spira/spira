@@ -41,7 +41,7 @@ class ImageTest extends TestCase
     {
         $entities = factory(Image::class, 30)->create()->all();
 
-        $this->get('/images', ['Range'=>'entities=0-19']);
+        $this->getJson('/images', ['Range'=>'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -54,7 +54,7 @@ class ImageTest extends TestCase
     {
         $entity = factory(Image::class)->create();
 
-        $this->get('/images/'.$entity->image_id);
+        $this->getJson('/images/'.$entity->image_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -85,7 +85,7 @@ class ImageTest extends TestCase
 
         $rowCount = Image::count();
 
-        $this->put('/images/'.$id, $this->prepareEntity($entity));
+        $this->putJson('/images/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -102,7 +102,7 @@ class ImageTest extends TestCase
         $id = $entity->image_id;
         $entity->alt = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
-        $this->patch('/images/'.$id, $preparedEntity);
+        $this->patchJson('/images/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Image::find($id);
@@ -117,7 +117,7 @@ class ImageTest extends TestCase
         $entity = $entities[0];
         $id = $entity->image_id;
         $rowCount = Image::count();
-        $this->delete('/images/'.$id);
+        $this->deleteJson('/images/'.$id);
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, Image::count());
