@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "314b78b439c5de448224324a4772b5af",
+    "hash": "025d7e1bf6f26a3bce6d35f0fe8e1ed3",
     "packages": [
         {
             "name": "beatswitch/lock",
@@ -2147,16 +2147,16 @@
         },
         {
             "name": "league/oauth1-client",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth1-client.git",
-                "reference": "815b2dbd2b866409f3de6e4046a76e66b5af608e"
+                "reference": "4d4edd9b6014f882e319231a9b3351e3a1dfdc81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth1-client/zipball/815b2dbd2b866409f3de6e4046a76e66b5af608e",
-                "reference": "815b2dbd2b866409f3de6e4046a76e66b5af608e",
+                "url": "https://api.github.com/repos/thephpleague/oauth1-client/zipball/4d4edd9b6014f882e319231a9b3351e3a1dfdc81",
+                "reference": "4d4edd9b6014f882e319231a9b3351e3a1dfdc81",
                 "shasum": ""
             },
             "require": {
@@ -2164,9 +2164,9 @@
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "mockery/mockery": "0.7.2",
-                "phpunit/phpunit": "*",
-                "satooshi/php-coveralls": "dev-master"
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~2.0"
             },
             "type": "library",
             "extra": {
@@ -2206,7 +2206,7 @@
                 "tumblr",
                 "twitter"
             ],
-            "time": "2015-05-18 00:04:43"
+            "time": "2015-08-22 09:49:14"
         },
         {
             "name": "monolog/monolog",
@@ -3664,6 +3664,54 @@
             "time": "2015-06-23 22:34:08"
         },
         {
+            "name": "venturecraft/revisionable",
+            "version": "1.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VentureCraft/revisionable.git",
+                "reference": "fddb69b8f256b7601edb0ec60f3ea9fcf293444f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/fddb69b8f256b7601edb0ec60f3ea9fcf293444f",
+                "reference": "fddb69b8f256b7601edb0ec60f3ea9fcf293444f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~4.0|~5.0|~5.1",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-0": {
+                    "Venturecraft\\Revisionable": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Duell",
+                    "email": "me@chrisduell.com"
+                }
+            ],
+            "description": "Keep a revision history for your models without thinking, created as a package for use with Laravel 4",
+            "homepage": "http://github.com/venturecraft/revisionable",
+            "keywords": [
+                "ardent",
+                "history",
+                "laravel",
+                "model",
+                "revision"
+            ],
+            "time": "2015-07-06 05:10:42"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v1.1.1",
             "source": {
@@ -4278,16 +4326,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.5",
+            "version": "4.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9b7417edaf28059ea63d86be941e6004dbfcc0cc"
+                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9b7417edaf28059ea63d86be941e6004dbfcc0cc",
-                "reference": "9b7417edaf28059ea63d86be941e6004dbfcc0cc",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2246830f4a1a551c67933e4171bf2126dc29d357",
+                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357",
                 "shasum": ""
             },
             "require": {
@@ -4346,7 +4394,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-19 09:20:57"
+            "time": "2015-08-24 04:09:38"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
