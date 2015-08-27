@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Queue;
 use Pheanstalk\Pheanstalk;
 
+/**
+ * Class QueueTest
+ * @group integration
+ */
 class QueueTest extends TestCase
 {
     protected $pheanstalk;

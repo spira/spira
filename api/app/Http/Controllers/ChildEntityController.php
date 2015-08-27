@@ -151,7 +151,7 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
         $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
@@ -198,7 +198,8 @@ class ChildEntityController extends ApiController
      */
     public function patchMany(Request $request, $id)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
+
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
         $parent = $this->findParentEntity($id);
@@ -238,7 +239,7 @@ class ChildEntityController extends ApiController
      */
     public function deleteMany(Request $request, $id)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
         $model = $this->findParentEntity($id);
 
         $this->findOrFailChildrenCollection($requestCollection, $model)->each(function (BaseModel $model) {
