@@ -17,7 +17,6 @@ class TransformInputDataMiddleware
      */
     public function handle($request, Closure $next)
     {
-
         $this->transformRequestInput($request, $request->all());
         $this->transformRequestInput($request, $request->json());
 
@@ -74,5 +73,4 @@ class TransformInputDataMiddleware
             }
         }
     }
-
 }
