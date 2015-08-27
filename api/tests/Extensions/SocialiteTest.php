@@ -10,6 +10,10 @@ use App\Extensions\Socialite\Parsers\ParserFactory;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
 
+/**
+ * Class SocialiteTest
+ * group failing
+ */
 class SocialiteTest extends TestCase
 {
     public function testParserFactoryUnknownParser()
@@ -70,7 +74,7 @@ class SocialiteTest extends TestCase
             ->shouldReceive('getAuthorizationUrl')
             ->once()
             ->andReturn('http://foo.bar.baz');
-        $request->shouldReceive('get')->once()->andReturn('http://foo.bar');
+        $request->shouldReceive('input')->once()->andReturn('http://foo.bar');
 
         $mock = Mockery::mock(AbstractProvider::class, [$request, $server, $cache])->makePartial();
         $mock->shouldReceive('temp->getIdentifier')->andReturn($identifier);
@@ -87,7 +91,7 @@ class SocialiteTest extends TestCase
         $request = Mockery::mock('Illuminate\Http\Request');
         $server = Mockery::mock('League\OAuth1\Client\Server\Server');
         $cache = $this->app->cache;
-        $request->shouldReceive('get')->once();
+        $request->shouldReceive('input')->once();
 
         $mock = Mockery::mock(AbstractProvider::class, [$request, $server, $cache])->makePartial();
 
@@ -106,7 +110,7 @@ class SocialiteTest extends TestCase
         $server = Mockery::mock('League\OAuth1\Client\Server\Server');
         $cache = $this->app->cache;
 
-        $request->shouldReceive('get')->once()->andReturn($identifier);
+        $request->shouldReceive('input')->once()->andReturn($identifier);
 
         $mock = Mockery::mock(AbstractProvider::class, [$request, $server, $cache])->makePartial();
 
@@ -120,7 +124,7 @@ class SocialiteTest extends TestCase
         $request = Mockery::mock('Illuminate\Http\Request');
         $server = Mockery::mock('League\OAuth1\Client\Server\Server');
         $cache = Mockery::mock('Illuminate\Cache\CacheManager')->shouldAllowMockingProtectedMethods();
-        $request->shouldReceive('get')->andReturn(Str::random(40));
+        $request->shouldReceive('input')->andReturn(Str::random(40));
         $cache->shouldReceive('get')->andReturn(new TemporaryCredentials);
         $server->shouldReceive('getTokenCredentials')->andReturn(new TokenCredentials);
 
@@ -151,7 +155,7 @@ class SocialiteTest extends TestCase
         $returnUrl = 'http://foo.bar';
         Cache::put('oauth_return_url_foo', $returnUrl, 1);
         $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('get')
+        $request->shouldReceive('input')
             ->once()
             ->andReturn('foo');
 
@@ -165,7 +169,7 @@ class SocialiteTest extends TestCase
     public function testProviderTraitgetCachedReturnUrlNoCache()
     {
         $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('get')->once()->andReturn(null);
+        $request->shouldReceive('input')->once()->andReturn(null);
         $mock = Mockery::mock(FacebookProvider::class, [$request, null, null, null])->makePartial();
 
         $url = $mock->getCachedReturnUrl();
