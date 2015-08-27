@@ -95,7 +95,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
                 $name = 'HTTP_' . $name;
                 $server[$name] = $value; //add the HTTP_* key
             }
-
         }
 
         return $server;
@@ -189,6 +188,4 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         return $this->requestJson('DELETE', $uri, $data, $headers);
     }
-
-
 }
