@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Image;
+use App\Models\Article;
 use App\Models\ArticleImage;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -26,11 +28,11 @@ class CreateArticleImageTable extends Migration
             $table->unique(['image_id','article_id']);
 
             $table->foreign('article_id')
-                ->references('article_id')->on(\App\Models\Article::getTableName())
+                ->references('article_id')->on(Article::getTableName())
                 ->onDelete('cascade');
 
             $table->foreign('image_id')
-                ->references('image_id')->on(\App\Models\Image::getTableName())
+                ->references('image_id')->on(Image::getTableName())
                 ->onDelete('cascade');
         }
         );

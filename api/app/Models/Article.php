@@ -1,7 +1,8 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
@@ -178,15 +179,20 @@ class Article extends IndexedModel
     }
 
     /**
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function images()
-    {
-        return $this->belongsToMany(Image::class, 'image_article');
-    }
-
     public function articleImages()
     {
         return $this->hasMany(ArticleImage::class);
     }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function images()
+    {
+        return $this->belongsToMany(Image::class);
+    }
+
+
 }

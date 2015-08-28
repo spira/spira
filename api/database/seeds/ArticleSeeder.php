@@ -20,20 +20,29 @@ class ArticleSeeder extends Seeder
         factory(Article::class, 50)
             ->create()
             ->each(function (Article $article) {
-                $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
-                $metas = factory(ArticleMeta::class, 2)->make()->all();
-                $tags = factory(Tag::class, 2)->make()->all();
-                $images = $entity = factory(Image::class, 10)->create();
                 $article->save();
+
+                //add metas
+                $metas = factory(ArticleMeta::class, 2)->make()->all();
                 $article->metas()->saveMany($metas);
+
+                //add permalinks
+                $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
                 $article->permalinks()->saveMany($permalinks);
+
+                //add tags
+                $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
-                foreach ($images as $image) {
-                    $imageArticle = factory(ArticleImage::class)->make();
-                    $imageArticle->article_id = $article->article_id;
-                    $imageArticle->image_id = $image->image_id;
-                    $imageArticle->save();
-                }
+
+                //create & link images
+                factory(Image::class, 5)
+                    ->create()
+                    ->each(function (Image $image) use ($article){
+                        factory(ArticleImage::class)->create([
+                            'article_id' => $article->article_id,
+                            'image_id' => $image->image_id,
+                        ]);
+                    });
 
             })
         ;

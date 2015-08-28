@@ -1,13 +1,12 @@
 <?php
 
+use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleImage;
-use App\Models\Image;
 
 /**
  * Class ArticleImageTest
  * @group integration
- * @group imagetest
  */
 class ArticleImageTest extends TestCase
 {
@@ -15,14 +14,14 @@ class ArticleImageTest extends TestCase
     {
         parent::setUp();
 
-        App\Models\Article::flushEventListeners();
-        App\Models\Article::boot();
+        Article::flushEventListeners();
+        Article::boot();
 
-        App\Models\Image::flushEventListeners();
-        App\Models\Image::boot();
+        Image::flushEventListeners();
+        Image::boot();
 
-        App\Models\ArticleImage::flushEventListeners();
-        App\Models\ArticleImage::boot();
+        ArticleImage::flushEventListeners();
+        ArticleImage::boot();
         // Workaround for model event firing.
         // The package Bosnadev\Database used for automatic UUID creation relies
         // on model events (creating) to generate the UUID.
@@ -47,20 +46,23 @@ class ArticleImageTest extends TestCase
         return $entity;
     }
 
-    protected function addImagesToArticle(\App\Models\Article $article)
+    protected function addImagesToArticle(Article $article)
     {
-        $images = factory(Image::class, 5)->create();
-        foreach ($images as $image) {
-            $imageArticle = factory(ArticleImage::class)->make();
-            $imageArticle->article_id = $article->article_id;
-            $imageArticle->image_id = $image->image_id;
-            $imageArticle->save();
-        }
+        factory(Image::class, 5)
+            ->create()
+            ->each(function(Image $image) use ($article){
+
+                factory(ArticleImage::class)->create([
+                    'article_id' => $article->article_id,
+                    'image_id' => $image->image_id,
+                ]);
+
+            });
     }
 
     public function testGetAll()
     {
-        $article = factory(App\Models\Article::class)->create();
+        $article = factory(Article::class)->create();
         $this->addImagesToArticle($article);
 
         $this->getJson('/articles/'.$article->article_id.'/article-images', ['With-Nested' => 'image']);
@@ -77,7 +79,7 @@ class ArticleImageTest extends TestCase
 
     public function testPutManyNew()
     {
-        $article = factory(App\Models\Article::class)->create();
+        $article = factory(Article::class)->create();
 
         $images = factory(Image::class, 5)->create();
         $articleImages = [];
@@ -92,14 +94,14 @@ class ArticleImageTest extends TestCase
             return $this->prepareEntity($entity);
         }, $articleImages);
 
-        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
+        $childCount = Article::find($article->article_id)->articleImages->count();
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($childCount + 5, \App\Models\Article::find($article->article_id)->articleImages->count());
+        $this->assertEquals($childCount + 5, Article::find($article->article_id)->articleImages->count());
         $this->assertTrue(is_array($object));
         $this->assertCount(5, $object);
     }
@@ -107,7 +109,7 @@ class ArticleImageTest extends TestCase
 
     public function testPutManyNewInvalid()
     {
-        $article = factory(App\Models\Article::class)->create();
+        $article = factory(Article::class)->create();
 
         $images = factory(Image::class, 5)->create();
         $articleImages = [];
@@ -126,7 +128,7 @@ class ArticleImageTest extends TestCase
             unset($image['articleId']);
         }
 
-        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
+        $childCount = Article::find($article->article_id)->articleImages->count();
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
@@ -134,7 +136,7 @@ class ArticleImageTest extends TestCase
 
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('articleId', $object->invalid[0]);
-        $this->assertEquals($childCount, \App\Models\Article::find($article->article_id)->articleImages->count());
+        $this->assertEquals($childCount, Article::find($article->article_id)->articleImages->count());
     }
 
 
@@ -142,10 +144,10 @@ class ArticleImageTest extends TestCase
     public function testDeleteMany()
     {
         /** @var Article $article */
-        $article = factory(App\Models\Article::class)->create();
+        $article = factory(Article::class)->create();
         $this->addImagesToArticle($article);
 
-        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
+        $childCount = Article::find($article->article_id)->articleImages->count();
 
         $images = array_map(function ($entity) {
             return $this->prepareEntity($entity);
@@ -155,6 +157,24 @@ class ArticleImageTest extends TestCase
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($childCount - 5, \App\Models\Article::find($article->article_id)->articleImages->count());
+        $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
+
+
+    public function testGetManyImages()
+    {
+        $article = factory(Article::class)->create();
+        $this->addImagesToArticle($article);
+
+        $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'images']);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $this->assertObjectHasAttribute('_images', $object);
+        $this->assertCount(5, $object->_images);
+    }
+
+
 }
