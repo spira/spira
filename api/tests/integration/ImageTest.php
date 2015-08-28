@@ -3,6 +3,11 @@
 
 use App\Models\Image;
 
+/**
+ * Class ImageTest
+ * @group integration
+ * @group imagetest
+ */
 class ImageTest extends TestCase
 {
     public function setUp()
