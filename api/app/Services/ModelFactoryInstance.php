@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Support\Collection;
 use App\Http\Transformers\BaseTransformer;
 use App\Http\Transformers\EloquentModelTransformer;
@@ -12,7 +11,6 @@ use Illuminate\Contracts\Support\Jsonable;
 class ModelFactoryInstance implements Arrayable, Jsonable
 {
     private $transformerService;
-    /** @var FactoryBuilder */
     private $factoryInstance;
     private $customizations = [];
     private $entityCount = 1;
@@ -29,7 +27,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * @param $factoryInstance
      * @param $transformerService
      */
-    public function __construct(FactoryBuilder $factoryInstance, $transformerService)
+    public function __construct($factoryInstance, $transformerService)
     {
         $this->factoryInstance = $factoryInstance;
         $this->transformerService = $transformerService;
