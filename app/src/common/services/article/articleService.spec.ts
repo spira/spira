@@ -31,7 +31,7 @@
         }
     };
 
-    describe.only('Article Service', () => {
+    describe('Article Service', () => {
 
         let articleService:common.services.article.ArticleService;
         let $httpBackend:ng.IHttpBackendService;

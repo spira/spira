@@ -12,9 +12,16 @@ namespace common.models {
     export class AbstractModel implements IModel {
 
         protected _nestedEntityMap;
+        private _exists:boolean;
 
         constructor(data?:any) {
             this.hydrate(data);
+
+            Object.defineProperty(this, "_exists", {
+                enumerable: false,
+                writable: true,
+                value: false,
+            });
         }
 
         /**
@@ -86,6 +93,22 @@ namespace common.models {
                 return _.startsWith(key, '_');
             });
 
+        }
+
+        /**
+         * Get if the model exists in remote api
+         * @returns {boolean}
+         */
+        public exists():boolean{
+            return this._exists;
+        }
+
+        /**
+         * Set if the model exists
+         * @param exists
+         */
+        public setExists(exists:boolean):void{
+            this._exists = exists;
         }
 
     }

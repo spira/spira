@@ -164,11 +164,7 @@ namespace app.user.profile {
                     token:'eyJtZXRob2QiOiJnb29nbGUiLCJzdWIiOiJkODU2ZWI2OS1jYTU4LTQ2M2MtOWNlZS05MTRlMDlkOWZlNWYiLCJfdXNlci'
                 });
 
-                ProfileController.fullUserInfo._socialLogins = (<common.models.UserSocialLogin[]>[]);
-
-                ProfileController.fullUserInfo._socialLogins.push(userLoginDataFacebook);
-
-                let socialLoginCount = _.size(ProfileController.fullUserInfo._socialLogins);
+                ProfileController.fullUserInfo._socialLogins = [ userLoginDataFacebook ];
 
                 ProfileController.unlinkSocialLogin(common.models.UserSocialLogin.facebookType);
 
@@ -176,7 +172,7 @@ namespace app.user.profile {
 
                 $scope.$apply();
 
-                expect(socialLoginCount).to.be.greaterThan(_.size(ProfileController.fullUserInfo._socialLogins));
+                expect(ProfileController.fullUserInfo._socialLogins).to.be.empty;
 
                 expect(notificationService.toast).to.have.been.calledWith('Your ' + _.capitalize(common.models.UserSocialLogin.facebookType) + ' has been unlinked from your account');
 

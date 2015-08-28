@@ -48,14 +48,14 @@ namespace app.admin.articles.article {
             });
 
             sinon.spy(notificationService, 'toast');
-            sinon.spy(articleService, 'saveArticle');
+            sinon.spy(articleService, 'saveArticleWithRelated');
 
         });
 
         afterEach(() => {
 
             (<any>notificationService).toast.restore();
-            (<any>articleService).saveArticle.restore();
+            (<any>articleService).saveArticleWithRelated.restore();
 
         });
 

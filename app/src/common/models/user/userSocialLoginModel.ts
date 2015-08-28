@@ -12,6 +12,7 @@ module common.models {
 
         constructor(data:any) {
             super(data);
+            this.hydrate(data);
         }
 
     }

@@ -5,7 +5,7 @@ namespace common.models {
 
     class TestModel extends AbstractModel {
 
-        protected nestedEntityMap = {
+        protected _nestedEntityMap = {
             hasOne: TestChildModel,
             hasMany: TestChildModel
         };
@@ -19,8 +19,6 @@ namespace common.models {
         }
 
     }
-
-
 
     describe('Abstract Base Model', () => {
 
@@ -49,6 +47,25 @@ namespace common.models {
             });
 
             expect(model._hasMany[0]).to.be.instanceOf(TestChildModel);
+
+        });
+
+
+        it('should be able to check if a model exists on the remote api', () => {
+
+            let model = new TestModel({});
+
+            expect(model.exists()).to.be.false;
+
+        });
+
+
+        it('should be able to set if a model exists on the remote api', () => {
+
+            let model = new TestModel({});
+            model.setExists(true);
+
+            expect(model.exists()).to.be.true;
 
         });
 
