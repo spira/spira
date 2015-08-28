@@ -63,7 +63,7 @@ class ArticleImageTest extends TestCase
         $article = factory(App\Models\Article::class)->create();
         $this->addImagesToArticle($article);
 
-        $this->getJson('/articles/'.$article->article_id.'/images', ['With-Nested' => 'image']);
+        $this->getJson('/articles/'.$article->article_id.'/article-images', ['With-Nested' => 'image']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -94,7 +94,7 @@ class ArticleImageTest extends TestCase
 
         $childCount = \App\Models\Article::find($article->article_id)->imagesPivot->count();
 
-        $this->putJson('/articles/'.$article->article_id.'/images', $images);
+        $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $object = json_decode($this->response->getContent());
 
@@ -128,7 +128,7 @@ class ArticleImageTest extends TestCase
 
         $childCount = \App\Models\Article::find($article->article_id)->imagesPivot->count();
 
-        $this->putJson('/articles/'.$article->article_id.'/images', $images);
+        $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $object = json_decode($this->response->getContent());
 
@@ -151,7 +151,7 @@ class ArticleImageTest extends TestCase
             return $this->prepareEntity($entity);
         }, $article->imagesPivot->all());
 
-        $this->deleteJson('/articles/'.$article->article_id.'/images', $images);
+        $this->deleteJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();

@@ -50,9 +50,9 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
 
-    $app->get('{id}/images', 'App\Http\Controllers\ArticleImageController@getAll');
-    $app->put('{id}/images', 'App\Http\Controllers\ArticleImageController@putMany');
-    $app->delete('{id}/images', 'App\Http\Controllers\ArticleImageController@deleteMany');
+    $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
+    $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putMany');
+    $app->delete('{id}/article-images', 'App\Http\Controllers\ArticleImageController@deleteMany');
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
