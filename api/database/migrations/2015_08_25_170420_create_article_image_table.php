@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ArticleImage;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -12,16 +14,16 @@ class CreateArticleImageTable extends Migration
      */
     public function up()
     {
-        Schema::create('article_image', function (Blueprint $table) {
+        Schema::create(ArticleImage::getTableName(), function (Blueprint $table) {
             $table->uuid('article_image_id')->primary();
             $table->uuid('image_id');
             $table->uuid('article_id');
-            $table->enum('image_type', ['primary','thumbnail','carousel']);
+            $table->enum('image_type', ['primary','thumbnail','carousel'])->nullable();
             $table->string('alt', 255)->nullable();
             $table->string('title', 255)->nullable();
-            $table->smallInteger('position', false, true)->default(1);
+            $table->smallInteger('position', false, true)->nullable();
 
-            $table->unique(['image_id','article_id','image_type']);
+            $table->unique(['image_id','article_id']);
 
             $table->foreign('article_id')
                 ->references('article_id')->on(\App\Models\Article::getTableName())
@@ -41,6 +43,6 @@ class CreateArticleImageTable extends Migration
      */
     public function down()
     {
-        Schema::drop('image_article');
+        Schema::drop(ArticleImage::getTableName());
     }
 }

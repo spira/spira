@@ -31,7 +31,7 @@ class Image extends BaseModel
         'version' => 'required|numeric',
         'format' => 'required|string',
         'folder' => 'string|max:10',
-        'alt' => 'string|max:255',
+        'alt' => 'required|string|max:255',
         'title' => 'string|max:255',
     ];
 }

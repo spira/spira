@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Image;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -19,7 +20,7 @@ class CreateImageTable extends Migration
                 $table->integer('version');
                 $table->string('format', 4);
                 $table->string('folder', 10)->nullable();
-                $table->string('alt', 255)->nullable();
+                $table->string('alt', 255);
                 $table->string('title', 255)->nullable();
 
                 $table->unique(['public_id','version']);
