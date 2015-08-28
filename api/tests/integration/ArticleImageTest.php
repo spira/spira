@@ -119,16 +119,16 @@ class ArticleImageTest extends TestCase
 
     public function testDeleteMany()
     {
-        $this->markTestSkipped();
-        /** @var Article $article */
-        $article = factory(Article::class)->create();
-        $this->addImagesToArticle($article);
+
+        $article = $this->getFactory()->get(Article::class)->create();
+        $images = $this->addImagesToArticle($article);
+
+        $images = $this->getFactory()
+            ->get($images)
+            ->count(5)
+            ->transformed();
 
         $childCount = Article::find($article->article_id)->articleImages->count();
-
-        $images = array_map(function ($entity) {
-            return $this->prepareEntity($entity);
-        }, $article->articleImages->all());
 
         $this->deleteJson('/articles/'.$article->article_id.'/article-images', $images);
 
@@ -140,8 +140,7 @@ class ArticleImageTest extends TestCase
 
     public function testGetManyImages()
     {
-        $this->markTestSkipped();
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $this->addImagesToArticle($article);
 
         $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'images']);
