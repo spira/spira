@@ -92,14 +92,14 @@ class ArticleImageTest extends TestCase
             return $this->prepareEntity($entity);
         }, $articleImages);
 
-        $childCount = \App\Models\Article::find($article->article_id)->imagesPivot->count();
+        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($childCount + 5, \App\Models\Article::find($article->article_id)->imagesPivot->count());
+        $this->assertEquals($childCount + 5, \App\Models\Article::find($article->article_id)->articleImages->count());
         $this->assertTrue(is_array($object));
         $this->assertCount(5, $object);
     }
@@ -126,7 +126,7 @@ class ArticleImageTest extends TestCase
             unset($image['articleId']);
         }
 
-        $childCount = \App\Models\Article::find($article->article_id)->imagesPivot->count();
+        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
@@ -134,7 +134,7 @@ class ArticleImageTest extends TestCase
 
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('articleId', $object->invalid[0]);
-        $this->assertEquals($childCount, \App\Models\Article::find($article->article_id)->imagesPivot->count());
+        $this->assertEquals($childCount, \App\Models\Article::find($article->article_id)->articleImages->count());
     }
 
 
@@ -145,16 +145,16 @@ class ArticleImageTest extends TestCase
         $article = factory(App\Models\Article::class)->create();
         $this->addImagesToArticle($article);
 
-        $childCount = \App\Models\Article::find($article->article_id)->imagesPivot->count();
+        $childCount = \App\Models\Article::find($article->article_id)->articleImages->count();
 
         $images = array_map(function ($entity) {
             return $this->prepareEntity($entity);
-        }, $article->imagesPivot->all());
+        }, $article->articleImages->all());
 
         $this->deleteJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($childCount - 5, \App\Models\Article::find($article->article_id)->imagesPivot->count());
+        $this->assertEquals($childCount - 5, \App\Models\Article::find($article->article_id)->articleImages->count());
     }
 }

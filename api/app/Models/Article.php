@@ -185,7 +185,7 @@ class Article extends IndexedModel
         return $this->belongsToMany(Image::class, 'image_article');
     }
 
-    public function imagesPivot()
+    public function articleImages()
     {
         return $this->hasMany(ArticleImage::class);
     }
