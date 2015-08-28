@@ -18,8 +18,6 @@ class ArticleImage extends BaseModel
 
     public $timestamps = false;
 
-    public $with = ['image'];
-
     /**
      * The attributes that are mass assignable.
      *

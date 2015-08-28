@@ -4,6 +4,11 @@ use App\Models\Article;
 use App\Models\ArticleImage;
 use App\Models\Image;
 
+/**
+ * Class ArticleImageTest
+ * @group integration
+ * @group imagetest
+ */
 class ArticleImageTest extends TestCase
 {
     public function setUp()
@@ -58,7 +63,7 @@ class ArticleImageTest extends TestCase
         $article = factory(App\Models\Article::class)->create();
         $this->addImagesToArticle($article);
 
-        $this->getJson('/articles/'.$article->article_id.'/images');
+        $this->getJson('/articles/'.$article->article_id.'/images', ['With-Nested' => 'image']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
