@@ -1,17 +1,21 @@
 <?php
+use App\Services\ModelFactory;
 
 /**
  * Class ModelFactoryTest.
  */
 class ModelFactoryTest extends TestCase
 {
-    private $modelFactory;
+    /**
+     * @var ModelFactory
+     */
+    private $modelFactoryTest;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->modelFactory = $this->app->make('App\Services\ModelFactory');
+        $this->modelFactoryTest = $this->app->make('App\Services\ModelFactory');
     }
 
     /**
@@ -21,7 +25,7 @@ class ModelFactoryTest extends TestCase
     {
         $normalFactory = factory(\App\Models\TestEntity::class)->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\TestEntity::class)->toArray();
+        $serviceCreatedFactory = $this->modelFactoryTest->get(\App\Models\TestEntity::class)->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
     }
@@ -33,7 +37,7 @@ class ModelFactoryTest extends TestCase
     {
         $normalFactory = factory(App\Models\TestEntity::class, 'custom')->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactory->get(\App\Models\TestEntity::class, 'custom')->toArray();
+        $serviceCreatedFactory = $this->modelFactoryTest->get(\App\Models\TestEntity::class, 'custom')->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
@@ -45,7 +49,7 @@ class ModelFactoryTest extends TestCase
      */
     public function testJsonModel()
     {
-        $serviceJson = $this->modelFactory->json(App\Models\TestEntity::class);
+        $serviceJson = $this->modelFactoryTest->json(App\Models\TestEntity::class);
 
         $this->assertJson($serviceJson);
 
@@ -62,7 +66,7 @@ class ModelFactoryTest extends TestCase
     {
         $retrieveOnly = ['varchar', 'hash'];
 
-        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
+        $serviceModel = $this->modelFactoryTest->get(App\Models\TestEntity::class)
             ->showOnly($retrieveOnly)
             ->toArray();
 
@@ -76,7 +80,7 @@ class ModelFactoryTest extends TestCase
     {
         $retrieveOnly = ['varchar', 'hash'];
 
-        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
+        $serviceModel = $this->modelFactoryTest->get(App\Models\TestEntity::class)
             ->count(2)
             ->showOnly($retrieveOnly)
             ->toArray();
@@ -94,7 +98,7 @@ class ModelFactoryTest extends TestCase
         $user = new \App\Models\TestEntity();
         $this->assertContains($showProperty, $user->getHidden());
 
-        $serviceModel = $this->modelFactory->get(App\Models\TestEntity::class)
+        $serviceModel = $this->modelFactoryTest->get(App\Models\TestEntity::class)
             ->makeVisible([$showProperty])
             ->toArray();
 
@@ -106,7 +110,7 @@ class ModelFactoryTest extends TestCase
      */
     public function testFactoryMakesEloquent()
     {
-        $entity = $this->modelFactory->make(App\Models\TestEntity::class);
+        $entity = $this->modelFactoryTest->make(App\Models\TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Database\Eloquent\Model::class, $entity);
     }
@@ -124,7 +128,7 @@ class ModelFactoryTest extends TestCase
 
         $collection = [$fixture, $fixture];
 
-        $serviceCreatedFactoryJson = $this->modelFactory->get(\App\Models\TestEntity::class, 'custom')
+        $serviceCreatedFactoryJson = $this->modelFactoryTest->get(\App\Models\TestEntity::class, 'custom')
             ->customize(['varchar' => $fixture['varchar'], 'multi_word_column_title' => $fixture['multiWordColumnTitle'], 'hidden' => false])
             ->makeVisible(['hidden'])
             ->showOnly(['varchar', 'multi_word_column_title', 'hidden'])
@@ -145,7 +149,7 @@ class ModelFactoryTest extends TestCase
 
     public function testModelFactoryInstanceArrayableAndJsonable()
     {
-        $serviceCreatedFactoryInstance = $this->modelFactory->get(\App\Models\TestEntity::class);
+        $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(\App\Models\TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Contracts\Support\Arrayable::class, $serviceCreatedFactoryInstance);
         $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
