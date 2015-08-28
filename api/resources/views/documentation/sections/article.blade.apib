@@ -259,7 +259,6 @@ Note that this route returns paginated results as defined in the `Content-Range`
                     ->append('articleId',$faker->uuid)
                     ->append('_image',
                         $factory->get(\App\Models\Image::class)
-                            ->append('imageId',$faker->uuid)
                             ->transformed()
                     )
                     ->count(3)
