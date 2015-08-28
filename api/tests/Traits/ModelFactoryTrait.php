@@ -12,7 +12,7 @@ trait ModelFactoryTrait
 
     public function bootModelFactoryTrait()
     {
-        if (is_null(static::$modelFactory)){
+        if (is_null(static::$modelFactory)) {
             static::$modelFactory = \App::make(ModelFactory::class);
         }
     }

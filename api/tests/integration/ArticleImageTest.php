@@ -34,7 +34,7 @@ class ArticleImageTest extends TestCase
     {
         $factory = $this->getFactory();
         $method = 'create';
-        if ($make){
+        if ($make) {
             $method = 'make';
         }
 

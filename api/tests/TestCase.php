@@ -36,7 +36,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     protected function bootTraits()
     {
         foreach (get_declared_traits() as $trait) {
-
             if (method_exists($this, 'boot'.$trait)) {
                 $this->{'boot'.$trait}();
             }
