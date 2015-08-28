@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\App;
 class ModelFactory
 {
     protected $transformerService;
+    /**
+     * @var Factory
+     */
     protected $factory;
 
     /**

@@ -5,7 +5,7 @@ use \Illuminate\Support\Debug\Dumper;
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-    use AssertionsTrait, HelpersTrait;
+    use AssertionsTrait, HelpersTrait, ModelFactoryTrait;
 
     /**
      * Setup the test environment.
@@ -35,7 +35,8 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     protected function bootTraits()
     {
-        foreach (class_uses($this) as $trait) {
+        foreach (get_declared_traits() as $trait) {
+
             if (method_exists($this, 'boot'.$trait)) {
                 $this->{'boot'.$trait}();
             }
