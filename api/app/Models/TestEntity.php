@@ -52,7 +52,7 @@ class TestEntity extends IndexedModel
             'varchar' => 'required|string',
             'hash'    => 'required|string',
             'integer' => 'required|integer',
-            'decimal' => 'required|float',
+            'decimal' => 'required|decimal',
             'boolean' => 'required|boolean',
             'text'    => 'required|string',
             'date'    => 'required|date',
