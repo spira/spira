@@ -64,7 +64,7 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
      */
     protected function storeReturnUrl(TemporaryCredentials $temp)
     {
-        if ($url = $this->request->get('return_url')) {
+        if ($url = $this->request->input('return_url')) {
             $key = 'oauth_return_url_'.$temp->getIdentifier();
             $this->cache->put($key, $url, ProviderContract::CACHE_TTL);
         }
@@ -77,7 +77,7 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
      */
     public function getCachedReturnUrl()
     {
-        $key = 'oauth_return_url_'.$this->request->get('oauth_token');
+        $key = 'oauth_return_url_'.$this->request->input('oauth_token');
 
         // If we have no return url stored, redirect back to root page
         $url = $this->cache->get($key, Config::get('hosts.app'));
@@ -95,13 +95,13 @@ abstract class AbstractProvider extends AbstractProviderBase implements Provider
         // We have a stateless app without sessions, so we use the cache to
         // retrieve the temp credentials for man in the middle attack
         // protection
-        $key = 'oauth_temp_'.$this->request->get('oauth_token');
+        $key = 'oauth_temp_'.$this->request->input('oauth_token');
         $temp = $this->cache->get($key, '');
 
         return $this->server->getTokenCredentials(
             $temp,
-            $this->request->get('oauth_token'),
-            $this->request->get('oauth_verifier')
+            $this->request->input('oauth_token'),
+            $this->request->input('oauth_verifier')
         );
     }
 }

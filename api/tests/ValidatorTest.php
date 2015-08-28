@@ -14,25 +14,27 @@ class ValidatorTest extends TestCase
 
     public function testSpiraValidator()
     {
-        $data = ['float' => 'foo'];
-        $validation = $this->validator->make($data, ['float'=>'float']);
+        $data = ['decimal' => 'foo'];
+        $validation = $this->validator->make($data, ['decimal'=>'decimal']);
         $this->assertInstanceOf(SpiraValidator::class, $validation);
     }
 
-    public function testPassingFloatValidation()
+    public function testPassingDecimalValidation()
     {
-        $data = ['float' => 12.042];
+        $data = ['decimal' => 12.042];
+        $this->assertTrue($this->validator->make($data, ['decimal'=>'decimal'])->passes());
 
-        $this->assertTrue($this->validator->make($data, ['float'=>'float'])->passes());
+        $data = ['decimal' => 12];
+        $this->assertTrue($this->validator->make($data, ['decimal'=>'decimal'])->passes());
     }
 
-    public function testFailingFloatValidation()
+    public function testFailingDecimalValidation()
     {
-        $data = ['float' => 'foo'];
-        $validation = $this->validator->make($data, ['float'=>'float']);
+        $data = ['decimal' => 'foo'];
+        $validation = $this->validator->make($data, ['decimal'=>'decimal']);
         $this->assertFalse($validation->passes());
 
-        $this->assertStringEndsWith('must be a float.', $validation->messages()->get('float')[0]);
+        $this->assertStringEndsWith('must be a decimal.', $validation->messages()->get('decimal')[0]);
     }
 
     public function testPassingUuidValidation()

@@ -3,6 +3,10 @@
 
 use Illuminate\Support\Facades\Artisan;
 
+/**
+ * Class DocumentationTest
+ * @group integration
+ */
 class DocumentationTest extends TestCase
 {
     /**
@@ -10,7 +14,7 @@ class DocumentationTest extends TestCase
      */
     public function testIndexPage()
     {
-        $this->get('/');
+        $this->getJson('/');
 
         $this->assertResponseOk();
 
@@ -19,7 +23,7 @@ class DocumentationTest extends TestCase
 
     public function testDocumentationApib()
     {
-        $this->get('/documentation.apib');
+        $this->getJson('/documentation.apib');
 
         $this->assertResponseOk();
         $this->see('FORMAT: 1A'); //see apiary format is present
