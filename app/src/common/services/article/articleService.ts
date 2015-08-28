@@ -59,7 +59,7 @@ namespace common.services.article {
             return this.ngRestAdapter.get('/articles/'+identifier, {
                 'With-Nested' : 'permalinks, metas, tags'
             })
-                .then((res) => ArticleService.articleFactory(res.data));
+                .then((res) => ArticleService.articleFactory(res.data, true));
 
         }
 

@@ -150,6 +150,33 @@
 
             });
 
+
+            it('should save an existing article with a patch request', () => {
+
+                let article = fixtures.getArticle();
+                article.setExists(true);
+
+                article.title = "This title has been updated";
+
+                let newTag = new common.models.Tag({
+                    tagId: seededChance.guid(),
+                    tag: "new tag",
+                });
+
+                article._tags = [newTag];
+
+                $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
         });
 
 

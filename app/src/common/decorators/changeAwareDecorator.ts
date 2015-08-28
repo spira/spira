@@ -4,7 +4,7 @@ namespace common.decorators {
         getChangedProperties?():string[];
         resetChangedProperties?():void;
         getOriginal?():typeof common.models.AbstractModel;
-        getChanged?(omitUnderscoredKeys?:boolean):{
+        getChanged?(includeUnderscoredKeys?:boolean):{
             [key:string]: any;
         };
     }
