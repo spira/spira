@@ -7,11 +7,8 @@ namespace common.models {
         public tag:string = undefined;
 
         constructor(data:any) {
-
             super(data);
-
-            _.assign(this, data);
-
+            this.hydrate(data);
         }
 
     }

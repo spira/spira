@@ -12,9 +12,22 @@ namespace common.models {
         protected nestedEntityMap;
 
         constructor(data?:any) {
-            if (data){
+            this.hydrate(data);
+        }
+
+        /**
+         * Assign the properties of the model from the init data
+         * @param data
+         */
+        protected hydrate(data?:any) {
+            if (_.isObject(data)) {
                 _.assign(this, data);
+
+                if (_.size(this.nestedEntityMap) > 1) {
+                    this.hydrateNested(data);
+                }
             }
+
         }
 
         /**

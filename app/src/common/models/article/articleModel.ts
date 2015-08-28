@@ -17,12 +17,8 @@ namespace common.models {
         public _tags:common.models.Tag[];
 
         constructor(data:any) {
-
             super(data);
-
-            _.assign(this, data);
-
-            this.hydrateNested(data);
+            this.hydrate(data);
         }
 
         /**

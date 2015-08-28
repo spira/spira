@@ -4,9 +4,12 @@ namespace common.services.tag {
 
     export class TagService {
 
-        static $inject:string[] = ['ngRestAdapter'];
+        private cachedPaginator:common.services.pagination.Paginator;
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
+        static $inject:string[] = ['ngRestAdapter', 'paginationService'];
+
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    private paginationService:common.services.pagination.PaginationService) {
         }
 
         /**
@@ -27,6 +30,37 @@ namespace common.services.tag {
             return TagService.tagFactory({
                 tagId: this.ngRestAdapter.uuid(),
             });
+
+        }
+
+        /**
+         * Get the tag paginator
+         * @returns {Paginator}
+         */
+        public getTagsPaginator():common.services.pagination.Paginator {
+
+            //cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator) {
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/tags')
+                    .setModelFactory(TagService.tagFactory);
+            }
+
+            return this.cachedPaginator;
+        }
+
+        /**
+         * Save a tag
+         * @param tag
+         * @returns ng.IPromise<common.models.Tag>
+         */
+        public saveTag(tag:common.models.Tag):ng.IPromise<common.models.Tag> {
+
+            return this.ngRestAdapter.put('/tags/' + tag.tagId, _.clone(tag))
+                .then(() => {
+                    (<common.decorators.IChangeAwareDecorator>tag).resetChangedProperties(); //reset so next save only saves the changed ones
+                    return tag;
+                });
 
         }
 
