@@ -146,6 +146,29 @@ $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
+    return [
+            'image_id' => $faker->uuid,
+            'public_id' => $faker->unique()->lexify('????????????????????'),
+            'version' => $faker->dateTimeThisDecade()->getTimestamp(),
+            'folder' => $faker->lexify('????????'),
+            // http://cloudinary.com/documentation/image_transformations#format_conversion
+            'format' => $faker->randomElement(['jpg', 'png', 'gif', 'bmp', 'tiff', 'ico', 'pdf', 'eps', 'psd', 'svg', 'WebP']),
+            'alt' => $faker->sentence,
+            'title' => $faker->optional()->sentence
+    ];
+});
+
+$factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $faker) {
+    return [
+        'article_image_id' => $faker->uuid,
+        'image_type' => $imageType = $faker->optional()->randomElement(['primary','thumbnail','carousel']),
+        'position' => ($imageType == 'carousel') ? $faker->numberBetween(1, 10) : null,
+        'alt' => $faker->optional()->sentence,
+        'title' => $faker->optional()->sentence
+    ];
+});
+
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     return [

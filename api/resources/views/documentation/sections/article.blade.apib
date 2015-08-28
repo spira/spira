@@ -241,3 +241,68 @@ Note that this route returns paginated results as defined in the `Content-Range`
                     )
                     ->json()
             !!}
+
+
+## Article Images [/articles/{articleId}/article-images]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's images [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->append('articleId',$faker->uuid)
+                    ->append('_image',
+                        $factory->get(\App\Models\Image::class)
+                            ->transformed()
+                    )
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Add images to article [PUT]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->append('articleId',$faker->uuid)
+                    ->append('imageId',$faker->uuid)
+                    ->count(3)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
+### Delete images [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->showOnly(['article_image_id'])
+                    ->count(3)
+                    ->json()
+            !!}
+
++ Response 204
+

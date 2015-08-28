@@ -23,8 +23,6 @@ class ChildEntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateParentIdRule = null;
-    protected $validateChildIdRule = null;
     protected $relationName = null;
 
     /**

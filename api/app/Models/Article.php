@@ -1,6 +1,8 @@
 <?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
@@ -138,7 +140,7 @@ class Article extends IndexedModel
     }
 
     /**
-     * If there is no defined exerpt for the text, create it from the content
+     * If there is no defined excerpt for the text, create it from the content
      * @param $excerpt
      * @return string
      */
@@ -174,5 +176,21 @@ class Article extends IndexedModel
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tag_article');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function articleImages()
+    {
+        return $this->hasMany(ArticleImage::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function images()
+    {
+        return $this->belongsToMany(Image::class);
     }
 }
