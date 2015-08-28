@@ -6,9 +6,9 @@ namespace common.models {
         public tagId:string = undefined;
         public tag:string = undefined;
 
-        constructor(data:any) {
-            super(data);
-            this.hydrate(data);
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
     }

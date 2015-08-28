@@ -20,10 +20,11 @@ namespace common.services.user {
         /**
          * Get an instance of a user from data
          * @param userData
-         * @returns {common.services.user.User}
+         * @returns {common.models.User}
+         * @param exists
          */
-        public static userFactory(userData:global.IUserData):common.models.User {
-            return new common.models.User(userData);
+        public static userFactory(userData:global.IUserData, exists:boolean = false):common.models.User {
+            return new common.models.User(userData, exists);
         }
 
         /**
@@ -66,7 +67,10 @@ namespace common.services.user {
             let user = new common.models.User(userData);
 
             return this.ngRestAdapter.put('/users/' + user.userId, user)
-                .then(() => user); //return this user object
+                .then(() => {
+                    user.setExists(true);
+                    return user;
+                }); //return this user object
         }
 
         /**
@@ -148,20 +152,20 @@ namespace common.services.user {
          */
         public updateUser(user:common.models.User):ng.IPromise<any> {
             return this.ngRestAdapter
-                .patch('/users/' + user.userId, user);
+                .patch('/users/' + user.userId, user.getAttributes(true));
         }
 
         /**
          * Get full user information
          * @param user
-         * @returns {ng.IHttpPromise<any>}
+         * @returns {ng.IPromise<common.models.User>}
          */
         public getUser(user:common.models.User):ng.IPromise<common.models.User> {
             return this.ngRestAdapter.get('/users/' + user.userId, {
                     'With-Nested' : 'userCredential, userProfile, socialLogins'
                 })
                 .then((res) => {
-                    return new common.models.User(res.data);
+                    return new common.models.User(res.data, true);
                 });
         }
 

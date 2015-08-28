@@ -16,9 +16,10 @@ namespace common.services.tag {
          * Get an instance of the Tag given data
          * @param data
          * @returns {common.models.Tag}
+         * @param exists
          */
-        public static tagFactory(data:any):common.models.Tag {
-            return new common.models.Tag(data);
+        public static tagFactory(data:any, exists:boolean = false):common.models.Tag {
+            return new common.models.Tag(data, exists);
         }
 
         /**

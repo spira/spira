@@ -40,7 +40,7 @@ namespace common.services.auth {
 
             return this.ngJwtAuthService
                 .registerUserFactory((subClaim: string, tokenData: global.JwtAuthClaims): ng.IPromise<common.models.User> => {
-                    return this.$q.when(new common.models.User(tokenData._user));
+                    return this.$q.when(new common.models.User(tokenData._user, true));
                 })
                 .registerLoginPromptFactory((deferredCredentials:ng.IDeferred<NgJwtAuth.ICredentials>, loginSuccessPromise:ng.IPromise<NgJwtAuth.IUser>, currentUser:NgJwtAuth.IUser): ng.IPromise<any> => {
 

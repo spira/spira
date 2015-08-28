@@ -6,7 +6,7 @@ namespace common.models {
     }
 
     export interface IModelFactory{
-        (data:any):IModel;
+        (data:any, exists?:boolean):IModel;
     }
 
     export class AbstractModel implements IModel {
@@ -14,26 +14,27 @@ namespace common.models {
         protected _nestedEntityMap;
         private _exists:boolean;
 
-        constructor(data?:any) {
-            this.hydrate(data);
+        constructor(data?:any, exists:boolean = false) {
+            this.hydrate(data, exists);
 
             Object.defineProperty(this, "_exists", {
                 enumerable: false,
                 writable: true,
-                value: false,
+                value: exists,
             });
         }
 
         /**
          * Assign the properties of the model from the init data
          * @param data
+         * @param exists
          */
-        protected hydrate(data?:any) {
+        protected hydrate(data:any, exists:boolean) {
             if (_.isObject(data)) {
                 _.assign(this, data);
 
                 if (_.size(this._nestedEntityMap) > 1) {
-                    this.hydrateNested(data);
+                    this.hydrateNested(data, exists);
                 }
             }
 
@@ -42,8 +43,9 @@ namespace common.models {
         /**
          * Find all the nested entities and hydrate them into model instances
          * @param data
+         * @param exists
          */
-        protected hydrateNested(data:any){
+        protected hydrateNested(data:any, exists:boolean){
 
             _.forIn(this._nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
 
@@ -51,9 +53,9 @@ namespace common.models {
                 if (_.has(data, key) && !_.isNull(data[key])){
 
                     if (_.isArray(data[key])){
-                        this[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model));
+                        this[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model, exists));
                     }else if (_.isObject(data[key])){
-                        this[key] = this.hydrateModel(data[key], model);
+                        this[key] = this.hydrateModel(data[key], model, exists);
                     }
 
                 }else{
@@ -68,12 +70,15 @@ namespace common.models {
          * Get a new instance of a model from data
          * @param data
          * @param Model
-         * @returns {undefined}
+         * @returns {common.models.AbstractModel}
+         * @param exists
          */
-        private hydrateModel(data:any, Model:typeof AbstractModel){
+        private hydrateModel(data:any, Model:typeof AbstractModel, exists:boolean){
 
-            return new Model(data);
+            let model = new Model(data);
+            model.setExists(exists);
 
+            return model;
         }
 
         /**

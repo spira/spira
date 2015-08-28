@@ -141,7 +141,7 @@
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
 
-                let savePromise = articleService.saveArticleWithRelated(article, true);
+                let savePromise = articleService.saveArticleWithRelated(article);
 
                 expect(savePromise).eventually.to.be.fulfilled;
                 expect(savePromise).eventually.to.deep.equal(article);

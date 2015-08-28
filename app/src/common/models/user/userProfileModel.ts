@@ -23,9 +23,9 @@ module common.models {
             {label: 'Prefer not to say', value: 'N/A'}
         ];
 
-        constructor(data:any) {
-            super(data);
-            this.hydrate(data);
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
     }
