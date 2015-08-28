@@ -3,7 +3,7 @@ namespace common.models {
     @common.decorators.changeAware
     export class Article extends AbstractModel{
 
-        protected nestedEntityMap = {
+        protected _nestedEntityMap = {
             tags: Tag
         };
 

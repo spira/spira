@@ -8,9 +8,20 @@
             let title = seededChance.sentence();
 
             return new common.models.Article({
+                articleId: seededChance.guid(),
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
+                _tags: [
+                    {
+                        tagId: seededChance.guid(),
+                        tag: seededChance.word,
+                    },
+                    {
+                        tagId: seededChance.guid(),
+                        tag: seededChance.word,
+                    }
+                ]
             });
 
         },
@@ -20,22 +31,24 @@
         }
     };
 
-    describe('Article Service', () => {
+    describe.only('Article Service', () => {
 
         let articleService:common.services.article.ArticleService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _articleService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _articleService_, _ngRestAdapter_, _$rootScope_) => {
 
                 if (!articleService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     articleService = _articleService_;
                     ngRestAdapter = _ngRestAdapter_;
+                    $rootScope = _$rootScope_;
                 }
             });
 
@@ -117,6 +130,28 @@
             });
 
         });
+
+        describe('Save Article', () => {
+
+
+            it('should save a new article and all related entities', () => {
+
+                let article = fixtures.getArticle();
+
+                $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+
+                let savePromise = articleService.saveArticleWithRelated(article, true);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
+        });
+
 
     });
 

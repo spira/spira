@@ -158,11 +158,11 @@ namespace app.user.profile {
 
             it('should be able to unlink a social network login method', () => {
 
-                let userLoginDataFacebook:common.models.UserSocialLogin = {
+                let userLoginDataFacebook = new common.models.UserSocialLogin({
                     userId:ProfileController.fullUserInfo.userId,
                     provider:common.models.UserSocialLogin.facebookType,
                     token:'eyJtZXRob2QiOiJnb29nbGUiLCJzdWIiOiJkODU2ZWI2OS1jYTU4LTQ2M2MtOWNlZS05MTRlMDlkOWZlNWYiLCJfdXNlci'
-                };
+                });
 
                 ProfileController.fullUserInfo._socialLogins = (<common.models.UserSocialLogin[]>[]);
 

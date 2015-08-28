@@ -4,7 +4,7 @@ module common.models {
         value:string;
     }
 
-    export class UserProfile implements IModel {
+    export class UserProfile extends AbstractModel {
 
         public dob:string = undefined;
         public mobile:string = undefined;
@@ -24,7 +24,7 @@ module common.models {
         ];
 
         constructor(data:any) {
-            _.assign(this, data);
+            super(data);
         }
 
     }

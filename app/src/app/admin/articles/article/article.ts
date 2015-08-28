@@ -92,7 +92,7 @@ namespace app.admin.articles.article {
          */
         public save(){
 
-            return this.articleService.saveArticle(this.article, this.$stateParams.newArticle)
+            return this.articleService.saveArticleWithRelated(this.article, this.$stateParams.newArticle)
                 .then(() => {
                     this.notificationService.toast('Article saved').pop();
                 });

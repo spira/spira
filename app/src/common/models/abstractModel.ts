@@ -1,7 +1,9 @@
 //note this file MUST be loaded before any depending classes @todo resolve model load order
 namespace common.models {
 
-    export interface IModel{} //@todo add common methods/properties of a Model
+    export interface IModel{
+        getAttributes(includeUnderscoredKeys?:boolean):Object;
+    }
 
     export interface IModelFactory{
         (data:any):IModel;
@@ -9,7 +11,7 @@ namespace common.models {
 
     export class AbstractModel implements IModel {
 
-        protected nestedEntityMap;
+        protected _nestedEntityMap;
 
         constructor(data?:any) {
             this.hydrate(data);
@@ -23,7 +25,7 @@ namespace common.models {
             if (_.isObject(data)) {
                 _.assign(this, data);
 
-                if (_.size(this.nestedEntityMap) > 1) {
+                if (_.size(this._nestedEntityMap) > 1) {
                     this.hydrateNested(data);
                 }
             }
@@ -36,7 +38,7 @@ namespace common.models {
          */
         protected hydrateNested(data:any){
 
-            _.forIn(this.nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
+            _.forIn(this._nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
 
                 let key = '_' + nestedKey;
                 if (_.has(data, key) && !_.isNull(data[key])){
@@ -64,6 +66,25 @@ namespace common.models {
         private hydrateModel(data:any, Model:typeof AbstractModel){
 
             return new Model(data);
+
+        }
+
+        /**
+         * Get all enumerable attributes of the model, by default excluding all keys starting with an _underscore
+         * @param includeUnderscoredKeys
+         * @returns {any}
+         */
+        public getAttributes(includeUnderscoredKeys:boolean = false):Object{
+
+            let attributes = _.clone(this);
+
+            if (includeUnderscoredKeys){
+                return attributes;
+            }
+
+            return _.omit(attributes, (value, key) => {
+                return _.startsWith(key, '_');
+            });
 
         }
 
