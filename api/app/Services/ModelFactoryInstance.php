@@ -147,7 +147,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         $entity = $this->factoryInstance
             ->times($this->entityCount)
-            ->make(array_merge($attributes,$this->customizations));
+            ->make(array_merge($attributes, $this->customizations));
 
         $this->setEntityType();
 
@@ -241,7 +241,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         if ($this->factoryInstance instanceof Collection) {
             $entity = $this->factoryInstance->slice(0, $this->entityCount);
             foreach ($entity as $piece) {
-                if ($piece instanceof BaseModel){
+                if ($piece instanceof BaseModel) {
                     $this->modifyEntity($piece);
                     $piece->fill($this->customizations);
                 }
