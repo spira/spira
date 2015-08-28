@@ -7,7 +7,7 @@ namespace app.admin.articles.article.post {
         public tags:string[];
 
         static $inject = ['article', 'tagService', '$scope'];
-        constructor(public article:common.models.Article, private tagService:common.services.tag.TagService, private $scope:ng.IScope) {
+        constructor(public article:common.models.Article, private tagService:common.services.tag.TagService, public $scope:ng.IScope) {
 
 
             this.tags = _.pluck(article._tags, 'tag');

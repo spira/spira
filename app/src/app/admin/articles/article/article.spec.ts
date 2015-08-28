@@ -23,7 +23,7 @@ namespace app.admin.articles.article {
                 newArticle:true
             },
             articleService = {
-                saveArticleWithRelated:(article:common.models.Article, newArticle:boolean = false) => {
+                saveArticleWithRelated:(article:common.models.Article) => {
                     return $q.when(true);
                 }
             },
