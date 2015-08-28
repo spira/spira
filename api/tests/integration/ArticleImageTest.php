@@ -119,7 +119,6 @@ class ArticleImageTest extends TestCase
 
     public function testDeleteMany()
     {
-
         $article = $this->getFactory()->get(Article::class)->create();
         $images = $this->addImagesToArticle($article);
 
