@@ -23,7 +23,7 @@ namespace app.admin.articles.article {
                 newArticle:true
             },
             articleService = {
-                saveArticle:(article:common.models.Article, newArticle:boolean = false) => {
+                saveArticleWithRelated:(article:common.models.Article) => {
                     return $q.when(true);
                 }
             },
@@ -48,14 +48,14 @@ namespace app.admin.articles.article {
             });
 
             sinon.spy(notificationService, 'toast');
-            sinon.spy(articleService, 'saveArticle');
+            sinon.spy(articleService, 'saveArticleWithRelated');
 
         });
 
         afterEach(() => {
 
             (<any>notificationService).toast.restore();
-            (<any>articleService).saveArticle.restore();
+            (<any>articleService).saveArticleWithRelated.restore();
 
         });
 
@@ -70,7 +70,7 @@ namespace app.admin.articles.article {
 
             $scope.$apply();
 
-            expect(articleService.saveArticle).to.have.been.calledWith(article);
+            expect(articleService.saveArticleWithRelated).to.have.been.calledWith(article);
 
             expect(notificationService.toast).to.have.been.calledOnce;
 
