@@ -193,6 +193,4 @@ class Article extends IndexedModel
     {
         return $this->belongsToMany(Image::class);
     }
-
-
 }

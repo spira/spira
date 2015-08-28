@@ -50,7 +50,7 @@ class ArticleImageTest extends TestCase
     {
         factory(Image::class, 5)
             ->create()
-            ->each(function(Image $image) use ($article){
+            ->each(function (Image $image) use ($article) {
 
                 factory(ArticleImage::class)->create([
                     'article_id' => $article->article_id,
@@ -175,6 +175,4 @@ class ArticleImageTest extends TestCase
         $this->assertObjectHasAttribute('_images', $object);
         $this->assertCount(5, $object->_images);
     }
-
-
 }

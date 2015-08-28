@@ -37,7 +37,7 @@ class ArticleSeeder extends Seeder
                 //create & link images
                 factory(Image::class, 5)
                     ->create()
-                    ->each(function (Image $image) use ($article){
+                    ->each(function (Image $image) use ($article) {
                         factory(ArticleImage::class)->create([
                             'article_id' => $article->article_id,
                             'image_id' => $image->image_id,
