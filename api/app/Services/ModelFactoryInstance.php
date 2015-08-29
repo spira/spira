@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\FactoryBuilder;
 use Illuminate\Support\Collection;
-use App\Http\Transformers\BaseTransformer;
 use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Spira\Model\Model\BaseModel;
 
 class ModelFactoryInstance implements Arrayable, Jsonable
 {
     private $transformerService;
+    /**
+     * @var FactoryBuilder
+     */
     private $factoryInstance;
     private $customizations = [];
     private $entityCount = 1;
@@ -139,11 +143,11 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      *
      * @return mixed
      */
-    private function built()
+    private function built(array $attributes = [])
     {
         $entity = $this->factoryInstance
             ->times($this->entityCount)
-            ->make($this->customizations);
+            ->make(array_merge($attributes, $this->customizations));
 
         $this->setEntityType();
 
@@ -236,6 +240,13 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         if ($this->factoryInstance instanceof Collection) {
             $entity = $this->factoryInstance->slice(0, $this->entityCount);
+            foreach ($entity as $piece) {
+                if ($piece instanceof BaseModel) {
+                    $this->modifyEntity($piece);
+                    $piece->fill($this->customizations);
+                }
+            }
+
             $this->setEntityType();
         } else {
             $entity = $this->modified();
@@ -283,5 +294,41 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function toJson($options = 0)
     {
         return $this->json($options);
+    }
+
+    /**
+     * Create a collection of models.
+     * Shortcut for FactoryBuilder
+     * @param  array  $attributes
+     * @return mixed
+     */
+    public function make(array $attributes = [])
+    {
+        if ($this->factoryInstance instanceof Collection) {
+            throw new \InvalidArgumentException('Make operation can not be done for Collection');
+        }
+
+        return $this->built($attributes);
+    }
+
+    /**
+     * Create a collection of models and persist them to the database.
+     *
+     * @param  array  $attributes
+     * @return mixed
+     */
+    public function create(array $attributes = [])
+    {
+        $results = $this->make($attributes);
+
+        if ($this->entityCount === 1) {
+            $results->save();
+        } else {
+            foreach ($results as $result) {
+                $result->save();
+            }
+        }
+
+        return $results;
     }
 }
