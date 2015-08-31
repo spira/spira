@@ -43,7 +43,7 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id','first_published', 'primaryImage', 'status'];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -64,7 +64,8 @@ class Article extends IndexedModel
             'excerpt' => 'string',
             'primaryImage' => 'string',
             'status' => 'in:' . implode(',', static::$statuses),
-            'permalink' => 'string|unique:article_permalinks,permalink'
+            'permalink' => 'string|unique:article_permalinks,permalink',
+            'author_id' => 'uuid|exists:users,user_id',
         ];
     }
 
@@ -192,5 +193,10 @@ class Article extends IndexedModel
     public function images()
     {
         return $this->belongsToMany(Image::class);
+    }
+
+    public function author()
+    {
+        return $this->hasOne(User::class,'user_id','author_id');
     }
 }

@@ -13,7 +13,6 @@ use App\Models\Article;
 
 class ArticleController extends EntityController
 {
-    protected $validateIdRule = 'required|string';
 
     /**
      * Assign dependencies.

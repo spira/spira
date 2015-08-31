@@ -23,8 +23,6 @@ abstract class EntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateIdRule = null;
-
     /**
      * @var BaseModel
      */

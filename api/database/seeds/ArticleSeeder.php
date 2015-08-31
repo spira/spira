@@ -17,9 +17,13 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
+        $users = \App\Models\User::all();
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) {
+            ->each(function (Article $article) use ($users) {
+
+                $user = $users->random(1);
+                $article->author_id = $user->user_id;
                 $article->save();
 
                 //add metas
@@ -33,6 +37,7 @@ class ArticleSeeder extends Seeder
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
+
 
                 //create & link images
                 factory(Image::class, 5)
