@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
@@ -369,5 +370,57 @@ class ChildEntityController extends ApiController
     protected function getValidationRules()
     {
         return $this->getChildModel()->getValidationRules();
+    }
+
+    /**
+     * Sync the model ids with the parent model with event firing.
+     *
+     * Eloquent's sync method does actually return an array with id's sorted
+     * under 'attached', 'detached' and 'updated'. Though eloquent casts them to
+     * int ids which destroys the UUID ids we have.
+     *
+     * An optional approach would be to extend Eloquent's BelongsToMany class
+     * and remove the (int) castings. That approach would also allow to fire the
+     * sync events from the sync method in the relationship and keep using that
+     * method directly. With the backside that there are additional things that
+     * could break in Laravel updates.
+     *
+     * @param  BaseModel $parent
+     * @param  array     $ids
+     *
+     * @return [type]
+     */
+    protected function sync(BaseModel $parent, array $ids)
+    {
+        $this->fireModelEvent('syncing', $parent, [$parent, $this->relationName]);
+
+        $this->getRelation($parent)->sync($ids);
+
+        $this->fireModelEvent('synced', $parent, [$parent, $this->relationName, $ids], false);
+    }
+
+    /**
+     * Fire the given event for the model.
+     *
+     * @param  string    $event
+     * @param  BaseModel $model
+     * @param  array     $data
+     * @param  bool      $halt
+     *
+     * @return mixed
+     */
+    protected function fireModelEvent($event, BaseModel $model, array $data, $halt = true)
+    {
+        $dispatcher = \App::make(Dispatcher::class);
+
+        // We will append the names of the class to the event to distinguish it
+        // from other model events that are fired, allowing us to listen on each
+        // model event set individually instead of catching event for all the
+        // models.
+        $event = "eloquent.{$event}: ".get_class($model);
+
+        $method = $halt ? 'until' : 'fire';
+
+        return $dispatcher->$method($event, $data);
     }
 }

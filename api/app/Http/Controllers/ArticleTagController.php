@@ -49,8 +49,7 @@ class ArticleTagController extends ChildEntityController
                 }
             });
 
-
-        $this->getRelation($parent)->sync($childModels->lists('tag_id')->toArray());
+        $this->sync($parent, $childModels->lists('tag_id')->toArray());
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
