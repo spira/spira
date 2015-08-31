@@ -162,7 +162,7 @@ trait ChangeloggableTrait
         }
 
         if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
-            && (!$LimitReached || $RevisionCleanup)
+            && (!$limitReached || $RevisionCleanup)
         ) {
             $revisions = [];
 
@@ -184,7 +184,7 @@ trait ChangeloggableTrait
             }
 
             if (count($revisions) > 0) {
-                if ($LimitReached && $RevisionCleanup) {
+                if ($limitReached && $RevisionCleanup) {
                     $toDelete = $this->revisionHistory()->orderBy('id', 'asc')->limit(count($revisions))->get();
                     foreach ($toDelete as $delete) {
                         $delete->delete();

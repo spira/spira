@@ -182,3 +182,35 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];
 });
+
+$factory->define(App\Extensions\Revisionable\Revision::class, function (\Faker\Generator $faker) {
+    return [
+        'revision_id' => $faker->uuid,
+        'revisionable_type' => $faker->word,
+        'revisionable_id' => $faker->uuid,
+        'user_id' => $faker->uuid,
+        'key' => $faker->word,
+        'old_value' => $faker->word,
+        'new_value' => $faker->word,
+        'created_at' => $faker->dateTime,
+    ];
+});
+
+$factory->defineAs(App\Extensions\Revisionable\Revision::class, 'article', function ($faker) use ($factory) {
+    $revision = $factory->raw(App\Extensions\Revisionable\Revision::class);
+
+    $article = array_except($factory->raw(App\Models\Article::class), ['article_id']);
+    $articleUpdated = array_except($factory->raw(App\Models\Article::class), ['article_id']);
+
+    // Pick a key to update
+    $key = array_keys($article)[array_rand(array_keys($article))];
+
+    $articleRevision = [
+        'revisionable_type' => 'App\Models\Article',
+        'key' => $key,
+        'old_value' => $article[$key],
+        'new_value' => $articleUpdated[$key],
+    ];
+
+    return array_merge($revision, $articleRevision);
+});
