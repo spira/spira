@@ -158,7 +158,7 @@ class ChildEntityController extends ApiController
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels);
 
-        $this->getRelation($parent)->saveMany($childModels);
+        $this->saveMany($parent, $childModels);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -224,7 +224,7 @@ class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
 
-        $childModel->delete();
+        $this->delete($parent, $childModel);
 
         return $this->getResponse()->noContent();
     }
@@ -388,7 +388,7 @@ class ChildEntityController extends ApiController
      * @param  BaseModel $parent
      * @param  array     $ids
      *
-     * @return [type]
+     * @return void
      */
     protected function sync(BaseModel $parent, array $ids)
     {
@@ -397,6 +397,40 @@ class ChildEntityController extends ApiController
         $this->getRelation($parent)->sync($ids);
 
         $this->fireModelEvent('synced', $parent, [$parent, $this->relationName, $ids], false);
+    }
+
+    /**
+     * Save multiple model relationship with event firing.
+     *
+     * @param  BaseModel  $parent
+     * @param  Collection $childModels
+     *
+     * @return void
+     */
+    protected function saveMany(BaseModel $parent, Collection $childModels)
+    {
+        $this->fireModelEvent('savingMany', $parent, [$parent, $this->relationName]);
+
+        $this->getRelation($parent)->saveMany($childModels);
+
+        $this->fireModelEvent('savedMany', $parent, [$parent, $this->relationName, $childModels], false);
+    }
+
+    /**
+     * Delete a child model with event firing.
+     *
+     * @param  BaseModel $parent
+     * @param  BaseModel $childModel
+     *
+     * @return void
+     */
+    protected function delete(BaseModel $parent, BaseModel $childModel)
+    {
+        $this->fireModelEvent('deletingOneChild', $parent, [$parent, $this->relationName]);
+
+        $childModel->delete();
+
+        $this->fireModelEvent('deletedOneChild', $parent, [$parent, $this->relationName, $childModels], false);
     }
 
     /**
