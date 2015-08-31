@@ -162,7 +162,7 @@ trait ChangeloggableTrait
         }
 
         if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
-            && (!$limitReached || $RevisionCleanup)
+            && (!$limitReached || $revisionCleanup)
         ) {
             $revisions = [];
 
@@ -171,30 +171,30 @@ trait ChangeloggableTrait
             // $changes_to_record = $this->changedRevisionableFields();
             // foreach ($changes_to_record as $key => $change) {
             foreach ($childModels as $model) {
-                $revisions[] = array(
+                $revisions[] = [
                     'revisionable_type' => get_class($this),
                     'revisionable_id' => $this->getKey(),
                     'key' => $key,
                     'old_value' => null,
-                    'new_value' => $model->toArray(),
+                    'new_value' => $model->toJson(),
                     'user_id' => $this->getUserId(),
                     'created_at' => new \DateTime(),
                     'updated_at' => new \DateTime(),
-                );
+                ];
             }
 
             if (count($revisions) > 0) {
-                if ($limitReached && $RevisionCleanup) {
+                if ($limitReached && $revisionCleanup) {
                     $toDelete = $this->revisionHistory()->orderBy('id', 'asc')->limit(count($revisions))->get();
                     foreach ($toDelete as $delete) {
                         $delete->delete();
                     }
                 }
+
                 $revision = new Revision;
                 \DB::table($revision->getTable())->insert($revisions);
             }
         }
-
     }
 
     /**
@@ -287,7 +287,7 @@ trait ChangeloggableTrait
             ];
 
             $revision = new Revision;
-            \DB::table($revision->getTable())->insert($revisions);
+            \DB::table($revision->getTable())->insert($data);
         }
     }
 
@@ -306,7 +306,6 @@ trait ChangeloggableTrait
 
         if (isset($this->dontKeepRevisionOf)) {
             return !in_array($relation, $this->dontKeepRevisionOf);
-
         }
 
         return true;
