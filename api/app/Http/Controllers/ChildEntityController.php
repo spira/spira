@@ -396,7 +396,7 @@ class ChildEntityController extends ApiController
 
         $this->getRelation($parent)->sync($ids);
 
-        $this->fireModelEvent('synced', $parent, [$parent, $this->relationName, $ids], false);
+        $this->fireModelEvent('synced', $parent, [$parent, $this->relationName, $ids]);
     }
 
     /**

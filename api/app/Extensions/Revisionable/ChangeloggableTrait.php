@@ -107,10 +107,12 @@ trait ChangeloggableTrait
 
         static::syncing(function ($model, $relation) {
             $model->preSync($relation);
+            return true;
         });
 
         static::synced(function ($model, $relation, $ids) {
             $model->postSync($relation, $ids);
+            return true;
         });
 
         static::deletingOneChild(function ($model, $relation) {
@@ -181,7 +183,7 @@ trait ChangeloggableTrait
      */
     public function preSync($relation)
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
+        if ($this->isRevisionEnabled()
             && $this->isRelationRevisionable($relation)
         ) {
             // Get only the IDs from the relationship
@@ -202,40 +204,15 @@ trait ChangeloggableTrait
      */
     public function postSync($key, array $ids)
     {
-        if (isset($this->historyLimit) && $this->revisionHistory()->count() >= $this->historyLimit) {
-            $limitReached = true;
-        } else {
-            $limitReached = false;
-        }
-
-        if (isset($this->revisionCleanup)) {
-            $revisionCleanup = $this->revisionCleanup;
-        } else {
-            $revisionCleanup = false;
-        }
-
-        if (((!isset($this->revisionEnabled) || $this->revisionEnabled))
-            && (!$limitReached || $revisionCleanup)
+        if (($this->isRevisionEnabled())
+            && (!$this->isLimitReached() || $this->isRevisionCleanup())
             && array_key_exists($key, $this->originalData)
         ) {
-            $data = [
-                'revisionable_type' => get_class($this),
-                'revisionable_id' => $this->getKey(),
-                'key' => $key,
-                'old_value' => json_encode(array_get($this->originalData, $key)),
-                'new_value' => json_encode($ids),
-                'user_id' => $this->getUserId(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
-            ];
+            $revision = $this->prepareRevision($key, json_encode(array_get($this->originalData, $key)), json_encode($ids));
 
-            if ($limitReached && $revisionCleanup) {
-                $toDelete = $this->revisionHistory()->orderBy('id', 'asc')->first();
-                $toDelete->delete();
-            }
+            $this->cleanupRevisions();
 
-            $revision = new Revision;
-            \DB::table($revision->getTable())->insert($data);
+            $this->dbInsert($revision);
         }
     }
 
