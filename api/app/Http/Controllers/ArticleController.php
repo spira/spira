@@ -39,13 +39,12 @@ class ArticleController extends EntityController
      */
     protected function modifyEntity(BaseModel $entity)
     {
-       if (!$entity->exists){
-           try{
-               $user = $this->auth->getUser();
-               $entity->author_id = $user->user_id;
-           }catch (\Exception $e){}
-       }
+        if (!$entity->exists) {
+            try {
+                $user = $this->auth->getUser();
+                $entity->author_id = $user->user_id;
+            } catch (\Exception $e) {
+            }
+        }
     }
-
-
 }
