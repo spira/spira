@@ -46,17 +46,17 @@ namespace common.models {
 
             let user = new User(_.clone(userData, true));
 
-            let userLoginDataFacebook:common.models.UserSocialLogin = {
+            let userLoginDataFacebook = new common.models.UserSocialLogin ({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.facebookType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
-            let userLoginDataGoogle:common.models.UserSocialLogin = {
+            let userLoginDataGoogle = new common.models.UserSocialLogin ({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.googleType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
             user._socialLogins.push(userLoginDataFacebook, userLoginDataGoogle);
 
@@ -68,11 +68,11 @@ namespace common.models {
 
             let user = new User(_.clone(userData, true));
 
-            let userLoginDataGoogle:common.models.UserSocialLogin = {
+            let userLoginDataGoogle = new common.models.UserSocialLogin({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.googleType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
             user._socialLogins.push(userLoginDataGoogle);
 

@@ -3,6 +3,10 @@ namespace common.models {
     @common.decorators.changeAware
     export class Article extends AbstractModel{
 
+        protected _nestedEntityMap = {
+            tags: Tag
+        };
+
         public articleId:string = undefined;
         public title:string = undefined;
         public permalink:string = undefined;
@@ -10,12 +14,11 @@ namespace common.models {
         public primaryImage:string = undefined;
         public status:string = undefined;
 
-        constructor(data:any) {
+        public _tags:common.models.Tag[];
 
-            super(data);
-
-            _.assign(this, data);
-
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
         /**

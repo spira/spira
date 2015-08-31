@@ -290,7 +290,7 @@
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = fixtures.user;
 
                 let profile = _.clone(userProfile);
 

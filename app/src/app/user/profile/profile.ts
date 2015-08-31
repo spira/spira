@@ -169,8 +169,10 @@ namespace app.user.profile {
 
             this.authService.unlinkSocialLogin(this.fullUserInfo, type)
                 .then(() => {
-                    // Typings for lodash must not have this callback shorthand
-                    (<any>_).remove(this.fullUserInfo._socialLogins, 'provider', type);
+
+                    _.remove(this.fullUserInfo._socialLogins, {
+                        'provider' : type
+                    });
 
                     this.notificationService.toast('Your ' + _.capitalize(type) + ' has been unlinked from your account').pop();
                 });

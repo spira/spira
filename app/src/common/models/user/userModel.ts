@@ -20,10 +20,9 @@ namespace common.models {
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public userType:string = undefined;
 
-        constructor(data:global.IUserData) {
-            super(data);
-
-            _.assign(this, data);
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
         /**

@@ -22,7 +22,7 @@ class ArticleTagTransformer extends EloquentModelTransformer
     {
         /** @var Tag[] $collection */
         foreach ($collection as $item) {
-            $item->addHidden(['tag_id','pivot']);
+            $item->addHidden(['pivot']);
         }
 
         return parent::transformCollection($collection);
