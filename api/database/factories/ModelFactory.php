@@ -199,17 +199,27 @@ $factory->define(App\Extensions\Revisionable\Revision::class, function (\Faker\G
 $factory->defineAs(App\Extensions\Revisionable\Revision::class, 'article', function ($faker) use ($factory) {
     $revision = $factory->raw(App\Extensions\Revisionable\Revision::class);
 
-    $article = array_except($factory->raw(App\Models\Article::class), ['article_id']);
-    $articleUpdated = array_except($factory->raw(App\Models\Article::class), ['article_id']);
+    // Get 2 articles to simulate an update
+    $articles = [];
+    $articles[0] = array_except($factory->raw(App\Models\Article::class), ['article_id']);
+    $articles[1] = array_except($factory->raw(App\Models\Article::class), ['article_id']);
+
+    // Inject child entities
+    foreach ($articles as &$article) {
+        $tags = factory(App\Models\Tag::class, $faker->numberBetween(2, 4))->make();
+        $article['tags'] = $tags->lists('tag')->toArray();
+
+        $meta = $factory->raw(App\Models\ArticleMeta::class);
+        $article['metas'] = $meta;
+    }
 
     // Pick a key to update
-    $key = array_keys($article)[array_rand(array_keys($article))];
-
+    $key = array_keys($articles[0])[array_rand(array_keys($articles[0]))];
     $articleRevision = [
         'revisionable_type' => 'App\Models\Article',
         'key' => $key,
-        'old_value' => $article[$key],
-        'new_value' => $articleUpdated[$key],
+        'old_value' => $articles[0][$key],
+        'new_value' => $articles[1][$key],
     ];
 
     return array_merge($revision, $articleRevision);
