@@ -145,7 +145,7 @@ abstract class EntityController extends ApiController
 
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function (BaseModel $model){
+            ->each(function (BaseModel $model) {
                 $this->modifyEntity($model);
                 return $model->save();
             });
