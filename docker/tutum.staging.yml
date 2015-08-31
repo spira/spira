@@ -1,31 +1,16 @@
-spira:
-  image: tutum.co/iqsadmin/spira:production
-  deployment_strategy: high_availability
-  ports:
-    - "80"
-  tags:
-    - staging
-  volumes:
-    - /data
-
 cache:
-  image: redis:3.0.3
-  tags:
-    - staging
-
+  image: 'redis:3.0.3'
 elasticsearch:
-  image: elasticsearch:1.7.1
-  tags:
-    - staging
-
+  image: 'elasticsearch:1.7.1'
 php:
-  image: spira/docker-hhvm:latest
+  image: 'spira/docker-hhvm:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
-    - API_HOST=http://api.staging.iqstech.net:8080
-    - APP_HOST=http://app.staging.iqstech.net
+    - 'API_HOST=http://api.staging.iqstech.net:8080'
     - API_PATH=/api
+    - 'APP_HOST=http://app.staging.iqstech.net'
     - COOKIE_DOMAIN=spira.io
+    - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.iqstech.net
     - HOSTNAME_APP=app.staging.iqstech.net
@@ -36,12 +21,12 @@ php:
     - MYSQL_ROOT_PASSWORD=root
     - MYSQL_USER=spira_vanilla
     - POSTGRES_DB=spira
-    - POSTGRES_PASSWORD=spira
-    - POSTGRES_USER=spira
-    - PROVIDER_FACEBOOK_CLIENT_ID=1677556862475688
-    - PROVIDER_FACEBOOK_CLIENT_SECRET=c14de8480fbf8925fa9ab3ad1a59c6cd
-    - PROVIDER_GOOGLE_CLIENT_ID=1055178154133-3u2un47dahaghli65uh727uff2co5cbi.apps.googleusercontent.com
-    - PROVIDER_GOOGLE_CLIENT_SECRET=5Fp3qjVzqIuaJVh9_lR9Q-Mq
+    - 'POSTGRES_PASSWORD=<database-password-here>'
+    - POSTGRES_USER=stage_api_admin
+    - PROVIDER_FACEBOOK_CLIENT_ID='<fb-client-id-here>'
+    - PROVIDER_FACEBOOK_CLIENT_SECRET='<fb-client-secred-here>'
+    - PROVIDER_GOOGLE_CLIENT_ID='<google-client-id-here>'
+    - PROVIDER_GOOGLE_CLIENT_SECRET='<google-client-secret-here>'
     - PROVIDER_TWITTER_CLIENT_ID=false
     - PROVIDER_TWITTER_CLIENT_SECRET=false
     - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
@@ -50,27 +35,22 @@ php:
     - XDEBUG_ENABLED=false
   links:
     - cache
-    - queue
     - elasticsearch
+    - queue
   privileged: true
-  tags:
-    - staging
   volumes_from:
     - spira
-
 queue:
-  image: spira/docker-beanstalkd:latest
-  tags:
-    - staging
-
+  image: 'spira/docker-beanstalkd:latest'
 queuerunner:
-  image: spira/docker-artisan-queue-runner:latest
+  image: 'spira/docker-artisan-queue-runner:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
-    - API_HOST=http://api.staging.iqstech.net:8080
-    - APP_HOST=http://app.staging.iqstech.net
+    - 'API_HOST=http://api.staging.iqstech.net:8080'
     - API_PATH=/api
+    - 'APP_HOST=http://app.staging.iqstech.net'
     - COOKIE_DOMAIN=spira.io
+    - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.iqstech.net
     - HOSTNAME_APP=app.staging.iqstech.net
@@ -81,12 +61,12 @@ queuerunner:
     - MYSQL_ROOT_PASSWORD=root
     - MYSQL_USER=spira_vanilla
     - POSTGRES_DB=spira
-    - POSTGRES_PASSWORD=spira
-    - POSTGRES_USER=spira
-    - PROVIDER_FACEBOOK_CLIENT_ID=1677556862475688
-    - PROVIDER_FACEBOOK_CLIENT_SECRET=c14de8480fbf8925fa9ab3ad1a59c6cd
-    - PROVIDER_GOOGLE_CLIENT_ID=1055178154133-3u2un47dahaghli65uh727uff2co5cbi.apps.googleusercontent.com
-    - PROVIDER_GOOGLE_CLIENT_SECRET=5Fp3qjVzqIuaJVh9_lR9Q-Mq
+    - 'POSTGRES_PASSWORD='<database-password-here>'
+    - POSTGRES_USER=stage_api_admin
+    - PROVIDER_FACEBOOK_CLIENT_ID='<fb-client-id-here>'
+    - PROVIDER_FACEBOOK_CLIENT_SECRET='<fb-client-secred-here>'
+    - PROVIDER_GOOGLE_CLIENT_ID='<google-client-id-here>'
+    - PROVIDER_GOOGLE_CLIENT_SECRET='<google-client-secret-here>'
     - PROVIDER_TWITTER_CLIENT_ID=false
     - PROVIDER_TWITTER_CLIENT_SECRET=false
     - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
@@ -95,29 +75,32 @@ queuerunner:
     - XDEBUG_ENABLED=false
   links:
     - cache
+    - elasticsearch
     - queue
     - web
-    - elasticsearch
-  tags:
-    - staging
   volumes_from:
     - spira
-
+spira:
+  image: 'tutum.co/iqsadmin/spira:production'
+  command: 'tail -f /dev/null'
+  deployment_strategy: high_availability
+  ports:
+    - '80'
+  volumes:
+    - /data
 web:
-  image: spira/docker-nginx:latest
+  image: 'spira/docker-nginx:latest'
   environment:
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.iqstech.net
     - HOSTNAME_APP=app.staging.iqstech.net
     - HOSTNAME_BASE=staging.iqstech.net
     - HOSTNAME_FORUM=forum.staging.iqstech.net
-    - NGINX_VHOSTS=vhosts/nginx/production/*.conf
+    - 'NGINX_VHOSTS=vhosts/nginx/production/*.conf'
   links:
     - php
   ports:
-    - "80:80"
+    - '80:80'
   privileged: true
-  tags:
-    - staging
   volumes_from:
     - spira
