@@ -59,7 +59,7 @@ abstract class EntityController extends ApiController
         if ($request->has('q')) {
             $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
         } else {
-            $collection = $this->getAllEntities($limit, $offset, $totalCount);
+            $collection = $this->getAllEntities($limit, $offset);
         }
 
         $collection = $this->getWithNested($collection, $request);
@@ -98,6 +98,7 @@ abstract class EntityController extends ApiController
         $model = $this->getModel()->newInstance();
         $this->validateRequest($request->all(), $this->getValidationRules());
         $model->fill($request->all());
+        $this->modifyEntity($model);
         $model->save();
 
         return $this->getResponse()
@@ -120,8 +121,9 @@ abstract class EntityController extends ApiController
 
         $this->validateRequest($request->all(), $this->getValidationRules());
 
-        $model->fill($request->all())
-            ->save();
+        $model->fill($request->all());
+        $this->modifyEntity($model);
+        $model->save();
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -143,7 +145,8 @@ abstract class EntityController extends ApiController
 
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function (BaseModel $model) {
+            ->each(function (BaseModel $model){
+                $this->modifyEntity($model);
                 return $model->save();
             });
 
@@ -168,6 +171,7 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->all(), $this->getValidationRules(), true);
 
         $model->fill($request->all());
+        $this->modifyEntity($model);
         $model->save();
 
         return $this->getResponse()->noContent();
@@ -190,6 +194,7 @@ abstract class EntityController extends ApiController
         $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
             ->each(function (BaseModel $model) {
+                $this->modifyEntity($model);
                 return $model->save();
             });
 
@@ -262,13 +267,11 @@ abstract class EntityController extends ApiController
     }
 
     /**
-     * @param Request $request
      * @param null $limit
      * @param null $offset
-     * @param null $totalCount
      * @return Collection
      */
-    protected function getAllEntities($limit = null, $offset = null, &$totalCount = null)
+    protected function getAllEntities($limit = null, $offset = null)
     {
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
@@ -341,13 +344,20 @@ abstract class EntityController extends ApiController
         return $this->model;
     }
 
-
-
     /**
      * @return array
      */
     protected function getValidationRules()
     {
         return $this->getModel()->getValidationRules();
+    }
+
+    /**
+     * Generic method fired before model save
+     * @param BaseModel $entity
+     * @return void
+     */
+    protected function modifyEntity(BaseModel $entity)
+    {
     }
 }
