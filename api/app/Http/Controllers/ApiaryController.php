@@ -13,13 +13,13 @@ class ApiaryController extends Controller
     public function index()
     {
         return view('documentation.layouts.master', [
-            'apibUrl' => '/documentation.apib',
+            'apibUrl' => 'documentation.apib',
         ]);
     }
 
-    public function getApiaryDocumentation(Request $request)
+    public function getApiaryDocumentation()
     {
-        $apib = $this->getDocumentationApib($request->root());
+        $apib = $this->getDocumentationApib(env('API_HOST'));
 
         $headers = [
             'Content-Type' => 'text/plain',
