@@ -97,10 +97,12 @@ trait ChangeloggableTrait
     {
         static::savingMany(function ($model, $relation) {
             $model->preSaveMany($relation);
+            return true;
         });
 
         static::savedMany(function ($model, $relation, $childModels) {
             $model->postSaveMany($relation, $childModels);
+            return true;
         });
 
         static::syncing(function ($model, $relation) {
@@ -112,10 +114,12 @@ trait ChangeloggableTrait
         });
 
         static::deletingOneChild(function ($model, $relation) {
+            return true;
         });
 
-        static::deletedOneChild(function ($model, $relation, $id) {
-            $model->postDeleteOneChild($relation, $id);
+        static::deletedOneChild(function ($model, $relation, $child) {
+            $model->postDeleteOneChild($relation, $child);
+            return true;
         });
     }
 
@@ -128,7 +132,7 @@ trait ChangeloggableTrait
      */
     public function preSaveMany($relation)
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
+        if ($this->isRevisionEnabled()
             && $this->isRelationRevisionable($relation)
         ) {
             // Get only the IDs from the relationship
@@ -149,50 +153,21 @@ trait ChangeloggableTrait
      */
     public function postSaveMany($key, Collection $childModels)
     {
-        if (isset($this->historyLimit) && $this->revisionHistory()->count() >= $this->historyLimit) {
-            $limitReached = true;
-        } else {
-            $limitReached = false;
-        }
-
-        if (isset($this->revisionCleanup)) {
-            $revisionCleanup = $this->revisionCleanup;
-        } else {
-            $revisionCleanup = false;
-        }
-
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)
-            && (!$limitReached || $revisionCleanup)
+        if ($this->isRevisionEnabled()
+            && (!$this->isLimitReached() || $this->isRevisionCleanup())
         ) {
             $revisions = [];
-
-            // @todo Possibly we should instead have a nested array with what child
-            // entity fields to log
-            // $changes_to_record = $this->changedRevisionableFields();
-            // foreach ($changes_to_record as $key => $change) {
             foreach ($childModels as $model) {
-                $revisions[] = [
-                    'revisionable_type' => get_class($this),
-                    'revisionable_id' => $this->getKey(),
-                    'key' => $key,
-                    'old_value' => null,
-                    'new_value' => $model->toJson(),
-                    'user_id' => $this->getUserId(),
-                    'created_at' => new \DateTime(),
-                    'updated_at' => new \DateTime(),
-                ];
+                array_push(
+                    $revisions,
+                    $this->prepareRevision($key, null, $model->toJson())
+                );
             }
 
-            if (count($revisions) > 0) {
-                if ($limitReached && $revisionCleanup) {
-                    $toDelete = $this->revisionHistory()->orderBy('id', 'asc')->limit(count($revisions))->get();
-                    foreach ($toDelete as $delete) {
-                        $delete->delete();
-                    }
-                }
+            if (count($revisions)) {
+                $this->cleanupRevisions(count($revisions));
 
-                $revision = new Revision;
-                \DB::table($revision->getTable())->insert($revisions);
+                $this->dbInsert($revisions);
             }
         }
     }
@@ -267,27 +242,18 @@ trait ChangeloggableTrait
     /**
      * Called after a child model is deleted.
      *
-     * @param  string $key
-     * @param  string $id
+     * @param  string    $key
+     * @param  BaseModel $model
      *
      * @return void
      */
-    public function postDeleteOneChild($key, $id)
+    public function postDeleteOneChild($key, $model)
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)) {
-            $data = [
-                'revisionable_type' => get_class($this),
-                'revisionable_id' => $this->getKey(),
-                'key' => $key,
-                'old_value' => $id,
-                'new_value' => null,
-                'user_id' => $this->getUserId(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
-            ];
+        if ($this->isRevisionEnabled()) {
+            $revision = $this->prepareRevision($key, $model, null);
 
-            $revision = new Revision;
-            \DB::table($revision->getTable())->insert($data);
+            $this->cleanupRevisions();
+            $this->dbInsert($revision);
         }
     }
 

@@ -413,7 +413,7 @@ class ChildEntityController extends ApiController
 
         $this->getRelation($parent)->saveMany($childModels);
 
-        $this->fireModelEvent('savedMany', $parent, [$parent, $this->relationName, $childModels], false);
+        $this->fireModelEvent('savedMany', $parent, [$parent, $this->relationName, $childModels]);
     }
 
     /**
@@ -430,7 +430,7 @@ class ChildEntityController extends ApiController
 
         $childModel->delete();
 
-        $this->fireModelEvent('deletedOneChild', $parent, [$parent, $this->relationName, $childModel], false);
+        $this->fireModelEvent('deletedOneChild', $parent, [$parent, $this->relationName, $childModel]);
     }
 
     /**
