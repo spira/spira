@@ -175,7 +175,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
     /** @var Collection $users */
     static $users = null;
 
-    if (is_null($users)){
+    if (is_null($users)) {
         $users = \App\Models\User::all();
     }
 

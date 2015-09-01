@@ -19,7 +19,7 @@ class ArticleSeeder extends Seeder
     {
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article){
+            ->each(function (Article $article) {
 
                 //add metas
                 $metas = factory(ArticleMeta::class, 2)->make()->all();
