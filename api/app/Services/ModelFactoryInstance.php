@@ -248,13 +248,13 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             }
 
             $this->setEntityType();
-        } else if ($this->factoryInstance instanceof BaseModel) {
+        } elseif ($this->factoryInstance instanceof BaseModel) {
             $entity = $this->factoryInstance;
             $this->modifyEntity($entity);
             $entity->fill($this->customizations);
             $this->entityCount = 1;
             $this->setEntityType();
-        }else{
+        } else {
             $entity = $this->modified();
         }
 
