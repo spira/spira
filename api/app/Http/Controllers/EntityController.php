@@ -98,7 +98,6 @@ abstract class EntityController extends ApiController
         $model = $this->getModel()->newInstance();
         $this->validateRequest($request->all(), $this->getValidationRules());
         $model->fill($request->all());
-        $this->modifyEntity($model);
         $model->save();
 
         return $this->getResponse()
@@ -122,7 +121,6 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->all(), $this->getValidationRules());
 
         $model->fill($request->all());
-        $this->modifyEntity($model);
         $model->save();
 
         return $this->getResponse()
@@ -146,7 +144,6 @@ abstract class EntityController extends ApiController
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
             ->each(function (BaseModel $model) {
-                $this->modifyEntity($model);
                 return $model->save();
             });
 
@@ -171,7 +168,6 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->all(), $this->getValidationRules(), true);
 
         $model->fill($request->all());
-        $this->modifyEntity($model);
         $model->save();
 
         return $this->getResponse()->noContent();
@@ -194,7 +190,6 @@ abstract class EntityController extends ApiController
         $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
             ->each(function (BaseModel $model) {
-                $this->modifyEntity($model);
                 return $model->save();
             });
 
@@ -350,14 +345,5 @@ abstract class EntityController extends ApiController
     protected function getValidationRules()
     {
         return $this->getModel()->getValidationRules();
-    }
-
-    /**
-     * Generic method fired before model save
-     * @param BaseModel $entity
-     * @return void
-     */
-    protected function modifyEntity(BaseModel $entity)
-    {
     }
 }

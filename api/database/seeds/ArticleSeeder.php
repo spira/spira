@@ -17,14 +17,9 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        $users = \App\Models\User::all();
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) use ($users) {
-
-                $user = $users->random(1);
-                $article->author_id = $user->user_id;
-                $article->save();
+            ->each(function (Article $article){
 
                 //add metas
                 $metas = factory(ArticleMeta::class, 2)->make()->all();

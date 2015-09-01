@@ -112,7 +112,9 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('articleId', $object);
+        $this->assertObjectHasAttribute('authorId', $object);
         $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->articleId);
+        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->authorId);
         $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
 
         $this->assertTrue(is_string($object->title));
@@ -135,6 +137,18 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('_tags', $object);
         $this->assertEquals(4, count($object->_tags));
+    }
+
+    public function testGetOneWithNestedAuthor()
+    {
+        $entity = $this->getFactory()->get(Article::class)->create();
+
+        $this->getJson('/articles/'.$entity->article_id, ['with-nested'=> 'author']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_author', $object);
     }
 
     public function testGetOneByFirstPermalink()
@@ -233,6 +247,23 @@ class ArticleTest extends TestCase
         $this->assertStringStartsWith('http', $object->_self);
 
         $this->cleanupDiscussions([Article::find($entity->article_id)]);
+    }
+
+    public function testPutOneNonExistingAuthor()
+    {
+        $entity = $this->getFactory()->get(Article::class)
+            ->customize(['author_id'=>(string)  \Rhumsaa\Uuid\Uuid::uuid4()])
+            ->transformed();
+
+        $this->putJson('/articles/'.$entity['articleId'], $entity);
+        $this->shouldReturnJson();
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(422);
+        $this->assertObjectHasAttribute('authorId', $object->invalid);
+
+        $this->assertEquals('The selected author id is invalid.', $object->invalid->authorId[0]->message);
+        $this->assertEquals('Exists', $object->invalid->authorId[0]->type);
     }
 
     public function testPutMissingIdInBody()

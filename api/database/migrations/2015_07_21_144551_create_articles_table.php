@@ -21,7 +21,7 @@ class CreateArticlesTable extends Migration
                 $table->text('excerpt')->nullable();
                 $table->string('primary_image')->nullable();
                 $table->string('permalink')->index()->nullable();
-                $table->uuid('author_id')->index()->nullable();
+                $table->uuid('author_id')->index();
                 $table->dateTime('first_published')->nullable();
 
                 $table->dateTime('created_at');

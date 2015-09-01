@@ -65,7 +65,7 @@ class Article extends IndexedModel
             'primaryImage' => 'string',
             'status' => 'in:' . implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink',
-            'author_id' => 'uuid|exists:users,user_id',
+            'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
 

@@ -11,7 +11,6 @@ namespace App\Http\Controllers;
 use App\Extensions\JWTAuth\JWTAuth;
 use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
-use Spira\Model\Model\BaseModel;
 
 class ArticleController extends EntityController
 {
@@ -30,21 +29,5 @@ class ArticleController extends EntityController
     {
         parent::__construct($model, $transformer);
         $this->auth = $auth;
-    }
-
-    /**
-     * Generic method fired before model save
-     * @param BaseModel $entity
-     * @return void
-     */
-    protected function modifyEntity(BaseModel $entity)
-    {
-        if (!$entity->exists) {
-            try {
-                $user = $this->auth->getUser();
-                $entity->author_id = $user->user_id;
-            } catch (\Exception $e) {
-            }
-        }
     }
 }
