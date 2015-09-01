@@ -41,7 +41,7 @@ trait HelpersTrait
         $unique = $faker->unique();
 
         $binder = function ($value) {
-            $this->uniqueUserValues = $value;
+            $this->uniques = $value;
         };
 
         $uniqueBinder = $binder->bindTo($unique, $unique);
