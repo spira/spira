@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3759e5cb90134f0b3a3c0aa8d7093b81",
+    "hash": "216994d3fef29777d3eb5069c83ce94a",
     "packages": [
         {
             "name": "beatswitch/lock",
@@ -1864,16 +1864,16 @@
         },
         {
             "name": "laravel/lumen-framework",
-            "version": "v5.1.4",
+            "version": "v5.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/lumen-framework.git",
-                "reference": "b49e8275e47670b70043b50dcce67bd4079a03e9"
+                "reference": "0ec7ffaf1e61a7fb15f24656d2d63ea7e216447d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/b49e8275e47670b70043b50dcce67bd4079a03e9",
-                "reference": "b49e8275e47670b70043b50dcce67bd4079a03e9",
+                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/0ec7ffaf1e61a7fb15f24656d2d63ea7e216447d",
+                "reference": "0ec7ffaf1e61a7fb15f24656d2d63ea7e216447d",
                 "shasum": ""
             },
             "require": {
@@ -1945,7 +1945,7 @@
                 "laravel",
                 "lumen"
             ],
-            "time": "2015-08-31 15:51:22"
+            "time": "2015-07-19 18:25:14"
         },
         {
             "name": "laravel/socialite",
