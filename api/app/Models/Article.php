@@ -79,8 +79,7 @@ class Article extends IndexedModel
         parent::boot();
         static::saving(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
-                $articlePermalink = new ArticlePermalink();
-                $articlePermalink->permalink = $model->permalink;
+                $articlePermalink = new ArticlePermalink(['permalink'=>$model->permalink]);
                 $articlePermalink->save();
             }
             return true;

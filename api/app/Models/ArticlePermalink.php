@@ -24,6 +24,8 @@ class ArticlePermalink extends BaseModel
 
     protected $primaryKey = 'permalink';
 
+    protected $fillable = ['permalink'];
+
     protected static $validationRules = [
         'permalink' => 'string|required',
         'check_entity_id' => 'uuid',
