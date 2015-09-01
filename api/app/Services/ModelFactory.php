@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
+use Spira\Model\Model\BaseModel;
 
 class ModelFactory
 {
@@ -34,7 +35,7 @@ class ModelFactory
      */
     public function get($factoryClass, $definedName = 'default')
     {
-        if ($factoryClass instanceof Collection) {
+        if ($factoryClass instanceof Collection || $factoryClass instanceof BaseModel) {
             $instance = $factoryClass;
         } else {
             $instance = $this->factory->of($factoryClass, $definedName);
