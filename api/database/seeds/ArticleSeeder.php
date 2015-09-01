@@ -27,7 +27,7 @@ class ArticleSeeder extends Seeder
                 $article->metas()->saveMany($metas);
 
                 //add permalinks
-                $permalinks = factory(ArticlePermalink::class, rand(0, 4))->make()->all();
+                $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
                 $article->permalinks()->saveMany($permalinks);
 
                 //add tags
