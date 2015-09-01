@@ -4,6 +4,7 @@ namespace App\Services\Api\Vanilla;
 
 use InvalidArgumentException;
 use Guzzle\Http\Client as GuzzleClient;
+use Illuminate\Support\Facades\Request;
 use Guzzle\Http\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
@@ -71,7 +72,7 @@ class Client
         $this->client = $client;
 
         $this->secret = env('VANILLA_API_SECRET');
-        $this->baseUrl = 'http://'.env('FORUMSERVER_HOST').':'.env('FORUMSERVER_PORT').'/api/';
+        $this->baseUrl = sprintf('http://%s:%s', Request::server('UPSTREAM_WEB_TCP_ADDR'), env('FORUMSERVER_PORT'));
 
         $this->client->setBaseUrl($this->baseUrl);
         $this->client->getEventDispatcher()->addListener(
