@@ -21,10 +21,14 @@ class CreateArticlesTable extends Migration
                 $table->text('excerpt')->nullable();
                 $table->string('primary_image')->nullable();
                 $table->string('permalink')->index()->nullable();
+                $table->uuid('author_id')->index();
                 $table->dateTime('first_published')->nullable();
 
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
+                $table->foreign('author_id')
+                    ->references('user_id')->on(\App\Models\User::getTableName())
+                    ->onDelete('set null');
             }
         );
     }

@@ -8,20 +8,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\JWTAuth\JWTAuth;
 use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
 
 class ArticleController extends EntityController
 {
-    protected $validateIdRule = 'required|string';
+    /**
+     * @var JWTAuth
+     */
+    private $auth;
 
     /**
      * Assign dependencies.
      * @param Article $model
      * @param ArticleTransformer $transformer
+     * @param JWTAuth $auth
      */
-    public function __construct(Article $model, ArticleTransformer $transformer)
+    public function __construct(Article $model, ArticleTransformer $transformer, JWTAuth $auth)
     {
         parent::__construct($model, $transformer);
+        $this->auth = $auth;
     }
 }

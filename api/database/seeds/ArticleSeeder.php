@@ -20,7 +20,6 @@ class ArticleSeeder extends Seeder
         factory(Article::class, 50)
             ->create()
             ->each(function (Article $article) {
-                $article->save();
 
                 //add metas
                 $metas = factory(ArticleMeta::class, 2)->make()->all();
@@ -33,6 +32,7 @@ class ArticleSeeder extends Seeder
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
+
 
                 //create & link images
                 factory(Image::class, 5)
