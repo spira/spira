@@ -293,6 +293,6 @@ class Client
         //try the forumserver first, then default to upstream (used by the runtime)
         $host = strlen(env('FORUMSERVER_HOST') > 0) ? env('FORUMSERVER_HOST') : env('UPSTREAM_WEB_TCP_ADDR');
 
-        return sprintf('http://%s:%s', $host, env('FORUMSERVER_PORT'));
+        return sprintf('http://%s:%s/api/', $host, env('FORUMSERVER_PORT'));
     }
 }
