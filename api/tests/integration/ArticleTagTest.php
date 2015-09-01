@@ -10,7 +10,6 @@ use Spira\Model\Collection\Collection;
  */
 class ArticleTagTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -28,13 +27,13 @@ class ArticleTagTest extends TestCase
     protected function addTagsToArticles($articles, $same = false)
     {
         $tags = null;
-        if ($same){
+        if ($same) {
             /** @var Collection $tags */
             $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
         }
         /** @var Article[] $articles */
         foreach ($articles as $article) {
-            if (!$same){
+            if (!$same) {
                 /** @var Collection $tags */
                 $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
             }
@@ -110,7 +109,7 @@ class ArticleTagTest extends TestCase
             ->count(5)
             ->create();
 
-        $this->addTagsToArticles($articles,true);
+        $this->addTagsToArticles($articles, true);
 
         $entity = Article::find($articles->first()->article_id);
         $this->assertEquals(4, $entity->tags->count());
@@ -153,7 +152,7 @@ class ArticleTagTest extends TestCase
         $this->assertObjectHasAttribute('tagId', $object2);
         $this->assertObjectHasAttribute('tag', $object2);
 
-        $this->assertEquals($object,$object2);
+        $this->assertEquals($object, $object2);
     }
 
     public function testPostTagGlobal()
