@@ -1,22 +1,23 @@
-namespace common.services.imageUpload {
+namespace common.services.image {
 
     let seededChance = new Chance(1),
-        imageUploadService:common.services.imageUpload.ImageService,
+        imageService:common.services.image.ImageService,
         $httpBackend:ng.IHttpBackendService,
+        $q:ng.IQService,
         ngRestAdapter:NgRestAdapter.INgRestAdapterService
     ;
 
-    describe('Image Upload Service', () => {
+    describe('Image Service', () => {
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _imageUploadService_, _$q_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _imageService_, _$q_, _ngRestAdapter_) => {
 
-                if (!imageUploadService) { // Don't rebind, so each test gets the singleton
+                if (!imageService) { // Don't rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
-                    imageUploadService = _imageUploadService_;
+                    imageService = _imageService_;
                     $q = _$q_;
                     ngRestAdapter = _ngRestAdapter_;
                 }
