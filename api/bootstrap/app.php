@@ -58,7 +58,8 @@ $app->singleton(
 */
 
 $app->middleware([
-    'App\Http\Middleware\TransformInputDataMiddleware'
+    App\Http\Middleware\UserResolverMiddleware::class,
+    App\Http\Middleware\TransformInputDataMiddleware::class,
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 //     // 'Illuminate\Session\Middleware\StartSession',
