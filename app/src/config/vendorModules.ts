@@ -18,6 +18,7 @@ namespace config.vendorModules {
         'ngJwtAuth', // json web token authentication - https://github.com/spira/angular-jwt-auth
         'infinite-scroll', //infinite scrolling - https://github.com/sroze/ngInfiniteScroll
         'ui.validate', // Field validator - https://github.com/angular-ui/ui-validate
-    ]);
+        'ngFileUpload', // File uploader - https://github.com/danialfarid/ng-file-upload
+    ])
 
 }

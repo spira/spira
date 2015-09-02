@@ -1,4 +1,10 @@
 <h2>Media</h2>
 
+<button type="file"
+        ngf-select="MediaController.uploadFiles($file)"
+        multiple="multiple"
+        accept="image/*"
+        ngf-max-height="1000"
+        ngf-max-size="20MB">
+    Select File</button>
 
-<pre highlight="">{{ArticlesController.allMedia|json}}</pre>

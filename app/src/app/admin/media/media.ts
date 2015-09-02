@@ -5,13 +5,14 @@ namespace app.admin.media {
     export class MediaConfig {
 
         static $inject = ['stateHelperServiceProvider'];
-        constructor(private stateHelperServiceProvider){
+
+        constructor(private stateHelperServiceProvider) {
 
             let state:global.IState = {
                 url: '/media',
                 views: {
                     "main@app.admin": {
-                        controller: namespace+'.controller',
+                        controller: namespace + '.controller',
                         controllerAs: 'MediaController',
                         templateUrl: 'templates/app/admin/media/media.tpl.html'
                     }
@@ -38,8 +39,33 @@ namespace app.admin.media {
 
     export class MediaController {
 
-        static $inject = ['allMedia'];
-        constructor(public allMedia:any[]) {
+        static $inject = ['allMedia', 'imageService'];
+
+        constructor(public allMedia:any[], private imageService:common.services.image.ImageService) {
+
+        }
+
+        /**
+         * Upload files
+         * @param files
+         */
+        public uploadFiles(files:File[]):void {
+
+            let onSuccess = (image:common.models.Image) => {
+                console.log('images ' + image.alt + 'uploaded.');
+            };
+
+            let onNotify = (progressPercentage:number) => {
+                console.log('progress: ' + progressPercentage + '% ');
+            };
+
+            this.imageService.upload({
+                files: files
+            })
+            .then(onSuccess, null, onNotify)
+            .catch(function (err) {
+                console.error(err);
+            });
 
         }
 
@@ -47,6 +73,6 @@ namespace app.admin.media {
 
     angular.module(namespace, [])
         .config(MediaConfig)
-        .controller(namespace+'.controller', MediaController);
+        .controller(namespace + '.controller', MediaController);
 
 }
