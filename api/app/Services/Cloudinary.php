@@ -6,7 +6,6 @@ use App\Exceptions\NotImplementedException;
 
 class Cloudinary
 {
-
     public $apiKey;
     protected $apiSecret;
 
@@ -15,10 +14,9 @@ class Cloudinary
         $this->apiKey = env('CLOUDINARY_API_KEY');
         $this->apiSecret = env('CLOUDINARY_API_SECRET');
 
-        if (!$this->apiSecret || !$this->apiKey){
+        if (!$this->apiSecret || !$this->apiKey) {
             throw new NotImplementedException("Cloudinary configuration variables have not been set");
         }
-
     }
 
     /**
@@ -28,10 +26,8 @@ class Cloudinary
      */
     public function signUploadString($uploadString)
     {
-
         $signaturePlain = sprintf('%s%s', $uploadString, $this->apiSecret);
 
         return sha1($signaturePlain);
     }
-
 }
