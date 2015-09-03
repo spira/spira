@@ -74,7 +74,6 @@ class ImageTest extends TestCase
         $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->imageId);
         $this->assertTrue(strlen($object->imageId) === 36, 'UUID has 36 chars');
 
-        $this->assertTrue(is_string($object->publicId));
         $this->assertTrue(is_string($object->format));
         $this->assertTrue(is_string($object->alt));
         $this->assertTrue(is_string($object->folder));
