@@ -13,6 +13,7 @@ namespace common.services.image {
         api_key: string;
         timestamp: number;
         signature: string;
+        type: string;
         public_id?: string;
         resource_type?: string;
         _inputOptions?:IImageUploadOptions;
