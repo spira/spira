@@ -2,6 +2,15 @@ namespace config.vendorModules {
 
     export const namespace = 'config.vendorModules';
 
+    class CloudinaryConfig {
+
+        constructor() {
+
+            //for some dumb reason cloudinary angular is dependent on jquery. Hopefully they support native angular at some point
+            (<any>$).cloudinary.config().cloud_name = 'spira';
+        }
+    }
+
     angular.module(namespace, [
         'ngMessages', //nice validation messages
         'ngMaterial', //angular material
@@ -19,6 +28,8 @@ namespace config.vendorModules {
         'infinite-scroll', //infinite scrolling - https://github.com/sroze/ngInfiniteScroll
         'ui.validate', // Field validator - https://github.com/angular-ui/ui-validate
         'ngFileUpload', // File uploader - https://github.com/danialfarid/ng-file-upload
+        'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
     ])
+    .config(CloudinaryConfig)
 
 }

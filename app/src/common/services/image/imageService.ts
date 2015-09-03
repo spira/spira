@@ -158,7 +158,7 @@ namespace common.services.image {
                 timestamp: moment().unix(),
                 public_id: this.ngRestAdapter.uuid(),
                 resource_type: 'image', // 'image', 'raw', 'auto'
-                type: 'authenticated', //'upload', 'private', 'authenticated'.
+                type: 'upload', //'upload', 'private', 'authenticated'.
                 _inputOptions: inputOptions, //include the raw object for other consumers
             };
 

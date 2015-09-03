@@ -6,6 +6,8 @@ namespace app.admin.media {
         page:number;
     }
 
+    const perPage = 12;
+
     export class MediaConfig {
 
         static $inject = ['stateHelperServiceProvider'];
@@ -26,7 +28,7 @@ namespace app.admin.media {
                 },
                 resolve: /*@ngInject*/{
                     imagesPaginator: (imageService:common.services.image.ImageService) => {
-                        return imageService.getImagesPaginator().setCount(12);
+                        return imageService.getImagesPaginator().setCount(perPage);
                     },
                     initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
                         return imagesPaginator.getPage($stateParams.page);
@@ -93,6 +95,14 @@ namespace app.admin.media {
             let onSuccess = (image:common.models.Image) => {
                 console.log('image uploaded.', image);
                 this.progressBar.visible = false;
+
+                if (this.images.length >= perPage){
+                    this.images.pop();
+                }
+
+                this.images.unshift(image);
+                this.imagesPaginator.setCount(this.imagesPaginator.getCount() + 1);
+
             };
 
             let onNotify = (notification:common.services.image.IImageNotification) => {
