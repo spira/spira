@@ -47,20 +47,21 @@ namespace app.admin.media {
 
         /**
          * Upload files
-         * @param files
+         * @param file
          */
-        public uploadFiles(files:File[]):void {
+        public uploadFiles(file:File):void {
 
             let onSuccess = (image:common.models.Image) => {
-                console.log('images ' + image.alt + 'uploaded.');
+                console.log('image uploaded.', image);
             };
 
             let onNotify = (progressPercentage:number) => {
                 console.log('progress: ' + progressPercentage + '% ');
             };
 
-            this.imageService.upload({
-                files: files
+            this.imageService.uploadImage({
+                file: file,
+                alt: "test image",
             })
             .then(onSuccess, null, onNotify)
             .catch(function (err) {
