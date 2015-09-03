@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Database\Seeder;
-
-class TestEntitySeeder extends Seeder
+class TestEntitySeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.

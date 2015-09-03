@@ -1,12 +1,11 @@
 <?php
 
 use App\Models\User;
-use App\Models\UserCredential;
-use App\Models\UserProfile;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use App\Models\UserProfile;
+use App\Models\UserCredential;
 
-class UserStorySeeder extends Seeder
+class UserStorySeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.

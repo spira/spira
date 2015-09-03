@@ -25,8 +25,8 @@ class CloudinaryController extends ApiController
 
     public function getSignature(Request $request)
     {
-        $signatureString = $request->getQueryString();
-        $signedString = $this->cloudinary->signUploadString($signatureString);
+        $signatureParams = $request->query();
+        $signedString = $this->cloudinary->signRequestParams($signatureParams);
 
         $responseObject = [
             'signature' => $signedString,
