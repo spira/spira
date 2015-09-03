@@ -13,6 +13,16 @@ use Spira\Responder\Paginator\RangeRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        //for some reason this part of is not shown as covered, though it really is
+        // @codeCoverageIgnoreStart.
+        $this->app->make('validator')->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
+            return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
+        });
+        // @codeCoverageIgnoreEnd
+    }
+
     /**
      * Register any application services.
      *
@@ -24,12 +34,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConnectionResolverInterface::class, 'db');
         $this->app->bind(TransformerInterface::class, EloquentModelTransformer::class);
         $this->app->bind(PaginatedRequestDecoratorInterface::class, RangeRequest::class);
-
-        //for some reason this part of is not shown as covered, though it really is
-        // @codeCoverageIgnoreStart
-        Validator::resolver(function ($translator, $data, $rules, $messages) {
-            return new SpiraValidator($translator, $data, $rules, $messages);
-        });
-        // @codeCoverageIgnoreEnd
     }
 }
