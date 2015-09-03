@@ -4,7 +4,6 @@ namespace common.models {
     export class Image extends AbstractModel{
 
         public imageId:string = undefined;
-        public publicId:string = undefined;
         public version:number = undefined;
         public folder:string = undefined;
         public format:string = undefined;

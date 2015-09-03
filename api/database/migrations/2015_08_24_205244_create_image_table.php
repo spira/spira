@@ -16,14 +16,13 @@ class CreateImageTable extends Migration
     {
         Schema::create(Image::getTableName(), function (Blueprint $table) {
                 $table->uuid('image_id')->primary();
-                $table->string('public_id', 255);
                 $table->integer('version');
                 $table->string('format', 4);
                 $table->string('folder', 10)->nullable();
                 $table->string('alt', 255);
                 $table->string('title', 255)->nullable();
 
-                $table->unique(['public_id','version']);
+                $table->unique(['image_id','version']);
 
             }
         );

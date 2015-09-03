@@ -150,7 +150,6 @@ $factory->define(App\Models\Tag::class, function (\Faker\Generator $faker) {
 $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
     return [
             'image_id' => $faker->uuid,
-            'public_id' => $faker->unique()->lexify('????????????????????'),
             'version' => $faker->dateTimeThisDecade()->getTimestamp(),
             'folder' => $faker->lexify('????????'),
             // http://cloudinary.com/documentation/image_transformations#format_conversion

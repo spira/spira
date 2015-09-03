@@ -6,7 +6,6 @@
 
         let tagData = {
             imageId: seededChance.guid(),
-            publicId : seededChance.string({length: 20}),
             version : Math.floor(chance.date().getTime() / 1000),
             folder : seededChance.word(),
             format : seededChance.pick(['gif', 'jpg', 'png']),

@@ -239,13 +239,14 @@ namespace common.services.image {
          */
         private linkImageToApi(uploadOptions:ICloudinaryUpload, cloudinaryResponse:ng.IHttpPromiseCallbackArg<any>, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
 
-            let imageModel = this.newImage();
-            imageModel.publicId = uploadOptions.public_id;
-            imageModel.version = cloudinaryResponse.data.version;
-            imageModel.format = cloudinaryResponse.data.format;
-            imageModel.alt = uploadOptions._inputOptions.alt;
-            imageModel.title = _.isString(uploadOptions._inputOptions.title) ? uploadOptions._inputOptions.title : imageModel.alt;
-            imageModel.imageId = imageModel.publicId; //@todo remove imageId or publicId as they are duplicates
+            let imageModel = ImageService.imageFactory({
+                imageId: uploadOptions.public_id,
+                version: cloudinaryResponse.data.version,
+                format: cloudinaryResponse.data.format,
+                alt: uploadOptions._inputOptions.alt,
+                title: _.isString(uploadOptions._inputOptions.title) ? uploadOptions._inputOptions.title : uploadOptions._inputOptions.alt,
+            });
+
 
             deferredUploadProgress.notify({
                 event: 'api_link',

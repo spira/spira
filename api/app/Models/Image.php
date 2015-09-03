@@ -23,11 +23,10 @@ class Image extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['image_id','public_id', 'version', 'format', 'folder', 'alt', 'title'];
+    protected $fillable = ['image_id','version', 'format', 'folder', 'alt', 'title'];
 
     protected static $validationRules = [
         'image_id' => 'required|uuid',
-        'public_id' => 'required|string|alphaDashSpace|max:255',
         'version' => 'required|numeric',
         'format' => 'required|string',
         'folder' => 'string|max:10',
