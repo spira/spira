@@ -2,6 +2,10 @@ namespace app.admin.media {
 
     export const namespace = 'app.admin.media';
 
+    export interface IMediaStateParams extends ng.ui.IStateParamsService {
+        page:number;
+    }
+
     export class MediaConfig {
 
         static $inject = ['stateHelperServiceProvider'];
@@ -9,7 +13,10 @@ namespace app.admin.media {
         constructor(private stateHelperServiceProvider) {
 
             let state:global.IState = {
-                url: '/media',
+                url: '/media/{page:int}',
+                params: {
+                    page: 1
+                },
                 views: {
                     "main@app.admin": {
                         controller: namespace + '.controller',
@@ -18,8 +25,11 @@ namespace app.admin.media {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    allMedia: () => {
-                        return [];
+                    imagesPaginator: (imageService:common.services.image.ImageService) => {
+                        return imageService.getImagesPaginator().setCount(12);
+                    },
+                    initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
+                        return imagesPaginator.getPage($stateParams.page);
                     }
                 },
                 data: {
@@ -37,11 +47,38 @@ namespace app.admin.media {
 
     }
 
+    export interface IProgressBar {
+        statusText: string;
+        visible: boolean;
+        mode: string;
+        value: number;
+    }
+
     export class MediaController {
 
-        static $inject = ['allMedia', 'imageService'];
+        static $inject = ['imageService', 'imagesPaginator', 'initialImages', '$stateParams'];
 
-        constructor(public allMedia:any[], private imageService:common.services.image.ImageService) {
+        public progressBar:IProgressBar = {
+            statusText: 'Saving...',
+            visible: false,
+            mode: 'query',
+            value: 0
+        };
+
+        public images:common.models.Image[] = [];
+        public pages:number[] = [];
+        public currentPageIndex:number;
+
+        constructor(private imageService:common.services.image.ImageService,
+                    private imagesPaginator:common.services.pagination.Paginator,
+                    images:common.models.Image[],
+                    public $stateParams:IMediaStateParams) {
+
+            this.images = images; //initialise the first images
+
+            this.pages = imagesPaginator.getPages();
+
+            this.currentPageIndex = this.$stateParams.page - 1;
 
         }
 
@@ -51,22 +88,34 @@ namespace app.admin.media {
          */
         public uploadFiles(file:File):void {
 
+            this.progressBar.visible = true;
+
             let onSuccess = (image:common.models.Image) => {
                 console.log('image uploaded.', image);
+                this.progressBar.visible = false;
             };
 
             let onNotify = (notification:common.services.image.IImageNotification) => {
                 console.log('progress notification: ', notification);
+                this.progressBar.statusText = notification.message;
+                switch (notification.event) {
+                    case 'cloudinary_upload':
+                        this.progressBar.mode = 'determinate';
+                        this.progressBar.value = notification.progressValue;
+                        break;
+                    default:
+                        this.progressBar.mode = 'indeterminate';
+                }
             };
 
             this.imageService.uploadImage({
                 file: file,
                 alt: "test image",
             })
-            .then(onSuccess, null, onNotify)
-            .catch(function (err) {
-                console.error(err);
-            });
+                .then(onSuccess, null, onNotify)
+                .catch(function (err) {
+                    console.error(err);
+                });
 
         }
 

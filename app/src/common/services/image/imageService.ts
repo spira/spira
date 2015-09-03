@@ -35,22 +35,21 @@ namespace common.services.image {
     }
 
     export interface IImageDeferred<T> extends ng.IDeferred<T> {
-        notify(state: IImageNotification): void;
+        notify(state:IImageNotification): void;
         promise: IImageUploadPromise<T>;
     }
 
-
-
     export class ImageService {
 
-        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http'];
+        private cachedPaginator:common.services.pagination.Paginator;
+
+        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http', 'paginationService'];
 
         constructor(private ngFileUpload:ng.angularFileUpload.IUploadService,
                     private $q:ng.IQService,
                     private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
-                    private $http:ng.IHttpService
-        ) {
-
+                    private $http:ng.IHttpService,
+                    private paginationService:common.services.pagination.PaginationService) {
 
         }
 
@@ -87,14 +86,12 @@ namespace common.services.image {
 
             let deferredUploadProgress:IImageDeferred<common.models.Image> = this.$q.defer();
 
-            let imageUploadPromise = this.signCloudinaryUpload(cloudinaryOptions, deferredUploadProgress)
+            this.signCloudinaryUpload(cloudinaryOptions, deferredUploadProgress)
                 .then((signedCloudinaryOptions:ICloudinaryUpload) => this.uploadToCloudinary(signedCloudinaryOptions, deferredUploadProgress))
                 .then((cloudinaryResponse) => this.linkImageToApi(cloudinaryOptions, cloudinaryResponse, deferredUploadProgress))
-            ;
-
-            imageUploadPromise.then((image:common.models.Image) => {
-                deferredUploadProgress.resolve(image);
-            });
+                .then((image:common.models.Image) => {
+                    deferredUploadProgress.resolve(image);
+                });
 
             return deferredUploadProgress.promise;
         }
@@ -123,7 +120,6 @@ namespace common.services.image {
                     });
                 });
 
-
             uploadPromise.finally(() => {
                 restoreAuthFunction();
             });
@@ -131,7 +127,6 @@ namespace common.services.image {
             return uploadPromise;
 
         }
-
 
         /**
          *
@@ -220,7 +215,7 @@ namespace common.services.image {
                 message: "Signing request for cloudinary",
             });
 
-            return this.ngRestAdapter.get('/cloudinary/signature?'+signableString)
+            return this.ngRestAdapter.get('/cloudinary/signature?' + signableString)
                 .then((res:any) => {
 
                     uploadOptions.signature = res.data.signature;
@@ -248,18 +243,34 @@ namespace common.services.image {
                 title: _.isString(uploadOptions._inputOptions.title) ? uploadOptions._inputOptions.title : uploadOptions._inputOptions.alt,
             });
 
-
             deferredUploadProgress.notify({
                 event: 'api_link',
                 message: "Uploading to API",
             });
 
-            return this.ngRestAdapter.put('/images/'+imageModel.imageId, imageModel.getAttributes()).then(() => {
+            return this.ngRestAdapter.put('/images/' + imageModel.imageId, imageModel.getAttributes()).then(() => {
                 imageModel.setExists(true);
                 return imageModel;
             });
 
         }
+
+        /**
+         * Get the image paginator
+         * @returns {Paginator}
+         */
+        public getImagesPaginator():common.services.pagination.Paginator {
+
+            //cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator) {
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/images')
+                    .setModelFactory(ImageService.imageFactory);
+            }
+
+            return this.cachedPaginator;
+        }
+
     }
 
     angular.module(namespace, [])

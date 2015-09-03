@@ -1,4 +1,4 @@
-<h2>Media</h2>
+<h2>Add Image</h2>
 
 <button type="file"
         ngf-select="MediaController.uploadFiles($file)"
@@ -8,3 +8,52 @@
         ngf-max-size="20MB">
     Select File</button>
 
+<div ng-if="MediaController.progressBar.visible">
+    <h2>{{MediaController.progressBar.statusText}}</h2>
+    <md-progress-linear md-mode="{{MediaController.progressBar.mode}}" value="{{MediaController.progressBar.value}}"></md-progress-linear>
+</div>
+
+<div layout-padding>
+
+    <h2>Images</h2>
+
+    <md-grid-list
+            md-cols-sm="1"
+            md-cols-md="2"
+            md-cols-gt-md="4"
+            md-row-height="1:1"
+            md-gutter="12px"
+            md-gutter-gt-sm="8px">
+
+        <md-grid-tile
+                ng-repeat="image in MediaController.images"
+                ui-sref="app.admin.media.image({permalink: image.imageId})"
+                md-ink-ripple style="cursor:pointer">
+
+            <md-grid-tile-header>
+                <h3>{{image.alt | uppercase}}</h3>
+            </md-grid-tile-header>
+
+            <img width="100%" ng-src="{{image.primaryImage}}" alt="{{image.title}}">
+
+            <md-grid-tile-footer ng-if="!!image.title">
+                <h3>{{image.title}}</h3>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+
+    </md-grid-list>
+
+</div>
+
+
+<md-toolbar>
+    <md-tabs md-selected="MediaController.currentPageIndex">
+
+        <md-tab ng-repeat="pageNumber in MediaController.pages" ui-sref="app.admin.media({page:pageNumber})">
+            <md-tab-label>
+                <span>{{pageNumber}}</span>
+            </md-tab-label>
+        </md-tab>
+
+    </md-tabs>
+</md-toolbar>
