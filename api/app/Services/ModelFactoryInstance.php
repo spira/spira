@@ -22,8 +22,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $makeVisible;
     private $showOnly;
     private $hide;
-    private $entityType;
     private $appends = [];
+
+    /**
+     * @var BaseModel|BaseModel[]|null
+     */
+    protected $entities;
 
     /**
      * New model instance.
@@ -141,15 +145,26 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Get the built entities.
      *
-     * @return mixed
+     * @param array $attributes
+     * @return Collection|BaseModel|\Spira\Model\Model\BaseModel[]
      */
     private function built(array $attributes = [])
     {
-        $entity = $this->factoryInstance
-            ->times($this->entityCount)
-            ->make(array_merge($attributes, $this->customizations));
+        if (is_null($this->entities)){
+            $this->entities = $this->factoryInstance
+                ->times($this->entityCount)
+                ->make(array_merge($attributes, $this->customizations));
 
-        $this->setEntityType();
+            return $this->entities;
+        }
+        $entity = $this->entities;
+        if ($entity instanceof Collection){
+            if ($this->entityCount === 1){
+                $entity = $entity->first();
+            }else{
+                $entity = $entity->slice(0, $this->entityCount);
+            }
+        }
 
         return $entity;
     }
@@ -157,17 +172,18 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Set if the entity is a single item or a collection.
      *
-     * @return void
+     * @return string
      */
-    protected function setEntityType()
+    protected function getEntityType()
     {
-        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
+        return ($this->entityCount > 1) ? 'collection' : 'item';
     }
 
     /**
      * Modify an entity.
      *
-     * @param $entity
+     * @param BaseModel $entity
+     * @return BaseModel
      */
     private function modifyEntity($entity)
     {
@@ -204,6 +220,10 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             }
         }
 
+        if ($this->customizations){
+            $entity->fill($this->customizations);
+        }
+
         return $entity;
     }
 
@@ -215,7 +235,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function modified()
     {
         $entity = $this->built();
-        switch ($this->entityType) {
+        switch ($this->getEntityType()) {
             case 'item':
                 $entity = $this->modifyEntity($entity);
                 break;
@@ -238,30 +258,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function transformed()
     {
-        if ($this->factoryInstance instanceof Collection) {
-            $entity = $this->factoryInstance->slice(0, $this->entityCount);
-            foreach ($entity as $piece) {
-                if ($piece instanceof BaseModel) {
-                    $this->modifyEntity($piece);
-                    $piece->fill($this->customizations);
-                }
-            }
-
-            $this->setEntityType();
-        } elseif ($this->factoryInstance instanceof BaseModel) {
-            $entity = $this->factoryInstance;
-            $this->modifyEntity($entity);
-            $entity->fill($this->customizations);
-            $this->entityCount = 1;
-            $this->setEntityType();
-        } else {
-            $entity = $this->modified();
-        }
+        $entity = $this->modified();
 
         if (!$this->transformer) {
             $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
-        $method = 'transform'.ucfirst($this->entityType);
+        $method = 'transform'.ucfirst($this->getEntityType());
         $transformedEntity = $this->transformer->{$method}($entity);
 
         $transformedEntity = array_except($transformedEntity, $this->hide); //allow the definer to specify transformed values to hide
@@ -306,35 +308,42 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * Create a collection of models.
      * Shortcut for FactoryBuilder
      * @param  array  $attributes
-     * @return mixed
+     * @return $this
      */
     public function make(array $attributes = [])
     {
-        if ($this->factoryInstance instanceof Collection) {
-            throw new \InvalidArgumentException('Make operation can not be done for Collection');
-        }
-
-        return $this->built($attributes);
+        $this->entities = $this->built($attributes);
+        return $this;
     }
 
     /**
      * Create a collection of models and persist them to the database.
      *
      * @param  array  $attributes
-     * @return mixed
+     * @return $this
      */
     public function create(array $attributes = [])
     {
-        $results = $this->make($attributes);
+        $this->make($attributes);
 
         if ($this->entityCount === 1) {
-            $results->save();
+            $this->entities->save();
         } else {
-            foreach ($results as $result) {
+            foreach ($this->entities as $result) {
                 $result->save();
             }
         }
 
-        return $results;
+        return $this;
     }
+
+    /**
+     * @return null|BaseModel|BaseModel[]|Collection
+     */
+    public function getEntities()
+    {
+        return $this->entities;
+    }
+
+
 }
