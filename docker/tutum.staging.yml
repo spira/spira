@@ -2,6 +2,22 @@ cache:
   image: 'redis:3.0.3'
 elasticsearch:
   image: 'elasticsearch:1.7.1'
+lbhaproxy:
+  image: 'tutum/haproxy:0.1'
+  command: '/run.sh'
+  deployment_strategy: high_availability
+  environment:
+    - 'STATS_AUTH=<username>:<password>'
+    - 'MODE=tcp'
+  expose:
+    - '443'
+  links:
+    - web
+  ports:
+    - '80:80'
+    - '1936:1936'
+  roles:
+    - global  
 php:
   image: 'spira/docker-hhvm:latest'
   environment:
