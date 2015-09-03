@@ -102,6 +102,7 @@ spira:
   deployment_strategy: high_availability
   ports:
     - '80'
+  target_num_containers: 5  
   volumes:
     - /data
 web:
@@ -118,5 +119,6 @@ web:
   ports:
     - '80:80'
   privileged: true
+  target_num_containers: 4
   volumes_from:
     - spira
