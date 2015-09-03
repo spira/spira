@@ -150,7 +150,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     private function built(array $attributes = [])
     {
-        if (is_null($this->entities)){
+        if (is_null($this->entities)) {
             $this->entities = $this->factoryInstance
                 ->times($this->entityCount)
                 ->make(array_merge($attributes, $this->customizations));
@@ -158,10 +158,10 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             return $this->entities;
         }
         $entity = $this->entities;
-        if ($entity instanceof Collection){
-            if ($this->entityCount === 1){
+        if ($entity instanceof Collection) {
+            if ($this->entityCount === 1) {
                 $entity = $entity->first();
-            }else{
+            } else {
                 $entity = $entity->slice(0, $this->entityCount);
             }
         }
@@ -220,7 +220,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             }
         }
 
-        if ($this->customizations){
+        if ($this->customizations) {
             $entity->fill($this->customizations);
         }
 
@@ -344,6 +344,4 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         return $this->entities;
     }
-
-
 }
