@@ -111,7 +111,7 @@ namespace common.services.image {
             let uploadPromise = this.ngFileUpload.upload(uploadOptions)
                 .progress(function (evt:any) {
                     var progressPercentage = (<any>_).round(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+
                     deferredUploadProgress.notify({
                         event: 'cloudinary_upload',
                         message: "Uploading to cloudinary",

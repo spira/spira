@@ -1,16 +1,46 @@
 <h2>Add Image</h2>
 
-<button type="file"
-        ngf-select="MediaController.uploadFiles($file)"
-        multiple="multiple"
-        accept="image/*"
-        ngf-max-height="1000"
-        ngf-max-size="20MB">
-    Select File</button>
+<form name="imageUploadForm">
+    <div layout layout-sm="column">
+
+        <md-input-container>
+            <label>Alt</label>
+            <input ng-model="MediaController.uploadImage.alt" required>
+        </md-input-container>
+
+        <md-input-container>
+            <label>Title</label>
+            <input ng-model="MediaController.uploadImage.title">
+        </md-input-container>
+
+        <md-input-container>
+
+            <input type="file"
+                   ng-model="MediaController.uploadImage.file"
+                   name="file"
+                   ngf-select
+                   accept="image/*"
+                   ngf-max-height="1000"
+                   ngf-max-size="20MB"
+                   required
+                >
+
+            <img ng-show="imageUploadForm.file.$valid" ngf-src="MediaController.uploadImage.file">
+
+        </md-input-container>
+
+        <md-button ng-click="MediaController.uploadFiles(MediaController.uploadImage)" class="md-raised md-primary">Primary</md-button>
+
+    </div>
+
+
+</form>
+
 
 <div ng-if="MediaController.progressBar.visible">
     <h2>{{MediaController.progressBar.statusText}}</h2>
-    <md-progress-linear md-mode="{{MediaController.progressBar.mode}}" value="{{MediaController.progressBar.value}}"></md-progress-linear>
+    <md-progress-linear md-mode="{{MediaController.progressBar.mode}}"
+                        value="{{MediaController.progressBar.value}}"></md-progress-linear>
 </div>
 
 <div layout-padding id="media">
@@ -35,7 +65,7 @@
             </md-grid-tile-header>
 
             <cl-image width="100%" public-id="{{image.imageId}}" format="{{image.format}}">
-                <cl-transformation height="300" width="300" crop="fill" gravity="north" />
+                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
             </cl-image>
 
             <md-grid-tile-footer ng-if="!!image.title">

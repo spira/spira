@@ -70,6 +70,7 @@ namespace app.admin.media {
         public images:common.models.Image[] = [];
         public pages:number[] = [];
         public currentPageIndex:number;
+        public uploadImage:common.services.image.IImageUploadOptions;
 
         constructor(private imageService:common.services.image.ImageService,
                     private imagesPaginator:common.services.pagination.Paginator,
@@ -86,11 +87,13 @@ namespace app.admin.media {
 
         /**
          * Upload files
-         * @param file
+         * @param image
          */
-        public uploadFiles(file:File):void {
+        public uploadFiles(image:common.services.image.IImageUploadOptions):void {
 
             this.progressBar.visible = true;
+
+            debugger;
 
             let onSuccess = (image:common.models.Image) => {
                 console.log('image uploaded.', image);
@@ -106,7 +109,7 @@ namespace app.admin.media {
             };
 
             let onNotify = (notification:common.services.image.IImageNotification) => {
-                console.log('progress notification: ', notification);
+
                 this.progressBar.statusText = notification.message;
                 switch (notification.event) {
                     case 'cloudinary_upload':
@@ -118,10 +121,7 @@ namespace app.admin.media {
                 }
             };
 
-            this.imageService.uploadImage({
-                file: file,
-                alt: "test image",
-            })
+            this.imageService.uploadImage(image)
                 .then(onSuccess, null, onNotify)
                 .catch(function (err) {
                     console.error(err);
