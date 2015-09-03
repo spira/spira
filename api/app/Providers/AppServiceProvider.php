@@ -15,12 +15,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        //for some reason this part of is not shown as covered, though it really is
-        // @codeCoverageIgnoreStart.
         $this->app->make('validator')->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
             return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
         });
-        // @codeCoverageIgnoreEnd
     }
 
     /**
