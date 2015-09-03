@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class CloudinaryController extends ApiController
 {
-
     /** @var Cloudinary */
     protected $cloudinary;
 
@@ -38,7 +37,6 @@ class CloudinaryController extends ApiController
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($responseObject);
-
     }
 
 
