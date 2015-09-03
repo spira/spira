@@ -13,5 +13,5 @@ have their emails dispatched.
 
     + Body
 
-            {!! $factory->get(App::make('App\Services\Datasets\Timezones')->all())->count(5)->json() !!}
+            {!! json_encode(App::make('App\Services\Datasets\Timezones')->all()) !!}
 

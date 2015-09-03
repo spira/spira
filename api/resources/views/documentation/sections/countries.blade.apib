@@ -11,5 +11,5 @@ Users can set their country in their user profile.
 
     + Body
 
-            {!! $factory->get(App::make('App\Services\Datasets\Countries')->all())->count(5)->json() !!}
+            {!! json_encode(App::make('App\Services\Datasets\Countries')->all()) !!}
 
