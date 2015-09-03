@@ -13,6 +13,7 @@
 
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Spira\Model\Collection\Collection;
 
 // Ensure that the custom validation rules are registered so the factories also
 // have them available.
@@ -43,7 +44,7 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 });
 
 
-$factory->define(App\Models\User::class, function ($faker) {
+$factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'user_id' => $faker->uuid,
         'username' => $faker->unique()->userName,
@@ -58,7 +59,7 @@ $factory->define(App\Models\User::class, function ($faker) {
     ];
 });
 
-$factory->define(App\Models\UserProfile::class, function ($faker) {
+$factory->define(App\Models\UserProfile::class, function (\Faker\Generator $faker) {
     return [
         'phone' => $faker->optional(0.5)->phoneNumber,
         'mobile' => $faker->optional(0.5)->phoneNumber,
@@ -171,6 +172,13 @@ $factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $fak
 
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
+    /** @var Collection $users */
+    static $users = null;
+
+    if (is_null($users)) {
+        $users = \App\Models\User::all();
+    }
+
     return [
         'article_id' => $faker->uuid,
         'title' => $faker->sentence,
@@ -179,6 +187,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'excerpt' => Str::words($content, 30, ''),
         'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
+        'author_id' => $users->random(1)->user_id,
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];
 });

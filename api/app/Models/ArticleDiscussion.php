@@ -314,7 +314,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      *
      * @param  Article $article
      *
-     * @return ArticleComment
+     * @return $this
      */
     public function setArticle(Article $article)
     {
