@@ -55,8 +55,8 @@ namespace app.admin.media {
                 console.log('image uploaded.', image);
             };
 
-            let onNotify = (progressPercentage:number) => {
-                console.log('progress: ' + progressPercentage + '% ');
+            let onNotify = (notification:common.services.image.IImageNotification) => {
+                console.log('progress notification: ', notification);
             };
 
             this.imageService.uploadImage({

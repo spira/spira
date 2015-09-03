@@ -29,7 +29,7 @@ class Cloudinary
     public function signUploadString($uploadString)
     {
 
-        $signaturePlain = sprintf('%s%s%s', $uploadString, $this->apiKey, $this->apiSecret);
+        $signaturePlain = sprintf('%s%s', $uploadString, $this->apiSecret);
 
         return sha1($signaturePlain);
     }

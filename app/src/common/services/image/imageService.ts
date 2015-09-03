@@ -15,6 +15,7 @@ namespace common.services.image {
         signature: string;
         public_id?: string;
         resource_type?: string;
+        _inputOptions?:IImageUploadOptions;
     }
 
     export interface ICloudinaryFileUploadConfig extends ng.angularFileUpload.IFileUploadConfig {
@@ -41,11 +42,12 @@ namespace common.services.image {
 
     export class ImageService {
 
-        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter'];
+        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http'];
 
         constructor(private ngFileUpload:ng.angularFileUpload.IUploadService,
                     private $q:ng.IQService,
-                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService
+                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    private $http:ng.IHttpService
         ) {
 
 
@@ -86,7 +88,7 @@ namespace common.services.image {
 
             let imageUploadPromise = this.signCloudinaryUpload(cloudinaryOptions, deferredUploadProgress)
                 .then((signedCloudinaryOptions:ICloudinaryUpload) => this.uploadToCloudinary(signedCloudinaryOptions, deferredUploadProgress))
-                .then(() => this.linkImageToApi(cloudinaryOptions, deferredUploadProgress))
+                .then((cloudinaryResponse) => this.linkImageToApi(cloudinaryOptions, cloudinaryResponse, deferredUploadProgress))
             ;
 
             imageUploadPromise.then((image:common.models.Image) => {
@@ -106,7 +108,9 @@ namespace common.services.image {
 
             let uploadOptions = this.getNgUploadConfig(signedCloudinaryOptions);
 
-            return this.ngFileUpload.upload(uploadOptions)
+            let restoreAuthFunction = this.unsetAuthorizationHeader();
+
+            let uploadPromise = this.ngFileUpload.upload(uploadOptions)
                 .progress(function (evt:any) {
                     var progressPercentage = (<any>_).round(100.0 * evt.loaded / evt.total);
                     console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
@@ -117,6 +121,31 @@ namespace common.services.image {
                         progressValue: progressPercentage,
                     });
                 });
+
+
+            uploadPromise.finally(() => {
+                restoreAuthFunction();
+            });
+
+            return uploadPromise;
+
+        }
+
+
+        /**
+         *
+         * @returns {function(): undefined}
+         */
+        private unsetAuthorizationHeader():() => void {
+
+            let currentAuthHeader = this.$http.defaults.headers.common.Authorization;
+
+            delete this.$http.defaults.headers.common.Authorization;
+
+            //return restore function
+            return () => {
+                this.$http.defaults.headers.common.Authorization = currentAuthHeader;
+            };
 
         }
 
@@ -133,7 +162,8 @@ namespace common.services.image {
                 timestamp: moment().unix(),
                 public_id: this.ngRestAdapter.uuid(),
                 resource_type: 'image', // 'image', 'raw', 'auto'
-                type: 'upload', //'upload', 'private', 'authenticated'.
+                type: 'authenticated', //'upload', 'private', 'authenticated'.
+                _inputOptions: inputOptions, //include the raw object for other consumers
             };
 
         }
@@ -145,11 +175,15 @@ namespace common.services.image {
          */
         private getNgUploadConfig(cloudinaryOptions:ICloudinaryUpload):ICloudinaryFileUploadConfig {
 
+            let cloudinaryFields = <ICloudinaryUpload>_.omit(cloudinaryOptions, ['file']);
+            delete cloudinaryFields._inputOptions;
+
             return {
                 file: cloudinaryOptions.file,
-                url: 'https://api.cloudinary.com/v1_1/demo/image/upload',
+                url: 'https://api.cloudinary.com/v1_1/spira/image/upload',
                 method: 'POST',
-                fields: <ICloudinaryUpload>_.omit(cloudinaryOptions, ['file'])
+                fields: cloudinaryFields,
+                sendFieldsAs: 'json',
             };
 
         }
@@ -188,8 +222,8 @@ namespace common.services.image {
             return this.ngRestAdapter.get('/cloudinary/signature?'+signableString)
                 .then((res:any) => {
 
-                    uploadOptions.signature = res.signature;
-                    uploadOptions.api_key = res.api_key;
+                    uploadOptions.signature = res.data.signature;
+                    uploadOptions.api_key = res.data.apiKey;
 
                     return uploadOptions;
                 });
@@ -199,13 +233,19 @@ namespace common.services.image {
         /**
          * Link the cdn image to the api
          * @param uploadOptions
-         * @returns {IPromise<common.models.Image>}
          * @param deferredUploadProgress
+         * @param cloudinaryResponse
+         * @returns {IPromise<common.models.Image>}
          */
-        private linkImageToApi(uploadOptions:ICloudinaryUpload, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
+        private linkImageToApi(uploadOptions:ICloudinaryUpload, cloudinaryResponse:ng.IHttpPromiseCallbackArg<any>, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
 
             let imageModel = this.newImage();
             imageModel.publicId = uploadOptions.public_id;
+            imageModel.version = cloudinaryResponse.data.version;
+            imageModel.format = cloudinaryResponse.data.format;
+            imageModel.alt = uploadOptions._inputOptions.alt;
+            imageModel.title = _.isString(uploadOptions._inputOptions.title) ? uploadOptions._inputOptions.title : imageModel.alt;
+            imageModel.imageId = imageModel.publicId; //@todo remove imageId or publicId as they are duplicates
 
             deferredUploadProgress.notify({
                 event: 'api_link',
