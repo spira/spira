@@ -21,12 +21,13 @@ class DatasetsTest extends TestCase
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
+        /** @var Illuminate\Support\Collection $countries */
         $countries = $set->getDataset();
         $country = $countries->first();
 
         $this->assertInstanceOf('Illuminate\Support\Collection', $countries);
-        $this->assertTrue($country->has('country_name'));
-        $this->assertTrue($country->has('country_code'));
+        $this->assertArrayHasKey('country_name', $country);
+        $this->assertArrayHasKey('country_code', $country);
         $this->assertGreaterThan(1, $countries->count());
     }
 

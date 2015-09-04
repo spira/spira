@@ -34,12 +34,12 @@ class Timezones extends Dataset
             //Read the current transition to get if the timezone is currently in DST
             $transitions = $dateTimeZone->getTransitions($now, $now);
 
-            $timezones->push(new Collection([
+            $timezones->push([
                 'timezone_identifier' => $dateTimeZone->getName(),
                 'offset' => $offset = $dateTimeZone->getOffset(new DateTime()),
                 'is_dst' => $transitions[0]['isdst'], //only use the first transition
                 'display_offset' => $this->formatDisplayOffset($offset),
-            ]));
+            ]);
         }
 
         return $timezones;

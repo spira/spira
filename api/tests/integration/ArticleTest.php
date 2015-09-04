@@ -16,7 +16,6 @@ use App\Services\Api\Vanilla\Client as VanillaClient;
 /**
  * Class ArticleTest.
  * @group integration
- * @group failing
  */
 class ArticleTest extends TestCase
 {

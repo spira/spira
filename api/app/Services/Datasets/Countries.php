@@ -63,10 +63,10 @@ class Countries extends Dataset
         $countries = new Collection;
 
         foreach ($response->json() as $country) {
-            $countries->push(new Collection([
+            $countries->push([
                 'country_name' => $country['name'],
                 'country_code' => $country['alpha2Code'],
-            ]));
+            ]);
         }
 
         return $countries;

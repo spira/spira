@@ -55,7 +55,7 @@ class ArticleImageTest extends TestCase
                         'article_id' => $article->article_id,
                         'image_id' => $image->image_id,
                     ]);
-        });
+                });
 
         return new \Spira\Model\Collection\Collection($articleImages);
     }
@@ -82,7 +82,8 @@ class ArticleImageTest extends TestCase
         $images = $this->addImagesToArticle($article, true);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->transformed();
 
@@ -104,7 +105,8 @@ class ArticleImageTest extends TestCase
         $images = $this->addImagesToArticle($article, true);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->customize([
                 'article_id' => null,
@@ -115,6 +117,7 @@ class ArticleImageTest extends TestCase
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
+        $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
 
         $this->assertCount(5, $object->invalid);
@@ -128,7 +131,8 @@ class ArticleImageTest extends TestCase
         $images = $this->addImagesToArticle($article);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->transformed();
 
