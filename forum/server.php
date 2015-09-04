@@ -1,6 +1,13 @@
 <?php
 
-// This file allows us to emulate Apache's "mod_rewrite" functionality from the
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 // built-in PHP web server. This provides a convenient way to test Vanilla
 // forum without having installed a "real" server software here.
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
