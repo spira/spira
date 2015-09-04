@@ -11,7 +11,6 @@
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
 

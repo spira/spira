@@ -173,10 +173,9 @@ class ModelFactoryTest extends TestCase
         $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(TestEntity::class)
             ->setModel($testEntity)
             ->customize([
-                'varchar' => 'customized'
+                'varchar' => 'customized',
             ])
             ->make();
-
 
         $this->assertInstanceOf(\Spira\Model\Model\BaseModel::class, $serviceCreatedFactoryInstance);
         $this->assertEquals($testEntity->entity_id, $serviceCreatedFactoryInstance->entity_id);
@@ -192,11 +191,9 @@ class ModelFactoryTest extends TestCase
             ->count(3)
             ->make();
 
-
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $serviceCreatedFactoryCollection);
         $this->assertEquals(3, $serviceCreatedFactoryCollection->count());
     }
-
 
     public function testRepeatedRetrievalFromBuiltFactory()
     {
