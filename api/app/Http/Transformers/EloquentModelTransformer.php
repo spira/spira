@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 08.07.15
- * Time: 21:36.
- */
-
 namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;

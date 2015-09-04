@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 04.08.15
- * Time: 20:23.
- */
-
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\RequestValidationTrait;

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 02.08.15
- * Time: 23:26.
- */
-
 namespace Spira\Responder\Response;
 
 use InvalidArgumentException;

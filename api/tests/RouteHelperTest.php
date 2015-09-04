@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 28.07.15
- * Time: 1:01.
- */
 use Mockery as m;
 use Rhumsaa\Uuid\Uuid;
 

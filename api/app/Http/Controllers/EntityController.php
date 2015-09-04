@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 16.07.15
- * Time: 0:37.
- */
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
