@@ -120,7 +120,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Add properties to the returned entity
+     * Add properties to the returned entity.
      *
      * @param $key
      * @param $value
@@ -148,22 +148,24 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function setTransformer($transformerName)
     {
         $this->transformer = new $transformerName($this->transformerService);
+
         return $this;
     }
 
     /**
-     * Define a model to operate on, rather than using the factory
+     * Define a model to operate on, rather than using the factory.
      * @param BaseModel $model
      * @return $this
      */
     public function setModel(BaseModel $model)
     {
         $this->predefinedEntities = $model;
+
         return $this->count(1);
     }
 
     /**
-     * Define a collection to operate on, rather than using the factory
+     * Define a collection to operate on, rather than using the factory.
      * @param Collection $collection
      * @return $this
      */
@@ -246,7 +248,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             }
         }
 
-        if (!empty($this->appends)) {
+        if (! empty($this->appends)) {
             foreach ($this->appends as $appendKey => $appendValue) {
                 $entity->{$appendKey} = $appendValue;
             }
@@ -286,11 +288,11 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         $entity = $this->modified();
 
-        if (!$this->transformer) {
+        if (! $this->transformer) {
             $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
 
-        $method = 'transform' . ucfirst($this->entityType);
+        $method = 'transform'.ucfirst($this->entityType);
         $transformedEntity = $this->transformer->{$method}($entity);
 
         $transformedEntity = array_except(
@@ -336,13 +338,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
     /**
      * Create a collection of models.
-     * Shortcut for FactoryBuilder
+     * Shortcut for FactoryBuilder.
      * @param  array $attributes
      * @return mixed
      */
     public function make(array $attributes = [])
     {
         $this->customize($attributes);
+
         return $this->modified();
     }
 
@@ -375,17 +378,18 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private function getModelMock($count = 1)
     {
         if (is_null($this->factoryInstance)) {
-            throw new \LogicException("No factory class passed to model factory, cannot generate a mock");
+            throw new \LogicException('No factory class passed to model factory, cannot generate a mock');
         }
 
         $entity = $this->factoryInstance
             ->times($count)
             ->make($this->customizations);
+
         return $entity;
     }
 
     /**
-     * Get either the predefined (subset of) collection/model, or
+     * Get either the predefined (subset of) collection/model, or.
      * @return Collection|mixed|BaseModel
      */
     private function getPredefinedOrMocks()
