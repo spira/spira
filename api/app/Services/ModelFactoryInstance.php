@@ -8,6 +8,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\DataModel;
 
 class ModelFactoryInstance implements Arrayable, Jsonable
 {
@@ -158,7 +159,17 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function setCollection(Collection $collection)
     {
+
+        $collection = $collection->map(function($item){
+            if ($item instanceof BaseModel){
+                return $item;
+            }
+
+            return new DataModel($item);
+        });
+
         $this->predefinedEntities = $collection;
+
         return $this->count($collection->count());
     }
 
