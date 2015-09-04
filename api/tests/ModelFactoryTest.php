@@ -155,4 +155,38 @@ class ModelFactoryTest extends TestCase
         $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
         $this->assertJson($serviceCreatedFactoryInstance->toJson());
     }
+
+    public function testPredefinedModel()
+    {
+
+        $testEntity = \App\Models\TestEntity::first();
+
+        $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(\App\Models\TestEntity::class)
+            ->setModel($testEntity)
+            ->customize([
+                'varchar' => 'customized'
+            ])
+            ->make();
+
+
+        $this->assertInstanceOf(\Spira\Model\Model\BaseModel::class, $serviceCreatedFactoryInstance);
+        $this->assertEquals($testEntity->entity_id, $serviceCreatedFactoryInstance->entity_id);
+        $this->assertEquals('customized', $serviceCreatedFactoryInstance->varchar);
+    }
+
+    public function testPredefinedCollection()
+    {
+
+        $testEntityCollection = \App\Models\TestEntity::take(10)->get();
+
+        $serviceCreatedFactoryCollection = $this->modelFactoryTest->get(\App\Models\TestEntity::class)
+            ->setCollection($testEntityCollection)
+            ->count(3)
+            ->make();
+
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $serviceCreatedFactoryCollection);
+        $this->assertEquals(3, $serviceCreatedFactoryCollection->count());
+    }
+
 }

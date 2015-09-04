@@ -63,7 +63,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function customize(array $customizations)
     {
-        $this->customizations = $customizations;
+        $this->customizations = array_merge($this->customizations, $customizations);
 
         return $this;
     }
@@ -206,12 +206,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         if ($this->showOnly) {
             $attributes = $entity->getAttributes();
-            $appends = $entity->appends;
-            $modifiedArray = array_keys($attributes);
-            if (!empty($appends)) {
-                $modifiedArray = array_merge($modifiedArray, $appends);
-            }
-            $newHidden = array_diff($modifiedArray, $this->showOnly);
+
+            $newHidden = array_diff(array_keys($attributes), $this->showOnly);
             $entity->setHidden($newHidden);
         }
 
@@ -232,6 +228,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         }
 
         if ($this->customizations) {
+
             foreach ($this->customizations as $key => $value) {
                 $entity->{$key} = $value;
             }
