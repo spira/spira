@@ -159,9 +159,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function setCollection(Collection $collection)
     {
-
-        $collection = $collection->map(function($item){
-            if ($item instanceof BaseModel){
+        $collection = $collection->map(function ($item) {
+            if ($item instanceof BaseModel) {
                 return $item;
             }
 
