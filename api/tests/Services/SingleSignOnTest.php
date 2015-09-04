@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Illuminate\Support\Collection;
 use App\Exceptions\NotImplementedException;
 use App\Services\SingleSignOn\SingleSignOnFactory;
@@ -243,7 +251,7 @@ class SingleSignOnTest extends TestCase
     {
         $user = [
             'username' => null,
-            'avatar_img_url' => null
+            'avatar_img_url' => null,
         ];
 
         $requester = Mockery::mock(VanillaSingleSignOn::class);
