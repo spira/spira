@@ -107,7 +107,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Add properties to the returned entity
+     * Add properties to the returned entity.
      *
      * @param $key
      * @param $value
@@ -135,6 +135,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function setTransformer($transformerName)
     {
         $this->transformer = new $transformerName($this->transformerService);
+
         return $this;
     }
 
@@ -175,7 +176,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $attributes = $entity->getAttributes();
             $appends = $entity->appends;
             $modifiedArray = array_keys($attributes);
-            if (!empty($appends)) {
+            if (! empty($appends)) {
                 $modifiedArray = array_merge($modifiedArray, $appends);
             }
             $newHidden = array_diff($modifiedArray, $this->showOnly);
@@ -198,7 +199,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity->setHidden($newHidden);
         }
 
-        if (!empty($this->appends)) {
+        if (! empty($this->appends)) {
             foreach ($this->appends as $appendKey => $appendValue) {
                 $entity->{$appendKey} = $appendValue;
             }
@@ -252,7 +253,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity = $this->modified();
         }
 
-        if (!$this->transformer) {
+        if (! $this->transformer) {
             $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
         $method = 'transform'.ucfirst($this->entityType);
@@ -298,7 +299,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
     /**
      * Create a collection of models.
-     * Shortcut for FactoryBuilder
+     * Shortcut for FactoryBuilder.
      * @param  array  $attributes
      * @return mixed
      */

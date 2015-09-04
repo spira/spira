@@ -1,4 +1,6 @@
-<?php namespace App\Services;
+<?php
+
+namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Validation\Validator;

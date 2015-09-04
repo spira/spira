@@ -3,7 +3,6 @@
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\TransformerService;
 use Mockery as m;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @property EloquentModelTransformer transformer
@@ -39,7 +38,7 @@ class TransformerTest extends TestCase
             ->once()
             ->andReturn([
                 'foo_bar' => 'foobar',
-                'nested_data' => ['foo_bar' => true, 'foo' => true, 'bar_foo' => true]
+                'nested_data' => ['foo_bar' => true, 'foo' => true, 'bar_foo' => true],
             ]);
 
         $data = $this->transformer->transformItem($data);
@@ -72,7 +71,7 @@ class TransformerTest extends TestCase
 
     public function testTransfomerService()
     {
-        $checkArray = ['item'=>'foo'];
+        $checkArray = ['item' => 'foo'];
         $transformed = $this->transformer->getService()->item(new \Illuminate\Database\Eloquent\Collection($checkArray));
         $this->assertEquals($checkArray, $transformed);
     }

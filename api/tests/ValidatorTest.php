@@ -15,23 +15,23 @@ class ValidatorTest extends TestCase
     public function testSpiraValidator()
     {
         $data = ['decimal' => 'foo'];
-        $validation = $this->validator->make($data, ['decimal'=>'decimal']);
+        $validation = $this->validator->make($data, ['decimal' => 'decimal']);
         $this->assertInstanceOf(SpiraValidator::class, $validation);
     }
 
     public function testPassingDecimalValidation()
     {
         $data = ['decimal' => 12.042];
-        $this->assertTrue($this->validator->make($data, ['decimal'=>'decimal'])->passes());
+        $this->assertTrue($this->validator->make($data, ['decimal' => 'decimal'])->passes());
 
         $data = ['decimal' => 12];
-        $this->assertTrue($this->validator->make($data, ['decimal'=>'decimal'])->passes());
+        $this->assertTrue($this->validator->make($data, ['decimal' => 'decimal'])->passes());
     }
 
     public function testFailingDecimalValidation()
     {
         $data = ['decimal' => 'foo'];
-        $validation = $this->validator->make($data, ['decimal'=>'decimal']);
+        $validation = $this->validator->make($data, ['decimal' => 'decimal']);
         $this->assertFalse($validation->passes());
 
         $this->assertStringEndsWith('must be a decimal.', $validation->messages()->get('decimal')[0]);
@@ -40,13 +40,13 @@ class ValidatorTest extends TestCase
     public function testPassingUuidValidation()
     {
         $data = ['uuid' => (string) Uuid::uuid4()];
-        $this->assertTrue($this->validator->make($data, ['uuid'=>'uuid'])->passes());
+        $this->assertTrue($this->validator->make($data, ['uuid' => 'uuid'])->passes());
     }
 
     public function testFailingUuidValidation()
     {
         $data = ['uuid' => 'foobar'];
-        $validation = $this->validator->make($data, ['uuid'=>'uuid']);
+        $validation = $this->validator->make($data, ['uuid' => 'uuid']);
         $this->assertFalse($validation->passes());
         $this->assertStringEndsWith('must be an UUID string.', $validation->messages()->get('uuid')[0]);
     }

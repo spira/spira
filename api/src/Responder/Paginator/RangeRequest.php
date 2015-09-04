@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 30.07.15
- * Time: 14:58
+ * Time: 14:58.
  */
 
 namespace Spira\Responder\Paginator;
@@ -41,7 +42,8 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     public function getOffset($default = null)
     {
         $this->parse();
-        return is_null($this->offset)?$default:$this->offset;
+
+        return is_null($this->offset) ? $default : $this->offset;
     }
 
     /**
@@ -52,17 +54,19 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     public function getLimit($default = null, $max = null)
     {
         $this->parse();
-        $limit = is_null($this->limit)?$default:$this->limit;
-        return ($limit > $max)?$max:$limit;
+        $limit = is_null($this->limit) ? $default : $this->limit;
+
+        return ($limit > $max) ? $max : $limit;
     }
 
     /**
-     * states that limit should be applied to the end of the result set
+     * states that limit should be applied to the end of the result set.
      * @return bool
      */
     public function isGetLast()
     {
         $this->parse();
+
         return $this->isGetLast;
     }
 
@@ -96,7 +100,7 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
             }
         }
 
-        if (!is_null($this->limit) && $this->limit <= 0) {
+        if (! is_null($this->limit) && $this->limit <= 0) {
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid Range header');
         }
 
@@ -112,7 +116,7 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
     }
 
     /**
-     * Get requested range
+     * Get requested range.
      * @return mixed
      */
     protected function getRequestedRange()
@@ -120,10 +124,10 @@ class RangeRequest implements PaginatedRequestDecoratorInterface
         if ($this->getRequest()->headers) {
             $range = $this->getRequest()->headers->get('Range');
 
-            if (strpos($range, $this->rangeKey . '=') !== 0) {
-                throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid Range header, Expected format example - `Range: ' . $this->rangeKey . '=0-100`');
+            if (strpos($range, $this->rangeKey.'=') !== 0) {
+                throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid Range header, Expected format example - `Range: '.$this->rangeKey.'=0-100`');
             } else {
-                return str_replace($this->rangeKey . '=', '', $range);
+                return str_replace($this->rangeKey.'=', '', $range);
             }
         }
 

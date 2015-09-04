@@ -243,7 +243,7 @@ class SingleSignOnTest extends TestCase
     {
         $user = [
             'username' => null,
-            'avatar_img_url' => null
+            'avatar_img_url' => null,
         ];
 
         $requester = Mockery::mock(VanillaSingleSignOn::class);
