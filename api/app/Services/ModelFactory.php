@@ -32,12 +32,12 @@ class ModelFactory
      *
      * @return ModelFactoryInstance
      */
-    public function get($factoryClass, $definedName = 'default')
+    public function get($factoryClass = null, $definedName = 'default')
     {
-        if ($factoryClass instanceof Collection) {
-            $instance = $factoryClass;
-        } else {
+        if (is_string($factoryClass)) {
             $instance = $this->factory->of($factoryClass, $definedName);
+        } else {
+            $instance = null;
         }
 
         return new ModelFactoryInstance($instance, $this->transformerService);
