@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 return [
 
     /*
@@ -16,7 +24,7 @@ return [
     'config' => [
         'hosts'     => [sprintf('%s:%s', env('ELASTICSEARCH_HOST'), env('ELASTICSEARCH_PORT_NUMBER'))],
         'logging'   => true,
-        'logPath'   => storage_path() . '/logs/elasticsearch.log',
+        'logPath'   => storage_path().'/logs/elasticsearch.log',
         'logLevel'  => Monolog\Logger::WARNING,
     ],
 

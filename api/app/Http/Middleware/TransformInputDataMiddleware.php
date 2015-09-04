@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -39,7 +47,7 @@ class TransformInputDataMiddleware
             $value = (is_array($value)) ? $this->renameKeys($value) : $value;
 
             // Convert camelCase to snake_case
-            if (is_string($key) && !ctype_lower($key)) {
+            if (is_string($key) && ! ctype_lower($key)) {
                 $newArray[snake_case($key)] = $value;
             } else {
                 $newArray[$key] = $value;
@@ -64,7 +72,7 @@ class TransformInputDataMiddleware
 
             // Find any potential camelCase keys in the 'root' array, and convert
             // them to snake_case
-            if (!ctype_lower($key)) {
+            if (! ctype_lower($key)) {
                 // Only convert if the key will change
                 if ($key != snake_case($key)) {
                     $request->offsetSet(snake_case($key), $value);

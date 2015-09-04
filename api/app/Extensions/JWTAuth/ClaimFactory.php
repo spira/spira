@@ -1,4 +1,14 @@
-<?php namespace App\Extensions\JWTAuth;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Extensions\JWTAuth;
 
 use Tymon\JWTAuth\Claims\Custom;
 use Tymon\JWTAuth\Claims\Factory;
@@ -16,11 +26,11 @@ class ClaimFactory extends Factory
         'jti' => 'Tymon\JWTAuth\Claims\JwtId',
         'nbf' => 'Tymon\JWTAuth\Claims\NotBefore',
         'sub' => 'Tymon\JWTAuth\Claims\Subject',
-        '_user' => 'App\Extensions\JWTAuth\UserClaim'
+        '_user' => 'App\Extensions\JWTAuth\UserClaim',
     ];
 
     /**
-     * Get the instance of the claim when passing the name and value
+     * Get the instance of the claim when passing the name and value.
      *
      * @param  string  $name
      * @param  mixed   $value
@@ -36,10 +46,10 @@ class ClaimFactory extends Factory
     }
 
     /**
-     * Check whether the claim exists
+     * Check whether the claim exists.
      *
      * @param  string  $name
-     * @return boolean
+     * @return bool
      */
     public function has($name)
     {

@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 04.08.15
- * Time: 21:09
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Extensions\Controller;
@@ -38,18 +40,17 @@ trait RequestValidationTrait
         return $ids;
     }
 
-
     /**
-     * Build notFoundException
+     * Build notFoundException.
      * @param string $keyName
      * @return ValidationException
      */
     protected function notFoundException($keyName = '')
     {
-        $validation = $this->getValidationFactory()->make([$keyName=>$keyName], [$keyName=>'notFound']);
-        if (!$validation->fails()) {
+        $validation = $this->getValidationFactory()->make([$keyName => $keyName], [$keyName => 'notFound']);
+        if (! $validation->fails()) {
             // @codeCoverageIgnoreStart
-            throw new \LogicException("Validator should have failed");
+            throw new \LogicException('Validator should have failed');
             // @codeCoverageIgnoreEnd
         }
 
@@ -57,7 +58,7 @@ trait RequestValidationTrait
     }
 
     /**
-     * Get notFoundManyException
+     * Get notFoundManyException.
      * @param $ids
      * @param Collection $models
      * @param string $keyName
@@ -80,7 +81,6 @@ trait RequestValidationTrait
 
         throw new ValidationExceptionCollection($errors);
     }
-
 
     /**
      * @param $requestEntity
@@ -105,7 +105,7 @@ trait RequestValidationTrait
     }
 
     /**
-     * Validate a request collection
+     * Validate a request collection.
      * @param $requestCollection
      * @param $validationRules
      * @param bool|false $limitToKeysPresent
@@ -133,8 +133,6 @@ trait RequestValidationTrait
         return true;
     }
 
-
-
     /**
      * @param Request $request
      * @param $id
@@ -145,16 +143,16 @@ trait RequestValidationTrait
     protected function checkEntityIdMatchesRoute(Request $request, $id, BaseModel $model, $requireEntityKey = true)
     {
         $keyName = $model->getKeyName();
-        if (!$request->has($keyName)) {
-            if (!$requireEntityKey) {
+        if (! $request->has($keyName)) {
+            if (! $requireEntityKey) {
                 return true; //it is ok if the key is not set (for patch requests etc)
             } else {
                 throw new BadRequestException("Request entity must include entity id ($keyName) for ".get_class($model));
             }
         }
 
-        if ((string)$request->input($keyName) !== (string)$id) {
-            throw new BadRequestException("Provided entity body does not match route parameter. The entity key cannot be updated");
+        if ((string) $request->input($keyName) !== (string) $id) {
+            throw new BadRequestException('Provided entity body does not match route parameter. The entity key cannot be updated');
         }
 
         return true;

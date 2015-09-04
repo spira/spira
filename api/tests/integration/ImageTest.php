@@ -1,10 +1,17 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use App\Models\Image;
 
 /**
- * Class ImageTest
+ * Class ImageTest.
  * @group integration
  */
 class ImageTest extends TestCase
@@ -40,12 +47,11 @@ class ImageTest extends TestCase
         return $entity;
     }
 
-
     public function testGetAllPaginated()
     {
         $entities = factory(Image::class, 30)->create()->all();
 
-        $this->getJson('/images', ['Range'=>'entities=0-19']);
+        $this->getJson('/images', ['Range' => 'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -80,7 +86,6 @@ class ImageTest extends TestCase
         $this->assertTrue(is_numeric($object->version));
     }
 
-
     public function testPutOneNew()
     {
         $entity = factory(Image::class)->make();
@@ -98,7 +103,6 @@ class ImageTest extends TestCase
         $this->assertStringStartsWith('http', $object->_self);
     }
 
-
     public function testPatchOne()
     {
         $entity = factory(Image::class)->create();
@@ -111,7 +115,6 @@ class ImageTest extends TestCase
         $checkEntity = Image::find($id);
         $this->assertEquals($checkEntity->alt, $entity->alt);
     }
-
 
     public function testDeleteOne()
     {

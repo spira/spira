@@ -1,15 +1,12 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use Laravel\Lumen\Application;
 
@@ -32,7 +29,7 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
 
 $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('/', 'App\Http\Controllers\ArticleController@getAllPaginated');
-    $app->get('{id}', ['as'=>\App\Models\Article::class, 'uses'=>'App\Http\Controllers\ArticleController@getOne']);
+    $app->get('{id}', ['as' => \App\Models\Article::class, 'uses' => 'App\Http\Controllers\ArticleController@getOne']);
     $app->post('/', 'App\Http\Controllers\ArticleController@postOne');
     $app->put('{id}', 'App\Http\Controllers\ArticleController@putOne');
     $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
@@ -56,7 +53,7 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
-    $app->get('{id}', ['as'=>\App\Models\Tag::class, 'uses'=>'App\Http\Controllers\TagController@getOne']);
+    $app->get('{id}', ['as' => \App\Models\Tag::class, 'uses' => 'App\Http\Controllers\TagController@getOne']);
     $app->post('/', 'App\Http\Controllers\TagController@postOne');
     $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\TagController@deleteOne');
@@ -64,11 +61,10 @@ $app->group(['prefix' => 'tags'], function (Application $app) {
 
 $app->group(['prefix' => 'images'], function (Application $app) {
     $app->get('/', 'App\Http\Controllers\ImageController@getAllPaginated');
-    $app->get('{id}', ['as'=>\App\Models\Image::class, 'uses'=>'App\Http\Controllers\ImageController@getOne']);
+    $app->get('{id}', ['as' => \App\Models\Image::class, 'uses' => 'App\Http\Controllers\ImageController@getOne']);
     $app->put('{id}', 'App\Http\Controllers\ImageController@putOne');
     $app->patch('{id}', 'App\Http\Controllers\ImageController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\ImageController@deleteOne');
-
 
     // @TODO add version, same way as permalinks ??
     // $app->get('{id}/versions', 'App\Http\Controllers\ImageVersionsController@getAll');
@@ -82,8 +78,8 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->get('/entities', 'App\Http\Controllers\TestController@getAll');
     $app->get('/entities/pages', 'App\Http\Controllers\TestController@getAllPaginated');
     $app->get('/entities_encoded/{id}', 'App\Http\Controllers\TestController@urlEncode');
-    $app->get('/entities/{id}', ['as'=>\App\Models\TestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
-    $app->get('/entities-second/{id}', ['as'=>\App\Models\SecondTestEntity::class, 'uses'=>'App\Http\Controllers\TestController@getOne']);
+    $app->get('/entities/{id}', ['as' => \App\Models\TestEntity::class, 'uses' => 'App\Http\Controllers\TestController@getOne']);
+    $app->get('/entities-second/{id}', ['as' => \App\Models\SecondTestEntity::class, 'uses' => 'App\Http\Controllers\TestController@getOne']);
     $app->post('/entities', 'App\Http\Controllers\TestController@postOne');
     $app->put('/entities/{id}', 'App\Http\Controllers\TestController@putOne');
     $app->put('/entities', 'App\Http\Controllers\TestController@putMany');
@@ -91,7 +87,6 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities', 'App\Http\Controllers\TestController@patchMany');
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
-
 
     $app->get('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@getAll');
     $app->get('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@getOne');

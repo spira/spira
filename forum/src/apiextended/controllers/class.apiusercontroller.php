@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 class ApiUserController extends UserController
 {
     /**
@@ -19,7 +27,7 @@ class ApiUserController extends UserController
             'Name' => '',
             'Email' => '',
             'Photo' => '',
-            'Roles' => [8]
+            'Roles' => [8],
         ];
 
         $user = array_intersect_key($data, $default) + $default;
@@ -28,7 +36,7 @@ class ApiUserController extends UserController
 
         // Create or get existing user
         $id = Gdn::userModel()->connect($uniqueId, $clientId, $user);
-        if (!$id) {
+        if (! $id) {
             throw new Gdn_UserException('Bad Request', 400);
         }
 
