@@ -1,11 +1,12 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
-use Spira\Model\Model\BaseModel;
 use Spira\Model\Model\IndexedModel;
 
 /**
- * Class TestEntity
+ * Class TestEntity.
  *
  * @property Collection $testMany
  */
@@ -57,10 +58,9 @@ class TestEntity extends IndexedModel
             'text'    => 'required|string',
             'date'    => 'required|date',
             'multi_word_column_title' => 'required|boolean',
-            'hidden'  => 'required|boolean'
+            'hidden'  => 'required|boolean',
         ];
     }
-
 
     public function testOne()
     {

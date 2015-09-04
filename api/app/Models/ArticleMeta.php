@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 03.08.15
- * Time: 13:29
+ * Time: 13:29.
  */
 
 namespace App\Models;
@@ -30,7 +31,7 @@ class ArticleMeta extends BaseModel
         return [
             'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'meta_property' => 'string'
+            'meta_property' => 'string',
         ];
     }
 

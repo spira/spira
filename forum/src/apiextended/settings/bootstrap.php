@@ -1,5 +1,6 @@
 <?php
-if (!defined('APPLICATION')) {
+
+if (! defined('APPLICATION')) {
     exit();
 }
 

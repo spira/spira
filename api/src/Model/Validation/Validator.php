@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 05.08.15
- * Time: 19:22
+ * Time: 19:22.
  */
 
 namespace Spira\Model\Validation;

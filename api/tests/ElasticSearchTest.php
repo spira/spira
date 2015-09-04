@@ -3,7 +3,7 @@
 use App\Models\TestEntity;
 
 /**
- * Class ElasticSearchTest
+ * Class ElasticSearchTest.
  */
 class ElasticSearchTest extends TestCase
 {
@@ -17,7 +17,7 @@ class ElasticSearchTest extends TestCase
     }
 
     /**
-     * Test model is automatically added to index on save
+     * Test model is automatically added to index on save.
      */
     public function testElasticSearchAddToIndex()
     {
@@ -29,9 +29,8 @@ class ElasticSearchTest extends TestCase
         $search = $testEntity->searchByQuery([
             'match' => [
                 'entity_id' => $testEntity->entity_id,
-            ]
+            ],
         ]);
-
 
         $this->assertEquals(1, $search->totalHits());
 
@@ -50,9 +49,8 @@ class ElasticSearchTest extends TestCase
         $search = $testEntity->searchByQuery([
             'match' => [
                 'entity_id' => $testEntity->entity_id,
-            ]
+            ],
         ]);
-
 
         $this->assertEquals(0, $search->totalHits());
     }
@@ -65,13 +63,12 @@ class ElasticSearchTest extends TestCase
         $testEntity->setAttribute('varchar', 'searchforthisvalue');
         $testEntity->save();
 
-
         sleep(1); //elastic search takes some time to index
 
         $search = $testEntity->searchByQuery([
             'match' => [
                 'varchar' => 'searchforthisvalue',
-            ]
+            ],
         ]);
 
         $this->assertEquals(1, $search->totalHits());

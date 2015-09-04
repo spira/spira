@@ -81,10 +81,10 @@ class Build
         @mkdir($dest);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
-                if (is_dir($source . '/' . $file)) {
-                    $this->recurseCopy($source . '/' . $file, $dest . '/' . $file);
+                if (is_dir($source.'/'.$file)) {
+                    $this->recurseCopy($source.'/'.$file, $dest.'/'.$file);
                 } else {
-                    copy($source . '/' . $file, $dest . '/' . $file);
+                    copy($source.'/'.$file, $dest.'/'.$file);
                 }
             }
         }
@@ -98,11 +98,11 @@ class Build
      */
     protected static function getInstance()
     {
-        return new Build;
+        return new self;
     }
 
     /**
-     * Run the vanilla setup functions
+     * Run the vanilla setup functions.
      */
     protected function setupVanilla()
     {

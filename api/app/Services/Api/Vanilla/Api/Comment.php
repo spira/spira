@@ -19,7 +19,7 @@ class Comment extends ApiAbstract
     {
         $parameters = [
             'Body' => $body,
-            'Format' => $format
+            'Format' => $format,
         ];
 
         return $this->post('discussions/'.$discussionId.'/comments', $parameters);

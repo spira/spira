@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 04.08.15
- * Time: 20:23
+ * Time: 20:23.
  */
 
 namespace App\Http\Controllers;
@@ -39,18 +40,17 @@ class ChildEntityController extends ApiController
     {
         $this->parentModel = $parentModel;
 
-        if (!$this->relationName) {
+        if (! $this->relationName) {
             throw new \InvalidArgumentException('You must specify relationName in '.static::class);
         }
 
-        if (!method_exists($parentModel, $this->relationName)) {
+        if (! method_exists($parentModel, $this->relationName)) {
             throw new \InvalidArgumentException('Relation '.$this->relationName.', required by '.
                 static::class.', does not exist in '.get_class($parentModel)
             );
         }
         parent::__construct($transformer);
     }
-
 
     /**
      * Get all entities.
@@ -263,6 +263,7 @@ class ChildEntityController extends ApiController
         if (is_null($this->cacheChildModel)) {
             $this->cacheChildModel = $this->getRelation($this->parentModel)->getRelated();
         }
+
         return $this->cacheChildModel;
     }
 
@@ -274,7 +275,6 @@ class ChildEntityController extends ApiController
     {
         return $model->{$this->relationName}();
     }
-
 
     /**
      * @param $id

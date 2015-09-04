@@ -39,12 +39,9 @@ class ApiaryValidateCommand extends Command
     {
         $apiaryController = new ApiaryController();
 
-
         $apib = $apiaryController->getDocumentationApib('/');
 
-
         $fs = new Filesystem();
-
 
         $fileLocation = storage_path().'/app/apiary.apib';
 

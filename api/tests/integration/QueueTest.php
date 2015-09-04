@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Queue;
 use Pheanstalk\Pheanstalk;
 
 /**
- * Class QueueTest
+ * Class QueueTest.
  * @group integration
  */
 class QueueTest extends TestCase

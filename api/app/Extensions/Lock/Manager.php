@@ -1,4 +1,6 @@
-<?php namespace App\Extensions\Lock;
+<?php
+
+namespace App\Extensions\Lock;
 
 use BeatSwitch\Lock\Callers\Caller;
 use BeatSwitch\Lock\Manager as BaseManager;

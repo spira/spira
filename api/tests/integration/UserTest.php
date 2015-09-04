@@ -7,7 +7,7 @@ use App\Models\UserCredential;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * Class UserTest
+ * Class UserTest.
  * @group integration
  */
 class UserTest extends TestCase
@@ -38,7 +38,7 @@ class UserTest extends TestCase
 
         $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Range' => 'entities=0-19'
+            'Range' => 'entities=0-19',
         ]);
 
         $this->assertResponseStatus(206);
@@ -54,7 +54,7 @@ class UserTest extends TestCase
 
         $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Range' => 'entities=0-19'
+            'Range' => 'entities=0-19',
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -67,7 +67,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->getJson('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseOk();
@@ -82,7 +82,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->getJson('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -95,7 +95,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->getJson('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseOk();
@@ -112,7 +112,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->getJson('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -225,11 +225,11 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -248,12 +248,12 @@ class UserTest extends TestCase
         $update = [
             'firstName' => 'foobar',
             '_userProfile' => [
-                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
-            ]
+                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
+            ],
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -273,12 +273,12 @@ class UserTest extends TestCase
 
         $update = [
             '_userCredential' => [
-                'password' => 'foobarfoobar'
-            ]
+                'password' => 'foobarfoobar',
+            ],
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedCredentials = UserCredential::find($userToUpdate->user_id);
@@ -296,12 +296,12 @@ class UserTest extends TestCase
 
         $update = [
             '_userCredential' => [
-                'password' => 'foobarfoobar'
-            ]
+                'password' => 'foobarfoobar',
+            ],
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedCredentials = UserCredential::find($userToUpdate->user_id);
@@ -325,7 +325,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->patchJson('/users/'.$userToUpdate->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -338,11 +338,11 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -361,12 +361,12 @@ class UserTest extends TestCase
         $update = [
             'firstName' => 'foobar',
             '_userProfile' => [
-                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
-            ]
+                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
+            ],
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -386,11 +386,11 @@ class UserTest extends TestCase
 
         $update = [
             'userId' => '1234',
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseStatus(400);
@@ -403,7 +403,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->deleteJson('/users/'.$userToDelete->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $user = User::find($userToDelete->user_id);
@@ -422,7 +422,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->deleteJson('/users/'.$userToDelete->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $user = User::find($userToDelete->user_id);
@@ -440,7 +440,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $this->deleteJson('/users/'.$user->email.'/password', [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $mail = $this->getLastMessage();
@@ -481,8 +481,8 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->deleteJson('/users/foo.bar.' . $user->email . '/password', [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->deleteJson('/users/foo.bar.'.$user->email.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseStatus(404);
@@ -499,7 +499,7 @@ class UserTest extends TestCase
         // Make a request to change email
         $update = ['email' => 'foo@bar.com'];
         $this->patchJson('/users/'.$user->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
         // Ensure that we get the right response
         $this->assertResponseStatus(204);
@@ -519,13 +519,13 @@ class UserTest extends TestCase
         $emailToken = str_replace('emailConfirmationToken=', '', $tokens[0]);
         $loginToken = str_replace('loginToken=', '', $tokens[1]);
         // Ensure the login token is valid
-        $this->assertEquals($user->user_id, Cache::get('login_token_' . $loginToken, false));
+        $this->assertEquals($user->user_id, Cache::get('login_token_'.$loginToken, false));
         // Confirm the email change
         $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];
         $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'email-confirm-token' => $emailToken
+            'email-confirm-token' => $emailToken,
         ]);
         // Ensure we get the right response
         $this->assertResponseStatus(204);
@@ -546,7 +546,7 @@ class UserTest extends TestCase
         $emailToken = $user->createEmailConfirmToken($user->email, 'foo@bar.com');
         $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Email-Confirm-Token' => $emailToken
+            'Email-Confirm-Token' => $emailToken,
         ]);
         $updatedUser = User::find($user->user_id);
         $this->assertResponseStatus(204);
@@ -563,7 +563,7 @@ class UserTest extends TestCase
         $emailToken = 'foobar';
         $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Email-Confirm-Token' => $emailToken
+            'Email-Confirm-Token' => $emailToken,
         ]);
         $this->assertResponseStatus(422);
     }

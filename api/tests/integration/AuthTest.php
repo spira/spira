@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Claims\Expiration;
 use Tymon\JWTAuth\Claims\IssuedAt;
@@ -15,7 +14,7 @@ use Tymon\JWTAuth\Payload;
 use Tymon\JWTAuth\Token;
 
 /**
- * Class AuthTest
+ * Class AuthTest.
  * @group integration
  */
 class AuthTest extends TestCase
@@ -395,7 +394,7 @@ class AuthTest extends TestCase
         // tests against twitter if credentials is available, and if not
         // available, we still can test that the cache with the returnurl is
         // properly set.
-        if (!$this->app->config->get('services.twitter.client_id')) {
+        if (! $this->app->config->get('services.twitter.client_id')) {
             Cache::put('oauth_return_url_'.'foobar', $returnUrl, 1);
             $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
@@ -440,7 +439,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn((object) [
                 'email' => null,
-                'token' => 'foobar'
+                'token' => 'foobar',
             ]);
 
         $this->getJson('/auth/social/facebook/callback');
@@ -582,7 +581,7 @@ class AuthTest extends TestCase
         $params = [
             'client_id' => env('VANILLA_JSCONNECT_CLIENT_ID'),
             'timestamp' => $timestamp,
-            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET'))
+            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET')),
         ];
 
         $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];

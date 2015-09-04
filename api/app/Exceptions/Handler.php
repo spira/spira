@@ -6,7 +6,6 @@ use App\Http\Transformers\EloquentModelTransformer;
 use Exception;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Spira\Responder\Contract\TransformableInterface;
-use Spira\Responder\Contract\TransformerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -27,7 +26,6 @@ class Handler extends ExceptionHandler
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
      * @param  \Exception  $e
-     *
      */
     public function report(Exception $e)
     {
@@ -47,7 +45,7 @@ class Handler extends ExceptionHandler
         $debug = env('APP_DEBUG', false);
 
         $message = $e->getMessage();
-        if (!$message) {
+        if (! $message) {
             $message = 'An error occurred';
         }
 

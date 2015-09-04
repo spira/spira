@@ -245,7 +245,7 @@ class Client
             'path' => $path,
             'username'  => $this->user['username'],
             'email'     => $this->user['email'],
-            'timestamp' => time()
+            'timestamp' => time(),
         ];
 
         // Strip away any empty records (username/email might not be provided)
@@ -280,12 +280,12 @@ class Client
     {
         $this->user = [
             'username' => $username,
-            'email' => $email
+            'email' => $email,
         ];
     }
 
     /**
-     * Get the forum host url
+     * Get the forum host url.
      * @return string
      */
     protected function getForumHost()

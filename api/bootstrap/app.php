@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 Dotenv::load(__DIR__.'/../');
@@ -69,7 +70,7 @@ $app->middleware([
 
 $app->routeMiddleware([
     'permission' => 'App\Http\Middleware\PermissionMiddleware',
-    'transaction' => App\Http\Middleware\TransactionMiddleware::class
+    'transaction' => App\Http\Middleware\TransactionMiddleware::class,
 ]);
 
 /*

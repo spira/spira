@@ -4,7 +4,7 @@
 use Illuminate\Support\Facades\Artisan;
 
 /**
- * Class DocumentationTest
+ * Class DocumentationTest.
  * @group integration
  */
 class DocumentationTest extends TestCase

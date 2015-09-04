@@ -21,11 +21,11 @@ class UserStorySeeder extends Seeder
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
-            'user_type'=>'admin',
+            'user_type' => 'admin',
             'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
         ]);
 
-        for ($i=0; $i < 99; $i++) {
+        for ($i = 0; $i < 99; $i++) {
             $this->createUser();
         }
     }

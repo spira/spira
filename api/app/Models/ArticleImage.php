@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 27.08.15
- * Time: 12:07
+ * Time: 12:07.
  */
 
 namespace App\Models;

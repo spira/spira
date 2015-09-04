@@ -4,7 +4,7 @@ use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Class EntityTest
+ * Class EntityTest.
  * @group integration
  */
 class EntityTest extends TestCase
@@ -68,7 +68,7 @@ class EntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->getJson('/test/entities', ['with-nested'=>'testMany']);
+        $this->getJson('/test/entities', ['with-nested' => 'testMany']);
         $objects = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -97,8 +97,8 @@ class EntityTest extends TestCase
     public function testGetAllPaginated()
     {
         $defaultLimit = 10;
-        $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities=0-']);
+        $entities = factory(App\Models\TestEntity::class, $defaultLimit + 1)->create();
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=0-']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -111,12 +111,12 @@ class EntityTest extends TestCase
     public function testGetAllPaginatedWithNested()
     {
         $defaultLimit = 10;
-        $entities = factory(App\Models\TestEntity::class, $defaultLimit+1)->create();
+        $entities = factory(App\Models\TestEntity::class, $defaultLimit + 1)->create();
         foreach ($entities as $entity) {
             $this->addRelatedEntities($entity);
         }
 
-        $this->getJson('/test/entities/pages', ['Range'=>'entities=-10','with-nested'=>'testMany']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10','with-nested' => 'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(206);
@@ -143,15 +143,15 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedInvalidRangeHeader()
     {
-        $this->getJson('/test/entities/pages', ['Range'=>'0-']);
+        $this->getJson('/test/entities/pages', ['Range' => '0-']);
         $this->assertResponseStatus(400);
     }
 
     public function testGetAllPaginatedSimpleRange()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
-        $totalCount =TestEntity::count();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities=0-19']);
+        $totalCount = TestEntity::count();
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=0-19']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -167,7 +167,7 @@ class EntityTest extends TestCase
     public function testPaginationBadRanges()
     {
         $entities = factory(App\Models\TestEntity::class, 20)->create();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities=19-18']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=19-18']);
         $this->assertResponseStatus(400);
     }
 
@@ -175,7 +175,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = TestEntity::count();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities='.$totalCount.'-']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities='.$totalCount.'-']);
         $this->assertResponseStatus(416);
     }
 
@@ -183,7 +183,7 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = TestEntity::count();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities='.($totalCount-2).'-'.($totalCount+20)]);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities='.($totalCount - 2).'-'.($totalCount + 20)]);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -192,15 +192,15 @@ class EntityTest extends TestCase
         $this->assertEquals(2, count($object));
         list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
         $this->assertEquals($total, $totalCount);
-        $this->assertEquals($first, $totalCount-2);
-        $this->assertEquals($last, $totalCount-1);
+        $this->assertEquals($first, $totalCount - 2);
+        $this->assertEquals($last, $totalCount - 1);
     }
 
     public function testPaginationGetLast()
     {
         $entities = factory(App\Models\TestEntity::class, 10)->create();
         $totalCount = TestEntity::count();
-        $this->getJson('/test/entities/pages', ['Range'=>'entities=-5']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=-5']);
         $object = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -209,8 +209,8 @@ class EntityTest extends TestCase
         $this->assertEquals(5, count($object));
         list($first, $last, $total) = $this->parseRange($this->response->headers->get('content-range'));
         $this->assertEquals($total, $totalCount);
-        $this->assertEquals($first, $totalCount-5);
-        $this->assertEquals($last, $totalCount-1);
+        $this->assertEquals($first, $totalCount - 5);
+        $this->assertEquals($last, $totalCount - 1);
     }
 
     protected function parseRange($header)
@@ -256,8 +256,8 @@ class EntityTest extends TestCase
 
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
-        $this->assertTrue(is_integer($object->integer), 'Integer column type is integer');
-        $this->assertTrue(is_float($object->decimal) || is_integer($object->decimal), 'Decimal column type is integer');
+        $this->assertTrue(is_int($object->integer), 'Integer column type is integer');
+        $this->assertTrue(is_float($object->decimal) || is_int($object->decimal), 'Decimal column type is integer');
         $this->assertNull($object->nullable, 'Nullable column type is null');
         $this->assertTrue(is_string($object->text), 'Text column type is text');
         $this->assertValidIso8601Date($object->date, 'Date column type is a valid ISO8601 date');
@@ -274,7 +274,7 @@ class EntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested'=>'testMany']);
+        $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested' => 'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -300,7 +300,7 @@ class EntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested'=>'not-a-valid-nesting']);
+        $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested' => 'not-a-valid-nesting']);
         $object = json_decode($this->response->getContent());
 
         $this->shouldReturnJson();
@@ -372,7 +372,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_object($object));
 
         $this->assertObjectHasAttribute('message', $object);
-        $this->assertEquals("Provided entity body does not match route parameter. The entity key cannot be updated", $object->message);
+        $this->assertEquals('Provided entity body does not match route parameter. The entity key cannot be updated', $object->message);
     }
 
     public function testPutOneNewInvalidId()
@@ -444,7 +444,6 @@ class EntityTest extends TestCase
     {
         $entities = factory(App\Models\TestEntity::class, 5)->create();
 
-
         $entities = array_map(function ($entity) {
             return $this->prepareEntity($entity);
         }, $entities->all());
@@ -504,8 +503,6 @@ class EntityTest extends TestCase
         $this->assertEquals($rowCount, TestEntity::count());
     }
 
-
-
     public function testPatchOne()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
@@ -554,7 +551,7 @@ class EntityTest extends TestCase
         $data = array_map(function ($entity) {
             return [
                 'entity_id' => (string) Uuid::uuid4(),
-                'varchar' => 'foobar'
+                'varchar' => 'foobar',
             ];
         }, $entities->all());
 
@@ -572,7 +569,7 @@ class EntityTest extends TestCase
         $data = array_map(function ($entity) {
             return [
                 'entity_id' => $entity->entity_id,
-                'multi_word_column_title' => 'foobar'
+                'multi_word_column_title' => 'foobar',
             ];
         }, $entities->all());
 
@@ -640,7 +637,6 @@ class EntityTest extends TestCase
         $this->assertEquals($rowCount, TestEntity::count());
     }
 
-
     public function testNoInnerLumenUrlDecode()
     {
         $compareString = '%foo?*:bar/"foo';
@@ -657,18 +653,17 @@ class EntityTest extends TestCase
         TestEntity::removeAllFromIndex();
 
         $searchEntity = factory(App\Models\TestEntity::class)->create([
-            'varchar' => 'searchforthisstring'
+            'varchar' => 'searchforthisstring',
         ]);
 
         sleep(1); //give the elastic search agent time to index
 
-        $this->getJson('/test/entities/pages?q=searchforthisstring', ['Range'=>'entities=0-9']);
+        $this->getJson('/test/entities/pages?q=searchforthisstring', ['Range' => 'entities=0-9']);
 
         $collection = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
-
 
         $this->assertCount(1, $collection);
 
@@ -677,7 +672,7 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-        $this->getJson('/test/entities/pages?q=thisstringwontreturnresults', ['Range'=>'entities=0-9']);
+        $this->getJson('/test/entities/pages?q=thisstringwontreturnresults', ['Range' => 'entities=0-9']);
 
         $this->assertResponseStatus(404);
         $this->shouldReturnJson();

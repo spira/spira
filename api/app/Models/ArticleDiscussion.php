@@ -276,7 +276,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         $results = new Collection;
 
         foreach ($this->eagerConstraints as $model) {
-            $comments = new ArticleDiscussion;
+            $comments = new self;
             $comments->setArticle($model);
             $results->offsetSet($model->getKey(), $comments->getResults());
         }
@@ -330,7 +330,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      */
     protected function getClient()
     {
-        if (!$this->client) {
+        if (! $this->client) {
             $this->client = App::make(VanillaClient::class);
         }
 

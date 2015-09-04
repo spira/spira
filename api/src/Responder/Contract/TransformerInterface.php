@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 16.07.15
- * Time: 0:19
+ * Time: 0:19.
  */
 
 namespace Spira\Responder\Contract;

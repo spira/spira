@@ -23,7 +23,6 @@ class VanillaApiTest extends TestCase
             ->getMock();
     }
 
-
     // Configuration
 
     /**
@@ -34,8 +33,8 @@ class VanillaApiTest extends TestCase
         $expected = [
             'Configuration' => [
                 'Title' => 'Spira',
-                'Domain' => ''
-            ]
+                'Domain' => '',
+            ],
         ];
 
         $api = $this->getApiMock(Configuration::class);
@@ -46,7 +45,6 @@ class VanillaApiTest extends TestCase
 
         $this->assertEquals($expected, $api->current());
     }
-
 
     // Discussions
 
@@ -73,7 +71,7 @@ class VanillaApiTest extends TestCase
         $data = [
             'Name' => $name = 'Some name',
             'Body' => $body = 'Some body',
-            'CategoryID' => $categoryId = 1
+            'CategoryID' => $categoryId = 1,
         ];
 
         $api = $this->getApiMock(Discussion::class);
@@ -94,7 +92,7 @@ class VanillaApiTest extends TestCase
             'CategoryID' => 1,
             'Category' => [],
             'Comments' => [],
-            'Page' => 1
+            'Page' => 1,
         ];
 
         $api = $this->getApiMock(Discussion::class);
@@ -116,7 +114,7 @@ class VanillaApiTest extends TestCase
             'CategoryID' => 1,
             'Category' => [],
             'Comments' => [],
-            'Page' => 1
+            'Page' => 1,
         ];
 
         $api = $this->getApiMock(Discussion::class);
@@ -135,7 +133,7 @@ class VanillaApiTest extends TestCase
     {
         $input = [
             'Name' => $name = 'New name',
-            'Body' => $body = 'New body'
+            'Body' => $body = 'New body',
         ];
 
         $api = $this->getApiMock(Discussion::class);
@@ -174,7 +172,6 @@ class VanillaApiTest extends TestCase
         $api->removeByForeignId(123);
     }
 
-
     // Comments
 
     /**
@@ -184,7 +181,7 @@ class VanillaApiTest extends TestCase
     {
         $input = [
             'Body' => $body = 'Some body',
-            'Format' => 'Html'
+            'Format' => 'Html',
         ];
 
         $api = $this->getApiMock(Comment::class);
@@ -201,7 +198,7 @@ class VanillaApiTest extends TestCase
     public function shouldUpdateComment()
     {
         $input = [
-            'Body' => $body = 'New body'
+            'Body' => $body = 'New body',
         ];
 
         $api = $this->getApiMock(Comment::class);
@@ -225,7 +222,6 @@ class VanillaApiTest extends TestCase
 
         $api->remove(456);
     }
-
 
     // Users
 
@@ -254,7 +250,7 @@ class VanillaApiTest extends TestCase
     public function shouldRemoveUser()
     {
         $input = [
-            'Method' => 'delete'
+            'Method' => 'delete',
         ];
 
         $api = $this->getApiMock(User::class);

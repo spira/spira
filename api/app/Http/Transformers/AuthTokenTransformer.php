@@ -30,10 +30,9 @@ class AuthTokenTransformer extends EloquentModelTransformer
 
         return [
             'token' => (string) $token,
-            'decodedTokenBody' => $jwtAuth->decode($token)->toArray()
+            'decodedTokenBody' => $jwtAuth->decode($token)->toArray(),
         ];
     }
-
 
     /**
      * Collections are not used for token transformations.

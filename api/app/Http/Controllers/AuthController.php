@@ -82,11 +82,11 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
-        if (!$token = $this->attemptLogin($credentials)) {
+        if (! $token = $this->attemptLogin($credentials)) {
             // Check to see if the user has recently requested to change their email and try to log in using it
             if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
                 $credentials['email'] = $oldEmail;
-                if (!$token = $this->attemptLogin($credentials)) {
+                if (! $token = $this->attemptLogin($credentials)) {
                     throw new UnauthorizedException('Credentials failed.');
                 }
             } else {
@@ -107,7 +107,7 @@ class AuthController extends ApiController
      */
     private function attemptLogin($credentials)
     {
-        if (!$this->auth->attempt($credentials)) {
+        if (! $this->auth->attempt($credentials)) {
             return false;
         }
 
@@ -121,7 +121,7 @@ class AuthController extends ApiController
     }
 
     /**
-     * Refresh a login token
+     * Refresh a login token.
      *
      * @return ApiResponse
      */
@@ -153,14 +153,14 @@ class AuthController extends ApiController
     public function token(Request $request, User $userModel)
     {
         $header = $request->headers->get('authorization');
-        if (!starts_with(strtolower($header), 'token')) {
+        if (! starts_with(strtolower($header), 'token')) {
             throw new BadRequestException('Single use token not provided.');
         }
 
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
-        if (!$user = $userModel->findByLoginToken($token)) {
+        if (! $user = $userModel->findByLoginToken($token)) {
             throw new UnauthorizedException('Token invalid.');
         }
 
@@ -207,7 +207,7 @@ class AuthController extends ApiController
         // with Twitter for instance, that isn't whitelisted, no email
         // address will be returned with the response.
         // See the notes in Spira API doc under Social Login for more info.
-        if (!$socialUser->email) {
+        if (! $socialUser->email) {
             // The app is connected with the service, but the 3rd party service
             // is not configured or allowed to return email addresses, so we
             // can't process the data further. Let's throw an exception.
@@ -232,10 +232,11 @@ class AuthController extends ApiController
 
         // Prepare response data
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->getCachedReturnUrl() . '?jwtAuthToken=' . $token;
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$token;
 
         $response = $this->getResponse();
         $response->redirect($returnUrl, 302);
+
         return $response;
     }
 
@@ -275,7 +276,7 @@ class AuthController extends ApiController
      */
     protected function validateProvider($provider)
     {
-        if (!in_array($provider, array_keys($this->app['config']['services']))) {
+        if (! in_array($provider, array_keys($this->app['config']['services']))) {
             throw new NotImplementedException('Provider '.$provider.' is not supported.');
         }
     }

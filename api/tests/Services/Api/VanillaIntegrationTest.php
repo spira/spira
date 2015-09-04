@@ -163,7 +163,6 @@ class VanillaIntegrationTest extends TestCase
         $this->assertEquals($body, $response);
     }
 
-
     // Generic
 
     /**
@@ -180,7 +179,6 @@ class VanillaIntegrationTest extends TestCase
         // Clean up
         $this->client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
     }
-
 
     // Discussions
 
@@ -278,7 +276,7 @@ class VanillaIntegrationTest extends TestCase
         // Create discussion thread
         $id = (string) Uuid::uuid4();
         $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1, ['ForeignID' => $id]);
-        for ($i=0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $comment = $this->client->api('comments')->create(
                 $discussion['Discussion']['DiscussionID'],
                 'Comment #'.$i
@@ -300,7 +298,6 @@ class VanillaIntegrationTest extends TestCase
         // Clean up
         $this->client->api('discussions')->removeByForeignId($id);
     }
-
 
     // Comments
 

@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\TestEntity;
@@ -10,10 +12,9 @@ class TestController extends EntityController
         parent::__construct($model, $transformer);
     }
 
-
     public function urlEncode($id)
     {
-        return $this->getResponse()->item(['test'=>$id]);
+        return $this->getResponse()->item(['test' => $id]);
     }
 
     /**

@@ -1,4 +1,6 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
@@ -17,7 +19,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
-    
+
     /**
      * Login/email confirm token time to live in minutes.
      *
@@ -114,7 +116,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     }
 
     /**
-     *
      * @todo Replace these two methods with the hasMany relationship for roles
      *       when implementing. For now they "simulate" the relationship so
      *       functionality accessing roles will get a similar dataset as when
@@ -148,7 +149,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
      *
      * @param UserProfile $profile
      * @return $this
-     *
      */
     public function setProfile(UserProfile $profile)
     {
@@ -210,7 +210,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
         // If no user credential is associated with the user, just return an
         // empty string which will trigger a ValidationException during
         // password_verify()
-        if (!$this->userCredential) {
+        if (! $this->userCredential) {
             return '';
         }
 
@@ -275,7 +275,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
             return $user;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -317,9 +317,9 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
 
-        Cache::put('email_confirmation_' . $token, $newEmail, $this->token_ttl);
+        Cache::put('email_confirmation_'.$token, $newEmail, $this->token_ttl);
 
-        Cache::put('email_change_' . $newEmail, $oldEmail, $this->token_ttl);
+        Cache::put('email_change_'.$newEmail, $oldEmail, $this->token_ttl);
 
         return $token;
     }
@@ -332,10 +332,10 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
      */
     public function getEmailFromToken($token)
     {
-        $newEmail = Cache::pull('email_confirmation_' . $token, false);
+        $newEmail = Cache::pull('email_confirmation_'.$token, false);
 
         if ($newEmail) {
-            Cache::forget('email_change_' . $newEmail);
+            Cache::forget('email_change_'.$newEmail);
         }
 
         return $newEmail;
@@ -349,6 +349,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
      */
     public static function findCurrentEmail($newEmail)
     {
-        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
+        return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
     }
 }

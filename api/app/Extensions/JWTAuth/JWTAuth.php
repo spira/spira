@@ -1,4 +1,6 @@
-<?php namespace App\Extensions\JWTAuth;
+<?php
+
+namespace App\Extensions\JWTAuth;
 
 use Exception;
 use App\Models\User;
@@ -21,7 +23,7 @@ class JWTAuth extends JWTAuthBase
      */
     public function getTokenFromRequest()
     {
-        if (!$token = $this->setRequest($this->request)->getToken()) {
+        if (! $token = $this->setRequest($this->request)->getToken()) {
             throw new BadRequestException('Token not provided.');
         }
 
@@ -48,7 +50,7 @@ class JWTAuth extends JWTAuthBase
             throw new UnprocessableEntityException($e->getMessage(), null, $e);
         }
 
-        if (!$user) {
+        if (! $user) {
             throw new RuntimeException('The user does not exist.');
         }
 
@@ -99,7 +101,7 @@ class JWTAuth extends JWTAuthBase
         return $this->manager->getPayloadFactory()->make(
             array_merge($customClaims, [
                 'sub' => $user->user_id,
-                '_user' => $user
+                '_user' => $user,
             ])
         );
     }
