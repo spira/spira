@@ -1,8 +1,16 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Services;
 
 use Cloudinary\Api;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use App\Exceptions\NotImplementedException;
 
 class Cloudinary
@@ -34,19 +42,18 @@ class Cloudinary
 
         $this->api = new Api();
 
-        if (!$this->apiSecret || !$this->apiKey) {
-            throw new NotImplementedException("Cloudinary configuration variables have not been set");
+        if (! $this->apiSecret || ! $this->apiKey) {
+            throw new NotImplementedException('Cloudinary configuration variables have not been set');
         }
     }
 
     /**
-     * Sign request parameters
+     * Sign request parameters.
      * @param array $paramsToSign
      * @return string
      */
     public function signRequestParams(array $paramsToSign)
     {
-
         return $this->cloudinary->api_sign_request($paramsToSign, $this->apiSecret);
     }
 
@@ -55,11 +62,8 @@ class Cloudinary
      */
     public function getRemoteImages()
     {
-
         $imageResponse = $this->api->resources();
-
 
         return $imageResponse;
     }
-
 }

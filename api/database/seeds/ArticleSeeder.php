@@ -24,7 +24,6 @@ class ArticleSeeder extends BaseSeeder
      */
     public function run()
     {
-
         $images = Image::all();
 
         factory(Article::class, 50)
@@ -42,7 +41,6 @@ class ArticleSeeder extends BaseSeeder
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
-
 
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {

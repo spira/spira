@@ -1,4 +1,14 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Cloudinary;
@@ -11,7 +21,7 @@ class CloudinaryController extends ApiController
     protected $cloudinary;
 
     /**
-     * Assign dependencies
+     * Assign dependencies.
      *
      * @param Cloudinary $cloudinary
      * @param EloquentModelTransformer $transformer
@@ -21,7 +31,6 @@ class CloudinaryController extends ApiController
         $this->cloudinary = $cloudinary;
         parent::__construct($transformer);
     }
-
 
     public function getSignature(Request $request)
     {
@@ -33,13 +42,10 @@ class CloudinaryController extends ApiController
             'api_key' => $this->cloudinary->apiKey,
         ];
 
-
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($responseObject);
     }
-
-
 
     public function getAll()
     {
