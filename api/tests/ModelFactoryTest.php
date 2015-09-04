@@ -199,7 +199,5 @@ class ModelFactoryTest extends TestCase
         $entityTransformed = $factory->transformed();
 
         $this->assertEquals($entity->first()->entity_id, $entityTransformed[0]['entityId']);
-
     }
-
 }

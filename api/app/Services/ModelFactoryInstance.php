@@ -181,7 +181,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     private function built()
     {
-        if ($this->loadedEntities){
+        if ($this->loadedEntities) {
             return $this->loadedEntities;
         }
 
