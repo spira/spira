@@ -45,7 +45,7 @@ class ArticleTagTest extends TestCase
         }
         /** @var Article[] $articles */
         foreach ($articles as $article) {
-            if (!$same) {
+            if (! $same) {
                 /** @var Collection $tags */
                 $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
             }
@@ -127,7 +127,7 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(4, $entity->tags->count());
         $tag = $entity->tags->first();
 
-        $this->getJson('/tags/'.$tag->tag_id, ['with-nested'=>'articles']);
+        $this->getJson('/tags/'.$tag->tag_id, ['with-nested' => 'articles']);
         $object = json_decode($this->response->getContent());
         $this->assertEquals(5, count($object->_articles));
     }
@@ -185,7 +185,7 @@ class ArticleTagTest extends TestCase
     public function testPostTagInvalid()
     {
         $tag = $this->getFactory()->get(Tag::class)
-            ->customize(['tag'=>'%$@""'])
+            ->customize(['tag' => '%$@""'])
             ->transformed();
 
         $this->post('/tags', $tag);
