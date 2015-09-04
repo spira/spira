@@ -9,6 +9,7 @@ class Cloudinary
 {
     public $apiKey;
     protected $apiSecret;
+    public $cloudName;
     /** @var  \Cloudinary */
     protected $cloudinary;
     /** @var  Api */
@@ -18,12 +19,13 @@ class Cloudinary
     {
         $this->apiKey = env('CLOUDINARY_API_KEY');
         $this->apiSecret = env('CLOUDINARY_API_SECRET');
+        $this->cloudName = env('CLOUDINARY_CLOUD_NAME');
 
         \Cloudinary::config(
             [
-                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-                'api_key' => env('CLOUDINARY_API_KEY'),
-                'api_secret' => env('CLOUDINARY_API_SECRET'),
+                'cloud_name' => $this->apiKey,
+                'api_key' => $this->apiSecret,
+                'api_secret' => $this->cloudName,
                 'private_cdn' => false,
             ]
         );
