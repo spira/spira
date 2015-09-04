@@ -20,7 +20,7 @@ trait HelpersTrait
     {
         // Prepare an array with user data already used
         $users = User::all();
-        if (!$this->uniqueUserValues) {
+        if (! $this->uniqueUserValues) {
             $uniques = ['username' => [], 'email' => []];
             foreach ($users as $user) {
                 array_push($uniques['username'], [$user->username => null]);
@@ -63,7 +63,7 @@ trait HelpersTrait
             $default = [
                 'email' => $faker->unique()->email,
                 'username' => $faker->unique()->username,
-                'user_type' => 'admin'
+                'user_type' => 'admin',
             ];
             $attr = array_merge($default, $attributes);
 

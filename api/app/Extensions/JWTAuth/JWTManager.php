@@ -8,7 +8,7 @@ use Tymon\JWTAuth\JWTManager as JWTManagerBase;
 class JWTManager extends JWTManagerBase
 {
     /**
-     * Refresh a Token and return a new Token
+     * Refresh a Token and return a new Token.
      *
      * @param  \Tymon\JWTAuth\Token  $token
      * @return \Tymon\JWTAuth\Token

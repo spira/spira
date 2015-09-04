@@ -1,4 +1,6 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -48,7 +50,7 @@ class PermissionMiddleware
         $user = $this->jwtAuth->getUser();
         $lock = $this->lock->makeCallerLockAware($user);
 
-        if (!$user->can($action, $resource)) {
+        if (! $user->can($action, $resource)) {
             throw new ForbiddenException;
         }
 

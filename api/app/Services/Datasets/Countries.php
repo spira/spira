@@ -1,4 +1,6 @@
-<?php namespace App\Services\Datasets;
+<?php
+
+namespace App\Services\Datasets;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -55,7 +57,7 @@ class Countries extends Dataset
         foreach ($response->json() as $country) {
             $countries->push(new Collection([
                 'country_name' => $country['name'],
-                'country_code' => $country['alpha2Code']
+                'country_code' => $country['alpha2Code'],
             ]));
         }
 

@@ -68,7 +68,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
             } catch (VanillaException $e) {
                 return $this->formatResponse([
                     'error' => $e->getType(),
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ]);
             }
         }
@@ -90,15 +90,15 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         if (empty($user)) {
             return [
                 'name' => '',
-                'photourl' => ''
+                'photourl' => '',
             ];
         }
 
         // When no signature and timestamp is sent, only return public information
-        if (!$this->request->has('timestamp') && !$this->request->has('signature')) {
+        if (! $this->request->has('timestamp') && ! $this->request->has('signature')) {
             return [
                 'name' => $user['name'],
-                'photourl' => @$user['photourl']
+                'photourl' => @$user['photourl'],
             ];
         }
 
@@ -120,7 +120,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     public function formatUser()
     {
-        if (!$this->user) {
+        if (! $this->user) {
             return [];
         } else {
             return [
@@ -128,7 +128,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
                 'name' => $this->user->username,
                 'email' => $this->user->email,
                 'photourl' => $this->user->avatar_img_url,
-                'roles' => $this->getMappedRoles()
+                'roles' => $this->getMappedRoles(),
             ];
         }
     }
@@ -146,7 +146,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         $roles = $roles->map(function ($role) {
             $mapping = [
                 'admin' => 'administrator',
-                'guest' => 'member'
+                'guest' => 'member',
             ];
 
             if (array_key_exists($role, $mapping)) {
@@ -182,7 +182,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      *
      * @param  array    $data
      * @param  string   $hashType
-     * @param  boolean  $returnData
+     * @param  bool  $returnData
      *
      * @return mixed
      */
@@ -247,7 +247,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function ssoString(array $user)
     {
-        if (!isset($user['client_id'])) {
+        if (! isset($user['client_id'])) {
             $user['client_id'] = $this->clientId;
         }
 
@@ -291,7 +291,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
             if ($condition) {
                 $method = camel_case('validCondition_'.$condition);
 
-                if (!$this->{$method}()) {
+                if (! $this->{$method}()) {
                     continue;
                 }
             }
@@ -322,7 +322,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function validHasClientId()
     {
-        if (!$this->request->has('client_id')) {
+        if (! $this->request->has('client_id')) {
             throw new VanillaInvalidRequestException('The client_id parameter is missing.');
         }
     }
@@ -350,7 +350,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function validTimestamp()
     {
-        if (!$this->request->has('timestamp') || !is_numeric($this->request->get('timestamp'))) {
+        if (! $this->request->has('timestamp') || ! is_numeric($this->request->get('timestamp'))) {
             throw new VanillaInvalidRequestException('The timestamp parameter is missing or invalid.');
         }
     }
@@ -364,7 +364,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function validHasSignature()
     {
-        if (!$this->request->has('signature')) {
+        if (! $this->request->has('signature')) {
             throw new VanillaInvalidRequestException('Missing signature parameter.');
         }
     }

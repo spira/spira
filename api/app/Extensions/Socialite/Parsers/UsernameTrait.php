@@ -59,7 +59,7 @@ trait UsernameTrait
             'removeSpaces',
             'replaceSpacesWithDots',
             'switchFirstLast',
-            'InitialAndLast'
+            'InitialAndLast',
         ];
 
         foreach ($methods as $method) {
@@ -78,7 +78,7 @@ trait UsernameTrait
         do {
             $tryName = $username.' '.$suffix;
             $suffix++;
-        } while (!$this->usernameIsUnique($tryName));
+        } while (! $this->usernameIsUnique($tryName));
 
         return $tryName;
     }

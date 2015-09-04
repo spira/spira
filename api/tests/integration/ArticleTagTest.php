@@ -5,7 +5,7 @@ use App\Models\Tag;
 use Spira\Model\Collection\Collection;
 
 /**
- * Class ArticleTagTest
+ * Class ArticleTagTest.
  * @group integration
  */
 class ArticleTagTest extends TestCase
@@ -69,7 +69,7 @@ class ArticleTagTest extends TestCase
     /**
      * Current scenario is tested
      * Say we got 5 tags for article
-     * foo, bar, zoo, dar, kar
+     * foo, bar, zoo, dar, kar.
      *
      * In request we put only "foo" + 4 new tags
      * So "bar, zoo, dar, kar" are detached from article, "foo" remains and 4 new tags created
@@ -192,7 +192,6 @@ class ArticleTagTest extends TestCase
 
         $this->assertEquals(4, Article::find($entity->article_id)->tags->count());
         $tag = $entity->tags->first();
-
 
         $this->deleteJson('/tags/'.$tag->tag_id);
 

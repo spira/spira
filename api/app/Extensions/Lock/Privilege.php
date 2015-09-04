@@ -1,4 +1,6 @@
-<?php namespace App\Extensions\Lock;
+<?php
+
+namespace App\Extensions\Lock;
 
 use BeatSwitch\Lock\Lock;
 use BeatSwitch\Lock\Permissions\Privilege as BasePrivilege;
@@ -19,7 +21,7 @@ class Privilege extends BasePrivilege
             $class = array_shift($condition);
             $method = array_shift($condition);
 
-            if (!call_user_func_array([$class, $method], $condition)) {
+            if (! call_user_func_array([$class, $method], $condition)) {
                 return false;
             }
         }

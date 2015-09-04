@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 20.08.15
- * Time: 11:55
+ * Time: 11:55.
  */
 
 namespace App\Http\Controllers;
@@ -44,11 +45,10 @@ class ArticleTagController extends ChildEntityController
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels)
             ->each(function (BaseModel $model) {
-                if (!$model->exists) {
+                if (! $model->exists) {
                     $model->save();
                 }
             });
-
 
         $this->getRelation($parent)->sync($childModels->lists('tag_id')->toArray());
 

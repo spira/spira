@@ -5,7 +5,7 @@ use App\Services\ModelFactory;
 trait ModelFactoryTrait
 {
     /**
-     * Making it static not to reinit for each TestCase
+     * Making it static not to reinit for each TestCase.
      * @var ModelFactory
      */
     protected static $modelFactory;

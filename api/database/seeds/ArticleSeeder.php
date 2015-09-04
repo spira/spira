@@ -33,7 +33,6 @@ class ArticleSeeder extends Seeder
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
 
-
                 //create & link images
                 factory(Image::class, 5)
                     ->create()
@@ -44,7 +43,6 @@ class ArticleSeeder extends Seeder
                         ]);
                     });
 
-            })
-        ;
+            });
     }
 }

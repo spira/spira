@@ -22,7 +22,7 @@ class User extends ApiAbstract
             'Name' => $username,
             'Email' => $email,
             'Photo' => $photo,
-            'Roles' => $roles
+            'Roles' => $roles,
         ];
 
         $parameters = array_filter($parameters);
@@ -51,7 +51,7 @@ class User extends ApiAbstract
     public function remove($id, $method = 'delete')
     {
         $parameters = [
-            'Method' => $method
+            'Method' => $method,
         ];
 
         return $this->delete('users/hotfix/'.$id, $parameters);

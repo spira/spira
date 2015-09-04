@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 05.08.15
- * Time: 18:03
+ * Time: 18:03.
  */
 
 namespace App\Http\Controllers;

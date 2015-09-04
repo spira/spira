@@ -33,7 +33,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the Payload Factory
+     * Register the bindings for the Payload Factory.
      */
     protected function registerClaimFactory()
     {
@@ -43,7 +43,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the JWT Manager
+     * Register the bindings for the JWT Manager.
      */
     protected function registerJWTManager()
     {
@@ -60,7 +60,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the main JWTAuth class
+     * Register the bindings for the main JWTAuth class.
      */
     protected function registerJWTAuth()
     {

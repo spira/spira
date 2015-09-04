@@ -1,8 +1,9 @@
-<?php namespace App\Extensions\Lock;
+<?php
+
+namespace App\Extensions\Lock;
 
 use BeatSwitch\Lock\Roles\Role;
 use BeatSwitch\Lock\Callers\Caller;
-use BeatSwitch\Lock\LockFactory as LockFactoryBase;
 
 class LockFactory
 {

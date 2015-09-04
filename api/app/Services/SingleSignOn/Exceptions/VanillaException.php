@@ -2,7 +2,7 @@
 
 namespace App\Services\SingleSignOn\Exceptions;
 
-use \Exception;
+use Exception;
 
 abstract class VanillaException extends Exception
 {

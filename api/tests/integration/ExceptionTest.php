@@ -4,7 +4,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ServerException;
 
 /**
- * Class RestExceptionTest
+ * Class RestExceptionTest.
  * @group integration
  */
 class RestExceptionTest extends TestCase

@@ -11,7 +11,7 @@ use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
 
 /**
- * Class SocialiteTest
+ * Class SocialiteTest.
  */
 class SocialiteTest extends TestCase
 {
@@ -38,7 +38,7 @@ class SocialiteTest extends TestCase
     public function testCreateTwitterDriver()
     {
         // If no twitter credentials exists in the env, add mock credentials
-        if (!$this->app->config->get('services.twitter.client_id')) {
+        if (! $this->app->config->get('services.twitter.client_id')) {
             $this->app->config->set('services.twitter.client_id', 'foo');
             $this->app->config->set('services.twitter.client_secret', 'bar');
         }

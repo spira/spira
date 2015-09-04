@@ -19,7 +19,7 @@ class ApiUserController extends UserController
             'Name' => '',
             'Email' => '',
             'Photo' => '',
-            'Roles' => [8]
+            'Roles' => [8],
         ];
 
         $user = array_intersect_key($data, $default) + $default;
@@ -28,7 +28,7 @@ class ApiUserController extends UserController
 
         // Create or get existing user
         $id = Gdn::userModel()->connect($uniqueId, $clientId, $user);
-        if (!$id) {
+        if (! $id) {
             throw new Gdn_UserException('Bad Request', 400);
         }
 

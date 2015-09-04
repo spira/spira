@@ -1,9 +1,10 @@
 <?php
+
 use App\Models\Article;
 use Faker\Factory as Faker;
 
 /**
- * Class ArticleModelTest
+ * Class ArticleModelTest.
  * @group article
  */
 class ArticleModelTest extends TestCase
@@ -16,7 +17,6 @@ class ArticleModelTest extends TestCase
         App\Models\Article::boot();
     }
 
-
     public function testAutomaticExcerpt()
     {
         $faker = Faker::create('au_AU');
@@ -24,7 +24,7 @@ class ArticleModelTest extends TestCase
 
         $articleWithoutExcerpt = factory(Article::class)->make([
             'excerpt' => null,
-            'content' => implode("\n\n", $faker->paragraphs(3)) //use seeded faker paragraph so the unit test will always use the same data
+            'content' => implode("\n\n", $faker->paragraphs(3)), //use seeded faker paragraph so the unit test will always use the same data
         ]);
 
         $excerpt = $articleWithoutExcerpt->excerpt;
@@ -35,11 +35,11 @@ class ArticleModelTest extends TestCase
 
     public function testManualExcerpt()
     {
-        $excerpt = "This is the article excerpt";
+        $excerpt = 'This is the article excerpt';
         $articleWithExcerpt = factory(Article::class)->make([
-            'excerpt' => $excerpt
+            'excerpt' => $excerpt,
         ]);
 
-        $this->assertEquals($excerpt, $articleWithExcerpt->excerpt, "Article excerpt has not been overridden");
+        $this->assertEquals($excerpt, $articleWithExcerpt->excerpt, 'Article excerpt has not been overridden');
     }
 }

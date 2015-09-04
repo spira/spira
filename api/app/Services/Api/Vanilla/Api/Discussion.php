@@ -35,7 +35,7 @@ class Discussion extends ApiAbstract
         $parameters = [
             'Name' => $name,
             'Body' => $body,
-            'CategoryID' => $categoryId
+            'CategoryID' => $categoryId,
         ];
 
         $parameters = array_merge($parameters, $additional);
@@ -90,7 +90,7 @@ class Discussion extends ApiAbstract
     {
         $parameters = [
             'Name' => $name,
-            'Body' => $body
+            'Body' => $body,
         ];
 
         return $this->put('discussions/'.$id, $parameters);

@@ -1,4 +1,6 @@
-<?php namespace App\Providers;
+<?php
+
+namespace App\Providers;
 
 use App\Extensions\Lock\Manager;
 use BeatSwitch\Lock\Drivers\ArrayDriver;
@@ -14,7 +16,7 @@ class LockServiceProvider extends ServiceProvider
     protected $defer = true;
 
     /**
-     * Register the service provider
+     * Register the service provider.
      *
      * @return void
      */

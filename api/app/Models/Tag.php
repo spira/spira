@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 13.07.15
- * Time: 15:07
+ * Time: 15:07.
  */
 
 namespace App\Models;
@@ -29,7 +30,7 @@ class Tag extends BaseModel
 
     protected static $validationRules = [
         'tag_id' => 'required|uuid',
-        'tag' => 'required|string|alphaDashSpace|max:20'
+        'tag' => 'required|string|alphaDashSpace|max:20',
     ];
 
     /**

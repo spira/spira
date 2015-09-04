@@ -19,7 +19,7 @@ class UserClaim extends Claim
     protected $name = '_user';
 
     /**
-     * Set the claim value, and call a validate method if available
+     * Set the claim value, and call a validate method if available.
      *
      * @param  User  $value
      * @throws InvalidClaimException
@@ -39,7 +39,7 @@ class UserClaim extends Claim
      * Validate the user claim.
      *
      * @param  mixed  $value
-     * @return boolean
+     * @return bool
      */
     protected function validate($value)
     {

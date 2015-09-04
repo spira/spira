@@ -15,13 +15,13 @@ class ApiExtendedHooks implements Gdn_IPlugin
             'controller' => 'ApiDiscussion',
             'method' => 'getbyforeignid',
             'arguments' => [
-                'Page' => val('Page', $data)
-            ]
+                'Page' => val('Page', $data),
+            ],
         ]);
 
         $sender::delete('/foreign/[*:foreignID]', [
             'controller' => 'ApiDiscussion',
-            'method' => 'deletebyforeignid'
+            'method' => 'deletebyforeignid',
         ]);
     }
 
@@ -44,8 +44,8 @@ class ApiExtendedHooks implements Gdn_IPlugin
             'controller' => 'ApiUser',
             'method'     => 'delete',
             'arguments'  => [
-                'Method' => val('Method', $data)
-            ]
+                'Method' => val('Method', $data),
+            ],
         ]);
     }
 

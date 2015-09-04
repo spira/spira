@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 28.07.15
- * Time: 1:01
+ * Time: 1:01.
  */
-
 use Mockery as m;
 use Rhumsaa\Uuid\Uuid;
 
@@ -14,7 +14,7 @@ class RouteHelperTest extends TestCase
     public function testRoute()
     {
         $uuid = Uuid::uuid4();
-        $route = \App\Helpers\RouteHelper::getRoute(new \App\Models\TestEntity(['entity_id'=>$uuid]));
+        $route = \App\Helpers\RouteHelper::getRoute(new \App\Models\TestEntity(['entity_id' => $uuid]));
         $this->assertStringEndsWith('/test/entities/'.$uuid, $route);
     }
 

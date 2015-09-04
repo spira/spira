@@ -1,4 +1,6 @@
-<?php namespace App\Services\Datasets;
+<?php
+
+namespace App\Services\Datasets;
 
 use DateTime;
 use DateTimeZone;
@@ -31,6 +33,7 @@ class Timezones extends Dataset
                 'display_offset' => $this->formatDisplayOffset($offset),
             ]));
         }
+
         return $timezones;
     }
 
@@ -46,6 +49,6 @@ class Timezones extends Dataset
         $inital->setTimestamp(abs($offset));
         $hoursFormatted = $inital->format('H:i');
 
-        return ($offset >= 0 ? '+':'-') . $hoursFormatted;
+        return ($offset >= 0 ? '+' : '-').$hoursFormatted;
     }
 }

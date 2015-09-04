@@ -1,4 +1,6 @@
-<?php namespace App\Http\Transformers;
+<?php
+
+namespace App\Http\Transformers;
 
 use App\Services\TransformerService;
 use League\Fractal\TransformerAbstract;

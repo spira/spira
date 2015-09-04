@@ -1,4 +1,5 @@
 <?php
+
 // This file allows us to emulate Apache's "mod_rewrite" functionality from the
 // built-in PHP web server. This provides a convenient way to test Vanilla
 // forum without having installed a "real" server software here.

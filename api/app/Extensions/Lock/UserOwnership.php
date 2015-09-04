@@ -1,4 +1,6 @@
-<?php namespace App\Extensions\Lock;
+<?php
+
+namespace App\Extensions\Lock;
 
 interface UserOwnership
 {

@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 21.08.15
- * Time: 17:15
+ * Time: 17:15.
  */
 
 namespace App\Http\Transformers;

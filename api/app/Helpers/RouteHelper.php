@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 17.07.15
- * Time: 18:19
+ * Time: 18:19.
  */
 
 namespace App\Helpers;
@@ -20,9 +21,9 @@ class RouteHelper
      */
     public static function getRoute(BaseModel $model)
     {
-        if (!isset(static::$badRoutes[get_class($model)])) {
+        if (! isset(static::$badRoutes[get_class($model)])) {
             try {
-                return route(get_class($model), ['id'=>$model->getQueueableId()]);
+                return route(get_class($model), ['id' => $model->getQueueableId()]);
             } catch (\InvalidArgumentException $e) {
                 static::$badRoutes[get_class($model)] = true;
             }
