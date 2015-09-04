@@ -1,11 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 
 /**
- * Class ChildEntityTest
+ * Class ChildEntityTest.
  * @group integration
  */
 class ChildEntityTest extends TestCase
@@ -39,6 +47,7 @@ class ChildEntityTest extends TestCase
         // as if they came from the frontend.
         $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
         $entity = $transformer->transform($entity);
+
         return $entity;
     }
 
@@ -155,7 +164,7 @@ class ChildEntityTest extends TestCase
         $this->assertTrue(is_object($object));
 
         $this->assertObjectHasAttribute('message', $object);
-        $this->assertEquals("Provided entity body does not match route parameter. The entity key cannot be updated", $object->message);
+        $this->assertEquals('Provided entity body does not match route parameter. The entity key cannot be updated', $object->message);
     }
 
     public function testPutOneNewInvalidId()
@@ -435,7 +444,6 @@ class ChildEntityTest extends TestCase
                 'value'   => 'foobar',
             ];
         }, $childEntities->all());
-
 
         $this->deleteJson('/test/entities/'.$entity->entity_id.'/children', $data);
 

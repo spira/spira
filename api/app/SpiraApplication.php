@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace app;
 
 use Laravel\Lumen\Application;
@@ -19,7 +27,7 @@ class SpiraApplication extends Application
         // Don't display additional errors on top of the exception being rendered
         // @codeCoverageIgnoreStart
         ini_set('display_errors', 0);
-        if ('cli' !== php_sapi_name() && (!ini_get('log_errors') || ini_get('error_log'))) {
+        if ('cli' !== php_sapi_name() && (! ini_get('log_errors') || ini_get('error_log'))) {
             // CLI - display errors only if they're not already logged to STDERR
             ini_set('display_errors', 1);
         }

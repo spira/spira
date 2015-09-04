@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Debug\Dumper;
 
@@ -52,9 +60,8 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         return require __DIR__.'/../bootstrap/app.php';
     }
 
-
     /**
-     * Assert status code, and on failure print the output to assist debugging
+     * Assert status code, and on failure print the output to assist debugging.
      * @param int $code
      */
     public function assertResponseStatus($code)
@@ -92,7 +99,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
             $server[$name] = $value; //set the server header to SNAKE_CASE
 
             if (! starts_with($name, 'HTTP_')) {
-                $name = 'HTTP_' . $name;
+                $name = 'HTTP_'.$name;
                 $server[$name] = $value; //add the HTTP_* key
             }
         }
@@ -117,6 +124,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         $server = $this->transformHeadersToServerVars($headers);
 
         $this->call($method, $uri, [], [], [], $server, $content);
+
         return $this;
     }
 
@@ -129,13 +137,14 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         $headers['Content-Type'] = 'application/json';
         $headers['Content-Length'] = mb_strlen($content, '8bit');
-        if (!isset($headers['Accept'])) {
+        if (! isset($headers['Accept'])) {
             $headers['Accept'] = 'application/json';
+
             return $headers;
         }
+
         return $headers;
     }
-
 
     /**
      * Visit the given URI with a GET request with content type of application/json.

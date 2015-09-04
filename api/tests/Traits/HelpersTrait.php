@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\User;
 use App\Models\UserProfile;
 use Faker\Factory as Faker;
@@ -20,7 +28,7 @@ trait HelpersTrait
     {
         // Prepare an array with user data already used
         $users = User::all();
-        if (!$this->uniqueUserValues) {
+        if (! $this->uniqueUserValues) {
             $uniques = ['username' => [], 'email' => []];
             foreach ($users as $user) {
                 array_push($uniques['username'], [$user->username => null]);
@@ -63,7 +71,7 @@ trait HelpersTrait
             $default = [
                 'email' => $faker->unique()->email,
                 'username' => $faker->unique()->username,
-                'user_type' => 'admin'
+                'user_type' => 'admin',
             ];
             $attr = array_merge($default, $attributes);
 
