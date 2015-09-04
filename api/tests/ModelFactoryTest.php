@@ -158,7 +158,6 @@ class ModelFactoryTest extends TestCase
 
     public function testPredefinedModel()
     {
-
         $testEntity = \App\Models\TestEntity::first();
 
         $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(\App\Models\TestEntity::class)
@@ -176,7 +175,6 @@ class ModelFactoryTest extends TestCase
 
     public function testPredefinedCollection()
     {
-
         $testEntityCollection = \App\Models\TestEntity::take(10)->get();
 
         $serviceCreatedFactoryCollection = $this->modelFactoryTest->get(\App\Models\TestEntity::class)
@@ -188,5 +186,4 @@ class ModelFactoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $serviceCreatedFactoryCollection);
         $this->assertEquals(3, $serviceCreatedFactoryCollection->count());
     }
-
 }
