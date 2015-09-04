@@ -48,4 +48,9 @@ class Tag extends BaseModel
 
         return $this->where('tag', '=', $id)->firstOrFail();
     }
+
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class, 'tag_article');
+    }
 }

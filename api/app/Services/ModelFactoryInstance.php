@@ -215,7 +215,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Modify an entity.
      *
-     * @param $entity
+     * @param BaseModel $entity
+     * @return BaseModel
      */
     private function modifyEntity(BaseModel $entity)
     {
@@ -340,7 +341,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * Create a collection of models.
      * Shortcut for FactoryBuilder.
      * @param  array $attributes
-     * @return mixed
+     * @return BaseModel|Collection
      */
     public function make(array $attributes = [])
     {
