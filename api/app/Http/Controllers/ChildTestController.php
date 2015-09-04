@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 06.08.15
- * Time: 1:30.
- */
-
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 17.07.15
- * Time: 20:12.
- */
-
 namespace Spira\Model\Validation;
 
 use Spira\Responder\Contract\TransformableInterface;

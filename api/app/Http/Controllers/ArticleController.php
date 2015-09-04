@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 08.07.15
- * Time: 23:39.
- */
-
 namespace App\Http\Controllers;
 
 use App\Extensions\JWTAuth\JWTAuth;

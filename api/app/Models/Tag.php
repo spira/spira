@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 15:07.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;

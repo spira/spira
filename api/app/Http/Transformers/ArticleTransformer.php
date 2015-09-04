@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 03.08.15
- * Time: 0:05.
- */
-
 namespace App\Http\Transformers;
 
 use App\Models\Article;

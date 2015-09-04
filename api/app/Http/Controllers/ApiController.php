@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 05.08.15
- * Time: 0:50.
- */
-
 namespace App\Http\Controllers;
 
 use App\Exceptions\BadRequestException;

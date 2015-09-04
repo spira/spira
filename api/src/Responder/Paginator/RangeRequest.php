@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 30.07.15
- * Time: 14:58.
- */
-
 namespace Spira\Responder\Paginator;
 
 use Illuminate\Http\Request;

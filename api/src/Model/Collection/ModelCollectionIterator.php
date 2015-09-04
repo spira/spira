@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 19:59.
- */
-
 namespace Spira\Model\Collection;
 
 use Spira\Model\Model\BaseModel;
