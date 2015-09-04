@@ -31,9 +31,9 @@ class Cloudinary
 
         \Cloudinary::config(
             [
-                'cloud_name' => $this->apiKey,
-                'api_key' => $this->apiSecret,
-                'api_secret' => $this->cloudName,
+                'cloud_name' => $this->cloudName,
+                'api_key' => $this->apiKey,
+                'api_secret' => $this->apiSecret,
                 'private_cdn' => false,
             ]
         );
