@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services\Api\Vanilla\Api;
 
 class Discussion extends ApiAbstract
@@ -35,7 +43,7 @@ class Discussion extends ApiAbstract
         $parameters = [
             'Name' => $name,
             'Body' => $body,
-            'CategoryID' => $categoryId
+            'CategoryID' => $categoryId,
         ];
 
         $parameters = array_merge($parameters, $additional);
@@ -90,7 +98,7 @@ class Discussion extends ApiAbstract
     {
         $parameters = [
             'Name' => $name,
-            'Body' => $body
+            'Body' => $body,
         ];
 
         return $this->put('discussions/'.$id, $parameters);

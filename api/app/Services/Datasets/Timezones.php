@@ -1,4 +1,14 @@
-<?php namespace App\Services\Datasets;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Services\Datasets;
 
 use DateTime;
 use DateTimeZone;
@@ -31,6 +41,7 @@ class Timezones extends Dataset
                 'display_offset' => $this->formatDisplayOffset($offset),
             ]));
         }
+
         return $timezones;
     }
 
@@ -46,6 +57,6 @@ class Timezones extends Dataset
         $inital->setTimestamp(abs($offset));
         $hoursFormatted = $inital->format('H:i');
 
-        return ($offset >= 0 ? '+':'-') . $hoursFormatted;
+        return ($offset >= 0 ? '+' : '-').$hoursFormatted;
     }
 }

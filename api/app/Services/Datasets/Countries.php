@@ -1,4 +1,14 @@
-<?php namespace App\Services\Datasets;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Services\Datasets;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -55,7 +65,7 @@ class Countries extends Dataset
         foreach ($response->json() as $country) {
             $countries->push(new Collection([
                 'country_name' => $country['name'],
-                'country_code' => $country['alpha2Code']
+                'country_code' => $country['alpha2Code'],
             ]));
         }
 

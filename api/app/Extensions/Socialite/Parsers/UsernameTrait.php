@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Extensions\Socialite\Parsers;
 
 use App\Models\User;
@@ -59,7 +67,7 @@ trait UsernameTrait
             'removeSpaces',
             'replaceSpacesWithDots',
             'switchFirstLast',
-            'InitialAndLast'
+            'InitialAndLast',
         ];
 
         foreach ($methods as $method) {
@@ -78,7 +86,7 @@ trait UsernameTrait
         do {
             $tryName = $username.' '.$suffix;
             $suffix++;
-        } while (!$this->usernameIsUnique($tryName));
+        } while (! $this->usernameIsUnique($tryName));
 
         return $tryName;
     }

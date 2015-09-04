@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services\Api\Vanilla\Api;
 
 class User extends ApiAbstract
@@ -22,7 +30,7 @@ class User extends ApiAbstract
             'Name' => $username,
             'Email' => $email,
             'Photo' => $photo,
-            'Roles' => $roles
+            'Roles' => $roles,
         ];
 
         $parameters = array_filter($parameters);
@@ -51,7 +59,7 @@ class User extends ApiAbstract
     public function remove($id, $method = 'delete')
     {
         $parameters = [
-            'Method' => $method
+            'Method' => $method,
         ];
 
         return $this->delete('users/hotfix/'.$id, $parameters);

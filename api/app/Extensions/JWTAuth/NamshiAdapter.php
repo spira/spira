@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Extensions\JWTAuth;
 
 use App\Exceptions\TokenInvalidException;
@@ -71,7 +79,7 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
             throw new TokenInvalidException('Could not decode token: '.$e->getMessage(), null, $e);
         }
 
-        if (!$jws->verify($this->secret['public'], $this->algo)) {
+        if (! $jws->verify($this->secret['public'], $this->algo)) {
             throw new TokenInvalidException('Token Signature could not be verified.');
         }
 

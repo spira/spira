@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Extensions\JWTAuth;
 
 use App;
@@ -19,7 +27,7 @@ class UserClaim extends Claim
     protected $name = '_user';
 
     /**
-     * Set the claim value, and call a validate method if available
+     * Set the claim value, and call a validate method if available.
      *
      * @param  User  $value
      * @throws InvalidClaimException
@@ -39,7 +47,7 @@ class UserClaim extends Claim
      * Validate the user claim.
      *
      * @param  mixed  $value
-     * @return boolean
+     * @return bool
      */
     protected function validate($value)
     {

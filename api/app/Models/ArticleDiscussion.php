@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Models;
 
 use App;
@@ -276,7 +284,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         $results = new Collection;
 
         foreach ($this->eagerConstraints as $model) {
-            $comments = new ArticleDiscussion;
+            $comments = new self;
             $comments->setArticle($model);
             $results->offsetSet($model->getKey(), $comments->getResults());
         }
@@ -330,7 +338,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      */
     protected function getClient()
     {
-        if (!$this->client) {
+        if (! $this->client) {
             $this->client = App::make(VanillaClient::class);
         }
 

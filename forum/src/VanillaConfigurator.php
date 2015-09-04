@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * We can not namespace this class as we need to interact with Vanilla's classes
  * that are not following any namespace or psr schema. So we must make sure this
@@ -55,7 +63,7 @@ class VanillaConfigurator
         define('PATH_ROOT', getcwd().'/public');
 
         // Boostrap Vanilla
-        require_once('public/bootstrap.php');
+        require_once 'public/bootstrap.php';
     }
 
     /**
@@ -73,9 +81,9 @@ class VanillaConfigurator
         ini_set('display_errors', 0);
 
         // Create the database tables
-        require_once('public/applications/dashboard/settings/structure.php');
-        require_once('public/applications/vanilla/settings/structure.php');
-        require_once('public/applications/conversations/settings/structure.php');
+        require_once 'public/applications/dashboard/settings/structure.php';
+        require_once 'public/applications/vanilla/settings/structure.php';
+        require_once 'public/applications/conversations/settings/structure.php';
     }
 
     /**
@@ -88,16 +96,16 @@ class VanillaConfigurator
         saveToConfig('Garden.Cookie.Salt', RandomString(10));
 
         $ApplicationInfo = [];
-        include(CombinePaths([PATH_APPLICATIONS.DS.'dashboard'.DS.'settings'.DS.'about.php']));
+        include CombinePaths([PATH_APPLICATIONS.DS.'dashboard'.DS.'settings'.DS.'about.php']);
 
         // Detect Internet connection for CDNs
-        $Disconnected = !(bool)@fsockopen('ajax.googleapis.com', 80);
+        $Disconnected = ! (bool) @fsockopen('ajax.googleapis.com', 80);
 
         saveToConfig([
             'Garden.Version' => arrayValue('Version', val('Dashboard', $ApplicationInfo, []), 'Undefined'),
             'Garden.Cdns.Disable' => $Disconnected,
             'Garden.CanProcessImages' => function_exists('gd_info'),
-            'EnabledPlugins.HtmLawed' => 'HtmLawed'
+            'EnabledPlugins.HtmLawed' => 'HtmLawed',
         ]);
     }
 
@@ -114,7 +122,7 @@ class VanillaConfigurator
         $user = [
             'Name' => getenv('VANILLA_ADMIN_NAME'),
             'Email' => getenv('VANILLA_ADMIN_EMAIL'),
-            'Password' => getenv('VANILLA_ADMIN_PASSWORD')
+            'Password' => getenv('VANILLA_ADMIN_PASSWORD'),
         ];
 
         $AdminUserID = $UserModel->SaveAdminUser($user);
@@ -158,14 +166,14 @@ class VanillaConfigurator
             'AssociationHashMethod' => 'md5',
             'AuthenticationSchemeAlias' => 'jsconnect',
             'Name' => 'Spira',
-            'AuthenticateUrl' => 'http://' . getenv('HOSTNAME_BASE') . '/api/auth/sso/vanilla',
+            'AuthenticateUrl' => 'http://'.getenv('HOSTNAME_BASE').'/api/auth/sso/vanilla',
             'Attributes' => serialize([
                 'HashType' => 'sha1',
                 'TestMode' => false,
-                'Trusted' => true
+                'Trusted' => true,
             ]),
             'Active' => true,
-            'IsDefault' => true
+            'IsDefault' => true,
         ];
 
         Gdn::SQL()->Options('Ignore', true)->Insert('UserAuthenticationProvider', $provider);

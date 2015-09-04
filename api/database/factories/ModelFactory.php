@@ -1,18 +1,14 @@
 <?php
 
 /*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| Here you may define all of your model factories. Model factories give
-| you a convenient way to create models for testing and seeding your
-| database. Just tell the factory how a default model should look.
-|
-*/
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 use Spira\Model\Collection\Collection;
 
 $factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker) {
@@ -27,7 +23,7 @@ $factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker
         'text' => $faker->paragraph(3),
         'date' => $faker->date(),
         'multi_word_column_title' => true,
-        'hidden' => $faker->boolean()
+        'hidden' => $faker->boolean(),
     ];
 });
 
@@ -36,7 +32,6 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
     return array_merge($testEntity, ['varchar' => 'custom']);
 });
-
 
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
@@ -49,7 +44,7 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
         'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
-        'user_type' => $faker->randomElement(App\Models\User::$userTypes)
+        'user_type' => $faker->randomElement(App\Models\User::$userTypes),
     ];
 });
 
@@ -61,7 +56,7 @@ $factory->define(App\Models\UserProfile::class, function (\Faker\Generator $fake
         'gender' => $faker->optional(0.5)->randomElement(['M', 'F', 'N/A']),
         'about' => $faker->optional(0.5)->text(120),
         'facebook' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
-        'twitter' => $faker->boolean() ? '@' . $faker->userName() : null,
+        'twitter' => $faker->boolean() ? '@'.$faker->userName() : null,
         'pinterest' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
         'instagram' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
         'website' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
@@ -76,7 +71,7 @@ $factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($fact
 
 $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
-        'password' => 'password'
+        'password' => 'password',
     ];
 });
 
@@ -91,7 +86,7 @@ $factory->define(App\Models\SecondTestEntity::class, function ($faker) {
     return [
         'entity_id' => $faker->uuid,
         'check_entity_id' => $faker->uuid,
-        'value' => $faker->word
+        'value' => $faker->word,
     ];
 });
 
@@ -150,7 +145,7 @@ $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
             // http://cloudinary.com/documentation/image_transformations#format_conversion
             'format' => $faker->randomElement(['jpg', 'png', 'gif', 'bmp', 'tiff', 'ico', 'pdf', 'eps', 'psd', 'svg', 'WebP']),
             'alt' => $faker->sentence,
-            'title' => $faker->optional()->sentence
+            'title' => $faker->optional()->sentence,
     ];
 });
 
@@ -160,7 +155,7 @@ $factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $fak
         'image_type' => $imageType = $faker->optional()->randomElement(['primary','thumbnail','carousel']),
         'position' => ($imageType == 'carousel') ? $faker->numberBetween(1, 10) : null,
         'alt' => $faker->optional()->sentence,
-        'title' => $faker->optional()->sentence
+        'title' => $faker->optional()->sentence,
     ];
 });
 

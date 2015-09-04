@@ -1,11 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleImage;
 
 /**
- * Class ArticleImageTest
+ * Class ArticleImageTest.
  * @group integration
  */
 class ArticleImageTest extends TestCase
@@ -90,7 +98,6 @@ class ArticleImageTest extends TestCase
         $this->assertCount(5, $object);
     }
 
-
     public function testPutManyNewInvalid()
     {
         $article = $this->getFactory()->get(Article::class)->create();
@@ -100,7 +107,7 @@ class ArticleImageTest extends TestCase
             ->get($images)
             ->count(5)
             ->customize([
-                'article_id'=>null
+                'article_id' => null,
             ])
             ->transformed();
 
@@ -114,8 +121,6 @@ class ArticleImageTest extends TestCase
         $this->assertObjectHasAttribute('articleId', $object->invalid[0]);
         $this->assertEquals($childCount, Article::find($article->article_id)->articleImages->count());
     }
-
-
 
     public function testDeleteMany()
     {
@@ -135,7 +140,6 @@ class ArticleImageTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
-
 
     public function testGetManyImages()
     {
