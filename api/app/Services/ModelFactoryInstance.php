@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\FactoryBuilder;
@@ -8,6 +16,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\DataModel;
 
 class ModelFactoryInstance implements Arrayable, Jsonable
 {
@@ -22,12 +31,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $makeVisible;
     private $showOnly;
     private $hide;
+    private $entityType;
     private $appends = [];
-
-    /**
-     * @var BaseModel|BaseModel[]|null
-     */
-    protected $entities;
+    /** @var  Collection|BaseModel */
+    private $predefinedEntities;
+    /** @var  Collection|BaseModel */
+    private $loadedEntities;
 
     /**
      * New model instance.
@@ -64,7 +73,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function customize(array $customizations)
     {
-        $this->customizations = $customizations;
+        $this->customizations = array_merge($this->customizations, $customizations);
 
         return $this;
     }
@@ -100,7 +109,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Hide attributes the factory instance returns.
      *
-     * @param  array  $hide
+     * @param  array $hide
      * @return $this
      */
     public function hide(array $hide)
@@ -111,7 +120,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     }
 
     /**
-     * Add properties to the returned entity
+     * Add properties to the returned entity.
      *
      * @param $key
      * @param $value
@@ -139,62 +148,81 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function setTransformer($transformerName)
     {
         $this->transformer = new $transformerName($this->transformerService);
+
         return $this;
+    }
+
+    /**
+     * Define a model to operate on, rather than using the factory.
+     * @param BaseModel $model
+     * @return $this
+     */
+    public function setModel(BaseModel $model)
+    {
+        $this->predefinedEntities = $model;
+
+        return $this->count(1);
+    }
+
+    /**
+     * Define a collection to operate on, rather than using the factory.
+     * @param Collection $collection
+     * @return $this
+     */
+    public function setCollection(Collection $collection)
+    {
+        $collection = $collection->map(function ($item) {
+            if ($item instanceof BaseModel) {
+                return $item;
+            }
+
+            return new DataModel($item);
+        });
+
+        $this->predefinedEntities = $collection;
+
+        return $this->count($collection->count());
     }
 
     /**
      * Get the built entities.
      *
-     * @param array $attributes
-     * @return Collection|BaseModel|\Spira\Model\Model\BaseModel[]
+     * @return Collection|BaseModel
      */
-    private function built(array $attributes = [])
+    private function built()
     {
-        if (is_null($this->entities)) {
-            $this->entities = $this->factoryInstance
-                ->times($this->entityCount)
-                ->make(array_merge($attributes, $this->customizations));
-
-            return $this->entities;
-        }
-        $entity = $this->entities;
-        if ($entity instanceof Collection) {
-            if ($this->entityCount === 1) {
-                $entity = $entity->first();
-            } else {
-                $entity = $entity->slice(0, $this->entityCount);
-            }
+        if ($this->loadedEntities) {
+            return $this->loadedEntities;
         }
 
-        return $entity;
+        $this->loadedEntities = $this->getPredefinedOrMocks();
+
+        $this->setEntityType();
+
+        return $this->loadedEntities;
     }
 
     /**
      * Set if the entity is a single item or a collection.
      *
-     * @return string
+     * @return void
      */
-    protected function getEntityType()
+    protected function setEntityType()
     {
-        return ($this->entityCount > 1) ? 'collection' : 'item';
+        $this->entityType = ($this->entityCount > 1) ? 'collection' : 'item';
     }
 
     /**
      * Modify an entity.
      *
-     * @param BaseModel $entity
-     * @return BaseModel
+     * @param $entity
      */
-    private function modifyEntity($entity)
+    private function modifyEntity(BaseModel $entity)
     {
         if ($this->showOnly) {
             $attributes = $entity->getAttributes();
-            $appends = $entity->appends;
-            $modifiedArray = array_keys($attributes);
-            if (!empty($appends)) {
-                $modifiedArray = array_merge($modifiedArray, $appends);
-            }
-            $newHidden = array_diff($modifiedArray, $this->showOnly);
+
+            $newHidden = array_diff(array_keys($attributes), $this->showOnly);
             $entity->setHidden($newHidden);
         }
 
@@ -214,14 +242,16 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity->setHidden($newHidden);
         }
 
-        if (!empty($this->appends)) {
-            foreach ($this->appends as $appendKey => $appendValue) {
-                $entity->{$appendKey} = $appendValue;
+        if ($this->customizations) {
+            foreach ($this->customizations as $key => $value) {
+                $entity->{$key} = $value;
             }
         }
 
-        if ($this->customizations) {
-            $entity->fill($this->customizations);
+        if (! empty($this->appends)) {
+            foreach ($this->appends as $appendKey => $appendValue) {
+                $entity->{$appendKey} = $appendValue;
+            }
         }
 
         return $entity;
@@ -235,16 +265,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     public function modified()
     {
         $entity = $this->built();
-        switch ($this->getEntityType()) {
+        switch ($this->entityType) {
             case 'item':
                 $entity = $this->modifyEntity($entity);
                 break;
             case 'collection':
-                $entity = $entity->each(
-                    function ($singleEntity) {
-                        return $this->modifyEntity($singleEntity);
-                    }
-                );
+                $entity = $entity->each(function ($singleEntity) {
+                    return $this->modifyEntity($singleEntity);
+                });
                 break;
         }
 
@@ -260,13 +288,17 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     {
         $entity = $this->modified();
 
-        if (!$this->transformer) {
+        if (! $this->transformer) {
             $this->transformer = new EloquentModelTransformer($this->transformerService);
         }
-        $method = 'transform'.ucfirst($this->getEntityType());
+
+        $method = 'transform'.ucfirst($this->entityType);
         $transformedEntity = $this->transformer->{$method}($entity);
 
-        $transformedEntity = array_except($transformedEntity, $this->hide); //allow the definer to specify transformed values to hide
+        $transformedEntity = array_except(
+            $transformedEntity,
+            $this->hide
+        ); //allow the definer to specify transformed values to hide
 
         return $transformedEntity;
     }
@@ -306,42 +338,88 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
     /**
      * Create a collection of models.
-     * Shortcut for FactoryBuilder
-     * @param  array  $attributes
-     * @return $this
+     * Shortcut for FactoryBuilder.
+     * @param  array $attributes
+     * @return mixed
      */
     public function make(array $attributes = [])
     {
-        $this->entities = $this->built($attributes);
-        return $this;
+        $this->customize($attributes);
+
+        return $this->modified();
     }
 
     /**
      * Create a collection of models and persist them to the database.
      *
-     * @param  array  $attributes
-     * @return $this
+     * @param  array $attributes
+     * @return mixed
      */
     public function create(array $attributes = [])
     {
-        $this->make($attributes);
+        $results = $this->make($attributes);
 
         if ($this->entityCount === 1) {
-            $this->entities->save();
+            $results->save();
         } else {
-            foreach ($this->entities as $result) {
+            foreach ($results as $result) {
                 $result->save();
             }
         }
 
-        return $this;
+        return $results;
     }
 
     /**
-     * @return null|BaseModel|BaseModel[]|Collection
+     * @param $count
+     * @return BaseModel|Collection
+     * @internal param array $attributes
      */
-    public function getEntities()
+    private function getModelMock($count = 1)
     {
-        return $this->entities;
+        if (is_null($this->factoryInstance)) {
+            throw new \LogicException('No factory class passed to model factory, cannot generate a mock');
+        }
+
+        $entity = $this->factoryInstance
+            ->times($count)
+            ->make($this->customizations);
+
+        return $entity;
+    }
+
+    /**
+     * Get either the predefined (subset of) collection/model, or.
+     * @return Collection|mixed|BaseModel
+     */
+    private function getPredefinedOrMocks()
+    {
+        if ($this->entityCount > 1) {
+            $collection = new Collection();
+
+            if ($this->predefinedEntities) {
+                if ($this->predefinedEntities instanceof Collection) {
+                    $collection = $collection->merge($this->predefinedEntities->random($this->entityCount));
+                } else {
+                    $collection->push($this->predefinedEntities);
+                }
+            }
+
+            if ($collection->count() < $this->entityCount) {
+                $collection = $collection->merge($this->getModelMock($this->entityCount - $collection->count()));
+            }
+
+            return $collection;
+        } else {
+            if ($this->predefinedEntities) {
+                if ($this->predefinedEntities instanceof Collection) {
+                    return $this->predefinedEntities->random();
+                } else {
+                    return $this->predefinedEntities;
+                }
+            }
+
+            return $this->getModelMock();
+        }
     }
 }
