@@ -10,7 +10,5 @@ namespace Spira\Model\Model;
 
 class DataModel extends BaseModel
 {
-
-
     protected static $unguarded = true;
 }
