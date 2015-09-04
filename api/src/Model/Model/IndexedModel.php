@@ -1,4 +1,14 @@
-<?php namespace Spira\Model\Model;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace Spira\Model\Model;
 
 use Carbon\Carbon;
 use Elasticquent\ElasticquentTrait;
@@ -20,7 +30,7 @@ abstract class IndexedModel extends BaseModel
     }
 
     /**
-     * Check if index exists
+     * Check if index exists.
      * @return bool
      */
     public static function indexExists()
@@ -35,7 +45,7 @@ abstract class IndexedModel extends BaseModel
     }
 
     /**
-     * Remove all of this entity from the index
+     * Remove all of this entity from the index.
      * @return bool
      */
     public static function removeAllFromIndex()
@@ -44,7 +54,7 @@ abstract class IndexedModel extends BaseModel
     }
 
     /**
-     * Get the count of this entity in the index
+     * Get the count of this entity in the index.
      * @return mixed
      */
     public function countIndex()
@@ -78,6 +88,7 @@ abstract class IndexedModel extends BaseModel
         static::created(
             function (IndexedModel $model) {
                 $model->addToIndex();
+
                 return true;
             }, PHP_INT_MAX
         );
@@ -85,6 +96,7 @@ abstract class IndexedModel extends BaseModel
         static::deleted(
             function (IndexedModel $model) {
                 $model->removeFromIndex();
+
                 return true;
             }, PHP_INT_MAX
         );
@@ -92,6 +104,7 @@ abstract class IndexedModel extends BaseModel
         static::updated(
             function (IndexedModel $model) {
                 $model->updateIndex();
+
                 return true;
             }, PHP_INT_MAX
         );

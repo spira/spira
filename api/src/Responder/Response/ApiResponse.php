@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 02.08.15
- * Time: 23:26
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spira\Responder\Response;
@@ -19,13 +21,14 @@ class ApiResponse extends Response
     protected $transformer = null;
 
     /**
-     * Set the transformer to use for building entities
+     * Set the transformer to use for building entities.
      * @param TransformerInterface $transformer
      * @return ApiResponse
      */
     public function transformer(TransformerInterface $transformer)
     {
         $this->transformer = $transformer;
+
         return $this;
     }
 
@@ -42,10 +45,8 @@ class ApiResponse extends Response
 
         return $this
             ->setContent(null)
-            ->setStatusCode(self::HTTP_CREATED)
-        ;
+            ->setStatusCode(self::HTTP_CREATED);
     }
-
 
     /**
      * Respond with a no content response.
@@ -57,10 +58,8 @@ class ApiResponse extends Response
     {
         return $this
             ->setStatusCode($code)
-            ->setContent(null)
-        ;
+            ->setContent(null);
     }
-
 
     /**
      * Bind an item to a transformer and start building a response.
@@ -77,10 +76,8 @@ class ApiResponse extends Response
         return $this
             ->header('Content-Type', 'application/json')
             ->setContent($this->encode($item))
-            ->setStatusCode($statusCode)
-        ;
+            ->setStatusCode($statusCode);
     }
-
 
     /**
      * Respond with a created response.
@@ -90,6 +87,7 @@ class ApiResponse extends Response
     public function createdItem($item)
     {
         $item->setVisible(['']);
+
         return $this->item($item, self::HTTP_CREATED);
     }
 
@@ -107,13 +105,11 @@ class ApiResponse extends Response
         return $this
             ->header('Content-Type', 'application/json')
             ->setContent($this->encode($items))
-            ->setStatusCode($statusCode)
-        ;
+            ->setStatusCode($statusCode);
     }
 
-
     /**
-     * Respond with a created response and hide all the items (except self)
+     * Respond with a created response and hide all the items (except self).
      * @param $items
      * @return ApiResponse
      */
@@ -125,7 +121,6 @@ class ApiResponse extends Response
 
         return $this->collection($items, self::HTTP_CREATED);
     }
-
 
     /**
      * Build paginated response.
@@ -145,8 +140,7 @@ class ApiResponse extends Response
             ->header('Accept-Ranges', 'entities')
             ->header('Content-Type', 'application/json')
             ->header('Content-Range', $rangeHeader)
-            ->collection($items, self::HTTP_PARTIAL_CONTENT)
-        ;
+            ->collection($items, self::HTTP_PARTIAL_CONTENT);
     }
 
     /**
@@ -172,20 +166,21 @@ class ApiResponse extends Response
     {
         $offset = is_null($offset) ? 0 : $offset;
         $totalCount = is_null($totalCount) ? '*' : $totalCount;
-        $rangeHeader = 'entities '.$offset . '-' . ($itemCount + $offset - 1) . '/' . $totalCount;
+        $rangeHeader = 'entities '.$offset.'-'.($itemCount + $offset - 1).'/'.$totalCount;
 
         return $rangeHeader;
     }
 
     /**
-     * Json encode
+     * Json encode.
      * @param $data
      * @return string
      */
     protected function encode($data)
     {
         $debug = env('APP_DEBUG', false);
-        $prettyPrint = $debug?JSON_PRETTY_PRINT:0;
+        $prettyPrint = $debug ? JSON_PRETTY_PRINT : 0;
+
         return json_encode($data, $prettyPrint);
     }
 
@@ -208,7 +203,7 @@ class ApiResponse extends Response
         $this->setStatusCode($status);
         $this->header('Location', $url);
 
-        if (!$this->isRedirect()) {
+        if (! $this->isRedirect()) {
             throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
         }
     }
