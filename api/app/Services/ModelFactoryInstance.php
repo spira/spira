@@ -227,7 +227,6 @@ class ModelFactoryInstance implements Arrayable, Jsonable
         }
 
         if ($this->customizations) {
-
             foreach ($this->customizations as $key => $value) {
                 $entity->{$key} = $value;
             }
