@@ -192,7 +192,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      *
      * @param $entity
      */
-    private function modifyEntity($entity)
+    private function modifyEntity(BaseModel $entity)
     {
         if ($this->showOnly) {
             $attributes = $entity->getAttributes();
@@ -221,6 +221,12 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity->setHidden($newHidden);
         }
 
+        if($this->customizations){
+            foreach ($this->customizations as $key => $value) {
+                $entity->{$key} = $value;
+            }
+        }
+
         if (!empty($this->appends)) {
             foreach ($this->appends as $appendKey => $appendValue) {
                 $entity->{$appendKey} = $appendValue;
@@ -243,11 +249,9 @@ class ModelFactoryInstance implements Arrayable, Jsonable
                 $entity = $this->modifyEntity($entity);
                 break;
             case 'collection':
-                $entity = $entity->each(
-                    function ($singleEntity) {
-                        return $this->modifyEntity($singleEntity);
-                    }
-                );
+                $entity = $entity->each(function ($singleEntity) {
+                    return $this->modifyEntity($singleEntity);
+                });
                 break;
         }
 
@@ -372,14 +376,15 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
             $collection = new Collection();
 
-            if ($this->predefinedEntities && $this->predefinedEntities instanceof Collection) {
-                $collection = $collection->merge($this->predefinedEntities->random($this->entityCount));
-            }
+            if ($this->predefinedEntities) {
 
-            if ($this->predefinedEntities && $this->predefinedEntities instanceof BaseModel) {
-                $collection->push($this->predefinedEntities);
-            }
+                if ($this->predefinedEntities instanceof Collection) {
+                    $collection = $collection->merge($this->predefinedEntities->random($this->entityCount));
+                }else{
+                    $collection->push($this->predefinedEntities);
+                }
 
+            }
 
             if ($collection->count() < $this->entityCount) {
                 $collection = $collection->merge($this->getModelMock($this->entityCount - $collection->count()));
@@ -389,12 +394,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
 
         } else {
 
-            if ($this->predefinedEntities && $this->predefinedEntities instanceof Collection) {
-                return $this->predefinedEntities->random();
-            }
+            if ($this->predefinedEntities){
 
-            if ($this->predefinedEntities && $this->predefinedEntities instanceof BaseModel) {
-                return $this->predefinedEntities;
+                if ($this->predefinedEntities instanceof Collection) {
+                    return $this->predefinedEntities->random();
+                }else{
+                    return $this->predefinedEntities;
+                }
+
             }
 
             return $this->getModelMock();
