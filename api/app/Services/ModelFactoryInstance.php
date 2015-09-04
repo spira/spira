@@ -169,7 +169,6 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     private function built()
     {
-
         $entities = $this->getPredefinedOrMocks();
 
         $this->setEntityType();
@@ -221,7 +220,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             $entity->setHidden($newHidden);
         }
 
-        if($this->customizations){
+        if ($this->customizations) {
             foreach ($this->customizations as $key => $value) {
                 $entity->{$key} = $value;
             }
@@ -265,7 +264,6 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     public function transformed()
     {
-
         $entity = $this->modified();
 
         if (!$this->transformer) {
@@ -356,7 +354,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     private function getModelMock($count = 1)
     {
-        if (is_null($this->factoryInstance)){
+        if (is_null($this->factoryInstance)) {
             throw new \LogicException("No factory class passed to model factory, cannot generate a mock");
         }
 
@@ -373,17 +371,14 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private function getPredefinedOrMocks()
     {
         if ($this->entityCount > 1) {
-
             $collection = new Collection();
 
             if ($this->predefinedEntities) {
-
                 if ($this->predefinedEntities instanceof Collection) {
                     $collection = $collection->merge($this->predefinedEntities->random($this->entityCount));
-                }else{
+                } else {
                     $collection->push($this->predefinedEntities);
                 }
-
             }
 
             if ($collection->count() < $this->entityCount) {
@@ -391,21 +386,16 @@ class ModelFactoryInstance implements Arrayable, Jsonable
             }
 
             return $collection;
-
         } else {
-
-            if ($this->predefinedEntities){
-
+            if ($this->predefinedEntities) {
                 if ($this->predefinedEntities instanceof Collection) {
                     return $this->predefinedEntities->random();
-                }else{
+                } else {
                     return $this->predefinedEntities;
                 }
-
             }
 
             return $this->getModelMock();
-
         }
     }
 }
