@@ -27,6 +27,8 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     private $appends = [];
     /** @var  Collection|BaseModel */
     private $predefinedEntities;
+    /** @var  Collection|BaseModel */
+    private $loadedEntities;
 
     /**
      * New model instance.
@@ -179,11 +181,15 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      */
     private function built()
     {
-        $entities = $this->getPredefinedOrMocks();
+        if ($this->loadedEntities){
+            return $this->loadedEntities;
+        }
+
+        $this->loadedEntities = $this->getPredefinedOrMocks();
 
         $this->setEntityType();
 
-        return $entities;
+        return $this->loadedEntities;
     }
 
     /**
