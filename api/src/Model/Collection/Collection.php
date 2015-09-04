@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 19:41
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spira\Model\Collection;
@@ -39,7 +41,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         }
 
         return count(array_filter($this->items, function (BaseModel $item) {
-            return !$item->isDeleted();
+            return ! $item->isDeleted();
         }));
     }
 
@@ -54,7 +56,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         }
 
         return array_filter($this->items, function (BaseModel $item) {
-            return !$item->isDeleted();
+            return ! $item->isDeleted();
         });
     }
 
@@ -96,8 +98,8 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
             }
         }
 
-        if (!is_null($model)) {
-            /** @var BaseModel $model */
+        if (! is_null($model)) {
+            /* @var BaseModel $model */
             $model->markAsDeleted();
         }
     }
@@ -109,7 +111,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     protected function checkItem($item)
     {
         $className = $this->className;
-        if (!is_null($className) && !($item instanceof $className)) {
+        if (! is_null($className) && ! ($item instanceof $className)) {
             throw new ItemTypeException('Item must be instance of '.$className);
         }
     }
@@ -125,7 +127,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     }
 
     /**
-     * In case new entity was addedm then saved, then added again
+     * In case new entity was addedm then saved, then added again.
      * @param BaseModel $item
      */
     protected function preventAddingSameItem(BaseModel $item)
