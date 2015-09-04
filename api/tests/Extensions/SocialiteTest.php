@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Illuminate\Support\Str;
 use Laravel\Socialite\Two\User;
 use App\Exceptions\NotImplementedException;
@@ -11,7 +19,7 @@ use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
 
 /**
- * Class SocialiteTest
+ * Class SocialiteTest.
  */
 class SocialiteTest extends TestCase
 {
@@ -38,7 +46,7 @@ class SocialiteTest extends TestCase
     public function testCreateTwitterDriver()
     {
         // If no twitter credentials exists in the env, add mock credentials
-        if (!$this->app->config->get('services.twitter.client_id')) {
+        if (! $this->app->config->get('services.twitter.client_id')) {
             $this->app->config->set('services.twitter.client_id', 'foo');
             $this->app->config->set('services.twitter.client_secret', 'bar');
         }

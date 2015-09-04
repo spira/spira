@@ -1,11 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleImage;
 
 /**
- * Class ArticleImageTest
+ * Class ArticleImageTest.
  * @group integration
  */
 class ArticleImageTest extends TestCase
@@ -32,33 +40,29 @@ class ArticleImageTest extends TestCase
 
     protected function addImagesToArticle(Article $article, $make = false)
     {
+        $factory = $this->getFactory();
         $method = 'create';
         if ($make) {
             $method = 'make';
         }
 
         $articleImages = [];
-
-        $this->getFactory()->get(Image::class)
+        $factory->get(Image::class)
                 ->count(5)
                 ->create()
-                ->getEntities()
-                ->each(function (Image $image) use ($article, $method, &$articleImagesFactories) {
-                    $factory = $this->getFactory()->get(ArticleImage::class)->{$method}([
+                ->each(function (Image $image) use ($article, $factory, $method, &$articleImages) {
+                    $articleImages[] = $factory->get(ArticleImage::class)->{$method}([
                         'article_id' => $article->article_id,
                         'image_id' => $image->image_id,
                     ]);
-                    $articleImagesFactories[]=$factory;
+                });
 
-        });
-
-        return $articleImagesFactories;
+        return new \Spira\Model\Collection\Collection($articleImages);
     }
 
     public function testGetAll()
     {
-        /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create()->getEntities();
+        $article = $this->getFactory()->get(Article::class)->create();
         $this->addImagesToArticle($article);
         $this->getJson('/articles/'.$article->article_id.'/article-images', ['With-Nested' => 'image']);
         $object = json_decode($this->response->getContent());
@@ -74,15 +78,14 @@ class ArticleImageTest extends TestCase
 
     public function testPutManyNew()
     {
-        /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create()->getEntities();
-        $factories = $this->addImagesToArticle($article, true);
+        $article = $this->getFactory()->get(Article::class)->create();
+        $images = $this->addImagesToArticle($article, true);
 
-        $images = [];
-        /** @var \App\Services\ModelFactoryInstance[] $factories */
-        foreach ($factories as $factory) {
-            $images[] = $factory->count(1)->transformed();
-        }
+        $images = $this->getFactory()
+            ->get(Image::class)
+            ->setCollection($images)
+            ->count(5)
+            ->transformed();
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
@@ -96,23 +99,25 @@ class ArticleImageTest extends TestCase
         $this->assertCount(5, $object);
     }
 
-
     public function testPutManyNewInvalid()
     {
-        /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create()->getEntities();
-        $factories = $this->addImagesToArticle($article, true);
+        $article = $this->getFactory()->get(Article::class)->create();
+        $images = $this->addImagesToArticle($article, true);
 
-        $images = [];
-        /** @var \App\Services\ModelFactoryInstance[] $factories */
-        foreach ($factories as $factory) {
-            $images[] = $factory->count(1)->customize(['article_id'=>null])->transformed();
-        }
+        $images = $this->getFactory()
+            ->get(Image::class)
+            ->setCollection($images)
+            ->count(5)
+            ->customize([
+                'article_id' => null,
+            ])
+            ->transformed();
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
+        $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
 
         $this->assertCount(5, $object->invalid);
@@ -120,19 +125,16 @@ class ArticleImageTest extends TestCase
         $this->assertEquals($childCount, Article::find($article->article_id)->articleImages->count());
     }
 
-
-
     public function testDeleteMany()
     {
-        /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create()->getEntities();
-        $factories = $this->addImagesToArticle($article);
+        $article = $this->getFactory()->get(Article::class)->create();
+        $images = $this->addImagesToArticle($article);
 
-        $images = [];
-        /** @var \App\Services\ModelFactoryInstance[] $factories */
-        foreach ($factories as $factory) {
-            $images[] = $factory->count(1)->transformed();
-        }
+        $images = $this->getFactory()
+            ->get(Image::class)
+            ->setCollection($images)
+            ->count(5)
+            ->transformed();
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
@@ -143,11 +145,9 @@ class ArticleImageTest extends TestCase
         $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
 
-
     public function testGetManyImages()
     {
-        /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create()->getEntities();
+        $article = $this->getFactory()->get(Article::class)->create();
         $this->addImagesToArticle($article);
 
         $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'images']);

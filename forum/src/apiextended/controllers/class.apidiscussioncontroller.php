@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 class ApiDiscussionController extends DiscussionController
 {
     /**
@@ -15,15 +23,15 @@ class ApiDiscussionController extends DiscussionController
      */
     public function getByForeignId($foreignId = '', $page = '', $perPage = 10)
     {
-        if (!$this->isValidUuid($foreignId)) {
+        if (! $this->isValidUuid($foreignId)) {
             throw new Gdn_UserException('Bad Request', 400);
         }
 
-        if (!array_key_exists('Discussion', $this->Data)) {
+        if (! array_key_exists('Discussion', $this->Data)) {
             $this->setData('Discussion', $this->DiscussionModel->getForeignID($foreignId), true);
         }
 
-        if (!is_object($this->Discussion)) {
+        if (! is_object($this->Discussion)) {
             throw notFoundException('Discussion');
         }
 
@@ -48,13 +56,13 @@ class ApiDiscussionController extends DiscussionController
      */
     public function deleteByForeignId($foreignId = '')
     {
-        if (!$this->isValidUuid($foreignId)) {
+        if (! $this->isValidUuid($foreignId)) {
             throw new Gdn_UserException('Bad Request', 400);
         }
 
         $discussion = $this->DiscussionModel->getForeignID($foreignId);
 
-        if (!is_object($discussion)) {
+        if (! is_object($discussion)) {
             throw notFoundException('Discussion');
         }
 

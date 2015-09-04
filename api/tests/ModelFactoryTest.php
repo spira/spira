@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+use App\Models\TestEntity;
 use App\Services\ModelFactory;
 
 /**
@@ -23,9 +33,9 @@ class ModelFactoryTest extends TestCase
      */
     public function testMakeModel()
     {
-        $normalFactory = factory(\App\Models\TestEntity::class)->make()->toArray();
+        $normalFactory = factory(TestEntity::class)->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactoryTest->get(\App\Models\TestEntity::class)->toArray();
+        $serviceCreatedFactory = $this->modelFactoryTest->get(TestEntity::class)->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
     }
@@ -37,7 +47,7 @@ class ModelFactoryTest extends TestCase
     {
         $normalFactory = factory(App\Models\TestEntity::class, 'custom')->make()->toArray();
 
-        $serviceCreatedFactory = $this->modelFactoryTest->get(\App\Models\TestEntity::class, 'custom')->toArray();
+        $serviceCreatedFactory = $this->modelFactoryTest->get(TestEntity::class, 'custom')->toArray();
 
         $this->assertEquals(array_keys($normalFactory), array_keys($serviceCreatedFactory));
 
@@ -95,7 +105,7 @@ class ModelFactoryTest extends TestCase
     {
         $showProperty = 'hidden';
 
-        $user = new \App\Models\TestEntity();
+        $user = new TestEntity();
         $this->assertContains($showProperty, $user->getHidden());
 
         $serviceModel = $this->modelFactoryTest->get(App\Models\TestEntity::class)
@@ -128,7 +138,7 @@ class ModelFactoryTest extends TestCase
 
         $collection = [$fixture, $fixture];
 
-        $serviceCreatedFactoryJson = $this->modelFactoryTest->get(\App\Models\TestEntity::class, 'custom')
+        $serviceCreatedFactoryJson = $this->modelFactoryTest->get(TestEntity::class, 'custom')
             ->customize(['varchar' => $fixture['varchar'], 'multi_word_column_title' => $fixture['multiWordColumnTitle'], 'hidden' => false])
             ->makeVisible(['hidden'])
             ->showOnly(['varchar', 'multi_word_column_title', 'hidden'])
@@ -149,10 +159,51 @@ class ModelFactoryTest extends TestCase
 
     public function testModelFactoryInstanceArrayableAndJsonable()
     {
-        $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(\App\Models\TestEntity::class);
+        $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(TestEntity::class);
 
         $this->assertInstanceOf(Illuminate\Contracts\Support\Arrayable::class, $serviceCreatedFactoryInstance);
         $this->assertInstanceOf(Illuminate\Contracts\Support\Jsonable::class, $serviceCreatedFactoryInstance);
         $this->assertJson($serviceCreatedFactoryInstance->toJson());
+    }
+
+    public function testPredefinedModel()
+    {
+        $testEntity = TestEntity::first();
+
+        $serviceCreatedFactoryInstance = $this->modelFactoryTest->get(TestEntity::class)
+            ->setModel($testEntity)
+            ->customize([
+                'varchar' => 'customized',
+            ])
+            ->make();
+
+        $this->assertInstanceOf(\Spira\Model\Model\BaseModel::class, $serviceCreatedFactoryInstance);
+        $this->assertEquals($testEntity->entity_id, $serviceCreatedFactoryInstance->entity_id);
+        $this->assertEquals('customized', $serviceCreatedFactoryInstance->varchar);
+    }
+
+    public function testPredefinedCollection()
+    {
+        $testEntityCollection = TestEntity::take(10)->get();
+
+        $serviceCreatedFactoryCollection = $this->modelFactoryTest->get(TestEntity::class)
+            ->setCollection($testEntityCollection)
+            ->count(3)
+            ->make();
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $serviceCreatedFactoryCollection);
+        $this->assertEquals(3, $serviceCreatedFactoryCollection->count());
+    }
+
+    public function testRepeatedRetrievalFromBuiltFactory()
+    {
+        $factory = $this->modelFactoryTest
+            ->get(TestEntity::class)
+            ->count(4);
+
+        $entity = $factory->make();
+        $entityTransformed = $factory->transformed();
+
+        $this->assertEquals($entity->first()->entity_id, $entityTransformed[0]['entityId']);
     }
 }

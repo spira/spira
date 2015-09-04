@@ -1,12 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
-use Spira\Model\Model\BaseModel;
 
 class ModelFactory
 {
@@ -33,12 +39,12 @@ class ModelFactory
      *
      * @return ModelFactoryInstance
      */
-    public function get($factoryClass, $definedName = 'default')
+    public function get($factoryClass = null, $definedName = 'default')
     {
-        if ($factoryClass instanceof Collection || $factoryClass instanceof BaseModel) {
-            $instance = $factoryClass;
-        } else {
+        if (is_string($factoryClass)) {
             $instance = $this->factory->of($factoryClass, $definedName);
+        } else {
+            $instance = null;
         }
 
         return new ModelFactoryInstance($instance, $this->transformerService);
