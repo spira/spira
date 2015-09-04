@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 17.07.15
- * Time: 20:12
+ * Time: 20:12.
  */
 
 namespace Spira\Model\Validation;
@@ -44,7 +45,7 @@ class ValidationExceptionCollection extends HttpException implements Transformab
     {
         $responses = [];
         foreach ($this->exceptions as $exception) {
-            if (!is_null($exception)) {
+            if (! is_null($exception)) {
                 $responses[] = $exception->getErrors();
             } else {
                 $responses[] = null;

@@ -1,4 +1,6 @@
-<?php namespace App\Services\Datasets;
+<?php
+
+namespace App\Services\Datasets;
 
 use ReflectionClass;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
@@ -24,7 +26,7 @@ abstract class Dataset
     }
 
     /**
-     * Get the dataset collection
+     * Get the dataset collection.
      *
      * @return \Illuminate\Support\Collection
      */

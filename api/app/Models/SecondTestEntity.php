@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 13.07.15
- * Time: 15:07
+ * Time: 15:07.
  */
 
 namespace App\Models;
@@ -28,6 +29,6 @@ class SecondTestEntity extends BaseModel
     protected static $validationRules = [
             'entity_id' => 'required|uuid',
             'check_entity_id' => 'uuid',
-            'value' => 'required|string'
+            'value' => 'required|string',
         ];
 }

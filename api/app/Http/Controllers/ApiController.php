@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: redjik
  * Date: 05.08.15
- * Time: 0:50
+ * Time: 0:50.
  */
 
 namespace App\Http\Controllers;
@@ -56,12 +57,12 @@ abstract class ApiController extends Controller
      */
     protected function getWithNested($modelOrCollection, Request $request)
     {
-        if ((!$modelOrCollection instanceof BaseModel) && (!$modelOrCollection instanceof EloquentCollection)) {
+        if ((! $modelOrCollection instanceof BaseModel) && (! $modelOrCollection instanceof EloquentCollection)) {
             throw new \InvalidArgumentException(sprintf('Model must be instance of %s or %s. %s given.', BaseModel::class, EloquentCollection::class, get_class($modelOrCollection)));
         }
 
         $nested = $request->headers->get('With-Nested');
-        if (!$nested) {
+        if (! $nested) {
             return $modelOrCollection;
         }
 
