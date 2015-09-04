@@ -35,36 +35,28 @@ class ArticleTagTest extends TestCase
     /**
      * @param $articles
      * @param bool|false $same
-     * @return \App\Services\ModelFactoryInstance[]
      */
     protected function addTagsToArticles($articles, $same = false)
     {
         $tags = null;
-        $tagFactories = [];
         if ($same) {
-            $factory = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
-            $tagFactories[] = $factory;
             /** @var Collection $tags */
-            $tags = $factory->getEntities();
+            $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
         }
         /** @var Article[] $articles */
         foreach ($articles as $article) {
             if (!$same) {
-                $factory = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
-                $tagFactories[] = $factory;
                 /** @var Collection $tags */
-                $tags = $factory->getEntities();
+                $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
             }
 
             $article->tags()->sync($tags->lists('tag_id')->toArray());
         }
-
-        return $tagFactories;
     }
 
     public function testGetTags()
     {
-        $entity = $this->getFactory()->get(Article::class)->create()->getEntities();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addTagsToArticles([$entity]);
 
         $count = Article::find($entity->article_id)->tags->count();
@@ -87,18 +79,19 @@ class ArticleTagTest extends TestCase
      */
     public function testPutTags()
     {
-        $entity = $this->getFactory()->get(Article::class)->create()->getEntities();
-        $factories = $this->addTagsToArticles([$entity]);
+        $entity = $this->getFactory()->get(Article::class)->create();
+        $this->addTagsToArticles([$entity]);
 
         // re-acquire for collection to have ids as key
         $entity = Article::find($entity->article_id);
 
         $previousTagsWillBeRemoved = $entity->tags;
 
-        $existingTagWillStay = $factories[0]->count(1)
+        $existingTagWillStay = $this->getFactory()->get(Tag::class)
+            ->setModel($previousTagsWillBeRemoved->first())
             ->transformed();
 
-        $newTags = $this->getFactory()->get(\App\Models\Tag::class)
+        $newTags = $this->getFactory()->get(Tag::class)
             ->count(4)
             ->transformed();
 
@@ -124,10 +117,9 @@ class ArticleTagTest extends TestCase
 
     public function testGetOneWithArticles()
     {
-        $articles = $this->getFactory()->get(\App\Models\Article::class)
+        $articles = $this->getFactory()->get(Article::class)
             ->count(5)
-            ->create()
-            ->getEntities();
+            ->create();
 
         $this->addTagsToArticles($articles, true);
 
@@ -142,7 +134,7 @@ class ArticleTagTest extends TestCase
 
     public function testGetTagByIdAndName()
     {
-        $tag = $this->getFactory()->get(\App\Models\Tag::class)->create()->getEntities();
+        $tag = $this->getFactory()->get(Tag::class)->create();
         $this->getJson('/tags/'.$tag->tag);
 
         $object = json_decode($this->response->getContent());
@@ -177,7 +169,7 @@ class ArticleTagTest extends TestCase
 
     public function testPostTagGlobal()
     {
-        $tag = $this->getFactory()->get(\App\Models\Tag::class)->transformed();
+        $tag = $this->getFactory()->get(Tag::class)->transformed();
 
         $this->post('/tags', $tag);
 
@@ -192,7 +184,7 @@ class ArticleTagTest extends TestCase
 
     public function testPostTagInvalid()
     {
-        $tag = $this->getFactory()->get(\App\Models\Tag::class)
+        $tag = $this->getFactory()->get(Tag::class)
             ->customize(['tag'=>'%$@""'])
             ->transformed();
 
@@ -208,7 +200,9 @@ class ArticleTagTest extends TestCase
 
     public function testPatchTagGlobal()
     {
-        $tag = $this->getFactory()->get(\App\Models\Tag::class)->create()
+        $factory = $this->getFactory()->get(Tag::class);
+        $factory->create();
+        $tag = $factory
             ->customize(['tag' => 'foo'])
             ->transformed();
 
@@ -222,7 +216,9 @@ class ArticleTagTest extends TestCase
 
     public function testPatchTagInvalid()
     {
-        $tag = $this->getFactory()->get(\App\Models\Tag::class)->create()
+        $factory = $this->getFactory()->get(Tag::class);
+        $factory->create();
+        $tag = $factory
             ->customize(['tag' => '%$@""'])
             ->transformed();
 
@@ -237,7 +233,7 @@ class ArticleTagTest extends TestCase
 
     public function testDeleteTagGlobal()
     {
-        $entity = $this->getFactory()->get(\App\Models\Article::class)->create()->getEntities();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addTagsToArticles([$entity]);
 
         $this->assertEquals(4, Article::find($entity->article_id)->tags->count());

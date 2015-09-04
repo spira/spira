@@ -149,7 +149,7 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedAuthor()
     {
-        $entity = $this->getFactory()->get(Article::class)->create()->getEntities();
+        $entity = $this->getFactory()->get(Article::class)->create();
 
         $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'author']);
         $this->assertResponseOk();
