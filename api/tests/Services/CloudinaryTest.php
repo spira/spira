@@ -28,4 +28,21 @@ class CloudinaryTest extends TestCase
         $this->assertInternalType('string', $signature);
         $this->assertEquals(sha1('foo1=bar1&foo2=bar2'.env('CLOUDINARY_API_SECRET')), $signature);
     }
+
+    public function testRequestAllImages()
+    {
+
+        $cloudinary = Mockery::mock(\Cloudinary::class)->makePartial();
+        $api = Mockery::mock(\Cloudinary\Api::class)->makePartial();
+        $response = Mockery::mock(\Cloudinary\Api\Response::class);
+
+        $api->shouldReceive('resources')
+            ->once()
+            ->andReturn($response);
+
+        $cloudinaryService = new \App\Services\Cloudinary($cloudinary, $api);
+
+        $cloudinaryService->getRemoteImages();
+    }
+
 }
