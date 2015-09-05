@@ -30,7 +30,6 @@ class CloudinaryTest extends TestCase
 
     public function testRequestAllImages()
     {
-
         $cloudinary = Mockery::mock(\Cloudinary::class)->makePartial();
         $api = Mockery::mock(\Cloudinary\Api::class)->makePartial();
         $response = Mockery::mock(\Cloudinary\Api\Response::class);
@@ -43,5 +42,4 @@ class CloudinaryTest extends TestCase
 
         $cloudinaryService->getRemoteImages();
     }
-
 }

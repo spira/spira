@@ -56,7 +56,7 @@ class ImageSeeder extends BaseSeeder
 
         $images = $remoteImageResponse->storage['resources'];
 
-        $this->command->comment(count($images) . " images retrieved from Cloudinary");
+        $this->command->comment(count($images).' images retrieved from Cloudinary');
 
         foreach ($images as $image) {
             $imageId = $image['public_id'];
