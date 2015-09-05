@@ -10,7 +10,6 @@
 
 /**
  * Class CloudinaryTest.
- * @group testing
  */
 class CloudinaryTest extends TestCase
 {
