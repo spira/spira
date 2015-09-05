@@ -9,6 +9,8 @@
  */
 
 use App\Models\Image;
+use Illuminate\Support\Facades\App;
+use App\Services\Cloudinary;
 
 class ImageSeeder extends BaseSeeder
 {
@@ -47,7 +49,8 @@ class ImageSeeder extends BaseSeeder
      */
     private function seedFromCloudinary()
     {
-        $cloudinary = new \App\Services\Cloudinary();
+        /** @var Cloudinary $cloudinary */
+        $cloudinary = App::make(Cloudinary::class);
 
         $remoteImageResponse = $cloudinary->getRemoteImages();
 

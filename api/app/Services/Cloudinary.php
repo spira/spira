@@ -23,7 +23,7 @@ class Cloudinary
     /** @var  Api */
     protected $api;
 
-    public function __construct()
+    public function __construct(\Cloudinary $cloudinary, Api $cloudinaryApi)
     {
         $this->apiKey = env('CLOUDINARY_API_KEY');
         $this->apiSecret = env('CLOUDINARY_API_SECRET');
@@ -38,9 +38,9 @@ class Cloudinary
             ]
         );
 
-        $this->cloudinary = new \Cloudinary();
+        $this->cloudinary = $cloudinary;
 
-        $this->api = new Api();
+        $this->api = $cloudinaryApi;
 
         if (! $this->apiSecret || ! $this->apiKey) {
             throw new NotImplementedException('Cloudinary configuration variables have not been set');
@@ -62,8 +62,6 @@ class Cloudinary
      */
     public function getRemoteImages()
     {
-        $imageResponse = $this->api->resources();
-
-        return $imageResponse;
+        return $this->api->resources();
     }
 }

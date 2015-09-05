@@ -16,9 +16,11 @@ class CloudinaryTest extends TestCase
 {
     public function testRequestSigning()
     {
-        $cloudinary = new \App\Services\Cloudinary();
+        $cloudinary = Mockery::mock('\Cloudinary')->makePartial();
+        $api = Mockery::mock('\Cloudinary\Api')->makePartial();
+        $cloudinaryService = new \App\Services\Cloudinary($cloudinary, $api);
 
-        $signature = $cloudinary->signRequestParams([
+        $signature = $cloudinaryService->signRequestParams([
             'foo1' => 'bar1',
             'foo2' => 'bar2',
         ]);
