@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\User;
 use App\Models\UserCredential;
 use App\Models\UserProfile;
@@ -21,11 +29,11 @@ class UserStorySeeder extends Seeder
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
-            'user_type'=>'admin',
+            'user_type' => 'admin',
             'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
         ]);
 
-        for ($i=0; $i < 99; $i++) {
+        for ($i = 0; $i < 99; $i++) {
             $this->createUser();
         }
     }

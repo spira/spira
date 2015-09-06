@@ -8,14 +8,16 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Services\SingleSignOn;
+/**
+ * Created by PhpStorm.
+ * User: redjik
+ * Date: 13.07.15
+ * Time: 19:24.
+ */
 
-interface SingleSignOnContract
+namespace Spira\Model\Model;
+
+class DataModel extends BaseModel
 {
-    /**
-     * Get the response to the requester.
-     *
-     * @return mixed
-     */
-    public function getResponse();
+    protected static $unguarded = true;
 }

@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 03.08.15
- * Time: 13:29
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Models;
@@ -30,7 +32,7 @@ class ArticleMeta extends BaseModel
         return [
             'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'meta_property' => 'string'
+            'meta_property' => 'string',
         ];
     }
 
