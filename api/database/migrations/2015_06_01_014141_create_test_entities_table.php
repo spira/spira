@@ -14,6 +14,7 @@ use Illuminate\Database\Schema\Blueprint;
 class CreateTestEntitiesTable extends Migration
 {
     const MODEL = 'App\Models\TestEntity';
+
     /**
      * Run the migrations.
      *
