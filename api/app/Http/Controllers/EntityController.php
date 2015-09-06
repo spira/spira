@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 16.07.15
- * Time: 0:37
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Controllers;
@@ -44,7 +46,7 @@ abstract class EntityController extends ApiController
     {
         $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
-        
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
@@ -54,7 +56,7 @@ abstract class EntityController extends ApiController
     {
         $totalCount = $this->countEntities();
         $limit = $rangeRequest->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
-        $offset = $rangeRequest->isGetLast()?$totalCount-$limit:$rangeRequest->getOffset();
+        $offset = $rangeRequest->isGetLast() ? $totalCount - $limit : $rangeRequest->getOffset();
 
         if ($request->has('q')) {
             $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
@@ -83,8 +85,7 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($model)
-        ;
+            ->item($model);
     }
 
     /**
@@ -285,12 +286,12 @@ abstract class EntityController extends ApiController
 
         $searchResults = $model->searchByQuery([
             'match_phrase' => [
-                '_all' => $queryString
-            ]
+                '_all' => $queryString,
+            ],
         ], null, null, $limit, $offset);
 
         if ($searchResults->totalHits() === 0) {
-            throw new NotFoundHttpException(sprintf("No results found with query `%s` for model `%s`", $queryString, get_class($model)));
+            throw new NotFoundHttpException(sprintf('No results found with query `%s` for model `%s`', $queryString, get_class($model)));
         }
 
         if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
@@ -328,6 +329,7 @@ abstract class EntityController extends ApiController
     protected function findCollection($requestCollection)
     {
         $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName());
+
         return $this->getModel()->findMany($ids); //if $ids is empty, findMany returns an empty collection
     }
 

@@ -1,11 +1,17 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Manager;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\SerializerAbstract;
@@ -44,6 +50,7 @@ class TransformerService
     public function collection($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Collection($data, $this->getTransformer($transformer), $resourceKey);
+
         return $this->manager->createData($resource)->toArray()['data'];
     }
 
@@ -59,6 +66,7 @@ class TransformerService
     public function item($data, $transformer = null, $resourceKey = null)
     {
         $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
+
         return $this->manager->createData($resource)->toArray();
     }
 

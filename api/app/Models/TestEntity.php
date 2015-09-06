@@ -1,11 +1,20 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
-use Spira\Model\Model\BaseModel;
 use Spira\Model\Model\IndexedModel;
 
 /**
- * Class TestEntity
+ * Class TestEntity.
  *
  * @property Collection $testMany
  */
@@ -57,10 +66,9 @@ class TestEntity extends IndexedModel
             'text'    => 'required|string',
             'date'    => 'required|date',
             'multi_word_column_title' => 'required|boolean',
-            'hidden'  => 'required|boolean'
+            'hidden'  => 'required|boolean',
         ];
     }
-
 
     public function testOne()
     {
