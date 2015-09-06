@@ -132,7 +132,6 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(5, count($object->_articles));
     }
 
-
     public function testDeleteTagGlobal()
     {
         $entity = $this->getFactory()->get(Article::class)->create();

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use App\Models\Tag;
 use Spira\Model\Collection\Collection;
@@ -80,13 +87,12 @@ class TagTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
 
-        $this->assertObjectHasAttribute('_parentTags',$object);
-        $this->assertObjectHasAttribute('_childTags',$object);
+        $this->assertObjectHasAttribute('_parentTags', $object);
+        $this->assertObjectHasAttribute('_childTags', $object);
 
         $this->assertEquals(3, count($object->_childTags));
         $this->assertEquals(5, count($object->_parentTags));
     }
-
 
     public function testPostTag()
     {
@@ -197,5 +203,4 @@ class TagTest extends TestCase
 
         $this->assertEquals(5, count($updatedTags));
     }
-
 }
