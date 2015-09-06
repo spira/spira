@@ -54,6 +54,15 @@ class ArticleTagTest extends TestCase
         }
     }
 
+    protected function cleanupDiscussions(array $articles)
+    {
+        foreach ($articles as $article) {
+            // Deleting the article will trigger the deleted event that removes
+            // the discussion
+            $article->delete();
+        }
+    }
+
     public function testGetTags()
     {
         $entity = $this->getFactory()->get(Article::class)->create();
@@ -237,7 +246,7 @@ class ArticleTagTest extends TestCase
         $this->addTagsToArticles([$entity]);
 
         $this->assertEquals(4, Article::find($entity->article_id)->tags->count());
-        $tag = $entity->tags->first();
+        $tag = Article::find($entity->article_id)->tags->first();
 
         $this->deleteJson('/tags/'.$tag->tag_id);
 
@@ -250,9 +259,9 @@ class ArticleTagTest extends TestCase
     {
         $article = factory(Article::class)->create();
 
-        $tags = array_map(function ($tag) {
-            return $this->prepareEntity($tag);
-        }, factory(Tag::class, 4)->make()->all());
+        $tags = $this->getFactory()->get(Tag::class)
+            ->count(4)
+            ->transformed();
 
         $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
 
