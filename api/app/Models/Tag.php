@@ -53,4 +53,14 @@ class Tag extends BaseModel
     {
         return $this->belongsToMany(Article::class, 'tag_article');
     }
+
+    public function childTags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_tag', 'tag_id', 'fk_tag_id');
+    }
+
+    public function parentTags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_tag', 'fk_tag_id', 'tag_id');
+    }
 }

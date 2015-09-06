@@ -24,7 +24,7 @@ class CreateTagTagTable extends Migration
                 ->onDelete('cascade');
 
             $table->foreign('fk_tag_id')
-                ->references('fk_tag_id')->on(Tag::getTableName())
+                ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
         }
         );
