@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Laravel\Lumen\Routing\Controller;
 use Faker;
@@ -13,13 +20,13 @@ class ApiaryController extends Controller
     public function index()
     {
         return view('documentation.layouts.master', [
-            'apibUrl' => '/documentation.apib',
+            'apibUrl' => 'documentation.apib',
         ]);
     }
 
-    public function getApiaryDocumentation(Request $request)
+    public function getApiaryDocumentation()
     {
-        $apib = $this->getDocumentationApib($request->root());
+        $apib = $this->getDocumentationApib(env('API_HOST'));
 
         $headers = [
             'Content-Type' => 'text/plain',

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Services\SpiraValidator;
 use Rhumsaa\Uuid\Uuid;
 
@@ -14,37 +22,39 @@ class ValidatorTest extends TestCase
 
     public function testSpiraValidator()
     {
-        $data = ['float' => 'foo'];
-        $validation = $this->validator->make($data, ['float'=>'float']);
+        $data = ['decimal' => 'foo'];
+        $validation = $this->validator->make($data, ['decimal' => 'decimal']);
         $this->assertInstanceOf(SpiraValidator::class, $validation);
     }
 
-    public function testPassingFloatValidation()
+    public function testPassingDecimalValidation()
     {
-        $data = ['float' => 12.042];
+        $data = ['decimal' => 12.042];
+        $this->assertTrue($this->validator->make($data, ['decimal' => 'decimal'])->passes());
 
-        $this->assertTrue($this->validator->make($data, ['float'=>'float'])->passes());
+        $data = ['decimal' => 12];
+        $this->assertTrue($this->validator->make($data, ['decimal' => 'decimal'])->passes());
     }
 
-    public function testFailingFloatValidation()
+    public function testFailingDecimalValidation()
     {
-        $data = ['float' => 'foo'];
-        $validation = $this->validator->make($data, ['float'=>'float']);
+        $data = ['decimal' => 'foo'];
+        $validation = $this->validator->make($data, ['decimal' => 'decimal']);
         $this->assertFalse($validation->passes());
 
-        $this->assertStringEndsWith('must be a float.', $validation->messages()->get('float')[0]);
+        $this->assertStringEndsWith('must be a decimal.', $validation->messages()->get('decimal')[0]);
     }
 
     public function testPassingUuidValidation()
     {
         $data = ['uuid' => (string) Uuid::uuid4()];
-        $this->assertTrue($this->validator->make($data, ['uuid'=>'uuid'])->passes());
+        $this->assertTrue($this->validator->make($data, ['uuid' => 'uuid'])->passes());
     }
 
     public function testFailingUuidValidation()
     {
         $data = ['uuid' => 'foobar'];
-        $validation = $this->validator->make($data, ['uuid'=>'uuid']);
+        $validation = $this->validator->make($data, ['uuid' => 'uuid']);
         $this->assertFalse($validation->passes());
         $this->assertStringEndsWith('must be an UUID string.', $validation->messages()->get('uuid')[0]);
     }

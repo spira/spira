@@ -1,4 +1,14 @@
-<?php namespace App\Jobs;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Jobs;
 
 use App\Models\User;
 use Illuminate\Contracts\Mail\Mailer;
@@ -45,7 +55,7 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
     {
         $mailer->send('emails.resetPassword', [
             'user' => $this->user,
-            'passwordResetRedirectionUrl' => Config::get('hosts.app') . '/profile?loginToken='.$this->loginToken
+            'passwordResetRedirectionUrl' => Config::get('hosts.app').'/profile?loginToken='.$this->loginToken,
         ], function ($m) {
             $m->to($this->user->email, $this->user->full_name)
                 ->subject('Password Reset');

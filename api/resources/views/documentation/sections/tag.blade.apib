@@ -1,0 +1,87 @@
+# Group Tags
+Tags are generic mechanism of tagging particular entity (articles etc) and find entities with common tags
+
+## Tag Entity [/tags]
+
+### Create tag entity [POST]
+It is recommended to use the PUT method with `entityId` in route, as the same action is used for updating the entity
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
+## Exiting Tag Entity Actions [/tags/{tagId}]
+
++ Parameters
+    + tagId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `tag` of the tag to perform action with.
+
+
+### Retrieve a tag [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\Tag::class) !!}
+
+### Create tag entity [PUT]
+
+#### Restrictions
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
+### Update the tag [PATCH]
+
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->showOnly(['tag'])
+                    ->json()
+            !!}
+
+
++ Response 204
+
+
+### Delete the tag [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Response 204
+

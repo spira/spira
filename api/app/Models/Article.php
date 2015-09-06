@@ -1,24 +1,33 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
+use Spira\Model\Model\IndexedModel;
 
 /**
- *
  * @property ArticlePermalink[]|Collection $permalinks
  * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
- * @package App\Models
- *
  */
-class Article extends BaseModel
+class Article extends IndexedModel
 {
     const defaultExcerptWordCount = 30;
-
 
     /**
      * Article statuses. ! WARNING these statuses define the enum types in the migration, don't remove any!
@@ -40,7 +49,7 @@ class Article extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id','first_published', 'primaryImage', 'status'];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -48,6 +57,8 @@ class Article extends BaseModel
 
     protected $casts = [
         'first_published' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     public static function getValidationRules()
@@ -58,13 +69,14 @@ class Article extends BaseModel
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', static::$statuses),
-            'permalink' => 'string|unique:article_permalinks,permalink'
+            'status' => 'in:'.implode(',', static::$statuses),
+            'permalink' => 'string|unique:article_permalinks,permalink',
+            'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
 
     /**
-     * Listen for save event
+     * Bootstrap model with event listeners.
      *
      * Saving permalink to history
      */
@@ -72,19 +84,36 @@ class Article extends BaseModel
     {
         parent::boot();
         static::saving(function (Article $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
-                $articlePermalink = new ArticlePermalink();
-                $articlePermalink->permalink = $model->permalink;
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
+                $articlePermalink = new ArticlePermalink(['permalink' => $model->permalink]);
                 $articlePermalink->save();
             }
+
             return true;
         });
 
         static::saved(function (Article $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
                 $model->permalinks()->save($articlePermalink);
             }
+
+            return true;
+        });
+
+        static::created(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->createDiscussion();
+
+            return true;
+        });
+
+        static::deleted(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->deleteDiscussion();
+
             return true;
         });
     }
@@ -119,7 +148,7 @@ class Article extends BaseModel
     }
 
     /**
-     * If there is no defined exerpt for the text, create it from the content
+     * If there is no defined excerpt for the text, create it from the content.
      * @param $excerpt
      * @return string
      */
@@ -140,5 +169,41 @@ class Article extends BaseModel
     public function metas()
     {
         return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
+    }
+
+    /**
+     * Get comment relationship.
+     *
+     * @return ArticleComment
+     */
+    public function comments()
+    {
+        return (new ArticleDiscussion)->setArticle($this);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_article');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function articleImages()
+    {
+        return $this->hasMany(ArticleImage::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function images()
+    {
+        return $this->belongsToMany(Image::class);
+    }
+
+    public function author()
+    {
+        return $this->hasOne(User::class, 'user_id', 'author_id');
     }
 }

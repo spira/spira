@@ -1,10 +1,23 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Cache;
 use App\Models\UserCredential;
+use Illuminate\Support\Facades\Hash;
 
+/**
+ * Class UserTest.
+ * @group integration
+ */
 class UserTest extends TestCase
 {
     use MailcatcherTrait;
@@ -31,9 +44,9 @@ class UserTest extends TestCase
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users', [
+        $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Range' => 'entities=0-19'
+            'Range' => 'entities=0-19',
         ]);
 
         $this->assertResponseStatus(206);
@@ -47,9 +60,9 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users', [
+        $this->getJson('/users', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Range' => 'entities=0-19'
+            'Range' => 'entities=0-19',
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -61,8 +74,8 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->getJson('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseOk();
@@ -76,8 +89,8 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->getJson('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -89,8 +102,8 @@ class UserTest extends TestCase
         $userToGet = $user;
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->getJson('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseOk();
@@ -106,8 +119,8 @@ class UserTest extends TestCase
         $userToGet = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->get('/users/'.$userToGet->user_id.'/profile', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->getJson('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -137,7 +150,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $response = json_decode($this->response->getContent());
 
@@ -168,7 +181,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $response = json_decode($this->response->getContent());
 
@@ -192,7 +205,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = $transformer->transform($user);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
@@ -207,7 +220,7 @@ class UserTest extends TestCase
         $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
         $user = array_except($transformer->transform($user), ['_self', 'userType']);
 
-        $this->put('/users/'.$user['userId'], $user);
+        $this->putJson('/users/'.$user['userId'], $user);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
@@ -220,11 +233,11 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -243,12 +256,12 @@ class UserTest extends TestCase
         $update = [
             'firstName' => 'foobar',
             '_userProfile' => [
-                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
-            ]
+                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
+            ],
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -268,12 +281,12 @@ class UserTest extends TestCase
 
         $update = [
             '_userCredential' => [
-                'password' => 'foobarfoobar'
-            ]
+                'password' => 'foobarfoobar',
+            ],
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedCredentials = UserCredential::find($userToUpdate->user_id);
@@ -291,12 +304,12 @@ class UserTest extends TestCase
 
         $update = [
             '_userCredential' => [
-                'password' => 'foobarfoobar'
-            ]
+                'password' => 'foobarfoobar',
+            ],
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedCredentials = UserCredential::find($userToUpdate->user_id);
@@ -304,6 +317,13 @@ class UserTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
+
+        // Assert token is invalid
+        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+        $blacklist = $jwtAuth->getBlacklist();
+        $payload = $jwtAuth->getJWTProvider()->decode($token);
+        $payload = $jwtAuth->getPayloadFactory()->setRefreshFlow(false)->make($payload);
+        $this->assertTrue($blacklist->has($payload));
     }
 
     public function testPatchOneByGuestUser()
@@ -312,8 +332,8 @@ class UserTest extends TestCase
         $userToUpdate = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->patch('/users/'.$userToUpdate->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
@@ -326,11 +346,11 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -349,12 +369,12 @@ class UserTest extends TestCase
         $update = [
             'firstName' => 'foobar',
             '_userProfile' => [
-                'dob' => '1221-05-14' // We have to change the dob to a date we know will never get randomly generated
-            ]
+                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
+            ],
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
@@ -374,11 +394,11 @@ class UserTest extends TestCase
 
         $update = [
             'userId' => '1234',
-            'firstName' => 'foobar'
+            'firstName' => 'foobar',
         ];
 
-        $this->patch('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseStatus(400);
@@ -390,8 +410,8 @@ class UserTest extends TestCase
         $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$userToDelete->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->deleteJson('/users/'.$userToDelete->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $user = User::find($userToDelete->user_id);
@@ -409,8 +429,8 @@ class UserTest extends TestCase
         $userToDelete = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$userToDelete->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->deleteJson('/users/'.$userToDelete->user_id, [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $user = User::find($userToDelete->user_id);
@@ -427,8 +447,8 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/'.$user->email.'/password', [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->deleteJson('/users/'.$user->email.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $mail = $this->getLastMessage();
@@ -449,14 +469,14 @@ class UserTest extends TestCase
         $token = str_replace('loginToken=', '', $parsed['query']);
 
         // Use it the first time
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertResponseOk();
 
         // Use it the second time
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
@@ -469,8 +489,8 @@ class UserTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->delete('/users/foo.bar.' . $user->email . '/password', [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->deleteJson('/users/foo.bar.'.$user->email.'/password', [], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseStatus(404);
@@ -486,8 +506,8 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         // Make a request to change email
         $update = ['email' => 'foo@bar.com'];
-        $this->patch('/users/'.$user->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token
+        $this->patchJson('/users/'.$user->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
         // Ensure that we get the right response
         $this->assertResponseStatus(204);
@@ -507,13 +527,13 @@ class UserTest extends TestCase
         $emailToken = str_replace('emailConfirmationToken=', '', $tokens[0]);
         $loginToken = str_replace('loginToken=', '', $tokens[1]);
         // Ensure the login token is valid
-        $this->assertEquals($user->user_id, Cache::get('login_token_' . $loginToken, false));
+        $this->assertEquals($user->user_id, Cache::get('login_token_'.$loginToken, false));
         // Confirm the email change
         $datetime = date(\DateTime::ISO8601);
         $update = ['emailConfirmed' => $datetime];
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'email-confirm-token' => $emailToken
+            'email-confirm-token' => $emailToken,
         ]);
         // Ensure we get the right response
         $this->assertResponseStatus(204);
@@ -532,9 +552,9 @@ class UserTest extends TestCase
         $update = ['emailConfirmed' => $datetime];
         // For the purposes of this test, the old email does not matter.
         $emailToken = $user->createEmailConfirmToken($user->email, 'foo@bar.com');
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Email-Confirm-Token' => $emailToken
+            'Email-Confirm-Token' => $emailToken,
         ]);
         $updatedUser = User::find($user->user_id);
         $this->assertResponseStatus(204);
@@ -549,9 +569,9 @@ class UserTest extends TestCase
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
         $emailToken = 'foobar';
-        $this->patch('/users/'.$user->user_id, $update, [
+        $this->patchJson('/users/'.$user->user_id, $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'Email-Confirm-Token' => $emailToken
+            'Email-Confirm-Token' => $emailToken,
         ]);
         $this->assertResponseStatus(422);
     }

@@ -12,13 +12,13 @@ Note that this route returns paginated results as defined in the `Content-Range`
 * Unpublished - Allowed - [admin, self]
 + Request
     + Headers
-    
+
             Range: entities=0-
-            
+
 + Response 200 (application/json)
 
     + Headers
-    
+
             Accept-Ranges: entities
             Content-Range: entities 0-9/200
 
@@ -26,7 +26,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\Article::class)
-                    ->hide(['content'])
+                    ->setTransformer(App\Http\Transformers\ArticleTransformer::class)
                     ->count(10)
                     ->json()
             !!}
@@ -48,7 +48,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!! $factory->json(\App\Models\Article::class) !!}
-            
+
 ### Create/update article entity [PUT]
 
 #### Restrictions
@@ -56,7 +56,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!! $factory->json(\App\Models\Article::class) !!}
 
 + Response 201
@@ -68,14 +68,14 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!!
                 $factory->get(\App\Models\Article::class)
                     ->hide(['_self'])
                     ->showOnly(['content'])
                     ->json()
             !!}
-            
+
 
 + Response 204
 
@@ -89,37 +89,37 @@ Note that this route returns paginated results as defined in the `Content-Range`
 ## Article Permalinks [/articles/{articleId}/permalinks]
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
-    
+
 ### Retrieve all article's permalinks [GET]
 #### Restrictions
 * Allowed - [admin, self]
 
 + Response 200 (application/json)
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticlePermalink::class)                    
+                $factory->get(\App\Models\ArticlePermalink::class)
                     ->count(3)
                     ->json()
             !!}
-            
+
 ## Article Meta [/articles/{articleId}/meta]
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
-    
+
 ### Retrieve all article's meta data [GET]
 #### Restrictions
 * Allowed - [all]
 
 + Response 200 (application/json)
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticleMeta::class)                    
+                $factory->get(\App\Models\ArticleMeta::class)
                     ->count(3)
                     ->json()
             !!}
-            
+
 ### Bulk create/update article meta data [PUT]
 
 #### Restrictions
@@ -127,9 +127,9 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Request
     + Body
-    
+
             {!!
-                $factory->get(\App\Models\ArticleMeta::class)                    
+                $factory->get(\App\Models\ArticleMeta::class)
                     ->count(3)
                     ->json()
             !!}
@@ -140,9 +140,169 @@ Note that this route returns paginated results as defined in the `Content-Range`
 + Parameters
     + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
     + metaName (required, string, `twitter`) ... Meta data name
+
 ### DELETE article's meta data single record [DELETE]
 #### Restrictions
 * Allowed - [admin, self]
+
++ Response 204
+
+## Article Tags [/articles/{articleId}/tags]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's tags data [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->setTransformer(App\Http\Transformers\ArticleTagTransformer::class)
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Add tags to article [PUT]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
+
+## Article Comments [/articles/{articleId}/comments]
+
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the article to get comments for.
+
+### Retrieve all comments for article [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Post a comment for article [POST]
+#### Restrictions
+* Allowed - [all]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->showOnly(['body'])
+                    ->json();
+            !!}
+
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
+                    ->json()
+            !!}
+
+
+## Article Images [/articles/{articleId}/article-images]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's images [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->append('articleId',$faker->uuid)
+                    ->append('_image',
+                        $factory->get(\App\Models\Image::class)
+                            ->transformed()
+                    )
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Add images to article [PUT]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->append('articleId',$faker->uuid)
+                    ->append('imageId',$faker->uuid)
+                    ->count(3)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+
+### Delete images [DELETE]
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleImage::class)
+                    ->showOnly(['article_image_id'])
+                    ->count(3)
+                    ->json()
+            !!}
 
 + Response 204
 

@@ -1,7 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\User;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Claims\Expiration;
 use Tymon\JWTAuth\Claims\IssuedAt;
 use Tymon\JWTAuth\Claims\Issuer;
@@ -12,11 +21,15 @@ use App\Extensions\JWTAuth\UserClaim;
 use Tymon\JWTAuth\Payload;
 use Tymon\JWTAuth\Token;
 
+/**
+ * Class AuthTest.
+ * @group integration
+ */
 class AuthTest extends TestCase
 {
     protected function callRefreshToken($token)
     {
-        $this->get('/auth/jwt/refresh', [
+        $this->getJson('/auth/jwt/refresh', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
     }
@@ -27,7 +40,7 @@ class AuthTest extends TestCase
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
@@ -51,7 +64,7 @@ class AuthTest extends TestCase
     {
         $user = $this->createUser();
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'foobar',
         ]);
@@ -67,7 +80,7 @@ class AuthTest extends TestCase
         $credential = factory(App\Models\UserCredential::class)->make();
         $credential->user_id = $user->user_id;
         $credential->save();
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
         ]);
@@ -81,7 +94,7 @@ class AuthTest extends TestCase
     {
         $user = $this->createUser();
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
         ]);
@@ -100,7 +113,7 @@ class AuthTest extends TestCase
 
         $this->app->config->set('jwt.algo', 'foobar');
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
@@ -117,7 +130,7 @@ class AuthTest extends TestCase
 
         $user->createEmailConfirmToken('foo@bar.net', $user->email);
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => 'password',
         ]);
@@ -146,7 +159,7 @@ class AuthTest extends TestCase
 
         $user->createEmailConfirmToken('foo@bar.net', $user->email);
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => '',
         ]);
@@ -165,7 +178,7 @@ class AuthTest extends TestCase
 
         $user->createEmailConfirmToken('foo@bar.net', $user->email);
 
-        $this->get('/auth/jwt/login', [
+        $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
         ]);
@@ -275,7 +288,7 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingToken()
     {
-        $this->get('/auth/jwt/refresh');
+        $this->getJson('/auth/jwt/refresh');
 
         $this->assertException('not provided', 400, 'BadRequestException');
     }
@@ -296,7 +309,7 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
@@ -307,7 +320,7 @@ class AuthTest extends TestCase
 
     public function testMissingToken()
     {
-        $this->get('/auth/jwt/token');
+        $this->getJson('/auth/jwt/token');
 
         $this->assertException('not provided', 400, 'BadRequestException');
     }
@@ -315,7 +328,7 @@ class AuthTest extends TestCase
     public function testInvalidToken()
     {
         $token = 'invalid';
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
@@ -328,13 +341,13 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
         $this->assertResponseOk();
 
-        $this->get('/auth/jwt/token', [
+        $this->getJson('/auth/jwt/token', [
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
@@ -368,14 +381,14 @@ class AuthTest extends TestCase
 
     public function testInvalidProvider()
     {
-        $this->get('/auth/social/foobar');
+        $this->getJson('/auth/social/foobar');
 
         $this->assertException('Provider', 501, 'NotImplementedException');
     }
 
     public function testProviderRedirect()
     {
-        $this->get('/auth/social/facebook');
+        $this->getJson('/auth/social/facebook');
 
         $this->assertResponseStatus(302);
     }
@@ -389,7 +402,7 @@ class AuthTest extends TestCase
         // tests against twitter if credentials is available, and if not
         // available, we still can test that the cache with the returnurl is
         // properly set.
-        if (!$this->app->config->get('services.twitter.client_id')) {
+        if (! $this->app->config->get('services.twitter.client_id')) {
             Cache::put('oauth_return_url_'.'foobar', $returnUrl, 1);
             $mock = Mockery::mock('App\Extensions\Socialite\SocialiteManager');
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
@@ -398,7 +411,7 @@ class AuthTest extends TestCase
                 ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
         }
 
-        $this->get('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
+        $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -414,7 +427,7 @@ class AuthTest extends TestCase
     {
         $returnUrl = 'http://www.foo.bar/';
 
-        $this->get('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
+        $this->getJson('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -423,7 +436,7 @@ class AuthTest extends TestCase
         $key = 'oauth_return_url_'.$array['state'];
         $url = Cache::get($key);
 
-        $this->assertEquals($url, $returnUrl);
+        $this->assertEquals($returnUrl, $url);
     }
 
     public function testProviderCallbackNoEmail()
@@ -434,10 +447,10 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn((object) [
                 'email' => null,
-                'token' => 'foobar'
+                'token' => 'foobar',
             ]);
 
-        $this->get('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertException('no email', 422, 'UnprocessableEntityException');
     }
@@ -461,7 +474,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->get('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(302);
 
@@ -506,7 +519,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->get('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(302);
 
@@ -535,7 +548,7 @@ class AuthTest extends TestCase
 
     public function testSingleSignOnVanillaNoParameters()
     {
-        $this->get('/auth/sso/vanilla');
+        $this->getJson('/auth/sso/vanilla');
 
         $this->assertResponseStatus(200);
         $this->assertContains('parameter is missing', $this->response->getContent());
@@ -576,7 +589,7 @@ class AuthTest extends TestCase
         $params = [
             'client_id' => env('VANILLA_JSCONNECT_CLIENT_ID'),
             'timestamp' => $timestamp,
-            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET'))
+            'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET')),
         ];
 
         $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];

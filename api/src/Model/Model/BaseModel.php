@@ -1,13 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 19:24
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spira\Model\Model;
 
+use Bosnadev\Database\Traits\UuidTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,10 +24,10 @@ use Spira\Model\Collection\Collection;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Model\Validation\ValidationExceptionCollection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
- * Class BaseModel
- * @package Spira\Model\Model
+ * Class BaseModel.
  *
  * @method static int count
  * @method static BaseModel find($id)
@@ -32,12 +36,13 @@ use Spira\Model\Validation\ValidationExceptionCollection;
  * @method static Collection get
  * @method static Collection findMany($ids)
  * @method static Builder where($value,$operator,$operand)
+ * @method static Builder whereIn($column,$ids)
  * @method static BaseModel skip($offset)
  * @method static BaseModel take($limit)
- *
  */
 abstract class BaseModel extends Model
 {
+    use UuidTrait;
     /**
      * @var Relation[]
      */
@@ -51,6 +56,13 @@ abstract class BaseModel extends Model
     protected $isDeleted = false;
 
     public $exceptionOnError = true;
+
+    public $incrementing = false;
+
+    protected $casts = [
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+    ];
 
     /**
      * @var MessageBag|null
@@ -73,6 +85,14 @@ abstract class BaseModel extends Model
     }
 
     /**
+     * @return mixed
+     */
+    public static function getTableName()
+    {
+        return with(new static())->getTable();
+    }
+
+    /**
      * @return MessageBag|null
      */
     public function getErrors()
@@ -86,7 +106,7 @@ abstract class BaseModel extends Model
      */
     public function getRelationErrors($relationName)
     {
-        return isset($this->relationErrors[$relationName])?$this->relationErrors[$relationName]:null;
+        return isset($this->relationErrors[$relationName]) ? $this->relationErrors[$relationName] : null;
     }
 
     /**
@@ -104,16 +124,25 @@ abstract class BaseModel extends Model
                 $this->addPreviousValueToDeleteStack($models);
                 $this->isValueCompatibleWithRelation($key, $value);
                 $this->relations[$key] = $value;
+
+                return;
             }
-        } else {
-            parent::setAttribute($key, $value);
         }
+
+        if (in_array($key, $this->getDates()) && $value) {
+            if (! $value instanceof Carbon && ! $value instanceof \DateTime) {
+                $value = new Carbon($value);
+                $this->attributes[$key] = $value;
+
+                return;
+            }
+        }
+
+        parent::setAttribute($key, $value);
     }
 
-    
-
     /**
-     * Prepare value for proper assignment
+     * Prepare value for proper assignment.
      * @param array|Collection|false|BaseModel $value
      * Can be array, empty array, null, false, Collection or Model
      * @return null|Collection|BaseModel|false  false on bad value
@@ -121,7 +150,7 @@ abstract class BaseModel extends Model
     protected function prepareValue($value)
     {
         if (empty($value)) {
-            return null;
+            return;
         }
 
         if ($this->isModel($value) || $this->isCollection($value)) {
@@ -130,9 +159,10 @@ abstract class BaseModel extends Model
 
         if (is_array($value)) {
             $firstModel = current($value);
-            if ($firstModel instanceof BaseModel) {
+            if ($firstModel instanceof self) {
                 return $firstModel->newCollection($value);
             }
+
             return false;
         }
 
@@ -145,7 +175,7 @@ abstract class BaseModel extends Model
     protected function addPreviousValueToDeleteStack($models)
     {
         /** @var Collection|BaseModel[] $models */
-        $models = $this->isCollection($models)?$models->all(true):[$models];
+        $models = $this->isCollection($models) ? $models->all(true) : [$models];
         $deleteArray = [];
         foreach ($models as $model) {
             if ($model && $model->exists) {
@@ -155,7 +185,6 @@ abstract class BaseModel extends Model
 
         $this->deleteStack = array_merge($this->deleteStack, $deleteArray);
     }
-
 
     /**
      * Save the model and all of its relationships.
@@ -174,7 +203,7 @@ abstract class BaseModel extends Model
         }
 
         foreach ($this->deleteStack as $modelToDelete) {
-            if (!$modelToDelete->delete()) {
+            if (! $modelToDelete->delete()) {
                 return false;
             }
             $this->deleteStack = [];
@@ -196,12 +225,12 @@ abstract class BaseModel extends Model
             $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
 
             if ($this->isCollection($models)) {
-                /** @var Collection $models */
+                /* @var Collection $models */
                 $modelsArray = $models->all(true);
                 $error = false;
                 $errors = [];
                 foreach (array_filter($modelsArray) as $model) {
-                    /** @var BaseModel $model */
+                    /* @var BaseModel $model */
                     $model->preserveKeys($relation);
                     try {
                         $model->push();
@@ -217,7 +246,7 @@ abstract class BaseModel extends Model
                     $this->errors->add($key, $errors);
                 }
             } elseif ($models) {
-                /** @var BaseModel $models */
+                /* @var BaseModel $models */
                 $models->preserveKeys($relation);
                 try {
                     $models->push();
@@ -237,7 +266,7 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * Checks relation against value
+     * Checks relation against value.
      * @param $method
      * @param $value
      * @return bool
@@ -270,7 +299,7 @@ abstract class BaseModel extends Model
      */
     protected function isModel($value)
     {
-        return $value instanceof BaseModel;
+        return $value instanceof self;
     }
 
     /**
@@ -319,7 +348,7 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isDeleted()
     {
@@ -336,7 +365,7 @@ abstract class BaseModel extends Model
 
     /**
      * Get a relationship value from a method.
-     * Relation cache added
+     * Relation cache added.
      *
      * @param  string  $method
      * @return mixed
@@ -347,7 +376,7 @@ abstract class BaseModel extends Model
     {
         $relations = $this->$method();
 
-        if (!$relations instanceof Relation) {
+        if (! $relations instanceof Relation) {
             throw new LogicException('Relationship method must return an object of type '
                 .'Illuminate\Database\Eloquent\Relations\Relation');
         } else {
@@ -393,22 +422,20 @@ abstract class BaseModel extends Model
         return spl_object_hash($this).'_'.$method;
     }
 
-
     /**
      * Create a collection of models from a request collection
-     * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity
-     *
-     * @param  array $requestCollection
-     * @param Collection $existingModels
-     * @return \Illuminate\Database\Eloquent\Collection
+     * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity.
+     * @param array $requestCollection
+     * @param EloquentCollection|null $existingModels
+     * @return Collection
      */
-    public function hydrateRequestCollection(array $requestCollection, Collection $existingModels = null)
+    public function hydrateRequestCollection(array $requestCollection, EloquentCollection $existingModels = null)
     {
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
             $model = null;
-            $entityId = $item[$keyName];
+            $entityId = isset($item[$keyName]) ? $item[$keyName] : null;
 
             if ($existingModels) {
                 //get the model from the collection, or create a new instance
@@ -425,5 +452,64 @@ abstract class BaseModel extends Model
         }, $requestCollection);
 
         return $this->newCollection($models);
+    }
+
+    /**
+     * Handle case where the value might be from Carbon::toArray.
+     * @param mixed $value
+     * @return Carbon|static
+     */
+    protected function asDateTime($value)
+    {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        if ($value instanceof \DateTime) {
+            return Carbon::instance($value);
+        }
+
+        if (is_array($value) && isset($value['date'])) {
+            return Carbon::parse($value['date'], $value['timezone']);
+        }
+
+        try {
+            return Carbon::createFromFormat(Carbon::ISO8601, $value); //try decode ISO8601 date
+        } catch (\InvalidArgumentException $e) {
+            return parent::asDateTime($value);
+        }
+    }
+
+    /**
+     * Cast an attribute to a native PHP type.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        // Run the parent cast rules in the parent method
+        $value = parent::castAttribute($key, $value);
+
+        if (is_null($value)) {
+            return $value;
+        }
+
+        switch ($this->getCastType($key)) {
+            case 'date':
+
+                try {
+                    return $this->asDateTime($value); //otherwise try the alternatives
+                } catch (\InvalidArgumentException $e) {
+                    return Carbon::createFromFormat('Y-m-d', $value); //if it is the true base ISO8601 date format, parse it
+                }
+
+            case 'datetime':
+                return $this->asDateTime($value); //try the catchall method for date translation
+            default:
+                return $value;
+        }
     }
 }

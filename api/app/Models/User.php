@@ -1,4 +1,14 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
@@ -8,15 +18,16 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Spira\Model\Model\IndexedModel;
 
-class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
+class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
-    
+
     /**
      * Login/email confirm token time to live in minutes.
      *
@@ -78,6 +89,8 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $casts = [
         'email_confirmed' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     /**
@@ -111,7 +124,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     *
      * @todo Replace these two methods with the hasMany relationship for roles
      *       when implementing. For now they "simulate" the relationship so
      *       functionality accessing roles will get a similar dataset as when
@@ -145,7 +157,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param UserProfile $profile
      * @return $this
-     *
      */
     public function setProfile(UserProfile $profile)
     {
@@ -207,7 +218,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         // If no user credential is associated with the user, just return an
         // empty string which will trigger a ValidationException during
         // password_verify()
-        if (!$this->userCredential) {
+        if (! $this->userCredential) {
             return '';
         }
 
@@ -272,7 +283,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
             return $user;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -314,9 +325,9 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
 
-        Cache::put('email_confirmation_' . $token, $newEmail, $this->token_ttl);
+        Cache::put('email_confirmation_'.$token, $newEmail, $this->token_ttl);
 
-        Cache::put('email_change_' . $newEmail, $oldEmail, $this->token_ttl);
+        Cache::put('email_change_'.$newEmail, $oldEmail, $this->token_ttl);
 
         return $token;
     }
@@ -329,10 +340,10 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public function getEmailFromToken($token)
     {
-        $newEmail = Cache::pull('email_confirmation_' . $token, false);
+        $newEmail = Cache::pull('email_confirmation_'.$token, false);
 
         if ($newEmail) {
-            Cache::forget('email_change_' . $newEmail);
+            Cache::forget('email_change_'.$newEmail);
         }
 
         return $newEmail;
@@ -346,6 +357,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     public static function findCurrentEmail($newEmail)
     {
-        return Cache::get('email_change_' . $newEmail, false); // Return false on cache miss
+        return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
     }
 }

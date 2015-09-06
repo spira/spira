@@ -1,27 +1,29 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 16.07.15
- * Time: 0:37
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Spira\Model\Model\BaseModel;
+use Elasticquent\ElasticquentTrait;
+use Spira\Model\Collection\Collection;
+use Spira\Responder\Response\ApiResponse;
+use Spira\Responder\Paginator\RangeRequest;
+use Spira\Responder\Contract\TransformerInterface;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\BaseModel;
-use Spira\Responder\Contract\TransformerInterface;
-use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;
-use Spira\Responder\Response\ApiResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
 {
     use RequestValidationTrait;
-
-    protected $validateIdRule = null;
 
     /**
      * @var BaseModel
@@ -44,24 +46,29 @@ abstract class EntityController extends ApiController
     {
         $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
-        
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
     }
 
-    public function getAllPaginated(PaginatedRequestDecoratorInterface $request)
+    public function getAllPaginated(Request $request, RangeRequest $rangeRequest)
     {
-        $count = $this->countEntities();
-        $limit = $request->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
-        $offset = $request->isGetLast()?$count-$limit:$request->getOffset();
-        $collection = $this->getAllEntities($limit, $offset);
-        
-        $collection = $this->getWithNested($collection, $request->getRequest());
+        $totalCount = $this->countEntities();
+        $limit = $rangeRequest->getLimit($this->paginatorDefaultLimit, $this->paginatorMaxLimit);
+        $offset = $rangeRequest->isGetLast() ? $totalCount - $limit : $rangeRequest->getOffset();
+
+        if ($request->has('q')) {
+            $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
+        } else {
+            $collection = $this->getAllEntities($limit, $offset);
+        }
+
+        $collection = $this->getWithNested($collection, $request);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->paginatedCollection($collection, $offset, $count);
+            ->paginatedCollection($collection, $offset, $totalCount);
     }
 
     /**
@@ -78,8 +85,7 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($model)
-        ;
+            ->item($model);
     }
 
     /**
@@ -115,8 +121,8 @@ abstract class EntityController extends ApiController
 
         $this->validateRequest($request->all(), $this->getValidationRules());
 
-        $model->fill($request->all())
-            ->save();
+        $model->fill($request->all());
+        $model->save();
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -131,7 +137,7 @@ abstract class EntityController extends ApiController
      */
     public function putMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
         $existingModels = $this->findCollection($requestCollection);
@@ -176,7 +182,7 @@ abstract class EntityController extends ApiController
      */
     public function patchMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
@@ -212,7 +218,7 @@ abstract class EntityController extends ApiController
      */
     public function deleteMany(Request $request)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
 
         $this->findOrFailCollection($requestCollection)
             ->each(function (BaseModel $model) {
@@ -267,6 +273,35 @@ abstract class EntityController extends ApiController
     }
 
     /**
+     * @param $queryString
+     * @param null $limit
+     * @param null $offset
+     * @param null $totalCount
+     * @return \Elasticquent\ElasticquentResultCollection
+     */
+    protected function searchAllEntities($queryString, $limit = null, $offset = null, &$totalCount = null)
+    {
+        /* @var ElasticquentTrait $model */
+        $model = $this->getModel();
+
+        $searchResults = $model->searchByQuery([
+            'match_phrase' => [
+                '_all' => $queryString,
+            ],
+        ], null, null, $limit, $offset);
+
+        if ($searchResults->totalHits() === 0) {
+            throw new NotFoundHttpException(sprintf('No results found with query `%s` for model `%s`', $queryString, get_class($model)));
+        }
+
+        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
+            $totalCount = $searchResults->totalHits();
+        }
+
+        return $searchResults;
+    }
+
+    /**
      * @param $requestCollection
      * @return Collection
      */
@@ -294,6 +329,7 @@ abstract class EntityController extends ApiController
     protected function findCollection($requestCollection)
     {
         $ids = $this->getIds($requestCollection, $this->getModel()->getKeyName());
+
         return $this->getModel()->findMany($ids); //if $ids is empty, findMany returns an empty collection
     }
 
@@ -304,8 +340,6 @@ abstract class EntityController extends ApiController
     {
         return $this->model;
     }
-
-
 
     /**
      * @return array

@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 08.07.15
- * Time: 21:36
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Transformers;
@@ -13,11 +15,16 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
-use Traversable;
+use Spira\Responder\Contract\TransformerInterface;
 
 class EloquentModelTransformer extends BaseTransformer
 {
     public static $badRoutes = [];
+
+    public $addSelfKey = true;
+
+    public $nestedMap = [];
+
     /**
      * Turn the object into a format adjusted array.
      *
@@ -27,7 +34,7 @@ class EloquentModelTransformer extends BaseTransformer
     public function transform($object)
     {
         if (is_null($object)) {
-            return null;
+            return;
         }
 
         $array = null;
@@ -66,7 +73,9 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            $array = $this->addSelfKey($object, $array);
+            if ($this->addSelfKey) {
+                $array = $this->addSelfKey($object, $array);
+            }
 
             $array = $this->nestRelations($object, $array);
         }
@@ -86,7 +95,7 @@ class EloquentModelTransformer extends BaseTransformer
      */
     private function castAttribute($castTypes, $key, $value)
     {
-        if (!array_key_exists($key, $castTypes)) {
+        if (! array_key_exists($key, $castTypes)) {
             return $value;
         }
 
@@ -105,7 +114,7 @@ class EloquentModelTransformer extends BaseTransformer
     }
 
     /**
-     * Recursive adding of self key
+     * Recursive adding of self key.
      * @param BaseModel $model
      * @param $array
      */
@@ -179,27 +188,48 @@ class EloquentModelTransformer extends BaseTransformer
     }
 
     /**
-     * Get the objects nested entities transformed
+     * Get the objects nested entities transformed.
      * @param $object
      * @param $array
      * @return mixed
      */
     private function nestRelations($object, $array)
     {
+        /** @var BaseModel $object */
         if (count($object['relations']) > 0) {
             foreach ($object['relations'] as $relation => $childModelOrCollection) {
+                if (in_array($relation, $object->getHidden())) {
+                    continue;
+                }
+                $transformer = $this->getTransformerForNested($relation);
                 $childTransformed = null;
                 if ($childModelOrCollection instanceof Collection) {
-                    $childTransformed = $this->transformCollection($childModelOrCollection);
+                    $childTransformed = $transformer->transformCollection($childModelOrCollection);
                 } else {
-                    $childTransformed = $this->transformItem($childModelOrCollection);
+                    $childTransformed = $transformer->transformItem($childModelOrCollection);
                 }
 
-                $array = $array + ['_' . $relation => $childTransformed];
+                $array = $array + ['_'.$relation => $childTransformed];
                 unset($array[$relation]);
             }
         }
 
         return $array;
+    }
+
+    /**
+     * @param string $relationName
+     * @param string $default
+     * @return TransformerInterface
+     */
+    private function getTransformerForNested($relationName, $default = self::class)
+    {
+        if (isset($this->nestedMap[$relationName])) {
+            $className = $this->nestedMap[$relationName];
+        } else {
+            $className = $default;
+        }
+
+        return new $className($this->getService());
     }
 }

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Console\Commands;
 
 use Crypt_RSA;
@@ -53,7 +61,7 @@ class GenerateKeysCommand extends Command
         $rsa = new Crypt_RSA();
         $keys = $rsa->createKey();
 
-        if (!$this->file->exists(storage_path('app/keys'))) {
+        if (! $this->file->exists(storage_path('app/keys'))) {
             $this->file->makeDirectory(storage_path('app/keys'));
         }
 

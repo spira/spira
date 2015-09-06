@@ -4,7 +4,7 @@ namespace common.decorators {
         getChangedProperties?():string[];
         resetChangedProperties?():void;
         getOriginal?():typeof common.models.AbstractModel;
-        getChanged?():{
+        getChanged?(includeUnderscoredKeys?:boolean):{
             [key:string]: any;
         };
     }
@@ -59,8 +59,16 @@ namespace common.decorators {
 
             Object.defineProperty(obj, 'getChanged', {
                 enumerable: false,
-                value: function(){
-                    return _.pick(this, changedProperties);
+                value: function(includeUnderscoredKeys:boolean = false){
+                    let attributes = _.pick(this, changedProperties);
+
+                    if (includeUnderscoredKeys){
+                        return attributes;
+                    }
+
+                    return _.omit(attributes, (value, key) => {
+                        return _.startsWith(key, '_');
+                    });
                 }
             });
 
@@ -75,8 +83,12 @@ namespace common.decorators {
 
                 let value = val; //store the value locally
 
+                if (_.isFunction(val)){
+                    return; //don't try to track functions for changes
+                }
+
                 Object.defineProperty(obj, propName, {
-                    enumerable: !_.isFunction(value),
+                    enumerable: true,
                     get: function() {
                         return value;
                     },

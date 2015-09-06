@@ -1,8 +1,22 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
+use App\Services\Api\Vanilla\Client as VanillaClient;
 
+/**
+ * Class ArticleTest.
+ * @group integration
+ */
 class ArticleTest extends TestCase
 {
     public function setUp()
@@ -56,6 +70,15 @@ class ArticleTest extends TestCase
         }
     }
 
+    protected function cleanupDiscussions(array $articles)
+    {
+        foreach ($articles as $article) {
+            // Deleting the article will trigger the deleted event that removes
+            // the discussion
+            $article->delete();
+        }
+    }
+
     public function testGetAllPaginated()
     {
         $entities = factory(Article::class, 5)->create()->all();
@@ -66,7 +89,7 @@ class ArticleTest extends TestCase
             $oneEntity->push();
         }
 
-        $this->get('/articles', ['Range'=>'entities=0-19']);
+        $this->getJson('/articles', ['Range' => 'entities=0-19']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -74,6 +97,8 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertNotNull($object[0]->excerpt);
         $this->assertObjectNotHasAttribute('content', $object[0]);
+
+        $this->cleanupDiscussions($entities);
     }
 
     public function testGetOne()
@@ -82,7 +107,7 @@ class ArticleTest extends TestCase
         $this->addPermalinksToArticles([$entity]);
         $entity->push();
 
-        $this->get('/articles/'.$entity->article_id);
+        $this->getJson('/articles/'.$entity->article_id);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -95,12 +120,43 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('articleId', $object);
+        $this->assertObjectHasAttribute('authorId', $object);
         $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->articleId);
+        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->authorId);
         $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
 
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
-        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+        $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
+
+        $this->cleanupDiscussions([$entity]);
+    }
+
+    public function testGetOneWithNestedTags()
+    {
+        $entity = factory(Article::class)->create();
+        $tags = factory(\App\Models\Tag::class, 4)->create();
+        $entity->tags()->sync($tags->lists('tag_id')->toArray());
+
+        $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'tags']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_tags', $object);
+        $this->assertEquals(4, count($object->_tags));
+    }
+
+    public function testGetOneWithNestedAuthor()
+    {
+        $entity = $this->getFactory()->get(Article::class)->create();
+
+        $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'author']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_author', $object);
     }
 
     public function testGetOneByFirstPermalink()
@@ -110,7 +166,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $permalink = $entity->permalinks->first();
-        $this->get('/articles/'.$permalink->permalink);
+        $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -128,7 +184,9 @@ class ArticleTest extends TestCase
 
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
-        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
+        $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testGetOneByLastPermalink()
@@ -138,7 +196,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $permalink = $entity->permalinks->last();
-        $this->get('/articles/'.$permalink->permalink);
+        $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -156,12 +214,14 @@ class ArticleTest extends TestCase
 
         $this->assertTrue(is_string($object->title));
         $this->assertTrue(is_string($object->content));
-        $this->assertTrue(is_string($object->permalink)||is_null($object->permalink));
-    }
+        $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
 
+        $this->cleanupDiscussions([$entity]);
+    }
 
     public function testPostOne()
     {
+        /** @var Article $entity */
         $entity = factory(Article::class)->make();
 
         $this->post('/articles', $this->prepareEntity($entity));
@@ -173,6 +233,8 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(201);
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
+
+        $this->cleanupDiscussions([Article::find($entity->article_id)]);
     }
 
     public function testPutOneNew()
@@ -182,7 +244,8 @@ class ArticleTest extends TestCase
 
         $rowCount = Article::count();
 
-        $this->put('/articles/'.$id, $this->prepareEntity($entity));
+        $requestData = $this->prepareEntity($entity);
+        $this->putJson('/articles/'.$id, $requestData);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -190,6 +253,25 @@ class ArticleTest extends TestCase
         $this->assertEquals($rowCount + 1, Article::count());
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
+
+        $this->cleanupDiscussions([Article::find($entity->article_id)]);
+    }
+
+    public function testPutOneNonExistingAuthor()
+    {
+        $entity = $this->getFactory()->get(Article::class)
+            ->customize(['author_id' => (string) \Rhumsaa\Uuid\Uuid::uuid4()])
+            ->transformed();
+
+        $this->putJson('/articles/'.$entity['articleId'], $entity);
+        $this->shouldReturnJson();
+        $object = json_decode($this->response->getContent());
+
+        $this->assertResponseStatus(422);
+        $this->assertObjectHasAttribute('authorId', $object->invalid);
+
+        $this->assertEquals('The selected author id is invalid.', $object->invalid->authorId[0]->message);
+        $this->assertEquals('Exists', $object->invalid->authorId[0]->type);
     }
 
     public function testPutMissingIdInBody()
@@ -201,12 +283,11 @@ class ArticleTest extends TestCase
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['permalink'], $preparedEntity['articleId']);
 
-        $this->put('/articles/'.$id, $preparedEntity);
+        $this->putJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
 
         $this->assertResponseStatus(400);
     }
-
 
     public function testPatchOne()
     {
@@ -215,11 +296,13 @@ class ArticleTest extends TestCase
         $entity->title = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['permalink'], $preparedEntity['articleId']);
-        $this->patch('/articles/'.$id, $preparedEntity);
+        $this->patchJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->title, $entity->title);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPatchOneNewPermalink()
@@ -234,13 +317,15 @@ class ArticleTest extends TestCase
 
         $preparedEntity = $this->prepareEntity($entity);
         unset($preparedEntity['articleId']);
-        $this->patch('/articles/'.$id, $preparedEntity);
+        $this->patchJson('/articles/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
         $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->permalink, $entity->permalink);
-        $this->assertEquals($checkEntity->permalinks->count(), $linksCount+1);
+        $this->assertEquals($checkEntity->permalinks->count(), $linksCount + 1);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPatchOneRemovePermalink()
@@ -254,12 +339,14 @@ class ArticleTest extends TestCase
 
         $entity->permalink = '';
 
-        $this->patch('/articles/'.$id, $this->prepareEntity($entity));
+        $this->patchJson('/articles/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
         $this->assertNull($checkEntity->permalink);
         $this->assertEquals($checkEntity->permalinks->count(), $linksCount);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testDeleteOne()
@@ -270,7 +357,7 @@ class ArticleTest extends TestCase
             $oneEntity->push();
         }
 
-        $entity = $entities[0];
+        $entity = array_shift($entities);
         $id = $entity->article_id;
 
         $entityPermalinksCount = $entity->permalinks->count();
@@ -279,13 +366,15 @@ class ArticleTest extends TestCase
         $rowCount = Article::count();
 
         $permalinksTotalCount = ArticlePermalink::all()->count();
-        $this->delete('/articles/'.$id);
+        $this->deleteJson('/articles/'.$id);
         $permalinksTotalCountAfterDelete = ArticlePermalink::all()->count();
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, Article::count());
         $this->assertEquals($permalinksTotalCount - $entityPermalinksCount, $permalinksTotalCountAfterDelete);
+
+        $this->cleanupDiscussions($entities);
     }
 
     public function testGetPermalinks()
@@ -296,7 +385,7 @@ class ArticleTest extends TestCase
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
-        $this->get('/articles/'.$entity->article_id.'/permalinks');
+        $this->getJson('/articles/'.$entity->article_id.'/permalinks');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -304,11 +393,13 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testGetPermalinksNotFoundArticle()
     {
-        $this->get('/articles/foo_bar/permalinks');
+        $this->getJson('/articles/foo_bar/permalinks');
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
     }
@@ -321,7 +412,7 @@ class ArticleTest extends TestCase
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
 
-        $this->get('/articles/'.$entity->article_id.'/meta');
+        $this->getJson('/articles/'.$entity->article_id.'/meta');
 
         $articleCheck = Article::find($entity->article_id);
         $metaCheck = $articleCheck->metas->first();
@@ -333,6 +424,8 @@ class ArticleTest extends TestCase
         $object = json_decode($this->response->getContent());
 
         $this->assertEquals(count($object), $count);
+
+        $this->cleanupDiscussions([$entity]);
     }
 
     public function testPutMetas()
@@ -352,12 +445,12 @@ class ArticleTest extends TestCase
             $entities[] = $this->prepareEntity($meta);
         }
 
-        $this->put('/articles/'.$article->article_id.'/meta', ['data' => $entities]);
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
 
-        $this->assertEquals($metaCount+2, $updatedArticle->metas->count());
+        $this->assertEquals($metaCount + 2, $updatedArticle->metas->count());
         $counter = 0;
         foreach ($updatedArticle->metas as $meta) {
             if ($meta->meta_content == 'foobar') {
@@ -365,6 +458,8 @@ class ArticleTest extends TestCase
             }
         }
         $this->assertEquals($counter, $metaCount);
+
+        $this->cleanupDiscussions([$article]);
     }
 
     public function deleteMeta()
@@ -377,8 +472,137 @@ class ArticleTest extends TestCase
         $article = current($articles);
         $metaEntity = $article->metas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
-        $this->delete('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
-        $this->assertEquals($metaCount-1, $updatedArticle->metas->count());
+        $this->assertEquals($metaCount - 1, $updatedArticle->metas->count());
+
+        $this->cleanupDiscussions($articles);
+    }
+
+    public function testShouldCreateDiscussionWhenArticleCreated()
+    {
+        $article = factory(Article::class)->create();
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+
+        $this->assertEquals($article->title, $discussion['Discussion']['Name']);
+        $this->assertEquals($article->article_id, $discussion['Discussion']['ForeignID']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    /**
+     * @expectedException Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function testShouldDeleteDiscussionWhenArticleDeleted()
+    {
+        $client = App::make(VanillaClient::class);
+
+        $article = factory(Article::class)->create();
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $article->delete();
+
+        $this->assertEquals($article->article_id, $discussion['Discussion']['ForeignID']);
+        $client->api('discussions')->findByForeignId($article->article_id);
+    }
+
+    public function testShouldGetCommentsForArticle()
+    {
+        $article = factory(Article::class)->create();
+        $body = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $body);
+
+        $this->getJson('/articles/'.$article->article_id.'/comments');
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array);
+        $this->assertEquals($body, $array[0]['body']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    public function testShouldGetCommentsForArticleUsingWithNestedHeader()
+    {
+        $article = factory(Article::class)->create();
+        $body = 'A comment';
+
+        // Get the discussion
+        $client = App::make(VanillaClient::class);
+        $discussion = $client->api('discussions')->findByForeignId($article->article_id);
+        $discussionId = $discussion['Discussion']['DiscussionID'];
+
+        // Add Comment
+        $client->api('comments')->create($discussionId, $body);
+
+        $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'comments']);
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertCount(1, $array['_comments']);
+        $this->assertEquals($body, $array['_comments'][0]['body']);
+
+        // Clean up by removing the discussion created
+        $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);
+    }
+
+    public function testShouldPostCommentForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertResponseStatus(200);
+        $this->assertEquals($body, $array['body']);
+
+        // Clean up Vanilla by removing the discussion and user created
+        $client = App::make(VanillaClient::class);
+        $client->api('discussions')->removeByForeignId($article->article_id);
+        $user = $client->api('users')->sso($array['_author']['userId'], '', '');
+        $client->api('users')->remove($user['User']['UserID']);
+    }
+
+    public function testShouldNotPostCommentWithoutBodyForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => ''], [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertArrayHasKey('body', $array['invalid']);
+        $this->assertResponseStatus(422);
+    }
+
+    public function testShouldNotPostCommentWithoutAuthedUserForArticle()
+    {
+        $body = 'A comment';
+        $article = factory(Article::class)->create();
+
+        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body]);
+
+        $this->assertResponseStatus(401);
     }
 }

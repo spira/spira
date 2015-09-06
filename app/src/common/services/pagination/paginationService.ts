@@ -27,7 +27,7 @@ namespace common.services.pagination {
                     private $q:ng.IQService,
                     private $window:ng.IWindowService) {
 
-            this.modelFactory = (data:any) => data; //set a default factory that just returns the data
+            this.modelFactory = (data:any, exists:boolean) => data; //set a default factory that just returns the data
 
         }
 
@@ -38,7 +38,7 @@ namespace common.services.pagination {
          */
         private static conditionalSkipInterceptor(rejection: ng.IHttpPromiseCallbackArg<any>): boolean {
 
-            return rejection.status == 416;
+            return _.contains([416, 404], rejection.status);
         }
         /**
          * Build the range header
@@ -83,8 +83,12 @@ namespace common.services.pagination {
                     Range: Paginator.getRangeHeader(index, last)
                 }).then((response:ng.IHttpPromiseCallbackArg<any>) => {
                     this.processContentRangeHeader(response.headers);
-                    return _.map(response.data, (modelData) => this.modelFactory(modelData));
-                }).catch(() => {
+                    return _.map(response.data, (modelData) => this.modelFactory(modelData, true));
+                }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {
+                    if(response.status == 404){ //no content
+                        this.entityCountTotal = 0;
+                        return this.$q.reject(new PaginatorException("Search returned no results!"));
+                    }
                     return this.$q.reject(new PaginatorException("No more results found!"));
                 });
 

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\Article;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -21,10 +29,14 @@ class CreateArticlesTable extends Migration
                 $table->text('excerpt')->nullable();
                 $table->string('primary_image')->nullable();
                 $table->string('permalink')->index()->nullable();
+                $table->uuid('author_id')->index();
                 $table->dateTime('first_published')->nullable();
 
                 $table->dateTime('created_at');
                 $table->dateTime('updated_at')->nullable();
+                $table->foreign('author_id')
+                    ->references('user_id')->on(\App\Models\User::getTableName())
+                    ->onDelete('set null');
             }
         );
     }
