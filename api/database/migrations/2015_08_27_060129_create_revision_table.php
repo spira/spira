@@ -17,7 +17,6 @@ class CreateRevisionTable extends Migration
     public function up()
     {
         Schema::create('revisions', function (Blueprint $table) {
-            $table->increments('id');
             $table->string('revisionable_type');
             $table->uuid('revisionable_id');
             $table->uuid('user_id')->nullable();
