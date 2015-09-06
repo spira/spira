@@ -1,4 +1,14 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,14 +20,11 @@ use Spira\Model\Model\IndexedModel;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
- *
  * @property ArticlePermalink[]|Collection $permalinks
  * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
- * @package App\Models
- *
  */
 class Article extends IndexedModel
 {
@@ -65,7 +72,7 @@ class Article extends IndexedModel
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', static::$statuses),
+            'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
@@ -80,18 +87,20 @@ class Article extends IndexedModel
     {
         parent::boot();
         static::saving(function (Article $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
-                $articlePermalink = new ArticlePermalink(['permalink'=>$model->permalink]);
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
+                $articlePermalink = new ArticlePermalink(['permalink' => $model->permalink]);
                 $articlePermalink->save();
             }
+
             return true;
         });
 
         static::saved(function (Article $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
                 $model->permalinks()->save($articlePermalink);
             }
+
             return true;
         });
 
@@ -142,7 +151,7 @@ class Article extends IndexedModel
     }
 
     /**
-     * If there is no defined excerpt for the text, create it from the content
+     * If there is no defined excerpt for the text, create it from the content.
      * @param $excerpt
      * @return string
      */

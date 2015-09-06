@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Providers;
 
 use App\Extensions\JWTAuth\JWTAuth;
@@ -33,7 +41,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the Payload Factory
+     * Register the bindings for the Payload Factory.
      */
     protected function registerClaimFactory()
     {
@@ -43,7 +51,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the JWT Manager
+     * Register the bindings for the JWT Manager.
      */
     protected function registerJWTManager()
     {
@@ -60,7 +68,7 @@ class JWTAuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the bindings for the main JWTAuth class
+     * Register the bindings for the main JWTAuth class.
      */
     protected function registerJWTAuth()
     {

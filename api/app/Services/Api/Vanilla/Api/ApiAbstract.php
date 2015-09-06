@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Services\Api\Vanilla\Api;
 
 use Guzzle\Http\Message\Response;
@@ -130,7 +138,7 @@ abstract class ApiAbstract
     protected function createJsonBody(array $parameters)
     {
         if (count($parameters) === 0) {
-            return null;
+            return;
         }
 
         return json_encode($parameters);

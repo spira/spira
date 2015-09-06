@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 15:07
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Models;
@@ -29,7 +31,7 @@ class Tag extends BaseModel
 
     protected static $validationRules = [
         'tag_id' => 'required|uuid',
-        'tag' => 'required|string|alphaDashSpace|max:20'
+        'tag' => 'required|string|alphaDashSpace|max:20',
     ];
 
     /**
@@ -45,5 +47,10 @@ class Tag extends BaseModel
         }
 
         return $this->where('tag', '=', $id)->firstOrFail();
+    }
+
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class, 'tag_article');
     }
 }

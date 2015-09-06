@@ -1,11 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleImage;
 
 /**
- * Class ArticleImageTest
+ * Class ArticleImageTest.
  * @group integration
  */
 class ArticleImageTest extends TestCase
@@ -47,7 +55,7 @@ class ArticleImageTest extends TestCase
                         'article_id' => $article->article_id,
                         'image_id' => $image->image_id,
                     ]);
-        });
+                });
 
         return new \Spira\Model\Collection\Collection($articleImages);
     }
@@ -74,7 +82,8 @@ class ArticleImageTest extends TestCase
         $images = $this->addImagesToArticle($article, true);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->transformed();
 
@@ -90,17 +99,17 @@ class ArticleImageTest extends TestCase
         $this->assertCount(5, $object);
     }
 
-
     public function testPutManyNewInvalid()
     {
         $article = $this->getFactory()->get(Article::class)->create();
         $images = $this->addImagesToArticle($article, true);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->customize([
-                'article_id'=>null
+                'article_id' => null,
             ])
             ->transformed();
 
@@ -108,6 +117,7 @@ class ArticleImageTest extends TestCase
 
         $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
+        $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
 
         $this->assertCount(5, $object->invalid);
@@ -115,15 +125,14 @@ class ArticleImageTest extends TestCase
         $this->assertEquals($childCount, Article::find($article->article_id)->articleImages->count());
     }
 
-
-
     public function testDeleteMany()
     {
         $article = $this->getFactory()->get(Article::class)->create();
         $images = $this->addImagesToArticle($article);
 
         $images = $this->getFactory()
-            ->get($images)
+            ->get(Image::class)
+            ->setCollection($images)
             ->count(5)
             ->transformed();
 
@@ -135,7 +144,6 @@ class ArticleImageTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
-
 
     public function testGetManyImages()
     {

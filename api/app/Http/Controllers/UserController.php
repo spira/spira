@@ -1,4 +1,14 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Http\Controllers;
 
 use App;
 use App\Extensions\JWTAuth\JWTManager;
@@ -97,7 +107,7 @@ class UserController extends EntityController
         $profile = $request->input('_user_profile', []);
 
         // Set new users to guest
-        $request->merge(['user_type' =>'guest']);
+        $request->merge(['user_type' => 'guest']);
 
         if ($this->getModel()->find($id)) {
             throw new ValidationException(
@@ -116,7 +126,7 @@ class UserController extends EntityController
         $model->setCredential(new UserCredential($credential));
 
         // Finally create the profile if it exists
-        if (!empty($profile)) {
+        if (! empty($profile)) {
             $this->validateRequest($profile, UserProfile::getValidationRules());
             $model->setProfile(new UserProfile($profile));
         }
@@ -150,7 +160,7 @@ class UserController extends EntityController
 
         // Change in email has been confirmed, set the new email
         if ($token = $request->headers->get('email-confirm-token')) {
-            if (!$email = $model->getEmailFromToken($token)) {
+            if (! $email = $model->getEmailFromToken($token)) {
                 throw new ValidationException(
                     new MessageBag(['email_confirmed' => 'The email confirmation token is not valid.'])
                 );
@@ -165,7 +175,7 @@ class UserController extends EntityController
 
         // Extract the profile and update if necessary
         $profileUpdateDetails = $request->input('_user_profile', []);
-        if (!empty($profileUpdateDetails)) {
+        if (! empty($profileUpdateDetails)) {
             /** @var UserProfile $profile */
             $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
             $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
@@ -173,10 +183,10 @@ class UserController extends EntityController
             $model->setProfile($profile);
         }
 
-        /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
+        /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
         $credentialUpdateDetails = $request->input('_user_credential', []);
-        if (!empty($credentialUpdateDetails)) {
+        if (! empty($credentialUpdateDetails)) {
             // Invalidate token for the user when user changes their password
             if ($this->jwtAuth->user()->user_id == $model->user_id) {
                 $token = $this->jwtAuth->getTokenFromRequest();
@@ -184,7 +194,7 @@ class UserController extends EntityController
             }
 
             $credentials = UserCredential::findOrNew($id);
-            /** @var UserCredential $credentials */
+            /* @var UserCredential $credentials */
             $credentials->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
@@ -220,7 +230,7 @@ class UserController extends EntityController
     }
 
     /**
-     * Deletes a social login entry from the database
+     * Deletes a social login entry from the database.
      *
      * @param $id
      * @param $provider
@@ -228,7 +238,7 @@ class UserController extends EntityController
      */
     public function unlinkSocialLogin($id, $provider)
     {
-        if (!$socialLogin = SocialLogin::where('user_id', '=', $id)
+        if (! $socialLogin = SocialLogin::where('user_id', '=', $id)
             ->where('provider', '=', $provider)
             ->first()) {
             throw new NotFoundHttpException('Sorry, this provider does not exist for this user.');
@@ -244,7 +254,7 @@ class UserController extends EntityController
     }
 
     /**
-     * Get full user details
+     * Get full user details.
      *
      * @param Request $request
      * @param string $id

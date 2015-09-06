@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 19:59
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spira\Model\Collection;
@@ -63,12 +65,13 @@ class ModelCollectionIterator extends \FilterIterator
     {
         $key = key($this->items);
         $var = ($key !== null && $key !== false);
+
         return $var;
     }
 
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
-     * Check whether the current element of the iterator is acceptable
+     * Check whether the current element of the iterator is acceptable.
      * @link http://php.net/manual/en/filteriterator.accept.php
      * @return bool true if the current element is acceptable, otherwise false.
      */
