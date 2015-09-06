@@ -472,39 +472,6 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions($articles);
     }
 
-    public function testShouldLogPutMetas()
-    {
-        $article = factory(Article::class)->create();
-
-        $metas = factory(\App\Models\ArticleMeta::class, 2)->make();
-        $entities = [];
-        foreach ($metas as $meta) {
-            array_push($entities, $this->prepareEntity($meta));
-        }
-
-        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
-
-        $article = Article::find($article->article_id);
-        $this->assertCount(2, $article->revisionHistory->toArray());
-
-        $this->cleanupDiscussions([$article]);
-    }
-
-    public function testShouldLogDeleteMeta()
-    {
-        $article = factory(Article::class)->create();
-        $this->addMetasToArticles([$article]);
-        $article->push();
-
-        $metaEntity = $article->metas->first();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
-
-        $article = Article::find($article->article_id);
-        $this->assertCount(1, $article->revisionHistory->toArray());
-
-        $this->cleanupDiscussions([$article]);
-    }
-
     public function testShouldCreateDiscussionWhenArticleCreated()
     {
         $article = factory(Article::class)->create();
@@ -630,5 +597,38 @@ class ArticleTest extends TestCase
         $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body]);
 
         $this->assertResponseStatus(401);
+    }
+
+    public function testShouldLogPutMetas()
+    {
+        $article = factory(Article::class)->create();
+
+        $metas = factory(\App\Models\ArticleMeta::class, 2)->make();
+        $entities = [];
+        foreach ($metas as $meta) {
+            array_push($entities, $this->prepareEntity($meta));
+        }
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(2, $article->revisionHistory->toArray());
+
+        $this->cleanupDiscussions([$article]);
+    }
+
+    public function testShouldLogDeleteMeta()
+    {
+        $article = factory(Article::class)->create();
+        $this->addMetasToArticles([$article]);
+        $article->push();
+
+        $metaEntity = $article->metas->first();
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(1, $article->revisionHistory->toArray());
+
+        $this->cleanupDiscussions([$article]);
     }
 }

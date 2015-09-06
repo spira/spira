@@ -142,7 +142,7 @@ abstract class BaseModel extends Model
         parent::setAttribute($key, $value);
     }
 
-    
+
 
     /**
      * Prepare value for proper assignment
@@ -337,6 +337,19 @@ abstract class BaseModel extends Model
         }
 
         return parent::save($options);
+    }
+
+    /**
+     * Delete child model from the database.
+     *
+     * @param  Model  $model
+     * @param  string $relation
+     *
+     * @return bool|null
+     */
+    public function deleteChild(Model $model, $relation)
+    {
+        return $model->delete();
     }
 
     /**
