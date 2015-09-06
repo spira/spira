@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 return [
 
     /*
@@ -70,12 +78,12 @@ return [
         'string'  => 'The :attribute must be :size characters.',
         'array'   => 'The :attribute must contain :size items.',
     ],
-    "unique"               => "The :attribute has already been taken.",
-    "url"                  => "The :attribute format is invalid.",
-    "timezone"             => "The :attribute must be a valid zone.",
-    'uuid'                 => "The :attribute must be an UUID string.",
-    'float'                => "The :attribute must be a float.",
-    'not_found'            => "The selected :attribute is invalid.",
+    'unique'               => 'The :attribute has already been taken.',
+    'url'                  => 'The :attribute format is invalid.',
+    'timezone'             => 'The :attribute must be a valid zone.',
+    'uuid'                 => 'The :attribute must be an UUID string.',
+    'decimal'                => 'The :attribute must be a decimal.',
+    'not_found'            => 'The selected :attribute is invalid.',
     'country'              => 'The :attribute must be a valid country code.',
     'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
 

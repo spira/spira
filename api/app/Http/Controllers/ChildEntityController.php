@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 04.08.15
- * Time: 20:23
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Controllers;
@@ -11,6 +13,7 @@ namespace App\Http\Controllers;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
@@ -22,8 +25,6 @@ class ChildEntityController extends ApiController
 {
     use RequestValidationTrait;
 
-    protected $validateParentIdRule = null;
-    protected $validateChildIdRule = null;
     protected $relationName = null;
 
     /**
@@ -40,18 +41,17 @@ class ChildEntityController extends ApiController
     {
         $this->parentModel = $parentModel;
 
-        if (!$this->relationName) {
+        if (! $this->relationName) {
             throw new \InvalidArgumentException('You must specify relationName in '.static::class);
         }
 
-        if (!method_exists($parentModel, $this->relationName)) {
+        if (! method_exists($parentModel, $this->relationName)) {
             throw new \InvalidArgumentException('Relation '.$this->relationName.', required by '.
                 static::class.', does not exist in '.get_class($parentModel)
             );
         }
         parent::__construct($transformer);
     }
-
 
     /**
      * Get all entities.
@@ -150,7 +150,7 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
         $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
@@ -197,7 +197,8 @@ class ChildEntityController extends ApiController
      */
     public function patchMany(Request $request, $id)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
+
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
         $parent = $this->findParentEntity($id);
@@ -237,7 +238,7 @@ class ChildEntityController extends ApiController
      */
     public function deleteMany(Request $request, $id)
     {
-        $requestCollection = $request->data;
+        $requestCollection = $request->all();
         $model = $this->findParentEntity($id);
 
         $this->findOrFailChildrenCollection($requestCollection, $model)->each(function (BaseModel $model) {
@@ -263,18 +264,18 @@ class ChildEntityController extends ApiController
         if (is_null($this->cacheChildModel)) {
             $this->cacheChildModel = $this->getRelation($this->parentModel)->getRelated();
         }
+
         return $this->cacheChildModel;
     }
 
     /**
      * @param BaseModel $model
-     * @return HasOneOrMany|Builder
+     * @return HasOneOrMany|BelongsToMany|Builder
      */
     protected function getRelation(BaseModel $model)
     {
         return $model->{$this->relationName}();
     }
-
 
     /**
      * @param $id

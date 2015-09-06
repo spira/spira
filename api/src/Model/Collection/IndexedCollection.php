@@ -8,10 +8,11 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Exceptions;
+namespace Spira\Model\Collection;
 
-use RuntimeException;
+use Elasticquent\ElasticquentCollectionTrait;
 
-class FatalErrorException extends RuntimeException
+class IndexedCollection extends Collection
 {
+    use ElasticquentCollectionTrait;
 }
