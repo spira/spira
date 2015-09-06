@@ -117,22 +117,6 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(5, count($updatedTags));
     }
 
-    public function testShouldLogPutTags()
-    {
-        $article = factory(Article::class)->create();
-
-        $tags = array_map(function ($tag) {
-            return $this->prepareEntity($tag);
-        }, factory(Tag::class, 4)->make()->all());
-
-        $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
-
-        $article = Article::find($article->article_id);
-        $this->assertCount(1, $article->revisionHistory->toArray());
-
-        $this->cleanupDiscussions([$article]);
-    }
-
     public function testGetTagGlobal()
     {
         $tag = factory(\App\Models\Tag::class)->create();
@@ -224,5 +208,21 @@ class ArticleTagTest extends TestCase
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals(3, Article::find($entity->article_id)->tags->count());
+    }
+
+    public function testShouldLogPutTags()
+    {
+        $article = factory(Article::class)->create();
+
+        $tags = array_map(function ($tag) {
+            return $this->prepareEntity($tag);
+        }, factory(Tag::class, 4)->make()->all());
+
+        $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(1, $article->revisionHistory->toArray());
+
+        $this->cleanupDiscussions([$article]);
     }
 }

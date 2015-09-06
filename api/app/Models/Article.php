@@ -177,7 +177,7 @@ class Article extends IndexedModel
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'tag_article');
+        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tags');
     }
 
     /**
