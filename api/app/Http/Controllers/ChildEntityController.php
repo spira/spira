@@ -158,7 +158,7 @@ class ChildEntityController extends ApiController
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels);
 
-        $this->saveMany($parent, $childModels);
+        $this->getRelation($parent)->saveMany($childModels);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -397,23 +397,6 @@ class ChildEntityController extends ApiController
         $this->getRelation($parent)->sync($ids);
 
         $this->fireModelEvent('synced', $parent, [$parent, $this->relationName, $ids]);
-    }
-
-    /**
-     * Save multiple model relationship with event firing.
-     *
-     * @param  BaseModel  $parent
-     * @param  Collection $childModels
-     *
-     * @return void
-     */
-    protected function saveMany(BaseModel $parent, Collection $childModels)
-    {
-        $this->fireModelEvent('savingMany', $parent, [$parent, $this->relationName]);
-
-        $this->getRelation($parent)->saveMany($childModels);
-
-        $this->fireModelEvent('savedMany', $parent, [$parent, $this->relationName, $childModels]);
     }
 
     /**

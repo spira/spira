@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
-use App\Extensions\Revisionable\ChangeloggableTrait;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  *
@@ -21,7 +21,7 @@ use App\Extensions\Revisionable\ChangeloggableTrait;
  */
 class Article extends IndexedModel
 {
-    use ChangeloggableTrait;
+    use RevisionableTrait;
 
     const defaultExcerptWordCount = 30;
 
@@ -162,7 +162,7 @@ class Article extends IndexedModel
 
     public function metas()
     {
-        return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
+        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
     }
 
     /**
