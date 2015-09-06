@@ -3669,12 +3669,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/revisionable.git",
-                "reference": "cbaa46ac4ffab7d4ed12cef8b02a16c8cd56b147"
+                "reference": "9e5251154866b894eb11dd26d2ec8ebb8519b3c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/revisionable/zipball/cbaa46ac4ffab7d4ed12cef8b02a16c8cd56b147",
-                "reference": "cbaa46ac4ffab7d4ed12cef8b02a16c8cd56b147",
+                "url": "https://api.github.com/repos/spira/revisionable/zipball/9e5251154866b894eb11dd26d2ec8ebb8519b3c5",
+                "reference": "9e5251154866b894eb11dd26d2ec8ebb8519b3c5",
                 "shasum": ""
             },
             "require": {
