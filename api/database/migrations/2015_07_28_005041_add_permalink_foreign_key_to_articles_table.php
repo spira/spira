@@ -25,6 +25,7 @@ class AddPermalinkForeignKeyToArticlesTable extends Migration
                 ->references('permalink')->on(\App\Models\ArticlePermalink::getTableName());
         });
     }
+
     /**
      * Reverse the migrations.
      *

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateFailedJobsTable extends Migration
 {
     const TABLE_NAME = 'failed_jobs';
+
     /**
      * Run the migrations.
      *
