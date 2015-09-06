@@ -194,7 +194,7 @@ $factory->define(App\Extensions\Revisionable\Revision::class, function (\Faker\G
     ];
 });
 
-$factory->defineAs(App\Extensions\Revisionable\Revision::class, 'article', function ($faker) use ($factory) {
+$factory->defineAs(Venturecraft\Revisionable\Revision::class, 'article', function ($faker) use ($factory) {
     $revision = $factory->raw(App\Extensions\Revisionable\Revision::class);
 
     // Get 2 articles to simulate an update

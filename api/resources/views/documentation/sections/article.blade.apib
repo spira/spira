@@ -319,7 +319,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
     + Body
 
             {!!
-                $factory->get(App\Extensions\Revisionable\Revision::class, 'article')
+                $factory->get(Venturecraft\Revisionable\Revision::class, 'article')
                     ->count(5)
                     ->json()
             !!}
