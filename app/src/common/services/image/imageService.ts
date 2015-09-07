@@ -8,7 +8,7 @@ namespace common.services.image {
         title?:string;
     }
 
-    export interface ICloudinaryUpload {
+    export interface ICloudinaryUploadRequest {
         file: File;
         api_key: string;
         timestamp: number;
@@ -19,8 +19,26 @@ namespace common.services.image {
         _inputOptions?:IImageUploadOptions;
     }
 
+    export interface ICloudinaryUploadResponse {
+        bytes: number;
+        created_at: string;
+        etag: string;
+        format: string;
+        height: number;
+        original_filename: string;
+        public_id: string|number;
+        resource_type: string;
+        secure_url: string;
+        signature: string;
+        tags: string[];
+        type: string;
+        url: string;
+        version: number; //unix timestamp
+        width: number;
+    }
+
     export interface ICloudinaryFileUploadConfig extends ng.angularFileUpload.IFileUploadConfig {
-        fields: ICloudinaryUpload;
+        fields: ICloudinaryUploadRequest;
     }
 
     export interface IImageNotification {
@@ -87,7 +105,7 @@ namespace common.services.image {
             let deferredUploadProgress:IImageDeferred<common.models.Image> = this.$q.defer();
 
             this.signCloudinaryUpload(cloudinaryOptions, deferredUploadProgress)
-                .then((signedCloudinaryOptions:ICloudinaryUpload) => this.uploadToCloudinary(signedCloudinaryOptions, deferredUploadProgress))
+                .then((signedCloudinaryOptions:ICloudinaryUploadRequest) => this.uploadToCloudinary(signedCloudinaryOptions, deferredUploadProgress))
                 .then((cloudinaryResponse) => this.linkImageToApi(cloudinaryOptions, cloudinaryResponse, deferredUploadProgress))
                 .then((image:common.models.Image) => {
                     deferredUploadProgress.resolve(image);
@@ -102,7 +120,7 @@ namespace common.services.image {
          * @returns {IUploadPromise<any>}
          * @param deferredUploadProgress
          */
-        private uploadToCloudinary(signedCloudinaryOptions:ICloudinaryUpload, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.angularFileUpload.IUploadPromise<ng.IHttpPromiseCallbackArg<any>> {
+        private uploadToCloudinary(signedCloudinaryOptions:ICloudinaryUploadRequest, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.angularFileUpload.IUploadPromise<ng.IHttpPromiseCallbackArg<any>> {
 
             let uploadOptions = this.getNgUploadConfig(signedCloudinaryOptions);
 
@@ -149,7 +167,7 @@ namespace common.services.image {
          * Get the upload configuration defaults for the cloudinary cdn
          * @returns {{url: string}}
          */
-        private getCloudinaryUploadConfig(inputOptions:IImageUploadOptions):ICloudinaryUpload {
+        private getCloudinaryUploadConfig(inputOptions:IImageUploadOptions):ICloudinaryUploadRequest {
 
             return {
                 file: inputOptions.file,
@@ -169,9 +187,9 @@ namespace common.services.image {
          * @param cloudinaryOptions
          * @returns {{file: File, url: string, method: string, fields: Omitted}}
          */
-        private getNgUploadConfig(cloudinaryOptions:ICloudinaryUpload):ICloudinaryFileUploadConfig {
+        private getNgUploadConfig(cloudinaryOptions:ICloudinaryUploadRequest):ICloudinaryFileUploadConfig {
 
-            let cloudinaryFields = <ICloudinaryUpload>_.omit(cloudinaryOptions, ['file']);
+            let cloudinaryFields = <ICloudinaryUploadRequest>_.omit(cloudinaryOptions, ['file']);
             delete cloudinaryFields._inputOptions;
 
             return {
@@ -193,10 +211,10 @@ namespace common.services.image {
         /**
          * Sign the upload options using remote service which secures the api secret
          * @param uploadOptions
-         * @returns {IPromise<ICloudinaryUpload>}
+         * @returns {IPromise<ICloudinaryUploadRequest>}
          * @param deferredUploadProgress
          */
-        private signCloudinaryUpload(uploadOptions:ICloudinaryUpload, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<ICloudinaryUpload> {
+        private signCloudinaryUpload(uploadOptions:ICloudinaryUploadRequest, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<ICloudinaryUploadRequest> {
 
             let signableString:string = _.chain(this.cloudinarySignedParams)
                     .filter((property) => {
@@ -233,10 +251,10 @@ namespace common.services.image {
          * @param cloudinaryResponse
          * @returns {IPromise<common.models.Image>}
          */
-        private linkImageToApi(uploadOptions:ICloudinaryUpload, cloudinaryResponse:ng.IHttpPromiseCallbackArg<any>, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
+        private linkImageToApi(uploadOptions:ICloudinaryUploadRequest, cloudinaryResponse:ng.IHttpPromiseCallbackArg<ICloudinaryUploadResponse>, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
 
             let imageModel = ImageService.imageFactory({
-                imageId: uploadOptions.public_id,
+                imageId: cloudinaryResponse.data.public_id,
                 version: cloudinaryResponse.data.version,
                 format: cloudinaryResponse.data.format,
                 alt: uploadOptions._inputOptions.alt,

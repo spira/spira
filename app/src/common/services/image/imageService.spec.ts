@@ -21,7 +21,7 @@ namespace common.services.image {
 
     };
 
-    describe('Image Service', () => {
+    describe.only('Image Service', () => {
 
         beforeEach(()=> {
 
@@ -47,15 +47,14 @@ namespace common.services.image {
 
         it('should be able to upload an image to cloudinary', () => {
 
-            console.log('imagefile', fixtures.imageFile);
-
             let fixedImageId = chance.guid(),
-                ts = moment().unix();
+                ts = moment().unix(),
+                image = fixtures.imageFile;
 
             sinon.stub((<any>imageService).ngRestAdapter, 'uuid').returns(fixedImageId); //fix the value of the ngRestAdapter.uuid() method
 
             let uploadPromise = imageService.uploadImage({
-                file: fixtures.imageFile,
+                file: image,
                 alt: 'image test',
             });
 
@@ -74,7 +73,7 @@ namespace common.services.image {
                 etag: "67131e8d70ecb06a8400554f5eef8c77",
                 format: "jpg",
                 height: 1632,
-                original_filename: "DSCF0275",
+                original_filename: image.name,
                 public_id: fixedImageId,
                 resource_type: "image",
                 secure_url: `https://res.cloudinary.com/spira/image/upload/v${ts}/${fixedImageId}.jpg`,
@@ -90,6 +89,7 @@ namespace common.services.image {
                 imageId: fixedImageId,
                 version: ts,
                 alt: "image test",
+                title: "image test",
                 format:'jpg',
             }).respond(204);
 
