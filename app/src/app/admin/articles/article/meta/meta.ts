@@ -9,14 +9,6 @@ namespace app.admin.articles.article.meta {
         static $inject = ['article', 'articleService'];
 
         constructor(public article:common.models.Article, private articleService:common.services.article.ArticleService) {
-
-            if(_.isEmpty(article._articleMeta)) {
-                this.metas = [];
-            }
-            else {
-                this.metas = article._articleMeta;
-            }
-
         }
 
         /**
@@ -24,7 +16,7 @@ namespace app.admin.articles.article.meta {
          */
         public add():void {
 
-            this.metas.push(
+            this.article._articleMeta.push(
                 new common.models.ArticleMeta({
                     metaName:'',
                     metaContent:'',
@@ -33,16 +25,6 @@ namespace app.admin.articles.article.meta {
             );
 
         }
-
-        /**
-         * Save all metas.
-         */
-        public save():void {
-
-            this.articleService.saveMetas(this.article, this.metas);
-
-        }
-
     }
 
     angular.module(namespace, [])
