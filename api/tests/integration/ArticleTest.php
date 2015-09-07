@@ -605,4 +605,42 @@ class ArticleTest extends TestCase
 
         $this->assertResponseStatus(401);
     }
+
+    public function testShouldLogPutMetas()
+    {
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
+        $article = factory(Article::class)->create();
+
+        $metas = factory(\App\Models\ArticleMeta::class, 2)->make();
+        $entities = [];
+        foreach ($metas as $meta) {
+            array_push($entities, $this->prepareEntity($meta));
+        }
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(2, $revisions = $article->revisionHistory->toArray());
+        $this->assertEquals($user->user_id, reset($revisions)['user_id']);
+
+        $this->cleanupDiscussions([$article]);
+    }
+
+    public function testShouldLogDeleteMeta()
+    {
+        $article = factory(Article::class)->create();
+        $this->addMetasToArticles([$article]);
+        $article->push();
+
+        $metaEntity = $article->metas->first();
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(1, $article->revisionHistory->toArray());
+
+        $this->cleanupDiscussions([$article]);
+    }
 }
