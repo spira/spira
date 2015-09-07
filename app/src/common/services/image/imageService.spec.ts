@@ -37,7 +37,7 @@ namespace common.services.image {
 
     };
 
-    describe.only('Image Service', () => {
+    describe('Image Service', () => {
 
         beforeEach(()=> {
 
