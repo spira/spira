@@ -12,7 +12,6 @@ namespace App\Http\Controllers;
 
 use App;
 use App\Extensions\JWTAuth\JWTManager;
-use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
@@ -28,18 +27,10 @@ use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
-use App\Extensions\Lock\Manager as Lock;
 
 class UserController extends EntityController
 {
     use DispatchesJobs;
-
-    /**
-     * Permission Lock Manager.
-     *
-     * @var Manager
-     */
-    protected $lock;
 
     /**
      * JWT Auth.
@@ -52,43 +43,18 @@ class UserController extends EntityController
      * Assign dependencies.
      *
      * @param  User $model
-     * @param  Lock $lock
      * @param  JWTAuth $jwtAuth
      * @param  Request $request
      * @param  EloquentModelTransformer $transformer
      */
     public function __construct(
         User $model,
-        Lock $lock,
         JWTAuth $jwtAuth,
         Request $request,
         EloquentModelTransformer $transformer
     ) {
-        $this->lock = $lock;
         $this->jwtAuth = $jwtAuth;
-        $this->permissions($request);
         parent::__construct($model, $transformer);
-    }
-
-    /**
-     * Set permissions to be used in the controller.
-     *
-     * @param  Request  $request
-     * @return void
-     */
-    public function permissions(Request $request)
-    {
-        $this->lock->setRole(User::$userTypes);
-        $user = $this->jwtAuth->user();
-        $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
-
-        $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
-        $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
-
-        $this->middleware('permission:readAll', ['only' => 'getAllPaginated']);
-        $this->middleware('permission:readOne', ['only' => 'getOne']);
-        $this->middleware('permission:update', ['only' => 'patchOne']);
-        $this->middleware('permission:delete', ['only' => 'deleteOne']);
     }
 
     /**
