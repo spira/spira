@@ -9,11 +9,14 @@
  */
 
 use App\Models\Tag;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+
 class CreateTagTagTable extends Migration
 {
+    const TABLE_NAME = 'tag_tag';
     /**
      * Run the migrations.
      *
@@ -21,21 +24,20 @@ class CreateTagTagTable extends Migration
      */
     public function up()
     {
-        Schema::create('tag_tag', function (Blueprint $table) {
+        Schema::create(static::TABLE_NAME, function (Blueprint $table) {
             $table->uuid('tag_id');
-            $table->uuid('fk_tag_id');
+            $table->uuid('parent_tag_id');
 
-            $table->primary(['tag_id','fk_tag_id']);
+            $table->primary(['tag_id','parent_tag_id']);
 
             $table->foreign('tag_id')
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
 
-            $table->foreign('fk_tag_id')
+            $table->foreign('parent_tag_id')
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
-        }
-        );
+        });
     }
 
     /**
@@ -45,6 +47,6 @@ class CreateTagTagTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tag_article');
+        Schema::drop(static::TABLE_NAME);
     }
 }
