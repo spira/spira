@@ -15,7 +15,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateUserProfilesTable extends Migration
 {
-
     /**
      * Run the migrations.
      *

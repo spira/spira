@@ -16,6 +16,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateArticleTagsTable extends Migration
 {
     const TABLE_NAME = 'tag_article';
+
     /**
      * Run the migrations.
      *
