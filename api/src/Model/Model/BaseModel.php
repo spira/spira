@@ -337,16 +337,20 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * Delete child model from the database.
+     * Fires an event for RevisionableTrait.
      *
-     * @param  Model  $model
-     * @param  string $relation
+     * @param  string $event
+     * @param  array  $payload
+     * @param  bool   $halt
      *
-     * @return bool|null
+     * @return mixed
      */
-    public function deleteChild(Model $model, $relation)
+    public function fireRevisionableEvent($event, array $payload, $halt = true)
     {
-        return $model->delete();
+        $event = "eloquent.{$event}: ".get_class($this);
+        $method = $halt ? 'until' : 'fire';
+
+        return static::$dispatcher->$method($event, array_merge([$this], $payload));
     }
 
     /**

@@ -224,7 +224,8 @@ class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $model);
 
-        $model->deleteChild($childModel, $this->relationName);
+        $childModel->delete();
+        $model->fireRevisionableEvent('deleteChild', [$childModel, $this->relationName]);
 
         return $this->getResponse()->noContent();
     }
