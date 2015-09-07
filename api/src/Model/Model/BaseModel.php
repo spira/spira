@@ -337,6 +337,23 @@ abstract class BaseModel extends Model
     }
 
     /**
+     * Fires an event for RevisionableTrait.
+     *
+     * @param  string $event
+     * @param  array  $payload
+     * @param  bool   $halt
+     *
+     * @return mixed
+     */
+    public function fireRevisionableEvent($event, array $payload, $halt = true)
+    {
+        $event = "eloquent.{$event}: ".get_class($this);
+        $method = $halt ? 'until' : 'fire';
+
+        return static::$dispatcher->$method($event, array_merge([$this], $payload));
+    }
+
+    /**
      * Create a new Eloquent Collection instance.
      *
      * @param  array  $models
