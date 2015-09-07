@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\SecondTestEntity;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class TestManyManySecondTable extends Migration
 {
-    const MODEL = 'App\Models\SecondTestEntity';
-
     /**
      * Run the migrations.
      *
@@ -22,14 +22,12 @@ class TestManyManySecondTable extends Migration
      */
     public function up()
     {
-        $modelClass = static::MODEL;
-        Schema::create($modelClass::getTableName(), function (Blueprint $table) {
+        Schema::create(SecondTestEntity::getTableName(), function (Blueprint $table) {
             $table->uuid('entity_id');
             $table->uuid('check_entity_id');
             $table->primary('entity_id');
             $table->string('value', 255);
-        }
-        );
+        });
     }
 
     /**
@@ -39,8 +37,6 @@ class TestManyManySecondTable extends Migration
      */
     public function down()
     {
-        $modelClass = static::MODEL;
-
-        Schema::drop($modelClass::getTableName());
+        Schema::drop(SecondTestEntity::getTableName());
     }
 }

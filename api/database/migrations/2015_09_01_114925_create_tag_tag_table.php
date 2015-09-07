@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticleTagsTable extends Migration
+class CreateTagTagTable extends Migration
 {
-    const TABLE_NAME = 'tag_article';
+    const TABLE_NAME = 'tag_tag';
 
     /**
      * Run the migrations.
@@ -26,15 +26,15 @@ class CreateArticleTagsTable extends Migration
     {
         Schema::create(static::TABLE_NAME, function (Blueprint $table) {
             $table->uuid('tag_id');
-            $table->uuid('article_id');
+            $table->uuid('parent_tag_id');
 
-            $table->primary(['tag_id','article_id']);
-
-            $table->foreign('article_id')
-                ->references('article_id')->on(\App\Models\Article::getTableName())
-                ->onDelete('cascade');
+            $table->primary(['tag_id','parent_tag_id']);
 
             $table->foreign('tag_id')
+                ->references('tag_id')->on(Tag::getTableName())
+                ->onDelete('cascade');
+
+            $table->foreign('parent_tag_id')
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
         });
