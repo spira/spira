@@ -10,7 +10,12 @@ namespace app.admin.articles.article.meta {
 
         constructor(public article:common.models.Article, private articleService:common.services.article.ArticleService) {
 
-            this.metas = article._metas;
+            if(_.isEmpty(article._articleMeta)) {
+                this.metas = [];
+            }
+            else {
+                this.metas = article._articleMeta;
+            }
 
         }
 

@@ -57,7 +57,7 @@ namespace common.services.article {
         public getArticle(identifier:string):ng.IPromise<common.models.Article> {
 
             return this.ngRestAdapter.get('/articles/'+identifier, {
-                'With-Nested' : 'permalinks, metas, tags'
+                'With-Nested' : 'articlePermalink, articleMeta, tag'
             })
                 .then((res) => ArticleService.articleFactory(res.data, true));
 
@@ -125,19 +125,19 @@ namespace common.services.article {
          */
         private saveArticleTags(article:common.models.Article):ng.IPromise<common.models.Tag[]|boolean>{
 
-            let tagData = _.clone(article._tags);
+            let tagData = _.clone(article._tag);
 
             if (article.exists()){
 
                 let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
-                if (!_.has(changes, '_tags')){
+                if (!_.has(changes, '_tag')){
                     return this.$q.when(false);
                 }
             }
 
             return this.ngRestAdapter.put('/articles/'+article.articleId+'/tags', tagData)
                 .then(() => {
-                    return article._tags;
+                    return article._tag;
                 });
 
         }

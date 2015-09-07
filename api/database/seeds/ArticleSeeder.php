@@ -31,15 +31,15 @@ class ArticleSeeder extends Seeder
 
                 //add metas
                 $metas = factory(ArticleMeta::class, 2)->make()->all();
-                $article->metas()->saveMany($metas);
+                $article->articleMeta()->saveMany($metas);
 
                 //add permalinks
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
-                $article->permalinks()->saveMany($permalinks);
+                $article->articlePermalink()->saveMany($permalinks);
 
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
-                $article->tags()->saveMany($tags);
+                $article->tag()->saveMany($tags);
 
                 //create & link images
                 factory(Image::class, 5)

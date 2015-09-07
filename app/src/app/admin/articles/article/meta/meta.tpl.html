@@ -1,21 +1,23 @@
 <div layout-padding>
-    <h2>User Profile</h2>
+    <h2>Search Engines</h2>
     <md-content layout-padding>
-        <h3>Meta Tags</h3>
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="metaTag in MetaController.metas">
                 <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
                     <md-input-container class="md-icon-float">
+                        <label for="metaTagMetaName">Name</label>
                         <md-icon>accessibility</md-icon>
-                        <input ng-model="metaTag.metaName" name="metaName" type="text" aria-label="metaName" md-maxlength="100">
+                        <input id="metaTagMetaName" ng-model="metaTag.metaName" name="metaName" type="text" aria-label="metaName" md-maxlength="100">
                     </md-input-container>
                     <md-input-container class="md-icon-float">
+                        <label for="metaTagMetaName">Property</label>
                         <md-icon>accessibility</md-icon>
-                        <input ng-model="metaTag.metaContent" name="metaContent" type="text" aria-label="metaContent" md-maxlength="100">
+                        <input id="metaTagMetaProperty" ng-model="metaTag.metaProperty" name="metaProperty" type="text" aria-label="metaProperty" md-maxlength="100">
                     </md-input-container>
                     <md-input-container class="md-icon-float">
+                        <label for="metaTagMetaContent">Content</label>
                         <md-icon>accessibility</md-icon>
-                        <input ng-model="metaTag.metaProperty" name="metaProperty" type="text" aria-label="metaProperty" md-maxlength="100">
+                        <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" aria-label="metaContent" md-maxlength="100">
                     </md-input-container>
                 </md-whiteframe>
             </md-list-item>

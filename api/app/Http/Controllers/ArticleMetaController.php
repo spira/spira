@@ -15,7 +15,7 @@ use App\Models\Article;
 
 class ArticleMetaController extends ChildEntityController
 {
-    protected $relationName = 'metas';
+    protected $relationName = 'articleMeta';
 
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {

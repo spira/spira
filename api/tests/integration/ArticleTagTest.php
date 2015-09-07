@@ -50,7 +50,7 @@ class ArticleTagTest extends TestCase
                 $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
             }
 
-            $article->tags()->sync($tags->lists('tag_id')->toArray());
+            $article->tag()->sync($tags->lists('tag_id')->toArray());
         }
     }
 

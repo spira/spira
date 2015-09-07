@@ -10,7 +10,7 @@ namespace app.admin.articles.article.post {
         constructor(public article:common.models.Article, private tagService:common.services.tag.TagService, public $scope:ng.IScope) {
 
 
-            this.tags = _.pluck(article._tags, 'tag');
+            this.tags = _.pluck(article._tag, 'tag');
 
             $scope.$watchCollection(() => this.tags, (newValue, oldValue) => {
                 if (!_.isEqual(newValue, oldValue)){
@@ -25,11 +25,11 @@ namespace app.admin.articles.article.post {
          */
         public updateArticleTags():void{
 
-            this.article._tags = _.chain(this.tags)
+            this.article._tag = _.chain(this.tags)
                 .map((tag:string):common.models.Tag => {
                     let tagModel:common.models.Tag;
 
-                    if (tagModel = _.find(this.article._tags, {tag: tag})){
+                    if (tagModel = _.find(this.article._tag, {tag: tag})){
                         return tagModel;
                     }
 
