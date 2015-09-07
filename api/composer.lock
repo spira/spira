@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fe6b634c7fe8acfba7d4a5f2c578589b",
+    "hash": "d8f3e18dd7c4e58ec7301c5226c7441b",
     "packages": [
         {
             "name": "beatswitch/lock",

@@ -4,7 +4,7 @@
 
     describe('Image Model', () => {
 
-        let tagData = {
+        let imageData = {
             imageId: seededChance.guid(),
             version : Math.floor(chance.date().getTime() / 1000),
             folder : seededChance.word(),
@@ -15,7 +15,7 @@
 
         it('should instantiate a new image', () => {
 
-            let image = new common.models.Image(tagData);
+            let image = new common.models.Image(imageData);
 
             expect(image).to.be.instanceOf(common.models.Image);
 
