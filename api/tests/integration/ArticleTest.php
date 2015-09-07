@@ -608,6 +608,8 @@ class ArticleTest extends TestCase
 
     public function testShouldLogPutMetas()
     {
+        $user = $this->createUser(['user_type' => 'guest']);
+        $token = $this->tokenFromUser($user);
         $article = factory(Article::class)->create();
 
         $metas = factory(\App\Models\ArticleMeta::class, 2)->make();
@@ -616,10 +618,13 @@ class ArticleTest extends TestCase
             array_push($entities, $this->prepareEntity($meta));
         }
 
-        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
 
         $article = Article::find($article->article_id);
-        $this->assertCount(2, $article->revisionHistory->toArray());
+        $this->assertCount(2, $revisions = $article->revisionHistory->toArray());
+        $this->assertEquals($user->user_id, reset($revisions)['user_id']);
 
         $this->cleanupDiscussions([$article]);
     }
