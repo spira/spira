@@ -85,3 +85,27 @@ It is recommended to use the PUT method with `entityId` in route, as the same ac
 
 + Response 204
 
+## Tag child Tags [/tags/{tagId}/child-tags]
++ Parameters
+    + tagId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `tag` of the tag to perform action with.
+
+### Add tags to tag [PUT]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->hide(['_self'])
+                    ->json()
+            !!}
+
++ Response 201 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Tag::class)
+                    ->showOnly(['_self'])
+                    ->json()
+            !!}
+

@@ -9,6 +9,7 @@
  */
 
 use App\Models\Tag;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -22,10 +23,9 @@ class CreateTagsTable extends Migration
     public function up()
     {
         Schema::create(Tag::getTableName(), function (Blueprint $table) {
-                $table->uuid('tag_id')->primary();
-                $table->string('tag', 20)->unique();
-            }
-        );
+            $table->uuid('tag_id')->primary();
+            $table->string('tag', 20)->unique();
+        });
     }
 
     /**

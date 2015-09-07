@@ -42,8 +42,7 @@ class CreateArticleImageTable extends Migration
             $table->foreign('image_id')
                 ->references('image_id')->on(Image::getTableName())
                 ->onDelete('cascade');
-        }
-        );
+        });
     }
 
     /**

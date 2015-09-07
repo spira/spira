@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Database\Migrations\Migration;
+use App\Models\TestEntity;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateTestEntitiesTable extends Migration
 {
-    const MODEL = 'App\Models\TestEntity';
-
     /**
      * Run the migrations.
      *
@@ -22,9 +22,7 @@ class CreateTestEntitiesTable extends Migration
      */
     public function up()
     {
-        $modelClass = static::MODEL;
-
-        Schema::create($modelClass::getTableName(), function (Blueprint $table) {
+        Schema::create(TestEntity::getTableName(), function (Blueprint $table) {
                 $table->uuid('entity_id');
                 $table->string('varchar', 255);
                 $table->char('hash', 60);
@@ -52,8 +50,6 @@ class CreateTestEntitiesTable extends Migration
      */
     public function down()
     {
-        $modelClass = static::MODEL;
-
-        Schema::drop($modelClass::getTableName());
+        Schema::drop(TestEntity::getTableName());
     }
 }
