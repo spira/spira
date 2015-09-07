@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "27e398f2c6e544dc13efcb328e667762",
+    "hash": "11b26bda0f8ee4447e3592023156d3b1",
     "packages": [
         {
             "name": "beatswitch/lock",
@@ -3665,16 +3665,16 @@
         },
         {
             "name": "venturecraft/revisionable",
-            "version": "dev-feature/relationship-revisions",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/revisionable.git",
-                "reference": "c23b532a535eab58c07fa87cdf602a542786a5c5"
+                "reference": "1c5bae565a35b8199891f048e5e1ee08096da573"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/revisionable/zipball/c23b532a535eab58c07fa87cdf602a542786a5c5",
-                "reference": "c23b532a535eab58c07fa87cdf602a542786a5c5",
+                "url": "https://api.github.com/repos/spira/revisionable/zipball/1c5bae565a35b8199891f048e5e1ee08096da573",
+                "reference": "1c5bae565a35b8199891f048e5e1ee08096da573",
                 "shasum": ""
             },
             "require": {
@@ -3712,7 +3712,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "time": "2015-09-06 19:52:21"
+            "time": "2015-09-07 07:47:56"
         },
         {
             "name": "vlucas/phpdotenv",
