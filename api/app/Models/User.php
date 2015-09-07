@@ -133,6 +133,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     {
         return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
     }
+
     public function getRolesAttribute()
     {
         return $this->roles();

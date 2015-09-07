@@ -8,13 +8,15 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\SocialLogin;
 use App\Models\User;
+use Illuminate\Support\Facades\Schema;
 use Bosnadev\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSocialLoginsTable extends Migration
 {
-    const MODEL = 'App\Models\SocialLogin';
+    const MODEL = SocialLogin::class;
 
     /**
      * Run the migrations.
@@ -23,8 +25,7 @@ class CreateSocialLoginsTable extends Migration
      */
     public function up()
     {
-        $modelClass = static::MODEL;
-        Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
+        Schema::create(SocialLogin::getTableName(), function (Blueprint $table) {
             $table->uuid('user_id');
             $table->string('provider', 16);
             $table->string('token');
@@ -44,7 +45,6 @@ class CreateSocialLoginsTable extends Migration
      */
     public function down()
     {
-        $modelClass = static::MODEL;
-        Schema::drop($modelClass::getTableName());
+        Schema::drop(SocialLogin::getTableName());
     }
 }

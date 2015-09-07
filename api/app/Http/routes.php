@@ -57,6 +57,7 @@ $app->group(['prefix' => 'tags'], function (Application $app) {
     $app->post('/', 'App\Http\Controllers\TagController@postOne');
     $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\TagController@deleteOne');
+    $app->put('{id}/child-tags', 'App\Http\Controllers\ChildTagController@putMany');
 });
 
 $app->group(['prefix' => 'images'], function (Application $app) {

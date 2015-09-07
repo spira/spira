@@ -23,17 +23,15 @@ class CreateImageTable extends Migration
     public function up()
     {
         Schema::create(Image::getTableName(), function (Blueprint $table) {
-                $table->uuid('image_id')->primary();
-                $table->integer('version');
-                $table->string('format', 4);
-                $table->string('folder', 10)->nullable();
-                $table->string('alt', 255);
-                $table->string('title', 255)->nullable();
+            $table->uuid('image_id')->primary();
+            $table->integer('version');
+            $table->string('format', 4);
+            $table->string('folder', 10)->nullable();
+            $table->string('alt', 255);
+            $table->string('title', 255)->nullable();
 
-                $table->unique(['image_id','version']);
-
-            }
-        );
+            $table->unique(['image_id','version']);
+        });
     }
 
     /**
