@@ -181,7 +181,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Extensions\Revisionable\Revision::class, function (\Faker\Generator $faker) {
+$factory->define(Venturecraft\Revisionable\Revision::class, function (\Faker\Generator $faker) {
     return [
         'revision_id' => $faker->uuid,
         'revisionable_type' => $faker->word,
@@ -195,7 +195,7 @@ $factory->define(App\Extensions\Revisionable\Revision::class, function (\Faker\G
 });
 
 $factory->defineAs(Venturecraft\Revisionable\Revision::class, 'article', function ($faker) use ($factory) {
-    $revision = $factory->raw(App\Extensions\Revisionable\Revision::class);
+    $revision = $factory->raw(Venturecraft\Revisionable\Revision::class);
 
     // Get 2 articles to simulate an update
     $articles = [];
