@@ -46,11 +46,4 @@ class CloudinaryController extends ApiController
             ->transformer($this->getTransformer())
             ->item($responseObject);
     }
-
-    public function getAll()
-    {
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->collection($this->countries->all());
-    }
 }
