@@ -83,18 +83,6 @@ namespace common.services.image {
         }
 
         /**
-         * Get a new image with no values and a set uuid
-         * @returns {common.models.Image}
-         */
-        public newImage():common.models.Image {
-
-            return ImageService.imageFactory({
-                imageId: this.ngRestAdapter.uuid(),
-            });
-
-        }
-
-        /**
          *
          * @returns {IUploadPromise<T>}
          * @param imageUploadOptions
