@@ -65,7 +65,7 @@ namespace common.services.image {
                 });
 
 
-                $httpBackend.expectGET('/api/cloudinary/signature?public_id='+fixedImageId+'&timestamp='+ts+'&type=upload').respond({
+                $httpBackend.expectGET(new RegExp('\/api\/cloudinary\/signature\\?public_id='+fixedImageId+'&timestamp=[\\d]+&type=upload')).respond({
                     signature: 'this-is-the-signature',
                     apiKey: 'abc-123'
                 });
@@ -113,7 +113,7 @@ namespace common.services.image {
                     ts = moment().unix(),
                     image = fixtures.imageFile;
 
-                $httpBackend.expectGET('/api/cloudinary/signature?public_id='+fixedImageId+'&timestamp='+ts+'&type=upload').respond({
+                $httpBackend.expectGET(new RegExp('\/api\/cloudinary\/signature\\?public_id='+fixedImageId+'&timestamp=[\\d]+&type=upload')).respond({
                     signature: 'this-is-the-signature',
                     apiKey: 'abc-123'
                 });
