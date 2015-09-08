@@ -6,8 +6,6 @@ namespace app.admin.media {
         page:number;
     }
 
-    const perPage = 12;
-
     export class MediaConfig {
 
         static $inject = ['stateHelperServiceProvider'];
@@ -27,7 +25,8 @@ namespace app.admin.media {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    imagesPaginator: (imageService:common.services.image.ImageService) => {
+                    perPage: 12,
+                    imagesPaginator: (imageService:common.services.image.ImageService, perPage:number) => {
                         return imageService.getImagesPaginator().setCount(perPage);
                     },
                     initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
@@ -58,7 +57,7 @@ namespace app.admin.media {
 
     export class MediaController {
 
-        static $inject = ['imageService', 'imagesPaginator', 'initialImages', '$stateParams'];
+        static $inject = ['perPage', 'imageService', 'imagesPaginator', 'initialImages', '$stateParams'];
 
         public progressBar:IProgressBar = {
             statusText: 'Saving...',
@@ -67,17 +66,15 @@ namespace app.admin.media {
             value: 0
         };
 
-        public images:common.models.Image[] = [];
         public pages:number[] = [];
         public currentPageIndex:number;
-        public uploadImage:common.services.image.IImageUploadOptions;
+        public queuedImage:common.services.image.IImageUploadOptions;
 
-        constructor(private imageService:common.services.image.ImageService,
+        constructor(private perPage:number,
+                    private imageService:common.services.image.ImageService,
                     private imagesPaginator:common.services.pagination.Paginator,
-                    images:common.models.Image[],
+                    public images:common.models.Image[],
                     public $stateParams:IMediaStateParams) {
-
-            this.images = images; //initialise the first images
 
             this.pages = imagesPaginator.getPages();
 
@@ -89,17 +86,15 @@ namespace app.admin.media {
          * Upload files
          * @param image
          */
-        public uploadFiles(image:common.services.image.IImageUploadOptions):void {
+        public uploadImage(image:common.services.image.IImageUploadOptions):void {
 
             this.progressBar.visible = true;
 
-            debugger;
-
             let onSuccess = (image:common.models.Image) => {
-                console.log('image uploaded.', image);
+
                 this.progressBar.visible = false;
 
-                if (this.images.length >= perPage){
+                if (this.images.length >= this.perPage) {
                     this.images.pop();
                 }
 
@@ -122,11 +117,7 @@ namespace app.admin.media {
             };
 
             this.imageService.uploadImage(image)
-                .then(onSuccess, null, onNotify)
-                .catch(function (err) {
-                    console.error(err);
-                });
-
+                .then(onSuccess, null, onNotify);
         }
 
     }

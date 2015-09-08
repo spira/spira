@@ -5,18 +5,18 @@
 
         <md-input-container>
             <label>Alt</label>
-            <input ng-model="MediaController.uploadImage.alt" required>
+            <input ng-model="MediaController.queuedImage.alt" required>
         </md-input-container>
 
         <md-input-container>
             <label>Title</label>
-            <input ng-model="MediaController.uploadImage.title">
+            <input ng-model="MediaController.queuedImage.title">
         </md-input-container>
 
         <md-input-container>
 
             <input type="file"
-                   ng-model="MediaController.uploadImage.file"
+                   ng-model="MediaController.queuedImage.file"
                    name="file"
                    ngf-select
                    accept="image/*"
@@ -25,11 +25,11 @@
                    required
                 >
 
-            <img ng-show="imageUploadForm.file.$valid" ngf-src="MediaController.uploadImage.file">
+            <img ng-show="imageUploadForm.file.$valid" ngf-src="MediaController.queuedImage.file">
 
         </md-input-container>
 
-        <md-button ng-click="MediaController.uploadFiles(MediaController.uploadImage)" class="md-raised md-primary">Primary</md-button>
+        <md-button ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Primary</md-button>
 
     </div>
 

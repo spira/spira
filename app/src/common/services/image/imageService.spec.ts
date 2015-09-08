@@ -19,22 +19,6 @@ namespace common.services.image {
                 this.name = seededChance.word() + '.jpg';
             };
 
-        },
-        getImage():common.models.Image {
-
-            return new common.models.Image({
-                imageId: seededChance.guid(),
-                version : Math.floor(chance.date().getTime() / 1000),
-                folder : seededChance.word(),
-                format : seededChance.pick(['gif', 'jpg', 'png']),
-                alt : seededChance.sentence(),
-                title : chance.weighted([null, seededChance.sentence()], [1, 2]),
-            });
-
-        },
-        getImages() {
-
-            return chance.unique(fixtures.getImage, 30);
         }
 
     };
@@ -231,7 +215,7 @@ namespace common.services.image {
                 (<any>ngRestAdapter.get).restore();
             });
 
-            let images = _.clone(fixtures.getImages()); //get a set of images
+            let images = _.clone(common.models.ImageMock.collection(10)); //get a set of images
 
             it('should return the first set of images from the paginator', () => {
 
