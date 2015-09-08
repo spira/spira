@@ -3,11 +3,8 @@ namespace common.services.image {
     let seededChance = new Chance(1),
         imageService:common.services.image.ImageService,
         $httpBackend:ng.IHttpBackendService,
-        $http:ng.IHttpService,
         $q:ng.IQService,
         ngRestAdapter:NgRestAdapter.INgRestAdapterService,
-        Upload:ng.angularFileUpload.IUploadService,
-        paginationService:common.services.pagination.PaginationService,
         $rootScope:ng.IRootScopeService,
         $timeout: ng.ITimeoutService
     ;
@@ -48,18 +45,15 @@ namespace common.services.image {
 
             module('app');
 
-            inject((_$httpBackend_, _imageService_, _$q_, _ngRestAdapter_, _Upload_, _paginationService_, _$http_, _$rootScope_, _$timeout_) => {
+            inject((_$httpBackend_, _imageService_, _$q_, _ngRestAdapter_, _$rootScope_, _$timeout_) => {
 
                 if (!imageService) { // Don't rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     imageService = _imageService_;
                     $q = _$q_;
                     ngRestAdapter = _ngRestAdapter_;
-                    Upload = _Upload_;
-                    paginationService = _paginationService_;
-                    $http = _$http_;
                     $rootScope = _$rootScope_;
-                    $timeout = _$timeout_
+                    $timeout = _$timeout_;
                 }
 
             });
@@ -129,7 +123,7 @@ namespace common.services.image {
             });
 
 
-            it.only('should notify progress on upload', () => {
+            it('should notify progress on upload', () => {
 
                 let fixedImageId = chance.guid(),
                     ts = moment().unix(),
@@ -142,16 +136,17 @@ namespace common.services.image {
 
 
                 sinon.stub((<any>imageService).ngRestAdapter, 'uuid').returns(fixedImageId); //fix the value of the ngRestAdapter.uuid() method
+
                 let mockUploadDeferred = $q.defer();
+                //mock the progress method
                 (<any>mockUploadDeferred.promise).progress = (callback) => {
                     return mockUploadDeferred.promise.then(null, null, callback);
                 };
-                sinon.stub((<any>Upload), 'upload').returns(mockUploadDeferred.promise);
 
-                let mockedImageService = new ImageService(Upload, $q, ngRestAdapter, $http, paginationService, $timeout);
+                sinon.stub((<any>imageService).ngFileUpload, 'upload').returns(mockUploadDeferred.promise);
 
                 let progressSpy = sinon.spy();
-                let uploadPromise = mockedImageService.uploadImage({
+                let uploadPromise = imageService.uploadImage({
                     file: image,
                     alt: 'image test',
                 }).then(null, null, progressSpy);
@@ -218,7 +213,7 @@ namespace common.services.image {
 
 
                 (<any>imageService).ngRestAdapter.uuid.restore();
-                (<any>Upload).upload.restore();
+                (<any>imageService).ngFileUpload.upload.restore();
 
             });
 

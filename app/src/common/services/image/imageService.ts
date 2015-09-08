@@ -61,7 +61,7 @@ namespace common.services.image {
 
         private cachedPaginator:common.services.pagination.Paginator;
 
-        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http', 'paginationService'];
+        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http', 'paginationService', '$timeout'];
 
         constructor(private ngFileUpload:ng.angularFileUpload.IUploadService,
                     private $q:ng.IQService,
