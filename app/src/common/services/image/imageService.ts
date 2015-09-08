@@ -67,7 +67,8 @@ namespace common.services.image {
                     private $q:ng.IQService,
                     private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     private $http:ng.IHttpService,
-                    private paginationService:common.services.pagination.PaginationService) {
+                    private paginationService:common.services.pagination.PaginationService,
+                    private $timeout:ng.ITimeoutService) {
 
         }
 
@@ -136,6 +137,7 @@ namespace common.services.image {
                         progressName: 'Upload progress',
                         progressValue: progressPercentage,
                     });
+
                 });
 
             uploadPromise.finally(() => {
@@ -228,9 +230,13 @@ namespace common.services.image {
                     .join('&')
                 ;
 
-            deferredUploadProgress.notify({
-                event: 'cloudinary_signature',
-                message: "Signing request for cloudinary",
+            //we wrap the notification in a timeout so the calling controller has a chance to register a notification listener before the first event is emitted
+            this.$timeout(() => {
+                deferredUploadProgress.notify({
+                    event: 'cloudinary_signature',
+                    message: "Signing request for cloudinary",
+                });
+
             });
 
             return this.ngRestAdapter.get('/cloudinary/signature?' + signableString)
