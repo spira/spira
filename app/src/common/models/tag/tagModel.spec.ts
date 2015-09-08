@@ -4,12 +4,9 @@
 
     describe('Tag Model', () => {
 
-        let title = seededChance.sentence();
         let tagData = {
             tagId:seededChance.guid(),
-            title: title,
-            permalink: title.toLowerCase().replace(' ', '-'),
-            content:seededChance.paragraph({sentences: 10}),
+            tag: seededChance.word(),
         };
 
         it('should instantiate a new tag', () => {

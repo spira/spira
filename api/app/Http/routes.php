@@ -110,3 +110,7 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
 
     $app->get('sso/{requester}', 'AuthController@singleSignOn');
 });
+
+$app->group(['prefix' => 'cloudinary', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('signature', 'CloudinaryController@getSignature');
+});
