@@ -41,69 +41,52 @@ namespace common.decorators {
 
             let obj = construct(original, args, original.name);
 
+            /* todo: update these functions
             let changedProperties = [];
 
-            Object.defineProperty(obj, 'resetChangedProperties', {
+            Object.defineProperty(obj, 'resetChangedProperties', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
                     changedProperties = [];
                 }
             });
 
-            Object.defineProperty(obj, 'getChangedProperties', {
+            Object.defineProperty(obj, 'getChangedProperties', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
                     return changedProperties;
                 }
             });
+            */
 
-            Object.defineProperty(obj, 'getChanged', {
+            Object.defineProperty(obj, 'getChanged', <PropertyDescriptor>{
                 enumerable: false,
-                value: function(includeUnderscoredKeys:boolean = false){
-                    let attributes = _.pick(this, changedProperties);
+                value: function (includeUnderscoredKeys:boolean = false) {
+                    let changedObj = obj;
 
-                    if (includeUnderscoredKeys){
-                        return attributes;
+                    let originalObj = construct(original, args, original.name);
+
+                    let result = {};
+
+                    if(!includeUnderscoredKeys) {
+                        changedObj = _.omit(changedObj, (value, key) => {
+                            return _.startsWith(key, '_');
+                        });
                     }
 
-                    return _.omit(attributes, (value, key) => {
-                        return _.startsWith(key, '_');
+                    _.forEach(changedObj, function(value, key) {
+                        if(!_.isEqual(value, originalObj[key])) {
+                            result[key] = value;
+                        }
                     });
                 }
             });
 
-            Object.defineProperty(obj, 'getOriginal', {
+            Object.defineProperty(obj, 'getOriginal', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
                     return construct(original, args, original.name);
                 }
-            });
-
-            _.forIn(obj, (val, propName) => {
-
-                let value = val; //store the value locally
-
-                if (_.isFunction(val)){
-                    return; //don't try to track functions for changes
-                }
-
-                Object.defineProperty(obj, propName, {
-                    enumerable: true,
-                    get: function() {
-                        return value;
-                    },
-                    set: function (v) {
-
-                        value = v;
-
-                        if (changedProperties.indexOf(propName) === -1){
-                            changedProperties.push(propName);
-                        }else if (v === this.getOriginal()[propName]){
-                            changedProperties = _.without(changedProperties, propName); //remove the changed properties if it becomes unchanged
-                        }
-                    }
-                });
-
             });
 
             return obj;

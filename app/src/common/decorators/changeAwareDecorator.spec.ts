@@ -5,20 +5,35 @@ namespace common.decorators {
     let data:any = {
         uuid:seededChance.guid(),
         string:seededChance.string(),
+        _nestedData:[
+            {test:'foo', testTwo:'bar'}
+        ]
     };
 
     @changeAware
     class TestModel extends common.models.AbstractModel {
         public string;
         public uuid;
+        public _nestedData:NestedData[];
 
-        constructor(data){
-            super(data);
-            _.assign(this, data);
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
     }
 
-    describe('@changeAware decorator', () => {
+    @changeAware
+    class NestedData extends common.models.AbstractModel {
+        public test:string = undefined;
+        public testTwo:string = undefined;
+
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
+        }
+    }
+
+    describe.only('@changeAware decorator', () => {
 
         it('should instantiate a new model', () => {
 
@@ -81,6 +96,18 @@ namespace common.decorators {
 
         });
 
+        it('should not include nested entities in the changed key-value map if they have not been changed', () => {
+
+            let model = new TestModel(data);
+
+            model.string = 'foo'; //make a change
+
+            expect((<IChangeAwareDecorator>model).getChanged(true)).to.deep.equal({
+                string: 'foo'
+            });
+
+        });
+
         it('should not mark a property as changed if it returns to it\'s original value', () => {
 
             let original = new TestModel(data);
@@ -91,6 +118,33 @@ namespace common.decorators {
 
             expect((<IChangeAwareDecorator>model).getChangedProperties()).to.be.instanceOf(Array).and.to.be.empty;
 
+        });
+
+        it('should be able to push a nested attribute and see that it has been changed', () => {
+
+            let model = new TestModel(data);
+
+            model._nestedData.push(new NestedData({test:'foo2', testTwo:'bar2'}));
+
+            expect((<IChangeAwareDecorator>model).getChanged(true)).to.deep.equal({
+                _nestedData: [
+                    {test:'foo', testTwo:'bar'},
+                    {test:'foo2', testTwo:'bar2'}
+                ]
+            });
+        });
+
+        it('should be able to edit a nested attribute and see that it has been changed', () => {
+
+            let model = new TestModel(data);
+
+            model._nestedData[0].test = 'foo2';
+
+            expect((<IChangeAwareDecorator>model).getChanged(true)).to.deep.equal({
+                _nestedData: [
+                    {test:'foo2', testTwo:'bar'}
+                ]
+            });
         });
 
     });
