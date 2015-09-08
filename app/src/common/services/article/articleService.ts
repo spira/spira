@@ -114,6 +114,7 @@ namespace common.services.article {
 
             return this.$q.all([ //save all related entities
                 this.saveArticleTags(article),
+                this.saveArticleMetas(article)
             ]);
 
         }
@@ -145,14 +146,24 @@ namespace common.services.article {
         /**
          * Save article metas
          * @param article
-         * @param metas
-         * @returns ng.IPromise<common.models.ArticleMeta[]>
+         * @returns {any}
          */
-        public saveMetas(article:common.models.Article, metas:common.models.ArticleMeta[]):ng.IPromise<common.models.ArticleMeta[]> {
+        private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
 
-            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metas)
-                .then((res) => {
-                    return metas;
+            let metaData = _.clone(article._articleMeta);
+
+            if (article.exists()){
+
+                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+
+                if (!_.has(changes, '_articleMeta')){
+                    return this.$q.when(false);
+                }
+            }
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaData)
+                .then(() => {
+                    return article._articleMeta;
                 });
         }
 

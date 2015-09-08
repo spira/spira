@@ -3,16 +3,13 @@ namespace common.models {
     @common.decorators.changeAware
     export class ArticleMeta extends AbstractModel {
 
-        public metaName:string;
-        public metaContent:string;
-        public metaProperty:string;
+        public metaName:string = undefined;
+        public metaContent:string = undefined;
+        public metaProperty:string = undefined;
 
-        constructor(data:any) {
-
-            super(data);
-
-            _.assign(this, data);
-
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
     }
