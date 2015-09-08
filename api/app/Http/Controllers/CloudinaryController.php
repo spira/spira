@@ -12,7 +12,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Cloudinary;
-use App\Services\Datasets\Countries;
 use Illuminate\Http\Request;
 
 class CloudinaryController extends ApiController
