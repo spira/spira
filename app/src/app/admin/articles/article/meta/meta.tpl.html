@@ -1,4 +1,15 @@
 <div layout-padding>
+    <h2>Author</h2>
+    <md-content layout-padding>
+        <label>Author</label>
+        <md-contact-chips
+                ng-model="MetaController.article._author"
+                md-contact-name="fullName()"
+                md-contact-image="avatarImgUrl"
+                md-contact-email="email"
+                md-contacts="MetaController.querySearch($query)">
+        </md-contact-chips>
+    </md-content>
     <h2>Search Engines</h2>
     <md-content layout-padding>
         <md-list>
@@ -10,7 +21,7 @@
                         <input id="metaTagMetaName" ng-model="metaTag.metaName" ng-disabled="!metaTag.newTag" name="metaName" type="text" aria-label="metaName" md-maxlength="100" required>
                     </md-input-container>
                     <md-input-container class="md-icon-float">
-                        <label for="metaTagMetaName">Property</label>
+                        <label for="metaTagMetaProperty">Property</label>
                         <md-icon>accessibility</md-icon>
                         <input id="metaTagMetaProperty" ng-model="metaTag.metaProperty" name="metaProperty" type="text" aria-label="metaProperty" md-maxlength="100" required>
                     </md-input-container>

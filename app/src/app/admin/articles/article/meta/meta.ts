@@ -2,9 +2,18 @@ namespace app.admin.articles.article.meta {
 
     export const namespace = 'app.admin.articles.article.meta';
 
+    export class AuthorContactChip {
+        public id:string = undefined;
+        public name:string = undefined;
+        public image:string = undefined;
+        public email:string = undefined;
+    }
+
     export class MetaController {
 
-        static $inject = ['article', 'articleService', 'notificationService'];
+        static $inject = ['article', 'articleService', 'notificationService', 'userService'];
+
+        public author:AuthorContactChip = undefined;
 
         constructor(
             public article:common.models.Article,
@@ -46,6 +55,9 @@ namespace app.admin.articles.article.meta {
                     this.notificationService.toast(error.data.message).pop();
                 });
 
+        }
+
+        public authorSearch(query:string):void {
         }
     }
 
