@@ -41,23 +41,12 @@ namespace common.decorators {
 
             let obj = construct(original, args, original.name);
 
-            /* todo: update these functions
-            let changedProperties = [];
-
             Object.defineProperty(obj, 'resetChangedProperties', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
-                    changedProperties = [];
+                    obj = construct(original, args, original.name);
                 }
             });
-
-            Object.defineProperty(obj, 'getChangedProperties', <PropertyDescriptor>{
-                enumerable: false,
-                value: function(){
-                    return changedProperties;
-                }
-            });
-            */
 
             Object.defineProperty(obj, 'getChanged', <PropertyDescriptor>{
                 enumerable: false,
@@ -79,6 +68,8 @@ namespace common.decorators {
                             result[key] = value;
                         }
                     });
+
+                    return result;
                 }
             });
 
