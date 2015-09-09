@@ -7,7 +7,7 @@
                     <md-input-container class="md-icon-float">
                         <label for="metaTagMetaName">Name</label>
                         <md-icon>accessibility</md-icon>
-                        <input id="metaTagMetaName" ng-model="metaTag.metaName" name="metaName" type="text" aria-label="metaName" md-maxlength="100" required>
+                        <input id="metaTagMetaName" ng-model="metaTag.metaName" ng-disabled="!metaTag.newTag" name="metaName" type="text" aria-label="metaName" md-maxlength="100" required>
                     </md-input-container>
                     <md-input-container class="md-icon-float">
                         <label for="metaTagMetaName">Property</label>
@@ -19,6 +19,9 @@
                         <md-icon>accessibility</md-icon>
                         <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" aria-label="metaContent" md-maxlength="100" required>
                     </md-input-container>
+                    <md-button ng-click="MetaController.remove(metaTag.metaName)" class="md-raised" type="button">
+                        Remove
+                    </md-button>
                 </md-whiteframe>
             </md-list-item>
         </md-list>
