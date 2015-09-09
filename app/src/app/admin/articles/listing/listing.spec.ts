@@ -5,7 +5,7 @@ namespace app.admin.articles.listing {
         let articles:common.models.Article[],
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
-            $stateParams:IArticlesListingStateParams = <IArticlesListingStateParams> {
+            $stateParams:IArticlesListingStateParams = {
                 page:1
             },
             articleService:common.services.article.ArticleService,

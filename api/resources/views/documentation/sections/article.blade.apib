@@ -306,3 +306,21 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
 + Response 204
 
+
+## Article Changelog [/articles/{articleId}/log]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's revisions [GET]
+#### Restrictions
+* Allowed - [admin]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(Venturecraft\Revisionable\Revision::class, 'article')
+                    ->count(5)
+                    ->json()
+            !!}
+

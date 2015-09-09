@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * @property ArticlePermalink[]|Collection $permalinks
@@ -27,6 +28,8 @@ use Spira\Model\Model\IndexedModel;
  */
 class Article extends IndexedModel
 {
+    use RevisionableTrait;
+
     const defaultExcerptWordCount = 30;
 
     /**
@@ -168,7 +171,7 @@ class Article extends IndexedModel
 
     public function articleMeta()
     {
-        return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
+        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
     }
 
     /**
@@ -183,7 +186,7 @@ class Article extends IndexedModel
 
     public function tag()
     {
-        return $this->belongsToMany(Tag::class, 'tag_article');
+        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tags');
     }
 
     /**

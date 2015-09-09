@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
         TestEntity::createIndex();
         $this->command->info('ElasticSearch index created');
 
+        $this->call('ImageSeeder');
+        $this->command->info('Images seeded!');
+
         $this->call('UserStorySeeder');
         $this->command->info('User story seeded!');
 

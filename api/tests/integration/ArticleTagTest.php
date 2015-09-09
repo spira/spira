@@ -54,6 +54,15 @@ class ArticleTagTest extends TestCase
         }
     }
 
+    protected function cleanupDiscussions(array $articles)
+    {
+        foreach ($articles as $article) {
+            // Deleting the article will trigger the deleted event that removes
+            // the discussion
+            $article->delete();
+        }
+    }
+
     public function testGetTags()
     {
         $entity = $this->getFactory()->get(Article::class)->create();
@@ -132,117 +141,34 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(5, count($object->_articles));
     }
 
-    public function testGetTagByIdAndName()
-    {
-        $tag = $this->getFactory()->get(Tag::class)->create();
-        $this->getJson('/tags/'.$tag->tag);
-
-        $object = json_decode($this->response->getContent());
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-
-        $this->assertTrue(is_object($object), 'Response is an object');
-
-        $this->assertObjectHasAttribute('_self', $object);
-        $this->assertTrue(is_string($object->_self), '_self is a string');
-
-        $this->assertObjectHasAttribute('tagId', $object);
-        $this->assertObjectHasAttribute('tag', $object);
-
-        $this->getJson('/tags/'.$tag->tag_id);
-        $object2 = json_decode($this->response->getContent());
-
-        $this->assertResponseOk();
-        $this->shouldReturnJson();
-
-        $this->assertTrue(is_object($object2), 'Response is an object');
-
-        $this->assertObjectHasAttribute('_self', $object2);
-        $this->assertTrue(is_string($object2->_self), '_self is a string');
-
-        $this->assertObjectHasAttribute('tagId', $object2);
-        $this->assertObjectHasAttribute('tag', $object2);
-
-        $this->assertEquals($object, $object2);
-    }
-
-    public function testPostTagGlobal()
-    {
-        $tag = $this->getFactory()->get(Tag::class)->transformed();
-
-        $this->post('/tags', $tag);
-
-        $this->shouldReturnJson();
-
-        $object = json_decode($this->response->getContent());
-
-        $this->assertResponseStatus(201);
-        $this->assertTrue(is_object($object));
-        $this->assertStringStartsWith('http', $object->_self);
-    }
-
-    public function testPostTagInvalid()
-    {
-        $tag = $this->getFactory()->get(Tag::class)
-            ->customize(['tag' => '%$@""'])
-            ->transformed();
-
-        $this->post('/tags', $tag);
-
-        $this->shouldReturnJson();
-        $this->assertResponseStatus(422);
-        $object = json_decode($this->response->getContent());
-        $this->assertObjectHasAttribute('invalid', $object);
-        $this->assertObjectHasAttribute('tag', $object->invalid);
-        $this->assertEquals('The tag may only contain letters, numbers, dashes and spaces.', $object->invalid->tag[0]->message);
-    }
-
-    public function testPatchTagGlobal()
-    {
-        $factory = $this->getFactory()->get(Tag::class);
-        $factory->create();
-        $tag = $factory
-            ->customize(['tag' => 'foo'])
-            ->transformed();
-
-        $this->patchJson('/tags/'.$tag['tagId'], $tag);
-
-        $this->shouldReturnJson();
-        $this->assertResponseStatus(204);
-        $checkEntity = Tag::find($tag['tagId']);
-        $this->assertEquals($checkEntity->tag, $tag['tag']);
-    }
-
-    public function testPatchTagInvalid()
-    {
-        $factory = $this->getFactory()->get(Tag::class);
-        $factory->create();
-        $tag = $factory
-            ->customize(['tag' => '%$@""'])
-            ->transformed();
-
-        $this->patchJson('/tags/'.$tag['tagId'], $tag);
-        $this->shouldReturnJson();
-        $this->assertResponseStatus(422);
-        $object = json_decode($this->response->getContent());
-        $this->assertObjectHasAttribute('invalid', $object);
-        $this->assertObjectHasAttribute('tag', $object->invalid);
-        $this->assertEquals('The tag may only contain letters, numbers, dashes and spaces.', $object->invalid->tag[0]->message);
-    }
-
     public function testDeleteTagGlobal()
     {
         $entity = $this->getFactory()->get(Article::class)->create();
         $this->addTagsToArticles([$entity]);
 
         $this->assertEquals(4, Article::find($entity->article_id)->tags->count());
-        $tag = $entity->tags->first();
+        $tag = Article::find($entity->article_id)->tags->first();
 
         $this->deleteJson('/tags/'.$tag->tag_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals(3, Article::find($entity->article_id)->tags->count());
+    }
+
+    public function testShouldLogPutTags()
+    {
+        $article = factory(Article::class)->create();
+
+        $tags = $this->getFactory()->get(Tag::class)
+            ->count(4)
+            ->transformed();
+
+        $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
+
+        $article = Article::find($article->article_id);
+        $this->assertCount(1, $article->revisionHistory->toArray());
+
+        $this->cleanupDiscussions([$article]);
     }
 }

@@ -8,13 +8,14 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Illuminate\Support\Facades\Schema;
 use Bosnadev\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
 
 class CreateFailedJobsTable extends Migration
 {
     const TABLE_NAME = 'failed_jobs';
+
     /**
      * Run the migrations.
      *

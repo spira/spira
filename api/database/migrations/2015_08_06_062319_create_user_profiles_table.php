@@ -8,14 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\UserProfile;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateUserProfilesTable extends Migration
 {
-    const TABLE_NAME = 'user_profiles';
-    const MODEL = 'App\Models\UserProfile';
-
     /**
      * Run the migrations.
      *
@@ -23,9 +22,9 @@ class CreateUserProfilesTable extends Migration
      */
     public function up()
     {
-        $modelClass = static::MODEL;
+        $modelClass = UserProfile::class;
 
-        Schema::create($modelClass::getTableName(), function (Blueprint $table) use ($modelClass) {
+        Schema::create(UserProfile::getTableName(), function (Blueprint $table) use ($modelClass) {
             $table->uuid('user_id');
             $table->string('phone', 45)->nullable();
             $table->string('mobile', 45)->nullable();
@@ -56,6 +55,6 @@ class CreateUserProfilesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(static::TABLE_NAME);
+        Schema::drop(UserProfile::getTableName());
     }
 }

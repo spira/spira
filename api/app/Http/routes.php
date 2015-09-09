@@ -57,6 +57,7 @@ $app->group(['prefix' => 'tags'], function (Application $app) {
     $app->post('/', 'App\Http\Controllers\TagController@postOne');
     $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\TagController@deleteOne');
+    $app->put('{id}/child-tags', 'App\Http\Controllers\ChildTagController@putMany');
 });
 
 $app->group(['prefix' => 'images'], function (Application $app) {
@@ -108,4 +109,8 @@ $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], functio
     $app->get('social/{provider}/callback', 'AuthController@handleProviderCallback');
 
     $app->get('sso/{requester}', 'AuthController@singleSignOn');
+});
+
+$app->group(['prefix' => 'cloudinary', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('signature', 'CloudinaryController@getSignature');
 });
