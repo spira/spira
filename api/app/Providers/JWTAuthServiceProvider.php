@@ -14,10 +14,23 @@ use App\Extensions\JWTAuth\JWTAuth;
 use App\Extensions\JWTAuth\JWTManager;
 use App\Extensions\JWTAuth\ClaimFactory;
 use App\Extensions\JWTAuth\PayloadFactory;
+use App\Models\User;
+use App\Polices\UserPolicy;
+use Illuminate\Http\Request;
+use Spira\Auth\Access\Gate;
 use Tymon\JWTAuth\Providers\JWTAuthServiceProvider as ServiceProvider;
 
 class JWTAuthServiceProvider extends ServiceProvider
 {
+    /**
+     * The policy mappings for the application.
+     *
+     * @var array
+     */
+    protected $policies = [
+        User::class => UserPolicy::class
+    ];
+
     /**
      * Boot the service provider.
      */
@@ -26,24 +39,51 @@ class JWTAuthServiceProvider extends ServiceProvider
         $this->app->configure('jwt');
 
         $this->bootBindings();
-        $this->registerAsCoreAuthenticator();
+
+        //authorization part
+        $this->registerUserResolver();
+        $this->registerAccessGate();
+
+        foreach ($this->policies as $class => $policy) {
+            $this->getGate()->policy($class,$policy);
+        }
     }
 
     /**
-     * Register the authenticator services.
+     * @return Gate
+     */
+    protected function getGate()
+    {
+        return $this->app[Gate::GATE_NAME];
+    }
+
+    /**
+     * Register the access gate service.
      *
      * @return void
      */
-    protected function registerAsCoreAuthenticator()
+    protected function registerAccessGate()
     {
-        $this->app->singleton('auth', function (Application $app) {
-            // Once the authentication service has actually been requested by the developer
-            // we will set a variable in the application indicating such. This helps us
-            // know that we need to set any queued cookies in the after event later.
-            $app['auth.loaded'] = true;
-
-            return $app['tymon.jwt.auth'];
+        $this->app->singleton(Gate::GATE_NAME, function ($app) {
+            return new Gate($app, function () use ($app) { return $app['tymon.jwt.auth']->user(); });
         });
+    }
+
+    /**
+     * Register a resolver for the authenticated user.
+     *
+     * @return void
+     */
+    protected function registerUserResolver()
+    {
+        $this->app->bind('Illuminate\Contracts\Auth\Authenticatable', function ($app) {
+            return $app['tymon.jwt.auth']->user();
+        });
+
+        $this->app->extend(Request::class, function (Request $request, $app){
+            return $request->setUserResolver(function() use ($app){ return $app['tymon.jwt.auth']->user(); });
+        });
+
     }
 
     /**

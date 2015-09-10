@@ -113,7 +113,7 @@ class UserController extends EntityController
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
-
+        $this->authorize($model);
         // Check if the email is being changed, and initialize confirmation
         $email = $request->input('email');
         if ($email && $model->email != $email) {
@@ -230,7 +230,7 @@ class UserController extends EntityController
     {
         /** @var User $user */
         $user = User::find($id);
-
+        $this->authorize($user);
         $userData = $this->transformer->transformItem($user);
 
         if (is_null($user->userCredential)) {

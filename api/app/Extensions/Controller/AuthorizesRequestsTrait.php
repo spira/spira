@@ -9,8 +9,9 @@
 namespace App\Extensions\Controller;
 
 
-use Illuminate\Auth\Access\Gate;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Exceptions\ForbiddenException;
+use Spira\Auth\Access\Gate;
+
 
 trait AuthorizesRequestsTrait
 {
@@ -21,7 +22,7 @@ trait AuthorizesRequestsTrait
      * @param  mixed|array  $arguments
      * @return void
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws ForbiddenException
      */
     public function authorize($ability, $arguments = [])
     {
@@ -40,7 +41,7 @@ trait AuthorizesRequestsTrait
      * @param  mixed|array  $arguments
      * @return void
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws ForbiddenException
      */
     public function authorizeForUser($user, $ability, $arguments = [])
     {
@@ -74,9 +75,7 @@ trait AuthorizesRequestsTrait
      */
     protected function getGate()
     {
-        /** @var \Illuminate\Support\Facades\Gate $gate */
-        $gate = '\Illuminate\Support\Facades\Gate';
-        return $gate::getFacadeRoot();
+        return app(Gate::GATE_NAME);
     }
 
     /**
@@ -84,10 +83,10 @@ trait AuthorizesRequestsTrait
      *
      * @param  string  $ability
      * @param  array  $arguments
-     * @return HttpException
+     * @return ForbiddenException
      */
     protected function createGateUnauthorizedException($ability, $arguments)
     {
-        return new HttpException(403, 'This action is unauthorized.');
+        return new ForbiddenException();
     }
 }

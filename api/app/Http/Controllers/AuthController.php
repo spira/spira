@@ -10,7 +10,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Extensions\JWTAuth\JWTManager;
 use App\Extensions\Socialite\SocialiteManager;
 use App\Models\User;
 use RuntimeException;
@@ -44,7 +43,7 @@ class AuthController extends ApiController
     /**
      * JWT Auth Package.
      *
-     * @var \App\Extensions\JWTAuth\JWTAuth|JWTManager
+     * @var \App\Extensions\JWTAuth\JWTAuth
      */
     protected $jwtAuth;
 
@@ -65,12 +64,10 @@ class AuthController extends ApiController
      * @param Cache $cache
      */
     public function __construct(
-        Auth $auth,
         JWTAuth $jwtAuth,
         AuthTokenTransformer $transformer,
         Application $app)
     {
-        $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
         $this->app = $app;
         parent::__construct($transformer);
@@ -115,17 +112,11 @@ class AuthController extends ApiController
      */
     private function attemptLogin($credentials)
     {
-        if (! $this->auth->attempt($credentials)) {
-            return false;
-        }
-
         try {
-            $token = $this->jwtAuth->fromUser($this->auth->user(), ['method' => 'password']);
+            return $this->jwtAuth->attempt($credentials, ['method' => 'password']);
         } catch (JWTException $e) {
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
-
-        return $token;
     }
 
     /**
