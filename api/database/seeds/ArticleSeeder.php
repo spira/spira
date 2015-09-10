@@ -30,9 +30,8 @@ class ArticleSeeder extends BaseSeeder
             ->create()
             ->each(function (Article $article) use ($images) {
 
-                //add metas
-                $metas = factory(ArticleMeta::class, 2)->make()->all();
-                $article->articleMeta()->saveMany($metas);
+                //add a meta tag
+                $article->articleMeta()->save(factory(ArticleMeta::class)->make());
 
                 //add permalinks
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();

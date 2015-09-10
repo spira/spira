@@ -23,7 +23,7 @@ class ArticleMeta extends BaseModel
 
     protected $primaryKey = 'meta_name';
 
-    protected $fillable = ['meta_name', 'meta_content', 'meta_property'];
+    protected $fillable = ['meta_name', 'meta_content'];
 
     protected $guarded = ['meta_name'];
 
@@ -32,7 +32,6 @@ class ArticleMeta extends BaseModel
         return [
             'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'meta_property' => 'string',
         ];
     }
 
