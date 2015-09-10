@@ -96,7 +96,7 @@ namespace common.decorators {
 
                 let model = new TestModel(data);
 
-                model._nestedCollection[0].test = 'foo2'; // @todo: not sure why this changes the original object, in practice it doesn't
+                model._nestedCollection[0].test = 'foo2';
 
                 let changed = (<IChangeAwareDecorator>model).getChanged(true);
 
@@ -117,7 +117,7 @@ namespace common.decorators {
 
                 let model = new TestModel(data);
 
-                model._nestedCollection.push(new NestedData({test: 'foo2', testTwo: 'bar2'})); // @todo: not sure why this changes the original object, in practice it doesn't
+                model._nestedCollection.push(new NestedData({test: 'foo2', testTwo: 'bar2'}));
 
                 let changed = (<IChangeAwareDecorator>model).getChanged(true);
 
