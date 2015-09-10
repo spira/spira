@@ -1,7 +1,6 @@
 namespace common.decorators {
 
     export interface IChangeAwareDecorator{
-        getChangedProperties?(includeUnderscoredKeys?:boolean):string[];
         resetChanged?():void;
         getOriginal?():typeof common.models.AbstractModel;
         getChanged?(includeUnderscoredKeys?:boolean):{
@@ -76,13 +75,6 @@ namespace common.decorators {
                 enumerable: false,
                 value: function(){
                     return construct(original, args, original.name);
-                }
-            });
-
-            Object.defineProperty(obj, 'getChangedProperties', <PropertyDescriptor>{
-                enumerable: false,
-                value: function(includeUnderscoredKeys:boolean = false){
-                    return _.keys(this.getChanged(includeUnderscoredKeys));
                 }
             });
 

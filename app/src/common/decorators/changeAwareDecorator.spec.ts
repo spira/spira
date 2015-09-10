@@ -90,16 +90,6 @@ namespace common.decorators {
 
         });
 
-        it('should be able to retrieve an array of the changed keys', () => {
-
-            let model = new TestModel(data);
-
-            model.string = 'foo'; //make a change
-
-            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.deep.equal(['string']);
-
-        });
-
         describe('Nested entities', () => {
 
             it('should be able to edit a nested collection and see that it has been changed', () => {
