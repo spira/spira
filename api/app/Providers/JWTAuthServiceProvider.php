@@ -28,7 +28,7 @@ class JWTAuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        User::class => UserPolicy::class
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -45,7 +45,7 @@ class JWTAuthServiceProvider extends ServiceProvider
         $this->registerAccessGate();
 
         foreach ($this->policies as $class => $policy) {
-            $this->getGate()->policy($class,$policy);
+            $this->getGate()->policy($class, $policy);
         }
     }
 
@@ -80,10 +80,9 @@ class JWTAuthServiceProvider extends ServiceProvider
             return $app['tymon.jwt.auth']->user();
         });
 
-        $this->app->extend(Request::class, function (Request $request, $app){
-            return $request->setUserResolver(function() use ($app){ return $app['tymon.jwt.auth']->user(); });
+        $this->app->extend(Request::class, function (Request $request, $app) {
+            return $request->setUserResolver(function () use ($app) { return $app['tymon.jwt.auth']->user(); });
         });
-
     }
 
     /**

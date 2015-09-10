@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 08.09.15
- * Time: 0:00
+ * Time: 0:00.
  */
 
 namespace App\Polices;
-
 
 use App\Models\User;
 use Spira\Model\Collection\Collection;
@@ -30,7 +38,7 @@ class UserPolicy
 {
     public function getOne(User $user, User $affectedUser)
     {
-        if ($user->user_id === $affectedUser->user_id || $user->isAdmin() ){
+        if ($user->user_id === $affectedUser->user_id || $user->isAdmin()) {
             return true;
         }
 
@@ -39,7 +47,7 @@ class UserPolicy
 
     public function getAll(User $user, Collection $affectedUsers)
     {
-        if ($user->isAdmin()){
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -48,7 +56,7 @@ class UserPolicy
 
     public function getAllPaginated(User $user, Collection $affectedUsers)
     {
-        if ($user->isAdmin()){
+        if ($user->isAdmin()) {
             return true;
         }
 
@@ -57,7 +65,7 @@ class UserPolicy
 
     public function patchOne(User $user, User $affectedUser)
     {
-        if ($affectedUser->getOriginal('user_id') === $user->user_id || $user->isAdmin()){
+        if ($affectedUser->getOriginal('user_id') === $user->user_id || $user->isAdmin()) {
             return true;
         }
 
@@ -66,7 +74,7 @@ class UserPolicy
 
     public function deleteOne(User $user, User $affectedUser)
     {
-        if ($user->isAdmin()){
+        if ($user->isAdmin()) {
             return true;
         }
 

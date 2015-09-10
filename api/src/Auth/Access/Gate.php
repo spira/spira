@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Auth\Access;
 
 use App\Models\User;
@@ -7,7 +15,6 @@ use Spira\Model\Collection\Collection;
 
 class Gate extends \Illuminate\Auth\Access\Gate
 {
-
     const GATE_NAME = 'spira.gate';
 
     /**
@@ -44,8 +51,9 @@ class Gate extends \Illuminate\Auth\Access\Gate
      */
     protected function firstArgumentCorrespondsToPolicy(array $arguments)
     {
-        if (isset($arguments[0]) && is_object($arguments[0])){
+        if (isset($arguments[0]) && is_object($arguments[0])) {
             $policyName = $this->getPolicyName($arguments[0]);
+
             return isset($this->policies[$policyName]);
         }
 
@@ -105,7 +113,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
                 }
             }
 
-            if (!method_exists($instance, $ability)){
+            if (! method_exists($instance, $ability)) {
                 return true;
             }
 
@@ -121,7 +129,7 @@ class Gate extends \Illuminate\Auth\Access\Gate
      */
     protected function getPolicyName($obj)
     {
-        if ($obj instanceof Collection){
+        if ($obj instanceof Collection) {
             return  $obj->getClassName();
         }
 
