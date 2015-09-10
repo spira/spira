@@ -49,17 +49,21 @@ namespace common.models {
 
             _.forIn(this._nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
 
-                let key = '_' + nestedKey;
-                if (_.has(data, key) && !_.isNull(data[key])){
+                //if the nested map is not defined with a leading _ prepend one
+                if (!_.startsWith(nestedKey, '_')){
+                    nestedKey = '_' + nestedKey;
+                }
 
-                    if (_.isArray(data[key])){
-                        this[key] = _.map(data[key], (entityData) => this.hydrateModel(entityData, model, exists));
-                    }else if (_.isObject(data[key])){
-                        this[key] = this.hydrateModel(data[key], model, exists);
+                if (_.has(data, nestedKey) && !_.isNull(data[nestedKey])){
+
+                    if (_.isArray(data[nestedKey])){
+                        this[nestedKey] = _.map(data[nestedKey], (entityData) => this.hydrateModel(entityData, model, exists));
+                    }else if (_.isObject(data[nestedKey])){
+                        this[nestedKey] = this.hydrateModel(data[nestedKey], model, exists);
                     }
 
                 }else{
-                    this[key] = null;
+                    this[nestedKey] = null;
                 }
 
             });

@@ -90,13 +90,11 @@ namespace common.decorators {
 
         });
 
-        describe.only('Nested entities', () => {
+        describe('Nested entities', () => {
 
             it('should be able to edit a nested collection and see that it has been changed', () => {
 
                 let model = new TestModel(data);
-
-                console.log('model', model);
 
                 model._nestedCollection[0].test = 'foo2'; // @todo: not sure why this changes the original object, in practice it doesn't
 
@@ -125,8 +123,6 @@ namespace common.decorators {
 
                 expect(changed).to.have.property('_nestedCollection');
                 expect((<any>changed)._nestedCollection[0]).to.be.instanceOf(NestedData);
-
-                console.log('a', JSON.stringify(changed));
 
                 expect(_.cloneDeep(changed)).to.deep.equal({
                     _nestedCollection: [
