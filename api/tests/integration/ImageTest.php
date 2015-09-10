@@ -47,6 +47,20 @@ class ImageTest extends TestCase
         return $entity;
     }
 
+    public function testSignRequest()
+    {
+        $this->getJson('/cloudinary/signature?foo=bar&baz=quux');
+
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('signature', $object);
+        $this->assertObjectHasAttribute('apiKey', $object);
+        $this->assertInternalType('string', $object->apiKey); //no need to test signature response - the service has tests for this
+    }
+
     public function testGetAllPaginated()
     {
         $entities = factory(Image::class, 30)->create()->all();
@@ -80,7 +94,6 @@ class ImageTest extends TestCase
         $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->imageId);
         $this->assertTrue(strlen($object->imageId) === 36, 'UUID has 36 chars');
 
-        $this->assertTrue(is_string($object->publicId));
         $this->assertTrue(is_string($object->format));
         $this->assertTrue(is_string($object->alt));
         $this->assertTrue(is_string($object->folder));
