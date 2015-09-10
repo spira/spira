@@ -73,7 +73,7 @@ namespace common.services.article {
             return this.saveArticle(article)
                 .then(() => this.saveRelatedEntities(article))
                 .then(() => {
-                    (<common.decorators.IChangeAwareDecorator>article).resetChangedProperties(); //reset so next save only saves the changed ones
+                    (<common.decorators.IChangeAwareDecorator>article).resetChanged(); //reset so next save only saves the changed ones
                     article.setExists(true);
                     return article;
                 })

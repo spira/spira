@@ -1,8 +1,7 @@
 namespace common.decorators {
 
     export interface IChangeAwareDecorator{
-        getChangedProperties?():string[];
-        resetChangedProperties?():void;
+        resetChanged?():void;
         getOriginal?():typeof common.models.AbstractModel;
         getChanged?(includeUnderscoredKeys?:boolean):{
             [key:string]: any;
@@ -41,35 +40,34 @@ namespace common.decorators {
 
             let obj = construct(original, args, original.name);
 
-            Object.defineProperty(obj, 'resetChangedProperties', <PropertyDescriptor>{
+            let pristineInstance = _.cloneDeep(obj);
+
+            Object.defineProperty(obj, 'resetChanged', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
-                    obj = construct(original, args, original.name);
+
+                    pristineInstance = _.cloneDeep(this);
                 }
             });
 
             Object.defineProperty(obj, 'getChanged', <PropertyDescriptor>{
                 enumerable: false,
                 value: function (includeUnderscoredKeys:boolean = false) {
-                    let changedObj = obj;
 
-                    let originalObj = construct(original, args, original.name);
+                    return _.transform(this, (changes, value, key) => {
 
-                    let result = {};
-
-                    if(!includeUnderscoredKeys) {
-                        changedObj = _.omit(changedObj, (value, key) => {
-                            return _.startsWith(key, '_');
-                        });
-                    }
-
-                    _.forEach(changedObj, function(value, key) {
-                        if(!_.isEqual(value, originalObj[key])) {
-                            result[key] = value;
+                        if(!includeUnderscoredKeys && _.startsWith(key, '_')) {
+                            return;
                         }
-                    });
 
-                    return result;
+                        if (_.isEqual(_.cloneDeep(value), pristineInstance[key])){
+                            return;
+                        }
+
+                        changes[key] = value;
+
+                    }, {});
+
                 }
             });
 
