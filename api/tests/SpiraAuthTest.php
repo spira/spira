@@ -33,4 +33,15 @@ class SpiraAuthTest extends TestCase
         $request->headers->set('Authorization', 'Bearer '.$token);
         $this->assertEquals($user->user_id, $request->user()->user_id);
     }
+
+    public function testRequestFacadeUserResolver()
+    {
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+
+        /** @var Request $request */
+        $request = \Request::getFacadeRoot();
+        $request->headers->set('Authorization', 'Bearer '.$token);
+        $this->assertEquals($user->user_id, $request->user()->user_id);
+    }
 }
