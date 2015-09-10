@@ -60,7 +60,7 @@ namespace common.decorators {
 
             model.string = 'foo';
 
-            (<IChangeAwareDecorator>model).resetChangedProperties();
+            (<IChangeAwareDecorator>model).resetChanged();
 
             expect(model.string).to.equal('foo');
             expect((<IChangeAwareDecorator>model).getChanged()).to.be.empty;
@@ -87,6 +87,16 @@ namespace common.decorators {
             expect((<IChangeAwareDecorator>model).getChanged()).to.deep.equal({
                 string: 'foo'
             });
+
+        });
+
+        it('should be able to retrieve an array of the changed keys', () => {
+
+            let model = new TestModel(data);
+
+            model.string = 'foo'; //make a change
+
+            expect((<IChangeAwareDecorator>model).getChangedProperties()).to.deep.equal(['string']);
 
         });
 

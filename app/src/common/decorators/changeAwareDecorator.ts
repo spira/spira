@@ -1,8 +1,8 @@
 namespace common.decorators {
 
     export interface IChangeAwareDecorator{
-        getChangedProperties?():string[];
-        resetChangedProperties?():void;
+        getChangedProperties?(includeUnderscoredKeys?:boolean):string[];
+        resetChanged?():void;
         getOriginal?():typeof common.models.AbstractModel;
         getChanged?(includeUnderscoredKeys?:boolean):{
             [key:string]: any;
@@ -43,7 +43,7 @@ namespace common.decorators {
 
             let pristineInstance = _.cloneDeep(obj);
 
-            Object.defineProperty(obj, 'resetChangedProperties', <PropertyDescriptor>{
+            Object.defineProperty(obj, 'resetChanged', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
 
@@ -55,7 +55,7 @@ namespace common.decorators {
                 enumerable: false,
                 value: function (includeUnderscoredKeys:boolean = false) {
 
-                    let changes = _.transform(this, (changes, value, key) => {
+                    return _.transform(this, (changes, value, key) => {
 
                         if(!includeUnderscoredKeys && _.startsWith(key, '_')) {
                             return;
@@ -69,7 +69,6 @@ namespace common.decorators {
 
                     }, {});
 
-                    return changes;
                 }
             });
 
@@ -77,6 +76,13 @@ namespace common.decorators {
                 enumerable: false,
                 value: function(){
                     return construct(original, args, original.name);
+                }
+            });
+
+            Object.defineProperty(obj, 'getChangedProperties', <PropertyDescriptor>{
+                enumerable: false,
+                value: function(includeUnderscoredKeys:boolean = false){
+                    return _.keys(this.getChanged(includeUnderscoredKeys));
                 }
             });
 
