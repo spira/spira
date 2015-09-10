@@ -12,6 +12,7 @@ declare namespace global {
             icon?: string;
             sortAfter?: string;
             navigation?: boolean;
+            navigationGroup?: string;
         },
         children?:IState[];
     }
