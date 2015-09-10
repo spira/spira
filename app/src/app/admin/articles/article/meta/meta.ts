@@ -22,42 +22,8 @@ namespace app.admin.articles.article.meta {
         ) {
         }
 
-        /**
-         * Add a new meta tag to article.
-         */
-        public add():void {
-
-            this.article._articleMeta.push(
-                new common.models.ArticleMeta({
-                    newTag:true, // We need to know if a new tag is been added so we can let the user edit the metaName field
-                    metaName:'',
-                    metaContent:'',
-                    metaProperty:''
-                })
-            );
-
-        }
-
-        /**
-         * Remove an existing meta tag
-         * @param metaTagName
-         */
-        public remove(metaTagName:string):void {
-
-            this.articleService.removeMetaTag(this.article, metaTagName)
-                .then(() => {
-                    this.notificationService.toast('Meta tag has been removed successfully').pop();
-                    _.remove(this.article._articleMeta, (metaTag) => {
-                        return metaTag.metaName == metaTagName;
-                    });
-                })
-                .catch((error) => {
-                    this.notificationService.toast(error.data.message).pop();
-                });
-
-        }
-
         public authorSearch(query:string):void {
+
         }
     }
 

@@ -10,6 +10,10 @@ namespace app.admin.articles.article {
 
     export class ArticleConfig {
 
+        public articleMetaTemplate:string[] = [
+            'name', 'description', 'keyword', 'canonical'
+        ];
+
         static $inject = ['stateHelperServiceProvider'];
         constructor(private stateHelperServiceProvider){
 
@@ -61,6 +65,31 @@ namespace app.admin.articles.article {
                         }
 
                         return articleService.getArticle($stateParams.permalink);
+                    },
+                    articleMetaTags: (article:common.models.Article):void => {
+
+                        // 'thru' not defined in typings yet
+                        article._articleMeta = (<any>_).chain(this.articleMetaTemplate)
+                            .map((metaTagName) => {
+                                let existingTag = _.find(article._articleMeta, {metaName:metaTagName});
+                                if(_.isEmpty(existingTag)) {
+                                    return new common.models.ArticleMeta({
+                                        metaName:metaTagName,
+                                        metaContent:''
+                                    });
+                                }
+                                return existingTag;
+                            })
+                            .thru((templateMeta) => {
+                                let leftovers = _.filter(article._articleMeta, (metaTag) => {
+                                    return !_.contains(templateMeta, metaTag);
+                                });
+
+                                return templateMeta.concat(leftovers);
+                            })
+                            .value();
+
+                        (<common.decorators.IChangeAwareDecorator>article).resetChanged();
                     }
                 },
                 data: {
@@ -78,12 +107,13 @@ namespace app.admin.articles.article {
 
     export class ArticleController {
 
-        static $inject = ['article', '$stateParams', 'articleService', 'notificationService'];
+        static $inject = ['article', '$stateParams', 'articleService', 'notificationService', 'articleMetaTags'];
         constructor(
             public article:common.models.Article,
             public $stateParams:IArticleStateParams,
             private articleService:common.services.article.ArticleService,
-            private notificationService:common.services.notification.NotificationService) {
+            private notificationService:common.services.notification.NotificationService
+        ) {
         }
 
         /**

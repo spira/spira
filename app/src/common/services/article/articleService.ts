@@ -106,18 +106,6 @@ namespace common.services.article {
         }
 
         /**
-         * Removes a meta tag
-         * @param article
-         * @param metaTagName
-         * @returns {IPromise<common.models.Article>}
-         */
-        public removeMetaTag(article:common.models.Article, metaTagName:string):ng.IPromise<any>{
-            return this.ngRestAdapter
-                .skipInterceptor()
-                .remove('/articles/' + article.articleId + '/meta/' + metaTagName);
-        }
-
-        /**
          * Save all the related entities concurrently
          * @param article
          * @returns {IPromise<any[]>}
@@ -161,9 +149,6 @@ namespace common.services.article {
          * @returns {any}
          */
         private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
-
-            let metaData = _.clone(article._articleMeta);
-
             if (article.exists()){
 
                 let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
@@ -173,11 +158,13 @@ namespace common.services.article {
                 }
             }
 
-            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaData)
+            // Remove the meta tags which have not been used
+            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMeta, (metaTag) => {
+                return !_.isEmpty(metaTag.metaContent);
+            });
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
                 .then(() => {
-                    _.forEach(article._articleMeta, (metaTag) => { // All tags have been saved, none of them are new
-                        metaTag.newTag = false;
-                    });
                     return article._articleMeta;
                 });
         }

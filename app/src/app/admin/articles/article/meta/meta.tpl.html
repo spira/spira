@@ -1,43 +1,19 @@
 <div layout-padding>
     <h2>Author</h2>
-    <md-content layout-padding>
-        <label>Author</label>
-        <md-contact-chips
-                ng-model="MetaController.article._author"
-                md-contact-name="fullName()"
-                md-contact-image="avatarImgUrl"
-                md-contact-email="email"
-                md-contacts="MetaController.querySearch($query)">
-        </md-contact-chips>
-    </md-content>
+    <label>Author</label>
+    <md-contact-chips
+            ng-model="MetaController.article._author"
+            md-contact-name="fullName()"
+            md-contact-image="avatarImgUrl"
+            md-contact-email="email"
+            md-contacts="MetaController.querySearch($query)">
+    </md-contact-chips>
+
     <h2>Search Engines</h2>
-    <md-content layout-padding>
-        <md-list>
-            <md-list-item class="md-2-line" ng-repeat="metaTag in MetaController.article._articleMeta">
-                <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-                    <md-input-container class="md-icon-float">
-                        <label for="metaTagMetaName">Name</label>
-                        <md-icon>accessibility</md-icon>
-                        <input id="metaTagMetaName" ng-model="metaTag.metaName" ng-disabled="!metaTag.newTag" name="metaName" type="text" aria-label="metaName" md-maxlength="100" required>
-                    </md-input-container>
-                    <md-input-container class="md-icon-float">
-                        <label for="metaTagMetaProperty">Property</label>
-                        <md-icon>accessibility</md-icon>
-                        <input id="metaTagMetaProperty" ng-model="metaTag.metaProperty" name="metaProperty" type="text" aria-label="metaProperty" md-maxlength="100" required>
-                    </md-input-container>
-                    <md-input-container class="md-icon-float">
-                        <label for="metaTagMetaContent">Content</label>
-                        <md-icon>accessibility</md-icon>
-                        <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" aria-label="metaContent" md-maxlength="100" required>
-                    </md-input-container>
-                    <md-button ng-click="MetaController.remove(metaTag.metaName)" class="md-raised" type="button">
-                        Remove
-                    </md-button>
-                </md-whiteframe>
-            </md-list-item>
-        </md-list>
-        <md-button ng-click="MetaController.add()" class="md-raised" type="button">
-            Add
-        </md-button>
-    </md-content>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <md-input-container ng-repeat="metaTag in MetaController.article._articleMeta">
+            <label for="metaTagMetaContent">{{ metaTag.metaName }}</label>
+            <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text">
+        </md-input-container>
+    </md-whiteframe>
 </div>
