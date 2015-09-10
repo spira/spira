@@ -48,6 +48,7 @@ abstract class EntityController extends ApiController
         $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
         $this->authorize($collection);
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
@@ -67,6 +68,7 @@ abstract class EntityController extends ApiController
 
         $collection = $this->getWithNested($collection, $request);
         $this->authorize($collection);
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->paginatedCollection($collection, $offset, $totalCount);
@@ -84,6 +86,7 @@ abstract class EntityController extends ApiController
         $model = $this->findOrFailEntity($id);
         $model = $this->getWithNested($model, $request);
         $this->authorize($model);
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($model);
@@ -105,7 +108,6 @@ abstract class EntityController extends ApiController
         $this->authorize($model);
 
         $model->save();
-
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -130,7 +132,6 @@ abstract class EntityController extends ApiController
         $this->authorize($model);
 
         $model->save();
-
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -182,7 +183,6 @@ abstract class EntityController extends ApiController
 
         $model->save();
 
-
         return $this->getResponse()->noContent();
     }
 
@@ -225,6 +225,7 @@ abstract class EntityController extends ApiController
         $this->authorize($entity);
 
         $entity->delete();
+
         return $this->getResponse()->noContent();
     }
 
