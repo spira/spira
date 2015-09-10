@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8e4c17d802244edd7cd233da661ed2cc",
+    "hash": "d8f3e18dd7c4e58ec7301c5226c7441b",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -60,6 +60,58 @@
                 "postgresql"
             ],
             "time": "2015-05-05 14:43:15"
+        },
+        {
+            "name": "cloudinary/cloudinary_php",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cloudinary/cloudinary_php.git",
+                "reference": "99fce1c4a8c293f2dadcdba5cf292572f5071287"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/99fce1c4a8c293f2dadcdba5cf292572f5071287",
+                "reference": "99fce1c4a8c293f2dadcdba5cf292572f5071287",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ],
+                "files": [
+                    "src/Helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cloudinary",
+                    "homepage": "https://github.com/cloudinary/cloudinary_php/graphs/contributors"
+                }
+            ],
+            "description": "Cloudinary PHP SDK",
+            "homepage": "https://github.com/cloudinary/cloudinary_php",
+            "keywords": [
+                "cdn",
+                "cloud",
+                "cloudinary",
+                "image management",
+                "sdk"
+            ],
+            "time": "2015-08-23 20:03:14"
         },
         {
             "name": "danielstjules/stringy",

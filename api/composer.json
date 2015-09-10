@@ -28,6 +28,7 @@
         "league/flysystem": "^1.0",
         "tymon/jwt-auth": "0.5.*",
         "laravel/socialite": "^2.0",
+        "cloudinary/cloudinary_php": "^1.1",
         "elasticquent/elasticquent": "dev-master",
         "venturecraft/revisionable": "dev-master"
     },

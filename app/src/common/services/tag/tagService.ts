@@ -59,7 +59,7 @@ namespace common.services.tag {
 
             return this.ngRestAdapter.put('/tags/' + tag.tagId, _.clone(tag))
                 .then(() => {
-                    (<common.decorators.IChangeAwareDecorator>tag).resetChangedProperties(); //reset so next save only saves the changed ones
+                    (<common.decorators.IChangeAwareDecorator>tag).resetChanged(); //reset so next save only saves the changed ones
                     return tag;
                 });
 
