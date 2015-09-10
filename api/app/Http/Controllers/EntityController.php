@@ -10,6 +10,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Controller\AuthorizesRequestsTrait;
 use Illuminate\Http\Request;
 use Spira\Model\Model\BaseModel;
 use Elasticquent\ElasticquentTrait;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
 {
-    use RequestValidationTrait;
+    use RequestValidationTrait, AuthorizesRequestsTrait;
 
     /**
      * @var BaseModel
@@ -46,7 +47,7 @@ abstract class EntityController extends ApiController
     {
         $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
-
+        $this->authorize($collection);
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->collection($collection);
@@ -65,7 +66,7 @@ abstract class EntityController extends ApiController
         }
 
         $collection = $this->getWithNested($collection, $request);
-
+        $this->authorize($collection);
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->paginatedCollection($collection, $offset, $totalCount);
@@ -82,7 +83,7 @@ abstract class EntityController extends ApiController
     {
         $model = $this->findOrFailEntity($id);
         $model = $this->getWithNested($model, $request);
-
+        $this->authorize($model);
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($model);
@@ -98,8 +99,13 @@ abstract class EntityController extends ApiController
     {
         $model = $this->getModel()->newInstance();
         $this->validateRequest($request->all(), $this->getValidationRules());
+
         $model->fill($request->all());
+
+        $this->authorize($model);
+
         $model->save();
+
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -116,13 +122,15 @@ abstract class EntityController extends ApiController
     public function putOne(Request $request, $id)
     {
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel());
-
         $model = $this->findOrNewEntity($id);
-
         $this->validateRequest($request->all(), $this->getValidationRules());
 
         $model->fill($request->all());
+
+        $this->authorize($model);
+
         $model->save();
+
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -143,8 +151,11 @@ abstract class EntityController extends ApiController
         $existingModels = $this->findCollection($requestCollection);
 
         $modelCollection = $this->getModel()
-            ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function (BaseModel $model) {
+            ->hydrateRequestCollection($requestCollection, $existingModels);
+
+        $this->authorize($modelCollection);
+
+        $modelCollection->each(function (BaseModel $model) {
                 return $model->save();
             });
 
@@ -163,13 +174,14 @@ abstract class EntityController extends ApiController
     public function patchOne(Request $request, $id)
     {
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
-
         $model = $this->findOrFailEntity($id);
-
         $this->validateRequest($request->all(), $this->getValidationRules(), true);
-
         $model->fill($request->all());
+
+        $this->authorize($model);
+
         $model->save();
+
 
         return $this->getResponse()->noContent();
     }
@@ -188,9 +200,12 @@ abstract class EntityController extends ApiController
 
         $existingModels = $this->findOrFailCollection($requestCollection);
 
-        $this->getModel()
-            ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function (BaseModel $model) {
+        $modelsCollection = $this->getModel()
+            ->hydrateRequestCollection($requestCollection, $existingModels);
+
+        $this->authorize($existingModels);
+
+        $modelsCollection->each(function (BaseModel $model) {
                 return $model->save();
             });
 
@@ -205,8 +220,11 @@ abstract class EntityController extends ApiController
      */
     public function deleteOne($id)
     {
-        $this->findOrFailEntity($id)->delete();
+        $entity = $this->findOrFailEntity($id);
 
+        $this->authorize($entity);
+
+        $entity->delete();
         return $this->getResponse()->noContent();
     }
 
@@ -220,8 +238,11 @@ abstract class EntityController extends ApiController
     {
         $requestCollection = $request->all();
 
-        $this->findOrFailCollection($requestCollection)
-            ->each(function (BaseModel $model) {
+        $modelsCollection = $this->findOrFailCollection($requestCollection);
+
+        $this->authorize($modelsCollection);
+
+        $modelsCollection->each(function (BaseModel $model) {
                 $model->delete();
             });
 

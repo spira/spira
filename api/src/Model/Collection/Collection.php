@@ -159,4 +159,12 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
 
         return $this->getItemHash($model);
     }
+
+    /**
+     * @return string Name of the Model collection consist of
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
 }
