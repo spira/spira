@@ -4,9 +4,16 @@ namespace common.decorators {
 
     @changeAware
     class TestModel extends common.models.AbstractModel {
+
+        protected _nestedEntityMap = {
+            _nestedCollection: NestedData,
+            _nestedEntity: NestedData,
+        };
+
         public string;
         public uuid;
-        public _nestedData:NestedData[];
+        public _nestedCollection:NestedData[];
+        public _nestedEntity:NestedData;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
@@ -25,22 +32,25 @@ namespace common.decorators {
         }
     }
 
-    let nestedDataSample = new NestedData({test:'foo', testTwo:'bar'}),
+    let nestedCollection = [{test: 'collection1', testTwo: 'collection1'}],
+        nestedEntity = {test: 'entity', testTwo: 'entity'},
         data:any = {
-            uuid:seededChance.guid(),
-            string:seededChance.string(),
-            _nestedData:[
-                nestedDataSample
-            ]
+            uuid: seededChance.guid(),
+            string: seededChance.string(),
+            _nestedEntity: nestedEntity,
+            _nestedCollection: nestedCollection,
         };
 
     describe('@changeAware decorator', () => {
 
-        it('should instantiate a new model', () => {
+        it('should instantiate a new nested model', () => {
 
             let model = new TestModel(data);
 
             expect(model).to.be.instanceOf(TestModel);
+            expect(model._nestedEntity).to.be.instanceOf(NestedData);
+            expect(model._nestedCollection).to.be.instanceOf(Array);
+            expect(model._nestedCollection[0]).to.be.instanceOf(NestedData);
 
         });
 
@@ -52,6 +62,7 @@ namespace common.decorators {
 
             (<IChangeAwareDecorator>model).resetChangedProperties();
 
+            expect(model.string).to.equal('foo');
             expect((<IChangeAwareDecorator>model).getChanged()).to.be.empty;
 
         });
@@ -81,15 +92,25 @@ namespace common.decorators {
 
         describe.only('Nested entities', () => {
 
-            it('should be able to edit a nested attribute and see that it has been changed', () => {
+            it('should be able to edit a nested collection and see that it has been changed', () => {
 
                 let model = new TestModel(data);
 
-                model._nestedData[0].test = 'foo2'; // @todo: not sure why this changes the original object, in practice it doesn't
+                console.log('model', model);
 
-                expect((<IChangeAwareDecorator>model).getChanged(true)).to.deep.equal({
-                    _nestedData: [
-                        {test:'foo2', testTwo:'bar'}
+                model._nestedCollection[0].test = 'foo2'; // @todo: not sure why this changes the original object, in practice it doesn't
+
+                let changed = (<IChangeAwareDecorator>model).getChanged(true);
+
+                expect(changed).to.have.property('_nestedCollection');
+                expect((<any>changed)._nestedCollection[0]).to.be.instanceOf(NestedData);
+
+                expect(_.cloneDeep(changed)).to.deep.equal({
+                    _nestedCollection: [
+                        {
+                            test: 'foo2',
+                            testTwo: nestedCollection[0].testTwo
+                        }
                     ]
                 });
             });
@@ -98,12 +119,19 @@ namespace common.decorators {
 
                 let model = new TestModel(data);
 
-                model._nestedData.push(new NestedData({test:'foo2', testTwo:'bar2'})); // @todo: not sure why this changes the original object, in practice it doesn't
+                model._nestedCollection.push(new NestedData({test: 'foo2', testTwo: 'bar2'})); // @todo: not sure why this changes the original object, in practice it doesn't
 
-                expect((<IChangeAwareDecorator>model).getChanged(true)).to.deep.equal({
-                    _nestedData: [
-                        {test:'foo', testTwo:'bar'},
-                        {test:'foo2', testTwo:'bar2'}
+                let changed = (<IChangeAwareDecorator>model).getChanged(true);
+
+                expect(changed).to.have.property('_nestedCollection');
+                expect((<any>changed)._nestedCollection[0]).to.be.instanceOf(NestedData);
+
+                console.log('a', JSON.stringify(changed));
+
+                expect(_.cloneDeep(changed)).to.deep.equal({
+                    _nestedCollection: [
+                        {test: 'collection1', testTwo: 'collection1'},
+                        {test: 'foo2', testTwo: 'bar2'}
                     ]
                 });
             });
