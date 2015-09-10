@@ -618,6 +618,9 @@ class ArticleTest extends TestCase
             array_push($entities, $this->prepareEntity($meta));
         }
 
+        // this stupid line hacks the scope somehow
+        $request = \Request::getFacadeRoot();
+
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
