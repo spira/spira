@@ -60,7 +60,8 @@ namespace common.decorators {
                             return;
                         }
 
-                        if (_.isEqual(_.cloneDeep(value), pristineInstance[key])){
+                        // Have to use angular's equals function here as a comparator in the case where you are comparing an object which has been put through an ng-repeat and gotten a hash key added to it
+                        if (angular.equals(_.cloneDeep(value), pristineInstance[key])){
                             return;
                         }
 
