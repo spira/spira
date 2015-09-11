@@ -18,6 +18,8 @@ class CreateLocalisationsTable extends Migration
             $table->uuid('entity_id');
             $table->char('region_code', 2);
             $table->json('localisations');
+
+            $table->index(['entity_id', 'region_code']);
         });
     }
 
