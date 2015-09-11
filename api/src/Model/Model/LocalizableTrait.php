@@ -42,13 +42,13 @@ trait LocalizableTrait
     {
         $locale = array_pull($options, 'locale');
 
-        if (!$localised = $this->getLocalisedModel($locale)) {
+        if (! $localised = $this->getLocalisedModel($locale)) {
             $this->updateLocalisedCache($locale, $options);
 
             return DB::table('localisations')->insert([
                 'entity_id' => $this->getKey(),
                 'region_code' => $locale,
-                'localisations' => json_encode($options)
+                'localisations' => json_encode($options),
             ]);
         } else {
             $localised = array_merge($localised, $options);

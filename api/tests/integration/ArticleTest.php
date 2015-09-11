@@ -652,7 +652,7 @@ class ArticleTest extends TestCase
         $data = [
             'locale' => $locale,
             'title' => $title = 'localised title',
-            'content' => $content = 'localised content'
+            'content' => $content = 'localised content',
         ];
 
         $article->save($data);
@@ -683,7 +683,7 @@ class ArticleTest extends TestCase
         $data = [
             'locale' => $locale,
             'title' => 'localised title',
-            'content' => $content = 'localised content'
+            'content' => $content = 'localised content',
         ];
         $article->save($data);
 
