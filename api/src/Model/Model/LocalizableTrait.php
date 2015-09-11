@@ -11,6 +11,7 @@
 namespace Spira\Model\Model;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 trait LocalizableTrait
 {
@@ -42,6 +43,8 @@ trait LocalizableTrait
         $locale = array_pull($options, 'locale');
 
         if (!$localised = $this->getLocalisedModel($locale)) {
+            $this->updateLocalisedCache($locale, $options);
+
             return DB::table('localisations')->insert([
                 'entity_id' => $this->getKey(),
                 'region_code' => $locale,
@@ -49,8 +52,9 @@ trait LocalizableTrait
             ]);
         } else {
             $localised = array_merge($localised, $options);
+            $this->updateLocalisedCache($locale, $localised);
 
-            DB::table('localisations')
+            return DB::table('localisations')
                 ->where('entity_id', $this->getKey())
                 ->where('region_code', $locale)
                 ->update(['localisations' => json_encode($localised)]);
@@ -76,5 +80,20 @@ trait LocalizableTrait
         }
 
         return false;
+    }
+
+    /**
+     * Updates cached version of localised model.
+     *
+     * @param  string $locale
+     * @param  array  $localised
+     *
+     * @return void
+     */
+    protected function updateLocalisedCache($locale, array $localised = [])
+    {
+        $key = sprintf('l10n:%s:%s', $this->getKey(), $locale);
+
+        Cache::put($key, json_encode($localised), 0);
     }
 }
