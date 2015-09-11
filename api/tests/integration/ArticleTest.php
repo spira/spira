@@ -643,4 +643,62 @@ class ArticleTest extends TestCase
 
         $this->cleanupDiscussions([$article]);
     }
+
+    public function testShouldCreateLocalisedArticle()
+    {
+        $article = factory(Article::class)->create();
+        $locale = 'au';
+
+        $data = [
+            'locale' => $locale,
+            'title' => $title = 'localised title',
+            'content' => $content = 'localised content'
+        ];
+
+        $article->save($data);
+
+        $localised = DB::table('localisations')
+            ->where('entity_id', $article->article_id)
+            ->where('region_code', $locale)
+            ->first();
+
+        $localisations = json_decode($localised->localisations, true);
+
+        $this->assertEquals($title, $localisations['title']);
+
+        $this->cleanupDiscussions([$article]);
+    }
+
+    public function testShouldUpdateLocalisedArticle()
+    {
+        $article = factory(Article::class)->create();
+        $locale = 'au';
+
+        $data = [
+            'locale' => $locale,
+            'title' => 'localised title',
+            'content' => $content = 'localised content'
+        ];
+        $article->save($data);
+
+        // Update the localised data
+        $data = [
+            'locale' => $locale,
+            'title' => $title = 'updated localised title',
+        ];
+        $article->save($data);
+
+        $localised = DB::table('localisations')
+            ->where('entity_id', $article->article_id)
+            ->where('region_code', $locale)
+            ->get();
+
+        $localisations = json_decode(reset($localised)->localisations, true);
+
+        $this->assertCount(1, $localised);
+        $this->assertEquals($title, $localisations['title']);
+        $this->assertEquals($content, $localisations['content']);
+
+        $this->cleanupDiscussions([$article]);
+    }
 }
