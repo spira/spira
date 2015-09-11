@@ -68,7 +68,7 @@ class ArticleTagTest extends TestCase
         $entity = $this->getFactory()->get(Article::class)->create();
         $this->addTagsToArticles([$entity]);
 
-        $count = Article::find($entity->article_id)->tags->count();
+        $count = Article::find($entity->article_id)->tag->count();
         $this->getJson('/articles/'.$entity->article_id.'/tags');
         $object = json_decode($this->response->getContent());
 
@@ -94,7 +94,7 @@ class ArticleTagTest extends TestCase
         // re-acquire for collection to have ids as key
         $entity = Article::find($entity->article_id);
 
-        $previousTagsWillBeRemoved = $entity->tags;
+        $previousTagsWillBeRemoved = $entity->tag;
 
         $existingTagWillStay = $this->getFactory()->get(Tag::class)
             ->setModel($previousTagsWillBeRemoved->first())
@@ -111,7 +111,7 @@ class ArticleTagTest extends TestCase
         $this->assertResponseStatus(201);
 
         $updatedArticle = Article::find($entity->article_id);
-        $updatedTags = $updatedArticle->tags->toArray();
+        $updatedTags = $updatedArticle->tag->toArray();
 
         $this->assertArrayHasKey($existingTagWillStay['tagId'], $updatedTags);
         foreach ($previousTagsWillBeRemoved as $removedTag) {
@@ -133,8 +133,8 @@ class ArticleTagTest extends TestCase
         $this->addTagsToArticles($articles, true);
 
         $entity = Article::find($articles->first()->article_id);
-        $this->assertEquals(4, $entity->tags->count());
-        $tag = $entity->tags->first();
+        $this->assertEquals(4, $entity->tag->count());
+        $tag = $entity->tag->first();
 
         $this->getJson('/tags/'.$tag->tag_id, ['with-nested' => 'articles']);
         $object = json_decode($this->response->getContent());
@@ -146,14 +146,14 @@ class ArticleTagTest extends TestCase
         $entity = $this->getFactory()->get(Article::class)->create();
         $this->addTagsToArticles([$entity]);
 
-        $this->assertEquals(4, Article::find($entity->article_id)->tags->count());
-        $tag = Article::find($entity->article_id)->tags->first();
+        $this->assertEquals(4, Article::find($entity->article_id)->tag->count());
+        $tag = Article::find($entity->article_id)->tag->first();
 
         $this->deleteJson('/tags/'.$tag->tag_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals(3, Article::find($entity->article_id)->tags->count());
+        $this->assertEquals(3, Article::find($entity->article_id)->tag->count());
     }
 
     public function testShouldLogPutTags()

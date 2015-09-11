@@ -15,7 +15,7 @@ use App\Models\Article;
 
 class ArticlePermalinkController extends ChildEntityController
 {
-    protected $relationName = 'permalinks';
+    protected $relationName = 'articlePermalink';
 
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
