@@ -444,17 +444,15 @@ class ArticleTest extends TestCase
             return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
         }, $article->articleMeta->all());
 
-        $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
-        foreach ($metas as $meta) {
-            $entities[] = $this->prepareEntity($meta);
-        }
+        $meta = factory(\App\Models\ArticleMeta::class)->make();
+        $entities[] = $this->prepareEntity($meta);
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
 
-        $this->assertEquals($metaCount + 2, $updatedArticle->articleMeta->count());
+        $this->assertEquals($metaCount + 1, $updatedArticle->articleMeta->count());
         $counter = 0;
         foreach ($updatedArticle->articleMeta as $meta) {
             if ($meta->meta_content == 'foobar') {
