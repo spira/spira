@@ -39,11 +39,18 @@ namespace app.admin.articles.article {
                 notificationService = _notificationService_;
                 $q = _$q_;
 
+                let metaTag:common.models.ArticleMeta = new common.models.ArticleMeta({
+                    metaName: 'title',
+                    metaContent: 'foo'
+                });
+
                 ArticleController = $controller(app.admin.articles.article.namespace + '.controller', {
                     $stateParams: $stateParams,
                     notificationService: notificationService,
                     article: article,
-                    articleService: articleService
+                    articleService: articleService,
+                    articleMetaTags: [metaTag]
+
                 });
             });
 

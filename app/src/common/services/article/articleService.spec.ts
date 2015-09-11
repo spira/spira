@@ -12,7 +12,7 @@
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
-                _tags: [
+                _tag: [
                     {
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
@@ -20,6 +20,16 @@
                     {
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
+                    }
+                ],
+                _articleMeta: [
+                    {
+                        metaName: 'title',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
                     }
                 ]
             });
@@ -139,7 +149,8 @@
                 let article = fixtures.getArticle();
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tag, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMeta, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -163,10 +174,10 @@
                     tag: "new tag",
                 });
 
-                article._tags = [newTag];
+                article._tag = [newTag];
 
                 $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tag, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 

@@ -89,7 +89,6 @@ namespace app.admin.articles.article {
                             })
                             .value();
 
-                        (<common.decorators.IChangeAwareDecorator>article).resetChanged();
                     }
                 },
                 data: {

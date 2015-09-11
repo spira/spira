@@ -4,7 +4,7 @@ namespace common.models {
     export class Article extends AbstractModel{
 
         protected _nestedEntityMap = {
-            tags: Tag,
+            tag: Tag,
             articleMeta: ArticleMeta
         };
 
