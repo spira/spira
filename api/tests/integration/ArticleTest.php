@@ -64,9 +64,9 @@ class ArticleTest extends TestCase
     {
         foreach ($articles as $article) {
             $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
-            $uniqueMetas = array();
+            $uniqueMetas = [];
             foreach ($metas as $meta) {
-                if(!in_array($meta->meta_name, $uniqueMetas)) {
+                if (! in_array($meta->meta_name, $uniqueMetas)) {
                     $article->articleMeta->add($meta);
                     array_push($uniqueMetas, $meta->meta_name);
                 }
