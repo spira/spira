@@ -77,4 +77,20 @@ abstract class ApiController extends Controller
 
         return $modelOrCollection;
     }
+
+    /**
+     * Determine if the request is localised.
+     *
+     * @param  Request $request
+     *
+     * @return array
+     */
+    protected function isLocalised(Request $request)
+    {
+        if ($locale = $request->header('Content-Region')) {
+            return ['locale' => $locale];
+        }
+
+        return [];
+    }
 }

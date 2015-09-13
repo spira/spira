@@ -122,7 +122,7 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->all(), $this->getValidationRules());
 
         $model->fill($request->all());
-        $model->save();
+        $model->save($this->isLocalised($request));
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -144,8 +144,8 @@ abstract class EntityController extends ApiController
 
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels)
-            ->each(function (BaseModel $model) {
-                return $model->save();
+            ->each(function (BaseModel $model) use ($request) {
+                return $model->save($this->isLocalised($request));
             });
 
         return $this->getResponse()
