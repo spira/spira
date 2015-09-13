@@ -10,8 +10,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
 use Spira\Model\Model\IndexedModel;
+use Spira\Model\Model\LocalizableTrait;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class TestEntity.
@@ -20,6 +21,8 @@ use Spira\Model\Model\IndexedModel;
  */
 class TestEntity extends IndexedModel
 {
+    use LocalizableTrait;
+
     /**
      * The database table used by the model.
      *

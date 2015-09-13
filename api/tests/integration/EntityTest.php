@@ -686,4 +686,47 @@ class EntityTest extends TestCase
         $this->shouldReturnJson();
         $this->assertJsonArray();
     }
+
+    public function testLocalisedPutOneNew()
+    {
+        $entity = factory(App\Models\TestEntity::class)->make();
+
+        $locale = 'au';
+        $id = $entity->entity_id;
+        $entity = $this->prepareEntity($entity);
+
+        $rowCount = TestEntity::count();
+
+        $this->putJson('/test/entities/'.$id, $entity, ['Content-Region' => $locale]);
+
+        // Assert the cache
+        $key = sprintf('l10n:%s:%s', $id, $locale);
+        $cached = json_decode(Cache::get($key), true);
+
+        $this->assertEquals($entity['varchar'], $cached['varchar']);
+        $this->assertEquals($entity['text'], $cached['text']);
+    }
+
+    public function testLocalisedPutManySomeLocalised()
+    {
+        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $locale = 'au';
+
+        $entities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $entities->all());
+        $entities[1]['text'] = 'localised text';
+        $entities[2]['text'] = 'localised text';
+
+        $this->putJson('/test/entities', $entities, ['Content-Region' => $locale]);
+
+        // Assert the cache
+        $key1 = sprintf('l10n:%s:%s', $entities[1]['entityId'], $locale);
+        $key2 = sprintf('l10n:%s:%s', $entities[2]['entityId'], $locale);
+        $cached1 = json_decode(Cache::get($key1), true);
+        $cached2 = json_decode(Cache::get($key2), true);
+
+        $this->assertEquals($entities[1]['text'], $cached1['text']);
+        $this->assertEquals($entities[2]['text'], $cached2['text']);
+    }
 }

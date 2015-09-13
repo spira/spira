@@ -41,23 +41,19 @@ trait LocalizableTrait
     protected function saveLocalisedAttributes(array $options)
     {
         $locale = array_pull($options, 'locale');
+        $this->updateLocalisedCache($locale);
 
-        if (! $localised = $this->getLocalisedModel($locale)) {
-            $this->updateLocalisedCache($locale, $options);
-
+        if (! $this->getLocalisedModel($locale)) {
             return DB::table('localisations')->insert([
                 'entity_id' => $this->getKey(),
                 'region_code' => $locale,
-                'localisations' => json_encode($options),
+                'localisations' => json_encode($this->attributes),
             ]);
         } else {
-            $localised = array_merge($localised, $options);
-            $this->updateLocalisedCache($locale, $localised);
-
             return DB::table('localisations')
                 ->where('entity_id', $this->getKey())
                 ->where('region_code', $locale)
-                ->update(['localisations' => json_encode($localised)]);
+                ->update(['localisations' => json_encode($this->attributes)]);
         }
     }
 
@@ -86,14 +82,13 @@ trait LocalizableTrait
      * Updates cached version of localised model.
      *
      * @param  string $locale
-     * @param  array  $localised
      *
      * @return void
      */
-    protected function updateLocalisedCache($locale, array $localised = [])
+    protected function updateLocalisedCache($locale)
     {
         $key = sprintf('l10n:%s:%s', $this->getKey(), $locale);
 
-        Cache::put($key, json_encode($localised), 0);
+        Cache::put($key, json_encode($this->attributes), 0);
     }
 }

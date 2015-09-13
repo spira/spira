@@ -650,12 +650,12 @@ class ArticleTest extends TestCase
         $locale = 'au';
 
         $data = [
-            'locale' => $locale,
             'title' => $title = 'localised title',
             'content' => $content = 'localised content',
         ];
 
-        $article->save($data);
+        $article->fill($data);
+        $article->save(['locale' => $locale]);
 
         $localised = DB::table('localisations')
             ->where('entity_id', $article->article_id)
@@ -669,7 +669,6 @@ class ArticleTest extends TestCase
         // Assert the cache
         $key = sprintf('l10n:%s:%s', $article->article_id, $locale);
         $cached = json_decode(Cache::get($key), true);
-        $this->assertCount(2, $cached);
         $this->assertEquals($title, $cached['title']);
 
         $this->cleanupDiscussions([$article]);
@@ -681,18 +680,20 @@ class ArticleTest extends TestCase
         $locale = 'au';
 
         $data = [
-            'locale' => $locale,
             'title' => 'localised title',
             'content' => $content = 'localised content',
         ];
-        $article->save($data);
+
+        $article->fill($data);
+        $article->save(['locale' => $locale]);
 
         // Update the localised data
         $data = [
-            'locale' => $locale,
             'title' => $title = 'updated localised title',
         ];
-        $article->save($data);
+
+        $article->fill($data);
+        $article->save(['locale' => $locale]);
 
         $localised = DB::table('localisations')
             ->where('entity_id', $article->article_id)
@@ -708,7 +709,6 @@ class ArticleTest extends TestCase
         // Assert the cache
         $key = sprintf('l10n:%s:%s', $article->article_id, $locale);
         $cached = json_decode(Cache::get($key), true);
-        $this->assertCount(2, $cached);
         $this->assertEquals($title, $cached['title']);
         $this->assertEquals($content, $cached['content']);
 
