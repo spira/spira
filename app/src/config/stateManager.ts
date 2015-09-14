@@ -70,7 +70,6 @@ namespace config.stateManager {
 
             this.$rootScope.$on('$stateChangeStart', (event, toState:global.IState, toParams, fromState:global.IState, fromParams):ng.IPromise<any> => {
 
-                debugger;
                 if (this.userMustBeLoggedIn(toState) && !this.ngJwtAuthService.loggedIn) {
 
                     event.preventDefault();

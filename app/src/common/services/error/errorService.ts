@@ -4,18 +4,15 @@ namespace common.services.error {
 
     export class ErrorInit {
 
-        static $inject:string[] = ['ngRestAdapter', 'errorService', '$rootScope'];
+        static $inject:string[] = ['ngRestAdapter', 'errorService'];
 
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
-                    private errorService:ErrorService,
-                    private $rootScope:ng.IRootScopeService) {
+                    private errorService:ErrorService) {
 
             ngRestAdapter.registerApiErrorHandler(_.bind(this.errorInterceptorHandler, this));
         }
 
         private errorInterceptorHandler = (requestConfig:ng.IRequestConfig, responseObject:ng.IHttpPromiseCallbackArg<any>):void => {
-
-            this.$rootScope.$broadcast('apiErrorHandler', "Redirecting to error page");
 
             let message = <string>_.get(responseObject, 'data.message');
 
