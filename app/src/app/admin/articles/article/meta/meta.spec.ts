@@ -27,17 +27,6 @@ namespace app.admin.articles.article.meta {
 
         });
 
-        afterEach(() => {
-
-        });
-
-
-        it('should run at least one test', () => {
-
-            expect(true).to.be.true;
-
-        });
-
     });
 
 }

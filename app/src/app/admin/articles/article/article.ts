@@ -10,7 +10,7 @@ namespace app.admin.articles.article {
 
     export class ArticleConfig {
 
-        public articleMetaTemplate:string[] = [
+        public static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
         ];
 
@@ -70,7 +70,7 @@ namespace app.admin.articles.article {
                         return articleService.getArticle($stateParams.permalink)
                             .then((article) => {
 
-                                article._articleMetas = articleService.hydrateMetaFromTemplate(article._articleMetas, this.articleMetaTemplate);
+                                article._articleMetas = articleService.hydrateMetaFromTemplate(article._articleMetas, ArticleConfig.articleMetaTemplate);
 
                                 return article;
                             });
