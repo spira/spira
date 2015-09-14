@@ -14,9 +14,9 @@ namespace common.models {
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
-        public _articleMetas:common.models.ArticleMeta[];
+        public _articleMetas:common.models.ArticleMeta[] = [];
 
-        public _tags:common.models.Tag[];
+        public _tags:common.models.Tag[] = [];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

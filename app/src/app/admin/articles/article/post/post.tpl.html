@@ -14,10 +14,7 @@
     <md-input-container>
         <label for="articleFormPermalink">Permalink</label>
 
-        <input id="articleFormPermalink" ng-model="ArticleController.article.permalink" name="permalink" type="text" ng-required="true" ng-change="ArticleController.updatePermalink()">
-        <ng-messages for="articleFormTitle.permalink.$error">
-            <ng-message when="required">This is required.</ng-message>
-        </ng-messages>
+        <input id="articleFormPermalink" ng-model="ArticleController.article.permalink" name="permalink" type="text" ng-change="ArticleController.updatePermalink()" ng-required="false">
     </md-input-container>
 
 
