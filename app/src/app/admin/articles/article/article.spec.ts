@@ -13,7 +13,7 @@ namespace app.admin.articles.article {
                     title: title,
                     body: seededChance.paragraph(),
                     permalink: title.replace(' ', '-'),
-                    _articleMeta: []
+                    _articleMetas: []
                 });
 
             },
@@ -115,24 +115,24 @@ namespace app.admin.articles.article {
 
             let article:common.models.Article = getArticle();
 
-            article._articleMeta.push(new common.models.ArticleMeta({
+            article._articleMetas.push(new common.models.ArticleMeta({
                 metaName: 'title',
                 metaContent: 'foo'
             }));
 
-            article._articleMeta.push(new common.models.ArticleMeta({
+            article._articleMetas.push(new common.models.ArticleMeta({
                 metaName: 'keyword',
                 metaContent: 'bar'
             }));
 
-            expect(_.cloneDeep(article._articleMeta)).to.deep.equal([
+            expect(_.cloneDeep(article._articleMetas)).to.deep.equal([
                 {metaName: 'title', metaContent: 'foo'},
                 {metaName: 'keyword', metaContent: 'bar'}
             ]);
 
             (<any>ArticleConfig.state.resolve).articleMetaTags(article);
 
-            expect(_.cloneDeep(article._articleMeta)).to.deep.equal([
+            expect(_.cloneDeep(article._articleMetas)).to.deep.equal([
                 {metaName: 'name', metaContent: ''},
                 {metaName: 'description', metaContent: ''},
                 {metaName: 'keyword', metaContent: 'bar'},

@@ -12,7 +12,7 @@
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
-                _tag: [
+                _tags: [
                     {
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
@@ -22,7 +22,7 @@
                         tag: seededChance.word,
                     }
                 ],
-                _articleMeta: [
+                _articleMetas: [
                     {
                         metaName: 'title',
                         metaContent: 'foo'
@@ -149,8 +149,8 @@
                 let article = fixtures.getArticle();
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tag, true)).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMeta, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMetas, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -174,10 +174,10 @@
                     tag: "new tag",
                 });
 
-                article._tag = [newTag];
+                article._tags = [newTag];
 
                 $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tag, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 

@@ -26,7 +26,7 @@ use Spira\Responder\Response\ApiResponse;
 
 class ArticleTagController extends ChildEntityController
 {
-    protected $relationName = 'tag';
+    protected $relationName = 'tags';
 
     public function __construct(Article $parentModel, ArticleTagTransformer $transformer)
     {

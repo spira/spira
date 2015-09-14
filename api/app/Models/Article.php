@@ -98,7 +98,7 @@ class Article extends IndexedModel
         static::saved(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
-                $model->articlePermalink()->save($articlePermalink);
+                $model->articlePermalinks()->save($articlePermalink);
             }
 
             return true;
@@ -164,12 +164,12 @@ class Article extends IndexedModel
         return Str::words($this->content, self::defaultExcerptWordCount, '');
     }
 
-    public function articlePermalink()
+    public function articlePermalinks()
     {
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 
-    public function articleMeta()
+    public function articleMetas()
     {
         return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
     }
@@ -184,9 +184,9 @@ class Article extends IndexedModel
         return (new ArticleDiscussion)->setArticle($this);
     }
 
-    public function tag()
+    public function tags()
     {
-        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tag');
+        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tags');
     }
 
     /**

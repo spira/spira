@@ -57,7 +57,7 @@ namespace common.services.article {
         public getArticle(identifier:string):ng.IPromise<common.models.Article> {
 
             return this.ngRestAdapter.get('/articles/'+identifier, {
-                'With-Nested' : 'articlePermalink, articleMeta, tag, author'
+                'With-Nested' : 'articlePermalinks, articleMetas, tags, author'
             })
                 .then((res) => ArticleService.articleFactory(res.data, true));
 
@@ -126,19 +126,19 @@ namespace common.services.article {
          */
         private saveArticleTags(article:common.models.Article):ng.IPromise<common.models.Tag[]|boolean>{
 
-            let tagData = _.clone(article._tag);
+            let tagData = _.clone(article._tags);
 
             if (article.exists()){
 
                 let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
-                if (!_.has(changes, '_tag')){
+                if (!_.has(changes, '_tags')){
                     return this.$q.when(false);
                 }
             }
 
             return this.ngRestAdapter.put('/articles/'+article.articleId+'/tags', tagData)
                 .then(() => {
-                    return article._tag;
+                    return article._tags;
                 });
 
         }
@@ -153,19 +153,19 @@ namespace common.services.article {
 
                 let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
 
-                if (!_.has(changes, '_articleMeta')){
+                if (!_.has(changes, '_articleMetas')){
                     return this.$q.when(false);
                 }
             }
 
             // Remove the meta tags which have not been used
-            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMeta, (metaTag) => {
+            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMetas, (metaTag) => {
                 return !_.isEmpty(metaTag.metaContent);
             });
 
             return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
                 .then(() => {
-                    return article._articleMeta;
+                    return article._articleMetas;
                 });
         }
 

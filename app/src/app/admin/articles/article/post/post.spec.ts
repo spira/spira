@@ -44,7 +44,7 @@ namespace app.admin.articles.article.post {
 
             PostController.updateArticleTags();
 
-            expect(PostController.article._tag).to.have.lengthOf(3);
+            expect(PostController.article._tags).to.have.lengthOf(3);
 
         });
 

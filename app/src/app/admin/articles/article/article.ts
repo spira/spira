@@ -72,9 +72,9 @@ namespace app.admin.articles.article {
                     articleMetaTags: (article:common.models.Article):void => {
 
                         // 'thru' not defined in typings yet
-                        article._articleMeta = (<any>_).chain(this.articleMetaTemplate)
+                        article._articleMetas = (<any>_).chain(this.articleMetaTemplate)
                             .map((metaTagName) => {
-                                let existingTag = _.find(article._articleMeta, {metaName:metaTagName});
+                                let existingTag = _.find(article._articleMetas, {metaName:metaTagName});
                                 if(_.isEmpty(existingTag)) {
                                     return new common.models.ArticleMeta({
                                         metaName:metaTagName,
@@ -84,7 +84,7 @@ namespace app.admin.articles.article {
                                 return existingTag;
                             })
                             .thru((templateMeta) => {
-                                let leftovers = _.filter(article._articleMeta, (metaTag) => {
+                                let leftovers = _.filter(article._articleMetas, (metaTag) => {
                                     return !_.contains(templateMeta, metaTag);
                                 });
 

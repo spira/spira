@@ -31,15 +31,15 @@ class ArticleSeeder extends BaseSeeder
             ->each(function (Article $article) use ($images) {
 
                 //add a meta tag
-                $article->articleMeta()->save(factory(ArticleMeta::class)->make());
+                $article->articleMetas()->save(factory(ArticleMeta::class)->make());
 
                 //add permalinks
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
-                $article->articlePermalink()->saveMany($permalinks);
+                $article->articlePermalinks()->saveMany($permalinks);
 
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
-                $article->tag()->saveMany($tags);
+                $article->tags()->saveMany($tags);
 
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {
