@@ -1,0 +1,18 @@
+<md-dialog flex="50" id="errorDialog">
+    <md-dialog-content>
+
+        <h1><md-icon>error</md-icon> Whoops <small>An error occurred</small> </h1>
+
+        <h3 ng-bind-html="ErrorDialogController.title">{{ErrorDialogController.title}}</h3>
+        <p>Please report this error, along with the debug output below.</p>
+
+        <p ng-bind-html="ErrorDialogController.message"></p>
+
+        <pre ng-if="!!ErrorDialogController.extra">{{ErrorDialogController.extra | json}}</pre>
+
+    </md-dialog-content>
+
+    <div class="md-actions">
+        <md-button ng-click="ErrorDialogController.cancelErrorDialog()">Dismiss</md-button>
+    </div>
+</md-dialog>
