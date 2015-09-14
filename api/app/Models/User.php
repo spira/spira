@@ -15,9 +15,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Model\Model\IndexedModel;
 
-class User extends IndexedModel implements AuthenticatableContract
+class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
     use Authenticatable;
 
@@ -31,6 +32,8 @@ class User extends IndexedModel implements AuthenticatableContract
      * @var int
      */
     protected $token_ttl = 1440;
+
+    protected $authMethod;
 
     /**
      * The primary key for the model.
@@ -361,5 +364,22 @@ class User extends IndexedModel implements AuthenticatableContract
     public function isAdmin()
     {
         return $this->user_type === self::USER_TYPE_ADMIN;
+    }
+
+    /**
+     * @param string $method
+     * @return void
+     */
+    public function setCurrentAuthMethod($method)
+    {
+        $this->authMethod = $method;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentAuthMethod()
+    {
+        return $this->authMethod;
     }
 }

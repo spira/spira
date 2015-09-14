@@ -11,6 +11,10 @@ namespace Spira\Auth\Driver;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Spira\Auth\Payload\PayloadFactory;
+use Spira\Auth\Payload\PayloadValidationFactory;
+use Spira\Auth\Token\JWTInterface;
+
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
 {
@@ -25,6 +29,33 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * @var Authenticatable
      */
     protected $user;
+
+    /**
+     * @var PayloadFactory
+     */
+    protected $payloadFactory;
+    /**
+     * @var JWTInterface
+     */
+    protected $tokenizer;
+    /**
+     * @var PayloadValidationFactory
+     */
+    private $validationFactory;
+
+    public function __construct(
+        JWTInterface $tokenizer,
+        PayloadFactory $payloadFactory,
+        PayloadValidationFactory $validationFactory,
+        UserProvider $provider
+    )
+    {
+
+        $this->payloadFactory = $payloadFactory;
+        $this->provider = $provider;
+        $this->tokenizer = $tokenizer;
+        $this->validationFactory = $validationFactory;
+    }
 
     /**
      * Determine if the current user is authenticated.
@@ -144,7 +175,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     /**
      * Log the given user ID into the application.
      *
-     * @param  mixed $id
+     * @param  mixed $id auth token
      * @param  bool $remember
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
@@ -179,7 +210,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     protected function generateToken(Authenticatable $user)
     {
-
+        return $this->getTokenizer()->encode($this->getPayloadFactory()->createFromUser($user));
     }
 
     /**
@@ -202,4 +233,21 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     {
         $this->provider = $provider;
     }
+
+    /**
+     * @return JWTInterface
+     */
+    public function getTokenizer()
+    {
+        return $this->tokenizer;
+    }
+
+    /**
+     * @return PayloadFactory
+     */
+    public function getPayloadFactory()
+    {
+        return $this->payloadFactory;
+    }
+
 }

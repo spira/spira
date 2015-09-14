@@ -12,14 +12,14 @@ namespace App\Http\Controllers;
 
 use App\Extensions\Socialite\SocialiteManager;
 use App\Models\User;
-use RuntimeException;
+use Illuminate\Contracts\Auth\Guard;
+use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Responder\Response\ApiResponse;
 use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\NotImplementedException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
@@ -43,14 +43,7 @@ class AuthController extends ApiController
     /**
      * JWT Auth Package.
      *
-     * @var \App\Extensions\JWTAuth\JWTAuth
-     */
-    protected $jwtAuth;
-
-    /**
-     * Illuminate Auth.
-     *
-     * @var Auth
+     * @var Guard
      */
     protected $auth;
 
@@ -58,17 +51,16 @@ class AuthController extends ApiController
      * Assign dependencies.
      *
      * @param Auth $auth
-     * @param JWTAuth $jwtAuth
      * @param AuthTokenTransformer $transformer
      * @param Application $app
      * @param Cache $cache
      */
     public function __construct(
-        JWTAuth $jwtAuth,
+        Guard $auth,
         AuthTokenTransformer $transformer,
         Application $app)
     {
-        $this->jwtAuth = $jwtAuth;
+        $this->auth = $auth;
         $this->app = $app;
         parent::__construct($transformer);
     }
@@ -87,11 +79,10 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
-        if (! $token = $this->attemptLogin($credentials)) {
-            // Check to see if the user has recently requested to change their email and try to log in using it
+        if (!$this->auth->attempt($credentials)){
             if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
                 $credentials['email'] = $oldEmail;
-                if (! $token = $this->attemptLogin($credentials)) {
+                if (!$this->auth->attempt($credentials)) {
                     throw new UnauthorizedException('Credentials failed.');
                 }
             } else {
@@ -99,25 +90,15 @@ class AuthController extends ApiController
             }
         }
 
+        /** @var SocialiteAuthenticatable $user */
+        $user = $this->auth->user();
+        $user->setCurrentAuthMethod('password');
+
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token);
+            ->item($this->auth->user()->getRememberToken());
     }
 
-    /**
-     * Attempt to login and get token.
-     *
-     * @param $credentials
-     * @return bool|string
-     */
-    private function attemptLogin($credentials)
-    {
-        try {
-            return $this->jwtAuth->attempt($credentials, ['method' => 'password']);
-        } catch (JWTException $e) {
-            throw new RuntimeException($e->getMessage(), 500, $e);
-        }
-    }
 
     /**
      * Refresh a login token.
