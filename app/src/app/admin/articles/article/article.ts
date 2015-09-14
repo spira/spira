@@ -14,10 +14,13 @@ namespace app.admin.articles.article {
             'name', 'description', 'keyword', 'canonical'
         ];
 
+        public static state:global.IState;
+
         static $inject = ['stateHelperServiceProvider'];
+
         constructor(private stateHelperServiceProvider){
 
-            let state:global.IState = {
+            ArticleConfig.state = {
                 url: '/article/{permalink}',
                 params: {
                     newArticle: false,
@@ -98,7 +101,7 @@ namespace app.admin.articles.article {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, ArticleConfig.state);
 
         }
 
