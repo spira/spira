@@ -33,6 +33,7 @@ class LocalizationTest extends TestCase
         ));
 
         $attributes = json_decode($this->response->getContent(), true);
+        print_r($attributes);
 
         $this->assertCount(1, $attributes);
         $this->assertEquals($localizations[$attribute], $attributes[$attribute]);

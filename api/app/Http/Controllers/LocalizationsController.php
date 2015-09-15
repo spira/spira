@@ -40,7 +40,7 @@ class LocalizationsController extends EntityController
      */
     public function getOne(Request $request, $region, $id, $attribute)
     {
-        $model = $this->findOrFailEntity($region, $id);
+        $model = $this->findOrFailEntity(['region_code' => $region, 'entity_id' => $id]);
 
         if (! $model->hasLocalizedAttribute($attribute)) {
             throw new NotFoundHttpException('Entity attribute does not have localized content.');
@@ -62,7 +62,7 @@ class LocalizationsController extends EntityController
      */
     public function getAll(Request $request, $region, $id)
     {
-        $model = $this->findOrFailEntity($region, $id);
+        $model = $this->findOrFailEntity(['region_code' => $region, 'entity_id' => $id]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -72,15 +72,14 @@ class LocalizationsController extends EntityController
     /**
      * Find entity by compound key.
      *
-     * @param string $region
-     * @param string $id
+     * @param array $compound
      *
      * @return BaseModel
      */
-    protected function findOrFailEntity($region, $id)
+    protected function findOrFailEntity(array $compound)
     {
         try {
-            return $this->getModel()->findByCompoundKey($region, $id);
+            return $this->getModel()->findByCompoundKey($compound);
         } catch (ModelNotFoundException $e) {
             throw $this->notFoundException($this->getModel()->getKeyName());
         }
