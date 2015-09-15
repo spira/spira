@@ -11,9 +11,11 @@ namespace Spira\Auth\Driver;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Http\Request;
 use Spira\Auth\Payload\PayloadFactory;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
+use Spira\Auth\Token\RequestParser;
 
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
@@ -31,23 +33,47 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     protected $user;
 
     /**
+     * @var bool
+     */
+    protected $viaToken = false;
+
+    /**
      * @var PayloadFactory
      */
     protected $payloadFactory;
+
     /**
      * @var JWTInterface
      */
     protected $tokenizer;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
     /**
      * @var PayloadValidationFactory
      */
-    private $validationFactory;
+    protected $validationFactory;
+    /**
+     * @var RequestParser
+     */
+    protected $requestParser;
 
+    /**
+     * @param JWTInterface $tokenizer
+     * @param PayloadFactory $payloadFactory
+     * @param PayloadValidationFactory $validationFactory
+     * @param UserProvider $provider
+     * @param RequestParser $requestParser
+     */
     public function __construct(
         JWTInterface $tokenizer,
         PayloadFactory $payloadFactory,
         PayloadValidationFactory $validationFactory,
-        UserProvider $provider
+        UserProvider $provider,
+        RequestParser $requestParser
     )
     {
 
@@ -55,6 +81,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         $this->provider = $provider;
         $this->tokenizer = $tokenizer;
         $this->validationFactory = $validationFactory;
+        $this->requestParser = $requestParser;
     }
 
     /**
@@ -64,7 +91,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function check()
     {
-        // TODO: Implement check() method.
+        return (bool)$this->user;
     }
 
     /**
@@ -74,7 +101,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function guest()
     {
-        // TODO: Implement guest() method.
+        return !$this->check();
     }
 
     /**
@@ -91,6 +118,18 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         if ($this->user){
             return $this->user;
         }
+
+        $token = $this->getRequestParser()->getToken($this->getRequest());
+        $payload = $this->getTokenizer()->decode($token);
+        $this->getValidationFactory()->validatePayload($payload);
+        $user = $this->getProvider()->retrieveByToken(null, $payload);
+
+        if ($user){
+            $this->user = $user;
+            $this->viaToken = true;
+        }
+
+        return $user;
     }
 
     /**
@@ -130,22 +169,24 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * Attempt to authenticate using HTTP Basic Auth.
      *
      * @param  string $field
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return null|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function basic($field = 'email')
     {
-        // TODO: Implement basic() method.
+        throw new \Exception('Not implemented');
     }
 
     /**
      * Perform a stateless HTTP Basic login attempt.
      *
      * @param  string $field
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return null|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function onceBasic($field = 'email')
     {
-        // TODO: Implement onceBasic() method.
+        throw new \Exception('Not implemented');
     }
 
     /**
@@ -153,23 +194,26 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      *
      * @param  array $credentials
      * @return bool
+     * @throws \Exception
      */
     public function validate(array $credentials = [])
     {
-        // TODO: Implement validate() method.
+        throw new \Exception('Not implemented');
     }
 
     /**
      * Log a user into the application.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param  bool $remember
+     * @param  bool $remember set or update token
      * @return void
      */
     public function login(Authenticatable $user, $remember = false)
     {
         $this->user = $user;
-        $user->setRememberToken($this->generateToken($user));
+        if ($remember){
+            $user->setRememberToken($this->generateToken($user));
+        }
     }
 
     /**
@@ -181,17 +225,22 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function loginUsingId($id, $remember = false)
     {
-        // TODO: Implement loginUsingId() method.
+        $user = $this->provider->retrieveById($id);
+        if ($user){
+            $this->login($user,$remember);
+        }
+
+        return $user;
     }
 
     /**
-     * Determine if the user was authenticated via "remember me" cookie.
+     * Determine if the user was authenticated via token.
      *
      * @return bool
      */
     public function viaRemember()
     {
-        // TODO: Implement viaRemember() method.
+        return $this->viaToken;
     }
 
     /**
@@ -201,7 +250,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function logout()
     {
-        // TODO: Implement logout() method.
+        $this->user = false;
     }
 
     /**
@@ -248,6 +297,45 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     public function getPayloadFactory()
     {
         return $this->payloadFactory;
+    }
+
+    /**
+     * @return RequestParser
+     */
+    public function getRequestParser()
+    {
+        return $this->requestParser;
+    }
+
+    /**
+     * Get the current request instance.
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Set the current request instance.
+     *
+     * @param  Request  $request
+     * @return $this
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * @return PayloadValidationFactory
+     */
+    public function getValidationFactory()
+    {
+        return $this->validationFactory;
     }
 
 }

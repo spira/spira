@@ -13,9 +13,7 @@ namespace App\Http\Controllers;
 use App\Extensions\Socialite\SocialiteManager;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
-use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Responder\Response\ApiResponse;
-use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Exceptions\BadRequestException;
@@ -90,10 +88,6 @@ class AuthController extends ApiController
             }
         }
 
-        /** @var SocialiteAuthenticatable $user */
-        $user = $this->auth->user();
-        $user->setCurrentAuthMethod('password');
-
         return $this->getResponse()
             ->transformer($this->transformer)
             ->item($this->auth->user()->getRememberToken());
@@ -105,18 +99,14 @@ class AuthController extends ApiController
      *
      * @return ApiResponse
      */
-    public function refresh()
+    public function refresh(Request $request)
     {
-        $token = $this->jwtAuth->getTokenFromRequest();
-
-        // Get the user to make sure the token is fully valid
-        $this->jwtAuth->getUser();
-
-        $token = $this->jwtAuth->refresh($token);
+        $user = $this->auth->user();
+        $this->auth->login($user, true);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($token);
+            ->item($user->getRememberToken());
     }
 
     /**

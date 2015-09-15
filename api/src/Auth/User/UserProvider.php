@@ -63,7 +63,7 @@ class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
     public function retrieveByToken($identifier, $token)
     {
         $function = $this->tokenUserProvider;
-        if (!is_null($function) && $user = $function($token)){
+        if (!is_null($function) && $user = $function($token, $this)){
             return $user;
         }
 

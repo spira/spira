@@ -28,13 +28,16 @@ class PayloadValidationFactory
         $this->validationRules[$name] = $function;
     }
 
+    /**
+     * @param $payload
+     * @throw TokenInvalidException
+     */
     public function validatePayload($payload)
     {
         foreach ($this->validationRules as $name => $rule) {
-            if (!$rule($payload)){
+            if (isset($payload[$name]) && !$rule($payload)){
                 throw new TokenInvalidException('Token invalid due to '.$name);
             }
         }
-
     }
 }
