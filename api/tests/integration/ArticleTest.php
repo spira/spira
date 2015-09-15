@@ -444,7 +444,10 @@ class ArticleTest extends TestCase
             return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
         }, $article->articleMetas->all());
 
-        $meta = factory(\App\Models\ArticleMeta::class)->make();
+        $meta = factory(\App\Models\ArticleMeta::class)->make(array(
+            'meta_name' => 'barfoobar',
+            'meta_content' => 'barfoobarfoo'
+        ));
         $entities[] = $this->prepareEntity($meta);
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
