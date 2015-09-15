@@ -434,28 +434,51 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        $article = factory(Article::class)->create();
-        $this->addMetasToArticles([$article]);
-        $article->push();
+        // Ran into a case where updating one article's meta tags would change another article's meta tags that had the same meta name, in this test articleTwo's meta should not change.
+        
+        // Create articleOne, make sure it has a meta tag named 'barfoobar'
+        $articleOne = factory(Article::class)->create();
+        $this->addMetasToArticles([$articleOne]);
+        $articleOne->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'barfoobar',
+            'meta_content' => 'foo'
+        ]));
+        $articleOne->push();
 
-        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
+        // Create articleTwo and give it a meta tag named 'barfoobar' too. Give the meta tag different content.
+        $articleTwoMeta = factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'barfoobar',
+            'meta_content' => 'shouldnotchange'
+        ]);
+        $articleTwo = factory(Article::class)->create();
+        $articleTwo->articleMetas->add($articleTwoMeta);
+        $articleTwo->push();
+        
+        // Get the meta tag count of articleOne so that we can compare it later
+        $metaCount = ArticleMeta::where('article_id', '=', $articleOne->article_id)->count();
 
+        // Modify the content of all meta tags in articleOne to 'foobar'
         $entities = array_map(function ($entity) {
             return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
-        }, $article->articleMetas->all());
+        }, $articleOne->articleMetas->all());
 
-        $meta = factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'barfoobar',
-            'meta_content' => 'barfoobarfoo',
-        ]);
-        $entities[] = $this->prepareEntity($meta);
+        // Add a new meta tag to articleOne
+        $entities[] = $this->prepareEntity(factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'somethingdifferentfoobar',
+            'meta_content' => 'somethingdifferent'
+        ]));
 
-        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
+        // Submit the changes to articleOne's meta tags including the addition of a new tag
+        $this->putJson('/articles/'.$articleOne->article_id.'/meta', $entities);
 
+        // Ensure the API responds correctly
         $this->assertResponseStatus(201);
-        $updatedArticle = Article::find($article->article_id);
 
+        // Ensure that articleOne's meta tag count has increased by one
+        $updatedArticle = Article::find($articleOne->article_id);
         $this->assertEquals($metaCount + 1, $updatedArticle->articleMetas->count());
+
+        // Ensure that all meta tags have correctly changed their content to 'foobar' (except the new tag)
         $counter = 0;
         foreach ($updatedArticle->articleMetas as $meta) {
             if ($meta->meta_content == 'foobar') {
@@ -464,7 +487,13 @@ class ArticleTest extends TestCase
         }
         $this->assertEquals($counter, $metaCount);
 
-        $this->cleanupDiscussions([$article]);
+        // Check that articleTwo's meta has not changed
+        $articleTwo = Article::find($articleTwo->article_id);
+        $this->assertEquals($articleTwo->articleMetas->first()->meta_content, $articleTwoMeta->meta_content);
+
+        // Clean up
+        $this->cleanupDiscussions([$articleOne]);
+        $this->cleanupDiscussions([$articleTwo]);
     }
 
     public function deleteMeta()

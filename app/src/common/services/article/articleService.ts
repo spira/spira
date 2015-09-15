@@ -182,7 +182,8 @@ namespace common.services.article {
                         return new common.models.ArticleMeta({
                             metaName:metaTagName,
                             metaContent:'',
-                            articleId:article.articleId
+                            articleId:article.articleId,
+                            id:this.ngRestAdapter.uuid()
                         });
                     }
                     return existingTag;
