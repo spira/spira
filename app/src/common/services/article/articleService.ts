@@ -171,23 +171,24 @@ namespace common.services.article {
 
         /**
          * Hydrates a meta template with meta which already exists
-         * @param meta
+         * @param article
          * @param template
          */
-        public hydrateMetaFromTemplate(meta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] {
+        public hydrateMetaFromTemplate(article:common.models.Article, template:string[]):common.models.ArticleMeta[] {
             return (<any>_).chain(template)
                 .map((metaTagName) => {
-                    let existingTag = _.find(meta, {metaName:metaTagName});
+                    let existingTag = _.find(article._articleMetas, {metaName:metaTagName});
                     if(_.isEmpty(existingTag)) {
                         return new common.models.ArticleMeta({
                             metaName:metaTagName,
-                            metaContent:''
+                            metaContent:'',
+                            articleId:article.articleId
                         });
                     }
                     return existingTag;
                 })
                 .thru((templateMeta) => {
-                    let leftovers = _.filter(meta, (metaTag) => {
+                    let leftovers = _.filter(article._articleMetas, (metaTag) => {
                         return !_.contains(templateMeta, metaTag);
                     });
 
