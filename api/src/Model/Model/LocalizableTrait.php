@@ -44,16 +44,16 @@ trait LocalizableTrait
         $this->updateLocalisedCache($locale);
 
         if (! $this->getLocalisedModel($locale)) {
-            return DB::table('localisations')->insert([
+            return DB::table('localizations')->insert([
                 'entity_id' => $this->getKey(),
                 'region_code' => $locale,
-                'localisations' => json_encode($this->attributes),
+                'localizations' => json_encode($this->attributes),
             ]);
         } else {
-            return DB::table('localisations')
+            return DB::table('localizations')
                 ->where('entity_id', $this->getKey())
                 ->where('region_code', $locale)
-                ->update(['localisations' => json_encode($this->attributes)]);
+                ->update(['localizations' => json_encode($this->attributes)]);
         }
     }
 
@@ -66,13 +66,13 @@ trait LocalizableTrait
      */
     protected function getLocalisedModel($locale)
     {
-        $localised = DB::table('localisations')
+        $localised = DB::table('localizations')
             ->where('entity_id', $this->getKey())
             ->where('region_code', $locale)
             ->first();
 
         if ($localised) {
-            return json_decode($localised->localisations, true);
+            return json_decode($localised->localizations, true);
         }
 
         return false;

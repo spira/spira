@@ -11,9 +11,9 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocalisationsTable extends Migration
+class CreateLocalizationsTable extends Migration
 {
-    const TABLE_NAME = 'localisations';
+    const TABLE_NAME = 'localizations';
 
     /**
      * Run the migrations.
@@ -25,7 +25,7 @@ class CreateLocalisationsTable extends Migration
         Schema::create(static::TABLE_NAME, function (Blueprint $table) {
             $table->uuid('entity_id');
             $table->char('region_code', 2);
-            $table->json('localisations');
+            $table->json('localizations');
 
             $table->index(['entity_id', 'region_code']);
         });

@@ -657,12 +657,12 @@ class ArticleTest extends TestCase
         $article->fill($data);
         $article->save(['locale' => $locale]);
 
-        $localised = DB::table('localisations')
+        $localised = DB::table('localizations')
             ->where('entity_id', $article->article_id)
             ->where('region_code', $locale)
             ->first();
 
-        $localisations = json_decode($localised->localisations, true);
+        $localisations = json_decode($localised->localizations, true);
 
         $this->assertEquals($title, $localisations['title']);
 
@@ -695,12 +695,12 @@ class ArticleTest extends TestCase
         $article->fill($data);
         $article->save(['locale' => $locale]);
 
-        $localised = DB::table('localisations')
+        $localised = DB::table('localizations')
             ->where('entity_id', $article->article_id)
             ->where('region_code', $locale)
             ->get();
 
-        $localisations = json_decode(reset($localised)->localisations, true);
+        $localisations = json_decode(reset($localised)->localizations, true);
 
         $this->assertCount(1, $localised);
         $this->assertEquals($title, $localisations['title']);

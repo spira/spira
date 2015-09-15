@@ -100,6 +100,11 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
 });
 
+$app->group(['prefix' => 'localizations', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('{region}/{id}', 'LocalizationsController@getAll');
+    $app->get('{region}/{id}/{attribute}', 'LocalizationsController@getOne');
+});
+
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('jwt/login', 'AuthController@login');
     $app->get('jwt/refresh', 'AuthController@refresh');

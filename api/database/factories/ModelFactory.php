@@ -221,3 +221,14 @@ $factory->defineAs(Venturecraft\Revisionable\Revision::class, 'article', functio
 
     return array_merge($revision, $articleRevision);
 });
+
+$factory->define(App\Models\Localization::class, function ($faker) {
+    return [
+        'entity_id' => $faker->uuid,
+        'region_code' => $faker->randomElement(['au', 'uk', 'us']),
+        'localizations' => json_encode([
+            'varchar' => $faker->word,
+            'text' => $faker->paragraph(3),
+        ]),
+    ];
+});
