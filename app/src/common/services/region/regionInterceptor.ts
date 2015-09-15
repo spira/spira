@@ -52,7 +52,7 @@ namespace common.services.region {
 
                 let regionService = this.getRegionService();
 
-                if (!regionService.currentRegion || regionService.currentRegion.code !== regionHeader) {
+                if (!regionService.currentRegion) { //only trigger a region set when the current region has not been set
                     regionService.setRegion(regionService.getRegionByCode(regionHeader));
                 }
 

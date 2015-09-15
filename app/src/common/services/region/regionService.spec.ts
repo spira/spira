@@ -6,16 +6,18 @@ namespace common.services.region {
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
         let $rootScope:ng.IRootScopeService;
+        let $timeout:ng.ITimeoutService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _regionService_, _ngRestAdapter_, _$rootScope_) => {
+            inject((_$httpBackend_, _regionService_, _ngRestAdapter_, _$rootScope_, _$timeout_) => {
                 $httpBackend = _$httpBackend_;
                 regionService = _regionService_;
                 ngRestAdapter = _ngRestAdapter_;
                 $rootScope = _$rootScope_;
+                $timeout = _$timeout_;
             });
 
             sinon.stub((<any>regionService).$state, 'go');
@@ -65,6 +67,8 @@ namespace common.services.region {
 
                 regionService.setRegion(chosenRegion);
 
+                $timeout.flush();
+
                 expect(regionService.currentRegion).to.deep.equal(chosenRegion);
 
             });
@@ -74,6 +78,8 @@ namespace common.services.region {
                 let newRegion = regionService.getRegionByCode('us');
 
                 regionService.setRegion(newRegion);
+
+                $timeout.flush();
 
                 expect((<any>regionService).$state.go).to.have.been.calledWith('.', {region: newRegion.code});
 
@@ -129,6 +135,24 @@ namespace common.services.region {
 
                 expect(regionService.currentRegion).not.to.be.null;
                 expect(regionService.currentRegion.code).to.equal('us');
+
+            });
+
+
+            it('should not change the region when the api responds with a different region', () => {
+
+                regionService.setRegion(regionService.getRegionByCode('au'));
+
+                $httpBackend.expectGET('/api/any').respond(200, '', {
+                    'Content-Region': 'us'
+                });
+
+                ngRestAdapter.get('/any');
+
+                $httpBackend.flush();
+
+                expect(regionService.currentRegion).not.to.be.null;
+                expect(regionService.currentRegion.code).to.equal('au');
 
             });
 

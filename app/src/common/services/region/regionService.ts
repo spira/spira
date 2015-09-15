@@ -28,8 +28,10 @@ namespace common.services.region {
         public supportedRegions:global.ISupportedRegion[];
         public currentRegion:global.ISupportedRegion = null;
 
-        static $inject:string[] = ['$state'];
-        constructor(private $state:ng.ui.IStateService) {
+        static $inject:string[] = ['$state', '$timeout'];
+
+        constructor(private $state:ng.ui.IStateService,
+                    private $timeout:ng.ITimeoutService) {
             this.supportedRegions = supportedRegions;
         }
 
@@ -41,9 +43,12 @@ namespace common.services.region {
 
             this.currentRegion = region;
 
-            this.$state.go('.', {
-                region: region.code
+            this.$timeout(() => {
+                this.$state.go('.', {
+                    region: region.code
+                });
             });
+
         }
 
         /**
@@ -54,7 +59,6 @@ namespace common.services.region {
         public getRegionByCode(regionCode:String):global.ISupportedRegion {
             return _.find(this.supportedRegions, {code: regionCode})
         }
-
 
     }
 
