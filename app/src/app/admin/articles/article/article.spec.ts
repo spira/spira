@@ -3,6 +3,10 @@ namespace app.admin.articles.article {
     describe('Article', () => {
 
         let seededChance = new Chance(1),
+            testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
+                metaName: 'title',
+                metaContent: 'foobar'
+            }),
             getArticle = (title?:string):common.models.Article => {
 
                 if(_.isEmpty(title)) {
@@ -13,7 +17,7 @@ namespace app.admin.articles.article {
                     title: title,
                     body: seededChance.paragraph(),
                     permalink: title.replace(' ', '-'),
-                    _articleMetas: []
+                    _articleMetas: [testMeta]
                 });
 
             },
@@ -30,10 +34,15 @@ namespace app.admin.articles.article {
                     return $q.when(true);
                 },
                 getArticle:(identifier:string) => {
-                    return getArticle(identifier);
+                    return $q.when(getArticle(identifier));
                 },
                 newArticle:() => {
                     return getArticle('newArticle');
+                },
+                hydrateMetaFromTemplate:(meta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
+                    return [
+                        new common.models.ArticleMeta({metaName:'foobarfoo', metaContent:'barfoo'})
+                    ];
                 }
             },
             ArticleController:ArticleController;
@@ -60,6 +69,7 @@ namespace app.admin.articles.article {
 
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
+            sinon.spy(articleService, 'hydrateMetaFromTemplate');
 
         });
 
@@ -67,9 +77,9 @@ namespace app.admin.articles.article {
 
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
+            (<any>articleService).hydrateMetaFromTemplate.restore();
 
         });
-
 
         it('should be able to save a new article', () => {
 
@@ -105,40 +115,11 @@ namespace app.admin.articles.article {
 
             let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
 
-            expect(article).to.be.an.instanceOf(common.models.Article);
+            $rootScope.$apply();
 
-            expect(article.title).to.equal('foobar');
+            expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
-        });
-
-        it('should be able to resolve articleMetaTags', () => {
-
-            let article:common.models.Article = getArticle();
-
-            article._articleMetas.push(new common.models.ArticleMeta({
-                metaName: 'title',
-                metaContent: 'foo'
-            }));
-
-            article._articleMetas.push(new common.models.ArticleMeta({
-                metaName: 'keyword',
-                metaContent: 'bar'
-            }));
-
-            expect(_.cloneDeep(article._articleMetas)).to.deep.equal([
-                {metaName: 'title', metaContent: 'foo'},
-                {metaName: 'keyword', metaContent: 'bar'}
-            ]);
-
-            (<any>ArticleConfig.state.resolve).articleMetaTags(article);
-
-            expect(_.cloneDeep(article._articleMetas)).to.deep.equal([
-                {metaName: 'name', metaContent: ''},
-                {metaName: 'description', metaContent: ''},
-                {metaName: 'keyword', metaContent: 'bar'},
-                {metaName: 'canonical', metaContent: ''},
-                {metaName: 'title', metaContent: 'foo'}
-            ]);
+            expect(articleService.hydrateMetaFromTemplate).to.have.been.calledWith([testMeta]);
 
         });
 
