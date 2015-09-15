@@ -79,11 +79,12 @@ namespace app {
 
     export class AppController {
 
-        static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state'];
+        static $inject = ['$mdSidenav', 'ngJwtAuthService', '$state', 'regionService'];
 
         constructor(private $mdSidenav:ng.material.ISidenavService,
                     public ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    private $state:ng.ui.IStateService) {
+                    private $state:ng.ui.IStateService,
+                    public regionService:common.services.region.RegionService) {
         }
 
         /**

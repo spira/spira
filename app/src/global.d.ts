@@ -48,5 +48,11 @@ declare namespace global {
         _user: IUserData;
     }
 
+    export interface ISupportedRegion {
+        code:string;
+        name:string;
+        icon?:string;
+    }
+
 
 }

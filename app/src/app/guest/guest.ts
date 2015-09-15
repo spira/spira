@@ -1,6 +1,3 @@
-
-///<reference path="../../../src/global.d.ts" />
-
 namespace app.guest {
 
     export const namespace = 'app.guest';
@@ -11,12 +8,14 @@ namespace app.guest {
 
     class GuestConfig {
 
-        static $inject = ['stateHelperServiceProvider'];
-        constructor(private stateHelperServiceProvider){
+        static $inject = ['stateHelperServiceProvider', 'supportedRegions'];
+        constructor(private stateHelperServiceProvider, supportedRegions:global.ISupportedRegion[]){
+
+            let regionString = _.pluck(supportedRegions, 'code').join('|');
 
             let state:global.IState = {
                 abstract: true,
-                url: '/{region:us|gb|au}',
+                url: `/{region:${regionString}}`,
                 params: {
                     region: {
                         value: null,
