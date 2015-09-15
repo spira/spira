@@ -434,51 +434,28 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        // Ran into a case where updating one article's meta tags would change another article's meta tags that had the same meta name, in this test articleTwo's meta should not change.
-        
-        // Create articleOne, make sure it has a meta tag named 'barfoobar'
-        $articleOne = factory(Article::class)->create();
-        $this->addMetasToArticles([$articleOne]);
-        $articleOne->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'barfoobar',
-            'meta_content' => 'foo'
-        ]));
-        $articleOne->push();
+        $article = factory(Article::class)->create();
+        $this->addMetasToArticles([$article]);
+        $article->push();
 
-        // Create articleTwo and give it a meta tag named 'barfoobar' too. Give the meta tag different content.
-        $articleTwoMeta = factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'barfoobar',
-            'meta_content' => 'shouldnotchange'
-        ]);
-        $articleTwo = factory(Article::class)->create();
-        $articleTwo->articleMetas->add($articleTwoMeta);
-        $articleTwo->push();
-        
-        // Get the meta tag count of articleOne so that we can compare it later
-        $metaCount = ArticleMeta::where('article_id', '=', $articleOne->article_id)->count();
+        $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
 
-        // Modify the content of all meta tags in articleOne to 'foobar'
         $entities = array_map(function ($entity) {
             return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
-        }, $articleOne->articleMetas->all());
+        }, $article->articleMetas->all());
 
-        // Add a new meta tag to articleOne
-        $entities[] = $this->prepareEntity(factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'somethingdifferentfoobar',
-            'meta_content' => 'somethingdifferent'
-        ]));
+        $meta = factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'barfoobar',
+            'meta_content' => 'barfoobarfoo',
+        ]);
+        $entities[] = $this->prepareEntity($meta);
 
-        // Submit the changes to articleOne's meta tags including the addition of a new tag
-        $this->putJson('/articles/'.$articleOne->article_id.'/meta', $entities);
+        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
-        // Ensure the API responds correctly
         $this->assertResponseStatus(201);
+        $updatedArticle = Article::find($article->article_id);
 
-        // Ensure that articleOne's meta tag count has increased by one
-        $updatedArticle = Article::find($articleOne->article_id);
         $this->assertEquals($metaCount + 1, $updatedArticle->articleMetas->count());
-
-        // Ensure that all meta tags have correctly changed their content to 'foobar' (except the new tag)
         $counter = 0;
         foreach ($updatedArticle->articleMetas as $meta) {
             if ($meta->meta_content == 'foobar') {
@@ -487,13 +464,26 @@ class ArticleTest extends TestCase
         }
         $this->assertEquals($counter, $metaCount);
 
-        // Check that articleTwo's meta has not changed
-        $articleTwo = Article::find($articleTwo->article_id);
-        $this->assertEquals($articleTwo->articleMetas->first()->meta_content, $articleTwoMeta->meta_content);
+        $this->cleanupDiscussions([$article]);
+    }
 
-        // Clean up
-        $this->cleanupDiscussions([$articleOne]);
-        $this->cleanupDiscussions([$articleTwo]);
+    public function testPutDuplicateMetaNames()
+    {
+        $article = factory(Article::class)->create();
+        $article->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'foo',
+            'meta_content' => 'bar',
+        ]));
+        $article->push();
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $this->prepareEntity(
+            factory(\App\Models\ArticleMeta::class)->make([
+                'meta_name' => 'foo',
+                'meta_content' => 'foobar',
+            ])
+        ));
+
+        $this->assertResponseStatus(500);
     }
 
     public function deleteMeta()
