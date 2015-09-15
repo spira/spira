@@ -10,10 +10,17 @@ namespace app.admin.articles.article {
 
     export class ArticleConfig {
 
+        public static articleMetaTemplate:string[] = [
+            'name', 'description', 'keyword', 'canonical'
+        ];
+
+        public static state:global.IState;
+
         static $inject = ['stateHelperServiceProvider'];
+
         constructor(private stateHelperServiceProvider){
 
-            let state:global.IState = {
+            ArticleConfig.state = {
                 url: '/article/{permalink}',
                 params: {
                     newArticle: false,
@@ -60,7 +67,13 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink);
+                        return articleService.getArticle($stateParams.permalink)
+                            .then((article) => {
+
+                                article._articleMetas = articleService.hydrateMetaFromTemplate(article._articleMetas, ArticleConfig.articleMetaTemplate);
+
+                                return article;
+                            });
                     }
                 },
                 data: {
@@ -70,7 +83,7 @@ namespace app.admin.articles.article {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, ArticleConfig.state);
 
         }
 
@@ -83,7 +96,8 @@ namespace app.admin.articles.article {
             public article:common.models.Article,
             public $stateParams:IArticleStateParams,
             private articleService:common.services.article.ArticleService,
-            private notificationService:common.services.notification.NotificationService) {
+            private notificationService:common.services.notification.NotificationService
+        ) {
         }
 
         /**

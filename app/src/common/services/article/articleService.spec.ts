@@ -21,6 +21,16 @@
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
                     }
+                ],
+                _articleMetas: [
+                    {
+                        metaName: 'title',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    }
                 ]
             });
 
@@ -140,6 +150,7 @@
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMetas, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 

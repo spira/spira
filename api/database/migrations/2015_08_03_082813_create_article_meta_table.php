@@ -26,7 +26,6 @@ class CreateArticleMetaTable extends Migration
             $table->uuid('article_id');
             $table->string('meta_name', 255);
             $table->string('meta_content', 255)->nullable();
-            $table->string('meta_property', 255)->nullable();
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 
