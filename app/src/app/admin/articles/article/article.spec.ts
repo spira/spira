@@ -4,6 +4,8 @@ namespace app.admin.articles.article {
 
         let seededChance = new Chance(1),
             testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
+                articleId: undefined,
+                id: 'f6a31e1d-60e0-35b5-a878-085deabe57bd',
                 metaName: 'title',
                 metaContent: 'foobar'
             }),
@@ -39,7 +41,7 @@ namespace app.admin.articles.article {
                 newArticle:() => {
                     return getArticle('newArticle');
                 },
-                hydrateMetaFromTemplate:(meta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
+                hydrateMetaFromTemplate:(article:common.models.Article, template:string[]):common.models.ArticleMeta[] => {
                     return [
                         new common.models.ArticleMeta({metaName:'foobarfoo', metaContent:'barfoo'})
                     ];
@@ -119,7 +121,7 @@ namespace app.admin.articles.article {
 
             expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
-            expect(articleService.hydrateMetaFromTemplate).to.have.been.calledWith([testMeta]);
+            expect(articleService.hydrateMetaFromTemplate).to.have.been.calledWith(sinon.match.instanceOf(common.models.Article));
 
         });
 
