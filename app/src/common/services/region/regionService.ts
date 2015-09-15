@@ -33,10 +33,11 @@ namespace common.services.region {
             this.supportedRegions = supportedRegions;
         }
 
-
+        /**
+         * Set the region and reload the current state
+         * @param region
+         */
         public setRegion(region:global.ISupportedRegion) {
-
-            let currentStateParams = this.$state.current.params;
 
             this.currentRegion = region;
 
@@ -45,13 +46,26 @@ namespace common.services.region {
             });
         }
 
+        /**
+         * Get the region with a supplied code
+         * @param regionCode
+         * @returns {global.ISupportedRegion|T}
+         */
+        public getRegionByCode(regionCode:String):global.ISupportedRegion {
+            return _.find(this.supportedRegions, {code: regionCode})
+        }
+
 
     }
 
     angular.module(namespace, [])
         .constant('supportedRegions', supportedRegions)
-        .service('regionService', RegionService);
-
+        .service('regionService', RegionService)
+        .service('regionInterceptor', RegionInterceptor)
+        .config(['$httpProvider', '$injector', ($httpProvider:ng.IHttpProvider) => {
+            $httpProvider.interceptors.push('regionInterceptor');
+        }])
+    ;
 }
 
 
