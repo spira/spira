@@ -1,108 +1,115 @@
-namespace common.services.auth {
+namespace common.services.error {
 
-    let seededChance = new Chance(1),
-        authService:common.services.auth.AuthService,
-        ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
+    let errorService:ErrorService,
         $q:ng.IQService,
-        $location:ng.ILocationService,
         $timeout:ng.ITimeoutService,
         $mdDialog:ng.material.IDialogService,
-        $state:ng.ui.IStateService,
-        notificationService:common.services.notification.NotificationService,
-        ngRestAdapter:NgRestAdapter.INgRestAdapterService,
-        $window:ng.IWindowService,
         $httpBackend:ng.IHttpBackendService,
-        fixtures = {
-            buildUser: (overrides = {}) => {
+        $rootScope:ng.IRootScopeService,
+        ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+        ErrorDialogController:ErrorDialogController;
 
-                let userId = seededChance.guid();
-                let defaultUser:global.IUserData = {
-                    _self: '/users/'+userId,
-                    userId: userId,
-                    email: seededChance.email(),
-                    firstName: seededChance.first(),
-                    lastName: seededChance.last(),
-                    _userCredential: {
-                        userCredentialId: seededChance.guid(),
-                        password: seededChance.string(),
-                    }
-                };
-
-                return _.merge(defaultUser, overrides);
-            },
-            get user():common.models.User {
-                return new common.models.User(fixtures.buildUser());
-            }
-        };
-
-    describe('Auth Service', () => {
+    describe('Error Service', () => {
 
         beforeEach(()=> {
 
             module('app');
 
-            module(($provide) => {
+            inject((_$rootScope_, $controller, _$httpBackend_, _$q_, _$timeout_, _$mdDialog_, _errorService_, _ngRestAdapter_) => {
 
-                $window = <any> {
-                    // $window.location.href will update that empty object
-                    location: {},
-                    // Required functions
-                    document: window.document,
-                    localStorage: window.localStorage,
-                    encodeURIComponent: (<any>window).encodeURIComponent
-                };
+                $rootScope = _$rootScope_;
+                $httpBackend = _$httpBackend_;
+                errorService = _errorService_;
+                ngRestAdapter = _ngRestAdapter_;
+                $q = _$q_;
+                $timeout = _$timeout_;
+                $mdDialog = _$mdDialog_;
 
-                // We register our new $window instead of the old
-                $provide.constant('$window', $window);
+                ErrorDialogController = $controller(common.services.error.namespace + '.controller', {
+                    $mdDialog: $mdDialog,
+                    title: "test title",
+                    message: "test message",
+                    extra: {
+                        key: 'value'
+                    },
+                });
 
             });
 
-            inject((_$httpBackend_, _authService_, _ngJwtAuthService_, _$q_, _$location_, _$timeout_, _$mdDialog_, _$state_, _notificationService_, _ngRestAdapter_) => {
+        });
 
-                if (!authService) { // Don't rebind, so each test gets the singleton
-                    $httpBackend = _$httpBackend_;
-                    authService = _authService_;
-                    ngJwtAuthService = _ngJwtAuthService_;
-                    $q = _$q_;
-                    $location = _$location_;
-                    $timeout = _$timeout_;
-                    $mdDialog = _$mdDialog_;
-                    $state = _$state_;
-                    notificationService = _notificationService_;
-                    ngRestAdapter = _ngRestAdapter_;
+        it('should pop a dialog when requested', () => {
+
+            sinon.spy($mdDialog, 'show');
+
+
+            errorService.showError("Test title", "test message");
+
+            $timeout.flush();
+
+            expect($mdDialog.show).to.have.been.calledWithMatch({
+                locals: {
+                    title: "Test title",
+                    message: "test message",
                 }
-
             });
 
-        });
-
-        it('should be able to log in using a social network', () => {
-
-            let provider = common.models.UserSocialLogin.facebookType,
-                state = 'app.user.profile',
-                params = null,
-                url = '/auth/social/facebook?returnUrl=%2Fprofile';
-
-            authService.socialLogin(provider, state, params);
-
-            expect($window.location.href).to.equal(url);
+            (<Sinon.SinonSpy>$mdDialog.show).restore();
 
         });
 
-        it('should be able to unlink a social network', () => {
+        it('should be able to cancel the error dialog on creation', () => {
 
-            let user = _.clone(fixtures.user),
-                provider = common.models.UserSocialLogin.facebookType;
 
-            $httpBackend.expectDELETE('/api/users/' + user.userId + '/socialLogin/' + provider).respond(204);
+            sinon.spy($mdDialog, 'cancel');
+            ErrorDialogController.cancelErrorDialog();
 
-            let unlinkSocialPromise = authService.unlinkSocialLogin(user, provider);
+            expect($mdDialog.cancel).to.have.been.called;
 
-            expect(unlinkSocialPromise).eventually.to.be.fulfilled;
+            (<Sinon.SinonSpy>$mdDialog.cancel).restore();
+
+
+        });
+
+        it('should trigger an error dialog when an api responds with error', () => {
+
+
+            sinon.spy(errorService, 'showError');
+
+            $httpBackend.expectGET('/api/a-failing-endpoint').respond(500, {
+                message: "Api error message",
+            });
+
+            ngRestAdapter.get('/a-failing-endpoint');
 
             $httpBackend.flush();
+            $timeout.flush();
+
+            expect(errorService.showError).to.have.been.calledWithMatch(sinon.match.string, "Api error message", sinon.match.object);
+
+            (<Sinon.SinonSpy>errorService.showError).restore();
 
         });
+
+        it('should trigger an error dialog with a default message when the api does not provide one', () => {
+
+
+            sinon.spy(errorService, 'showError');
+
+            $httpBackend.expectGET('/api/a-failing-endpoint').respond(500);
+
+            ngRestAdapter.get('/a-failing-endpoint');
+
+            $httpBackend.flush();
+            $timeout.flush();
+
+            expect(errorService.showError).to.have.been.calledWithMatch(sinon.match.string, "No response message", sinon.match.object);
+
+            (<Sinon.SinonSpy>errorService.showError).restore();
+
+        });
+
+
 
     });
 
