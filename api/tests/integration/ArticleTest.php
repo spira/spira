@@ -658,9 +658,10 @@ class ArticleTest extends TestCase
         $article->push();
 
         $metaEntity = $article->articleMetas->first();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
 
         $article = Article::find($article->article_id);
+
         $this->assertCount(1, $article->revisionHistory->toArray());
 
         $this->cleanupDiscussions([$article]);

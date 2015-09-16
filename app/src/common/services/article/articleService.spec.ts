@@ -204,7 +204,7 @@
 
                 let article = fixtures.getArticle();
 
-                let hydratedMetaTags = articleService.hydrateMetaFromTemplate(article, articleMetaTemplate);
+                let hydratedMetaTags = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, articleMetaTemplate);
 
                 expect(_.size(hydratedMetaTags)).to.equal(5);
 

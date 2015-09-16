@@ -23,14 +23,14 @@ class CreateArticleMetaTable extends Migration
     public function up()
     {
         Schema::create(ArticleMeta::getTableName(), function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('meta_id');
             $table->uuid('article_id');
             $table->string('meta_name', 255);
             $table->string('meta_content', 255)->nullable();
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 
-            $table->primary('id');
+            $table->primary('meta_id');
 
             $table->unique(['article_id', 'meta_name']);
 

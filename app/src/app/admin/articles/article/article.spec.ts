@@ -5,7 +5,7 @@ namespace app.admin.articles.article {
         let seededChance = new Chance(1),
             testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
                 articleId: undefined,
-                id: 'f6a31e1d-60e0-35b5-a878-085deabe57bd',
+                id: seededChance.guid(),
                 metaName: 'title',
                 metaContent: 'foobar'
             }),

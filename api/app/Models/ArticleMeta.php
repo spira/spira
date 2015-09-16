@@ -19,9 +19,12 @@ class ArticleMeta extends BaseModel
      *
      * @var string
      */
+
     public $table = 'article_metas';
 
-    protected $fillable = ['id', 'article_id', 'meta_name', 'meta_content'];
+    protected $primaryKey = 'meta_id';
+
+    protected $fillable = ['meta_id', 'article_id', 'meta_name', 'meta_content'];
 
     protected $guarded = ['meta_name'];
 

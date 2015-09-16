@@ -171,25 +171,26 @@ namespace common.services.article {
 
         /**
          * Hydrates a meta template with meta which already exists
-         * @param article
+         * @param articleId
+         * @param articleMetas
          * @param template
          */
-        public hydrateMetaFromTemplate(article:common.models.Article, template:string[]):common.models.ArticleMeta[] {
+        public hydrateMetaCollectionFromTemplate(articleId:string, articleMetas:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] {
             return (<any>_).chain(template)
                 .map((metaTagName) => {
-                    let existingTag = _.find(article._articleMetas, {metaName:metaTagName});
+                    let existingTag = _.find(articleMetas, {metaName:metaTagName});
                     if(_.isEmpty(existingTag)) {
                         return new common.models.ArticleMeta({
                             metaName:metaTagName,
                             metaContent:'',
-                            articleId:article.articleId,
+                            articleId:articleId,
                             id:this.ngRestAdapter.uuid()
                         });
                     }
                     return existingTag;
                 })
                 .thru((templateMeta) => {
-                    let leftovers = _.filter(article._articleMetas, (metaTag) => {
+                    let leftovers = _.filter(articleMetas, (metaTag) => {
                         return !_.contains(templateMeta, metaTag);
                     });
 
