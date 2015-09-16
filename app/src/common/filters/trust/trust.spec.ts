@@ -1,6 +1,6 @@
 namespace common.filters.trust {
 
-    describe.only('Trust filter', function () {
+    describe('Trust filter', function () {
         let $filter:ng.IFilterService;
 
         beforeEach(function () {
