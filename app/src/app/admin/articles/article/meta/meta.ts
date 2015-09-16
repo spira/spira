@@ -30,6 +30,7 @@ namespace app.admin.articles.article.meta {
         public authorAdded(newAuthor:common.models.User):void {
             this.authors = [newAuthor];
             this.article._author = newAuthor;
+            this.article.authorId = newAuthor.userId;
         }
 
     }

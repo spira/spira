@@ -15,6 +15,7 @@ namespace common.models {
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
+        public authorId:string = undefined;
 
         public _articleMetas:common.models.ArticleMeta[] = [];
         public _author:common.models.User = undefined;
