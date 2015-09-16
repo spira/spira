@@ -6,26 +6,30 @@ namespace app.admin.articles.article.meta {
 
         static $inject = ['article', 'notificationService', 'usersPaginator'];
 
-        public authors:common.models.User[] = [];
+        public authors:common.models.User[];
 
         constructor(
             public article:common.models.Article,
             private notificationService:common.services.notification.NotificationService,
             private usersPaginator:common.services.pagination.Paginator
         ) {
-            this.authors.push(article._author);
+            this.authors = [article._author];
         }
 
         /**
-         * Function called when author is searched for in the author contact chip input
+         * Function called when author is searched for in the author contact chip input.
          * @param query
          */
-        public searchAuthors(query:string) {
+        public searchAuthors(query:string):ng.IPromise<common.models.User[]> {
+            return this.usersPaginator.query(query);
+        }
 
-            return [{firstName:"John", email:"email@email.com", avatarImgUrl:"http://lorempixel.com/100/100/people/?80221"},{firstName:"Doe", email:"email@email.com", avatarImgUrl:"http://lorempixel.com/100/100/people/?80221"}];
-
-            //return this.usersPaginator.query(query);
-
+        /**
+         * Function called when an author is added.
+         */
+        public authorAdded(newAuthor:common.models.User):void {
+            this.authors = [newAuthor];
+            this.article._author = newAuthor;
         }
 
     }
