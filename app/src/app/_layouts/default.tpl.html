@@ -30,6 +30,12 @@
 
     </md-toolbar>
 
+    <md-content ng-if="!!AppController.regionService.currentRegion && AppController.ngJwtAuthService.loggedIn && AppController.regionService.currentRegion.code != AppController.ngJwtAuthService.user.regionCode">
+        <md-whiteframe>
+            Region not matching
+        </md-whiteframe>
+    </md-content>
+
     <nav layout="column" ui-view="navigation"></nav>
 
 </header>

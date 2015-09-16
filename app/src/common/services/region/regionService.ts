@@ -28,11 +28,23 @@ namespace common.services.region {
         public supportedRegions:global.ISupportedRegion[];
         public currentRegion:global.ISupportedRegion = null;
 
-        static $inject:string[] = ['$state', '$timeout'];
+        static $inject:string[] = ['$state', '$timeout', 'ngJwtAuthService'];
 
         constructor(private $state:ng.ui.IStateService,
-                    private $timeout:ng.ITimeoutService) {
+                    private $timeout:ng.ITimeoutService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService) {
+
             this.supportedRegions = supportedRegions;
+
+            // @todo implement ngJwtAuthService.registerLoginListener
+            //this.ngJwtAuthService.registerLoginListener((user:common.models.User) => {
+            //
+            //    if (!this.currentRegion){
+            //        this.currentRegion = this.getRegionByCode(user.regionCode);
+            //    }
+            //
+            //});
+
         }
 
         /**
