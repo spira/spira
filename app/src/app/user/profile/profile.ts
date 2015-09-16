@@ -76,6 +76,9 @@ namespace app.user.profile {
                     },
                     providerTypes:() => {
                         return common.models.UserSocialLogin.providerTypes;
+                    },
+                    regions:(regionService:common.services.region.RegionService) => {
+                        return regionService.supportedRegions;
                     }
                 },
                 data: {
@@ -99,7 +102,7 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes', '$location'];
+        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes', '$location', 'regions'];
 
         constructor(
             private userService:common.services.user.UserService,
@@ -111,7 +114,8 @@ namespace app.user.profile {
             public genderOptions:common.models.IGenderOption[],
             private authService:common.services.auth.AuthService,
             public providerTypes:string[],
-            private $location:ng.ILocationService
+            private $location:ng.ILocationService,
+            private regions:global.ISupportedRegion[]
         ) {
             if (this.emailConfirmed) {
                 let updatedUser = userService.getAuthUser();
