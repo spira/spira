@@ -4,6 +4,8 @@ namespace app.admin.articles.article {
 
         let seededChance = new Chance(1),
             testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
+                articleId: undefined,
+                id: seededChance.guid(),
                 metaName: 'title',
                 metaContent: 'foobar'
             }),
@@ -39,7 +41,7 @@ namespace app.admin.articles.article {
                 newArticle:() => {
                     return getArticle('newArticle');
                 },
-                hydrateMetaFromTemplate:(meta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
+                hydrateMetaCollectionFromTemplate:(articleId: string, articleMeta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
                     return [
                         new common.models.ArticleMeta({metaName:'foobarfoo', metaContent:'barfoo'})
                     ];
@@ -69,7 +71,7 @@ namespace app.admin.articles.article {
 
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
-            sinon.spy(articleService, 'hydrateMetaFromTemplate');
+            sinon.spy(articleService, 'hydrateMetaCollectionFromTemplate');
 
         });
 
@@ -77,7 +79,7 @@ namespace app.admin.articles.article {
 
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
-            (<any>articleService).hydrateMetaFromTemplate.restore();
+            (<any>articleService).hydrateMetaCollectionFromTemplate.restore();
 
         });
 
@@ -119,7 +121,7 @@ namespace app.admin.articles.article {
 
             expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
-            expect(articleService.hydrateMetaFromTemplate).to.have.been.calledWith([testMeta]);
+            expect(articleService.hydrateMetaCollectionFromTemplate).to.have.been.calledWith(sinon.match.any, [testMeta], sinon.match.array);
 
         });
 

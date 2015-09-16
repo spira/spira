@@ -24,12 +24,16 @@
                 ],
                 _articleMetas: [
                     {
-                        metaName: 'title',
+                        metaName: 'keyword',
                         metaContent: 'foo'
                     },
                     {
                         metaName: 'description',
                         metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
                     }
                 ]
             });
@@ -190,6 +194,56 @@
 
         });
 
+        describe('Meta tag hydration', () => {
+
+            let articleMetaTemplate:string[] = [
+                'name', 'description', 'keyword', 'canonical'
+            ];
+
+            it('should be able to hydrate meta tags from a template', () => {
+
+                let article = fixtures.getArticle();
+
+                let hydratedMetaTags = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, articleMetaTemplate);
+
+                expect(_.size(hydratedMetaTags)).to.equal(5);
+
+                expect(hydratedMetaTags[0].articleId).to.equal(article.articleId);
+
+                expect(_.isEmpty(hydratedMetaTags[0].id)).to.be.false;
+
+                let testableMetaTags = _.cloneDeep(hydratedMetaTags);
+                _.forEach(testableMetaTags, (tag) => {
+                    delete(tag.id);
+                    delete(tag.articleId);
+                });
+
+                expect(testableMetaTags).to.deep.equal([
+                    {
+                        metaName: 'name',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'canonical',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
+                ]);
+
+            });
+
+        });
 
     });
 

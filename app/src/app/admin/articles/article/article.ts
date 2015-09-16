@@ -70,7 +70,7 @@ namespace app.admin.articles.article {
                         return articleService.getArticle($stateParams.permalink)
                             .then((article) => {
 
-                                article._articleMetas = articleService.hydrateMetaFromTemplate(article._articleMetas, ArticleConfig.articleMetaTemplate);
+                                article._articleMetas = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, ArticleConfig.articleMetaTemplate);
 
                                 return article;
                             });

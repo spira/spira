@@ -467,6 +467,25 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$article]);
     }
 
+    public function testPutDuplicateMetaNames()
+    {
+        $article = factory(Article::class)->create();
+        $article->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'foo',
+            'meta_content' => 'bar',
+        ]));
+        $article->push();
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $this->prepareEntity(
+            factory(\App\Models\ArticleMeta::class)->make([
+                'meta_name' => 'foo',
+                'meta_content' => 'foobar',
+            ])
+        ));
+
+        $this->assertResponseStatus(500);
+    }
+
     public function deleteMeta()
     {
         $articles = factory(Article::class, 2)->create()->all();
@@ -639,9 +658,10 @@ class ArticleTest extends TestCase
         $article->push();
 
         $metaEntity = $article->articleMetas->first();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
 
         $article = Article::find($article->article_id);
+
         $this->assertCount(1, $article->revisionHistory->toArray());
 
         $this->cleanupDiscussions([$article]);
