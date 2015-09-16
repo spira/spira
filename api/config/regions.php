@@ -22,7 +22,7 @@ return [
         [
             'code' => 'us',
             'name' => 'United States',
-        ]
-    ]
+        ],
+    ],
 
 ];

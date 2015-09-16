@@ -86,7 +86,7 @@ return [
     'not_found'            => 'The selected :attribute is invalid.',
     'country'              => 'The :attribute must be a valid country code.',
     'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
-    'supported_region'     => 'The :attribute must be a supported region. Supported region codes are (' . implode(', ', array_pluck(config('regions.supported'), 'code')) . ')',
+    'supported_region'     => 'The :attribute must be a supported region. Supported region codes are ('.implode(', ', array_pluck(config('regions.supported'), 'code')).')',
 
     /*
     |--------------------------------------------------------------------------
