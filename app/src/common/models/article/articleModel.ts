@@ -5,7 +5,8 @@ namespace common.models {
 
         protected _nestedEntityMap = {
             tags: Tag,
-            articleMetas: ArticleMeta
+            articleMetas: ArticleMeta,
+            author: User
         };
 
         public articleId:string = undefined;
@@ -14,8 +15,9 @@ namespace common.models {
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
-        public _articleMetas:common.models.ArticleMeta[] = [];
 
+        public _articleMetas:common.models.ArticleMeta[] = [];
+        public _author:common.models.User = undefined;
         public _tags:common.models.Tag[] = [];
 
         constructor(data:any, exists:boolean = false) {

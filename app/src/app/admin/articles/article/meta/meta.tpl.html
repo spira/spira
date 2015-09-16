@@ -2,11 +2,12 @@
     <h2>Author</h2>
     <label>Author</label>
     <md-contact-chips
-            ng-model="MetaController.article._author"
-            md-contact-name="fullName()"
+            ng-model="MetaController.authors"
+            md-contact-name="name"
             md-contact-image="avatarImgUrl"
             md-contact-email="email"
-            md-contacts="MetaController.querySearch($query)">
+            md-contacts="MetaController.searchAuthors($query)"
+            ng-model-options="{ debounce: 500 }">
     </md-contact-chips>
 
     <h2>Search Engines</h2>
