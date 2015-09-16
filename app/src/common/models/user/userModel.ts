@@ -1,16 +1,5 @@
 namespace common.models {
 
-    export class ContactChip {
-        public userId:string = undefined;
-        public name:string = undefined; // firstName + lastName
-        public avatarImgUrl:string = undefined;
-        public email:string = undefined;
-
-        constructor(data:any) {
-            _.assign(this, data);
-        }
-    }
-
     @common.decorators.changeAware
     export class User extends AbstractModel implements global.IUserData {
 
@@ -61,18 +50,6 @@ namespace common.models {
             return (<any>_).some(this._socialLogins, 'provider', provider);
         }
 
-        /**
-         * Returns the user in a form which is able to be used by Angular Material's md-contact-chips
-         * @returns {common.models.ContactChip}
-         */
-        public contactChip():common.models.ContactChip {
-            return new ContactChip({
-                userId: this.userId,
-                name: this.fullName(),
-                avatarImgUrl: this.avatarImgUrl,
-                email: this.email
-            });
-        }
     }
 
 }

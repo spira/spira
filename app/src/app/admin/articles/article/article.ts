@@ -74,6 +74,9 @@ namespace app.admin.articles.article {
 
                                 return article;
                             });
+                    },
+                    usersPaginator: (userService:common.services.user.UserService) => {
+                        return userService.getUsersPaginator().setCount(10);
                     }
                 },
                 data: {

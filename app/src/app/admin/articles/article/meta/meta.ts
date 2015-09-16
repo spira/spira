@@ -4,15 +4,16 @@ namespace app.admin.articles.article.meta {
 
     export class MetaController {
 
-        static $inject = ['article', 'notificationService'];
+        static $inject = ['article', 'notificationService', 'usersPaginator'];
 
-        public authors:common.models.ContactChip[] = [];
+        public authors:common.models.User[] = [];
 
         constructor(
             public article:common.models.Article,
-            private notificationService:common.services.notification.NotificationService
+            private notificationService:common.services.notification.NotificationService,
+            private usersPaginator:common.services.pagination.Paginator
         ) {
-            this.authors.push(article._author.contactChip());
+            this.authors.push(article._author);
         }
 
         /**
@@ -20,6 +21,11 @@ namespace app.admin.articles.article.meta {
          * @param query
          */
         public searchAuthors(query:string) {
+
+            return [{firstName:"John", email:"email@email.com", avatarImgUrl:"http://lorempixel.com/100/100/people/?80221"},{firstName:"Doe", email:"email@email.com", avatarImgUrl:"http://lorempixel.com/100/100/people/?80221"}];
+
+            //return this.usersPaginator.query(query);
+
         }
 
     }
