@@ -386,6 +386,32 @@ class UserTest extends TestCase
         $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
     }
 
+    public function testPatchRegionCodeInvalid()
+    {
+        $user = $this->createUser(['user_type' => 'guest']);
+        $userToUpdate = $user;
+        $token = $this->tokenFromUser($user);
+
+        $update = [
+            'regionCode' => 'zz' //an invalid region
+        ];
+
+        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $updatedUser = User::find($userToUpdate->user_id);
+
+        $this->assertResponseStatus(422);
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('regionCode', $object->invalid);
+
+        $this->assertEquals($user->region_code, $updatedUser->region_code);
+    }
+
     public function testPatchOneBySelfUserUUID()
     {
         $user = $this->createUser(['user_type' => 'guest']);

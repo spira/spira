@@ -71,4 +71,20 @@ class SpiraValidator extends Validator
     {
         return preg_match('/^[\pL\pN\s._-]+$/u', $value);
     }
+
+    /**
+     * Register custom validation rule for supported region codes
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateSupportedRegion($attribute, $value, $parameters)
+    {
+        $supportedRegionCodes = array_pluck(config('regions.supported'), 'code');
+
+        return in_array($value, $supportedRegionCodes);
+    }
+
+
 }
