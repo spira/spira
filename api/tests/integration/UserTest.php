@@ -393,7 +393,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'regionCode' => 'zz' //an invalid region
+            'regionCode' => 'zz', //an invalid region
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
