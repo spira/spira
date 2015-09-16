@@ -33,6 +33,8 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     protected $requestQuery = 'token';
 
+    protected $requestCookie = 'token';
+
     protected $ttl = 60;
 
 
@@ -62,7 +64,12 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     protected function registerRequestParser()
     {
         $this->app->bind(RequestParser::class, function($app){
-            return new RequestParser($this->requestMethod, $this->requestHeader, $this->requestQuery);
+            return new RequestParser(
+                $this->requestMethod,
+                $this->requestHeader,
+                $this->requestQuery,
+                $this->requestCookie
+            );
         });
     }
 

@@ -18,6 +18,8 @@ use Spira\Auth\User\UserProvider;
 
 class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
 {
+    protected $requestCookie = 'ngJwtAuthToken';
+
     protected function getPayloadGenerators()
     {
         /** @var Request $request */

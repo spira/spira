@@ -13,6 +13,9 @@ namespace App\Http\Controllers;
 use App\Extensions\Socialite\SocialiteManager;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
+use Spira\Auth\Driver\Guard as SpiraGuard;
+use Spira\Auth\Token\TokenInvalidException;
+use Spira\Auth\Token\TokenIsMissingException;
 use Spira\Responder\Response\ApiResponse;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
@@ -30,7 +33,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends ApiController
 {
-    const JWT_AUTH_TOKEN_COOKIE = 'ngJwtAuthToken';
     /**
      * The application instance.
      *
@@ -41,7 +43,7 @@ class AuthController extends ApiController
     /**
      * JWT Auth Package.
      *
-     * @var Guard
+     * @var SpiraGuard
      */
     protected $auth;
 
@@ -51,7 +53,6 @@ class AuthController extends ApiController
      * @param Auth $auth
      * @param AuthTokenTransformer $transformer
      * @param Application $app
-     * @param Cache $cache
      */
     public function __construct(
         Guard $auth,
@@ -99,9 +100,9 @@ class AuthController extends ApiController
      *
      * @return ApiResponse
      */
-    public function refresh(Request $request)
+    public function refresh()
     {
-        $user = $this->auth->user();
+        $user = $this->auth->getUserFromRequest();
         $this->auth->login($user, true);
 
         return $this->getResponse()
@@ -124,21 +125,21 @@ class AuthController extends ApiController
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
-            throw new BadRequestException('Single use token not provided.');
+            throw new TokenIsMissingException('Single use token not provided.');
         }
 
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
         if (! $user = $userModel->findByLoginToken($token)) {
-            throw new UnauthorizedException('Token invalid.');
+            throw new TokenInvalidException('Invalid single use token.');
         }
 
-        $token = $this->jwtAuth->fromUser($user);
+        $this->auth->login($user, true);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($token);
+            ->item($user->getRememberToken());
     }
 
     /**
@@ -198,11 +199,13 @@ class AuthController extends ApiController
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
+        /** @var User $user */
         $user->addSocialLogin($socialLogin);
 
         // Prepare response data
-        $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$token;
+        $user->setCurrentAuthMethod($provider);
+        $this->auth->login($user, true);
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$user->getRememberToken();
 
         $response = $this->getResponse();
         $response->redirect($returnUrl, 302);
@@ -216,22 +219,12 @@ class AuthController extends ApiController
      * @param  string  $requester
      * @param  Request $request
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function singleSignOn($requester, Request $request)
     {
-        // A single sign on request might have different requirements and
-        // methods how to deal with a non logged in user. So we get the user
-        // if possible, and if not we pass in a null user and let the the
-        // requester class deal with it according to the requester's definitions
-        if ($token = $request->cookie(self::JWT_AUTH_TOKEN_COOKIE)) {
-            $user = $this->jwtAuth->toUser($token);
-        } else {
-            $user = null;
-        }
-
+        $user = $this->auth->user();
         $requester = SingleSignOnFactory::create($requester, $request, $user);
-
         return $requester->getResponse();
     }
 

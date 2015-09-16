@@ -119,16 +119,26 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
             return $this->user;
         }
 
-        $token = $this->getRequestParser()->getToken($this->getRequest());
-        $payload = $this->getTokenizer()->decode($token);
-        $this->getValidationFactory()->validatePayload($payload);
-        $user = $this->getProvider()->retrieveByToken(null, $payload);
+        try{
+            $user = $this->getUserFromRequest();
+        }catch (\Exception $e){
+            return null;
+        }
 
         if ($user){
             $this->user = $user;
             $this->viaToken = true;
         }
 
+        return $user;
+    }
+
+    public function getUserFromRequest()
+    {
+        $token = $this->getRequestParser()->getToken($this->getRequest());
+        $payload = $this->getTokenizer()->decode($token);
+        $this->getValidationFactory()->validatePayload($payload);
+        $user = $this->getProvider()->retrieveByToken(null, $payload);
         return $user;
     }
 

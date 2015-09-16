@@ -10,16 +10,6 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Cache;
-use Tymon\JWTAuth\Claims\Expiration;
-use Tymon\JWTAuth\Claims\IssuedAt;
-use Tymon\JWTAuth\Claims\Issuer;
-use Tymon\JWTAuth\Claims\JwtId;
-use Tymon\JWTAuth\Claims\NotBefore;
-use Tymon\JWTAuth\Claims\Subject;
-use App\Extensions\JWTAuth\UserClaim;
-use Tymon\JWTAuth\Payload;
-use Tymon\JWTAuth\Token;
 
 /**
  * Class AuthTest.
@@ -249,8 +239,7 @@ class AuthTest extends TestCase
         $token = implode('.', $segments);
 
         $this->callRefreshToken($token);
-
-        $this->assertException('Signature could not', 422, 'UnprocessableEntityException');
+        $this->assertException('Signature could not', 422, 'TokenInvalidException');
     }
 
     public function testRefreshInvalidToken()
@@ -259,18 +248,19 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertException('invalid', 422, 'UnprocessableEntityException');
+        $this->assertException('invalid', 422, 'TokenInvalidException');
     }
 
     public function testRefreshMissingToken()
     {
         $this->getJson('/auth/jwt/refresh');
 
-        $this->assertException('not provided', 400, 'BadRequestException');
+        $this->assertException('The token can not be parsed from the Request', 400, 'TokenIsMissingException');
     }
 
     public function testRefreshMissingUser()
     {
+        $this->markTestSkipped('User is taken from token - no db check');
         $user = factory(User::class)->make();
         $token = $this->tokenFromUser($user);
 
@@ -298,7 +288,7 @@ class AuthTest extends TestCase
     {
         $this->getJson('/auth/jwt/token');
 
-        $this->assertException('not provided', 400, 'BadRequestException');
+        $this->assertException('Single use token not provided.', 400, 'TokenIsMissingException');
     }
 
     public function testInvalidToken()
@@ -308,7 +298,7 @@ class AuthTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertResponseStatus(401);
+        $this->assertResponseStatus(422);
     }
 
     public function testTokenInvalid()
@@ -327,7 +317,7 @@ class AuthTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertException('invalid', 401, 'UnauthorizedException');
+        $this->assertException('Invalid single use token', 422, 'TokenInvalidException');
     }
 
     public function testMakeLoginToken()
@@ -463,10 +453,7 @@ class AuthTest extends TestCase
 
         $token = str_replace('jwtAuthToken=', '', $tokenParam);
 
-        $token = new Token($token);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
-
+        $decoded = $this->app->make('auth')->getTokenizer()->decode($token);
         $this->assertEquals('facebook', $decoded['method']);
         $this->assertStringStartsWith('http://foo.bar', $locationHeader);
 
@@ -508,9 +495,7 @@ class AuthTest extends TestCase
 
         $token = str_replace('jwtAuthToken=', '', $tokenParam);
 
-        $token = new Token($token);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
+        $decoded = $this->app->make('auth')->getTokenizer()->decode($token);
 
         $this->assertEquals('facebook', $decoded['method']);
         $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
@@ -545,7 +530,7 @@ class AuthTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
-        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $cookies = ['ngJwtAuthToken' => $token];
         $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
 
         $response = json_decode($this->response->getContent());
@@ -568,7 +553,7 @@ class AuthTest extends TestCase
             'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET')),
         ];
 
-        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $cookies = ['ngJwtAuthToken' => $token];
         $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
 
         $response = json_decode($this->response->getContent());

@@ -280,7 +280,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
      *
      * @param string $token
      *
-     * @return mixed
+     * @return User|null
      */
     public function findByLoginToken($token)
     {
@@ -290,7 +290,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
             return $user;
         }
 
-        return;
+        return null;
     }
 
     /**
