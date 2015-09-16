@@ -19,7 +19,6 @@ class ArticleMeta extends BaseModel
      *
      * @var string
      */
-
     public $table = 'article_metas';
 
     protected $primaryKey = 'meta_id';
