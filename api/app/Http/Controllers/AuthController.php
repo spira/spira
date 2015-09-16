@@ -91,7 +91,7 @@ class AuthController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($this->auth->user()->getRememberToken());
+            ->item($this->auth->token());
     }
 
 
@@ -103,11 +103,9 @@ class AuthController extends ApiController
     public function refresh()
     {
         $user = $this->auth->getUserFromRequest();
-        $this->auth->login($user, true);
-
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($user->getRememberToken());
+            ->item($this->auth->generateToken($user));
     }
 
     /**
@@ -135,11 +133,9 @@ class AuthController extends ApiController
             throw new TokenInvalidException('Invalid single use token.');
         }
 
-        $this->auth->login($user, true);
-
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($user->getRememberToken());
+            ->item($this->auth->generateToken($user));
     }
 
     /**
@@ -204,8 +200,7 @@ class AuthController extends ApiController
 
         // Prepare response data
         $user->setCurrentAuthMethod($provider);
-        $this->auth->login($user, true);
-        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$user->getRememberToken();
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$this->auth->generateToken($user);
 
         $response = $this->getResponse();
         $response->redirect($returnUrl, 302);

@@ -9,6 +9,7 @@
 namespace App\Providers;
 
 
+use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 use Illuminate\Http\Request;
@@ -20,17 +21,25 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
 {
     protected $requestCookie = 'ngJwtAuthToken';
 
+
     protected function getPayloadGenerators()
     {
         /** @var Request $request */
         $request = $this->app[Request::class];
-        return array_merge(parent::getPayloadGenerators(),[
-            '_user' => function(Authenticatable $user){ return $user;},
-            'method' => function(SocialiteAuthenticatable $user){ return $user->getCurrentAuthMethod()?:'password';},
-            'iss'=> function() use ($request) { return $request->getHttpHost();},
-            'aud'=> function() use ($request) { return str_replace('api.', '', $request->getHttpHost());},
-            'sub' => function(Authenticatable $user){return $user->getAuthIdentifier();},
-        ]);
+        return array_merge(
+            parent::getPayloadGenerators(),
+            [
+                '_user' => function(Authenticatable $user){
+                    /** @var EloquentModelTransformer $transformer */
+                    $transformer = $this->app->make(EloquentModelTransformer::class);
+                    return $transformer->transformItem($user);
+                },
+                'method' => function(SocialiteAuthenticatable $user){ return $user->getCurrentAuthMethod()?:'password';},
+                'iss'=> function() use ($request) { return $request->getHttpHost();},
+                'aud'=> function() use ($request) { return str_replace('api.', '', $request->getHttpHost());},
+                'sub' => function(Authenticatable $user){return $user->getAuthIdentifier();},
+            ]
+        );
     }
 
     protected function getTokenUserProvider()
@@ -41,10 +50,9 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                 $user = $provider->createModel();
                 foreach($userData as $key => $value){
                     if (is_string($value)){
-                        $user->{$key} = $value;
+                        $user->{snake_case($key)} = $value;
                     }
                 }
-
                 return $user;
             }
 

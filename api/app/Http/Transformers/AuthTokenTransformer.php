@@ -23,9 +23,13 @@ class AuthTokenTransformer extends EloquentModelTransformer
      */
     public function transformItem($token)
     {
-        return [
-            'token' => (string) $token
-        ];
+        $result = ['token' => (string) $token];
+
+        if (env('APP_DEBUG', false)){
+            $result['decodedTokenBody'] = \App::make('auth')->getTokenizer()->decode($token);
+        }
+
+        return $result;
     }
 
     /**

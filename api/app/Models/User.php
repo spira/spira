@@ -35,12 +35,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
 
     protected $authMethod;
 
-    protected $remember_token;
-
-    protected $hidden = [
-        'remember_token'
-    ];
-
     /**
      * The primary key for the model.
      *

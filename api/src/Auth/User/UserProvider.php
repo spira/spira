@@ -12,6 +12,7 @@ namespace Spira\Auth\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
+use Spira\Contract\Exception\NotImplementedException;
 
 class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 {
@@ -75,11 +76,11 @@ class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable $user
      * @param  string $token
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        throw new \Exception('Not implemented');
+        throw new NotImplementedException;
     }
 
     /**

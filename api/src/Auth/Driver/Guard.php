@@ -16,6 +16,7 @@ use Spira\Auth\Payload\PayloadFactory;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
+use Spira\Contract\Exception\NotImplementedException;
 
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
@@ -133,6 +134,20 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         return $user;
     }
 
+    /**
+     * Get the token of currently authenticated user.
+     *
+     * @return string|null
+     */
+    public function token()
+    {
+        if ($this->user){
+            return $this->generateToken($this->user);
+        }
+
+        return null;
+    }
+
     public function getUserFromRequest()
     {
         $token = $this->getRequestParser()->getToken($this->getRequest());
@@ -166,7 +181,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         $user = $this->getProvider()->retrieveByCredentials($credentials);
         if ($user  && $this->getProvider()->validateCredentials($user, $credentials)){
             if ($login) {
-                $this->login($user, $remember);
+                $this->login($user);
             }
 
             return true;
@@ -180,11 +195,11 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      *
      * @param  string $field
      * @return null|\Symfony\Component\HttpFoundation\Response
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public function basic($field = 'email')
     {
-        throw new \Exception('Not implemented');
+        throw new NotImplementedException;
     }
 
     /**
@@ -192,11 +207,11 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      *
      * @param  string $field
      * @return null|\Symfony\Component\HttpFoundation\Response
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public function onceBasic($field = 'email')
     {
-        throw new \Exception('Not implemented');
+        throw new NotImplementedException;
     }
 
     /**
@@ -204,11 +219,11 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      *
      * @param  array $credentials
      * @return bool
-     * @throws \Exception
+     * @throws NotImplementedException
      */
     public function validate(array $credentials = [])
     {
-        throw new \Exception('Not implemented');
+        throw new NotImplementedException;
     }
 
     /**
@@ -221,9 +236,6 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     public function login(Authenticatable $user, $remember = false)
     {
         $this->user = $user;
-        if ($remember){
-            $user->setRememberToken($this->generateToken($user));
-        }
     }
 
     /**
@@ -237,7 +249,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     {
         $user = $this->provider->retrieveById($id);
         if ($user){
-            $this->login($user,$remember);
+            $this->login($user);
         }
 
         return $user;
@@ -249,6 +261,16 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * @return bool
      */
     public function viaRemember()
+    {
+        throw new NotImplementedException;
+    }
+
+    /**
+     * Determine if the user was authenticated via token.
+     *
+     * @return bool
+     */
+    public function viaToken()
     {
         return $this->viaToken;
     }
@@ -267,7 +289,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * @param Authenticatable $user
      * @return string
      */
-    protected function generateToken(Authenticatable $user)
+    public function generateToken(Authenticatable $user)
     {
         return $this->getTokenizer()->encode($this->getPayloadFactory()->createFromUser($user));
     }

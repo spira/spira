@@ -25,16 +25,38 @@ use Spira\Auth\User\UserProvider;
 abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 {
 
+    /**
+     * @var string token encode/decode algorithm
+     */
     protected $algorithm = 'RS256';
 
+    /**
+     * @var string
+     * @see registerRequestParser
+     */
     protected $requestMethod = 'bearer';
 
+    /**
+     * @var string
+     * @see registerRequestParser
+     */
     protected $requestHeader = 'authorization';
 
+    /**
+     * @var string
+     * @see registerRequestParser
+     */
     protected $requestQuery = 'token';
 
+    /**
+     * @var string
+     * @see registerRequestParser
+     */
     protected $requestCookie = 'token';
 
+    /**
+     * @var int expiration of token in minutes
+     */
     protected $ttl = 60;
 
 
@@ -53,6 +75,12 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         $this->registerDriver();
     }
 
+    /**
+     * Bind our custom user provider
+     * This is a base method you don't want to override
+     *
+     * @see getTokenUserProvider
+     */
     protected function registerUserProvider()
     {
         $this->app->bind(UserProviderContract::class, function($app) {
@@ -61,6 +89,17 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Parses request for the token data
+     * override
+     *
+     *  $this->requestMethod,
+     *  $this->requestHeader,
+     *  $this->requestQuery,
+     *  $this->requestCookie
+     *
+     * to set custom headers
+     */
     protected function registerRequestParser()
     {
         $this->app->bind(RequestParser::class, function($app){
@@ -73,10 +112,13 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Base token auth driver registration
+     */
     protected function registerDriver()
     {
         $this->app->extend('auth', function(AuthManager $auth, $app){
-            return $auth->extend('spira', function($app) {
+            return $auth->extend('jwt', function($app) {
                 return $app[Guard::class];
             });
         });
@@ -91,6 +133,9 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Tokenizer adapter
+     */
     protected function registerTokenizer()
     {
         $this->app->bind(JWTInterface::class, function($app){
@@ -112,6 +157,32 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Custom function to get user from token
+     * Example of usage
+     *
+     *   return function($payload, UserProvider $provider){
+     *       if (isset($payload['_user']) && $payload['_user']){
+     *           $userData = $payload['_user'];
+     *           $user = $provider->createModel();
+     *           foreach($userData as $key => $value){
+     *               if (is_string($value)){
+     *                   $user->{$key} = $value;
+     *               }
+     *           }
+     *
+     *           return $user;
+     *       }
+     *
+     *       if (isset($payload['sub']) && $payload['sub']){
+     *           return $provider->retrieveById($payload['sub']);
+     *       }
+     *
+     *       return null;
+     *   };
+     *
+     * @return null
+     */
     protected function getTokenUserProvider()
     {
         return null;
@@ -145,14 +216,14 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         return [
             'nbf' => function($payload){
                 if ( Carbon::createFromTimeStampUTC($payload['nbf'])->isFuture()) {
-                    throw new TokenInvalidException('Not Before (nbf) timestamp cannot be in the future', 400);
+                    throw new TokenInvalidException('Not Before (nbf) timestamp cannot be in the future');
                 }
 
                 return true;
             },
             'iat' => function($payload){
                 if ( Carbon::createFromTimeStampUTC($payload['iat'])->isFuture()) {
-                    throw new TokenInvalidException('Issued At (iat) timestamp cannot be in the future', 400);
+                    throw new TokenInvalidException('Issued At (iat) timestamp cannot be in the future');
                 }
 
                 return true;
