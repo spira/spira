@@ -23,10 +23,25 @@ namespace common.services.region {
         }
     ];
 
+
+    export class RegionInit {
+
+        static $inject:string[] = ['regionService', 'ngJwtAuthService'];
+
+        constructor(private regionService:RegionService,
+                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService) {
+
+            this.ngJwtAuthService.registerLoginListener((user:common.models.User) => regionService.handleLoggedInUser(user));
+
+        }
+
+    }
+
     export class RegionService {
 
         public supportedRegions:global.ISupportedRegion[];
         public currentRegion:global.ISupportedRegion = null;
+        public userRegion:global.ISupportedRegion = null;
 
         static $inject:string[] = ['$state', '$timeout', 'ngJwtAuthService'];
 
@@ -35,15 +50,6 @@ namespace common.services.region {
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService) {
 
             this.supportedRegions = supportedRegions;
-
-            // @todo implement ngJwtAuthService.registerLoginListener
-            //this.ngJwtAuthService.registerLoginListener((user:common.models.User) => {
-            //
-            //    if (!this.currentRegion){
-            //        this.currentRegion = this.getRegionByCode(user.regionCode);
-            //    }
-            //
-            //});
 
         }
 
@@ -63,6 +69,16 @@ namespace common.services.region {
 
         }
 
+        public handleLoggedInUser(user:common.models.User):void {
+
+            this.userRegion = this.getRegionByCode(user.regionCode);
+
+            if (!this.currentRegion){
+                this.currentRegion = this.userRegion;
+            }
+
+        }
+
         /**
          * Get the region with a supplied code
          * @param regionCode
@@ -76,6 +92,7 @@ namespace common.services.region {
 
     angular.module(namespace, [])
         .constant('supportedRegions', supportedRegions)
+        .run(RegionInit)
         .service('regionService', RegionService)
         .service('regionInterceptor', RegionInterceptor)
         .config(['$httpProvider', '$injector', ($httpProvider:ng.IHttpProvider) => {

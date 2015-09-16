@@ -40,7 +40,13 @@ namespace app.guest {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    region: ($stateParams:IGuestStateParams) => {
+                    region: ($stateParams:IGuestStateParams, regionService:common.services.region.RegionService) => {
+
+                        //if the region service has a different region set, change it to the url one as that will be the link preference
+                        if (regionService.currentRegion.code !== $stateParams.region){
+                            regionService.currentRegion = regionService.getRegionByCode($stateParams.region);
+                        }
+
                         return $stateParams.region;
                     }
                 },
