@@ -73,7 +73,7 @@ class SpiraValidator extends Validator
     }
 
     /**
-     * Register custom validation rule for supported region codes
+     * Register custom validation rule for supported region codes.
      * @param $attribute
      * @param $value
      * @param $parameters
@@ -85,6 +85,4 @@ class SpiraValidator extends Validator
 
         return in_array($value, $supportedRegionCodes);
     }
-
-
 }
