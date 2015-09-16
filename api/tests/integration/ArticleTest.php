@@ -55,7 +55,7 @@ class ArticleTest extends TestCase
         foreach ($articles as $article) {
             $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
             foreach ($permalinks as $permalink) {
-                $article->permalinks->add($permalink);
+                $article->articlePermalinks->add($permalink);
             }
         }
     }
@@ -64,8 +64,12 @@ class ArticleTest extends TestCase
     {
         foreach ($articles as $article) {
             $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
+            $uniqueMetas = [];
             foreach ($metas as $meta) {
-                $article->metas->add($meta);
+                if (! in_array($meta->meta_name, $uniqueMetas)) {
+                    $article->articleMetas->add($meta);
+                    array_push($uniqueMetas, $meta->meta_name);
+                }
             }
         }
     }
@@ -165,7 +169,7 @@ class ArticleTest extends TestCase
         $this->addPermalinksToArticles([$entity]);
         $entity->push();
 
-        $permalink = $entity->permalinks->first();
+        $permalink = $entity->articlePermalinks->first();
         $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
@@ -195,7 +199,7 @@ class ArticleTest extends TestCase
         $this->addPermalinksToArticles([$entity]);
         $entity->push();
 
-        $permalink = $entity->permalinks->last();
+        $permalink = $entity->articlePermalinks->last();
         $this->getJson('/articles/'.$permalink->permalink);
 
         $this->assertResponseOk();
@@ -312,7 +316,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $id = $entity->article_id;
-        $linksCount = $entity->permalinks->count();
+        $linksCount = $entity->articlePermalinks->count();
         $entity->permalink = 'foo_bar';
 
         $preparedEntity = $this->prepareEntity($entity);
@@ -323,7 +327,7 @@ class ArticleTest extends TestCase
 
         $checkEntity = Article::find($id);
         $this->assertEquals($checkEntity->permalink, $entity->permalink);
-        $this->assertEquals($checkEntity->permalinks->count(), $linksCount + 1);
+        $this->assertEquals($checkEntity->articlePermalinks->count(), $linksCount + 1);
 
         $this->cleanupDiscussions([$entity]);
     }
@@ -335,7 +339,7 @@ class ArticleTest extends TestCase
         $entity->push();
 
         $id = $entity->article_id;
-        $linksCount = $entity->permalinks->count();
+        $linksCount = $entity->articlePermalinks->count();
 
         $entity->permalink = '';
 
@@ -344,7 +348,7 @@ class ArticleTest extends TestCase
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($id);
         $this->assertNull($checkEntity->permalink);
-        $this->assertEquals($checkEntity->permalinks->count(), $linksCount);
+        $this->assertEquals($checkEntity->articlePermalinks->count(), $linksCount);
 
         $this->cleanupDiscussions([$entity]);
     }
@@ -360,7 +364,7 @@ class ArticleTest extends TestCase
         $entity = array_shift($entities);
         $id = $entity->article_id;
 
-        $entityPermalinksCount = $entity->permalinks->count();
+        $entityPermalinksCount = $entity->articlePermalinks->count();
         $this->assertEquals($entityPermalinksCount, ArticlePermalink::where('article_id', '=', $id)->count());
 
         $rowCount = Article::count();
@@ -415,7 +419,7 @@ class ArticleTest extends TestCase
         $this->getJson('/articles/'.$entity->article_id.'/meta');
 
         $articleCheck = Article::find($entity->article_id);
-        $metaCheck = $articleCheck->metas->first();
+        $metaCheck = $articleCheck->articleMetas->first();
         $this->assertEquals($entity->article_id, $metaCheck->article->article_id);
 
         $this->assertResponseOk();
@@ -438,21 +442,22 @@ class ArticleTest extends TestCase
 
         $entities = array_map(function ($entity) {
             return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
-        }, $article->metas->all());
+        }, $article->articleMetas->all());
 
-        $metas = factory(\App\Models\ArticleMeta::class, 2)->make()->all();
-        foreach ($metas as $meta) {
-            $entities[] = $this->prepareEntity($meta);
-        }
+        $meta = factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'barfoobar',
+            'meta_content' => 'barfoobarfoo',
+        ]);
+        $entities[] = $this->prepareEntity($meta);
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
 
-        $this->assertEquals($metaCount + 2, $updatedArticle->metas->count());
+        $this->assertEquals($metaCount + 1, $updatedArticle->articleMetas->count());
         $counter = 0;
-        foreach ($updatedArticle->metas as $meta) {
+        foreach ($updatedArticle->articleMetas as $meta) {
             if ($meta->meta_content == 'foobar') {
                 $counter++;
             }
@@ -460,6 +465,25 @@ class ArticleTest extends TestCase
         $this->assertEquals($counter, $metaCount);
 
         $this->cleanupDiscussions([$article]);
+    }
+
+    public function testPutDuplicateMetaNames()
+    {
+        $article = factory(Article::class)->create();
+        $article->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
+            'meta_name' => 'foo',
+            'meta_content' => 'bar',
+        ]));
+        $article->push();
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $this->prepareEntity(
+            factory(\App\Models\ArticleMeta::class)->make([
+                'meta_name' => 'foo',
+                'meta_content' => 'foobar',
+            ])
+        ));
+
+        $this->assertResponseStatus(500);
     }
 
     public function deleteMeta()
@@ -470,11 +494,11 @@ class ArticleTest extends TestCase
             $oneEntity->push();
         }
         $article = current($articles);
-        $metaEntity = $article->metas->first();
+        $metaEntity = $article->articleMetas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
         $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
-        $this->assertEquals($metaCount - 1, $updatedArticle->metas->count());
+        $this->assertEquals($metaCount - 1, $updatedArticle->articleMetas->count());
 
         $this->cleanupDiscussions($articles);
     }
@@ -612,18 +636,16 @@ class ArticleTest extends TestCase
         $token = $this->tokenFromUser($user);
         $article = factory(Article::class)->create();
 
-        $metas = factory(\App\Models\ArticleMeta::class, 2)->make();
+        $meta = factory(\App\Models\ArticleMeta::class)->make();
         $entities = [];
-        foreach ($metas as $meta) {
-            array_push($entities, $this->prepareEntity($meta));
-        }
+        array_push($entities, $this->prepareEntity($meta));
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $article = Article::find($article->article_id);
-        $this->assertCount(2, $revisions = $article->revisionHistory->toArray());
+        $this->assertCount(1, $revisions = $article->revisionHistory->toArray());
         $this->assertEquals($user->user_id, reset($revisions)['user_id']);
 
         $this->cleanupDiscussions([$article]);
@@ -635,10 +657,11 @@ class ArticleTest extends TestCase
         $this->addMetasToArticles([$article]);
         $article->push();
 
-        $metaEntity = $article->metas->first();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_name);
+        $metaEntity = $article->articleMetas->first();
+        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
 
         $article = Article::find($article->article_id);
+
         $this->assertCount(1, $article->revisionHistory->toArray());
 
         $this->cleanupDiscussions([$article]);

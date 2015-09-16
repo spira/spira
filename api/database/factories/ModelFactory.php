@@ -116,9 +116,9 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
 
 $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $faker) {
     return [
-        'meta_name' => $faker->unique()->slug,
+        'meta_id' => $faker->uuid,
+        'meta_name' => $faker->boolean(50) ? $faker->randomElement(['name','description','keyword','canonical']) : $faker->word,
         'meta_content' => $faker->slug,
-        'meta_property' => $faker->slug,
     ];
 });
 

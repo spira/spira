@@ -1,3 +1,19 @@
-<h2>Meta</h2>
+<div layout-padding>
+    <h2>Author</h2>
+    <label>Author</label>
+    <md-contact-chips
+            ng-model="MetaController.article._author"
+            md-contact-name="fullName()"
+            md-contact-image="avatarImgUrl"
+            md-contact-email="email"
+            md-contacts="MetaController.querySearch($query)">
+    </md-contact-chips>
 
-<h3>TODO</h3>
+    <h2>Search Engines</h2>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <md-input-container ng-repeat="metaTag in MetaController.article._articleMetas">
+            <label for="metaTagMetaContent">{{ metaTag.metaName }}</label>
+            <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" ng-required="false">
+        </md-input-container>
+    </md-whiteframe>
+</div>
