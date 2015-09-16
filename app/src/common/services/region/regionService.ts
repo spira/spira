@@ -43,11 +43,10 @@ namespace common.services.region {
         public currentRegion:global.ISupportedRegion = null;
         public userRegion:global.ISupportedRegion = null;
 
-        static $inject:string[] = ['$state', '$timeout', 'ngJwtAuthService'];
+        static $inject:string[] = ['$state', '$timeout'];
 
         constructor(private $state:ng.ui.IStateService,
-                    private $timeout:ng.ITimeoutService,
-                    private ngJwtAuthService:NgJwtAuth.NgJwtAuthService) {
+                    private $timeout:ng.ITimeoutService) {
 
             this.supportedRegions = supportedRegions;
 

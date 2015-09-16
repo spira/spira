@@ -7,17 +7,33 @@ namespace common.services.region {
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
         let $rootScope:ng.IRootScopeService;
         let $timeout:ng.ITimeoutService;
+        let stubRegisterAuthListener = sinon.stub();
 
-        beforeEach(()=> {
+        beforeEach(() => {
 
             module('app');
 
+            module(($provide) => {
+                $provide.decorator('ngJwtAuthService', function($delegate:any) {
+
+                    $delegate.registerLoginListener = stubRegisterAuthListener;
+
+                    $delegate.registerLoginListener.onCall(0).yields(common.models.UserMock.entity({regionCode:'au'}));
+
+                    return $delegate;
+                });
+            });
+
             inject((_$httpBackend_, _regionService_, _ngRestAdapter_, _$rootScope_, _$timeout_) => {
-                $httpBackend = _$httpBackend_;
-                regionService = _regionService_;
-                ngRestAdapter = _ngRestAdapter_;
-                $rootScope = _$rootScope_;
-                $timeout = _$timeout_;
+
+                if (!regionService) {
+                    regionService = _regionService_;
+                    $httpBackend = _$httpBackend_;
+                    ngRestAdapter = _ngRestAdapter_;
+                    $rootScope = _$rootScope_;
+                    $timeout = _$timeout_;
+                }
+
             });
 
             sinon.stub((<any>regionService).$state, 'go');
@@ -39,6 +55,16 @@ namespace common.services.region {
                 return expect(regionService).to.be.an('object');
             });
 
+
+            it('should have set the region when the user logs in', () => {
+
+
+                expect(stubRegisterAuthListener).to.have.been.calledWith(sinon.match.instanceOf(Function));
+                expect(regionService.userRegion.code).to.equal('au');
+                expect(regionService.currentRegion.code).to.equal('au');
+
+            });
+
         });
 
         describe('Utility functions', () => {
@@ -54,12 +80,6 @@ namespace common.services.region {
         });
 
         describe('Set a region', () => {
-
-            it('should not have a region initially', () => {
-
-                return expect(regionService.currentRegion).to.be.null;
-
-            });
 
             it('should be able to set a user selected region', () => {
 
