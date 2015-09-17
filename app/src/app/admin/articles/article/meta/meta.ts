@@ -13,12 +13,8 @@ namespace app.admin.articles.article.meta {
             private notificationService:common.services.notification.NotificationService,
             private usersPaginator:common.services.pagination.Paginator
         ) {
-            if(_.isEmpty(article._author)) { // New article
-                this.authors = [];
-            }
-            else {
-                this.authors = [article._author];
-            }
+            // Initialize the authors array which is used as a model for author contact chip input.
+            this.authors = [article._author];
         }
 
         /**
