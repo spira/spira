@@ -141,6 +141,25 @@ namespace common.services.region {
 
             });
 
+
+
+            it.only('should not set a region header when the called endpoint is not the base api', () => {
+
+                regionService.setRegion(regionService.getRegionByCode('au'));
+
+                $httpBackend.expectGET('/other/any', (headers:Object) => {
+
+                    return !_.has(headers, 'Accept-Region');
+                }).respond(200);
+
+                let responsePromise = ngRestAdapter.api('/other').get('/any');
+
+                $httpBackend.flush();
+
+                expect(responsePromise).eventually.to.be.fulfilled;
+
+            });
+
             it('should set the region when an api call responds with a Content-Region header', () => {
 
                 regionService.currentRegion = null; //clear the current setting

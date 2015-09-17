@@ -32,7 +32,7 @@ namespace common.services.region {
 
             let regionService = this.getRegionService();
 
-            if (regionService.currentRegion){
+            if (regionService.currentRegion && config.isBaseUrl){ //@todo add this field in the ngRestAdapter service
                 config.headers['Accept-Region'] = regionService.currentRegion.code;
             }
 

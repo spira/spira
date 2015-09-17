@@ -25,7 +25,7 @@ namespace app.admin.media {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    perPage: 12,
+                    perPage: () => 12,
                     imagesPaginator: (imageService:common.services.image.ImageService, perPage:number) => {
                         return imageService.getImagesPaginator().setCount(perPage);
                     },

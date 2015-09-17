@@ -16,20 +16,25 @@
         <md-input-container>
 
             <input type="file"
+                   aria-label="Select Image"
                    ng-model="MediaController.queuedImage.file"
                    name="file"
                    ngf-select
                    accept="image/*"
-                   ngf-max-height="1000"
+                   ngf-max-height="2000"
                    ngf-max-size="20MB"
                    required
                 >
 
             <img ng-show="imageUploadForm.file.$valid" ngf-src="MediaController.queuedImage.file">
 
+            <div ng-if="!imageUploadForm.file.$valid">
+                File is invalid @todo show why
+            </div>
+
         </md-input-container>
 
-        <md-button ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Primary</md-button>
+        <md-button ng-if="imageUploadForm.file.$valid" ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Primary</md-button>
 
     </div>
 
