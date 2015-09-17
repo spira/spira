@@ -13,8 +13,7 @@ namespace Spira\Auth\Payload;
 use Spira\Auth\Token\TokenInvalidException;
 
 /**
- * Class PayloadValidationFactory
- * @package Spira\Auth\Payload
+ * Class PayloadValidationFactory.
  */
 class PayloadValidationFactory
 {

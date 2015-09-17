@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 17.09.15
- * Time: 20:27
+ * Time: 20:27.
  */
 
 namespace Spira\Auth\Blacklist;
-
 
 use Carbon\Carbon;
 use Spira\Auth\Token\TokenExpiredException;
@@ -40,7 +48,7 @@ class Blacklist
     public function add($payload)
     {
         $seconds = null;
-        if ($this->exp && isset($payload[$this->exp])){
+        if ($this->exp && isset($payload[$this->exp])) {
             $exp = Carbon::createFromTimeStampUTC($payload['exp']);
             if ($exp->isPast()) {
                 return;
@@ -49,20 +57,20 @@ class Blacklist
             $seconds = $exp->diffInSeconds(Carbon::now()->subSecond(10));
         }
 
-        if (isset($payload[$this->key])){
+        if (isset($payload[$this->key])) {
             $this->driver->add($payload[$this->key], $seconds);
         }
     }
 
     /**
-     * Checks if token in a blacklist
+     * Checks if token in a blacklist.
      * @param $payload
      * @return bool
      * @throw TokenExpiredException
      */
     public function check($payload)
     {
-        if (isset($payload[$this->key]) && $this->driver->get($payload[$this->key])){
+        if (isset($payload[$this->key]) && $this->driver->get($payload[$this->key])) {
             throw new TokenExpiredException;
         }
 

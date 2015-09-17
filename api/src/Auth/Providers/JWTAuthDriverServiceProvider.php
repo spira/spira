@@ -173,7 +173,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     /**
      * Base payload factory
-     * Rules can be overridden in
+     * Rules can be overridden in.
      * @see getPayloadGenerators
      */
     protected function registerPayloadFactory()
@@ -185,7 +185,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     /**
      * Base payload validator factory
-     * Rules can be overridden in
+     * Rules can be overridden in.
      * @see getValidationRules
      */
     protected function registerPayloadValidatorFactory()
@@ -250,7 +250,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     }
 
     /**
-     * Validation rules for payload
+     * Validation rules for payload.
      * @return array
      */
     protected function getValidationRules()
@@ -299,17 +299,17 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     /**
      * Needed for token invalidation during logout
-     * Optional
+     * Optional.
      */
     protected function registerBlackList()
     {
         $this->app->bind(Blacklist::class, function ($app) {
-            return new Blacklist($this->app[StorageInterface::class],$this->tokenKey, $this->tokenExp);
+            return new Blacklist($this->app[StorageInterface::class], $this->tokenKey, $this->tokenExp);
         });
     }
 
     /**
-     * Driver used to store invalid tokens
+     * Driver used to store invalid tokens.
      */
     protected function registerBlackListDriver()
     {

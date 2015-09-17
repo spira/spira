@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-
 namespace Spira\Auth\Driver;
 
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -19,7 +18,6 @@ use Spira\Auth\Payload\PayloadFactory;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
-use Spira\Auth\Token\TokenExpiredException;
 use Spira\Contract\Exception\NotImplementedException;
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
@@ -303,10 +301,11 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function logout()
     {
-        try{
+        try {
             $token = $this->getTokenFromRequest();
             $this->blacklist->add($this->getTokenizer()->decode($token));
-        }catch (\Exception $e){}
+        } catch (\Exception $e) {
+        }
         $this->user = false;
     }
 
