@@ -61,11 +61,7 @@ namespace app.admin.articles.article {
                     article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.permalink || $stateParams.permalink == 'new'){
-                            let currentUser = userService.getAuthUser();
-
-                            let newArticle = articleService.newArticle();
-                            newArticle._author = currentUser;
-                            newArticle.authorId = currentUser.userId;
+                            let newArticle = articleService.newArticle(userService.getAuthUser());
                             $stateParams.permalink = 'new';
                             $stateParams.newArticle = true;
                             return newArticle;
