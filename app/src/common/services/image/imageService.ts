@@ -39,6 +39,7 @@ namespace common.services.image {
 
     export interface ICloudinaryFileUploadConfig extends ng.angularFileUpload.IFileUploadConfig {
         fields: ICloudinaryUploadRequest;
+        sendFieldsAs: string;
     }
 
     export interface IImageNotification {

@@ -2,7 +2,7 @@ namespace common.models {
 
     export class UserMock{
 
-        private static getMockData():global.IUserData {
+        public static getMockData():global.IUserData {
 
             let seededChance = new Chance(Math.random());
 
@@ -11,7 +11,7 @@ namespace common.models {
                 email:seededChance.email(),
                 firstName:seededChance.first(),
                 lastName:seededChance.last(),
-                emailConfirmed:seededChance.date(),
+                emailConfirmed: moment(seededChance.date()).toISOString(),
                 country:seededChance.country(),
                 avatarImgUrl:seededChance.url(),
                 regionCode: seededChance.pick(['uk', 'us', 'gb']),
