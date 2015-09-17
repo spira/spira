@@ -50,6 +50,7 @@ namespace common.models {
             // Typings for lodash must not have this callback shorthand
             return (<any>_).some(this._socialLogins, 'provider', provider);
         }
+
     }
 
 }

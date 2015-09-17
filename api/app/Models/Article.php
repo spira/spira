@@ -52,7 +52,7 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id','first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id', 'first_published', 'primaryImage', 'status'];
 
     protected $hidden = ['permalinks','metas'];
 
