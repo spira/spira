@@ -4,17 +4,7 @@ namespace common.models {
 
     describe('User Model', () => {
 
-        let userData:global.IUserData = {
-            userId:seededChance.guid(),
-            email:seededChance.email(),
-            firstName:seededChance.first(),
-            lastName:seededChance.last(),
-            emailConfirmed:seededChance.date(),
-            country:seededChance.country(),
-            avatarImgUrl:seededChance.url(),
-            userType: seededChance.pick(User.userTypes),
-            _socialLogins:(<common.models.UserSocialLogin[]>[])
-        };
+        let userData:global.IUserData = UserMock.getMockData();
 
         it('should instantiate a new user', () => {
 
@@ -22,6 +12,25 @@ namespace common.models {
 
             expect(user).to.be.instanceOf(User);
 
+        });
+
+        it('should get custom user mock entity', () => {
+
+            let user = UserMock.entity({userId: 'abc-123'});
+
+            expect(user).to.be.instanceOf(User);
+
+            expect(user.userId).to.equal('abc-123');
+
+        });
+
+        it('should get user mock collection', () => {
+
+            let users = UserMock.collection(5);
+
+            expect(users).to.be.instanceOf(Array);
+
+            expect(users).to.have.length(5);
         });
 
         it('should return the user\'s full name', () => {
