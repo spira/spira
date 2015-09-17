@@ -17,17 +17,18 @@ namespace app.admin.articles.article.meta {
         }
 
         /**
-         * Function called when author is searched for in the author contact chip input.
+         * Function called when user is searched for in the author contact chip input.
          * @param query
          */
-        public searchAuthors(query:string):ng.IPromise<common.models.User[]> {
+        public searchUsers(query:string):ng.IPromise<common.models.User[]> {
             return this.usersPaginator.query(query);
         }
 
         /**
-         * Function called when an author is added.
+         * Function called when a user is added to the author contact chip input. As we are only allowed
+         * to have one author per article, we should replace the author.
          */
-        public authorAdded(newAuthor:common.models.User):void {
+        public changeAuthor(newAuthor:common.models.User):void {
             this.authors = [newAuthor];
             this.article._author = newAuthor;
             this.article.authorId = newAuthor.userId;

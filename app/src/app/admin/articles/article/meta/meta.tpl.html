@@ -7,12 +7,12 @@
               ng-model="MetaController.authors"
               ng-model-options="{ debounce: 500 }"
               md-autocomplete-snap
-              md-on-append="MetaController.authorAdded(MetaController.selectedItem)">
+              md-on-append="MetaController.changeAuthor(MetaController.selectedItem)">
         <md-autocomplete
             md-menu-class="md-contact-chips-suggestions"
             md-search-text="MetaController.searchText"
             md-selected-item="MetaController.selectedItem"
-            md-items="item in MetaController.searchAuthors(MetaController.searchText)"
+            md-items="item in MetaController.searchUsers(MetaController.searchText)"
             md-item-text="item.firstName"
             md-no-cache="true"
             md-autoselect
@@ -35,6 +35,8 @@
             </div>
         </md-chip-template>
     </md-chips>
+    <!-- Require this hidden input to invalidate the form when there are no authors of the article. md-minlength, min-length, ng-required all don't work on md-chips. -->
+    <input type="hidden" ng-model="MetaController.authors[0]" ng-required="true">
 
     <h2>Search Engines</h2>
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
