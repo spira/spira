@@ -61,7 +61,13 @@ namespace common.services.auth {
                         .then(() => this.$mdDialog.show(dialogConfig));
 
                 })
-                .init(); //initialise the auth service (kicks off the timers etc)
+                .init() //initialise the auth service (kicks off the timers etc)
+                .catch((err) => {
+                    if (err === false){ //if the error was user failed to authenticate | @todo make the auth service throw a better error
+                        return true;
+                    }
+                    return err;
+                });
 
         }
 
