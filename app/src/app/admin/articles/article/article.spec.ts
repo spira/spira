@@ -115,6 +115,8 @@ namespace app.admin.articles.article {
 
             expect(article._author).to.deep.equal(loggedInUser);
 
+            expect(article.authorId).to.equal(loggedInUser.userId);
+
         });
 
         it('should be able to resolve article (existing)', () => {
