@@ -3,13 +3,19 @@ namespace common.models {
 
     export interface IModel{
         getAttributes(includeUnderscoredKeys?:boolean):Object;
+        setExists(exists:boolean):void;
+        exists():boolean;
+    }
+
+    export interface IModelClass{
+        new(data?:any, exists?:boolean):IModel;
     }
 
     export interface IModelFactory{
         (data:any, exists?:boolean):IModel;
     }
 
-    export class AbstractModel implements IModel {
+    export abstract class AbstractModel implements IModel {
 
         protected _nestedEntityMap;
         private _exists:boolean;
@@ -47,7 +53,7 @@ namespace common.models {
          */
         protected hydrateNested(data:any, exists:boolean){
 
-            _.forIn(this._nestedEntityMap, (model:typeof AbstractModel, nestedKey:string) => {
+            _.forIn(this._nestedEntityMap, (model:IModelClass, nestedKey:string) => {
 
                 //if the nested map is not defined with a leading _ prepend one
                 if (!_.startsWith(nestedKey, '_')){
@@ -77,7 +83,7 @@ namespace common.models {
          * @returns {common.models.AbstractModel}
          * @param exists
          */
-        private hydrateModel(data:any, Model:typeof AbstractModel, exists:boolean){
+        private hydrateModel(data:any, Model:IModelClass, exists:boolean){
 
             let model = new Model(data);
             model.setExists(exists);

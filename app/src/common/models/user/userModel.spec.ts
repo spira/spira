@@ -4,17 +4,7 @@ namespace common.models {
 
     describe('User Model', () => {
 
-        let userData:global.IUserData = {
-            userId:seededChance.guid(),
-            email:seededChance.email(),
-            firstName:seededChance.first(),
-            lastName:seededChance.last(),
-            emailConfirmed:seededChance.date(),
-            country:seededChance.country(),
-            avatarImgUrl:seededChance.url(),
-            userType: seededChance.pick(User.userTypes),
-            _socialLogins:(<common.models.UserSocialLogin[]>[])
-        };
+        let userData:global.IUserData = UserMock.getMockData();
 
         it('should instantiate a new user', () => {
 
