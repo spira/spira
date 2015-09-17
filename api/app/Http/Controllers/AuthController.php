@@ -41,7 +41,6 @@ class AuthController extends ApiController
     protected $app;
 
     /**
-     *
      * @var SpiraGuard
      */
     protected $auth;
@@ -77,10 +76,10 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
-        if (!$this->auth->attempt($credentials)){
+        if (! $this->auth->attempt($credentials)) {
             if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
                 $credentials['email'] = $oldEmail;
-                if (!$this->auth->attempt($credentials)) {
+                if (! $this->auth->attempt($credentials)) {
                     throw new UnauthorizedException('Credentials failed.');
                 }
             } else {
@@ -93,7 +92,6 @@ class AuthController extends ApiController
             ->item($this->auth->token());
     }
 
-
     /**
      * Refresh a login token.
      *
@@ -102,6 +100,7 @@ class AuthController extends ApiController
     public function refresh()
     {
         $user = $this->auth->getUserFromRequest();
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($this->auth->generateToken($user));
@@ -194,7 +193,7 @@ class AuthController extends ApiController
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
-        /** @var User $user */
+        /* @var User $user */
         $user->addSocialLogin($socialLogin);
 
         // Prepare response data
@@ -219,6 +218,7 @@ class AuthController extends ApiController
     {
         $user = $this->auth->user();
         $requester = SingleSignOnFactory::create($requester, $request, $user);
+
         return $requester->getResponse();
     }
 

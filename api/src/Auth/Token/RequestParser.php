@@ -1,19 +1,26 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 15.09.15
- * Time: 14:55
+ * Time: 14:55.
  */
 
 namespace Spira\Auth\Token;
-
 
 use Illuminate\Http\Request;
 
 class RequestParser
 {
-
     /**
      * @var string
      */
@@ -58,18 +65,14 @@ class RequestParser
             return trim(str_ireplace($this->method, '', $header));
         }
 
-        if ($token = $token = $request->query($this->query, false)){
+        if ($token = $token = $request->query($this->query, false)) {
             return $token;
         }
 
-        if ($token = $request->cookie($this->cookie)){
+        if ($token = $request->cookie($this->cookie)) {
             return $token;
         }
 
         throw new TokenIsMissingException();
-
     }
-
-
-
 }

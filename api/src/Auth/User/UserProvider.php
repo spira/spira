@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 15.09.15
- * Time: 0:18
+ * Time: 0:18.
  */
 
 namespace Spira\Auth\User;
-
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
@@ -64,7 +72,7 @@ class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
     public function retrieveByToken($identifier, $token)
     {
         $function = $this->tokenUserProvider;
-        if (!is_null($function) && $user = $function($token, $this)){
+        if (! is_null($function) && $user = $function($token, $this)) {
             return $user;
         }
 
@@ -130,5 +138,4 @@ class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 
         return new $class;
     }
-
 }

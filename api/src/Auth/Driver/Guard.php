@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 11.09.15
- * Time: 13:55
+ * Time: 13:55.
  */
 
 namespace Spira\Auth\Driver;
-
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -17,7 +25,6 @@ use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
 use Spira\Contract\Exception\NotImplementedException;
-
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
 {
@@ -75,9 +82,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         PayloadValidationFactory $validationFactory,
         UserProvider $provider,
         RequestParser $requestParser
-    )
-    {
-
+    ) {
         $this->payloadFactory = $payloadFactory;
         $this->provider = $provider;
         $this->tokenizer = $tokenizer;
@@ -92,7 +97,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function check()
     {
-        return (bool)$this->user;
+        return (bool) $this->user;
     }
 
     /**
@@ -102,7 +107,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function guest()
     {
-        return !$this->check();
+        return ! $this->check();
     }
 
     /**
@@ -112,21 +117,21 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function user()
     {
-        if ($this->user === false){
-            return null;
+        if ($this->user === false) {
+            return;
         }
 
-        if ($this->user){
+        if ($this->user) {
             return $this->user;
         }
 
-        try{
+        try {
             $user = $this->getUserFromRequest();
-        }catch (\Exception $e){
-            return null;
+        } catch (\Exception $e) {
+            return;
         }
 
-        if ($user){
+        if ($user) {
             $this->user = $user;
             $this->viaToken = true;
         }
@@ -141,11 +146,11 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function token()
     {
-        if ($this->user){
+        if ($this->user) {
             return $this->generateToken($this->user);
         }
 
-        return null;
+        return;
     }
 
     public function getUserFromRequest()
@@ -154,6 +159,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         $payload = $this->getTokenizer()->decode($token);
         $this->getValidationFactory()->validatePayload($payload);
         $user = $this->getProvider()->retrieveByToken(null, $payload);
+
         return $user;
     }
 
@@ -179,7 +185,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     public function attempt(array $credentials = [], $remember = true, $login = true)
     {
         $user = $this->getProvider()->retrieveByCredentials($credentials);
-        if ($user  && $this->getProvider()->validateCredentials($user, $credentials)){
+        if ($user  && $this->getProvider()->validateCredentials($user, $credentials)) {
             if ($login) {
                 $this->login($user);
             }
@@ -248,7 +254,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     public function loginUsingId($id, $remember = false)
     {
         $user = $this->provider->retrieveById($id);
-        if ($user){
+        if ($user) {
             $this->login($user);
         }
 
@@ -369,5 +375,4 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     {
         return $this->validationFactory;
     }
-
 }

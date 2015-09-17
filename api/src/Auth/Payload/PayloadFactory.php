@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 13.09.15
- * Time: 20:49
+ * Time: 20:49.
  */
 
 namespace Spira\Auth\Payload;
-
 
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -27,9 +35,9 @@ class PayloadFactory
     {
         $payload = [];
         foreach ($this->payloadGenerators as $name => $generator) {
-            if ($generator instanceof \Closure){
+            if ($generator instanceof \Closure) {
                 $result = $generator($user);
-                if ($result !== false ){
+                if ($result !== false) {
                     $payload[$name] = $result;
                 }
             }

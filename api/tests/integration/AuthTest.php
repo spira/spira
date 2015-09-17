@@ -218,7 +218,7 @@ class AuthTest extends TestCase
             'method' => 'password',
             'exp' => 123 - 3600,
             'nbf' => 123,
-            'iat' => 123
+            'iat' => 123,
         ]);
 
         $this->callRefreshToken($token);

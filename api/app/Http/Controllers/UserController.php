@@ -10,7 +10,6 @@
 
 namespace App\Http\Controllers;
 
-use App;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;

@@ -10,7 +10,6 @@
 
 namespace App\Http\Transformers;
 
-use App;
 use App\Exceptions\NotImplementedException;
 
 class AuthTokenTransformer extends EloquentModelTransformer
@@ -25,7 +24,7 @@ class AuthTokenTransformer extends EloquentModelTransformer
     {
         $result = ['token' => (string) $token];
 
-        if (env('APP_DEBUG', false)){
+        if (env('APP_DEBUG', false)) {
             $result['decodedTokenBody'] = \App::make('auth')->getTokenizer()->decode($token);
         }
 

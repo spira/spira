@@ -14,7 +14,6 @@ use App\Exceptions\TokenInvalidException;
 use Exception;
 use Namshi\JOSE\JWS;
 
-
 /**
  * The provided NamshiAdapter in the package can not handle RSA keys, which
  * this adapter enables.
@@ -25,7 +24,6 @@ class NamshiAdapter  implements JWTInterface
      * @var \Namshi\JOSE\JWS
      */
     protected $jws;
-
 
     /**
      * @var string
@@ -54,7 +52,6 @@ class NamshiAdapter  implements JWTInterface
         $this->secretPrivate = $secretPrivate;
         $this->secretPublic = $secretPublic;
     }
-
 
     /**
      * Create a JSON Web Token.

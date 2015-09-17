@@ -1,10 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Auth\Providers;
 
 use Carbon\Carbon;
-
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Request;
@@ -20,11 +26,8 @@ use Spira\Auth\Token\TokenExpiredException;
 use Spira\Auth\Token\TokenInvalidException;
 use Spira\Auth\User\UserProvider;
 
-
-
 abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 {
-
     /**
      * @var string token encode/decode algorithm
      */
@@ -59,7 +62,6 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
     protected $ttl = 60;
 
-
     /**
      * Register the service provider.
      *
@@ -77,14 +79,15 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     /**
      * Bind our custom user provider
-     * This is a base method you don't want to override
+     * This is a base method you don't want to override.
      *
      * @see getTokenUserProvider
      */
     protected function registerUserProvider()
     {
-        $this->app->bind(UserProviderContract::class, function($app) {
+        $this->app->bind(UserProviderContract::class, function ($app) {
             $model = $app['config']['auth.model'];
+
             return new UserProvider($app['hash'], $model, $this->getTokenUserProvider());
         });
 
@@ -99,7 +102,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
     /**
      * Parses request for the token data
-     * override
+     * override.
      *
      *  $this->requestMethod,
      *  $this->requestHeader,
@@ -110,7 +113,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
     protected function registerRequestParser()
     {
-        $this->app->bind(RequestParser::class, function($app){
+        $this->app->bind(RequestParser::class, function ($app) {
             return new RequestParser(
                 $this->requestMethod,
                 $this->requestHeader,
@@ -121,12 +124,12 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     }
 
     /**
-     * Base token auth driver registration
+     * Base token auth driver registration.
      */
     protected function registerDriver()
     {
-        $this->app->extend('auth', function(AuthManager $auth, $app){
-            return $auth->extend('jwt', function($app) {
+        $this->app->extend('auth', function (AuthManager $auth, $app) {
+            return $auth->extend('jwt', function ($app) {
                 return $app[Guard::class];
             });
         });
@@ -134,40 +137,40 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         //extra rebinding for tests
         /** @var Application $app */
         $app = $this->app;
-        $app->rebinding(Request::class, function(Application $app, Request $request){
-            if ($app->resolved('auth')){
+        $app->rebinding(Request::class, function (Application $app, Request $request) {
+            if ($app->resolved('auth')) {
                 $app['auth']->setRequest($request);
             }
         });
     }
 
     /**
-     * Tokenizer adapter
+     * Tokenizer adapter.
      */
     protected function registerTokenizer()
     {
-        $this->app->bind(JWTInterface::class, function($app){
+        $this->app->bind(JWTInterface::class, function ($app) {
             return new NamshiAdapter($this->getSecretPublic(), $this->getSecretPrivate(), $this->algorithm);
         });
     }
 
     protected function registerPayloadFactory()
     {
-        $this->app->bind(PayloadFactory::class, function($app){
+        $this->app->bind(PayloadFactory::class, function ($app) {
             return new PayloadFactory($this->getPayloadGenerators());
         });
     }
 
     protected function registerPayloadValidatorFactory()
     {
-        $this->app->bind(PayloadValidationFactory::class, function($app){
+        $this->app->bind(PayloadValidationFactory::class, function ($app) {
             return new PayloadValidationFactory($this->getValidationRules());
         });
     }
 
     /**
      * Custom function to get user from token
-     * Example of usage
+     * Example of usage.
      *
      *   return function($payload, UserProvider $provider){
      *       if (isset($payload['_user']) && $payload['_user']){
@@ -193,16 +196,15 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
     protected function getTokenUserProvider()
     {
-        return null;
+        return;
     }
-
 
     /**
      * iis - the Issuer claim
      * iat - Issued At claim
      * exp - Expired At claim
      * nbf - Not Before claim
-     * jti - token unique id
+     * jti - token unique id.
      *
      * @return array
      */
@@ -210,46 +212,47 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     {
         /** @var Request $request */
         $request = $this->app['request'];
+
         return [
-            'iss'=> function() use ($request) { return $request->url();},
-            'iat'=> function(){ return Carbon::now()->format('U');},
-            'exp'=> function(){ return Carbon::now()->addMinutes($this->ttl)->format('U');},
-            'nbf'=> function(){ return Carbon::now()->format('U');},
-            'jti'=> function(){ return str_random(16);},
+            'iss' => function () use ($request) { return $request->url();},
+            'iat' => function () { return Carbon::now()->format('U');},
+            'exp' => function () { return Carbon::now()->addMinutes($this->ttl)->format('U');},
+            'nbf' => function () { return Carbon::now()->format('U');},
+            'jti' => function () { return str_random(16);},
         ];
     }
 
     protected function getValidationRules()
     {
         return [
-            'nbf' => function($payload){
-                if ( Carbon::createFromTimeStampUTC($payload['nbf'])->isFuture()) {
+            'nbf' => function ($payload) {
+                if (Carbon::createFromTimeStampUTC($payload['nbf'])->isFuture()) {
                     throw new TokenInvalidException('Not Before (nbf) timestamp cannot be in the future');
                 }
 
                 return true;
             },
-            'iat' => function($payload){
-                if ( Carbon::createFromTimeStampUTC($payload['iat'])->isFuture()) {
+            'iat' => function ($payload) {
+                if (Carbon::createFromTimeStampUTC($payload['iat'])->isFuture()) {
                     throw new TokenInvalidException('Issued At (iat) timestamp cannot be in the future');
                 }
 
                 return true;
             },
-            'exp' => function($payload){
-                if ( Carbon::createFromTimeStampUTC($payload['exp'])->isPast()) {
+            'exp' => function ($payload) {
+                if (Carbon::createFromTimeStampUTC($payload['exp'])->isPast()) {
                     throw new TokenExpiredException('Token has expired');
                 }
 
                 return true;
             },
-            'structure' => function($payload){
+            'structure' => function ($payload) {
                 if (count(array_diff_key($this->getPayloadGenerators(), array_keys($payload))) !== 0) {
                     throw new TokenInvalidException('JWT payload does not contain the required claims');
                 }
 
                 return true;
-            }
+            },
         ];
     }
 

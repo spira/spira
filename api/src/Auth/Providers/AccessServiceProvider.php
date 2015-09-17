@@ -1,20 +1,27 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 16.09.15
- * Time: 14:51
+ * Time: 14:51.
  */
 
 namespace Spira\Auth\Providers;
-
 
 use Illuminate\Support\ServiceProvider;
 use Spira\Auth\Access\Gate;
 
 class AccessServiceProvider extends ServiceProvider
 {
-
     /**
      * The policy mappings for the application.
      *
@@ -32,7 +39,7 @@ class AccessServiceProvider extends ServiceProvider
 
     protected function attachPolicesToGate()
     {
-        $this->app->extend(Gate::GATE_NAME, function(Gate $gate, $app){
+        $this->app->extend(Gate::GATE_NAME, function (Gate $gate, $app) {
             foreach ($this->policies as $class => $policy) {
                 $gate->policy($class, $policy);
             }

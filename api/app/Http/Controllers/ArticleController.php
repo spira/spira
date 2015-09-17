@@ -15,7 +15,6 @@ use App\Models\Article;
 
 class ArticleController extends EntityController
 {
-
     /**
      * Assign dependencies.
      * @param Article $model

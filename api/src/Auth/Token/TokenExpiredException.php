@@ -1,9 +1,18 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 16.09.15
- * Time: 0:20
+ * Time: 0:20.
  */
 
 namespace Spira\Auth\Token;
@@ -20,7 +29,6 @@ class TokenExpiredException extends HttpException
      * @param string $message
      * @param int $code
      * @param \Exception $previous
-     *
      */
     public function __construct($message = 'Token has expired', $code = 0, Exception $previous = null)
     {

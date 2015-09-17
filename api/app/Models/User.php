@@ -284,7 +284,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
             return $user;
         }
 
-        return null;
+        return;
     }
 
     /**

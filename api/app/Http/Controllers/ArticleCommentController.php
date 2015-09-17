@@ -26,17 +26,15 @@ class ArticleCommentController extends ChildEntityController
      */
     protected $relationName = 'comments';
 
-
     /**
      * Set dependencies.
      *
      * @param  Article $parentModel
      * @param  EloquentModelTransformer $transformer
-     *
      */
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
-            parent::__construct($parentModel, $transformer);
+        parent::__construct($parentModel, $transformer);
     }
 
     /**
