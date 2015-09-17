@@ -30,6 +30,15 @@
 
     </md-toolbar>
 
+    <md-content ng-if="!!AppController.regionService.currentRegion && !!AppController.regionService.userRegion && AppController.regionService.currentRegion.code != AppController.regionService.userRegion.code">
+        <md-whiteframe>
+            You're currently viewing this page in the {{AppController.regionService.currentRegion.name}} region.
+            Your preference is set to {{AppController.regionService.userRegion.name}}
+            <a ui-sref="{region:AppController.regionService.userRegion.code}">Click here</a> to return to the {{AppController.regionService.userRegion.name}} region.
+            <a ui-sref="app.user.profile">Click here</a> to go to your profile to change your preference.
+        </md-whiteframe>
+    </md-content>
+
     <nav layout="column" ui-view="navigation"></nav>
 
 </header>
@@ -48,7 +57,30 @@
 
 <footer>
     <md-toolbar layout="row" layout-align="center-center">
-        <h4>Footer</h4>
+
+
+        <md-fab-speed-dial md-open="false" md-direction="up" class="md-fling">
+            <md-fab-trigger>
+                <md-button ng-if="!AppController.regionService.currentRegion" aria-label="menu" class="md-fab md-mini">
+                    <md-tooltip md-direction="right">Region</md-tooltip>
+                    <md-icon>public</md-icon>
+                </md-button>
+                <md-button ng-if="!!AppController.regionService.currentRegion" aria-label="menu" class="md-fab md-mini">
+                    <md-tooltip md-direction="right">Current Region ({{AppController.regionService.currentRegion.name}})</md-tooltip>
+                    <md-icon aria-label="{{AppController.regionService.currentRegion.name}}" ng-bind-html="AppController.regionService.currentRegion.icon"></md-icon>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions style="height: 0;">
+            <div ng-repeat="region in AppController.regionService.supportedRegions track by region.code" ng-if="region != AppController.regionService.currentRegion">
+                <md-button aria-label="{{region.name}}" class="md-fab md-raised md-mini"
+                           ng-click="AppController.regionService.setRegion(region)">
+                    <md-tooltip md-direction="right">{{region.name}}</md-tooltip>
+                    <md-icon aria-label="{{region.name}}" ng-bind-html="region.icon"></md-icon>
+                </md-button>
+            </div>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+
     </md-toolbar>
 </footer>
 
