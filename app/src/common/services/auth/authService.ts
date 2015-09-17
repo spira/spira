@@ -143,12 +143,12 @@ namespace common.services.auth {
 
             let token = queryParams.loginToken;
 
-            /*
-                We do not remove the loginToken from the URL params at this point because that would cause a state
-                reload causing whichever state we're navigating to to fully load twice (all resolves are called again);
-                this results in unneeded XHRs. The loginToken is safely removed in the constructor of
-                ProfileController, this means that the state we navigate to when we use the loginToken will always be
-                profile. See profile.ts.
+            /**
+             * We do not remove the loginToken from the URL params at this point because that would cause a state
+             * reload causing whichever state we're navigating to to fully load twice (all resolves are called again);
+             * this results in unneeded XHRs. The loginToken is safely removed in the constructor of
+             * ProfileController, this means that the state we navigate to when we use the loginToken will always be
+             * profile. See profile.ts.
              */
 
             return this.ngJwtAuthService.exchangeToken(token)
