@@ -67,7 +67,7 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink)
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author'])
                             .then((article) => {
 
                                 article._articleMetas = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, ArticleConfig.articleMetaTemplate);

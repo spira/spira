@@ -122,7 +122,7 @@
 
                 $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink);
+                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);

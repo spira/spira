@@ -55,11 +55,12 @@ namespace common.services.article {
          * Get an Article given an identifier (uuid or permalink)
          * @param identifier
          * @returns {IPromise<common.models.Article>}
+         * @param withNested
          */
-        public getArticle(identifier:string):ng.IPromise<common.models.Article> {
+        public getArticle(identifier:string, withNested:string[]):ng.IPromise<common.models.Article> {
 
             return this.ngRestAdapter.get('/articles/'+identifier, {
-                'With-Nested' : 'articlePermalinks, articleMetas, tags, author'
+                'With-Nested' : withNested.join(', ')
             })
                 .then((res) => ArticleService.articleFactory(res.data, true));
 
