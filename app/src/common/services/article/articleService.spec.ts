@@ -120,7 +120,9 @@
 
             it('should be able to retrieve an article by permalink', () => {
 
-                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
+                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                }).respond(mockArticle);
 
                 let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
@@ -136,10 +138,15 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
+                let author = common.models.UserMock.entity();
 
-                let article = articleService.newArticle();
+                let article = articleService.newArticle(author);
 
                 expect(article.articleId).to.be.ok;
+
+                expect(article.authorId).to.equal(author.userId);
+
+                expect(article._author).to.deep.equal(author);
 
             });
 
