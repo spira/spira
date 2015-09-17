@@ -13,7 +13,12 @@ namespace app.admin.articles.article.meta {
             private notificationService:common.services.notification.NotificationService,
             private usersPaginator:common.services.pagination.Paginator
         ) {
-            this.authors = [article._author];
+            if(_.isEmpty(article._author)) { // New article
+                this.authors = [];
+            }
+            else {
+                this.authors = [article._author];
+            }
         }
 
         /**

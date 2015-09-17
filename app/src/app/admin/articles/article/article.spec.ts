@@ -47,7 +47,11 @@ namespace app.admin.articles.article {
                     ];
                 }
             },
-            ArticleController:ArticleController;
+            ArticleController:ArticleController,
+            loggedInUser:common.models.User = common.models.UserMock.entity(),
+            userService = {
+                getAuthUser: sinon.stub().returns(loggedInUser)
+            };
 
         beforeEach(() => {
 
@@ -103,11 +107,13 @@ namespace app.admin.articles.article {
 
             $stateParams.permalink = 'new';
 
-            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
+            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
             expect(article).to.be.an.instanceOf(common.models.Article);
 
             expect(article.title).to.equal('newArticle');
+
+            expect(article._author).to.deep.equal(loggedInUser);
 
         });
 

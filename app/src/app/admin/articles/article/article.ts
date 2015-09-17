@@ -58,10 +58,11 @@ namespace app.admin.articles.article {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.permalink || $stateParams.permalink == 'new'){
                             let newArticle = articleService.newArticle();
+                            newArticle._author = userService.getAuthUser();
                             $stateParams.permalink = 'new';
                             $stateParams.newArticle = true;
                             return newArticle;
