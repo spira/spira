@@ -1,6 +1,3 @@
-
-///<reference path="../../../src/global.d.ts" />
-
 namespace app.guest {
 
     export const namespace = 'app.guest';
@@ -11,12 +8,14 @@ namespace app.guest {
 
     class GuestConfig {
 
-        static $inject = ['stateHelperServiceProvider'];
-        constructor(private stateHelperServiceProvider){
+        static $inject = ['stateHelperServiceProvider', 'supportedRegions'];
+        constructor(private stateHelperServiceProvider, supportedRegions:global.ISupportedRegion[]){
+
+            let regionString = _.pluck(supportedRegions, 'code').join('|');
 
             let state:global.IState = {
                 abstract: true,
-                url: '/{region:us|gb|au}',
+                url: `/{region:${regionString}}`,
                 params: {
                     region: {
                         value: null,
@@ -41,7 +40,13 @@ namespace app.guest {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    region: ($stateParams:IGuestStateParams) => {
+                    region: ($stateParams:IGuestStateParams, regionService:common.services.region.RegionService) => {
+
+                        //if the region service has a different region set, change it to the url one as that will be the link preference
+                        if ($stateParams.region && regionService.currentRegion.code !== $stateParams.region){
+                            regionService.currentRegion = regionService.getRegionByCode($stateParams.region);
+                        }
+
                         return $stateParams.region;
                     }
                 },

@@ -67,7 +67,7 @@ namespace app.user.profile {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _$q_, _notificationService_, _$location_) => {
+            inject(($controller, _$rootScope_, _$q_, _notificationService_, _$location_, _regionService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 $q = _$q_;
@@ -85,6 +85,7 @@ namespace app.user.profile {
                     genderOptions: genderOptions,
                     authService: authService,
                     providerTypes: providerTypes,
+                    regions: _regionService_.supportedRegions,
                     $location: $location
                 });
             });
