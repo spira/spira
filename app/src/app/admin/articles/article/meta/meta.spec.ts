@@ -26,7 +26,10 @@ namespace app.admin.articles.article.meta {
             $q:ng.IQService,
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
-            MetaController:MetaController;
+            MetaController:MetaController,
+            usersPaginator = {
+                query: sinon.stub()
+            };
 
         beforeEach(() => {
 
@@ -40,7 +43,8 @@ namespace app.admin.articles.article.meta {
 
                 MetaController = $controller(app.admin.articles.article.meta.namespace + '.controller', {
                     article: article,
-                    notificationService: notificationService
+                    notificationService: notificationService,
+                    usersPaginator: usersPaginator
                 });
             });
 
@@ -49,6 +53,28 @@ namespace app.admin.articles.article.meta {
         it('should have an article injected into it', () => {
 
             expect(MetaController.article).to.be.an.instanceOf(common.models.Article);
+
+        });
+
+        it('should be able to search for authors given a string', () => {
+
+            MetaController.searchUsers('foobar');
+
+            expect(usersPaginator.query).to.have.been.calledWith('foobar');
+
+        });
+
+        it('should be able to change the author of a post', () => {
+
+            let newAuthor = common.models.UserMock.entity();
+
+            MetaController.changeAuthor(newAuthor);
+
+            expect(MetaController.authors).to.deep.equal([newAuthor]);
+
+            expect(MetaController.article._author).to.deep.equal(newAuthor);
+
+            expect(MetaController.article.authorId).to.equal(newAuthor.userId);
 
         });
 
