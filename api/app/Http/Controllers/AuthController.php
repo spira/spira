@@ -41,7 +41,6 @@ class AuthController extends ApiController
     protected $app;
 
     /**
-     * JWT Auth Package.
      *
      * @var SpiraGuard
      */

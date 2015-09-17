@@ -87,6 +87,14 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
             $model = $app['config']['auth.model'];
             return new UserProvider($app['hash'], $model, $this->getTokenUserProvider());
         });
+
+        // due to lumen custom request alias rebinding
+        // we are forced to duplicate user resolver callback to the request
+        $this->app->rebinding(Request::class, function ($app, $request) {
+            $request->setUserResolver(function () use ($app) {
+                return $app['auth']->user();
+            });
+        });
     }
 
     /**
