@@ -161,13 +161,21 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function getUserFromRequest()
     {
-        $token = $this->getRequestParser()->getToken($this->getRequest());
+        $token = $this->getTokenFromRequest();
         $payload = $this->getTokenizer()->decode($token);
         $this->blacklist->check($payload);
         $this->getValidationFactory()->validatePayload($payload);
         $user = $this->getProvider()->retrieveByToken(null, $payload);
 
         return $user;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTokenFromRequest()
+    {
+        return  $this->getRequestParser()->getToken($this->getRequest());
     }
 
     /**
@@ -295,9 +303,10 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function logout()
     {
-        if ($this->user){
-            $this->blacklist->add($this->payloadFactory->createFromUser($this->user));
-        }
+        try{
+            $token = $this->getTokenFromRequest();
+            $this->blacklist->add($this->getTokenizer()->decode($token));
+        }catch (\Exception $e){}
         $this->user = false;
     }
 

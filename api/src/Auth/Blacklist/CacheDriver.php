@@ -30,8 +30,12 @@ class CacheDriver implements StorageInterface
      * @param $seconds
      * @return mixed
      */
-    public function add($id, $seconds)
+    public function add($id, $seconds = null)
     {
+        if ($seconds = null){
+            $seconds = 60*60;
+        }
+
         $this->cache->add($id,$id,ceil($seconds/60));
     }
 

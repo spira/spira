@@ -39,6 +39,7 @@ class Blacklist
      */
     public function add($payload)
     {
+        $seconds = null;
         if ($this->exp && isset($payload[$this->exp])){
             $exp = Carbon::createFromTimeStampUTC($payload['exp']);
             if ($exp->isPast()) {
@@ -46,10 +47,10 @@ class Blacklist
             }
 
             $seconds = $exp->diffInSeconds(Carbon::now()->subSecond(10));
+        }
 
-            if (isset($payload[$this->key])){
-                $this->driver->add($payload[$this->key], $seconds);
-            }
+        if (isset($payload[$this->key])){
+            $this->driver->add($payload[$this->key], $seconds);
         }
     }
 

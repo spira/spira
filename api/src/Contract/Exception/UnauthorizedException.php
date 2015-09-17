@@ -8,12 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 17.09.15
- * Time: 15:42.
- */
 
 namespace Spira\Contract\Exception;
 
@@ -30,11 +24,8 @@ class UnauthorizedException extends HttpException
      * @param int $code
      * @param \Exception $previous
      */
-    public function __construct($message = 'Unauthorized.', $code = 0, Exception $previous = null)
+    public function __construct($message = 'Unauthorized.', $code = Response::HTTP_UNAUTHORIZED, Exception $previous = null)
     {
-        if ($code == 0) {
-            $code = Response::HTTP_UNAUTHORIZED;
-        }
         parent::__construct($code, $message, $previous);
     }
 }

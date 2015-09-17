@@ -322,8 +322,8 @@ class UserTest extends TestCase
         /** @var \Spira\Auth\Driver\Guard $auth */
         $auth = $this->app['auth'];
         $payload = $auth->getTokenizer()->decode($token);
+        $this->setExpectedException(\Spira\Auth\Token\TokenExpiredException::class, 'Token has expired');
         $auth->getBlacklist()->check($payload);
-        $this->setExpectedException('TokenExpiredException', 'Token has expired', 401);
     }
 
     public function testPatchOneByGuestUser()

@@ -16,7 +16,7 @@ interface StorageInterface
      * @param $seconds
      * @return mixed
      */
-    public function add($id, $seconds);
+    public function add($id, $seconds = null);
 
     /**
      * @param $id
