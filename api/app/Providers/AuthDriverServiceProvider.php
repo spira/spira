@@ -69,7 +69,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                 return $provider->retrieveById($payload['sub']);
             }
 
-            return null;
+            return;
         };
     }
 
