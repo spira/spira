@@ -28,11 +28,15 @@ namespace common.services.region {
          * @param config
          * @returns {ng.IRequestConfig}
          */
-        public request = (config:ng.IRequestConfig):ng.IRequestConfig => {
+        public request = (config:NgRestAdapter.INgRestAdapterRequestConfig | ng.IRequestConfig):ng.IRequestConfig => {
+
+            if (!config.isBaseUrl){ //@todo load latest NgRestAdapter to get this property
+                return config;
+            }
 
             let regionService = this.getRegionService();
 
-            if (regionService.currentRegion && config.isBaseUrl){ //@todo add this field in the ngRestAdapter service
+            if (regionService.currentRegion){
                 config.headers['Accept-Region'] = regionService.currentRegion.code;
             }
 
