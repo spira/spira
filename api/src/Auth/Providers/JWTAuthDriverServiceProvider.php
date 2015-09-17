@@ -16,6 +16,9 @@ use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
+use Spira\Auth\Blacklist\Blacklist;
+use Spira\Auth\Blacklist\CacheDriver;
+use Spira\Auth\Blacklist\StorageInterface;
 use Spira\Auth\Driver\Guard;
 use Spira\Auth\Payload\PayloadFactory;
 use Spira\Auth\Payload\PayloadValidationFactory;
@@ -63,6 +66,18 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     protected $ttl = 60;
 
     /**
+     * @var string token unique id key name inside payload
+     * needed for blacklist
+     */
+    protected $tokenKey = 'jti';
+
+    /**
+     * @var string token expired key name inside payload
+     * needed for blacklist
+     */
+    protected $tokenExp = 'exp';
+
+    /**
      * Register the service provider.
      *
      * @return void
@@ -74,6 +89,8 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         $this->registerPayloadValidatorFactory();
         $this->registerTokenizer();
         $this->registerRequestParser();
+        $this->registerBlackList();
+        $this->registerBlackListDriver();
         $this->registerDriver();
     }
 
@@ -154,6 +171,11 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Base payload factory
+     * Rules can be overridden in
+     * @see getPayloadGenerators
+     */
     protected function registerPayloadFactory()
     {
         $this->app->bind(PayloadFactory::class, function ($app) {
@@ -161,6 +183,11 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Base payload validator factory
+     * Rules can be overridden in
+     * @see getValidationRules
+     */
     protected function registerPayloadValidatorFactory()
     {
         $this->app->bind(PayloadValidationFactory::class, function ($app) {
@@ -222,6 +249,10 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         ];
     }
 
+    /**
+     * Validation rules for payload
+     * @return array
+     */
     protected function getValidationRules()
     {
         return [
@@ -256,7 +287,34 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         ];
     }
 
+    /**
+     * @return mixed
+     */
     abstract protected function getSecretPublic();
 
+    /**
+     * @return mixed
+     */
     abstract protected function getSecretPrivate();
+
+    /**
+     * Needed for token invalidation during logout
+     * Optional
+     */
+    protected function registerBlackList()
+    {
+        $this->app->bind(Blacklist::class, function ($app) {
+            return new Blacklist($this->app[StorageInterface::class],$this->tokenKey, $this->tokenExp);
+        });
+    }
+
+    /**
+     * Driver used to store invalid tokens
+     */
+    protected function registerBlackListDriver()
+    {
+        $this->app->bind(StorageInterface::class, function ($app) {
+            return $this->app[CacheDriver::class];
+        });
+    }
 }

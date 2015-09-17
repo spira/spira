@@ -8,22 +8,18 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 11.09.15
- * Time: 13:55.
- */
 
 namespace Spira\Auth\Driver;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
+use Spira\Auth\Blacklist\Blacklist;
 use Spira\Auth\Payload\PayloadFactory;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
+use Spira\Auth\Token\TokenExpiredException;
 use Spira\Contract\Exception\NotImplementedException;
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
@@ -68,6 +64,10 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * @var RequestParser
      */
     protected $requestParser;
+    /**
+     * @var Blacklist
+     */
+    protected $blacklist;
 
     /**
      * @param JWTInterface $tokenizer
@@ -75,19 +75,22 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      * @param PayloadValidationFactory $validationFactory
      * @param UserProvider $provider
      * @param RequestParser $requestParser
+     * @param Blacklist $blacklist
      */
     public function __construct(
         JWTInterface $tokenizer,
         PayloadFactory $payloadFactory,
         PayloadValidationFactory $validationFactory,
         UserProvider $provider,
-        RequestParser $requestParser
+        RequestParser $requestParser,
+        Blacklist $blacklist
     ) {
         $this->payloadFactory = $payloadFactory;
         $this->provider = $provider;
         $this->tokenizer = $tokenizer;
         $this->validationFactory = $validationFactory;
         $this->requestParser = $requestParser;
+        $this->blacklist = $blacklist;
     }
 
     /**
@@ -153,10 +156,14 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         return;
     }
 
+    /**
+     * @return Authenticatable|null
+     */
     public function getUserFromRequest()
     {
         $token = $this->getRequestParser()->getToken($this->getRequest());
         $payload = $this->getTokenizer()->decode($token);
+        $this->blacklist->check($payload);
         $this->getValidationFactory()->validatePayload($payload);
         $user = $this->getProvider()->retrieveByToken(null, $payload);
 
@@ -288,6 +295,9 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function logout()
     {
+        if ($this->user){
+            $this->blacklist->add($this->payloadFactory->createFromUser($this->user));
+        }
         $this->user = false;
     }
 
@@ -374,5 +384,13 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     public function getValidationFactory()
     {
         return $this->validationFactory;
+    }
+
+    /**
+     * @return Blacklist
+     */
+    public function getBlacklist()
+    {
+        return $this->blacklist;
     }
 }

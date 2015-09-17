@@ -8,17 +8,14 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 14.09.15
- * Time: 21:24.
- */
-
 namespace Spira\Auth\Payload;
 
 use Spira\Auth\Token\TokenInvalidException;
 
+/**
+ * Class PayloadValidationFactory
+ * @package Spira\Auth\Payload
+ */
 class PayloadValidationFactory
 {
     /**
@@ -26,11 +23,18 @@ class PayloadValidationFactory
      */
     protected $validationRules;
 
+    /**
+     * @param array $validationRules
+     */
     public function __construct(array $validationRules = [])
     {
         $this->validationRules = $validationRules;
     }
 
+    /**
+     * @param $name
+     * @param \Closure $function
+     */
     public function addValidationRule($name, \Closure $function)
     {
         $this->validationRules[$name] = $function;

@@ -43,6 +43,12 @@ class AuthTest extends TestCase
         // Test that decoding the token, will match the user
         $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
         $this->assertEquals($user->user_id, $payload['sub']);
+
+        $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testFailedLogin()
@@ -89,24 +95,6 @@ class AuthTest extends TestCase
         $this->assertContains('failed', $body->message);
     }
 
-    public function testFailedTokenEncoding()
-    {
-        $this->markTestSkipped('why check that?');
-        $user = $this->createUser();
-        $credential = factory(App\Models\UserCredential::class)->make();
-        $credential->user_id = $user->user_id;
-        $credential->save();
-
-        $this->app->config->set('jwt.algo', 'foobar');
-
-        $this->getJson('/auth/jwt/login', [
-            'PHP_AUTH_USER' => $user->email,
-            'PHP_AUTH_PW'   => 'password',
-        ]);
-
-        $this->assertException('token', 500, 'RuntimeException');
-    }
-
     public function testLoginNewEmailAfterChange()
     {
         $user = factory(User::class)->create();
@@ -129,6 +117,12 @@ class AuthTest extends TestCase
         // Test that decoding the token, will match the user
         $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
         $this->assertEquals($user->user_id, $payload['sub']);
+
+        $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testLoginNewEmailAfterChangeWrongPassword()
@@ -172,6 +166,12 @@ class AuthTest extends TestCase
         // Test that decoding the token, will match the user
         $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
         $this->assertEquals($user->user_id, $payload['sub']);
+
+        $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
+        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testRefresh()
@@ -256,17 +256,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/refresh');
 
         $this->assertException('The token can not be parsed from the Request', 400, 'TokenIsMissingException');
-    }
-
-    public function testRefreshMissingUser()
-    {
-        $this->markTestSkipped('User is taken from token - no db check');
-        $user = factory(User::class)->make();
-        $token = $this->tokenFromUser($user);
-
-        $this->callRefreshToken($token);
-
-        $this->assertException('not exist', 500, 'RuntimeException');
     }
 
     public function testToken()

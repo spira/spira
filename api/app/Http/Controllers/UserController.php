@@ -150,19 +150,15 @@ class UserController extends EntityController
         $credentialUpdateDetails = $request->input('_user_credential', []);
         if (! empty($credentialUpdateDetails)) {
             // Invalidate token for the user when user changes their password
-            // no invalidation in current driver
-//            if ($this->jwtAuth->user()->user_id == $model->user_id) {
-//                $token = $this->jwtAuth->getTokenFromRequest();
-//                $this->jwtAuth->invalidate($token);
-//            }
+            if ($request->user()->user_id == $model->user_id) {
+                $this->auth->logout();
+            }
 
             $credentials = UserCredential::findOrNew($id);
             /* @var UserCredential $credentials */
             $credentials->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
-
-        $this->auth->login($model);
 
         return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($model))->noContent();
     }
