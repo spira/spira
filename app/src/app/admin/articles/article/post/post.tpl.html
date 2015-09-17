@@ -21,7 +21,7 @@
     <md-input-container flex>
         <label for="articleFormContent">Content</label>
 
-        <textarea id="articleFormContent" ng-model="ArticleController.article.content" columns="1"></textarea>
+        <textarea id="articleFormContent" ng-model="ArticleController.article.content" columns="1" ng-required="true"></textarea>
         <ng-messages for="articleFormTitle.title.$error">
             <ng-message when="required">This is required.</ng-message>
         </ng-messages>
