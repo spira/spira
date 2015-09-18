@@ -319,7 +319,7 @@ class EntityTest extends TestCase
     {
         $entity = factory(App\Models\TestEntity::class)->make();
 
-        $this->post('/test/entities', $this->prepareEntity($entity));
+        $this->postJson('/test/entities', $this->prepareEntity($entity));
 
         $this->shouldReturnJson();
 
@@ -336,7 +336,7 @@ class EntityTest extends TestCase
         $entity = $this->prepareEntity($entity);
         unset($entity['text']);
 
-        $this->post('/test/entities', $entity);
+        $this->postJson('/test/entities', $entity);
 
         $object = json_decode($this->response->getContent());
 
