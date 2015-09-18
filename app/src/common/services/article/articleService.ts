@@ -25,10 +25,12 @@ namespace common.services.article {
          * Get a new article with no values and a set uuid
          * @returns {common.models.Article}
          */
-        public newArticle():common.models.Article {
+        public newArticle(author:common.models.User):common.models.Article {
 
             return new common.models.Article({
                 articleId: this.ngRestAdapter.uuid(),
+                authorId: author.userId,
+                _author: author
             });
 
         }
@@ -53,11 +55,12 @@ namespace common.services.article {
          * Get an Article given an identifier (uuid or permalink)
          * @param identifier
          * @returns {IPromise<common.models.Article>}
+         * @param withNested
          */
-        public getArticle(identifier:string):ng.IPromise<common.models.Article> {
+        public getArticle(identifier:string, withNested:string[]):ng.IPromise<common.models.Article> {
 
             return this.ngRestAdapter.get('/articles/'+identifier, {
-                'With-Nested' : 'permalinks, metas, tags'
+                'With-Nested' : withNested.join(', ')
             })
                 .then((res) => ArticleService.articleFactory(res.data, true));
 
@@ -114,6 +117,7 @@ namespace common.services.article {
 
             return this.$q.all([ //save all related entities
                 this.saveArticleTags(article),
+                this.saveArticleMetas(article)
             ]);
 
         }
@@ -140,6 +144,62 @@ namespace common.services.article {
                     return article._tags;
                 });
 
+        }
+
+        /**
+         * Save article metas
+         * @param article
+         * @returns {any}
+         */
+        private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
+            if (article.exists()){
+
+                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+
+                if (!_.has(changes, '_articleMetas')){
+                    return this.$q.when(false);
+                }
+            }
+
+            // Remove the meta tags which have not been used
+            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMetas, (metaTag) => {
+                return !_.isEmpty(metaTag.metaContent);
+            });
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
+                .then(() => {
+                    return article._articleMetas;
+                });
+        }
+
+        /**
+         * Hydrates a meta template with meta which already exists
+         * @param articleId
+         * @param articleMetas
+         * @param template
+         */
+        public hydrateMetaCollectionFromTemplate(articleId:string, articleMetas:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] {
+            return (<any>_).chain(template)
+                .map((metaTagName) => {
+                    let existingTag = _.find(articleMetas, {metaName:metaTagName});
+                    if(_.isEmpty(existingTag)) {
+                        return new common.models.ArticleMeta({
+                            metaName:metaTagName,
+                            metaContent:'',
+                            articleId:articleId,
+                            id:this.ngRestAdapter.uuid()
+                        });
+                    }
+                    return existingTag;
+                })
+                .thru((templateMeta) => {
+                    let leftovers = _.filter(articleMetas, (metaTag) => {
+                        return !_.contains(templateMeta, metaTag);
+                    });
+
+                    return templateMeta.concat(leftovers);
+                })
+                .value();
         }
 
     }

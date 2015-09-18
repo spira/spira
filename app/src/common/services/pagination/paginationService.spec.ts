@@ -28,14 +28,24 @@ interface mockEntity {
 
     describe('PaginationService', () => {
 
-        let paginationService:common.services.pagination.PaginationService;
-        let $httpBackend:ng.IHttpBackendService;
-        let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
-        let $rootScope:ng.IRootScopeService;
+        let paginationService:common.services.pagination.PaginationService,
+            $httpBackend:ng.IHttpBackendService,
+            ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+            $rootScope:ng.IRootScopeService,
+            mockShowError = sinon.stub();
 
         beforeEach(()=> {
 
+
             module('app');
+
+            module(($provide:ng.auto.IProvideService) => {
+                $provide.factory('errorService', () => {
+                    return {
+                        showError: mockShowError
+                    }
+                });
+            });
 
             inject((_$httpBackend_, _paginationService_, _ngRestAdapter_, _$rootScope_) => {
 
@@ -251,15 +261,13 @@ interface mockEntity {
 
                 let results = paginator.getNext();
 
-                sinon.spy($rootScope, '$broadcast');
-
                 $httpBackend.flush();
 
                 $rootScope.$apply();
 
-                expect($rootScope.$broadcast).to.have.been.calledWith('apiErrorHandler', "Redirecting to error page");
+                expect(mockShowError).to.have.been.called;
 
-                (<any>$rootScope).$broadcast.restore();
+                mockShowError.reset();
 
             });
 
@@ -271,16 +279,11 @@ interface mockEntity {
 
                 let results = paginator.getNext();
 
-                sinon.spy($rootScope, '$broadcast');
-
                 $httpBackend.flush();
 
-                $rootScope.$apply();
+                expect(mockShowError).not.to.have.been.called;
 
-                expect($rootScope.$broadcast).not.to.have.been.calledWith('apiErrorHandler');
                 expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
-
-                (<any>$rootScope).$broadcast.restore();
 
             });
 

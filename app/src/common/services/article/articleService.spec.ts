@@ -21,6 +21,20 @@
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
                     }
+                ],
+                _articleMetas: [
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
                 ]
             });
 
@@ -106,9 +120,11 @@
 
             it('should be able to retrieve an article by permalink', () => {
 
-                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
+                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                }).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink);
+                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -122,10 +138,15 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
+                let author = common.models.UserMock.entity();
 
-                let article = articleService.newArticle();
+                let article = articleService.newArticle(author);
 
                 expect(article.articleId).to.be.ok;
+
+                expect(article.authorId).to.equal(author.userId);
+
+                expect(article._author).to.deep.equal(author);
 
             });
 
@@ -140,6 +161,7 @@
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMetas, true)).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -179,6 +201,56 @@
 
         });
 
+        describe('Meta tag hydration', () => {
+
+            let articleMetaTemplate:string[] = [
+                'name', 'description', 'keyword', 'canonical'
+            ];
+
+            it('should be able to hydrate meta tags from a template', () => {
+
+                let article = fixtures.getArticle();
+
+                let hydratedMetaTags = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, articleMetaTemplate);
+
+                expect(_.size(hydratedMetaTags)).to.equal(5);
+
+                expect(hydratedMetaTags[0].articleId).to.equal(article.articleId);
+
+                expect(_.isEmpty(hydratedMetaTags[0].id)).to.be.false;
+
+                let testableMetaTags = _.cloneDeep(hydratedMetaTags);
+                _.forEach(testableMetaTags, (tag) => {
+                    delete(tag.id);
+                    delete(tag.articleId);
+                });
+
+                expect(testableMetaTags).to.deep.equal([
+                    {
+                        metaName: 'name',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'canonical',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
+                ]);
+
+            });
+
+        });
 
     });
 

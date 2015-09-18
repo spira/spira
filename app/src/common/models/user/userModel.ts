@@ -13,6 +13,7 @@ namespace common.models {
         public lastName:string = undefined;
         public emailConfirmed:string = undefined;
         public country:string = undefined;
+        public regionCode:string = undefined;
         public avatarImgUrl:string = undefined;
         public timezoneIdentifier:string = undefined;
         public _userCredential:global.IUserCredential = undefined;
@@ -49,6 +50,7 @@ namespace common.models {
             // Typings for lodash must not have this callback shorthand
             return (<any>_).some(this._socialLogins, 'provider', provider);
         }
+
     }
 
 }

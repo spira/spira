@@ -10,10 +10,17 @@ namespace app.admin.articles.article {
 
     export class ArticleConfig {
 
+        public static articleMetaTemplate:string[] = [
+            'name', 'description', 'keyword', 'canonical'
+        ];
+
+        public static state:global.IState;
+
         static $inject = ['stateHelperServiceProvider'];
+
         constructor(private stateHelperServiceProvider){
 
-            let state:global.IState = {
+            ArticleConfig.state = {
                 url: '/article/{permalink}',
                 params: {
                     newArticle: false,
@@ -51,16 +58,25 @@ namespace app.admin.articles.article {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.permalink || $stateParams.permalink == 'new'){
-                            let newArticle = articleService.newArticle();
+                            let newArticle = articleService.newArticle(userService.getAuthUser());
                             $stateParams.permalink = 'new';
                             $stateParams.newArticle = true;
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink);
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author'])
+                            .then((article) => {
+
+                                article._articleMetas = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, ArticleConfig.articleMetaTemplate);
+
+                                return article;
+                            });
+                    },
+                    usersPaginator: (userService:common.services.user.UserService) => {
+                        return userService.getUsersPaginator().setCount(10);
                     }
                 },
                 data: {
@@ -70,7 +86,7 @@ namespace app.admin.articles.article {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, ArticleConfig.state);
 
         }
 
@@ -83,7 +99,8 @@ namespace app.admin.articles.article {
             public article:common.models.Article,
             public $stateParams:IArticleStateParams,
             private articleService:common.services.article.ArticleService,
-            private notificationService:common.services.notification.NotificationService) {
+            private notificationService:common.services.notification.NotificationService
+        ) {
         }
 
         /**

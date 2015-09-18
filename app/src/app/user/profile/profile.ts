@@ -76,6 +76,9 @@ namespace app.user.profile {
                     },
                     providerTypes:() => {
                         return common.models.UserSocialLogin.providerTypes;
+                    },
+                    regions:(regionService:common.services.region.RegionService) => {
+                        return regionService.supportedRegions;
                     }
                 },
                 data: {
@@ -99,7 +102,7 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'authService', 'providerTypes', '$location'];
+        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'regions', 'authService', 'providerTypes', '$location'];
 
         constructor(
             private userService:common.services.user.UserService,
@@ -108,6 +111,7 @@ namespace app.user.profile {
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public fullUserInfo:common.models.User,
+            private regions:global.ISupportedRegion[],
             public genderOptions:common.models.IGenderOption[],
             private authService:common.services.auth.AuthService,
             public providerTypes:string[],

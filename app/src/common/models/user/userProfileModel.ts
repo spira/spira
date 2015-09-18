@@ -24,7 +24,13 @@ module common.models {
         ];
 
         constructor(data:any, exists:boolean = false) {
+
             super(data, exists);
+
+            if (_.has(data, 'dob')){
+                data.dob = moment(data.dob).toDate();
+            }
+
             this.hydrate(data, exists);
         }
 

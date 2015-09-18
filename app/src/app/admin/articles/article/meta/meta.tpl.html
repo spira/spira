@@ -1,3 +1,64 @@
-<h2>Meta</h2>
+<div layout-padding>
+    <h2>Author</h2>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <label>Author</label>
+        <div layout="row" layout-padding>
+            <div flex>
+                <!-- Manual implementation of md-contact-chips as md-contact-chips does not inherit from md-chips (and there are some directives we need)! -->
+                <md-chips class="md-contact-chips"
+                          ng-model="MetaController.authors"
+                          ng-model-options="{ debounce: 500 }"
+                          md-autocomplete-snap
+                          md-on-append="MetaController.changeAuthor(MetaController.selectedItem)">
+                    <md-autocomplete
+                            md-menu-class="md-contact-chips-suggestions"
+                            md-search-text="MetaController.searchText"
+                            md-selected-item="MetaController.selectedItem"
+                            md-items="item in MetaController.searchUsers(MetaController.searchText)"
+                            md-item-text="item.firstName"
+                            md-no-cache="true"
+                            md-autoselect
+                            placeholder="{{ MetaController.authors.length == 0 ? 'Author' : '' }}">
+                        <div class="md-contact-suggestion">
+                            <img
+                                    ng-src="{{ item.avatarImgUrl }}"
+                                    alt="{{ item.firstName }}" />
+                            {{ item.fullName() }}
+                            <span class="md-contact-email" >{{ item.email }}</span>
+                        </div>
+                    </md-autocomplete>
+                    <md-chip-template>
+                        <div class="md-contact-avatar">
+                            <img ng-src="{{ $chip.avatarImgUrl }}"
+                                 alt="{{ $chip.firstName }}" />
+                        </div>
+                        <div class="md-contact-name">
+                            {{ $chip.firstName }}
+                        </div>
+                    </md-chip-template>
+                </md-chips>
+                <!-- Require this hidden input to invalidate the form when there are no authors of the article. md-minlength, min-length, ng-required all don't work on md-chips. -->
+                <input type="hidden" ng-model="MetaController.authors[0]" ng-required="true">
+            </div>
+            <div flex>
+                <md-checkbox ng-model="MetaController.article.showAuthorPromo" aria-label="Show author promotion footer">
+                    Show author promotion footer
+                </md-checkbox>
+            </div>
+        </div>
 
-<h3>TODO</h3>
+        <label>Author Display Options</label>
+        <md-radio-group ng-model="MetaController.article.authorDisplay">
+            <md-radio-button ng-value="true">Display real author on post</md-radio-button>
+            <md-radio-button ng-value="false">Override author display</md-radio-button>
+        </md-radio-group>
+    </md-whiteframe>
+
+    <h2>Search Engines</h2>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <md-input-container ng-repeat="metaTag in MetaController.article._articleMetas">
+            <label for="metaTagMetaContent">{{ metaTag.metaName }}</label>
+            <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" ng-required="false">
+        </md-input-container>
+    </md-whiteframe>
+</div>

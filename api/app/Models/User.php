@@ -57,6 +57,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'user_type',
         'avatar_img_url',
         'email',
+        'region_code',
     ];
 
     /**
@@ -72,6 +73,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'first_name' => 'string',
         'last_name' => 'string',
         'country' => 'country',
+        'region_code' => 'string|supported_region',
         'timezone_identifier' => 'timezone',
     ];
 

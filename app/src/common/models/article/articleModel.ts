@@ -4,7 +4,9 @@ namespace common.models {
     export class Article extends AbstractModel{
 
         protected _nestedEntityMap = {
-            tags: Tag
+            tags: Tag,
+            articleMetas: ArticleMeta,
+            author: User
         };
 
         public articleId:string = undefined;
@@ -13,8 +15,14 @@ namespace common.models {
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
+        public authorId:string = undefined;
 
-        public _tags:common.models.Tag[];
+        public authorDisplay:boolean = undefined;
+        public showAuthorPromo:boolean = undefined;
+
+        public _articleMetas:common.models.ArticleMeta[] = [];
+        public _author:common.models.User = undefined;
+        public _tags:common.models.Tag[] = [];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
