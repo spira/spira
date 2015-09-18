@@ -142,8 +142,7 @@ namespace common.services.region {
             });
 
 
-
-            it.only('should not set a region header when the called endpoint is not the base api', () => {
+            it('should not set a region header when the called endpoint is not the base api', () => {
 
                 regionService.setRegion(regionService.getRegionByCode('au'));
 

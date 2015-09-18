@@ -1,5 +1,7 @@
 namespace common.services.region {
 
+    type IRequestConfig = /*ng.IRequestConfig |*/ NgRestAdapter.INgRestAdapterRequestConfig;
+
     export class RegionInterceptor {
 
         private regionService:RegionService;
@@ -26,11 +28,11 @@ namespace common.services.region {
         /**
          * Add the Accept-Region header to the request when a region is set
          * @param config
-         * @returns {ng.IRequestConfig}
+         * @returns {IRequestConfig}
          */
-        public request = (config:NgRestAdapter.INgRestAdapterRequestConfig | ng.IRequestConfig):ng.IRequestConfig => {
+        public request = (config:IRequestConfig):IRequestConfig => {
 
-            if (!config.isBaseUrl){ //@todo load latest NgRestAdapter to get this property
+            if (!config.isBaseUrl){
                 return config;
             }
 
