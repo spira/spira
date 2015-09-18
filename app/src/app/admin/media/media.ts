@@ -10,9 +10,11 @@ namespace app.admin.media {
 
         static $inject = ['stateHelperServiceProvider'];
 
+        public static state:global.IState;
+
         constructor(private stateHelperServiceProvider) {
 
-            let state:global.IState = {
+            MediaConfig.state = {
                 url: '/media/{page:int}',
                 params: {
                     page: 1
@@ -42,7 +44,7 @@ namespace app.admin.media {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, MediaConfig.state);
 
         }
 

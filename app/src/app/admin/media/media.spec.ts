@@ -41,6 +41,21 @@ namespace app.admin.media {
 
         describe('Initialisation', () => {
 
+            it('should be able to resolve image paginator with initial images', () => {
+
+                let pageCount = (<any>MediaConfig.state.resolve).perPage();
+                let imagesPaginator = (<any>MediaConfig.state.resolve).imagesPaginator(imageService, pageCount);
+
+                sinon.stub(imagesPaginator, 'getPage').returns('mockresponse');
+                let mockStateParams = {
+                    page: 1,
+                };
+                let initialImages = (<any>MediaConfig.state.resolve).initialImages(imagesPaginator, mockStateParams);
+
+                expect(initialImages).to.equal('mockresponse');
+
+            });
+
             it('should have a set of images loaded', () => {
 
                 expect(MediaController.images[0]).to.be.instanceOf(common.models.Image);
