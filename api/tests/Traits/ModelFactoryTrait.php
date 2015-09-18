@@ -16,13 +16,11 @@ trait ModelFactoryTrait
      * Making it static not to reinit for each TestCase.
      * @var ModelFactory
      */
-    protected static $modelFactory;
+    protected $modelFactory;
 
     public function bootModelFactoryTrait()
     {
-        if (is_null(static::$modelFactory)) {
-            static::$modelFactory = \App::make(ModelFactory::class);
-        }
+        $this->modelFactory = $this->app->make(ModelFactory::class);
     }
 
     /**
@@ -30,6 +28,6 @@ trait ModelFactoryTrait
      */
     public function getFactory()
     {
-        return static::$modelFactory;
+        return $this->modelFactory;
     }
 }
