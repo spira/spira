@@ -10,22 +10,8 @@
 
 namespace Spira\Model\Validation;
 
-use Spira\Model\Model\BaseModel;
-
 class Validator extends \Illuminate\Validation\Validator
 {
-    /**
-     * @var BaseModel
-     */
-    protected $model;
-
-    /**
-     * @param BaseModel $model
-     */
-    public function setModel(BaseModel $model)
-    {
-        $this->model = $model;
-    }
 
     /**
      * Replace all error message place-holders with actual values.
