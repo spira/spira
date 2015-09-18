@@ -40,11 +40,6 @@ namespace app.admin.articles.article {
                 },
                 newArticle:(author:common.models.User) => {
                     return getArticle('newArticle');
-                },
-                hydrateMetaCollectionFromTemplate:(articleId: string, articleMeta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
-                    return [
-                        new common.models.ArticleMeta({metaName:'foobarfoo', metaContent:'barfoo'})
-                    ];
                 }
             },
             ArticleController:ArticleController,
@@ -75,7 +70,6 @@ namespace app.admin.articles.article {
 
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
-            sinon.spy(articleService, 'hydrateMetaCollectionFromTemplate');
             sinon.spy(articleService, 'newArticle');
             sinon.spy(articleService, 'getArticle');
 
@@ -85,7 +79,6 @@ namespace app.admin.articles.article {
 
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
-            (<any>articleService).hydrateMetaCollectionFromTemplate.restore();
             (<any>articleService).newArticle.restore();
             (<any>articleService).getArticle.restore();
 
