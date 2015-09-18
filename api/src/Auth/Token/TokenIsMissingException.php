@@ -8,13 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 15.09.15
- * Time: 15:01.
- */
-
 namespace Spira\Auth\Token;
 
 use Exception;

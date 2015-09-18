@@ -8,13 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 13.09.15
- * Time: 20:49.
- */
-
 namespace Spira\Auth\Payload;
 
 use Illuminate\Contracts\Auth\Authenticatable;
