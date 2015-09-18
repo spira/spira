@@ -10,17 +10,16 @@
 
 namespace App\Http\Controllers;
 
-use App;
-use App\Extensions\JWTAuth\JWTManager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spira\Auth\Driver\Guard as SpiraGuard;
 use Spira\Model\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
@@ -33,28 +32,26 @@ class UserController extends EntityController
     use DispatchesJobs;
 
     /**
-     * JWT Auth.
-     *
-     * @var \App\Extensions\JWTAuth\JWTAuth|JWTManager
+     * @var SpiraGuard
      */
-    protected $jwtAuth;
+    protected $auth;
 
     /**
      * Assign dependencies.
      *
      * @param  User $model
-     * @param  JWTAuth $jwtAuth
+     * @param  Guard $auth
      * @param  Request $request
      * @param  EloquentModelTransformer $transformer
      */
     public function __construct(
         User $model,
-        JWTAuth $jwtAuth,
+        Guard $auth,
         Request $request,
         EloquentModelTransformer $transformer
     ) {
-        $this->jwtAuth = $jwtAuth;
         parent::__construct($model, $transformer);
+        $this->auth = $auth;
     }
 
     /**
@@ -149,14 +146,12 @@ class UserController extends EntityController
             $model->setProfile($profile);
         }
 
-        /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
         $credentialUpdateDetails = $request->input('_user_credential', []);
         if (! empty($credentialUpdateDetails)) {
             // Invalidate token for the user when user changes their password
-            if ($this->jwtAuth->user()->user_id == $model->user_id) {
-                $token = $this->jwtAuth->getTokenFromRequest();
-                $this->jwtAuth->invalidate($token);
+            if ($request->user()->user_id == $model->user_id) {
+                $this->auth->logout();
             }
 
             $credentials = UserCredential::findOrNew($id);
@@ -165,11 +160,7 @@ class UserController extends EntityController
             $model->setCredential($credentials);
         }
 
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-
-        $token = $jwtAuth->fromUser($model);
-
-        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
+        return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($model))->noContent();
     }
 
     /**
@@ -211,12 +202,11 @@ class UserController extends EntityController
         }
 
         $socialLogin->delete();
-        /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
+        /** @var User $user */
+        $user = User::find($id);
+        $this->auth->login($user, true);
 
-        $token = $jwtAuth->fromUser(User::find($id));
-
-        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
+        return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($user))->noContent();
     }
 
     /**

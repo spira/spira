@@ -10,16 +10,6 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Cache;
-use Tymon\JWTAuth\Claims\Expiration;
-use Tymon\JWTAuth\Claims\IssuedAt;
-use Tymon\JWTAuth\Claims\Issuer;
-use Tymon\JWTAuth\Claims\JwtId;
-use Tymon\JWTAuth\Claims\NotBefore;
-use Tymon\JWTAuth\Claims\Subject;
-use App\Extensions\JWTAuth\UserClaim;
-use Tymon\JWTAuth\Payload;
-use Tymon\JWTAuth\Token;
 
 /**
  * Class AuthTest.
@@ -49,15 +39,16 @@ class AuthTest extends TestCase
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
+
+        // Test that decoding the token, will match the user
+        $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
+        $this->assertEquals($user->user_id, $payload['sub']);
+
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
         $this->assertEquals('password', $array['decodedTokenBody']['method']);
 
-        // Test that decoding the token, will match the decoded body
-        $token = new Token($array['token']);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
-        $this->assertEquals($decoded, $array['decodedTokenBody']);
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testFailedLogin()
@@ -104,23 +95,6 @@ class AuthTest extends TestCase
         $this->assertContains('failed', $body->message);
     }
 
-    public function testFailedTokenEncoding()
-    {
-        $user = $this->createUser();
-        $credential = factory(App\Models\UserCredential::class)->make();
-        $credential->user_id = $user->user_id;
-        $credential->save();
-
-        $this->app->config->set('jwt.algo', 'foobar');
-
-        $this->getJson('/auth/jwt/login', [
-            'PHP_AUTH_USER' => $user->email,
-            'PHP_AUTH_PW'   => 'password',
-        ]);
-
-        $this->assertException('token', 500, 'RuntimeException');
-    }
-
     public function testLoginNewEmailAfterChange()
     {
         $user = factory(User::class)->create();
@@ -139,15 +113,16 @@ class AuthTest extends TestCase
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
+
+        // Test that decoding the token, will match the user
+        $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
+        $this->assertEquals($user->user_id, $payload['sub']);
+
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
         $this->assertEquals('password', $array['decodedTokenBody']['method']);
 
-        // Test that decoding the token, will match the decoded body
-        $token = new Token($array['token']);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
-        $this->assertEquals($decoded, $array['decodedTokenBody']);
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testLoginNewEmailAfterChangeWrongPassword()
@@ -187,15 +162,16 @@ class AuthTest extends TestCase
         $this->assertResponseOk();
         $this->assertEquals('application/json', $this->response->headers->get('content-type'));
         $this->assertArrayHasKey('token', $array);
+
+        // Test that decoding the token, will match the user
+        $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
+        $this->assertEquals($user->user_id, $payload['sub']);
+
         $this->assertArrayHasKey('iss', $array['decodedTokenBody']);
         $this->assertArrayHasKey('userId', $array['decodedTokenBody']['_user']);
         $this->assertEquals('password', $array['decodedTokenBody']['method']);
 
-        // Test that decoding the token, will match the decoded body
-        $token = new Token($array['token']);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
-        $this->assertEquals($decoded, $array['decodedTokenBody']);
+        $this->assertEquals($payload, $array['decodedTokenBody']);
     }
 
     public function testRefresh()
@@ -208,14 +184,15 @@ class AuthTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertResponseOk();
         $this->assertNotEquals($token, $object->token);
-        $this->assertEquals('password', $object->decodedTokenBody->method);
+
+        $payload = $this->app->make('auth')->getTokenizer()->decode($object->token);
+        $this->assertEquals('password', $payload['method']);
     }
 
     public function testRefreshPlainHeader()
     {
         $user = User::first();
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $token = $jwtAuth->fromUser($user, ['method' => 'password']);
+        $token = $this->tokenFromUser($user, ['method' => 'password']);
 
         $options = ['headers' => ['authorization' => 'Bearer '.$token]];
         $client = new Client([
@@ -230,30 +207,19 @@ class AuthTest extends TestCase
         $array = $res->json();
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertNotEquals($token, $array['token']);
-        $this->assertEquals('password', $array['decodedTokenBody']['method']);
+        $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
+        $this->assertEquals('password', $payload['method']);
     }
 
     public function testRefreshExpiredToken()
     {
         $user = $this->createUser();
-
-        $claims = [
-            new UserClaim($user),
-            new Subject(1),
-            new Issuer('http://foo.bar'),
-            new Expiration(123 - 3600),
-            new NotBefore(123),
-            new IssuedAt(123),
-            new JwtId('foo'),
-        ];
-
-        $validator = Mockery::mock('Tymon\JWTAuth\Validators\PayloadValidator');
-        $validator->shouldReceive('setRefreshFlow->check');
-        $payload = new Payload($claims, $validator, true);
-
-        $cfg = $this->app->config->get('jwt');
-        $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
-        $token = $adapter->encode($payload->get());
+        $token = $this->tokenFromUser($user, [
+            'method' => 'password',
+            'exp' => 123 - 3600,
+            'nbf' => 123,
+            'iat' => 123,
+        ]);
 
         $this->callRefreshToken($token);
 
@@ -273,8 +239,7 @@ class AuthTest extends TestCase
         $token = implode('.', $segments);
 
         $this->callRefreshToken($token);
-
-        $this->assertException('Signature could not', 422, 'UnprocessableEntityException');
+        $this->assertException('Signature could not', 422, 'TokenInvalidException');
     }
 
     public function testRefreshInvalidToken()
@@ -283,24 +248,14 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
 
-        $this->assertException('invalid', 422, 'UnprocessableEntityException');
+        $this->assertException('invalid', 422, 'TokenInvalidException');
     }
 
     public function testRefreshMissingToken()
     {
         $this->getJson('/auth/jwt/refresh');
 
-        $this->assertException('not provided', 400, 'BadRequestException');
-    }
-
-    public function testRefreshMissingUser()
-    {
-        $user = factory(User::class)->make();
-        $token = $this->tokenFromUser($user);
-
-        $this->callRefreshToken($token);
-
-        $this->assertException('not exist', 500, 'RuntimeException');
+        $this->assertException('The token can not be parsed from the Request', 400, 'TokenIsMissingException');
     }
 
     public function testToken()
@@ -322,7 +277,7 @@ class AuthTest extends TestCase
     {
         $this->getJson('/auth/jwt/token');
 
-        $this->assertException('not provided', 400, 'BadRequestException');
+        $this->assertException('Single use token not provided.', 400, 'TokenIsMissingException');
     }
 
     public function testInvalidToken()
@@ -332,7 +287,7 @@ class AuthTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertResponseStatus(401);
+        $this->assertResponseStatus(422);
     }
 
     public function testTokenInvalid()
@@ -351,7 +306,7 @@ class AuthTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertException('invalid', 401, 'UnauthorizedException');
+        $this->assertException('Invalid single use token', 422, 'TokenInvalidException');
     }
 
     public function testMakeLoginToken()
@@ -487,10 +442,7 @@ class AuthTest extends TestCase
 
         $token = str_replace('jwtAuthToken=', '', $tokenParam);
 
-        $token = new Token($token);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
-
+        $decoded = $this->app->make('auth')->getTokenizer()->decode($token);
         $this->assertEquals('facebook', $decoded['method']);
         $this->assertStringStartsWith('http://foo.bar', $locationHeader);
 
@@ -532,9 +484,7 @@ class AuthTest extends TestCase
 
         $token = str_replace('jwtAuthToken=', '', $tokenParam);
 
-        $token = new Token($token);
-        $jwtAuth = $this->app->make('Tymon\JWTAuth\JWTAuth');
-        $decoded = $jwtAuth->decode($token)->toArray();
+        $decoded = $this->app->make('auth')->getTokenizer()->decode($token);
 
         $this->assertEquals('facebook', $decoded['method']);
         $this->assertTrue($this->response->headers->has('location'), 'Response has location header.');
@@ -569,7 +519,7 @@ class AuthTest extends TestCase
         $token = $this->tokenFromUser($user);
 
         $params = ['client_id' => env('VANILLA_JSCONNECT_CLIENT_ID')];
-        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $cookies = ['ngJwtAuthToken' => $token];
         $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
 
         $response = json_decode($this->response->getContent());
@@ -592,7 +542,7 @@ class AuthTest extends TestCase
             'signature' => sha1($timestamp.env('VANILLA_JSCONNECT_SECRET')),
         ];
 
-        $cookies = [\App\Http\Controllers\AuthController::JWT_AUTH_TOKEN_COOKIE => $token];
+        $cookies = ['ngJwtAuthToken' => $token];
         $this->call('GET', '/auth/sso/vanilla', $params, $cookies);
 
         $response = json_decode($this->response->getContent());

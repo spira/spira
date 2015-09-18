@@ -8,20 +8,17 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Extensions\JWTAuth;
+namespace Spira\Auth\Token;
 
 use App\Exceptions\TokenInvalidException;
 use Exception;
 use Namshi\JOSE\JWS;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Providers\JWT\JWTInterface;
-use Tymon\JWTAuth\Providers\JWT\JWTProvider;
 
 /**
  * The provided NamshiAdapter in the package can not handle RSA keys, which
  * this adapter enables.
  */
-class NamshiAdapter extends JWTProvider implements JWTInterface
+class NamshiAdapter  implements JWTInterface
 {
     /**
      * @var \Namshi\JOSE\JWS
@@ -29,36 +26,48 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
     protected $jws;
 
     /**
-     * @param string $secret
-     * @param string $algo
-     * @param null   $driver
+     * @var string
      */
-    public function __construct($secret, $algo, $driver = null)
-    {
-        array_walk($secret, function (&$path) {
-            $path = 'file://'.$path;
-        });
+    protected $algo;
+    /**
+     * @var mixed
+     */
+    private $secretPrivate;
+    /**
+     * @var mixed
+     */
+    private $secretPublic;
 
-        parent::__construct($secret, $algo);
+    /**
+     * @param mixed $secretPublic
+     * @param mixed $secretPrivate
+     * @param string $algo
+     * @param null $driver
+     */
+    public function __construct($secretPublic, $secretPrivate, $algo, $driver = null)
+    {
+        $this->algo = $algo;
 
         $this->jws = $driver ?: new JWS(['alg' => $algo]);
+        $this->secretPrivate = $secretPrivate;
+        $this->secretPublic = $secretPublic;
     }
 
     /**
      * Create a JSON Web Token.
      *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @throws TokenInvalidException
      *
      * @return string
      */
     public function encode(array $payload)
     {
         try {
-            $this->jws->setPayload($payload)->sign($this->secret['private']);
+            $this->jws->setPayload($payload)->sign($this->secretPrivate);
 
             return $this->jws->getTokenString();
         } catch (Exception $e) {
-            throw new JWTException('Could not create token: '.$e->getMessage());
+            throw new TokenInvalidException('Could not create token: '.$e->getMessage());
         }
     }
 
@@ -67,7 +76,7 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
      *
      * @param string $token
      *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @throws TokenInvalidException
      *
      * @return array
      */
@@ -79,7 +88,7 @@ class NamshiAdapter extends JWTProvider implements JWTInterface
             throw new TokenInvalidException('Could not decode token: '.$e->getMessage(), null, $e);
         }
 
-        if (! $jws->verify($this->secret['public'], $this->algo)) {
+        if (! $jws->verify($this->secretPublic, $this->algo)) {
             throw new TokenInvalidException('Token Signature could not be verified.');
         }
 

@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Exceptions;
+namespace Spira\Auth\Token;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class UnauthorizedException extends HttpException
+class TokenInvalidException extends HttpException
 {
     /**
-     * Create a new Unauthorized exception instance.
+     * Create a new Token Invalid exception instance.
      *
      * @param string $message
      * @param int $code
      * @param \Exception $previous
      */
-    public function __construct($message = 'Unauthorized.', $code = 0, Exception $previous = null)
+    public function __construct($message = 'Invalid token.', $code = 0, Exception $previous = null)
     {
-        parent::__construct(Response::HTTP_UNAUTHORIZED, $message, $previous);
+        parent::__construct(Response::HTTP_UNPROCESSABLE_ENTITY, $message, $previous);
     }
 }

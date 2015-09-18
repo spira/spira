@@ -11,7 +11,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Tymon\JWTAuth\JWTAuth;
+use App\Models\ArticleDiscussion;
+use Spira\Responder\Response\ApiResponse;
 use Illuminate\Http\Request;
 use App\Exceptions\UnauthorizedException;
 use App\Http\Transformers\EloquentModelTransformer;
@@ -26,28 +27,13 @@ class ArticleCommentController extends ChildEntityController
     protected $relationName = 'comments';
 
     /**
-     * JWT Auth.
-     *
-     * @var JWTAuth
-     */
-    protected $jwtAuth;
-
-    /**
      * Set dependencies.
      *
-     * @param  Article                  $parentModel
+     * @param  Article $parentModel
      * @param  EloquentModelTransformer $transformer
-     * @param  JWTAuth                  $jwtAuth
-     *
-     * @return void
      */
-    public function __construct(
-        Article $parentModel,
-        EloquentModelTransformer $transformer,
-        JWTAuth $jwtAuth
-    ) {
-        $this->jwtAuth = $jwtAuth;
-
+    public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
+    {
         parent::__construct($parentModel, $transformer);
     }
 
@@ -62,7 +48,7 @@ class ArticleCommentController extends ChildEntityController
     public function postOne(Request $request, $id)
     {
         // Add the current user to the request
-        if ($user = $this->jwtAuth->user()) {
+        if ($user = $request->user()) {
             $request->merge(['user_id' => $user->user_id]);
         } else {
             throw new UnauthorizedException('Not logged in.');
@@ -72,6 +58,7 @@ class ArticleCommentController extends ChildEntityController
 
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);
+        /** @var ArticleDiscussion $childModel */
         $childModel = $childModel->save($request->all(), $user);
 
         // If we respond with createdItem() it would be an empty response, so

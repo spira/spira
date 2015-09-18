@@ -12,14 +12,15 @@ namespace App\Http\Controllers;
 
 use App\Extensions\Socialite\SocialiteManager;
 use App\Models\User;
-use RuntimeException;
+use Illuminate\Contracts\Auth\Guard;
+use Spira\Auth\Driver\Guard as SpiraGuard;
+use Spira\Auth\Token\TokenInvalidException;
+use Spira\Auth\Token\TokenIsMissingException;
 use Spira\Responder\Response\ApiResponse;
-use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\NotImplementedException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
@@ -32,7 +33,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends ApiController
 {
-    const JWT_AUTH_TOKEN_COOKIE = 'ngJwtAuthToken';
     /**
      * The application instance.
      *
@@ -41,16 +41,7 @@ class AuthController extends ApiController
     protected $app;
 
     /**
-     * JWT Auth Package.
-     *
-     * @var \App\Extensions\JWTAuth\JWTAuth
-     */
-    protected $jwtAuth;
-
-    /**
-     * Illuminate Auth.
-     *
-     * @var Auth
+     * @var SpiraGuard
      */
     protected $auth;
 
@@ -58,17 +49,15 @@ class AuthController extends ApiController
      * Assign dependencies.
      *
      * @param Auth $auth
-     * @param JWTAuth $jwtAuth
      * @param AuthTokenTransformer $transformer
      * @param Application $app
-     * @param Cache $cache
      */
     public function __construct(
-        JWTAuth $jwtAuth,
+        Guard $auth,
         AuthTokenTransformer $transformer,
         Application $app)
     {
-        $this->jwtAuth = $jwtAuth;
+        $this->auth = $auth;
         $this->app = $app;
         parent::__construct($transformer);
     }
@@ -87,11 +76,10 @@ class AuthController extends ApiController
             'password' => $request->getPassword(),
         ];
 
-        if (! $token = $this->attemptLogin($credentials)) {
-            // Check to see if the user has recently requested to change their email and try to log in using it
+        if (! $this->auth->attempt($credentials)) {
             if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
                 $credentials['email'] = $oldEmail;
-                if (! $token = $this->attemptLogin($credentials)) {
+                if (! $this->auth->attempt($credentials)) {
                     throw new UnauthorizedException('Credentials failed.');
                 }
             } else {
@@ -101,22 +89,7 @@ class AuthController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->transformer)
-            ->item($token);
-    }
-
-    /**
-     * Attempt to login and get token.
-     *
-     * @param $credentials
-     * @return bool|string
-     */
-    private function attemptLogin($credentials)
-    {
-        try {
-            return $this->jwtAuth->attempt($credentials, ['method' => 'password']);
-        } catch (JWTException $e) {
-            throw new RuntimeException($e->getMessage(), 500, $e);
-        }
+            ->item($this->auth->token());
     }
 
     /**
@@ -126,16 +99,11 @@ class AuthController extends ApiController
      */
     public function refresh()
     {
-        $token = $this->jwtAuth->getTokenFromRequest();
-
-        // Get the user to make sure the token is fully valid
-        $this->jwtAuth->getUser();
-
-        $token = $this->jwtAuth->refresh($token);
+        $user = $this->auth->getUserFromRequest();
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($token);
+            ->item($this->auth->generateToken($user));
     }
 
     /**
@@ -153,21 +121,19 @@ class AuthController extends ApiController
     {
         $header = $request->headers->get('authorization');
         if (! starts_with(strtolower($header), 'token')) {
-            throw new BadRequestException('Single use token not provided.');
+            throw new TokenIsMissingException('Single use token not provided.');
         }
 
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
         if (! $user = $userModel->findByLoginToken($token)) {
-            throw new UnauthorizedException('Token invalid.');
+            throw new TokenInvalidException('Invalid single use token.');
         }
-
-        $token = $this->jwtAuth->fromUser($user);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->item($token);
+            ->item($this->auth->generateToken($user));
     }
 
     /**
@@ -227,11 +193,12 @@ class AuthController extends ApiController
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
+        /* @var User $user */
         $user->addSocialLogin($socialLogin);
 
         // Prepare response data
-        $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$token;
+        $user->setCurrentAuthMethod($provider);
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$this->auth->generateToken($user);
 
         $response = $this->getResponse();
         $response->redirect($returnUrl, 302);
@@ -245,20 +212,11 @@ class AuthController extends ApiController
      * @param  string  $requester
      * @param  Request $request
      *
-     * @return Response
+     * @return ApiResponse
      */
     public function singleSignOn($requester, Request $request)
     {
-        // A single sign on request might have different requirements and
-        // methods how to deal with a non logged in user. So we get the user
-        // if possible, and if not we pass in a null user and let the the
-        // requester class deal with it according to the requester's definitions
-        if ($token = $request->cookie(self::JWT_AUTH_TOKEN_COOKIE)) {
-            $user = $this->jwtAuth->toUser($token);
-        } else {
-            $user = null;
-        }
-
+        $user = $this->auth->user();
         $requester = SingleSignOnFactory::create($requester, $request, $user);
 
         return $requester->getResponse();

@@ -318,11 +318,12 @@ class UserTest extends TestCase
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
 
         // Assert token is invalid
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-        $blacklist = $jwtAuth->getBlacklist();
-        $payload = $jwtAuth->getJWTProvider()->decode($token);
-        $payload = $jwtAuth->getPayloadFactory()->setRefreshFlow(false)->make($payload);
-        $this->assertTrue($blacklist->has($payload));
+
+        /** @var \Spira\Auth\Driver\Guard $auth */
+        $auth = $this->app['auth'];
+        $payload = $auth->getTokenizer()->decode($token);
+        $this->setExpectedException(\Spira\Auth\Token\TokenExpiredException::class, 'Token has expired');
+        $auth->getBlacklist()->check($payload);
     }
 
     public function testPatchOneByGuestUser()
@@ -479,7 +480,7 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertException('invalid', 401, 'UnauthorizedException');
+        $this->assertException('Invalid', 422, 'TokenInvalidException');
     }
 
     public function testResetPasswordMailInvalidEmail()
