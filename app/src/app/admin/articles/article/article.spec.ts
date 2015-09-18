@@ -45,7 +45,10 @@ namespace app.admin.articles.article {
             ArticleController:ArticleController,
             loggedInUser:common.models.User = common.models.UserMock.entity(),
             userService = {
-                getAuthUser: sinon.stub().returns(loggedInUser)
+                getAuthUser: sinon.stub().returns(loggedInUser),
+                getUsersPaginator: sinon.stub().returns({
+                    setCount: sinon.stub()
+                })
             };
 
         beforeEach(() => {
@@ -125,6 +128,14 @@ namespace app.admin.articles.article {
             expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
             expect(articleService.getArticle).to.have.been.called;
+
+        });
+
+        it('should be able to resolve users paginator', () => {
+
+            (<any>ArticleConfig.state.resolve).usersPaginator(userService);
+
+            expect(userService.getUsersPaginator).to.have.been.called;
 
         });
 
