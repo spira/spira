@@ -7,8 +7,10 @@
 
             let title = seededChance.sentence();
 
+            let articleId = seededChance.guid();
+
             return new common.models.Article({
-                articleId: seededChance.guid(),
+                articleId: articleId,
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
@@ -25,15 +27,21 @@
                 _articleMetas: [
                     {
                         metaName: 'keyword',
-                        metaContent: 'foo'
+                        metaContent: 'foo',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
                     },
                     {
                         metaName: 'description',
-                        metaContent: 'bar'
+                        metaContent: 'bar',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
                     },
                     {
                         metaName: 'foobar',
-                        metaContent: 'foobar'
+                        metaContent: 'foobar',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
                     }
                 ]
             });
@@ -161,7 +169,9 @@
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMetas, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
+                    return !_.isEmpty(item.metaContent)
+                })).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -199,54 +209,14 @@
 
             });
 
-        });
-
-        describe('Meta tag hydration', () => {
-
-            let articleMetaTemplate:string[] = [
-                'name', 'description', 'keyword', 'canonical'
-            ];
-
-            it('should be able to hydrate meta tags from a template', () => {
+            it('should not make an api call if nothing has changed', () => {
 
                 let article = fixtures.getArticle();
+                article.setExists(true);
 
-                let hydratedMetaTags = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, articleMetaTemplate);
+                let savePromise = articleService.saveArticleWithRelated(article);
 
-                expect(_.size(hydratedMetaTags)).to.equal(5);
-
-                expect(hydratedMetaTags[0].articleId).to.equal(article.articleId);
-
-                expect(_.isEmpty(hydratedMetaTags[0].id)).to.be.false;
-
-                let testableMetaTags = _.cloneDeep(hydratedMetaTags);
-                _.forEach(testableMetaTags, (tag) => {
-                    delete(tag.id);
-                    delete(tag.articleId);
-                });
-
-                expect(testableMetaTags).to.deep.equal([
-                    {
-                        metaName: 'name',
-                        metaContent: ''
-                    },
-                    {
-                        metaName: 'description',
-                        metaContent: 'bar'
-                    },
-                    {
-                        metaName: 'keyword',
-                        metaContent: 'foo'
-                    },
-                    {
-                        metaName: 'canonical',
-                        metaContent: ''
-                    },
-                    {
-                        metaName: 'foobar',
-                        metaContent: 'foobar'
-                    }
-                ]);
+                expect(savePromise).eventually.to.equal(article);
 
             });
 
