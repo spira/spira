@@ -10,7 +10,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\BadRequestException;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -86,7 +85,7 @@ class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
 
         //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
-        if ($childId === false){
+        if ($childId === false) {
             $childId = $id;
         }
 
@@ -134,10 +133,10 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
+        if ($childId === false) { //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
             $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel());
             $childId = $parent->getKey();
-        }else{
+        } else {
             $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
         }
 
@@ -191,10 +190,10 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
+        if ($childId === false) { //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
             $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel(), false);
             $childId = $parent->getKey();
-        }else{
+        } else {
             $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
         }
 
@@ -244,7 +243,7 @@ class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
 
         //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id
-        if ($childId === false){
+        if ($childId === false) {
             $childId = $id;
         }
 
