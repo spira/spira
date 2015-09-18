@@ -16,7 +16,6 @@ use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Model\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;

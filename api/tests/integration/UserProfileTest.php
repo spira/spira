@@ -10,9 +10,6 @@
 
 use App\Models\User;
 use App\Models\UserProfile;
-use Illuminate\Support\Facades\Cache;
-use App\Models\UserCredential;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * Class UserProfileTest.
@@ -20,7 +17,6 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserProfileTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -39,7 +35,6 @@ class UserProfileTest extends TestCase
 
     public function testPutOne()
     {
-
         $user = $this->createUser();
 
         $userProfile = $this->getFactory()->get(UserProfile::class)->make([
@@ -68,7 +63,7 @@ class UserProfileTest extends TestCase
 
         $user->userProfile()->save($this->getFactory()->get(UserProfile::class)->make());
 
-        $user->userProfile->website = "http://example.com";
+        $user->userProfile->website = 'http://example.com';
 
         $profileTransformed = $this->getFactory()->get(UserProfile::class)->setModel($user->userProfile)->transformed();
 
@@ -80,7 +75,6 @@ class UserProfileTest extends TestCase
 
         $updatedProfile = $updatedUser->userProfile;
 
-        $this->assertEquals($updatedProfile->website, "http://example.com");
+        $this->assertEquals($updatedProfile->website, 'http://example.com');
     }
-
 }

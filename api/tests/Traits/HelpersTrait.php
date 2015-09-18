@@ -9,7 +9,6 @@
  */
 
 use App\Models\User;
-use App\Models\UserProfile;
 use Faker\Factory as Faker;
 
 trait HelpersTrait
