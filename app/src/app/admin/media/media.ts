@@ -55,6 +55,15 @@ namespace app.admin.media {
         value: number;
     }
 
+    export interface IImageConstraints {
+        maxHeight:number;
+        minHeight:number;
+        maxWidth:number;
+        minWidth:number;
+        maxSize:string;
+        minSize:string;
+    }
+
     export class MediaController {
 
         static $inject = ['perPage', 'imageService', 'imagesPaginator', 'initialImages', '$stateParams'];
@@ -66,9 +75,19 @@ namespace app.admin.media {
             value: 0
         };
 
+        public imageConstraints:IImageConstraints = {
+            maxHeight:2500,
+            minHeight:100,
+            maxWidth:2500,
+            minWidth:100,
+            maxSize:'20MB',
+            minSize:'10KB',
+        };
+
         public pages:number[] = [];
         public currentPageIndex:number;
         public queuedImage:common.services.image.IImageUploadOptions;
+        public imageUploadForm:ng.IFormController;
 
         constructor(private perPage:number,
                     private imageService:common.services.image.ImageService,
@@ -100,6 +119,9 @@ namespace app.admin.media {
 
                 this.images.unshift(image);
                 this.imagesPaginator.setCount(this.imagesPaginator.getCount() + 1);
+
+                this.queuedImage = null;
+                this.imageUploadForm.$setPristine();
 
             };
 
