@@ -32,6 +32,8 @@ class CreateArticlesTable extends Migration
             $table->string('primary_image')->nullable();
             $table->string('permalink')->index()->nullable();
             $table->uuid('author_id')->index();
+            $table->boolean('author_display')->default(true);
+            $table->boolean('show_author_promo')->default(false);
             $table->dateTime('first_published')->nullable();
 
             $table->dateTime('created_at');
