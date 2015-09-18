@@ -5,13 +5,23 @@ namespace common.models {
 
     class TestModel extends AbstractModel {
 
-        protected _nestedEntityMap = {
+        protected _nestedEntityMap:INestedEntityMap = {
             hasOne: TestChildModel,
-            hasMany: TestChildModel
+            hasMany: TestChildModel,
+            hydrate: this.hydrateFunction
         };
 
         public _hasOne:TestChildModel;
         public _hasMany:TestChildModel[];
+        public _hydrate:TestChildModel[];
+
+        private hydrateFunction(data:any, exists:boolean) {
+            if(exists) {
+                return ['bar'];
+            }
+
+            return data._hydrate;
+        }
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
@@ -40,13 +50,33 @@ namespace common.models {
 
         });
 
-        it('should instantiate nested collections', () => {
+        it('should instantiate nested collections (class)', () => {
 
             let model = new TestModel({
                 '_hasMany' : [{}]
             });
 
             expect(model._hasMany[0]).to.be.instanceOf(TestChildModel);
+
+        });
+
+        it('should instantiate nested collections (function, exists)', () => {
+
+            let model = new TestModel({
+                '_hydrate' : ['foobar']
+            }, true);
+
+            expect(model._hydrate).to.deep.equal(['bar']);
+
+        });
+
+        it('should instantiate nested collections (function, non-existant)', () => {
+
+            let model = new TestModel({
+                '_hydrate' : ['foobar']
+            }, false);
+
+            expect(model._hydrate).to.deep.equal(['foobar']);
 
         });
 
@@ -69,6 +99,13 @@ namespace common.models {
 
         });
 
+        it('should be able to generate a UUID', () => {
+
+            let uuid:string = TestModel.generateUUID();
+
+            expect(uuid.length).to.equal(36);
+
+        });
 
     });
 
