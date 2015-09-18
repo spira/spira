@@ -35,22 +35,20 @@ namespace app.admin.articles.article {
                 saveArticleWithRelated:(article:common.models.Article) => {
                     return $q.when(true);
                 },
-                getArticle:(identifier:string) => {
+                getArticle:(identifier:string, nestedEntities:string[]) => {
                     return $q.when(getArticle(identifier));
                 },
                 newArticle:(author:common.models.User) => {
                     return getArticle('newArticle');
-                },
-                hydrateMetaCollectionFromTemplate:(articleId: string, articleMeta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
-                    return [
-                        new common.models.ArticleMeta({metaName:'foobarfoo', metaContent:'barfoo'})
-                    ];
                 }
             },
             ArticleController:ArticleController,
             loggedInUser:common.models.User = common.models.UserMock.entity(),
             userService = {
-                getAuthUser: sinon.stub().returns(loggedInUser)
+                getAuthUser: sinon.stub().returns(loggedInUser),
+                getUsersPaginator: sinon.stub().returns({
+                    setCount: sinon.stub()
+                })
             };
 
         beforeEach(() => {
@@ -75,8 +73,8 @@ namespace app.admin.articles.article {
 
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
-            sinon.spy(articleService, 'hydrateMetaCollectionFromTemplate');
             sinon.spy(articleService, 'newArticle');
+            sinon.spy(articleService, 'getArticle');
 
         });
 
@@ -84,8 +82,8 @@ namespace app.admin.articles.article {
 
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
-            (<any>articleService).hydrateMetaCollectionFromTemplate.restore();
             (<any>articleService).newArticle.restore();
+            (<any>articleService).getArticle.restore();
 
         });
 
@@ -129,7 +127,15 @@ namespace app.admin.articles.article {
 
             expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
-            expect(articleService.hydrateMetaCollectionFromTemplate).to.have.been.calledWith(sinon.match.any, [testMeta], sinon.match.array);
+            expect(articleService.getArticle).to.have.been.called;
+
+        });
+
+        it('should be able to resolve users paginator', () => {
+
+            (<any>ArticleConfig.state.resolve).usersPaginator(userService);
+
+            expect(userService.getUsersPaginator).to.have.been.called;
 
         });
 

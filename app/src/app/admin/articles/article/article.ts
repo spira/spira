@@ -10,10 +10,6 @@ namespace app.admin.articles.article {
 
     export class ArticleConfig {
 
-        public static articleMetaTemplate:string[] = [
-            'name', 'description', 'keyword', 'canonical'
-        ];
-
         public static state:global.IState;
 
         static $inject = ['stateHelperServiceProvider'];
@@ -67,13 +63,7 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author'])
-                            .then((article) => {
-
-                                article._articleMetas = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, ArticleConfig.articleMetaTemplate);
-
-                                return article;
-                            });
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
                         return userService.getUsersPaginator().setCount(10);

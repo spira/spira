@@ -1,12 +1,12 @@
 namespace common.models {
 
     @common.decorators.changeAware
-    export class Article extends AbstractModel{
+    export class Article extends AbstractModel {
 
-        protected _nestedEntityMap = {
+        protected _nestedEntityMap:INestedEntityMap = {
             tags: Tag,
-            articleMetas: ArticleMeta,
-            author: User
+            author: User,
+            articleMetas: this.hydrateMetaCollectionFromTemplate
         };
 
         public articleId:string = undefined;
@@ -24,6 +24,10 @@ namespace common.models {
         public _author:common.models.User = undefined;
         public _tags:common.models.Tag[] = [];
 
+        private static articleMetaTemplate:string[] = [
+            'name', 'description', 'keyword', 'canonical'
+        ];
+
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
             this.hydrate(data, exists);
@@ -36,6 +40,40 @@ namespace common.models {
         public getIdentifier():string {
 
             return this.permalink || this.articleId;
+
+        }
+
+        /**
+         * Hydrates a meta template with meta which already exists
+         * @param data
+         * @param exists
+         * @returns {any}
+         */
+        private hydrateMetaCollectionFromTemplate(data:any, exists:boolean) {
+
+            return (<any>_).chain(common.models.Article.articleMetaTemplate)
+                .map((metaTagName) => {
+
+                    let existingTag = _.find((<common.models.Article>data)._articleMetas, {metaName:metaTagName});
+                    if(_.isEmpty(existingTag)) {
+                        return new common.models.ArticleMeta({
+                            metaName:metaTagName,
+                            metaContent:'',
+                            articleId:(<common.models.Article>data).articleId,
+                            metaId:common.models.Article.generateUUID()
+                        });
+                    }
+                    return existingTag;
+                })
+                .thru((templateMeta) => {
+                    let leftovers = _.filter((<common.models.Article>data)._articleMetas, (metaTag) => {
+                        return !_.contains(templateMeta, metaTag);
+                    });
+
+                    return templateMeta.concat(leftovers);
+                })
+                .value();
+
         }
 
     }

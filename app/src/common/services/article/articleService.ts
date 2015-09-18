@@ -172,36 +172,6 @@ namespace common.services.article {
                 });
         }
 
-        /**
-         * Hydrates a meta template with meta which already exists
-         * @param articleId
-         * @param articleMetas
-         * @param template
-         */
-        public hydrateMetaCollectionFromTemplate(articleId:string, articleMetas:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] {
-            return (<any>_).chain(template)
-                .map((metaTagName) => {
-                    let existingTag = _.find(articleMetas, {metaName:metaTagName});
-                    if(_.isEmpty(existingTag)) {
-                        return new common.models.ArticleMeta({
-                            metaName:metaTagName,
-                            metaContent:'',
-                            articleId:articleId,
-                            id:this.ngRestAdapter.uuid()
-                        });
-                    }
-                    return existingTag;
-                })
-                .thru((templateMeta) => {
-                    let leftovers = _.filter(articleMetas, (metaTag) => {
-                        return !_.contains(templateMeta, metaTag);
-                    });
-
-                    return templateMeta.concat(leftovers);
-                })
-                .value();
-        }
-
     }
 
     angular.module(namespace, [])
