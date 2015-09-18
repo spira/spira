@@ -35,7 +35,7 @@ namespace app.admin.articles.article {
                 saveArticleWithRelated:(article:common.models.Article) => {
                     return $q.when(true);
                 },
-                getArticle:(identifier:string) => {
+                getArticle:(identifier:string, nestedEntities:string[]) => {
                     return $q.when(getArticle(identifier));
                 },
                 newArticle:(author:common.models.User) => {
@@ -77,6 +77,7 @@ namespace app.admin.articles.article {
             sinon.spy(articleService, 'saveArticleWithRelated');
             sinon.spy(articleService, 'hydrateMetaCollectionFromTemplate');
             sinon.spy(articleService, 'newArticle');
+            sinon.spy(articleService, 'getArticle');
 
         });
 
@@ -86,6 +87,7 @@ namespace app.admin.articles.article {
             (<any>articleService).saveArticleWithRelated.restore();
             (<any>articleService).hydrateMetaCollectionFromTemplate.restore();
             (<any>articleService).newArticle.restore();
+            (<any>articleService).getArticle.restore();
 
         });
 
@@ -129,7 +131,7 @@ namespace app.admin.articles.article {
 
             expect(article).eventually.to.be.an.instanceOf(common.models.Article);
 
-            expect(articleService.hydrateMetaCollectionFromTemplate).to.have.been.calledWith(sinon.match.any, [testMeta], sinon.match.array);
+            expect(articleService.getArticle).to.have.been.called;
 
         });
 
