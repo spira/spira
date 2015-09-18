@@ -17,6 +17,9 @@ namespace common.models {
         public status:string = undefined;
         public authorId:string = undefined;
 
+        public authorDisplay:boolean = undefined;
+        public showAuthorPromo:boolean = undefined;
+
         public _articleMetas:common.models.ArticleMeta[] = [];
         public _author:common.models.User = undefined;
         public _tags:common.models.Tag[] = [];

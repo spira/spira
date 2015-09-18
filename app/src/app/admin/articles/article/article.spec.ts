@@ -38,7 +38,7 @@ namespace app.admin.articles.article {
                 getArticle:(identifier:string) => {
                     return $q.when(getArticle(identifier));
                 },
-                newArticle:() => {
+                newArticle:(author:common.models.User) => {
                     return getArticle('newArticle');
                 },
                 hydrateMetaCollectionFromTemplate:(articleId: string, articleMeta:common.models.ArticleMeta[], template:string[]):common.models.ArticleMeta[] => {
@@ -47,7 +47,11 @@ namespace app.admin.articles.article {
                     ];
                 }
             },
-            ArticleController:ArticleController;
+            ArticleController:ArticleController,
+            loggedInUser:common.models.User = common.models.UserMock.entity(),
+            userService = {
+                getAuthUser: sinon.stub().returns(loggedInUser)
+            };
 
         beforeEach(() => {
 
@@ -72,6 +76,7 @@ namespace app.admin.articles.article {
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
             sinon.spy(articleService, 'hydrateMetaCollectionFromTemplate');
+            sinon.spy(articleService, 'newArticle');
 
         });
 
@@ -80,6 +85,7 @@ namespace app.admin.articles.article {
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
             (<any>articleService).hydrateMetaCollectionFromTemplate.restore();
+            (<any>articleService).newArticle.restore();
 
         });
 
@@ -103,7 +109,9 @@ namespace app.admin.articles.article {
 
             $stateParams.permalink = 'new';
 
-            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
+            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
+
+            expect(articleService.newArticle).to.have.been.calledWith(loggedInUser);
 
             expect(article).to.be.an.instanceOf(common.models.Article);
 

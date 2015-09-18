@@ -13,6 +13,7 @@ namespace app.admin.articles.article.meta {
             private notificationService:common.services.notification.NotificationService,
             private usersPaginator:common.services.pagination.Paginator
         ) {
+            // Initialize the authors array which is used as a model for author contact chip input.
             this.authors = [article._author];
         }
 

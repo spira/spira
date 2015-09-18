@@ -1,35 +1,53 @@
 <h2>Add Image</h2>
 
-<form name="imageUploadForm">
+<form name="MediaController.imageUploadForm" novalidate>
     <div layout layout-sm="column">
 
         <md-input-container>
             <label>Alt</label>
-            <input ng-model="MediaController.queuedImage.alt" required>
+            <input name="alt" ng-model="MediaController.queuedImage.alt" required/>
+            <ng-messages ng-hide="MediaController.imageUploadForm.alt.$pristine" for="MediaController.imageUploadForm.alt.$error">
+                <ng-message when="required">Alt is required.</ng-message>
+            </ng-messages>
         </md-input-container>
 
         <md-input-container>
             <label>Title</label>
-            <input ng-model="MediaController.queuedImage.title">
+            <input name="title" ng-model="MediaController.queuedImage.title" />
         </md-input-container>
 
         <md-input-container>
 
             <input type="file"
+                   aria-label="Select Image"
                    ng-model="MediaController.queuedImage.file"
                    name="file"
                    ngf-select
                    accept="image/*"
-                   ngf-max-height="1000"
-                   ngf-max-size="20MB"
+                   ngf-max-height="{{MediaController.imageConstraints.maxHeight}}"
+                   ngf-min-height="{{MediaController.imageConstraints.minHeight}}"
+                   ngf-max-width="{{MediaController.imageConstraints.maxWidth}}"
+                   ngf-min-width="{{MediaController.imageConstraints.minWidth}}"
+                   ngf-max-size="{{MediaController.imageConstraints.maxSize}}"
+                   ngf-min-size="{{MediaController.imageConstraints.minSize}}"
                    required
                 >
 
-            <img ng-show="imageUploadForm.file.$valid" ngf-src="MediaController.queuedImage.file">
+            <img width="200" ng-show="MediaController.imageUploadForm.file.$valid" ngf-src="MediaController.queuedImage.file">
+
+            <ng-messages ng-hide="MediaController.imageUploadForm.file.$pristine" for="MediaController.imageUploadForm.file.$error">
+                <ng-message when="required">Image is required.</ng-message>
+                <ng-message when="maxHeight">Image must be less than {{MediaController.imageConstraints.maxHeight}} pixels high. ({{MediaController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
+                <ng-message when="minHeight">Image must be more than {{MediaController.imageConstraints.minHeight}} pixels high. ({{MediaController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
+                <ng-message when="maxWidth">Image must be less than {{MediaController.imageConstraints.maxWidth}} pixels wide. ({{MediaController.imageUploadForm.file.$modelValue.width}}px) given.</ng-message>
+                <ng-message when="minWidth">Image must be more than {{MediaController.imageConstraints.minWidth}} pixels wide. ({{MediaController.imageUploadForm.file.$modelValue.width}}px) given.</ng-message>
+                <ng-message when="maxSize">Image must be less than {{MediaController.imageConstraints.maxSize}}.</ng-message>
+                <ng-message when="minSize">Image must be more than {{MediaController.imageConstraints.minSize}}.</ng-message>
+            </ng-messages>
 
         </md-input-container>
 
-        <md-button ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Primary</md-button>
+        <md-button ng-if="MediaController.imageUploadForm.$valid" ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Upload</md-button>
 
     </div>
 

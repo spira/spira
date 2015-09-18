@@ -177,6 +177,8 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'author_id' => $users->random(1)->user_id,
+        'author_display' => $faker->boolean(50),
+        'show_author_promo' => $faker->boolean(50),
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];
 });

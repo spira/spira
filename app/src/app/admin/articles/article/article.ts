@@ -58,16 +58,16 @@ namespace app.admin.articles.article {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.permalink || $stateParams.permalink == 'new'){
-                            let newArticle = articleService.newArticle();
+                            let newArticle = articleService.newArticle(userService.getAuthUser());
                             $stateParams.permalink = 'new';
                             $stateParams.newArticle = true;
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink)
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author'])
                             .then((article) => {
 
                                 article._articleMetas = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, ArticleConfig.articleMetaTemplate);
