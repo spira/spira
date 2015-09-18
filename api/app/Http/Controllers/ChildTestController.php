@@ -1,24 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 06.08.15
- * Time: 1:30
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Repositories\TestRepository;
+use App\Models\TestEntity;
 
 class ChildTestController extends ChildEntityController
 {
-    protected $validateRequestRule = 'uuid';
-    protected $validateChildRequestRule = 'uuid';
     protected $relationName = 'testMany';
+    protected $validateParentIdRule = 'uuid';
+    protected $validateChildIdRule = 'uuid';
 
-    public function __construct(TestRepository $repository, EloquentModelTransformer $transformer)
+    public function __construct(TestEntity $parentModel, EloquentModelTransformer $transformer)
     {
-        parent::__construct($repository, $transformer);
+        parent::__construct($parentModel, $transformer);
     }
 }

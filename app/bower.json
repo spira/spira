@@ -1,50 +1,58 @@
 {
-  "name": "spira",
-  "version": "0.0.0",
-  "homepage": "https://github.com/spira/spira",
-  "authors": [
-    "Zak Henry <zak.henry@gmail.com>"
-  ],
-  "description": "AngularJS seed app for connecting to RESTful API",
-  "main": "app.js",
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "angular": "~1.4",
-    "angular-animate": "~1.4",
-    "angular-sanitize": "~1.4",
-    "angular-messages": "~1.4",
-    "angular-i18n": "~1.4",
-    "angular-ui-router": "~0.2.15",
-    "angular-ui-utils": "~0.2.3",
-    "angular-highlightjs": "~0.4.1",
-    "jquery": "~2.1.3",
-    "moment": "~2.10",
-    "lodash": "~3.9",
-    "lil-uuid": "~0.1.0",
-    "font-awesome": "~4.3.0",
-    "highlightjs": "~8.5.0",
-    "angular-material": "~0.10",
-    "toposort": "~0.3.1",
-    "angular-rest-adapter": "~1.2.0",
-    "angular-http-progress": "~0.1.3",
-    "angular-jwt-auth": "~3.3.1",
-    "moment-timezone": "~0.4.0",
-    "ngInfiniteScroll": "~1.2.1",
-    "angular-ui-validate": "~1.1.1"
-  },
-  "devDependencies": {
-    "angular-mocks": "~1.4",
-    "chance": "~0.7.6"
-  },
-  "resolutions": {
-    "angular": "~1.4",
-    "lodash": "~3.10"
-  }
+    "name": "spira",
+    "version": "0.0.0",
+    "homepage": "https://github.com/spira/spira",
+    "authors": [
+        "Zak Henry <zak.henry@gmail.com>"
+    ],
+    "description": "AngularJS seed app for connecting to RESTful API",
+    "main": "app.js",
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "angular": "~1.4",
+        "angular-animate": "~1.4",
+        "angular-highlightjs": "~0.4.1",
+        "angular-http-progress": "~0.1.3",
+        "angular-i18n": "~1.4",
+        "angular-jwt-auth": "~3.4.1",
+        "angular-material": "~0.11",
+        "angular-messages": "~1.4",
+        "angular-rest-adapter": "~1.3.0",
+        "angular-sanitize": "~1.4",
+        "angular-ui-router": "~0.2.15",
+        "angular-ui-utils": "~0.2.3",
+        "angular-ui-validate": "~1.1.1",
+        "cloudinary_ng": "~0.1.4",
+        "font-awesome": "~4.3.0",
+        "highlightjs": "~8.5.0",
+        "jquery": "~2.1.3",
+        "lil-uuid": "~0.1.0",
+        "lodash": "~3.10",
+        "moment": "~2.10",
+        "moment-timezone": "~0.4.0",
+        "ng-file-upload": "~7.0.15",
+        "ngInfiniteScroll": "~1.2.1",
+        "toposort": "~0.3.1"
+    },
+    "devDependencies": {
+        "angular-mocks": "~1.4",
+        "chance": "~0.7.6"
+    },
+    "resolutions": {
+        "lodash": "~3.10"
+    },
+    "overrides": {
+        "cloudinary_js": {
+            "dependencies": {
+                "jquery": ">=1.6"
+            }
+        }
+    }
 }

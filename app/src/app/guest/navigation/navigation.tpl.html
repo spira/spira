@@ -1,6 +1,6 @@
 <md-toolbar class="md-whiteframe-z2 navigation">
 
-    <md-tabs md-selected="NavigationController.navigableStateIndex">
+    <md-tabs md-dynamic-height md-selected="NavigationController.navigableStateIndex">
         <md-tab ng-repeat="state in NavigationController.navigableStates" ui-sref="{{state.name}}">
             <md-tab-label>
                 <md-icon>{{state.data.icon}}</md-icon>

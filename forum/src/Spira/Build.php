@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira;
 
 use VanillaConfigurator;
@@ -30,6 +38,17 @@ class Build
     }
 
     /**
+     * Runs after a composer update.
+     *
+     * @param   Event   $event  [description]
+     * @return  void
+     */
+    public static function buildForum(Event $event)
+    {
+        self::getInstance()->setupVanilla();
+    }
+
+    /**
      * Combine the retrieved packages to the required application.
      *
      * @return void
@@ -42,16 +61,19 @@ class Build
         // Copy the API module inside the application directory
         $this->recurseCopy('vendor/kasperisager/vanilla-api', 'public/applications/api');
 
+        // Copy the API Extended module inside the application directory
+        $this->recurseCopy('src/apiextended', 'public/applications/apiextended');
+
         // Copy the SSO plugin to the plugins directory
         $this->recurseCopy('vendor/vanilla/addons/plugins/jsconnect', 'public/plugins/jsconnect');
 
-        // Copy the initial configuration to conf directory
-        copy('config.php', 'public/conf/config.php');
-
+        // Setup the database variables to be bootstrapped into memory
         copy('bootstrap.database.php', 'public/conf/bootstrap.early.php');
 
-        // Setup Vanilla
-        (new VanillaConfigurator)->start();
+        // Override general functions
+        copy('bootstrap.before.php', 'public/conf/bootstrap.before.php');
+
+        $this->setupVanilla();
     }
 
     /**
@@ -67,10 +89,10 @@ class Build
         @mkdir($dest);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
-                if (is_dir($source . '/' . $file)) {
-                    $this->recurseCopy($source . '/' . $file, $dest . '/' . $file);
+                if (is_dir($source.'/'.$file)) {
+                    $this->recurseCopy($source.'/'.$file, $dest.'/'.$file);
                 } else {
-                    copy($source . '/' . $file, $dest . '/' . $file);
+                    copy($source.'/'.$file, $dest.'/'.$file);
                 }
             }
         }
@@ -84,6 +106,16 @@ class Build
      */
     protected static function getInstance()
     {
-        return new Build;
+        return new self;
+    }
+
+    /**
+     * Run the vanilla setup functions.
+     */
+    protected function setupVanilla()
+    {
+        copy('config.php', 'public/conf/config.php'); //also overwrites the config file for a repeated migration (for qa)
+
+        (new VanillaConfigurator)->start();
     }
 }

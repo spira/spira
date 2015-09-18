@@ -1,0 +1,61 @@
+
+# Group Images
+Image is a resource for storing data of uploaded images into <a href ="http://cloudinary.com/documentation/upload_images" >Cloudinary</a>
+
+Image Entity has some unique properties based on Cloudinary api.
+
+* **publicId**, unique identifier for the image (this can be client supplied)
+* **format**, format of image
+* **version**, gives versioning options (publicId and version must be a unique combination)
+* **folder**, possibility for group separation of images
+
+## Image Entity [/images/{imageId}]
+
++ Parameters
+    + imageId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the image in the spira system.
+
+### Retrieve an image [GET]
+
+#### Restrictions
+* Allowed - [admin]
++ Response 200 (application/json)
+
+    + Body
+
+            {!! $factory->json(\App\Models\Image::class) !!}
+
+### Create/update image entity [PUT]
+
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!! $factory->json(\App\Models\Image::class) !!}
+
++ Response 201
+
+### Update the image [PATCH]
+
+#### Restrictions
+* Allowed - [admin]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Image::class)
+                    ->showOnly(['alt'])
+                    ->json()
+            !!}
+
+
++ Response 204
+
+
+### Delete the image [DELETE]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Response 204

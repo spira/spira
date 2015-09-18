@@ -1,14 +1,23 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Http\Controllers;
 
-use Log;
+use App\Extensions\JWTAuth\JWTManager;
+use App\Extensions\Socialite\SocialiteManager;
+use App\Models\User;
 use RuntimeException;
 use Spira\Responder\Response\ApiResponse;
 use Tymon\JWTAuth\JWTAuth;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\UnauthorizedException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -22,7 +31,7 @@ use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class AuthController extends EntityController
+class AuthController extends ApiController
 {
     const JWT_AUTH_TOKEN_COOKIE = 'ngJwtAuthToken';
     /**
@@ -35,7 +44,7 @@ class AuthController extends EntityController
     /**
      * JWT Auth Package.
      *
-     * @var JWTAuth
+     * @var \App\Extensions\JWTAuth\JWTAuth|JWTManager
      */
     protected $jwtAuth;
 
@@ -49,22 +58,26 @@ class AuthController extends EntityController
     /**
      * Assign dependencies.
      *
-     * @param  Auth                  $auth
-     * @param  JWTAuth               $jwtAuth
-     * @param  AuthTokenTransformer  $transformer
-     * @param  Application           $app
-     *
+     * @param Auth $auth
+     * @param JWTAuth $jwtAuth
+     * @param AuthTokenTransformer $transformer
+     * @param Application $app
+     * @param Cache $cache
      */
-    public function __construct(Auth $auth, JWTAuth $jwtAuth, AuthTokenTransformer $transformer, Application $app)
+    public function __construct(
+        Auth $auth,
+        JWTAuth $jwtAuth,
+        AuthTokenTransformer $transformer,
+        Application $app)
     {
         $this->auth = $auth;
         $this->jwtAuth = $jwtAuth;
-        $this->transformer = $transformer;
         $this->app = $app;
+        parent::__construct($transformer);
     }
 
     /**
-     * Get a login token.
+     * Log in a user.
      *
      * @param Request $request
      *
@@ -77,8 +90,33 @@ class AuthController extends EntityController
             'password' => $request->getPassword(),
         ];
 
-        if (!$this->auth->attempt($credentials)) {
-            throw new UnauthorizedException('Credentials failed.');
+        if (! $token = $this->attemptLogin($credentials)) {
+            // Check to see if the user has recently requested to change their email and try to log in using it
+            if ($oldEmail = User::findCurrentEmail($credentials['email'])) {
+                $credentials['email'] = $oldEmail;
+                if (! $token = $this->attemptLogin($credentials)) {
+                    throw new UnauthorizedException('Credentials failed.');
+                }
+            } else {
+                throw new UnauthorizedException('Credentials failed.');
+            }
+        }
+
+        return $this->getResponse()
+            ->transformer($this->transformer)
+            ->item($token);
+    }
+
+    /**
+     * Attempt to login and get token.
+     *
+     * @param $credentials
+     * @return bool|string
+     */
+    private function attemptLogin($credentials)
+    {
+        if (! $this->auth->attempt($credentials)) {
+            return false;
         }
 
         try {
@@ -87,9 +125,7 @@ class AuthController extends EntityController
             throw new RuntimeException($e->getMessage(), 500, $e);
         }
 
-        return $this->getResponse()
-            ->transformer($this->transformer)
-            ->item($token);
+        return $token;
     }
 
     /**
@@ -107,7 +143,7 @@ class AuthController extends EntityController
         $token = $this->jwtAuth->refresh($token);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -115,31 +151,31 @@ class AuthController extends EntityController
      * Login with a single use token.
      *
      * @param  Request         $request
-     * @param  UserRepository  $userRepository
+     * @param  User  $userModel
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      *
      * @return ApiResponse
      */
-    public function token(Request $request, UserRepository $userRepository)
+    public function token(Request $request, User $userModel)
     {
         $header = $request->headers->get('authorization');
-        if (!starts_with(strtolower($header), 'token')) {
+        if (! starts_with(strtolower($header), 'token')) {
             throw new BadRequestException('Single use token not provided.');
         }
 
         $token = trim(substr($header, 5));
 
         // If we didn't find the user, it was an expired/invalid token. No access granted
-        if (!$user = $userRepository->findByLoginToken($token)) {
+        if (! $user = $userModel->findByLoginToken($token)) {
             throw new UnauthorizedException('Token invalid.');
         }
 
         $token = $this->jwtAuth->fromUser($user);
 
         return $this->getResponse()
-            ->transformer($this->transformer)
+            ->transformer($this->getTransformer())
             ->item($token);
     }
 
@@ -147,7 +183,7 @@ class AuthController extends EntityController
      * Redirect the user to the Provider authentication page.
      *
      * @param  string     $provider
-     * @param  Socialite  $socialite
+     * @param  Socialite|SocialiteManager  $socialite
      *
      * @return ApiResponse
      */
@@ -162,14 +198,14 @@ class AuthController extends EntityController
      * Obtain the user information from Provider.
      *
      * @param  string          $provider
-     * @param  Socialite       $socialite
-     * @param  UserRepository  $repository
+     * @param  Socialite|SocialiteManager       $socialite
+     * @param  User  $userModel
      *
      * @throws UnprocessableEntityException
      *
      * @return ApiResponse
      */
-    public function handleProviderCallback($provider, Socialite $socialite, UserRepository $repository)
+    public function handleProviderCallback($provider, Socialite $socialite, User $userModel)
     {
         $this->validateProvider($provider);
 
@@ -179,11 +215,11 @@ class AuthController extends EntityController
         // with Twitter for instance, that isn't whitelisted, no email
         // address will be returned with the response.
         // See the notes in Spira API doc under Social Login for more info.
-        if (!$socialUser->email) {
+        if (! $socialUser->email) {
             // The app is connected with the service, but the 3rd party service
             // is not configured or allowed to return email addresses, so we
             // can't process the data further. Let's throw an exception.
-            Log::critical('Provider '.$provider.' does not return email.');
+            \Log::critical('Provider '.$provider.' does not return email.');
             throw new UnprocessableEntityException('User object has no email');
         }
 
@@ -192,11 +228,11 @@ class AuthController extends EntityController
 
         // Get or create the Spira user from the social login
         try {
-            $user = $repository->findByEmail($socialUser->email);
+            $user = $userModel->findByEmail($socialUser->email);
         } catch (ModelNotFoundException $e) {
-            $user = $repository->getNewModel();
+            $user = $userModel->newInstance();
             $user->fill(array_merge($socialUser->toArray(), ['user_type' => 'guest']));
-            $user = $repository->save($user);
+            $user->save();
         }
 
         $socialLogin = new SocialLogin(['provider' => $provider, 'token' => $socialUser->token]);
@@ -204,10 +240,11 @@ class AuthController extends EntityController
 
         // Prepare response data
         $token = $this->jwtAuth->fromUser($user, ['method' => $provider]);
-        $returnUrl = $socialite->with($provider)->getCachedReturnUrl() . '?jwtAuthToken=' . $token;
+        $returnUrl = $socialite->with($provider)->getCachedReturnUrl().'?jwtAuthToken='.$token;
 
         $response = $this->getResponse();
         $response->redirect($returnUrl, 302);
+
         return $response;
     }
 
@@ -247,7 +284,7 @@ class AuthController extends EntityController
      */
     protected function validateProvider($provider)
     {
-        if (!in_array($provider, array_keys($this->app['config']['services']))) {
+        if (! in_array($provider, array_keys($this->app['config']['services']))) {
             throw new NotImplementedException('Provider '.$provider.' is not supported.');
         }
     }

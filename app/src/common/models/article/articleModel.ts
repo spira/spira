@@ -3,19 +3,30 @@ namespace common.models {
     @common.decorators.changeAware
     export class Article extends AbstractModel{
 
+        protected _nestedEntityMap = {
+            tags: Tag,
+            articleMetas: ArticleMeta,
+            author: User
+        };
+
         public articleId:string = undefined;
         public title:string = undefined;
         public permalink:string = undefined;
         public content:string = undefined;
         public primaryImage:string = undefined;
         public status:string = undefined;
+        public authorId:string = undefined;
 
-        constructor(data:any) {
+        public authorDisplay:boolean = undefined;
+        public showAuthorPromo:boolean = undefined;
 
-            super(data);
+        public _articleMetas:common.models.ArticleMeta[] = [];
+        public _author:common.models.User = undefined;
+        public _tags:common.models.Tag[] = [];
 
-            _.assign(this, data);
-
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
         /**

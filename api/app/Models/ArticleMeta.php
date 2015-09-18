@@ -1,12 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 03.08.15
- * Time: 13:29
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Models;
+
+use Spira\Model\Model\BaseModel;
 
 class ArticleMeta extends BaseModel
 {
@@ -17,24 +21,17 @@ class ArticleMeta extends BaseModel
      */
     public $table = 'article_metas';
 
-    protected $primaryKey = 'meta_name';
+    protected $primaryKey = 'meta_id';
 
-    protected $fillable = ['article_id', 'meta_name', 'meta_content', 'meta_property'];
+    protected $fillable = ['meta_id', 'article_id', 'meta_name', 'meta_content'];
 
-    public function getValidationRules()
+    protected $guarded = ['meta_name'];
+
+    public static function getValidationRules()
     {
-        $metaUniqueRule = 'unique:article_metas,meta_name';
-        if ($this->exists) {
-            $metaUniqueRule.=','.$this->meta_name.',meta_name';
-        } else {
-            $metaUniqueRule.=',NULL,NULL';
-        }
-        $metaUniqueRule.= ',article_id,'.$this->article_id;
         return [
-            'article_id' => 'uuid|createOnly',
-            'meta_name' => 'required|string|createOnly|'.$metaUniqueRule,
+            'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'meta_property' => 'string'
         ];
     }
 

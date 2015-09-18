@@ -1,8 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ServerException;
 
+/**
+ * Class RestExceptionTest.
+ * @group integration
+ */
 class RestExceptionTest extends TestCase
 {
     /**
@@ -10,7 +22,7 @@ class RestExceptionTest extends TestCase
      */
     public function testInvalidRoute()
     {
-        $this->get('/this-url-does-not-exist');
+        $this->getJson('/this-url-does-not-exist');
 
         $this->assertResponseStatus(404);
         $this->shouldReturnJson();
@@ -28,7 +40,7 @@ class RestExceptionTest extends TestCase
      */
     public function testInternalException()
     {
-        $this->get('/test/internal-exception');
+        $this->getJson('/test/internal-exception');
 
         $this->assertResponseStatus(500);
         $this->shouldReturnJson();

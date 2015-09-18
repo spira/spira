@@ -1,4 +1,14 @@
-<?php namespace App\Extensions\Lock;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Extensions\Lock;
 
 use BeatSwitch\Lock\Callers\Caller;
 use BeatSwitch\Lock\Manager as BaseManager;
@@ -20,7 +30,7 @@ class Manager extends BaseManager
      * Creates a new Lock instance for the given role.
      *
      * @param  \BeatSwitch\Lock\Roles\Role|string $role
-     * @return \BeatSwitch\Lock\Roles\RoleLock
+     * @return RoleLock
      */
     public function role($role)
     {

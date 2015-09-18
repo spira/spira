@@ -1,19 +1,39 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use BeatSwitch\Lock\LockAware;
 use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
 use App\Extensions\Lock\UserOwnership;
-use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
+use Spira\Model\Model\IndexedModel;
 
-class User extends BaseModel implements AuthenticatableContract, Caller, UserOwnership
+class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
 {
     use Authenticatable, LockAware;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
     public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
+
+    /**
+     * Login/email confirm token time to live in minutes.
+     *
+     * @var int
+     */
+    protected $token_ttl = 1440;
 
     /**
      * The primary key for the model.
@@ -37,6 +57,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         'user_type',
         'avatar_img_url',
         'email',
+        'region_code',
     ];
 
     /**
@@ -44,14 +65,15 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @var array
      */
-    protected $validationRules = [
-        'user_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+        'user_id' => 'required|uuid',
         'username' => 'required|between:3,50|alpha_dash_space',
         'email' => 'required|email',
         'email_confirmed' => 'date',
         'first_name' => 'string',
         'last_name' => 'string',
         'country' => 'country',
+        'region_code' => 'string|supported_region',
         'timezone_identifier' => 'timezone',
     ];
 
@@ -69,12 +91,14 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      */
     protected $casts = [
         'email_confirmed' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
     /**
      * Get the credentials associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userCredential()
     {
@@ -84,7 +108,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the profile associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasOne
      */
     public function userProfile()
     {
@@ -94,7 +118,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     /**
      * Get the social logins associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */
     public function socialLogins()
     {
@@ -102,7 +126,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     *
      * @todo Replace these two methods with the hasMany relationship for roles
      *       when implementing. For now they "simulate" the relationship so
      *       functionality accessing roles will get a similar dataset as when
@@ -112,6 +135,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     {
         return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
     }
+
     public function getRolesAttribute()
     {
         return $this->roles();
@@ -136,7 +160,6 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
      *
      * @param UserProfile $profile
      * @return $this
-     *
      */
     public function setProfile(UserProfile $profile)
     {
@@ -198,7 +221,7 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
         // If no user credential is associated with the user, just return an
         // empty string which will trigger a ValidationException during
         // password_verify()
-        if (!$this->userCredential) {
+        if (! $this->userCredential) {
             return '';
         }
 
@@ -249,17 +272,94 @@ class User extends BaseModel implements AuthenticatableContract, Caller, UserOwn
     }
 
     /**
-     * Make an email confirmation token for a user.
+     * Get a user by single use login token.
      *
-     * @param  string  $email
-     * @param  Cache   $cache
+     * @param string $token
+     *
+     * @return mixed
+     */
+    public function findByLoginToken($token)
+    {
+        if ($id = Cache::pull('login_token_'.$token)) {
+            $user = $this->findOrFail($id);
+
+            return $user;
+        }
+
+        return;
+    }
+
+    /**
+     * Get a user by their email.
+     *
+     * @param $email
+     * @return mixed
+     */
+    public function findByEmail($email)
+    {
+        return $this->where('email', '=', $email)->firstOrFail();
+    }
+
+    /**
+     * Make a single use login token for a user.
+     *
+     * @param string $id
      *
      * @return string
      */
-    public function makeConfirmationToken($email, Cache $cache)
+    public function makeLoginToken($id)
+    {
+        $user = $this->findOrFail($id);
+
+        $token = hash_hmac('sha256', str_random(40), str_random(40));
+        Cache::put('login_token_'.$token, $user->user_id, $this->token_ttl);
+
+        return $token;
+    }
+
+    /**
+     * Create an email confirmation token for a user.
+     *
+     * @param $newEmail
+     * @param $oldEmail
+     * @return string
+     */
+    public function createEmailConfirmToken($newEmail, $oldEmail)
     {
         $token = hash_hmac('sha256', str_random(40), str_random(40));
-        $cache->put('email_confirmation_'.$token, $email, 1440);
+
+        Cache::put('email_confirmation_'.$token, $newEmail, $this->token_ttl);
+
+        Cache::put('email_change_'.$newEmail, $oldEmail, $this->token_ttl);
+
         return $token;
+    }
+
+    /**
+     * Get an email address from supplied token.
+     *
+     * @param $token
+     * @return mixed
+     */
+    public function getEmailFromToken($token)
+    {
+        $newEmail = Cache::pull('email_confirmation_'.$token, false);
+
+        if ($newEmail) {
+            Cache::forget('email_change_'.$newEmail);
+        }
+
+        return $newEmail;
+    }
+
+    /**
+     * Check to see if the user has made a change email request. Return the current email associated with the new email.
+     *
+     * @param $newEmail
+     * @return mixed
+     */
+    public static function findCurrentEmail($newEmail)
+    {
+        return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
     }
 }

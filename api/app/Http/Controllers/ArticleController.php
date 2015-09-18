@@ -1,28 +1,35 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 08.07.15
- * Time: 23:39
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Http\Controllers;
 
+use App\Extensions\JWTAuth\JWTAuth;
 use App\Http\Transformers\ArticleTransformer;
-use App\Repositories\ArticleRepository;
+use App\Models\Article;
 
 class ArticleController extends EntityController
 {
-    protected $validateRequestRule = 'required|string';
+    /**
+     * @var JWTAuth
+     */
+    private $auth;
 
     /**
      * Assign dependencies.
-     * @param ArticleRepository $repository
+     * @param Article $model
      * @param ArticleTransformer $transformer
+     * @param JWTAuth $auth
      */
-    public function __construct(ArticleRepository $repository, ArticleTransformer $transformer)
+    public function __construct(Article $model, ArticleTransformer $transformer, JWTAuth $auth)
     {
-        $this->repository = $repository;
-        $this->transformer = $transformer;
+        parent::__construct($model, $transformer);
+        $this->auth = $auth;
     }
 }

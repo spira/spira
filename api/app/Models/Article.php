@@ -1,22 +1,36 @@
-<?php namespace App\Models;
+<?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
-use Spira\Repository\Collection\Collection;
+use Rhumsaa\Uuid\Uuid;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Model\IndexedModel;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
- *
  * @property ArticlePermalink[]|Collection $permalinks
  * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
- * @package App\Models
- *
  */
-class Article extends BaseModel
+class Article extends IndexedModel
 {
-    const defaultExcerptWordCount = 30;
+    use RevisionableTrait;
 
+    const defaultExcerptWordCount = 30;
 
     /**
      * Article statuses. ! WARNING these statuses define the enum types in the migration, don't remove any!
@@ -38,7 +52,7 @@ class Article extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id', 'author_display', 'show_author_promo', 'first_published', 'primaryImage', 'status'];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -46,43 +60,85 @@ class Article extends BaseModel
 
     protected $casts = [
         'first_published' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
-    public function getValidationRules()
+    public static function getValidationRules()
     {
-        $permalinkRule = 'string|unique:article_permalinks,permalink';
-        if (!is_null($this->permalink)) {
-            $permalinkRule.=','.$this->permalink.',permalink';
-        }
-
         return [
-            'article_id' => 'uuid|createOnly',
+            'article_id' => 'required|uuid',
             'title' => 'required|string',
             'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
-            'status' => 'in:' . implode(',', self::$statuses),
-            'permalink' => $permalinkRule
+            'status' => 'in:'.implode(',', static::$statuses),
+            'permalink' => 'string|unique:article_permalinks,permalink',
+            'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
 
     /**
-     * Listen for save event
+     * Bootstrap model with event listeners.
      *
      * Saving permalink to history
      */
     protected static function boot()
     {
         parent::boot();
-        static::validated(function (Article $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
-                $articlePermalink = new ArticlePermalink();
-                $articlePermalink->permalink = $model->permalink;
-                $model->permalinks->add($articlePermalink);
+        static::saving(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
+                $articlePermalink = new ArticlePermalink(['permalink' => $model->permalink]);
                 $articlePermalink->save();
             }
+
             return true;
         });
+
+        static::saved(function (Article $model) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
+                $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
+                $model->articlePermalinks()->save($articlePermalink);
+            }
+
+            return true;
+        });
+
+        static::created(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->createDiscussion();
+
+            return true;
+        });
+
+        static::deleted(function (Article $article) {
+            (new ArticleDiscussion)
+                ->setArticle($article)
+                ->deleteDiscussion();
+
+            return true;
+        });
+    }
+
+    /**
+     * @param string $id article_id or permalink
+     * @return Article
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return parent::findOrFail($id);
+        }
+
+        //otherwise attempt treat the id as a permalink and first try the model, then try the history
+        try {
+            return $this->where('permalink', '=', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
+            return ArticlePermalink::findOrFail($id)->article;
+        }
     }
 
     public function setPermalinkAttribute($permalink)
@@ -95,7 +151,7 @@ class Article extends BaseModel
     }
 
     /**
-     * If there is no defined exerpt for the text, create it from the content
+     * If there is no defined excerpt for the text, create it from the content.
      * @param $excerpt
      * @return string
      */
@@ -108,13 +164,49 @@ class Article extends BaseModel
         return Str::words($this->content, self::defaultExcerptWordCount, '');
     }
 
-    public function permalinks()
+    public function articlePermalinks()
     {
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 
-    public function metas()
+    public function articleMetas()
     {
-        return $this->hasMany(ArticleMeta::class, 'article_id', 'article_id');
+        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
+    }
+
+    /**
+     * Get comment relationship.
+     *
+     * @return ArticleComment
+     */
+    public function comments()
+    {
+        return (new ArticleDiscussion)->setArticle($this);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tags');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function articleImages()
+    {
+        return $this->hasMany(ArticleImage::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function images()
+    {
+        return $this->belongsToMany(Image::class);
+    }
+
+    public function author()
+    {
+        return $this->hasOne(User::class, 'user_id', 'author_id');
     }
 }

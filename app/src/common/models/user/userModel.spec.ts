@@ -4,17 +4,7 @@ namespace common.models {
 
     describe('User Model', () => {
 
-        let userData:global.IUserData = {
-            userId:seededChance.guid(),
-            email:seededChance.email(),
-            firstName:seededChance.first(),
-            lastName:seededChance.last(),
-            emailConfirmed:seededChance.date(),
-            country:seededChance.country(),
-            avatarImgUrl:seededChance.url(),
-            userType: seededChance.pick(User.userTypes),
-            _socialLogins:(<common.models.UserSocialLogin[]>[])
-        };
+        let userData:global.IUserData = UserMock.getMockData();
 
         it('should instantiate a new user', () => {
 
@@ -22,6 +12,25 @@ namespace common.models {
 
             expect(user).to.be.instanceOf(User);
 
+        });
+
+        it('should get custom user mock entity', () => {
+
+            let user = UserMock.entity({userId: 'abc-123'});
+
+            expect(user).to.be.instanceOf(User);
+
+            expect(user.userId).to.equal('abc-123');
+
+        });
+
+        it('should get user mock collection', () => {
+
+            let users = UserMock.collection(5);
+
+            expect(users).to.be.instanceOf(Array);
+
+            expect(users).to.have.length(5);
         });
 
         it('should return the user\'s full name', () => {
@@ -46,17 +55,17 @@ namespace common.models {
 
             let user = new User(_.clone(userData, true));
 
-            let userLoginDataFacebook:common.models.UserSocialLogin = {
+            let userLoginDataFacebook = new common.models.UserSocialLogin ({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.facebookType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
-            let userLoginDataGoogle:common.models.UserSocialLogin = {
+            let userLoginDataGoogle = new common.models.UserSocialLogin ({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.googleType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
             user._socialLogins.push(userLoginDataFacebook, userLoginDataGoogle);
 
@@ -68,11 +77,11 @@ namespace common.models {
 
             let user = new User(_.clone(userData, true));
 
-            let userLoginDataGoogle:common.models.UserSocialLogin = {
+            let userLoginDataGoogle = new common.models.UserSocialLogin({
                 userId:user.userId,
                 provider:common.models.UserSocialLogin.googleType,
                 token:seededChance.apple_token() // Closest thing to a token in Chance JS library
-            };
+            });
 
             user._socialLogins.push(userLoginDataGoogle);
 

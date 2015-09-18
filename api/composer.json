@@ -8,6 +8,16 @@
     ],
     "license": "MIT",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/spira/Elasticquent"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/spira/revisionable"
+        }
+    ],
     "require": {
         "laravel/lumen-framework": "5.1.*",
         "vlucas/phpdotenv": "~1.0",
@@ -23,6 +33,9 @@
         "tymon/jwt-auth": "0.5.*",
         "beatswitch/lock": "^0.1.0",
         "laravel/socialite": "^2.0",
+        "cloudinary/cloudinary_php": "^1.1",
+        "elasticquent/elasticquent": "dev-master",
+        "venturecraft/revisionable": "dev-master",
         "barryvdh/laravel-ide-helper": "^2.1"
     },
     "require-dev": {

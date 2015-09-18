@@ -12,6 +12,7 @@ declare namespace global {
             icon?: string;
             sortAfter?: string;
             navigation?: boolean;
+            navigationGroup?: string;
         },
         children?:IState[];
     }
@@ -31,12 +32,24 @@ declare namespace global {
         password: string;
     }
 
+    export interface ISocialLogin {
+        userId:string;
+        provider:string;
+        token:string;
+    }
+
     export interface IUserData extends NgJwtAuth.IUser {
+        _self?:string;
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
         userType?:string;
+        emailConfirmed?:string;
+        avatarImgUrl?:string;
+        country?:string;
+        regionCode?:string;
         _userCredential? : IUserCredential;
+        _socialLogins? : ISocialLogin[];
     }
 
     export interface IRootScope extends ng.IRootScopeService {
@@ -45,6 +58,12 @@ declare namespace global {
 
     export interface JwtAuthClaims extends NgJwtAuth.IJwtClaims{
         _user: IUserData;
+    }
+
+    export interface ISupportedRegion {
+        code:string;
+        name:string;
+        icon?:string;
     }
 
 

@@ -1,4 +1,14 @@
-<?php namespace App\Providers;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Providers;
 
 use App\Extensions\Lock\Manager;
 use BeatSwitch\Lock\Drivers\ArrayDriver;
@@ -14,7 +24,7 @@ class LockServiceProvider extends ServiceProvider
     protected $defer = true;
 
     /**
-     * Register the service provider
+     * Register the service provider.
      *
      * @return void
      */

@@ -1,6 +1,6 @@
 module common.models {
 
-    export class UserSocialLogin implements IModel {
+    export class UserSocialLogin extends AbstractModel implements global.ISocialLogin {
 
         public static googleType = 'google';
         public static facebookType = 'facebook';
@@ -10,8 +10,9 @@ module common.models {
         public provider:string = undefined;
         public token:string = undefined;
 
-        constructor(data:any) {
-            _.assign(this, data);
+        constructor(data:any, exists:boolean = false) {
+            super(data, exists);
+            this.hydrate(data, exists);
         }
 
     }

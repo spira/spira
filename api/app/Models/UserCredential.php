@@ -1,6 +1,16 @@
-<?php namespace App\Models;
+<?php
 
-use Hash;
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
+
+use Spira\Model\Model\BaseModel;
 
 class UserCredential extends BaseModel
 {
@@ -37,7 +47,7 @@ class UserCredential extends BaseModel
      *
      * @var array
      */
-    protected $validationRules = [
+    protected static $validationRules = [
         'password' => 'required|string',
     ];
 
@@ -49,6 +59,6 @@ class UserCredential extends BaseModel
      */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        $this->attributes['password'] = \Hash::make($value);
     }
 }

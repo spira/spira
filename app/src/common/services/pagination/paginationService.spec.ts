@@ -28,14 +28,24 @@ interface mockEntity {
 
     describe('PaginationService', () => {
 
-        let paginationService:common.services.pagination.PaginationService;
-        let $httpBackend:ng.IHttpBackendService;
-        let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
-        let $rootScope:ng.IRootScopeService;
+        let paginationService:common.services.pagination.PaginationService,
+            $httpBackend:ng.IHttpBackendService,
+            ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+            $rootScope:ng.IRootScopeService,
+            mockShowError = sinon.stub();
 
         beforeEach(()=> {
 
+
             module('app');
+
+            module(($provide:ng.auto.IProvideService) => {
+                $provide.factory('errorService', () => {
+                    return {
+                        showError: mockShowError
+                    }
+                });
+            });
 
             inject((_$httpBackend_, _paginationService_, _ngRestAdapter_, _$rootScope_) => {
 
@@ -251,15 +261,13 @@ interface mockEntity {
 
                 let results = paginator.getNext();
 
-                sinon.spy($rootScope, '$broadcast');
-
                 $httpBackend.flush();
 
                 $rootScope.$apply();
 
-                expect($rootScope.$broadcast).to.have.been.calledWith('apiErrorHandler', "Redirecting to error page");
+                expect(mockShowError).to.have.been.called;
 
-                (<any>$rootScope).$broadcast.restore();
+                mockShowError.reset();
 
             });
 
@@ -271,16 +279,11 @@ interface mockEntity {
 
                 let results = paginator.getNext();
 
-                sinon.spy($rootScope, '$broadcast');
-
                 $httpBackend.flush();
 
-                $rootScope.$apply();
+                expect(mockShowError).not.to.have.been.called;
 
-                expect($rootScope.$broadcast).not.to.have.been.calledWith('apiErrorHandler');
                 expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
-
-                (<any>$rootScope).$broadcast.restore();
 
             });
 
@@ -353,6 +356,81 @@ interface mockEntity {
 
             });
 
+            it('should be able to return an array of how many pages of results there are', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setCount(9);
+
+                $httpBackend.expectGET('/api/collection', (headers) => {
+                    return headers.Range == 'entities=9-17'
+                })
+                    .respond(206, collection.slice(9, 17), {
+                        'Content-Range' : 'entities 9-17/' + collection.length
+                    });
+
+                let results = paginator.getPage(2);
+
+                $httpBackend.flush();
+
+                let pages = paginator.getPages();
+
+                expect(pages).to.have.length(12);
+
+            });
+
+            describe('Query', () => {
+
+                it('should be able to query the results to filter them', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection?q=foo%40bar.com', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.query('foo@bar.com');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                });
+
+                it('should be able to query with an empty string', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.query('');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                });
+
+                it('should reset the count when there are no search results', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection?q=findnothing', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                    .respond(404);
+
+                    let results = paginator.query('findnothing');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
+
+                });
+
+            });
 
         });
 

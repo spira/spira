@@ -1,12 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 13.07.15
- * Time: 15:07
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Models;
+
+use Spira\Model\Model\BaseModel;
 
 class SecondTestEntity extends BaseModel
 {
@@ -23,9 +27,9 @@ class SecondTestEntity extends BaseModel
      */
     protected $fillable = ['entity_id', 'check_entity_id', 'value'];
 
-    protected $validationRules = [
-            'entity_id' => 'uuid|createOnly',
+    protected static $validationRules = [
+            'entity_id' => 'required|uuid',
             'check_entity_id' => 'uuid',
-            'value' => 'required|string'
+            'value' => 'required|string',
         ];
 }

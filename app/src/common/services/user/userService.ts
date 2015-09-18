@@ -4,39 +4,43 @@ namespace common.services.user {
 
     export class UserService {
 
-        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog'];
+        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog', 'paginationService'];
+
+        private cachedPaginator:common.services.pagination.Paginator;
 
         constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $q:ng.IQService,
-                    private $mdDialog:ng.material.IDialogService) {
+                    private $mdDialog:ng.material.IDialogService,
+                    private paginationService:common.services.pagination.PaginationService
+        ) {
 
         }
 
         /**
          * Get an instance of a user from data
          * @param userData
-         * @returns {common.services.user.User}
+         * @returns {common.models.User}
+         * @param exists
          */
-        public userFactory(userData:global.IUserData):common.models.User {
-            return new common.models.User(userData);
+        public static userFactory(userData:global.IUserData, exists:boolean = false):common.models.User {
+            return new common.models.User(userData, exists);
         }
 
         /**
-         * Get all users from the API
-         * @returns {any}
+         * Get the users paginator
+         * @returns {Paginator}
          */
-        public getAllUsers():ng.IPromise<common.models.User[]> {
+        public getUsersPaginator():common.services.pagination.Paginator {
 
-            return this.ngRestAdapter.get('/users')
-                .then((res) => {
+            // Cache the paginator so subsequent requests can be collection length-aware
+            if (!this.cachedPaginator){
+                this.cachedPaginator = this.paginationService
+                    .getPaginatorInstance('/users')
+                    .setModelFactory(UserService.userFactory);
+            }
 
-                    return _.map(res.data, (userData:global.IUserData) => {
-                        return new common.models.User(userData);
-                    });
-                })
-            ;
-
+            return this.cachedPaginator;
         }
 
         /**
@@ -63,7 +67,10 @@ namespace common.services.user {
             let user = new common.models.User(userData);
 
             return this.ngRestAdapter.put('/users/' + user.userId, user)
-                .then(() => user); //return this user object
+                .then(() => {
+                    user.setExists(true);
+                    return user;
+                }); //return this user object
         }
 
         /**
@@ -133,10 +140,9 @@ namespace common.services.user {
         public confirmEmail(user:common.models.User, emailConfirmToken:string):ng.IPromise<any> {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
-                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => {
-                    return rejection.status == 422;
-                })
-                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken});
+                .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => rejection.status == 422)
+                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken})
+            ;
         }
 
         /**
@@ -146,20 +152,31 @@ namespace common.services.user {
          */
         public updateUser(user:common.models.User):ng.IPromise<any> {
             return this.ngRestAdapter
-                .patch('/users/' + user.userId, user);
+                .patch('/users/' + user.userId, user.getAttributes(true));
         }
 
         /**
          * Get full user information
          * @param user
-         * @returns {ng.IHttpPromise<any>}
+         * @returns {ng.IPromise<common.models.User>}
          */
         public getUser(user:common.models.User):ng.IPromise<common.models.User> {
-            return this.ngRestAdapter.get('/users/' + user.userId)
+            return this.ngRestAdapter.get('/users/' + user.userId, {
+                    'With-Nested' : 'userCredential, userProfile, socialLogins'
+                })
                 .then((res) => {
-                    return new common.models.User(res.data);
+                    return new common.models.User(res.data, true);
                 });
         }
+
+        /**
+         * Get the auth user
+         * @returns {common.models.User}
+         */
+        public getAuthUser():common.models.User {
+            return <common.models.User>this.ngJwtAuthService.getUser();
+        }
+
     }
 
     angular.module(namespace, [])

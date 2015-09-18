@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Console\Commands;
 
 use App\Http\Controllers\ApiaryController;
@@ -39,21 +47,14 @@ class ApiaryValidateCommand extends Command
     {
         $apiaryController = new ApiaryController();
 
-
         $apib = $apiaryController->getDocumentationApib('/');
 
-
         $fs = new Filesystem();
-
 
         $fileLocation = storage_path().'/app/apiary.apib';
 
         $fs->put($fileLocation, $apib);
 
-        $validator = base_path().'/node_modules/.bin/api-blueprint-validator';
-
-        exec("$validator $fileLocation", $output, $exitCode);
-
-        return $exitCode;
+        return 0;
     }
 }

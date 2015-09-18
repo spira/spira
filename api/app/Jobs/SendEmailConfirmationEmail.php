@@ -1,4 +1,14 @@
-<?php namespace App\Jobs;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Jobs;
 
 use App\Models\User;
 use Illuminate\Contracts\Mail\Mailer;
@@ -23,11 +33,18 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     protected $email;
 
     /**
-     * Token for confirmation.
+     * Token for email confirmation.
      *
      * @var string
      */
-    protected $token;
+    protected $emailConfirmToken;
+
+    /**
+     * Token for login.
+     *
+     * @var string
+     */
+    protected $loginToken;
 
     /**
      * Create a new job instance.
@@ -37,11 +54,12 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
      * @param  string  $token
      * @return void
      */
-    public function __construct(User $user, $email, $token)
+    public function __construct(User $user, $email, $emailConfirmToken, $loginToken)
     {
         $this->user = $user;
         $this->email = $email;
-        $this->token = $token;
+        $this->emailConfirmToken = $emailConfirmToken;
+        $this->loginToken = $loginToken;
     }
 
     /**
@@ -55,7 +73,7 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
         $mailer->send('emails.emailConfirmation', [
             'user' => $this->user,
             'email' => $this->email,
-            'emailConfirmationRedirectionUrl' => Config::get('hosts.app') . '/profile?emailConfirmationToken='.$this->token
+            'emailConfirmationRedirectionUrl' => Config::get('hosts.app').'/profile?emailConfirmationToken='.$this->emailConfirmToken.'&loginToken='.$this->loginToken,
         ], function ($m) {
 
             $m->to($this->email, $this->user->full_name)

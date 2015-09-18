@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 30.07.15
- * Time: 14:46
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spira\Responder\Paginator;
@@ -26,7 +28,7 @@ interface PaginatedRequestDecoratorInterface
     public function getLimit($default = null, $max = null);
 
     /**
-     * states that limit should be applied to the end of the result set
+     * states that limit should be applied to the end of the result set.
      * @return bool
      */
     public function isGetLast();

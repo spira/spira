@@ -8,9 +8,34 @@
             let title = seededChance.sentence();
 
             return new common.models.Article({
+                articleId: seededChance.guid(),
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
+                _tags: [
+                    {
+                        tagId: seededChance.guid(),
+                        tag: seededChance.word,
+                    },
+                    {
+                        tagId: seededChance.guid(),
+                        tag: seededChance.word,
+                    }
+                ],
+                _articleMetas: [
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
+                ]
             });
 
         },
@@ -25,17 +50,19 @@
         let articleService:common.services.article.ArticleService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _articleService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _articleService_, _ngRestAdapter_, _$rootScope_) => {
 
                 if (!articleService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     articleService = _articleService_;
                     ngRestAdapter = _ngRestAdapter_;
+                    $rootScope = _$rootScope_;
                 }
             });
 
@@ -93,9 +120,11 @@
 
             it('should be able to retrieve an article by permalink', () => {
 
-                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
+                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                }).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink);
+                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -109,10 +138,115 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
+                let author = common.models.UserMock.entity();
 
-                let article = articleService.newArticle();
+                let article = articleService.newArticle(author);
 
                 expect(article.articleId).to.be.ok;
+
+                expect(article.authorId).to.equal(author.userId);
+
+                expect(article._author).to.deep.equal(author);
+
+            });
+
+        });
+
+        describe('Save Article', () => {
+
+
+            it('should save a new article and all related entities', () => {
+
+                let article = fixtures.getArticle();
+
+                $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.clone(article._articleMetas, true)).respond(201);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
+
+            it('should save an existing article with a patch request', () => {
+
+                let article = fixtures.getArticle();
+                article.setExists(true);
+
+                article.title = "This title has been updated";
+
+                let newTag = new common.models.Tag({
+                    tagId: seededChance.guid(),
+                    tag: "new tag",
+                });
+
+                article._tags = [newTag];
+
+                $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
+        });
+
+        describe('Meta tag hydration', () => {
+
+            let articleMetaTemplate:string[] = [
+                'name', 'description', 'keyword', 'canonical'
+            ];
+
+            it('should be able to hydrate meta tags from a template', () => {
+
+                let article = fixtures.getArticle();
+
+                let hydratedMetaTags = articleService.hydrateMetaCollectionFromTemplate(article.articleId, article._articleMetas, articleMetaTemplate);
+
+                expect(_.size(hydratedMetaTags)).to.equal(5);
+
+                expect(hydratedMetaTags[0].articleId).to.equal(article.articleId);
+
+                expect(_.isEmpty(hydratedMetaTags[0].id)).to.be.false;
+
+                let testableMetaTags = _.cloneDeep(hydratedMetaTags);
+                _.forEach(testableMetaTags, (tag) => {
+                    delete(tag.id);
+                    delete(tag.articleId);
+                });
+
+                expect(testableMetaTags).to.deep.equal([
+                    {
+                        metaName: 'name',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'canonical',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
+                ]);
 
             });
 

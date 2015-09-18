@@ -1,10 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+use App\Models\TestEntity;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 
 /**
- * @property \App\Repositories\BaseRepository $repository
+ * Class ChildEntityTest.
+ * @group integration
  */
 class ChildEntityTest extends TestCase
 {
@@ -22,9 +32,6 @@ class ChildEntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         App\Models\SecondTestEntity::flushEventListeners();
         App\Models\SecondTestEntity::boot();
-
-        // Get a repository instance, for assertions
-        $this->repository = $this->app->make('App\Repositories\TestRepository');
     }
 
     /**
@@ -40,13 +47,14 @@ class ChildEntityTest extends TestCase
         // as if they came from the frontend.
         $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
         $entity = $transformer->transform($entity);
+
         return $entity;
     }
 
-    protected function addRelatedEntities($model)
+    protected function addRelatedEntities(\Spira\Model\Model\BaseModel $model)
     {
         $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
-        $this->repository->save($model);
+        $model->push();
     }
 
     public function testGetAll()
@@ -54,12 +62,19 @@ class ChildEntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->get('/test/entities/'.$entity->entity_id.'/children');
+        $this->getJson('/test/entities/'.$entity->entity_id.'/children');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
         $this->assertJsonMultipleEntries();
+    }
+
+    public function testGetOneNotFoundParent()
+    {
+        $this->getJson('/test/entities/'.Uuid::uuid4().'/child/'.Uuid::uuid4());
+        $this->assertResponseStatus(422);
+        $this->shouldReturnJson();
     }
 
     public function testGetOne()
@@ -68,7 +83,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = $entity->testMany->first();
 
-        $this->get('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
+        $this->getJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseOk();
@@ -121,14 +136,14 @@ class ChildEntityTest extends TestCase
         $childEntity = factory(App\Models\SecondTestEntity::class)->make();
         $childEntity = $this->prepareEntity($childEntity);
 
-        $rowCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $rowCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($rowCount + 1, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($rowCount + 1, TestEntity::find($entity->entity_id)->testMany->count());
         $this->assertTrue(is_object($object));
     }
 
@@ -141,14 +156,15 @@ class ChildEntityTest extends TestCase
         $prevId = $childEntity['entityId'];
         $childEntity['entityId'] = (string) Uuid::uuid4();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$prevId, $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$prevId, $childEntity);
 
         $object = json_decode($this->response->getContent());
 
-        $this->assertResponseStatus(422);
+        $this->assertResponseStatus(400);
         $this->assertTrue(is_object($object));
 
-        $this->assertEquals('The entity id can not be changed.', $object->invalid->entityId[0]->message);
+        $this->assertObjectHasAttribute('message', $object);
+        $this->assertEquals('Provided entity body does not match route parameter. The entity key cannot be updated', $object->message);
     }
 
     public function testPutOneNewInvalidId()
@@ -159,13 +175,46 @@ class ChildEntityTest extends TestCase
         $childEntity = $this->prepareEntity($childEntity);
         $childEntity['entityId'] = 'foobar';
 
-        $this->put('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity['entityId'], $childEntity);
 
         $object = json_decode($this->response->getContent());
         $this->shouldReturnJson();
+        $this->assertResponseStatus(500);
+    }
+
+    public function testPutManyNoIds()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = factory(App\Models\SecondTestEntity::class, 5)->make();
+        $childEntities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $childEntities->all());
+        foreach ($childEntities as &$childEntity) {
+            unset($childEntity['entityId']);
+            unset($childEntity['_self']);
+        }
+
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
+        $this->shouldReturnJson();
         $this->assertResponseStatus(422);
-        $this->assertObjectHasAttribute('entityId', $object->invalid);
-        $this->assertEquals('The entity id must be an UUID string.', $object->invalid->entityId[0]->message);
+    }
+
+    public function testPatchManyNoIds()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = $entity->testMany;
+        $data = array_map(function ($entity) {
+            return [
+                'value'   => 'foobar',
+            ];
+        }, $childEntities->all());
+
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
+        $this->assertResponseStatus(422);
     }
 
     public function testPutManyNew()
@@ -178,14 +227,14 @@ class ChildEntityTest extends TestCase
             return $this->prepareEntity($entity);
         }, $childEntities->all());
 
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($childCount + 5, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount + 5, TestEntity::find($entity->entity_id)->testMany->count());
         $this->assertTrue(is_array($object));
         $this->assertCount(5, $object);
     }
@@ -200,16 +249,40 @@ class ChildEntityTest extends TestCase
             return array_add($this->prepareEntity($entity), 'entity_id', 'foobar');
         }, $childEntities->all());
 
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->put('/test/entities/'.$entity->entity_id.'/children', ['data' => $childEntities]);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
 
         $this->assertCount(5, $object->invalid);
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The entity id must be an UUID string.', $object->invalid[0]->entityId[0]->message);
-        $this->assertEquals($childCount, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
+    }
+
+    public function testPutManyNewInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = factory(App\Models\SecondTestEntity::class, 5)->make();
+        $childEntities = array_map(function ($entity) {
+            return $this->prepareEntity($entity);
+        }, $childEntities->all());
+
+        foreach ($childEntities as &$childEntity) {
+            unset($childEntity['value']);
+        }
+
+        $rowCount = TestEntity::count();
+
+        $this->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
+
+        $object = json_decode($this->response->getContent());
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('value', $object->invalid[0]);
+        $this->assertEquals($rowCount, TestEntity::count());
     }
 
     public function testPatchOne()
@@ -218,9 +291,9 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = $entity->testMany->first();
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id, ['value' => 'foobar']);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id, ['value' => 'foobar']);
 
-        $entity = $this->repository->find($entity->entity_id);
+        $entity = TestEntity::find($entity->entity_id);
         /** @var Collection $childEntities */
         $childEntities = $entity->testMany;
         $childEntity = $childEntities->find($childEntity->entity_id);
@@ -235,7 +308,7 @@ class ChildEntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('entityId', $object->invalid);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
@@ -254,9 +327,9 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
-        $entity = $this->repository->find($entity->entity_id);
+        $entity = TestEntity::find($entity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -278,11 +351,31 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->patch('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
         $object = json_decode($this->response->getContent());
 
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
+    }
+
+    public function testPatchManyNewInvalid()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+
+        $childEntities = $entity->testMany;
+        $data = array_map(function ($entity) {
+            return [
+                'entityId' => $entity->entity_id,
+                'value'   => null,
+            ];
+        }, $childEntities->all());
+
+        $this->patchJson('/test/entities/'.$entity->entity_id.'/children', $data);
+        $object = json_decode($this->response->getContent());
+
+        $this->assertCount(5, $object->invalid);
+        $this->assertObjectHasAttribute('value', $object->invalid[0]);
     }
 
     public function testDeleteOne()
@@ -290,35 +383,35 @@ class ChildEntityTest extends TestCase
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
         $childEntity = $entity->testMany->first();
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($childCount - 1, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount - 1, TestEntity::find($entity->entity_id)->testMany->count());
     }
 
     public function testDeleteOneInvalidId()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4());
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/child/'.(string) Uuid::uuid4());
 
         $object = json_decode($this->response->getContent());
 
         $this->assertObjectHasAttribute('entityId', $object->invalid);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
-        $this->assertEquals($childCount, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
     }
 
     public function testDeleteMany()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
         $childEntities = $entity->testMany;
         $data = array_map(function ($entity) {
@@ -328,18 +421,18 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-        $this->delete('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
-        $this->assertEquals($childCount - 5, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount - 5, TestEntity::find($entity->entity_id)->testMany->count());
     }
 
     public function testDeleteManyInvalidId()
     {
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
-        $childCount = $this->repository->find($entity->entity_id)->testMany->count();
+        $childCount = TestEntity::find($entity->entity_id)->testMany->count();
         $childEntities = $entity->testMany;
 
         $childEntities->first()->entity_id = (string) Uuid::uuid4();
@@ -352,8 +445,7 @@ class ChildEntityTest extends TestCase
             ];
         }, $childEntities->all());
 
-
-        $this->delete('/test/entities/'.$entity->entity_id.'/children', ['data' => $data]);
+        $this->deleteJson('/test/entities/'.$entity->entity_id.'/children', $data);
 
         $object = json_decode($this->response->getContent());
 
@@ -362,6 +454,6 @@ class ChildEntityTest extends TestCase
         $this->assertNull($object->invalid[1]);
         $this->assertObjectHasAttribute('entityId', $object->invalid[4]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
-        $this->assertEquals($childCount, $this->repository->find($entity->entity_id)->testMany->count());
+        $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
     }
 }

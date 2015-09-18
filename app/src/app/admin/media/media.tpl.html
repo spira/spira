@@ -1,4 +1,109 @@
-<h2>Media</h2>
+<h2>Add Image</h2>
+
+<form name="MediaController.imageUploadForm" novalidate>
+    <div layout layout-sm="column">
+
+        <md-input-container>
+            <label>Alt</label>
+            <input name="alt" ng-model="MediaController.queuedImage.alt" required/>
+            <ng-messages ng-hide="MediaController.imageUploadForm.alt.$pristine" for="MediaController.imageUploadForm.alt.$error">
+                <ng-message when="required">Alt is required.</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container>
+            <label>Title</label>
+            <input name="title" ng-model="MediaController.queuedImage.title" />
+        </md-input-container>
+
+        <md-input-container>
+
+            <input type="file"
+                   aria-label="Select Image"
+                   ng-model="MediaController.queuedImage.file"
+                   name="file"
+                   ngf-select
+                   accept="image/*"
+                   ngf-max-height="{{MediaController.imageConstraints.maxHeight}}"
+                   ngf-min-height="{{MediaController.imageConstraints.minHeight}}"
+                   ngf-max-width="{{MediaController.imageConstraints.maxWidth}}"
+                   ngf-min-width="{{MediaController.imageConstraints.minWidth}}"
+                   ngf-max-size="{{MediaController.imageConstraints.maxSize}}"
+                   ngf-min-size="{{MediaController.imageConstraints.minSize}}"
+                   required
+                >
+
+            <img width="200" ng-show="MediaController.imageUploadForm.file.$valid" ngf-src="MediaController.queuedImage.file">
+
+            <ng-messages ng-hide="MediaController.imageUploadForm.file.$pristine" for="MediaController.imageUploadForm.file.$error">
+                <ng-message when="required">Image is required.</ng-message>
+                <ng-message when="maxHeight">Image must be less than {{MediaController.imageConstraints.maxHeight}} pixels high. ({{MediaController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
+                <ng-message when="minHeight">Image must be more than {{MediaController.imageConstraints.minHeight}} pixels high. ({{MediaController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
+                <ng-message when="maxWidth">Image must be less than {{MediaController.imageConstraints.maxWidth}} pixels wide. ({{MediaController.imageUploadForm.file.$modelValue.width}}px) given.</ng-message>
+                <ng-message when="minWidth">Image must be more than {{MediaController.imageConstraints.minWidth}} pixels wide. ({{MediaController.imageUploadForm.file.$modelValue.width}}px) given.</ng-message>
+                <ng-message when="maxSize">Image must be less than {{MediaController.imageConstraints.maxSize}}.</ng-message>
+                <ng-message when="minSize">Image must be more than {{MediaController.imageConstraints.minSize}}.</ng-message>
+            </ng-messages>
+
+        </md-input-container>
+
+        <md-button ng-if="MediaController.imageUploadForm.$valid" ng-click="MediaController.uploadImage(MediaController.queuedImage)" class="md-raised md-primary">Upload</md-button>
+
+    </div>
 
 
-<pre highlight="">{{ArticlesController.allMedia|json}}</pre>
+</form>
+
+
+<div ng-if="MediaController.progressBar.visible">
+    <h2>{{MediaController.progressBar.statusText}}</h2>
+    <md-progress-linear md-mode="{{MediaController.progressBar.mode}}"
+                        value="{{MediaController.progressBar.value}}"></md-progress-linear>
+</div>
+
+<div layout-padding id="media">
+
+    <h2>Images</h2>
+
+    <md-grid-list
+            md-cols-sm="1"
+            md-cols-md="2"
+            md-cols-gt-md="4"
+            md-row-height="1:1"
+            md-gutter="12px"
+            md-gutter-gt-sm="8px">
+
+        <md-grid-tile
+                ng-repeat="image in MediaController.images"
+                ui-sref="app.admin.media.image({permalink: image.imageId})"
+                md-ink-ripple style="cursor:pointer">
+
+            <md-grid-tile-header>
+                <h3>{{image.alt | uppercase}}</h3>
+            </md-grid-tile-header>
+
+            <cl-image width="100%" public-id="{{image.imageId}}" format="{{image.format}}">
+                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+            </cl-image>
+
+            <md-grid-tile-footer ng-if="!!image.title">
+                <h3>{{image.title}}</h3>
+            </md-grid-tile-footer>
+        </md-grid-tile>
+
+    </md-grid-list>
+
+</div>
+
+
+<md-toolbar>
+    <md-tabs md-selected="MediaController.currentPageIndex">
+
+        <md-tab ng-repeat="pageNumber in MediaController.pages" ui-sref="app.admin.media({page:pageNumber})">
+            <md-tab-label>
+                <span>{{pageNumber}}</span>
+            </md-tab-label>
+        </md-tab>
+
+    </md-tabs>
+</md-toolbar>

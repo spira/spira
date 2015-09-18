@@ -6,7 +6,14 @@ namespace common.services.notification {
 
         private toastOptions:any = {};
 
-        constructor(private message:string, private $mdToast:ng.material.IToastService, private $rootScope:global.IRootScope) {
+        private timeOut:number;
+
+        constructor(
+            private message:string,
+            private $mdToast:ng.material.IToastService,
+            private $rootScope:global.IRootScope,
+            private $timeout:ng.ITimeoutService
+        ) {
             this.toastOptions = {
                 hideDelay: 2000,
                 position: 'top',
@@ -33,11 +40,31 @@ namespace common.services.notification {
         }
 
         /**
+         * Add a delay before showing the toast
+         *
+         * @param milliseconds
+         */
+        public delay(milliseconds:number) {
+
+            this.timeOut = milliseconds;
+
+            return this;
+
+        }
+
+        /**
          * Show the toast
          */
         public pop():void {
 
-            this.$mdToast.show(this.toastOptions);
+            if(_.isNumber(this.timeOut)) {
+                // See: https://docs.angularjs.org/api/ng/service/$timeout. ITimeoutService does not have final param
+                // which is passed into your function.
+                (<any>this.$timeout)(this.$mdToast.show, this.timeOut, true, this.toastOptions);
+            }
+            else {
+                this.$mdToast.show(this.toastOptions);
+            }
 
         }
 
@@ -45,10 +72,13 @@ namespace common.services.notification {
 
     export class NotificationService {
 
-        static $inject:string[] = ['$mdToast', '$rootScope'];
+        static $inject:string[] = ['$mdToast', '$rootScope', '$timeout'];
 
-        constructor(private $mdToast:ng.material.IToastService, private $rootScope:global.IRootScope) {
-
+        constructor(
+            private $mdToast:ng.material.IToastService,
+            private $rootScope:global.IRootScope,
+            private $timeout:ng.ITimeoutService
+        ) {
         }
 
         /**
@@ -58,7 +88,7 @@ namespace common.services.notification {
          * @return {common.services.notification.Toast}
          */
         public toast(message:string):Toast {
-            return new Toast(message, this.$mdToast, this.$rootScope);
+            return new Toast(message, this.$mdToast, this.$rootScope, this.$timeout);
         }
 
     }

@@ -7,11 +7,6 @@ datavolume:
     - /data:/data
   privileged: true
 
-spira:
-  image: spira/spira
-  volumes:
-    - /data #note we are not mounting to host. otherwise it would be /qa/data
-
 logviewer:
   image: spira/docker-clarity
 
@@ -41,6 +36,7 @@ mailcatcher:
 
 php:
   image: spira/docker-hhvm
+#  image: spira/docker-phpfpm
   env_file:
     - .common.env
     - .local.env
@@ -49,6 +45,10 @@ php:
 
 web:
   image: spira/docker-nginx
+  expose:
+   - "80"
+   - "8080"
+   - "8008"
   env_file:
     - .common.env
   privileged: true
@@ -65,5 +65,11 @@ devtools:
 
 apimock:
   image: spira/docker-drakov
+  env_file:
+    - .common.env
+
+
+elasticsearch:
+  image: elasticsearch:1.7.1
   env_file:
     - .common.env

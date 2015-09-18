@@ -1,4 +1,13 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 Dotenv::load(__DIR__.'/../');
@@ -23,6 +32,8 @@ $app->withFacades();
 $app->withEloquent();
 
 $app->configure('hosts');
+$app->configure('elasticquent');
+$app->configure('regions');
 
 /*
 |--------------------------------------------------------------------------
@@ -57,7 +68,8 @@ $app->singleton(
 */
 
 $app->middleware([
-    'App\Http\Middleware\TransformInputDataMiddleware'
+    App\Http\Middleware\UserResolverMiddleware::class,
+    App\Http\Middleware\TransformInputDataMiddleware::class,
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 //     // 'Illuminate\Session\Middleware\StartSession',
@@ -66,7 +78,8 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'permission' => 'App\Http\Middleware\PermissionMiddleware'
+    'permission' => 'App\Http\Middleware\PermissionMiddleware',
+    'transaction' => App\Http\Middleware\TransactionMiddleware::class,
 ]);
 
 /*

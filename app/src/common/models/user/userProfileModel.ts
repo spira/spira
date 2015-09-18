@@ -4,7 +4,7 @@ module common.models {
         value:string;
     }
 
-    export class UserProfile implements IModel {
+    export class UserProfile extends AbstractModel {
 
         public dob:string = undefined;
         public mobile:string = undefined;
@@ -23,8 +23,15 @@ module common.models {
             {label: 'Prefer not to say', value: 'N/A'}
         ];
 
-        constructor(data:any) {
-            _.assign(this, data);
+        constructor(data:any, exists:boolean = false) {
+
+            super(data, exists);
+
+            if (_.has(data, 'dob')){
+                data.dob = moment(data.dob).toDate();
+            }
+
+            this.hydrate(data, exists);
         }
 
     }
