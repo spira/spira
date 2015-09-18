@@ -209,6 +209,17 @@
 
             });
 
+            it('should not make an api call if nothing has changed', () => {
+
+                let article = fixtures.getArticle();
+                article.setExists(true);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.equal(article);
+
+            });
+
         });
 
     });
