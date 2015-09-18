@@ -9,6 +9,7 @@ RUN mkdir -p /data
 # only add the required data code
 COPY api /data/api/
 COPY app/build /data/app/build
+COPY forum /data/forum
 
 # add vhosts for the nginx container
 COPY vhosts /data/vhosts/

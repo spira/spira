@@ -1,13 +1,24 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Spira\Model\Model\IndexedModel;
 
 /**
- * Class TestEntity
+ * Class TestEntity.
  *
  * @property Collection $testMany
  */
-class TestEntity extends BaseModel
+class TestEntity extends IndexedModel
 {
     /**
      * The database table used by the model.
@@ -39,23 +50,25 @@ class TestEntity extends BaseModel
     protected $casts = [
         'decimal'    => 'float',
         'date'       => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
     ];
 
-    protected $validationRules = [
-        'entity_id' => 'uuid|createOnly',
-        'varchar' => 'required|string',
-        'hash'    => 'required|string',
-        'integer' => 'required|integer',
-        'decimal' => 'required|float',
-        'boolean' => 'required|boolean',
-        'text'    => 'required|string',
-        'date'    => 'required|date',
-        'multi_word_column_title' => 'required|boolean',
-        'hidden'  => 'required|boolean'
-    ];
-
+    public static function getValidationRules()
+    {
+        return [
+            'entity_id' => 'required|uuid',
+            'varchar' => 'required|string',
+            'hash'    => 'required|string',
+            'integer' => 'required|integer',
+            'decimal' => 'required|decimal',
+            'boolean' => 'required|boolean',
+            'text'    => 'required|string',
+            'date'    => 'required|date',
+            'multi_word_column_title' => 'required|boolean',
+            'hidden'  => 'required|boolean',
+        ];
+    }
 
     public function testOne()
     {

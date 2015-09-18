@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Providers;
 
 use App\Http\Transformers\EloquentModelTransformer;
@@ -13,6 +21,13 @@ use Spira\Responder\Paginator\RangeRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        $this->app->make('validator')->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
+            return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
+        });
+    }
+
     /**
      * Register any application services.
      *
@@ -24,9 +39,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConnectionResolverInterface::class, 'db');
         $this->app->bind(TransformerInterface::class, EloquentModelTransformer::class);
         $this->app->bind(PaginatedRequestDecoratorInterface::class, RangeRequest::class);
-
-        Validator::resolver(function ($translator, $data, $rules, $messages) {
-            return new SpiraValidator($translator, $data, $rules, $messages);
-        });
     }
 }

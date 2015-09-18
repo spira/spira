@@ -1,14 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: redjik
- * Date: 17.07.15
- * Time: 18:19
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace App\Helpers;
 
-use Spira\Repository\Model\BaseModel;
+use Spira\Model\Model\BaseModel;
 
 class RouteHelper
 {
@@ -20,9 +22,9 @@ class RouteHelper
      */
     public static function getRoute(BaseModel $model)
     {
-        if (!isset(static::$badRoutes[get_class($model)])) {
+        if (! isset(static::$badRoutes[get_class($model)])) {
             try {
-                return route(get_class($model), ['id'=>$model->getQueueableId()]);
+                return route(get_class($model), ['id' => $model->getQueueableId()]);
             } catch (\InvalidArgumentException $e) {
                 static::$badRoutes[get_class($model)] = true;
             }

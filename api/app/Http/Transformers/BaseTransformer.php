@@ -1,8 +1,18 @@
-<?php namespace App\Http\Transformers;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Http\Transformers;
 
 use App\Services\TransformerService;
 use League\Fractal\TransformerAbstract;
-use Spira\Repository\Collection\Collection;
+use Spira\Model\Collection\Collection;
 use Spira\Responder\Contract\TransformerInterface;
 
 abstract class BaseTransformer extends TransformerAbstract  implements TransformerInterface
@@ -38,7 +48,7 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
     public function transformCollection($collection)
     {
         if ($collection instanceof Collection) {
-            $collection = $collection->all();
+            $collection = $collection->all(); //remove the items marked as deleted
         }
 
         return $this->getService()->collection($collection, $this);

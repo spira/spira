@@ -1,13 +1,23 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
-use Spira\Repository\Validation\Validator;
+use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
 {
-    public function validateFloat($attribute, $value, $parameters)
+    public function validateDecimal($attribute, $value, $parameters)
     {
-        return is_float($value + 0);
+        return is_float($value) || is_int($value);
     }
 
     public function validateUuid($attribute, $value, $parameters)
@@ -20,14 +30,12 @@ class SpiraValidator extends Validator
         return false;
     }
 
-    public function validateCreateOnly($attribute, $value, $parameters)
+    public function validateEquals($attribute, $value, $parameters)
     {
-        $original = $this->model->getOriginal($attribute);
-        if (is_null($original)) {
-            return true;
-        }
+        $this->requireParameterCount(1, $parameters, 'equals');
+        $compare = $parameters[0];
 
-        if ($original == $value) {
+        if ($compare == $value) {
             return true;
         }
 
@@ -40,7 +48,7 @@ class SpiraValidator extends Validator
      * @param  string  $attribute
      * @param  string  $value
      * @param  array   $parameters
-     * @return void
+     * @return bool
      */
     protected function validateCountry($attribute, $value, $parameters)
     {
@@ -62,5 +70,19 @@ class SpiraValidator extends Validator
     protected function validateAlphaDashSpace($attribute, $value, $parameters)
     {
         return preg_match('/^[\pL\pN\s._-]+$/u', $value);
+    }
+
+    /**
+     * Register custom validation rule for supported region codes.
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateSupportedRegion($attribute, $value, $parameters)
+    {
+        $supportedRegionCodes = array_pluck(config('regions.supported'), 'code');
+
+        return in_array($value, $supportedRegionCodes);
     }
 }
