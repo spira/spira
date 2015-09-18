@@ -365,11 +365,9 @@ class UserTest extends TestCase
         ]);
 
         $user = User::find($userToDelete->user_id);
-        $profile = UserProfile::find($userToDelete->user_id);
 
         $this->assertResponseStatus(403);
         $this->assertNotNull($user);
-        $this->assertNotNull($profile);
     }
 
     public function testResetPasswordMail()

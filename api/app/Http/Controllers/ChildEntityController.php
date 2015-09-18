@@ -10,10 +10,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\BadRequestException;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
@@ -76,12 +78,18 @@ class ChildEntityController extends ApiController
      *
      * @param Request $request
      * @param  string $id
-     * @param string $childId
+     * @param bool|string $childId
      * @return ApiResponse
      */
-    public function getOne(Request $request, $id, $childId)
+    public function getOne(Request $request, $id, $childId = false)
     {
         $model = $this->findParentEntity($id);
+
+        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
+        if ($childId === false){
+            $childId = $id;
+        }
+
         $childModel = $this->findOrFailChildEntity($childId, $model);
         $childModel = $this->getWithNested($childModel, $request);
 
@@ -122,11 +130,17 @@ class ChildEntityController extends ApiController
      * @param  Request $request
      * @return ApiResponse
      */
-    public function putOne(Request $request, $id, $childId)
+    public function putOne(Request $request, $id, $childId = false)
     {
         $parent = $this->findParentEntity($id);
 
-        $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
+        if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
+            $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel());
+            $childId = $id;
+        }else{
+            $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
+        }
+
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
         $this->validateRequest($request->all(), $this->getValidationRules());
@@ -168,16 +182,22 @@ class ChildEntityController extends ApiController
     /**
      * Patch an entity.
      *
-     * @param  string $id
-     * @param string $childId
      * @param  Request $request
+     * @param  string $id
+     * @param bool|string $childId
      * @return ApiResponse
      */
-    public function patchOne(Request $request, $id, $childId)
+    public function patchOne(Request $request, $id, $childId = false)
     {
         $parent = $this->findParentEntity($id);
 
-        $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
+        if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
+            $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel(), false);
+            $childId = $id;
+        }else{
+            $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
+        }
+
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
         $this->validateRequest($request->all(), $this->getValidationRules(), true);
@@ -219,9 +239,15 @@ class ChildEntityController extends ApiController
      * @param string $childId
      * @return ApiResponse
      */
-    public function deleteOne($id, $childId)
+    public function deleteOne($id, $childId = false)
     {
         $model = $this->findParentEntity($id);
+
+        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id
+        if ($childId === false){
+            $childId = $id;
+        }
+
         $childModel = $this->findOrFailChildEntity($childId, $model);
 
         $childModel->delete();
@@ -270,12 +296,12 @@ class ChildEntityController extends ApiController
     }
 
     /**
-     * @param BaseModel $model
+     * @param BaseModel $parentModel
      * @return HasOneOrMany|BelongsToMany|Builder
      */
-    protected function getRelation(BaseModel $model)
+    protected function getRelation(BaseModel $parentModel)
     {
-        return $model->{$this->relationName}();
+        return $parentModel->{$this->relationName}();
     }
 
     /**
