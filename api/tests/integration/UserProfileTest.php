@@ -45,7 +45,6 @@ class UserProfileTest extends TestCase
         $userProfile = $this->getFactory()->get(UserProfile::class)->make([
             'website' => 'http://some-website.com',
         ]);
-
         $userProfile->user_id = $user->user_id;
 
         $profileTransformed = $this->getFactory()->get(UserProfile::class)->setModel($userProfile)->transformed();
@@ -54,7 +53,8 @@ class UserProfileTest extends TestCase
 
         $this->assertResponseStatus(201);
 
-        $createdUser = User::find($user->user_id);
+        /** @var User $createdUser */
+        $createdUser = User::findOrFail($user->user_id);
 
         $addedProfile = $createdUser->userProfile;
 
@@ -64,7 +64,6 @@ class UserProfileTest extends TestCase
 
     public function testPatchOne()
     {
-
         $user = $this->createUser();
 
         $user->userProfile()->save($this->getFactory()->get(UserProfile::class)->make());

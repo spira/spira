@@ -160,6 +160,19 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
     /**
+     * Visit the given URI with a POST request with content type of application/json.
+     *
+     * @param  string  $uri
+     * @param  array  $data
+     * @param  array  $headers
+     * @return $this
+     */
+    public function postJson($uri, array $data = [], array $headers = [])
+    {
+        return $this->requestJson('POST', $uri, $data, $headers);
+    }
+
+    /**
      * Visit the given URI with a PUT request with content type of application/json.
      *
      * @param  string  $uri

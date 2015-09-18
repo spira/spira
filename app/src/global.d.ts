@@ -1,6 +1,7 @@
 //Import definitely typed definitions
 
 ///<reference path="../typings/tsd.d.ts" />
+///<reference path="thirdPartyTypings.d.ts" />
 
 declare namespace global {
 
@@ -65,6 +66,5 @@ declare namespace global {
         name:string;
         icon?:string;
     }
-
 
 }

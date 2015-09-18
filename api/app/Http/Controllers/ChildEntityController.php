@@ -112,9 +112,9 @@ class ChildEntityController extends ApiController
         $parent = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
 
-        $this->validateRequest($request->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
-        $childModel->fill($request->all());
+        $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
@@ -136,16 +136,16 @@ class ChildEntityController extends ApiController
 
         if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
             $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel());
-            $childId = $id;
+            $childId = $parent->getKey();
         }else{
             $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel());
         }
 
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
-        $childModel->fill($request->all());
+        $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
@@ -164,7 +164,7 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
         $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
@@ -193,16 +193,16 @@ class ChildEntityController extends ApiController
 
         if ($childId === false){ //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
             $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel(), false);
-            $childId = $id;
+            $childId = $parent->getKey();
         }else{
             $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
         }
 
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $this->validateRequest($request->all(), $this->getValidationRules(), true);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
 
-        $childModel->fill($request->all());
+        $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()->noContent();
@@ -217,7 +217,7 @@ class ChildEntityController extends ApiController
      */
     public function patchMany(Request $request, $id)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
@@ -265,7 +265,7 @@ class ChildEntityController extends ApiController
      */
     public function deleteMany(Request $request, $id)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
         $model = $this->findParentEntity($id);
 
         $this->findOrFailChildrenCollection($requestCollection, $model)->each(function (BaseModel $model) {

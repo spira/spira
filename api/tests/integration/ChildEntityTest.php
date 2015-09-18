@@ -105,7 +105,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = factory(App\Models\SecondTestEntity::class)->make();
 
-        $this->post('/test/entities/'.$entity->entity_id.'/child', $this->prepareEntity($childEntity));
+        $this->postJson('/test/entities/'.$entity->entity_id.'/child', $this->prepareEntity($childEntity));
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(201);
@@ -119,7 +119,7 @@ class ChildEntityTest extends TestCase
         $childEntity = $this->prepareEntity($childEntity);
         unset($childEntity['value']);
 
-        $this->post('/test/entities/'.$entity->entity_id.'/child', $childEntity);
+        $this->postJson('/test/entities/'.$entity->entity_id.'/child', $childEntity);
 
         $object = json_decode($this->response->getContent());
 

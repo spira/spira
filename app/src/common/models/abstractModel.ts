@@ -1,23 +1,31 @@
 //note this file MUST be loaded before any depending classes @todo resolve model load order
 namespace common.models {
 
-    export interface IModel{
+    export interface IModel {
         getAttributes(includeUnderscoredKeys?:boolean):Object;
         setExists(exists:boolean):void;
         exists():boolean;
     }
 
-    export interface IModelClass{
+    export interface IModelClass {
         new(data?:any, exists?:boolean):IModel;
     }
 
-    export interface IModelFactory{
+    export interface IModelFactory {
         (data:any, exists?:boolean):IModel;
+    }
+
+    export interface IHydrateFunction {
+        (data:any, exists:boolean):any;
+    }
+
+    export interface INestedEntityMap {
+        [key:string] : IModelClass | IHydrateFunction;
     }
 
     export abstract class AbstractModel implements IModel {
 
-        protected _nestedEntityMap;
+        protected _nestedEntityMap:INestedEntityMap;
         private _exists:boolean;
 
         constructor(data?:any, exists:boolean = false) {
@@ -47,30 +55,48 @@ namespace common.models {
         }
 
         /**
+         * Checks to see if an entity implements interface IModelClass.
+         *
+         * Note: This is valid Typescript (1.6), change when PHPStorm gets an update:
+         *
+         * private isModelClass(entity: any):entity is IModelClass { ... }
+         *
+         * @param entity
+         */
+        private isModelClass(entity: any):boolean {
+            return entity.prototype && entity.prototype instanceof AbstractModel;
+        }
+
+        /**
          * Find all the nested entities and hydrate them into model instances
          * @param data
          * @param exists
          */
         protected hydrateNested(data:any, exists:boolean){
 
-            _.forIn(this._nestedEntityMap, (model:IModelClass, nestedKey:string) => {
+            _.forIn(this._nestedEntityMap, (nestedObject:IModelClass|IHydrateFunction, nestedKey:string) => {
 
                 //if the nested map is not defined with a leading _ prepend one
                 if (!_.startsWith(nestedKey, '_')){
                     nestedKey = '_' + nestedKey;
                 }
 
-                if (_.has(data, nestedKey) && !_.isNull(data[nestedKey])){
+                let nestedData = null;
 
-                    if (_.isArray(data[nestedKey])){
-                        this[nestedKey] = _.map(data[nestedKey], (entityData) => this.hydrateModel(entityData, model, exists));
-                    }else if (_.isObject(data[nestedKey])){
-                        this[nestedKey] = this.hydrateModel(data[nestedKey], model, exists);
+                if(this.isModelClass(nestedObject)) {
+                    if(_.has(data, nestedKey) && !_.isNull(data[nestedKey])) {
+                        if (_.isArray(data[nestedKey])){
+                            nestedData = _.map(data[nestedKey], (entityData) => this.hydrateModel(entityData, (<IModelClass>nestedObject), exists));
+                        } else if (_.isObject(data[nestedKey])) {
+                            nestedData = this.hydrateModel(data[nestedKey], (<IModelClass>nestedObject), exists);
+                        }
                     }
-
-                }else{
-                    this[nestedKey] = null;
                 }
+                else {
+                    nestedData = (<IHydrateFunction>nestedObject)(data, exists);
+                }
+
+                this[nestedKey] = nestedData;
 
             });
 
@@ -124,6 +150,15 @@ namespace common.models {
          */
         public setExists(exists:boolean):void{
             this._exists = exists;
+        }
+
+        /**
+         * Generates a UUID using lil:
+         * https://github.com/lil-js/uuid
+         * @returns {string}
+         */
+        public static generateUUID():string {
+            return lil.uuid();
         }
 
     }
