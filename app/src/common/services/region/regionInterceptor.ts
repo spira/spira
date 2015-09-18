@@ -1,6 +1,6 @@
 namespace common.services.region {
 
-    type IRequestConfig = /*ng.IRequestConfig |*/ NgRestAdapter.INgRestAdapterRequestConfig;
+    type IRequestConfig = ng.IRequestConfig & NgRestAdapter.INgRestAdapterRequestConfig;
 
     export class RegionInterceptor {
 

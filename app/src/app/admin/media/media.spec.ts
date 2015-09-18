@@ -35,6 +35,9 @@ namespace app.admin.media {
                     initialImages: images,
                     $stateParams: $stateParams
                 });
+
+                MediaController.imageUploadForm = global.FormControllerMock.getMock();
+
             });
 
         });
@@ -98,10 +101,9 @@ namespace app.admin.media {
 
                 $scope.$apply();
 
-
                 expect(MediaController.images.length).to.equal(imageViewCount); //length should not have changed
                 expect(MediaController.images[0].title).to.equal(image.title); //first image should have been pushed on
-
+                expect(MediaController.imageUploadForm.$setPristine).to.have.been.called;
 
             });
 
