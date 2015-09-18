@@ -228,7 +228,7 @@ class ArticleTest extends TestCase
         /** @var Article $entity */
         $entity = factory(Article::class)->make();
 
-        $this->post('/articles', $this->prepareEntity($entity));
+        $this->postJson('/articles', $this->prepareEntity($entity));
 
         $this->shouldReturnJson();
 
@@ -587,7 +587,7 @@ class ArticleTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body], [
+        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
         $array = json_decode($this->response->getContent(), true);
@@ -610,7 +610,7 @@ class ArticleTest extends TestCase
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
 
-        $this->post('/articles/'.$article->article_id.'/comments', ['body' => ''], [
+        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => ''], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
@@ -625,7 +625,7 @@ class ArticleTest extends TestCase
         $body = 'A comment';
         $article = factory(Article::class)->create();
 
-        $this->post('/articles/'.$article->article_id.'/comments', ['body' => $body]);
+        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body]);
 
         $this->assertResponseStatus(401);
     }

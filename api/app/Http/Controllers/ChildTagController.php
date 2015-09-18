@@ -36,7 +36,7 @@ class ChildTagController extends ChildEntityController
     {
         $parent = $this->findParentEntity($id);
 
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
 
