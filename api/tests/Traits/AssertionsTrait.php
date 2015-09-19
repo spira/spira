@@ -7,21 +7,19 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
-use Illuminate\Support\Debug\Dumper;
 use Laravel\Lumen\Testing\AssertionsTrait as BaseAssertionsTrait;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
-
 
 /**
  * Additional assertions not offered by Lumen's TestCase or PHPUnit.
  */
 trait AssertionsTrait
 {
-
     use BaseAssertionsTrait {
         BaseAssertionsTrait::assertResponseStatus as baseAssertResponseStatus;
     }
+
     /**
      * Assert the response is a JSON array.
      *
