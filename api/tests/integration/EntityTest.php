@@ -305,11 +305,12 @@ class EntityTest extends TestCase
 
     public function testGetOneWithInvalidNested()
     {
+        $this->markTestSkipped("Skipped until https://github.com/laravel/framework/pull/10309 is fixed");
+
         $entity = factory(App\Models\TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
         $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested' => 'not-a-valid-nesting']);
-        $object = json_decode($this->response->getContent());
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(400);
