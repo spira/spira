@@ -25,6 +25,10 @@ namespace common.models {
 
         }
 
+        public static entity(overrides:Object = {}, exists:boolean = true):UserProfile {
+            return <UserProfile> new this().buildEntity(overrides, exists);
+        }
+
     }
 
 }

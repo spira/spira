@@ -4,7 +4,7 @@ namespace common.models {
 
     describe('User Model', () => {
 
-        let userData:global.IUserData = new UserMock().getMockData();
+        let userData = <global.IUserData> new UserMock().getMockData();
 
         it('should instantiate a new user', () => {
 
@@ -16,7 +16,7 @@ namespace common.models {
 
         it('should get custom user mock entity', () => {
 
-            let user = new UserMock().entity({userId: 'abc-123'});
+            let user = UserMock.entity({userId: 'abc-123'});
 
             expect(user).to.be.instanceOf(User);
 
@@ -26,7 +26,7 @@ namespace common.models {
 
         it('should get user mock collection', () => {
 
-            let users = new UserMock().collection(5);
+            let users = UserMock.collection(5);
 
             expect(users).to.be.instanceOf(Array);
 

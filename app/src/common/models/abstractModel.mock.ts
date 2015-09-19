@@ -5,10 +5,10 @@ namespace common.models {
         public abstract getMockData():Object;
         public abstract getModelClass():IModelClass;
 
-        public entity(overrides:Object = {}, exists:boolean = true) {
+        public buildEntity(overrides:Object = {}, exists:boolean = true):IModel {
 
             let data:any = this.getMockData();
-            let modelClass:IModelClass = this.getModelClass();
+            let modelClass = this.getModelClass();
 
             let model = new modelClass(_.merge(data, overrides));
 
@@ -16,10 +16,10 @@ namespace common.models {
             return model;
         }
 
-        public collection(count:number = 10){
+        public buildCollection(count:number = 10){
 
             //return _.fill(Array(count), this.entity());
-            return chance.unique(() => this.entity(), count);
+            return chance.unique(() => this.buildEntity(), count);
         }
 
     }

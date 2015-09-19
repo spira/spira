@@ -24,6 +24,14 @@ namespace common.models {
 
         }
 
+        public static entity(overrides:Object = {}, exists:boolean = true):User {
+            return <User> new this().buildEntity(overrides, exists);
+        }
+
+        public static collection(count:number = 10):User[] {
+            return <User[]>new this().buildCollection(count);
+        }
+
     }
 
 }

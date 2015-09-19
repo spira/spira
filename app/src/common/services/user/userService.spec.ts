@@ -292,9 +292,9 @@
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
-                let user = new common.models.UserMock().entity();
+                let user = common.models.UserMock.entity();
 
-                user._userProfile = new common.models.UserProfileMock().entity();
+                user._userProfile = common.models.UserProfileMock.entity();
                 user._userProfile.dob = '1995-01-01';
                 user._userProfile.about = 'Ipsum';
 

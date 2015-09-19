@@ -66,7 +66,7 @@ namespace app.admin.articles.article.meta {
 
         it('should be able to change the author of a post', () => {
 
-            let newAuthor = new common.models.UserMock().entity();
+            let newAuthor = common.models.UserMock.entity();
 
             MetaController.changeAuthor(newAuthor);
 
