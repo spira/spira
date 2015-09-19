@@ -50,12 +50,13 @@
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
         let $mdDialog:ng.material.IDialogService;
         let $timeout:ng.ITimeoutService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_, _$mdDialog_, _$timeout_) => {
+            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_, _$mdDialog_, _$timeout_, _$rootScope_) => {
 
                 if (!userService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
@@ -64,6 +65,7 @@
                     ngRestAdapter = _ngRestAdapter_;
                     $mdDialog = _$mdDialog_;
                     $timeout = _$timeout_;
+                    $rootScope = _$rootScope_;
                 }
             });
 
@@ -290,23 +292,25 @@
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
-                let user = fixtures.user;
+                let user = new common.models.UserMock().entity();
 
-                let profile = _.clone(userProfile);
+                user._userProfile = new common.models.UserProfileMock().entity();
+                user._userProfile.dob = '1995-01-01';
+                user._userProfile.about = 'Ipsum';
 
-                profile.dob = '1995-01-01';
-                profile.about = 'Ipsum';
-                user.firstName = 'FooBar';
+                $httpBackend.expectPATCH('/api/users/' + user.userId, (jsonData:string) => {
+                    let data:common.models.User = JSON.parse(jsonData);
+                    return data.firstName == user.firstName;
+                }).respond(204);
 
-                user._userProfile = profile;
+                $httpBackend.expectPATCH('/api/users/' + user.userId + '/profile', (jsonData:string) => {
+                    let data:common.models.UserProfile = JSON.parse(jsonData);
+                    return data.dob == user._userProfile.dob && data.about == user._userProfile.about;
+                }).respond(204);
 
-                $httpBackend.expectPATCH('/api/users/' + user.userId,
-                    (jsonData:string) => {
-                        let data:common.models.User = JSON.parse(jsonData);
-                        return data.firstName == 'FooBar' && data._userProfile.dob == '1995-01-01' && data._userProfile.about == 'Ipsum';
-                    }).respond(204);
+                let profileUpdatePromise = userService.saveUserWithRelated(user);
 
-                let profileUpdatePromise = userService.updateUser(user);
+                $rootScope.$apply();
 
                 expect(profileUpdatePromise).eventually.to.be.fulfilled;
 

@@ -43,7 +43,7 @@ namespace app.admin.articles.article {
                 }
             },
             ArticleController:ArticleController,
-            loggedInUser:common.models.User = common.models.UserMock.entity(),
+            loggedInUser:common.models.User = new common.models.UserMock().entity(),
             userService = {
                 getAuthUser: sinon.stub().returns(loggedInUser),
                 getUsersPaginator: sinon.stub().returns({

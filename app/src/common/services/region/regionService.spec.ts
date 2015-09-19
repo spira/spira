@@ -18,7 +18,7 @@ namespace common.services.region {
 
                     $delegate.registerLoginListener = stubRegisterAuthListener;
 
-                    $delegate.registerLoginListener.onCall(0).yields(common.models.UserMock.entity({regionCode:'au'}));
+                    $delegate.registerLoginListener.onCall(0).yields(new common.models.UserMock().entity({regionCode:'au'}));
 
                     return $delegate;
                 });

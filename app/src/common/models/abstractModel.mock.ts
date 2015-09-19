@@ -1,0 +1,27 @@
+namespace common.models {
+
+    export abstract class AbstractMock{
+
+        public abstract getMockData():Object;
+        public abstract getModelClass():IModelClass;
+
+        public entity(overrides:Object = {}, exists:boolean = true) {
+
+            let data:any = this.getMockData();
+            let modelClass:IModelClass = this.getModelClass();
+
+            let model = new modelClass(_.merge(data, overrides));
+
+            model.setExists(exists);
+            return model;
+        }
+
+        public collection(count:number = 10){
+
+            //return _.fill(Array(count), this.entity());
+            return chance.unique(() => this.entity(), count);
+        }
+
+    }
+
+}

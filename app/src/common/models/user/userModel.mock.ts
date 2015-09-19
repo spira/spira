@@ -1,8 +1,12 @@
 namespace common.models {
 
-    export class UserMock{
+    export class UserMock extends AbstractMock{
 
-        public static getMockData():global.IUserData {
+        public getModelClass():IModelClass {
+            return common.models.User;
+        }
+
+        public getMockData():Object {
 
             let seededChance = new Chance(Math.random());
 
@@ -16,21 +20,8 @@ namespace common.models {
                 avatarImgUrl:seededChance.url(),
                 regionCode: seededChance.pick(['uk', 'us', 'gb']),
                 userType: seededChance.pick(User.userTypes),
-                _socialLogins:(<common.models.UserSocialLogin[]>[])
             };
 
-        }
-
-        public static entity(overrides:Object = {}, exists:boolean = true) {
-
-            let model = new common.models.User(_.merge(UserMock.getMockData(), overrides));
-
-            model.setExists(exists);
-            return model;
-        }
-
-        public static collection(count:number = 10){
-            return chance.unique(UserMock.entity, count);
         }
 
     }

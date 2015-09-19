@@ -146,7 +146,7 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
-                let author = common.models.UserMock.entity();
+                let author = new common.models.UserMock().entity();
 
                 let article = articleService.newArticle(author);
 

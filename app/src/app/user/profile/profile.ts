@@ -146,7 +146,7 @@ namespace app.user.profile {
                 delete this.fullUserInfo._userCredential;
             }
 
-            this.userService.updateUser(this.fullUserInfo)
+            this.userService.saveUserWithRelated(this.fullUserInfo)
                 .then(() => {
                     this.notificationService.toast('Profile update was successful').pop();
                 },

@@ -150,9 +150,58 @@ namespace common.services.user {
          * @param user
          * @returns {ng.IHttpPromise<any>}
          */
-        public updateUser(user:common.models.User):ng.IPromise<any> {
+        public saveUser(user:common.models.User):ng.IPromise<any> {
             return this.ngRestAdapter
-                .patch('/users/' + user.userId, user.getAttributes(true));
+                .patch('/users/' + user.userId, user.getAttributes(true))
+                .then(() => user);
+        }
+
+        /**
+         * Save user with all related entities
+         * @param user
+         * @returns {IPromise<common.models.User>}
+         */
+        public saveUserWithRelated(user:common.models.User):ng.IPromise<common.models.User>{
+
+            return this.saveUser(user)
+                .then(() => this.saveRelatedEntities(user))
+                .then(() => {
+                    (<common.decorators.IChangeAwareDecorator>user).resetChanged(); //reset so next save only saves the changed items
+                    return user;
+                });
+
+        }
+
+        /**
+         * Save all related entities within user
+         * @param user
+         * @returns {IPromise<any[]>}
+         */
+        private saveRelatedEntities(user:common.models.User):ng.IPromise<any[]> {
+
+            return this.$q.all([ //save all related entities
+                this.saveUserProfile(user),
+            ]);
+
+        }
+
+        /**
+         * Save user profile
+         * @param user
+         * @returns {any}
+         */
+        private saveUserProfile(user:common.models.User):ng.IPromise<common.models.UserProfile|boolean>{
+
+            let changes:any = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
+            if (_.isEmpty(changes)){
+                return this.$q.when(false);
+            }
+
+            return this.ngRestAdapter.patch('/users/'+user.userId+'/profile', changes)
+                .then(() => {
+                    return user._userProfile;
+                });
+
         }
 
         /**
