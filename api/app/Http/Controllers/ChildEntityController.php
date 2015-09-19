@@ -22,7 +22,7 @@ use Spira\Model\Model\BaseModel;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
-class ChildEntityController extends ApiController
+abstract class ChildEntityController extends ApiController
 {
     use RequestValidationTrait;
 
