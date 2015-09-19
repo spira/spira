@@ -11,16 +11,16 @@ namespace common.models {
             let seededChance = new Chance(Math.random());
 
             return {
-                dob:'1921-01-01',
-                mobile:'04123123',
-                phone:'',
-                gender:'M',
-                about:'Lorem',
-                facebook:'',
-                twitter:'',
-                pinterest:'',
-                instagram:'',
-                website:''
+                dob: moment(seededChance.birthday()).format('YYYY-MM-DD'),
+                mobile: seededChance.phone({ mobile: true }),
+                phone: seededChance.phone(),
+                gender: seededChance.pick(_.pluck(UserProfile.genderOptions, 'value')),
+                about: seededChance.paragraph(),
+                facebook: seededChance.url({domain: 'www.facebook.com'}),
+                twitter: seededChance.twitter(),
+                pinterest: seededChance.url({domain: 'www.pintrest.com'}),
+                instagram: seededChance.url({domain: 'www.instagram.com'}),
+                website: seededChance.url()
             };
 
         }

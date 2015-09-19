@@ -1,50 +1,8 @@
-(() => {
-
-    let seededChance = new Chance(1);
-    let fixtures = {
-
-        buildUser: (overrides = {}) => {
-
-            let userId = seededChance.guid();
-            let defaultUser:global.IUserData = {
-                _self: '/users/'+userId,
-                userId: userId,
-                email: seededChance.email(),
-                firstName: seededChance.first(),
-                lastName: seededChance.last(),
-                _userCredential: {
-                    userCredentialId: seededChance.guid(),
-                    password: seededChance.string(),
-                }
-            };
-
-            return _.merge(defaultUser, overrides);
-        },
-        get user():common.models.User {
-            return new common.models.User(fixtures.buildUser());
-        },
-        get users() {
-            return _.range(10).map(() => fixtures.user);
-        }
-    };
-    let userProfile:common.models.UserProfile = <common.models.UserProfile>{
-            dob:'1921-01-01',
-            mobile:'04123123',
-            phone:'',
-            gender:'M',
-            about:'Lorem',
-            facebook:'',
-            twitter:'',
-            pinterest:'',
-            instagram:'',
-            website:''
-        };
-
-    const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
+namespace common.services.user {
 
     describe('UserService', () => {
 
-        let userService:common.services.user.UserService;
+        let userService:UserService;
         let $httpBackend:ng.IHttpBackendService;
         let authService:NgJwtAuth.NgJwtAuthService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
@@ -89,7 +47,7 @@
 
             it('should be able to retrieve full info for one user', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
 
                 $httpBackend.expectGET('/api/users/' + user.userId,
                     (headers) => /userCredential, userProfile, socialLogins/.test(headers['With-Nested'])
@@ -105,9 +63,9 @@
 
             it('should return a new user created from user data', () => {
 
-                let userData = _.clone(fixtures.buildUser());
+                let userData = _.clone(common.models.UserMock.entity());
 
-                let user = common.services.user.UserService.userFactory(userData);
+                let user = UserService.userFactory(userData);
 
                 expect(user).to.be.instanceOf(common.models.User);
 
@@ -141,7 +99,7 @@
                     (<any>ngRestAdapter.get).restore();
                 });
 
-                let users = _.clone(fixtures.users); // Get a set of users
+                let users = _.clone(common.models.UserMock.collection()); // Get a set of users
 
                 it('should return the first set of users', () => {
 
@@ -172,8 +130,11 @@
 
                 it('should be able to create a new user and attempt login immediately',  () => {
 
-                    let user = _.compactObject(fixtures.user);
-                    delete user._self;
+                    let user = _.compactObject(common.models.UserMock.entity());
+                    user = <common.models.User>_.pick(user, ['userId', 'email', 'firstName', 'lastName', '_userCredential']);
+                    user._userCredential = new common.models.UserCredential({
+                        password: 'hunter2',
+                    });
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
                         return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
@@ -195,12 +156,13 @@
                 it('should be able to poll the api to check if an email has been registered', () => {
 
                     let notExistingEmail = 'not-registered@example.com';
+                    let existingEmail = 'registered@example.com';
 
                     $httpBackend.expectHEAD('/api/users/email/'+notExistingEmail).respond(404);
-                    $httpBackend.expectHEAD('/api/users/email/'+seededEmail).respond(200);
+                    $httpBackend.expectHEAD('/api/users/email/'+existingEmail).respond(200);
 
                     let notExistingCheck = userService.isEmailRegistered(notExistingEmail);
-                    let existingCheck = userService.isEmailRegistered(seededEmail);
+                    let existingCheck = userService.isEmailRegistered(existingEmail);
 
                     $httpBackend.flush();
 
@@ -249,7 +211,7 @@
 
             it('should be able to send a patch request to confirm email change', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
 
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
 
@@ -272,7 +234,7 @@
 
             it('should reject the promise if a bogus user id is passed through', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
                 user.userId = 'bogus-user-id';
 
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
@@ -322,4 +284,4 @@
     });
 
 
-})();
+}

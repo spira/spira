@@ -18,7 +18,7 @@ namespace common.models {
         public timezoneIdentifier:string = undefined;
         public _userCredential:global.IUserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;
-        public _socialLogins:common.models.UserSocialLogin[] = [];
+        public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public userType:string = undefined;
 
         constructor(data:any, exists:boolean = false) {

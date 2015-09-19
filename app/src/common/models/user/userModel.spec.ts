@@ -54,6 +54,7 @@ namespace common.models {
         it('should be able to check if the user has a social login', () => {
 
             let user = new User(_.clone(userData, true));
+            user._socialLogins = [];
 
             let userLoginDataFacebook = new common.models.UserSocialLogin ({
                 userId:user.userId,
@@ -76,6 +77,7 @@ namespace common.models {
         it('should be able to check if the user does not have a social login', () => {
 
             let user = new User(_.clone(userData, true));
+            user._socialLogins = [];
 
             let userLoginDataGoogle = new common.models.UserSocialLogin({
                 userId:user.userId,
