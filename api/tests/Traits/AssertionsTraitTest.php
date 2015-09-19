@@ -13,7 +13,6 @@
  */
 class AssertionsTraitTest extends TestCase
 {
-
     /**
      * Test that date formats are valid.
      */
@@ -46,7 +45,7 @@ class AssertionsTraitTest extends TestCase
     }
 
     /**
-     * Test that the response status assertion outputs the dumped json response on failure
+     * Test that the response status assertion outputs the dumped json response on failure.
      */
     public function testFailingStatusCodeAssertion()
     {
@@ -55,12 +54,11 @@ class AssertionsTraitTest extends TestCase
         ob_start();
         try {
             $this->assertResponseStatus(200);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_AssertionFailedError', $e);
         }
         $output = ob_get_clean();
 
-        $this->assertContains("NotFoundHttpException", $output);
+        $this->assertContains('NotFoundHttpException', $output);
     }
-
 }
