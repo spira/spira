@@ -483,14 +483,11 @@ class ChildEntityTest extends TestCase
     }
 }
 
-
-
-class MockMissingRelationNameController extends ChildEntityController {
-
+class MockMissingRelationNameController extends ChildEntityController
+{
 }
 
-class MockInvalidRelationNameController extends ChildEntityController {
-
+class MockInvalidRelationNameController extends ChildEntityController
+{
     protected $relationName = 'noSuchRelation';
-
 }

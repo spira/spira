@@ -9,7 +9,6 @@
  */
 
 use Illuminate\Support\Facades\DB;
-use \Illuminate\Support\Debug\Dumper;
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {

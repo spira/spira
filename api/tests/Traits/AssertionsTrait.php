@@ -122,5 +122,4 @@ trait AssertionsTrait
             throw $e;
         }
     }
-
 }
