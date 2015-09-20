@@ -13,8 +13,6 @@
  */
 class AssertionsTraitTest extends TestCase
 {
-    use \Laravel\Lumen\Testing\AssertionsTrait;
-
     /**
      * Test that date formats are valid.
      */
@@ -44,5 +42,23 @@ class AssertionsTraitTest extends TestCase
     public function testValidISO8601DateInvalidDateTimeString()
     {
         $this->assertValidIso8601Date('2010-02-18T16:23:48,3-06:00'); //actually valid ISO8601, but php's DateTime() cant parse it
+    }
+
+    /**
+     * Test that the response status assertion outputs the dumped json response on failure.
+     */
+    public function testFailingStatusCodeAssertion()
+    {
+        $this->getJson('/not-a-route');
+
+        ob_start();
+        try {
+            $this->assertResponseStatus(200);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_AssertionFailedError', $e);
+        }
+        $output = ob_get_clean();
+
+        $this->assertContains('NotFoundHttpException', $output);
     }
 }
