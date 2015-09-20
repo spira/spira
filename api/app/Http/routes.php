@@ -23,7 +23,13 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+
+    $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
+    $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);
+    $app->patch('{id}/profile', ['uses' => 'UserProfileController@patchOne']);
+
     $app->delete('{email}/password', ['uses' => 'UserController@resetPassword']);
+
     $app->delete('{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
 });
 

@@ -16,7 +16,6 @@ use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Model\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -103,9 +102,6 @@ class UserController extends EntityController
         // Extract the credentials
         $credential = $request->input('_user_credential', []);
 
-        // Extract the profile
-        $profile = $request->input('_user_profile', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -117,19 +113,13 @@ class UserController extends EntityController
 
         /** @var User $model */
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(), $this->getValidationRules());
-        $model->fill($request->all());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $model->fill($request->json()->all());
         $model->save();
 
         // Finally create the credentials
         $this->validateRequest($credential, UserCredential::getValidationRules());
         $model->setCredential(new UserCredential($credential));
-
-        // Finally create the profile if it exists
-        if (! empty($profile)) {
-            $this->validateRequest($profile, UserProfile::getValidationRules());
-            $model->setProfile(new UserProfile($profile));
-        }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -172,16 +162,6 @@ class UserController extends EntityController
         $this->validateRequest($request->except('email'), $this->getValidationRules(), true);
         $model->fill($request->except('email'));
         $model->save();
-
-        // Extract the profile and update if necessary
-        $profileUpdateDetails = $request->input('_user_profile', []);
-        if (! empty($profileUpdateDetails)) {
-            /** @var UserProfile $profile */
-            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
-            $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
-            $profile->fill($profileUpdateDetails);
-            $model->setProfile($profile);
-        }
 
         /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
@@ -278,18 +258,6 @@ class UserController extends EntityController
         } else {
             $userData['_social_logins'] = $user->socialLogins->toArray();
         }
-
-        $userProfile = null;
-
-        if (is_null($user->userProfile)) {
-            $userProfile = new UserProfile;
-            $userProfile->user_id = $id;
-            $user->setProfile($userProfile);
-        } else {
-            $userProfile = $user->userProfile;
-        }
-
-        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

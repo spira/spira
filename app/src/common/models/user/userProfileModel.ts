@@ -4,6 +4,7 @@ module common.models {
         value:string;
     }
 
+    @common.decorators.changeAware
     export class UserProfile extends AbstractModel {
 
         public dob:string = undefined;

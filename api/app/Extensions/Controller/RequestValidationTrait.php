@@ -151,7 +151,7 @@ trait RequestValidationTrait
             }
         }
 
-        if ((string) $request->input($keyName) !== (string) $id) {
+        if ((string) $request->json($keyName) !== (string) $id) {
             throw new BadRequestException('Provided entity body does not match route parameter. The entity key cannot be updated');
         }
 
