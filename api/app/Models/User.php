@@ -156,19 +156,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     }
 
     /**
-     * Set the user's profile.
-     *
-     * @param UserProfile $profile
-     * @return $this
-     */
-    public function setProfile(UserProfile $profile)
-    {
-        $this->userProfile()->save($profile);
-
-        return $this;
-    }
-
-    /**
      * Add or update a social login for the user.
      *
      * @param  SocialLogin  $socialLogin

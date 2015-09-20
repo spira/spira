@@ -68,11 +68,11 @@ class ArticleCommentController extends ChildEntityController
             throw new UnauthorizedException('Not logged in.');
         }
 
-        $this->validateRequest($request->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);
-        $childModel = $childModel->save($request->all(), $user);
+        $childModel = $childModel->save($request->json()->all(), $user);
 
         // If we respond with createdItem() it would be an empty response, so
         // we respond with item() instead to provide the data from the new
