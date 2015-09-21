@@ -59,7 +59,6 @@ class ArticleCommentController extends ChildEntityController
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);
         /** @var ArticleDiscussion $childModel */
-        $childModel = $childModel->save($request->all(), $user);
         $childModel = $childModel->save($request->json()->all(), $user);
 
         // If we respond with createdItem() it would be an empty response, so
