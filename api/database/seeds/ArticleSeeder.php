@@ -8,14 +8,15 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\ArticleComment;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
+use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
-use App\Models\User;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleSeeder extends BaseSeeder
 {
@@ -45,13 +46,16 @@ class ArticleSeeder extends BaseSeeder
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
 
-//                //add comments
-//                factory(ArticleComment::class, rand(2,10))->make()
-//                    ->each(function (ArticleComment $comment) use ($article, $users) {
-//                        print_r($users->random()->toArray());
-//                        $comment->setAuthor(1234);
-//                        $article->comments()->save($comment->toArray());
-//                    });
+                //add comments
+                $this->randomElements(factory(ArticleComment::class, 10)->make())
+                    ->each(function (ArticleComment $comment) use ($article, $users) {
+
+                        try {
+                            $article->comments()->save($comment->toArray(), $users->random());
+                        } catch (HttpException $e){
+                            echo "Caught exception" .get_class($e). ' : '. $e->getMessage() . "\n"; //@todo resolve why this occurs
+                        }
+                    });
 
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {

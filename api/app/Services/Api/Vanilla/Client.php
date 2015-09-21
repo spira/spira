@@ -12,8 +12,8 @@ namespace App\Services\Api\Vanilla;
 
 use InvalidArgumentException;
 use Guzzle\Http\Client as GuzzleClient;
-use Illuminate\Support\Facades\Request;
 use Guzzle\Http\Exception\RequestException;
+use App\Services\Api\Vanilla\Api\ApiAbstract;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class Client
@@ -98,7 +98,7 @@ class Client
      *
      * @throws InvalidArgumentException
      *
-     * @return ApiInterface
+     * @return ApiInterface|ApiAbstract
      */
     public function api($group)
     {
