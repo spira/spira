@@ -115,7 +115,7 @@ class UserController extends EntityController
         $model->save();
 
         // Finally create the credentials
-        if ($credential = $request->input('_user_credential', null)){
+        if ($credential = $request->input('_user_credential', null)) {
             $this->validateRequest($credential, UserCredential::getValidationRules());
             $model->setCredential(new UserCredential($credential));
         }
