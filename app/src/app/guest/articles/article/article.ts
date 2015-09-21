@@ -1,28 +1,28 @@
-namespace app.guest.articles.post {
+namespace app.guest.articles.article {
 
-    export const namespace = 'app.guest.articles.post';
+    export const namespace = 'app.guest.articles.article';
 
-    class PostConfig {
+    class ArticleConfig {
 
         static $inject = ['stateHelperServiceProvider'];
         constructor(private stateHelperServiceProvider){
 
             let state:global.IState = {
-                url: '/{stub}',
+                url: '/article/{permalink}',
                 views: {
                     'main@app.guest': {
                         controller: namespace+'.controller',
-                        templateUrl: 'templates/app/guest/blog/post/post.tpl.html'
+                        templateUrl: 'templates/app/guest/articles/article/article.tpl.html'
                     },
                     'content@app.guest.blog.post': {
-                        templateUrl: 'templates/app/guest/blog/post/post-stub.tpl.html'
+                        templateUrl: 'templates/app/guest/articles/article/article-stub.tpl.html'
                     }
                 },
                 resolve: /*@ngInject*/{
 
                 },
                 data: {
-                    title: "Blog Post",
+                    title: "Article",
                     role: 'public'
                 }
             };
@@ -37,7 +37,7 @@ namespace app.guest.articles.post {
     {
     }
 
-    class PostController {
+    class ArticleController {
 
         static $inject = ['$scope'];
         constructor(private $scope : IScope) {
@@ -47,9 +47,9 @@ namespace app.guest.articles.post {
     }
 
     angular.module(namespace, [
-        'app.guest.articles.post'
+        'app.guest.articles.article'
     ])
-        .config(PostConfig)
-        .controller(namespace+'.controller', PostController);
+        .config(ArticleConfig)
+        .controller(namespace+'.controller', ArticleController);
 
 }
