@@ -11,23 +11,23 @@
 namespace Spira\Auth\Providers;
 
 use Carbon\Carbon;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Request;
-use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application;
-use Spira\Auth\Blacklist\Blacklist;
-use Spira\Auth\Blacklist\CacheDriver;
-use Spira\Auth\Blacklist\StorageInterface;
 use Spira\Auth\Driver\Guard;
-use Spira\Auth\Payload\PayloadFactory;
-use Spira\Auth\Payload\PayloadValidationFactory;
+use Laravel\Lumen\Application;
+use Illuminate\Auth\AuthManager;
+use Spira\Auth\User\UserProvider;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\NamshiAdapter;
+use Spira\Auth\Blacklist\Blacklist;
 use Spira\Auth\Token\RequestParser;
+use Spira\Auth\Blacklist\CacheDriver;
+use Spira\Auth\Payload\PayloadFactory;
+use Illuminate\Support\ServiceProvider;
+use Spira\Auth\Blacklist\StorageInterface;
 use Spira\Auth\Token\TokenExpiredException;
 use Spira\Auth\Token\TokenInvalidException;
-use Spira\Auth\User\UserProvider;
+use Spira\Auth\Payload\PayloadValidationFactory;
+use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 
 abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 {
@@ -199,6 +199,10 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      * Custom function to get user from token
      * Example of usage.
      *
+     * /**
+     *  *Get token user provider closure
+     *  * @return \Closure
+     *  *
      *   return function($payload, UserProvider $provider){
      *       if (isset($payload['_user']) && $payload['_user']){
      *           $userData = $payload['_user'];
@@ -221,10 +225,12 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      *
      * @return null
      */
-    protected function getTokenUserProvider()
-    {
-        return;
-    }
+
+    /**
+     * Get token user provider closure
+     * @return \Closure
+     */
+    abstract protected function getTokenUserProvider();
 
     /**
      * iis - the Issuer claim

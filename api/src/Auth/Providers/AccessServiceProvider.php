@@ -10,8 +10,8 @@
 
 namespace Spira\Auth\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Spira\Auth\Access\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AccessServiceProvider extends ServiceProvider
 {

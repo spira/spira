@@ -24,6 +24,11 @@ class PayloadFactory
         $this->payloadGenerators = $payloadGenerators;
     }
 
+    /**
+     * Create payload from a given user
+     * @param Authenticatable $user
+     * @return array
+     */
     public function createFromUser(Authenticatable $user)
     {
         $payload = [];
@@ -39,6 +44,11 @@ class PayloadFactory
         return $payload;
     }
 
+    /**
+     * Add a payload generator
+     * @param $name
+     * @param \Closure $function
+     */
     public function addPayloadGenerator($name, \Closure $function)
     {
         $this->payloadGenerators[$name] = $function;

@@ -10,10 +10,10 @@
 
 namespace Spira\Auth\User;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Spira\Contract\Exception\NotImplementedException;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 
 class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 {

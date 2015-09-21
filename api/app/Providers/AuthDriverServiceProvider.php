@@ -10,17 +10,21 @@
 
 namespace App\Providers;
 
-use App\Http\Transformers\EloquentModelTransformer;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
-use Spira\Auth\Providers\JWTAuthDriverServiceProvider;
-use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Auth\User\UserProvider;
+use Spira\Auth\User\SocialiteAuthenticatable;
+use Illuminate\Contracts\Auth\Authenticatable;
+use App\Http\Transformers\EloquentModelTransformer;
+use Spira\Auth\Providers\JWTAuthDriverServiceProvider;
 
 class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
 {
     protected $requestCookie = 'ngJwtAuthToken';
 
+    /**
+     * Get the generators for the payload
+     * @return array
+     */
     protected function getPayloadGenerators()
     {
         /** @var Request $request */
@@ -43,6 +47,10 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
         );
     }
 
+    /**
+     * Get token user provider closure
+     * @return \Closure
+     */
     protected function getTokenUserProvider()
     {
         return function ($payload, UserProvider $provider) {
@@ -66,11 +74,19 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
         };
     }
 
+    /**
+     * Get the path to the public key
+     * @return string
+     */
     protected function getSecretPublic()
     {
         return 'file://'.storage_path('app/keys/public.pem');
     }
 
+    /**
+     * Get path to the private key
+     * @return string
+     */
     protected function getSecretPrivate()
     {
         return 'file://'.storage_path('app/keys/private.pem');

@@ -10,14 +10,14 @@
 
 namespace Spira\Auth\Driver;
 
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Spira\Auth\Blacklist\Blacklist;
-use Spira\Auth\Payload\PayloadFactory;
-use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
+use Spira\Auth\Blacklist\Blacklist;
+use Spira\Auth\Payload\PayloadFactory;
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Contract\Exception\NotImplementedException;
 
 class Guard implements \Illuminate\Contracts\Auth\Guard
