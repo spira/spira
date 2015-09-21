@@ -197,6 +197,10 @@ namespace common.services.user {
          */
         private saveUserProfile(user:common.models.User):ng.IPromise<common.models.UserProfile|boolean>{
 
+            if (!user._userProfile){ //don't try to save if there is no profile
+                return this.$q.when(false);
+            }
+
             let changes:any = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
             if (_.isEmpty(changes)){
                 return this.$q.when(false);

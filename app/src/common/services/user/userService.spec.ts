@@ -283,6 +283,19 @@ namespace common.services.user {
                 $httpBackend.flush();
             });
 
+
+
+            it('should not make an api call if nothing has changed', () => {
+
+                let user = common.models.UserMock.entity();
+                user.setExists(true);
+
+                let savePromise = userService.saveUserWithRelated(user);
+
+                expect(savePromise).eventually.to.equal(user);
+
+            });
+
         });
 
     });
