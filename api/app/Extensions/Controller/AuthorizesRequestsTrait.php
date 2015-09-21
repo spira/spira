@@ -10,7 +10,6 @@
 
 namespace App\Extensions\Controller;
 
-
 use Spira\Auth\Access\Gate;
 use Spira\Contract\Exception\ForbiddenException;
 

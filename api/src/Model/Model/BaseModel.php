@@ -21,9 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Model\Collection\Collection;
-use Spira\Model\Validation\ValidationException;
-use Illuminate\Support\MessageBag;
-use Spira\Model\Validation\ValidationExceptionCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
@@ -167,9 +164,7 @@ abstract class BaseModel extends Model
      */
     public function push()
     {
-
         $this->save();
-
 
         // To sync all of the relationships to the database, we will simply spin through
         // the relationships and save each model via this "push" method, which allows
@@ -192,13 +187,12 @@ abstract class BaseModel extends Model
                 foreach (array_filter($modelsArray) as $model) {
                     /* @var BaseModel $model */
                     $model->preserveKeys($relation);
-                    $model->push();                }
-
+                    $model->push();
+                }
             } elseif ($models) {
                 /* @var BaseModel $models */
                 $models->preserveKeys($relation);
                 $models->push();
-
             }
         }
 
@@ -297,7 +291,6 @@ abstract class BaseModel extends Model
     {
         return $this->isDeleted;
     }
-
 
     /**
      * Get a relationship value from a method.

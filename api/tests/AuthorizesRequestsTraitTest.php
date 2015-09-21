@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use App\Extensions\Controller\AuthorizesRequestsTrait;
 use App\Models\User;
 use Illuminate\Auth\Access\Gate;
@@ -27,8 +35,7 @@ class AuthorizesRequestsTraitTest extends TestCase
             ->method('getGate')
             ->will($this->returnValue($gate));
 
-
-        $trait->authorize('check',[]);
+        $trait->authorize('check', []);
     }
 
     public function testAuthorizeException()
@@ -52,7 +59,7 @@ class AuthorizesRequestsTraitTest extends TestCase
             ->will($this->returnValue($gate));
 
         $this->setExpectedException(ForbiddenException::class, 'Denied.');
-        $trait->authorize('check',[]);
+        $trait->authorize('check', []);
     }
 
     public function testAuthorizeForUser()
@@ -79,9 +86,8 @@ class AuthorizesRequestsTraitTest extends TestCase
             ->method('getGate')
             ->will($this->returnValue($gate));
 
-
         $user = new User();
-        $trait->authorizeForUser($user, 'check',[]);
+        $trait->authorizeForUser($user, 'check', []);
     }
 
     public function testAuthorizeForUserException()
@@ -108,10 +114,8 @@ class AuthorizesRequestsTraitTest extends TestCase
             ->method('getGate')
             ->will($this->returnValue($gate));
 
-
         $user = new User();
         $this->setExpectedException(ForbiddenException::class, 'Denied.');
-        $trait->authorizeForUser($user, 'check',[]);
+        $trait->authorizeForUser($user, 'check', []);
     }
-
 }

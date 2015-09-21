@@ -135,7 +135,7 @@ class UserController extends EntityController
             $profile->fill($profileUpdateDetails);
             $model->setProfile($profile);
         }
-        
+
         // Extract the credentials and update if necessary
         $credentialUpdateDetails = $request->input('_user_credential', []);
         if (! empty($credentialUpdateDetails)) {

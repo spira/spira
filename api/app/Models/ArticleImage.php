@@ -41,5 +41,4 @@ class ArticleImage extends BaseModel
     {
         return $this->hasOne(Image::class, 'image_id', 'image_id');
     }
-
 }
