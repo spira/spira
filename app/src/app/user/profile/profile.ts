@@ -69,7 +69,7 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         user:common.models.User //inherited from parent state
                     ) => {
-                        return userService.getUser(user, [''])
+                        return userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins'])
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;

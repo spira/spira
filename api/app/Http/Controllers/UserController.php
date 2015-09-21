@@ -233,34 +233,4 @@ class UserController extends EntityController
         return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
 
-    /**
-     * Get full user details.
-     *
-     * @param Request $request
-     * @param string $id
-     * @return \Spira\Responder\Response\ApiResponse
-     */
-    public function getOne(Request $request, $id)
-    {
-        /** @var User $user */
-        $user = User::find($id);
-
-        $userData = $this->transformer->transformItem($user);
-
-        if (is_null($user->userCredential)) {
-            $userData['_user_credential'] = false;
-        } else {
-            $userData['_user_credential'] = $user->userCredential->toArray();
-        }
-
-        if (is_null($user->socialLogins)) {
-            $userData['_social_logins'] = false;
-        } else {
-            $userData['_social_logins'] = $user->socialLogins->toArray();
-        }
-
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->item($userData);
-    }
 }

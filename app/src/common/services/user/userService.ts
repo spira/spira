@@ -148,9 +148,16 @@ namespace common.services.user {
          * @param user
          * @returns {ng.IHttpPromise<any>}
          */
-        public saveUser(user:common.models.User):ng.IPromise<any> {
+        public saveUser(user:common.models.User):ng.IPromise<common.models.User|boolean> {
+
+            let changes = (<common.decorators.IChangeAwareDecorator>user).getChanged();
+
+            if (_.isEmpty(changes)){
+                return this.$q.when(false);
+            }
+
             return this.ngRestAdapter
-                .patch(this.apiEndpoint()+'/' + user.userId, user.getAttributes(true))
+                .patch(this.apiEndpoint()+'/' + user.userId, changes)
                 .then(() => user);
         }
 

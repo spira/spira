@@ -131,13 +131,16 @@ namespace common.services.user {
                 it('should be able to create a new user and attempt login immediately',  () => {
 
                     let user = _.compactObject(common.models.UserMock.entity());
-                    user = <common.models.User>_.pick(user, ['userId', 'email', 'firstName', 'lastName', '_userCredential']);
+
+                    let requiredFields = ['userId', 'email', 'firstName', 'lastName', '_userCredential'];
+
+                    user = <common.models.User>_.pick(user, requiredFields);
                     user._userCredential = new common.models.UserCredential({
                         password: 'hunter2',
                     });
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
-                        return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
+                        return _.every(requiredFields, _.hasOwnProperty, JSON.parse(requestObj));
                     }).respond(204);
                     $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                     //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
@@ -256,6 +259,7 @@ namespace common.services.user {
 
                 let user = common.models.UserMock.entity();
 
+                user.firstName = 'Joe';
                 user._userProfile = common.models.UserProfileMock.entity();
                 user._userProfile.dob = '1995-01-01';
                 user._userProfile.about = 'Ipsum';
