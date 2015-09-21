@@ -232,5 +232,4 @@ class UserController extends EntityController
 
         return $this->getResponse()->header('Authorization-Update', $token)->noContent();
     }
-
 }
