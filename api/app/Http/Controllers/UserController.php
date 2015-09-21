@@ -99,9 +99,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Extract the credentials
-        $credential = $request->input('_user_credential', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -118,8 +115,10 @@ class UserController extends EntityController
         $model->save();
 
         // Finally create the credentials
-        $this->validateRequest($credential, UserCredential::getValidationRules());
-        $model->setCredential(new UserCredential($credential));
+        if ($credential = $request->input('_user_credential', null)){
+            $this->validateRequest($credential, UserCredential::getValidationRules());
+            $model->setCredential(new UserCredential($credential));
+        }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -165,17 +164,16 @@ class UserController extends EntityController
 
         /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->input('_user_credential', []);
-        if (! empty($credentialUpdateDetails)) {
+        $credentialUpdateDetails = $request->input('_user_credential');
+        if ($credentialUpdateDetails) {
             // Invalidate token for the user when user changes their password
             if ($this->jwtAuth->user()->user_id == $model->user_id) {
                 $token = $this->jwtAuth->getTokenFromRequest();
                 $this->jwtAuth->invalidate($token);
             }
 
-            $credentials = UserCredential::findOrNew($id);
             /* @var UserCredential $credentials */
-            $credentials->fill($credentialUpdateDetails);
+            $credentials = UserCredential::findOrNew($id)->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
 
