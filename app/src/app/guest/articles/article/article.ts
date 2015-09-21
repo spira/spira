@@ -2,24 +2,42 @@ namespace app.guest.articles.article {
 
     export const namespace = 'app.guest.articles.article';
 
+    export interface IArticleStateParams extends ng.ui.IStateParamsService
+    {
+        permalink:string;
+    }
+
     class ArticleConfig {
 
+        public static state:global.IState;
+
         static $inject = ['stateHelperServiceProvider'];
+
         constructor(private stateHelperServiceProvider){
 
-            let state:global.IState = {
+            ArticleConfig.state = {
                 url: '/article/{permalink}',
                 views: {
                     'main@app.guest': {
                         controller: namespace+'.controller',
                         templateUrl: 'templates/app/guest/articles/article/article.tpl.html'
                     },
-                    'content@app.guest.blog.post': {
-                        templateUrl: 'templates/app/guest/articles/article/article-stub.tpl.html'
+                    ['body@'+namespace]: {
+                        controller: namespace+'.body.controller',
+                        controllerAs: 'BodyController',
+                        templateUrl: 'templates/app/guest/articles/article/body/body.tpl.html'
+                    },
+                    ['comments@'+namespace]: {
+                        controller: namespace+'.comments.controller',
+                        controllerAs: 'CommentsController',
+                        templateUrl: 'templates/app/guest/articles/article/comments/comments.tpl.html'
                     }
                 },
                 resolve: /*@ngInject*/{
+                    article: ($stateParams:IArticleStateParams, articleService:common.services.article.ArticleService):common.models.Article | ng.IPromise<common.models.Article> => {
 
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                    }
                 },
                 data: {
                     title: "Article",
@@ -27,27 +45,25 @@ namespace app.guest.articles.article {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, ArticleConfig.state);
 
         }
 
     }
 
-    interface IScope extends ng.IScope
-    {
-    }
-
     class ArticleController {
 
-        static $inject = ['$scope'];
-        constructor(private $scope : IScope) {
-
+        static $inject = ['article'];
+        constructor(
+            public article:common.models.Article
+        ) {
         }
 
     }
 
     angular.module(namespace, [
-        'app.guest.articles.article'
+        namespace+'.body',
+        namespace+'.comments',
     ])
         .config(ArticleConfig)
         .controller(namespace+'.controller', ArticleController);

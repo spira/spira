@@ -1,4 +1,7 @@
 <h2 class="md-flex">Article</h2>
 <div ui-view="content">
-
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <md-content class="md-padding" ui-view="body"></md-content>
+    </md-whiteframe>
+    <md-content class="md-padding" ui-view="comments"></md-content>
 </div>
