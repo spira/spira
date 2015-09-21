@@ -24,15 +24,6 @@ class UserPolicy
         return false;
     }
 
-    public function getAll(User $user, Collection $affectedUsers)
-    {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function getAllPaginated(User $user, Collection $affectedUsers)
     {
         if ($user->isAdmin()) {

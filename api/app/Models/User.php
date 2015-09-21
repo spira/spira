@@ -229,49 +229,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     }
 
     /**
-     * The type of caller for lock permission.
-     *
-     * @return string
-     */
-    public function getCallerType()
-    {
-        return 'users';
-    }
-
-    /**
-     * The unique ID to identify the caller with for lock permission.
-     *
-     * @return string
-     */
-    public function getCallerId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * The caller's roles for lock permission.
-     *
-     * @return array
-     */
-    public function getCallerRoles()
-    {
-        return [$this->user_type];
-    }
-
-    /**
-     * Check if the user is owns the entity.
-     *
-     * @param  \App\Models\User  $user
-     * @param  string            $entityId
-     *
-     * @return bool
-     */
-    public static function userIsOwner($user, $entityId)
-    {
-        return $user->user_id == $entityId;
-    }
-
-    /**
      * Get a user by single use login token.
      *
      * @param string $token

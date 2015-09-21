@@ -10,6 +10,7 @@
 
 use App\Models\User;
 use GuzzleHttp\Client;
+use Spira\Auth\Driver\Guard;
 
 /**
  * Class AuthTest.
@@ -550,5 +551,19 @@ class AuthTest extends TestCase
         $this->assertResponseStatus(200);
         $this->assertContains($user->user_id, $response->uniqueid);
         $this->assertContains($user->email, $response->email);
+    }
+
+    public function testValidateCustomPayload()
+    {
+        /** @var Guard $guard */
+        $guard = $this->app['auth'];
+        $guard->getPayloadFactory()->addPayloadGenerator('foo',function(){return 'foo';});
+        $guard->getValidationFactory()->addValidationRule('foo', function(){ return false;});
+
+        $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
+
+        $this->callRefreshToken($token);
+        $this->assertException('Token invalid due to foo', 422, 'TokenInvalidException');
     }
 }

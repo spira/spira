@@ -10,8 +10,9 @@
 
 namespace App\Extensions\Controller;
 
-use App\Exceptions\ForbiddenException;
+
 use Spira\Auth\Access\Gate;
+use Spira\Contract\Exception\ForbiddenException;
 
 trait AuthorizesRequestsTrait
 {
@@ -73,7 +74,7 @@ trait AuthorizesRequestsTrait
     /**
      * @return Gate
      */
-    protected function getGate()
+    public function getGate()
     {
         return app(Gate::GATE_NAME);
     }
