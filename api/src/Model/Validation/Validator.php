@@ -12,7 +12,6 @@ namespace Spira\Model\Validation;
 
 class Validator extends \Illuminate\Validation\Validator
 {
-
     /**
      * Replace all error message place-holders with actual values.
      *

@@ -86,7 +86,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         }
     }
 
-
     /**
      * @param BaseModel $model
      * @return string
