@@ -23,6 +23,7 @@ namespace common.models {
         public _articleMetas:common.models.ArticleMeta[] = [];
         public _author:common.models.User = undefined;
         public _tags:common.models.Tag[] = [];
+        public _articleComments:common.models.ArticleComment[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
