@@ -53,7 +53,7 @@ namespace common.services.user {
                     (headers) => /userCredential, userProfile, socialLogins/.test(headers['With-Nested'])
                 ).respond(200);
 
-                let userDetailsPromise = userService.getUser(user);
+                let userDetailsPromise = userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins']);
 
                 expect(userDetailsPromise).eventually.to.be.fulfilled;
 
@@ -65,7 +65,7 @@ namespace common.services.user {
 
                 let userData = _.clone(common.models.UserMock.entity());
 
-                let user = UserService.userFactory(userData);
+                let user = userService.modelFactory(userData);
 
                 expect(user).to.be.instanceOf(common.models.User);
 

@@ -22,7 +22,7 @@ namespace app.admin.articles.listing {
                 articleService = _articleService_;
 
                 // Setup articlesPaginator before injection
-                articlesPaginator = articleService.getArticlesPaginator().setCount(10);
+                articlesPaginator = articleService.getPaginator().setCount(10);
 
                 ArticlesListingController = $controller(app.admin.articles.listing.namespace + '.controller', {
                     articlesPaginator: articlesPaginator,

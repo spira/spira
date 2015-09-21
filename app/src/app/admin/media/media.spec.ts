@@ -24,7 +24,7 @@ namespace app.admin.media {
                 imageService = _imageService_;
 
                 // Setup imagesPaginator before injection
-                imagesPaginator = imageService.getImagesPaginator().setCount(12);
+                imagesPaginator = imageService.getPaginator().setCount(12);
                 imagesPaginator.entityCountTotal = 50;
                 images = common.models.ImageMock.collection(12);
 
