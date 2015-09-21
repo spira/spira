@@ -67,9 +67,9 @@ namespace app.user.profile {
                     },
                     fullUserInfo:(
                         userService:common.services.user.UserService,
-                        ngJwtAuthService:NgJwtAuth.NgJwtAuthService
+                        user:common.models.User //inherited from parent state
                     ) => {
-                        return userService.getUser(<common.models.User>ngJwtAuthService.getUser())
+                        return userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins'])
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;
