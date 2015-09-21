@@ -3,7 +3,7 @@ namespace common.models {
     @common.decorators.changeAware
     export class User extends AbstractModel implements global.IUserData {
 
-        protected _nestedEntityMap:INestedEntityMap = {
+        protected __nestedEntityMap:INestedEntityMap = {
             userProfile: UserProfile,
             socialLogins: UserSocialLogin,
             userCredential: UserCredential,

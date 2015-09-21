@@ -5,7 +5,7 @@ namespace common.decorators {
     @changeAware
     class TestModel extends common.models.AbstractModel {
 
-        protected _nestedEntityMap:common.models.INestedEntityMap = {
+        protected __nestedEntityMap:common.models.INestedEntityMap = {
             _nestedCollection: NestedData,
             _nestedEntity: NestedData,
         };
