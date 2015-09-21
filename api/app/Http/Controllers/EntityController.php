@@ -101,12 +101,9 @@ abstract class EntityController extends ApiController
     public function postOne(Request $request)
     {
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(), $this->getValidationRules());
-
-        $model->fill($request->all());
-
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $model->fill($request->json()->all());
         $this->authorize($model);
-
         $model->save();
 
         return $this->getResponse()
@@ -125,12 +122,11 @@ abstract class EntityController extends ApiController
     {
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel());
         $model = $this->findOrNewEntity($id);
-        $this->validateRequest($request->all(), $this->getValidationRules());
 
-        $model->fill($request->all());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
+        $model->fill($request->json()->all());
         $this->authorize($model);
-
         $model->save();
 
         return $this->getResponse()
@@ -146,7 +142,7 @@ abstract class EntityController extends ApiController
      */
     public function putMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
         $existingModels = $this->findCollection($requestCollection);
@@ -175,12 +171,13 @@ abstract class EntityController extends ApiController
     public function patchOne(Request $request, $id)
     {
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
+
         $model = $this->findOrFailEntity($id);
-        $this->validateRequest($request->all(), $this->getValidationRules(), true);
-        $model->fill($request->all());
 
+        $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
+
+        $model->fill($request->json()->all());
         $this->authorize($model);
-
         $model->save();
 
         return $this->getResponse()->noContent();
@@ -194,7 +191,7 @@ abstract class EntityController extends ApiController
      */
     public function patchMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
@@ -237,7 +234,7 @@ abstract class EntityController extends ApiController
      */
     public function deleteMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $modelsCollection = $this->findOrFailCollection($requestCollection);
 

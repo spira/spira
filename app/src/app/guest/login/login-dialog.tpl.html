@@ -1,7 +1,14 @@
 <md-dialog flex="50" id="loginDialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Login</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="LoginController.cancelLoginDialog()">
+                <md-icon aria-label="Close dialog">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
     <md-dialog-content>
-
-        Login with
 
         <md-button class="md-fab" aria-label="Login with Facebook" ng-click="LoginController.socialLogin('facebook')">
             <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>

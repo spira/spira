@@ -13,7 +13,6 @@ namespace App\Http\Controllers;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Auth\Driver\Guard as SpiraGuard;
 use Spira\Model\Validation\ValidationException;
@@ -66,9 +65,6 @@ class UserController extends EntityController
         // Extract the credentials
         $credential = $request->input('_user_credential', []);
 
-        // Extract the profile
-        $profile = $request->input('_user_profile', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -80,19 +76,13 @@ class UserController extends EntityController
 
         /** @var User $model */
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(), $this->getValidationRules());
-        $model->fill($request->all());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $model->fill($request->json()->all());
         $model->save();
 
         // Finally create the credentials
         $this->validateRequest($credential, UserCredential::getValidationRules());
         $model->setCredential(new UserCredential($credential));
-
-        // Finally create the profile if it exists
-        if (! empty($profile)) {
-            $this->validateRequest($profile, UserProfile::getValidationRules());
-            $model->setProfile(new UserProfile($profile));
-        }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -145,7 +135,7 @@ class UserController extends EntityController
             $profile->fill($profileUpdateDetails);
             $model->setProfile($profile);
         }
-
+        
         // Extract the credentials and update if necessary
         $credentialUpdateDetails = $request->input('_user_credential', []);
         if (! empty($credentialUpdateDetails)) {
@@ -234,18 +224,6 @@ class UserController extends EntityController
         } else {
             $userData['_social_logins'] = $user->socialLogins->toArray();
         }
-
-        $userProfile = null;
-
-        if (is_null($user->userProfile)) {
-            $userProfile = new UserProfile;
-            $userProfile->user_id = $id;
-            $user->setProfile($userProfile);
-        } else {
-            $userProfile = $user->userProfile;
-        }
-
-        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

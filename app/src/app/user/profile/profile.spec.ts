@@ -42,7 +42,7 @@ namespace app.user.profile {
                 userType:'guest'
             },
             userService = {
-                updateUser: (user:common.models.User) => {
+                saveUserWithRelated: (user:common.models.User) => {
                     if (user.email == 'invalid@email.com') {
                         return $q.reject({data: {message: 'this failure message'}});
                     }
