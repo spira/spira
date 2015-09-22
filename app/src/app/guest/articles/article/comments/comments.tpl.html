@@ -1,20 +1,23 @@
 <md-subheader class="md-flex">{{ CommentsController.article._comments.length }} Comments</md-subheader>
 
-<form name="newCommentForm" ng-submit="CommentsController.save()">
+<form name="CommentsController.newCommentForm" ng-submit="CommentsController.save()" novalidate>
     <img ng-src="{{ CommentsController.user.avatarImgUrl }}" class="md-avatar" alt="{{ CommentsController.user.username }}" />
     <md-input-container>
         <label>Join the discussion</label>
-        <input type="text" ng-model="CommentsController.newComment" required>
+        <input name="comment" type="text" ng-model="CommentsController.newComment.body" required>
+        <ng-messages ng-hide="CommentsController.newCommentForm.comment.$pristine" for="CommentsController.newCommentForm.comment.$error">
+            <ng-message when="required">Comment is required.</ng-message>
+        </ng-messages>
     </md-input-container>
 
-    <md-button class="md-primary md-raised" ng-disabled="newCommentForm.$invalid" type="submit">Save</md-button>
+    <md-button class="md-primary md-raised" ng-disabled="CommentsController.newCommentForm.$invalid" type="submit">Save</md-button>
 </form>
 
 <md-list>
-    <md-list-item class="md-3-line" ng-repeat="comment in CommentsController.article._comments">
+    <md-list-item class="md-3-line" ng-repeat="comment in CommentsController.article._comments | orderBy:'-createdAt'">
         <img ng-src="{{ comment._author.avatarImgUrl }}" class="md-avatar" alt="{{ comment._author.username }}" />
         <div class="md-list-item-text" layout="column">
-            <h3>{{ comment._author.username }} | {{ comment._author.createdAt }}</h3>
+            <h3>{{ comment._author.username }} | {{ comment.createdAt.fromNow() }}</h3>
             <p>{{ comment.body }}</p>
             <p>Share Buttons</p>
         </div>
