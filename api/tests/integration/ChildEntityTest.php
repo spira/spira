@@ -10,6 +10,7 @@
 
 use App\Http\Controllers\ChildEntityController;
 use App\Http\Transformers\EloquentModelTransformer;
+use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
 use App\Services\TransformerService;
 use Rhumsaa\Uuid\Uuid;
@@ -54,10 +55,15 @@ class ChildEntityTest extends TestCase
         return $entity;
     }
 
-    protected function addRelatedEntities(\Spira\Model\Model\BaseModel $model)
+    /**
+     * @param TestEntity $model
+     */
+    protected function addRelatedEntities(TestEntity $model)
     {
-        $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
-        $model->push();
+        $this->getFactory()->get(SecondTestEntity::class)->count(5)->make()
+            ->each(function(SecondTestEntity $entity) use ($model){
+                $model->testMany()->save($entity);
+            });
     }
 
     /**

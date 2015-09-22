@@ -11,6 +11,7 @@
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
+use App\Models\Tag;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
 /**
@@ -34,43 +35,32 @@ class ArticleTest extends TestCase
     }
 
     /**
-     * Prepare a factory generated entity to be sent as input data.
-     *
-     * @param Arrayable $entity
-     *
-     * @return array
+     * @param Article[] $articles
      */
-    protected function prepareEntity($entity)
-    {
-        // We run the entity through the transformer to get the attributes named
-        // as if they came from the frontend.
-        $transformer = $this->app->make(\App\Http\Transformers\EloquentModelTransformer::class);
-        $entity = $transformer->transform($entity);
-
-        return $entity;
-    }
-
     protected function addPermalinksToArticles($articles)
     {
         foreach ($articles as $article) {
-            $permalinks = factory(ArticlePermalink::class, rand(2, 10))->make()->all();
-            foreach ($permalinks as $permalink) {
-                $article->articlePermalinks->add($permalink);
-            }
+            $this->getFactory()->get(ArticlePermalink::class)
+                ->count(rand(2, 10))->make()->each(function(ArticlePermalink $permalink) use ($article){
+                    $article->articlePermalinks()->save($permalink);
+                });
         }
     }
 
+    /**
+     * @param Article[] $articles
+     */
     protected function addMetasToArticles($articles)
     {
         foreach ($articles as $article) {
-            $metas = factory(\App\Models\ArticleMeta::class, 4)->make()->all();
             $uniqueMetas = [];
-            foreach ($metas as $meta) {
-                if (! in_array($meta->meta_name, $uniqueMetas)) {
-                    $article->articleMetas->add($meta);
-                    array_push($uniqueMetas, $meta->meta_name);
-                }
-            }
+            $this->getFactory()->get(ArticleMeta::class)
+                ->count(4)->make()->each(function(ArticleMeta $meta) use ($article, &$uniqueMetas){
+                    if (! in_array($meta->meta_name, $uniqueMetas)) {
+                        $article->articleMetas()->save($meta);
+                        array_push($uniqueMetas, $meta->meta_name);
+                    }
+                });
         }
     }
 
@@ -85,13 +75,11 @@ class ArticleTest extends TestCase
 
     public function testGetAllPaginated()
     {
-        $entities = factory(Article::class, 5)->create()->all();
+        $entities = $this->getFactory()->get(Article::class)->count(5)->create()->all();
+
         $entity = current($entities);
         $entity->excerpt = null;
         $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
 
         $this->getJson('/articles', ['Range' => 'entities=0-19']);
         $this->assertResponseStatus(206);
@@ -107,9 +95,8 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-        $entity = factory(Article::class)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
         $this->getJson('/articles/'.$entity->article_id);
 
@@ -138,8 +125,8 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedTags()
     {
-        $entity = factory(Article::class)->create();
-        $tags = factory(\App\Models\Tag::class, 4)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
+        $tags = $this->getFactory()->get(Tag::class)->count(4)->create();
         $entity->tags()->sync($tags->lists('tag_id')->toArray());
 
         $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'tags']);
@@ -165,9 +152,8 @@ class ArticleTest extends TestCase
 
     public function testGetOneByFirstPermalink()
     {
-        $entity = factory(Article::class)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
         $permalink = $entity->articlePermalinks->first();
         $this->getJson('/articles/'.$permalink->permalink);
@@ -195,9 +181,8 @@ class ArticleTest extends TestCase
 
     public function testGetOneByLastPermalink()
     {
-        $entity = factory(Article::class)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
         $permalink = $entity->articlePermalinks->last();
         $this->getJson('/articles/'.$permalink->permalink);
@@ -226,9 +211,11 @@ class ArticleTest extends TestCase
     public function testPostOne()
     {
         /** @var Article $entity */
-        $entity = factory(Article::class)->make();
+        $entity = $this->getFactory()->get(Article::class)
+            ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->transformed();
 
-        $this->postJson('/articles', $this->prepareEntity($entity));
+        $this->postJson('/articles', $entity);
 
         $this->shouldReturnJson();
 
@@ -238,18 +225,18 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
 
-        $this->cleanupDiscussions([Article::find($entity->article_id)]);
+        $this->cleanupDiscussions([Article::find($entity['articleId'])]);
     }
 
     public function testPutOneNew()
     {
-        $entity = factory(Article::class)->make();
-        $id = $entity->article_id;
+        $entity = $this->getFactory()->get(Article::class)
+            ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->transformed();
 
         $rowCount = Article::count();
 
-        $requestData = $this->prepareEntity($entity);
-        $this->putJson('/articles/'.$id, $requestData);
+        $this->putJson('/articles/'.$entity['articleId'], $entity);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -258,7 +245,7 @@ class ArticleTest extends TestCase
         $this->assertTrue(is_object($object));
         $this->assertStringStartsWith('http', $object->_self);
 
-        $this->cleanupDiscussions([Article::find($entity->article_id)]);
+        $this->cleanupDiscussions([Article::find($entity['articleId'])]);
     }
 
     public function testPutOneNonExistingAuthor()
@@ -280,14 +267,14 @@ class ArticleTest extends TestCase
 
     public function testPutMissingIdInBody()
     {
-        $entity = factory(Article::class)->create();
-        $id = $entity->article_id;
-        $entity->title = 'foo';
+        $factory = $this->getFactory()->get(Article::class);
+        $entity = $factory->create();
+        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->hide(['permalink','article_id'])
+            ->customize(['title' => 'foo'])
+            ->transformed();
 
-        $preparedEntity = $this->prepareEntity($entity);
-        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
-
-        $this->putJson('/articles/'.$id, $preparedEntity);
+        $this->putJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
 
         $this->assertResponseStatus(400);
@@ -295,15 +282,17 @@ class ArticleTest extends TestCase
 
     public function testPatchOne()
     {
-        $entity = factory(Article::class)->create();
-        $id = $entity->article_id;
-        $entity->title = 'foo';
-        $preparedEntity = $this->prepareEntity($entity);
-        unset($preparedEntity['permalink'], $preparedEntity['articleId']);
-        $this->patchJson('/articles/'.$id, $preparedEntity);
+        $factory = $this->getFactory()->get(Article::class);
+        $entity = $factory->create();
+        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->hide(['permalink','article_id'])
+            ->customize(['title' => 'foo'])
+            ->transformed();
+
+        $this->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
-        $checkEntity = Article::find($id);
+        $checkEntity = Article::find($entity->article_id);
         $this->assertEquals($checkEntity->title, $entity->title);
 
         $this->cleanupDiscussions([$entity]);
@@ -311,21 +300,21 @@ class ArticleTest extends TestCase
 
     public function testPatchOneNewPermalink()
     {
-        $entity = factory(Article::class)->create();
+        $factory = $this->getFactory()->get(Article::class);
+        $entity = $factory->create();
+        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->hide(['article_id'])
+            ->customize(['permalink' => 'foo_bar'])
+            ->transformed();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
-        $id = $entity->article_id;
         $linksCount = $entity->articlePermalinks->count();
-        $entity->permalink = 'foo_bar';
 
-        $preparedEntity = $this->prepareEntity($entity);
-        unset($preparedEntity['articleId']);
-        $this->patchJson('/articles/'.$id, $preparedEntity);
+        $this->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
-        $checkEntity = Article::find($id);
+        $checkEntity = Article::find($entity->article_id);
         $this->assertEquals($checkEntity->permalink, $entity->permalink);
         $this->assertEquals($checkEntity->articlePermalinks->count(), $linksCount + 1);
 
@@ -334,19 +323,20 @@ class ArticleTest extends TestCase
 
     public function testPatchOneRemovePermalink()
     {
-        $entity = factory(Article::class)->create();
+        $factory = $this->getFactory()->get(Article::class);
+        $entity = $factory->create();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
-        $id = $entity->article_id;
         $linksCount = $entity->articlePermalinks->count();
 
-        $entity->permalink = '';
+        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->customize(['permalink' => ''])
+            ->transformed();
 
-        $this->patchJson('/articles/'.$id, $this->prepareEntity($entity));
+        $this->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
-        $checkEntity = Article::find($id);
+        $checkEntity = Article::find($entity->article_id);
         $this->assertNull($checkEntity->permalink);
         $this->assertEquals($checkEntity->articlePermalinks->count(), $linksCount);
 
@@ -355,22 +345,18 @@ class ArticleTest extends TestCase
 
     public function testDeleteOne()
     {
-        $entities = factory(Article::class, 4)->create()->all();
+        $entities = $this->getFactory()->get(Article::class)->count(5)->create()->all();
         $this->addPermalinksToArticles($entities);
-        foreach ($entities as $oneEntity) {
-            $oneEntity->push();
-        }
 
         $entity = array_shift($entities);
-        $id = $entity->article_id;
 
         $entityPermalinksCount = $entity->articlePermalinks->count();
-        $this->assertEquals($entityPermalinksCount, ArticlePermalink::where('article_id', '=', $id)->count());
+        $this->assertEquals($entityPermalinksCount, ArticlePermalink::where('article_id', '=', $entity->article_id)->count());
 
         $rowCount = Article::count();
 
         $permalinksTotalCount = ArticlePermalink::all()->count();
-        $this->deleteJson('/articles/'.$id);
+        $this->deleteJson('/articles/'.$entity->article_id);
         $permalinksTotalCountAfterDelete = ArticlePermalink::all()->count();
 
         $this->assertResponseStatus(204);
@@ -383,9 +369,8 @@ class ArticleTest extends TestCase
 
     public function testGetPermalinks()
     {
-        $entity = factory(Article::class)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
-        $entity->push();
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
 
@@ -410,9 +395,8 @@ class ArticleTest extends TestCase
 
     public function testGetMetas()
     {
-        $entity = factory(Article::class)->create();
+        $entity = $this->getFactory()->get(Article::class)->create();
         $this->addMetasToArticles([$entity]);
-        $entity->push();
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
 
@@ -434,21 +418,23 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $this->addMetasToArticles([$article]);
-        $article->push();
 
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
 
-        $entities = array_map(function ($entity) {
-            return array_add($this->prepareEntity($entity), 'meta_content', 'foobar');
+        $factory = $this->getFactory();
+
+        $entities = array_map(function (ArticleMeta $entity) use ($factory) {
+            return $factory->get(ArticleMeta::class)->setModel($entity)->customize(['meta_content'=>'foobar'])->transformed();
         }, $article->articleMetas->all());
 
-        $meta = factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'barfoobar',
-            'meta_content' => 'barfoobarfoo',
-        ]);
-        $entities[] = $this->prepareEntity($meta);
+        $entities[] = $this->getFactory()->get(ArticleMeta::class)->customize(
+            [
+                'meta_name' => 'barfoobar',
+                'meta_content' => 'barfoobarfoo',
+            ]
+        )->transformed();
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
@@ -462,50 +448,52 @@ class ArticleTest extends TestCase
                 $counter++;
             }
         }
-        $this->assertEquals($counter, $metaCount);
+        $this->assertEquals($metaCount, $counter);
 
         $this->cleanupDiscussions([$article]);
     }
 
     public function testPutDuplicateMetaNames()
     {
-        $article = factory(Article::class)->create();
-        $article->articleMetas->add(factory(\App\Models\ArticleMeta::class)->make([
-            'meta_name' => 'foo',
-            'meta_content' => 'bar',
-        ]));
-        $article->push();
-
-        $this->putJson('/articles/'.$article->article_id.'/meta', $this->prepareEntity(
-            factory(\App\Models\ArticleMeta::class)->make([
+        /** @var Article $article */
+        $article = $this->getFactory()->get(Article::class)->create();
+        $factory = $this->getFactory()->get(ArticleMeta::class)->customize(
+            [
+                'meta_name' => 'foo',
+                'meta_content' => 'bar',
+            ]
+        );
+        $meta = $factory->make();
+        $article->articleMetas()->save($meta);
+        $data = $factory->customize(
+            [
                 'meta_name' => 'foo',
                 'meta_content' => 'foobar',
-            ])
-        ));
+            ]
+        )->transformed();
+
+        $this->putJson('/articles/'.$article->article_id.'/meta', $data);
 
         $this->assertResponseStatus(500);
     }
 
     public function deleteMeta()
     {
-        $articles = factory(Article::class, 2)->create()->all();
-        $this->addMetasToArticles($articles);
-        foreach ($articles as $oneEntity) {
-            $oneEntity->push();
-        }
-        $article = current($articles);
+        $article = $this->getFactory()->get(Article::class)->create();
+        $this->addMetasToArticles([$article]);
+
         $metaEntity = $article->articleMetas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
         $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
         $this->assertEquals($metaCount - 1, $updatedArticle->articleMetas->count());
 
-        $this->cleanupDiscussions($articles);
+        $this->cleanupDiscussions([$article]);
     }
 
     public function testShouldCreateDiscussionWhenArticleCreated()
     {
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
 
         // Get the discussion
         $client = App::make(VanillaClient::class);
@@ -525,7 +513,7 @@ class ArticleTest extends TestCase
     {
         $client = App::make(VanillaClient::class);
 
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $discussion = $client->api('discussions')->findByForeignId($article->article_id);
         $article->delete();
 
@@ -535,7 +523,7 @@ class ArticleTest extends TestCase
 
     public function testShouldGetCommentsForArticle()
     {
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $body = 'A comment';
 
         // Get the discussion
@@ -558,7 +546,7 @@ class ArticleTest extends TestCase
 
     public function testShouldGetCommentsForArticleUsingWithNestedHeader()
     {
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $body = 'A comment';
 
         // Get the discussion
@@ -582,7 +570,7 @@ class ArticleTest extends TestCase
     public function testShouldPostCommentForArticle()
     {
         $body = 'A comment';
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
@@ -604,8 +592,7 @@ class ArticleTest extends TestCase
 
     public function testShouldNotPostCommentWithoutBodyForArticle()
     {
-        $body = 'A comment';
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
@@ -634,11 +621,10 @@ class ArticleTest extends TestCase
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
 
-        $meta = factory(\App\Models\ArticleMeta::class)->make();
-        $entities = [];
-        array_push($entities, $this->prepareEntity($meta));
+        $meta = $this->getFactory()->get(ArticleMeta::class)->make();
+        $entities = [$meta];
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
@@ -653,16 +639,16 @@ class ArticleTest extends TestCase
 
     public function testShouldLogDeleteMeta()
     {
-        $article = factory(Article::class)->create();
+        $article = $this->getFactory()->get(Article::class)->create();
         $this->addMetasToArticles([$article]);
-        $article->push();
 
         $metaEntity = $article->articleMetas->first();
+        $metaCount = $article->articleMetas->count();
         $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
 
         $article = Article::find($article->article_id);
 
-        $this->assertCount(1, $article->revisionHistory->toArray());
+        $this->assertCount($metaCount + 1, $article->revisionHistory->toArray());
 
         $this->cleanupDiscussions([$article]);
     }
