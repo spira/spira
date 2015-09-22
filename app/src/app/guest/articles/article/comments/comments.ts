@@ -4,15 +4,19 @@ namespace app.guest.articles.article.comments {
 
     export class CommentsController {
 
-        static $inject = ['article', 'user', 'articleService'];
+        static $inject = ['article', 'user', 'articleService', 'notificationService'];
 
-        public newComment:string = '';
+        public newComment:common.models.ArticleComment;
+
+        public newCommentForm:ng.IFormController;
 
         constructor(
             public article:common.models.Article,
             public user:common.models.User,
-            private articleService:common.services.article.ArticleService
+            private articleService:common.services.article.ArticleService,
+            private notificationService:common.services.notification.NotificationService
         ) {
+            this.newComment = new common.models.ArticleComment({_author:this.user});
         }
 
         /**
@@ -21,14 +25,15 @@ namespace app.guest.articles.article.comments {
          */
         public save() {
 
-            let comment = new common.models.ArticleComment({
-                body: this.newComment,
-                createdAt: moment()
-            });
-
-            this.articleService.saveComment(this.article.articleId, comment)
-                .then((res) => {
-                    debugger;
+            this.articleService.saveComment(this.article, this.newComment)
+                .then(() => {
+                    this.newComment = new common.models.ArticleComment({_author:this.user});
+                    this.newCommentForm.$setPristine();
+                    this.newCommentForm.$setUntouched();
+                    this.notificationService.toast('Comment successfully added').pop();
+                })
+                .catch((error) => {
+                    this.notificationService.toast('An error has occurred saving your comment, please try again').pop();
                 });
 
         }
@@ -36,6 +41,6 @@ namespace app.guest.articles.article.comments {
     }
 
     angular.module(namespace, [])
-        .controller(namespace+'.controller', CommentsController);
+        .controller(namespace+'.controller', CommentsController)
 
 }

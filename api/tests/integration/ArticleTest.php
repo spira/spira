@@ -604,7 +604,6 @@ class ArticleTest extends TestCase
 
     public function testShouldNotPostCommentWithoutBodyForArticle()
     {
-        $body = 'A comment';
         $article = factory(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
