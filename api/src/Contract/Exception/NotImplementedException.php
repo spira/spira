@@ -8,23 +8,23 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Exceptions;
+namespace Spira\Contract\Exception;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class UnauthorizedException extends HttpException
+class NotImplementedException extends HttpException
 {
     /**
-     * Create a new Unauthorized exception instance.
+     * Create a new Not Implemented exception instance.
      *
      * @param string $message
      * @param int $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($message = 'Unauthorized.', $code = 0, Exception $previous = null)
+    public function __construct($message = 'Not Implemented.', $code = Response::HTTP_NOT_IMPLEMENTED, Exception $previous = null)
     {
-        parent::__construct(Response::HTTP_UNAUTHORIZED, $message, $previous);
+        parent::__construct($code, $message, $previous);
     }
 }
