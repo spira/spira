@@ -16,7 +16,6 @@ use App\Extensions\Lock\Manager;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\SocialLogin;
 use App\Models\User;
-use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Model\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,12 +99,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Extract the credentials
-        $credential = $request->input('_user_credential', []);
-
-        // Extract the profile
-        $profile = $request->input('_user_profile', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -117,18 +110,14 @@ class UserController extends EntityController
 
         /** @var User $model */
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(), $this->getValidationRules());
-        $model->fill($request->all());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $model->fill($request->json()->all());
         $model->save();
 
         // Finally create the credentials
-        $this->validateRequest($credential, UserCredential::getValidationRules());
-        $model->setCredential(new UserCredential($credential));
-
-        // Finally create the profile if it exists
-        if (! empty($profile)) {
-            $this->validateRequest($profile, UserProfile::getValidationRules());
-            $model->setProfile(new UserProfile($profile));
+        if ($credential = $request->input('_user_credential', null)) {
+            $this->validateRequest($credential, UserCredential::getValidationRules());
+            $model->setCredential(new UserCredential($credential));
         }
 
         return $this->getResponse()
@@ -173,29 +162,18 @@ class UserController extends EntityController
         $model->fill($request->except('email'));
         $model->save();
 
-        // Extract the profile and update if necessary
-        $profileUpdateDetails = $request->input('_user_profile', []);
-        if (! empty($profileUpdateDetails)) {
-            /** @var UserProfile $profile */
-            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
-            $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
-            $profile->fill($profileUpdateDetails);
-            $model->setProfile($profile);
-        }
-
         /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->input('_user_credential', []);
-        if (! empty($credentialUpdateDetails)) {
+        $credentialUpdateDetails = $request->input('_user_credential');
+        if ($credentialUpdateDetails) {
             // Invalidate token for the user when user changes their password
             if ($this->jwtAuth->user()->user_id == $model->user_id) {
                 $token = $this->jwtAuth->getTokenFromRequest();
                 $this->jwtAuth->invalidate($token);
             }
 
-            $credentials = UserCredential::findOrNew($id);
             /* @var UserCredential $credentials */
-            $credentials->fill($credentialUpdateDetails);
+            $credentials = UserCredential::findOrNew($id)->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
 
@@ -251,48 +229,5 @@ class UserController extends EntityController
         $token = $jwtAuth->fromUser(User::find($id));
 
         return $this->getResponse()->header('Authorization-Update', $token)->noContent();
-    }
-
-    /**
-     * Get full user details.
-     *
-     * @param Request $request
-     * @param string $id
-     * @return \Spira\Responder\Response\ApiResponse
-     */
-    public function getOne(Request $request, $id)
-    {
-        /** @var User $user */
-        $user = User::find($id);
-
-        $userData = $this->transformer->transformItem($user);
-
-        if (is_null($user->userCredential)) {
-            $userData['_user_credential'] = false;
-        } else {
-            $userData['_user_credential'] = $user->userCredential->toArray();
-        }
-
-        if (is_null($user->socialLogins)) {
-            $userData['_social_logins'] = false;
-        } else {
-            $userData['_social_logins'] = $user->socialLogins->toArray();
-        }
-
-        $userProfile = null;
-
-        if (is_null($user->userProfile)) {
-            $userProfile = new UserProfile;
-            $userProfile->user_id = $id;
-            $user->setProfile($userProfile);
-        } else {
-            $userProfile = $user->userProfile;
-        }
-
-        $userData['_user_profile'] = $this->transformer->transformItem($userProfile);
-
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->item($userData);
     }
 }

@@ -2,14 +2,16 @@ namespace common.services.tag {
 
     export const namespace = 'common.services.tag';
 
-    export class TagService {
+    export class TagService extends AbstractApiService {
 
-        private cachedPaginator:common.services.pagination.Paginator;
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q'];
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService'];
-
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
-                    private paginationService:common.services.pagination.PaginationService) {
+        /**
+         * Get the api endpoint for the model
+         * @returns {string}
+         */
+        protected apiEndpoint():string {
+            return '/tags';
         }
 
         /**
@@ -18,7 +20,7 @@ namespace common.services.tag {
          * @returns {common.models.Tag}
          * @param exists
          */
-        public static tagFactory(data:any, exists:boolean = false):common.models.Tag {
+        public modelFactory(data:any, exists:boolean = false):common.models.Tag {
             return new common.models.Tag(data, exists);
         }
 
@@ -28,26 +30,10 @@ namespace common.services.tag {
          */
         public newTag():common.models.Tag {
 
-            return TagService.tagFactory({
+            return this.modelFactory({
                 tagId: this.ngRestAdapter.uuid(),
             });
 
-        }
-
-        /**
-         * Get the tag paginator
-         * @returns {Paginator}
-         */
-        public getTagsPaginator():common.services.pagination.Paginator {
-
-            //cache the paginator so subsequent requests can be collection length-aware
-            if (!this.cachedPaginator) {
-                this.cachedPaginator = this.paginationService
-                    .getPaginatorInstance('/tags')
-                    .setModelFactory(TagService.tagFactory);
-            }
-
-            return this.cachedPaginator;
         }
 
         /**
@@ -57,9 +43,9 @@ namespace common.services.tag {
          */
         public saveTag(tag:common.models.Tag):ng.IPromise<common.models.Tag> {
 
-            return this.ngRestAdapter.put('/tags/' + tag.tagId, _.clone(tag))
+            return this.ngRestAdapter.put(this.apiEndpoint() + '/' + tag.tagId, _.clone(tag))
                 .then(() => {
-                    (<common.decorators.IChangeAwareDecorator>tag).resetChangedProperties(); //reset so next save only saves the changed ones
+                    (<common.decorators.IChangeAwareDecorator>tag).resetChanged(); //reset so next save only saves the changed ones
                     return tag;
                 });
 

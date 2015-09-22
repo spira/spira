@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
             $table->string('first_name', 45)->nullable();
             $table->string('last_name', 45)->nullable();
             $table->string('country', 2)->nullable();
+            $table->string('region_code', 2)->nullable();
             $table->string('timezone_identifier', 40)->nullable();
             $table->enum('user_type', User::$userTypes);
             $table->string('avatar_img_url')->nullable();

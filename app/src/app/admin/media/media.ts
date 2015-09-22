@@ -10,9 +10,11 @@ namespace app.admin.media {
 
         static $inject = ['stateHelperServiceProvider'];
 
+        public static state:global.IState;
+
         constructor(private stateHelperServiceProvider) {
 
-            let state:global.IState = {
+            MediaConfig.state = {
                 url: '/media/{page:int}',
                 params: {
                     page: 1
@@ -25,9 +27,9 @@ namespace app.admin.media {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    perPage: 12,
+                    perPage: () => 12,
                     imagesPaginator: (imageService:common.services.image.ImageService, perPage:number) => {
-                        return imageService.getImagesPaginator().setCount(perPage);
+                        return imageService.getPaginator().setCount(perPage);
                     },
                     initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
                         return imagesPaginator.getPage($stateParams.page);
@@ -42,7 +44,7 @@ namespace app.admin.media {
                 }
             };
 
-            stateHelperServiceProvider.addState(namespace, state);
+            stateHelperServiceProvider.addState(namespace, MediaConfig.state);
 
         }
 
@@ -53,6 +55,15 @@ namespace app.admin.media {
         visible: boolean;
         mode: string;
         value: number;
+    }
+
+    export interface IImageConstraints {
+        maxHeight:number;
+        minHeight:number;
+        maxWidth:number;
+        minWidth:number;
+        maxSize:string;
+        minSize:string;
     }
 
     export class MediaController {
@@ -66,9 +77,19 @@ namespace app.admin.media {
             value: 0
         };
 
+        public imageConstraints:IImageConstraints = {
+            maxHeight:2500,
+            minHeight:100,
+            maxWidth:2500,
+            minWidth:100,
+            maxSize:'20MB',
+            minSize:'10KB',
+        };
+
         public pages:number[] = [];
         public currentPageIndex:number;
         public queuedImage:common.services.image.IImageUploadOptions;
+        public imageUploadForm:ng.IFormController;
 
         constructor(private perPage:number,
                     private imageService:common.services.image.ImageService,
@@ -100,6 +121,9 @@ namespace app.admin.media {
 
                 this.images.unshift(image);
                 this.imagesPaginator.setCount(this.imagesPaginator.getCount() + 1);
+
+                this.queuedImage = null;
+                this.imageUploadForm.$setPristine();
 
             };
 

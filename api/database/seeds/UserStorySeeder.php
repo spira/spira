@@ -45,8 +45,11 @@ class UserStorySeeder extends BaseSeeder
      */
     protected function createUser(array $attributes = [])
     {
-        $user = factory(User::class)->create($attributes);
+        /** @var User $user */
+        $user = factory(User::class)
+            ->create($attributes);
+
+        $user->userProfile()->save(factory(UserProfile::class)->make());
         $user->setCredential(factory(UserCredential::class)->make());
-        $user->setProfile(factory(UserProfile::class)->make());
     }
 }

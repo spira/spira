@@ -45,6 +45,7 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
         'timezone_identifier' => $faker->timezone,
         'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
         'user_type' => $faker->randomElement(App\Models\User::$userTypes),
+        'region_code' => $faker->optional(0.9)->randomElement(array_pluck(config('regions.supported'), 'code')),
     ];
 });
 
@@ -115,9 +116,9 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
 
 $factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $faker) {
     return [
-        'meta_name' => $faker->unique()->slug,
+        'meta_id' => $faker->uuid,
+        'meta_name' => $faker->boolean(50) ? $faker->randomElement(['name','description','keyword','canonical']) : $faker->word,
         'meta_content' => $faker->slug,
-        'meta_property' => $faker->slug,
     ];
 });
 
@@ -176,6 +177,8 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'primary_image' => $faker->imageUrl(500, 500, 'food'),
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'author_id' => $users->random(1)->user_id,
+        'author_display' => $faker->boolean(50),
+        'show_author_promo' => $faker->boolean(50),
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
     ];
 });

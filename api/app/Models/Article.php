@@ -52,7 +52,7 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id','first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id', 'author_display', 'show_author_promo', 'first_published', 'primaryImage', 'status'];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -98,7 +98,7 @@ class Article extends IndexedModel
         static::saved(function (Article $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $articlePermalink = ArticlePermalink::findOrFail($model->permalink);
-                $model->permalinks()->save($articlePermalink);
+                $model->articlePermalinks()->save($articlePermalink);
             }
 
             return true;
@@ -164,12 +164,12 @@ class Article extends IndexedModel
         return Str::words($this->content, self::defaultExcerptWordCount, '');
     }
 
-    public function permalinks()
+    public function articlePermalinks()
     {
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 
-    public function metas()
+    public function articleMetas()
     {
         return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
     }

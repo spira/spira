@@ -2,29 +2,34 @@ namespace common.services.user {
 
     export const namespace = 'common.services.user';
 
-    export class UserService {
+    export class UserService extends AbstractApiService {
 
-        static $inject:string[] = ['ngRestAdapter', 'ngJwtAuthService', '$q', '$mdDialog', 'paginationService'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', 'ngJwtAuthService', '$mdDialog', ];
 
-        private cachedPaginator:common.services.pagination.Paginator;
-
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+        constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    paginationService:common.services.pagination.PaginationService,
+                    $q:ng.IQService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    private $q:ng.IQService,
-                    private $mdDialog:ng.material.IDialogService,
-                    private paginationService:common.services.pagination.PaginationService
-        ) {
-
+                    private $mdDialog:ng.material.IDialogService) {
+            super(ngRestAdapter, paginationService, $q);
         }
 
         /**
-         * Get an instance of a user from data
-         * @param userData
-         * @returns {common.models.User}
+         * Get an instance of the Article given data
+         * @param data
+         * @returns {common.models.Article}
          * @param exists
          */
-        public static userFactory(userData:global.IUserData, exists:boolean = false):common.models.User {
-            return new common.models.User(userData, exists);
+        public modelFactory(data:any, exists:boolean = false):common.models.User {
+            return new common.models.User(data, exists);
+        }
+
+        /**
+         * Get the api endpoint for the model
+         * @returns {string}
+         */
+        protected apiEndpoint():string {
+            return '/users';
         }
 
         /**
@@ -33,14 +38,7 @@ namespace common.services.user {
          */
         public getUsersPaginator():common.services.pagination.Paginator {
 
-            // Cache the paginator so subsequent requests can be collection length-aware
-            if (!this.cachedPaginator){
-                this.cachedPaginator = this.paginationService
-                    .getPaginatorInstance('/users')
-                    .setModelFactory(UserService.userFactory);
-            }
-
-            return this.cachedPaginator;
+            return this.getPaginator();
         }
 
         /**
@@ -66,7 +64,7 @@ namespace common.services.user {
 
             let user = new common.models.User(userData);
 
-            return this.ngRestAdapter.put('/users/' + user.userId, user)
+            return this.ngRestAdapter.put(this.apiEndpoint() + '/' + user.userId, user)
                 .then(() => {
                     user.setExists(true);
                     return user;
@@ -100,7 +98,7 @@ namespace common.services.user {
 
             return this.ngRestAdapter
                 .skipInterceptor()
-                .head('/users/email/' + email)
+                .head(this.apiEndpoint() + '/email/' + email)
                 .then(() => true, () => false) //200 OK is true (email exists) 404 is false (email not registered)
             ;
 
@@ -128,7 +126,7 @@ namespace common.services.user {
         public resetPassword(email:string):ng.IPromise<any> {
             return this.ngRestAdapter
                 .skipInterceptor()
-                .remove('/users/' + email + '/password');
+                .remove(`${this.apiEndpoint()}/${email}/password`);
         }
 
         /**
@@ -141,7 +139,7 @@ namespace common.services.user {
             user.emailConfirmed = moment().toISOString();
             return this.ngRestAdapter
                 .skipInterceptor((rejection:ng.IHttpPromiseCallbackArg<any>) => rejection.status == 422)
-                .patch('/users/' + user.userId, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken})
+                .patch(`${this.apiEndpoint()}/${user.userId}`, _.pick(user, 'emailConfirmed'), {'email-confirm-token':emailConfirmToken})
             ;
         }
 
@@ -150,23 +148,82 @@ namespace common.services.user {
          * @param user
          * @returns {ng.IHttpPromise<any>}
          */
-        public updateUser(user:common.models.User):ng.IPromise<any> {
+        public saveUser(user:common.models.User):ng.IPromise<common.models.User|boolean> {
+
+            let changes = (<common.decorators.IChangeAwareDecorator>user).getChanged();
+
+            if (_.isEmpty(changes)){
+                return this.$q.when(false);
+            }
+
             return this.ngRestAdapter
-                .patch('/users/' + user.userId, user.getAttributes(true));
+                .patch(this.apiEndpoint()+'/' + user.userId, changes)
+                .then(() => user);
+        }
+
+        /**
+         * Save user with all related entities
+         * @param user
+         * @returns {IPromise<common.models.User>}
+         */
+        public saveUserWithRelated(user:common.models.User):ng.IPromise<common.models.User>{
+
+            return this.saveUser(user)
+                .then(() => this.saveRelatedEntities(user))
+                .then(() => {
+                    (<common.decorators.IChangeAwareDecorator>user).resetChanged(); //reset so next save only saves the changed items
+                    return user;
+                });
+
+        }
+
+        /**
+         * Save all related entities within user
+         * @param user
+         * @returns {IPromise<any[]>}
+         */
+        private saveRelatedEntities(user:common.models.User):ng.IPromise<any[]> {
+
+            return this.$q.all([ //save all related entities
+                this.saveUserProfile(user),
+            ]);
+
+        }
+
+        /**
+         * Save user profile
+         * @param user
+         * @returns {any}
+         */
+        private saveUserProfile(user:common.models.User):ng.IPromise<common.models.UserProfile|boolean>{
+
+            if (!user._userProfile){ //don't try to save if there is no profile
+                return this.$q.when(false);
+            }
+
+            let changes:any = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
+            if (_.isEmpty(changes)){
+                return this.$q.when(false);
+            }
+
+            return this.ngRestAdapter.patch(`${this.apiEndpoint()}/${user.userId}/profile`, changes)
+                .then(() => {
+                    return user._userProfile;
+                });
+
         }
 
         /**
          * Get full user information
          * @param user
          * @returns {ng.IPromise<common.models.User>}
+         * @param withNested
          */
-        public getUser(user:common.models.User):ng.IPromise<common.models.User> {
-            return this.ngRestAdapter.get('/users/' + user.userId, {
-                    'With-Nested' : 'userCredential, userProfile, socialLogins'
-                })
-                .then((res) => {
-                    return new common.models.User(res.data, true);
-                });
+        public getUser(user:common.models.User, withNested:string[] = null):ng.IPromise<common.models.User> {
+
+            return this.getModel(user.userId, withNested)
+                .then((res) => this.modelFactory(res.data, true))
+
         }
 
         /**

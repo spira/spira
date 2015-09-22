@@ -83,7 +83,7 @@
 
                 $httpBackend.expectGET('/api/tags').respond(_.take(tags, 10));
 
-                let tagPaginator = tagService.getTagsPaginator();
+                let tagPaginator = tagService.getPaginator();
 
                 let firstSet = tagPaginator.getNext(10);
 

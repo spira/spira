@@ -1,8 +1,7 @@
 namespace common.decorators {
 
     export interface IChangeAwareDecorator{
-        getChangedProperties?():string[];
-        resetChangedProperties?():void;
+        resetChanged?():void;
         getOriginal?():typeof common.models.AbstractModel;
         getChanged?(includeUnderscoredKeys?:boolean):{
             [key:string]: any;
@@ -41,69 +40,43 @@ namespace common.decorators {
 
             let obj = construct(original, args, original.name);
 
-            let changedProperties = [];
+            let pristineInstance = _.cloneDeep(obj);
 
-            Object.defineProperty(obj, 'resetChangedProperties', {
+            Object.defineProperty(obj, 'resetChanged', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
-                    changedProperties = [];
+
+                    pristineInstance = _.cloneDeep(this);
                 }
             });
 
-            Object.defineProperty(obj, 'getChangedProperties', {
+            Object.defineProperty(obj, 'getChanged', <PropertyDescriptor>{
                 enumerable: false,
-                value: function(){
-                    return changedProperties;
+                value: function (includeUnderscoredKeys:boolean = false) {
+
+                    return _.transform(this, (changes, value, key) => {
+
+                        if(!includeUnderscoredKeys && _.startsWith(key, '_')) {
+                            return;
+                        }
+
+                        // Have to use angular's equals function here as a comparator in the case where you are comparing an object which has been put through an ng-repeat and gotten a hash key added to it
+                        if (angular.equals(_.cloneDeep(value), pristineInstance[key])){
+                            return;
+                        }
+
+                        changes[key] = value;
+
+                    }, {});
+
                 }
             });
 
-            Object.defineProperty(obj, 'getChanged', {
-                enumerable: false,
-                value: function(includeUnderscoredKeys:boolean = false){
-                    let attributes = _.pick(this, changedProperties);
-
-                    if (includeUnderscoredKeys){
-                        return attributes;
-                    }
-
-                    return _.omit(attributes, (value, key) => {
-                        return _.startsWith(key, '_');
-                    });
-                }
-            });
-
-            Object.defineProperty(obj, 'getOriginal', {
+            Object.defineProperty(obj, 'getOriginal', <PropertyDescriptor>{
                 enumerable: false,
                 value: function(){
                     return construct(original, args, original.name);
                 }
-            });
-
-            _.forIn(obj, (val, propName) => {
-
-                let value = val; //store the value locally
-
-                if (_.isFunction(val)){
-                    return; //don't try to track functions for changes
-                }
-
-                Object.defineProperty(obj, propName, {
-                    enumerable: true,
-                    get: function() {
-                        return value;
-                    },
-                    set: function (v) {
-
-                        value = v;
-
-                        if (changedProperties.indexOf(propName) === -1){
-                            changedProperties.push(propName);
-                        }else if (v === this.getOriginal()[propName]){
-                            changedProperties = _.without(changedProperties, propName); //remove the changed properties if it becomes unchanged
-                        }
-                    }
-                });
-
             });
 
             return obj;

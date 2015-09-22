@@ -28,9 +28,7 @@ namespace common.services.timezones {
             //store the promise in cache, so next time it is called the countries are resolved immediately.
             if (!this.timezonesCachePromise) {
                 this.timezonesCachePromise = this.ngRestAdapter.get('/timezones')
-                    .then((res) => {
-                        return res.data;
-                    })
+                    .then((res) => res.data)
                 ;
             }
 

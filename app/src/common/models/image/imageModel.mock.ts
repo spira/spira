@@ -1,12 +1,12 @@
 namespace common.models {
 
-    export class ImageMock{
+    export class ImageMock extends AbstractMock{
 
-        //constructor(data:any, exists:boolean = false) {
-        //
-        //}
+        public getModelClass():IModelClass {
+            return common.models.Image;
+        }
 
-        private static getMockData() {
+        public getMockData():Object {
 
             let seededChance = new Chance(Math.random());
 
@@ -21,16 +21,12 @@ namespace common.models {
 
         }
 
-        public static entity(overrides:Object = {}, exists:boolean = true) {
-
-            let model = new common.models.Image(_.merge(ImageMock.getMockData(), overrides));
-
-            model.setExists(exists);
-            return model;
+        public static entity(overrides:Object = {}, exists:boolean = true):Image {
+            return <Image> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10){
-            return chance.unique(ImageMock.entity, count);
+        public static collection(count:number = 10):Image[] {
+            return <Image[]>new this().buildCollection(count);
         }
 
     }

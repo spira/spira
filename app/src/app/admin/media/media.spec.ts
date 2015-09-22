@@ -24,7 +24,7 @@ namespace app.admin.media {
                 imageService = _imageService_;
 
                 // Setup imagesPaginator before injection
-                imagesPaginator = imageService.getImagesPaginator().setCount(12);
+                imagesPaginator = imageService.getPaginator().setCount(12);
                 imagesPaginator.entityCountTotal = 50;
                 images = common.models.ImageMock.collection(12);
 
@@ -35,11 +35,29 @@ namespace app.admin.media {
                     initialImages: images,
                     $stateParams: $stateParams
                 });
+
+                MediaController.imageUploadForm = global.FormControllerMock.getMock();
+
             });
 
         });
 
         describe('Initialisation', () => {
+
+            it('should be able to resolve image paginator with initial images', () => {
+
+                let pageCount = (<any>MediaConfig.state.resolve).perPage();
+                let imagesPaginator = (<any>MediaConfig.state.resolve).imagesPaginator(imageService, pageCount);
+
+                sinon.stub(imagesPaginator, 'getPage').returns('mockresponse');
+                let mockStateParams = {
+                    page: 1,
+                };
+                let initialImages = (<any>MediaConfig.state.resolve).initialImages(imagesPaginator, mockStateParams);
+
+                expect(initialImages).to.equal('mockresponse');
+
+            });
 
             it('should have a set of images loaded', () => {
 
@@ -83,10 +101,9 @@ namespace app.admin.media {
 
                 $scope.$apply();
 
-
                 expect(MediaController.images.length).to.equal(imageViewCount); //length should not have changed
                 expect(MediaController.images[0].title).to.equal(image.title); //first image should have been pushed on
-
+                expect(MediaController.imageUploadForm.$setPristine).to.have.been.called;
 
             });
 

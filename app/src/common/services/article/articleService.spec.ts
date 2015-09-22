@@ -7,8 +7,10 @@
 
             let title = seededChance.sentence();
 
+            let articleId = seededChance.guid();
+
             return new common.models.Article({
-                articleId: seededChance.guid(),
+                articleId: articleId,
                 title: title,
                 body: seededChance.paragraph(),
                 permalink: title.replace(' ', '-'),
@@ -20,6 +22,26 @@
                     {
                         tagId: seededChance.guid(),
                         tag: seededChance.word,
+                    }
+                ],
+                _articleMetas: [
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar',
+                        metaId: seededChance.guid(),
+                        articleId: articleId
                     }
                 ]
             });
@@ -86,7 +108,7 @@
 
                 $httpBackend.expectGET('/api/articles').respond(_.take(articles, 10));
 
-                let articlePaginator = articleService.getArticlesPaginator();
+                let articlePaginator = articleService.getPaginator();
 
                 let firstSet = articlePaginator.getNext(10);
 
@@ -106,9 +128,11 @@
 
             it('should be able to retrieve an article by permalink', () => {
 
-                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
+                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                }).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink);
+                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -122,10 +146,15 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
+                let author = common.models.UserMock.entity();
 
-                let article = articleService.newArticle();
+                let article = articleService.newArticle(author);
 
                 expect(article.articleId).to.be.ok;
+
+                expect(article.authorId).to.equal(author.userId);
+
+                expect(article._author).to.deep.equal(author);
 
             });
 
@@ -140,6 +169,9 @@
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
+                    return !_.isEmpty(item.metaContent)
+                })).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -177,8 +209,18 @@
 
             });
 
-        });
+            it('should not make an api call if nothing has changed', () => {
 
+                let article = fixtures.getArticle();
+                article.setExists(true);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.equal(article);
+
+            });
+
+        });
 
     });
 

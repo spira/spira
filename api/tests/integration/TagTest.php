@@ -98,7 +98,7 @@ class TagTest extends TestCase
     {
         $tag = $this->getFactory()->get(Tag::class)->transformed();
 
-        $this->post('/tags', $tag);
+        $this->postJson('/tags', $tag);
 
         $this->shouldReturnJson();
 
@@ -115,7 +115,7 @@ class TagTest extends TestCase
             ->customize(['tag' => '%$@""'])
             ->transformed();
 
-        $this->post('/tags', $tag);
+        $this->postJson('/tags', $tag);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);

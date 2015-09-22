@@ -57,6 +57,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
         'user_type',
         'avatar_img_url',
         'email',
+        'region_code',
     ];
 
     /**
@@ -72,6 +73,7 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
         'first_name' => 'string',
         'last_name' => 'string',
         'country' => 'country',
+        'region_code' => 'string|supported_region',
         'timezone_identifier' => 'timezone',
     ];
 
@@ -149,19 +151,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     public function setCredential(UserCredential $credential)
     {
         $this->userCredential()->save($credential);
-
-        return $this;
-    }
-
-    /**
-     * Set the user's profile.
-     *
-     * @param UserProfile $profile
-     * @return $this
-     */
-    public function setProfile(UserProfile $profile)
-    {
-        $this->userProfile()->save($profile);
 
         return $this;
     }

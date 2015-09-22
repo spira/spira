@@ -3,14 +3,23 @@ namespace app.admin.articles.article {
     describe('Article', () => {
 
         let seededChance = new Chance(1),
-            getArticle = ():common.models.Article => {
+            testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
+                articleId: undefined,
+                id: seededChance.guid(),
+                metaName: 'title',
+                metaContent: 'foobar'
+            }),
+            getArticle = (title?:string):common.models.Article => {
 
-                let title = seededChance.sentence();
+                if(_.isEmpty(title)) {
+                    title = seededChance.sentence();
+                }
 
                 return new common.models.Article({
                     title: title,
                     body: seededChance.paragraph(),
                     permalink: title.replace(' ', '-'),
+                    _articleMetas: [testMeta]
                 });
 
             },
@@ -25,9 +34,22 @@ namespace app.admin.articles.article {
             articleService = {
                 saveArticleWithRelated:(article:common.models.Article) => {
                     return $q.when(true);
+                },
+                getArticle:(identifier:string, nestedEntities:string[]) => {
+                    return $q.when(getArticle(identifier));
+                },
+                newArticle:(author:common.models.User) => {
+                    return getArticle('newArticle');
                 }
             },
-            ArticleController:ArticleController;
+            ArticleController:ArticleController,
+            loggedInUser:common.models.User = common.models.UserMock.entity(),
+            userService = {
+                getAuthUser: sinon.stub().returns(loggedInUser),
+                getUsersPaginator: sinon.stub().returns({
+                    setCount: sinon.stub()
+                })
+            };
 
         beforeEach(() => {
 
@@ -43,12 +65,16 @@ namespace app.admin.articles.article {
                     $stateParams: $stateParams,
                     notificationService: notificationService,
                     article: article,
-                    articleService: articleService
+                    articleService: articleService,
+                    articleMetaTags: []
+
                 });
             });
 
             sinon.spy(notificationService, 'toast');
             sinon.spy(articleService, 'saveArticleWithRelated');
+            sinon.spy(articleService, 'newArticle');
+            sinon.spy(articleService, 'getArticle');
 
         });
 
@@ -56,9 +82,10 @@ namespace app.admin.articles.article {
 
             (<any>notificationService).toast.restore();
             (<any>articleService).saveArticleWithRelated.restore();
+            (<any>articleService).newArticle.restore();
+            (<any>articleService).getArticle.restore();
 
         });
-
 
         it('should be able to save a new article', () => {
 
@@ -73,6 +100,42 @@ namespace app.admin.articles.article {
             expect(articleService.saveArticleWithRelated).to.have.been.calledWith(article);
 
             expect(notificationService.toast).to.have.been.calledOnce;
+
+        });
+
+        it('should be able to resolve article (new)', () => {
+
+            $stateParams.permalink = 'new';
+
+            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
+
+            expect(articleService.newArticle).to.have.been.calledWith(loggedInUser);
+
+            expect(article).to.be.an.instanceOf(common.models.Article);
+
+            expect(article.title).to.equal('newArticle');
+
+        });
+
+        it('should be able to resolve article (existing)', () => {
+
+            $stateParams.permalink = 'foobar';
+
+            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
+
+            $rootScope.$apply();
+
+            expect(article).eventually.to.be.an.instanceOf(common.models.Article);
+
+            expect(articleService.getArticle).to.have.been.called;
+
+        });
+
+        it('should be able to resolve users paginator', () => {
+
+            (<any>ArticleConfig.state.resolve).usersPaginator(userService);
+
+            expect(userService.getUsersPaginator).to.have.been.called;
 
         });
 
