@@ -11,10 +11,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Models\ArticleDiscussion;
-use Spira\Responder\Response\ApiResponse;
 use Illuminate\Http\Request;
+use App\Models\ArticleDiscussion;
 use App\Exceptions\UnauthorizedException;
+use Spira\Responder\Response\ApiResponse;
 use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleCommentController extends ChildEntityController

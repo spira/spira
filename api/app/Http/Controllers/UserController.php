@@ -10,21 +10,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
-use App\Models\SocialLogin;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Spira\Auth\Driver\Guard as SpiraGuard;
-use Spira\Model\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Auth\Guard;
+use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
+use Illuminate\Contracts\Auth\Guard;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
+use Spira\Auth\Driver\Guard as SpiraGuard;
+use Symfony\Component\HttpFoundation\Response;
+use Spira\Model\Validation\ValidationException;
+use App\Http\Transformers\EloquentModelTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends EntityController
 {
