@@ -3,7 +3,7 @@ namespace common.models {
     @common.decorators.changeAware
     export class Article extends AbstractModel {
 
-        protected _nestedEntityMap:INestedEntityMap = {
+        protected __nestedEntityMap:INestedEntityMap = {
             tags: Tag,
             author: User,
             articleMetas: this.hydrateMetaCollectionFromTemplate
