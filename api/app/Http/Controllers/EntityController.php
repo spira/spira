@@ -97,8 +97,8 @@ abstract class EntityController extends ApiController
     public function postOne(Request $request)
     {
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->all(), $this->getValidationRules());
-        $model->fill($request->all());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $model->fill($request->json()->all());
         $model->save();
 
         return $this->getResponse()
@@ -119,9 +119,9 @@ abstract class EntityController extends ApiController
 
         $model = $this->findOrNewEntity($id);
 
-        $this->validateRequest($request->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
-        $model->fill($request->all());
+        $model->fill($request->json()->all());
         $model->save();
 
         return $this->getResponse()
@@ -137,7 +137,7 @@ abstract class EntityController extends ApiController
      */
     public function putMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules());
         $existingModels = $this->findCollection($requestCollection);
@@ -166,9 +166,9 @@ abstract class EntityController extends ApiController
 
         $model = $this->findOrFailEntity($id);
 
-        $this->validateRequest($request->all(), $this->getValidationRules(), true);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
 
-        $model->fill($request->all());
+        $model->fill($request->json()->all());
         $model->save();
 
         return $this->getResponse()->noContent();
@@ -182,7 +182,7 @@ abstract class EntityController extends ApiController
      */
     public function patchMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
 
@@ -218,7 +218,7 @@ abstract class EntityController extends ApiController
      */
     public function deleteMany(Request $request)
     {
-        $requestCollection = $request->all();
+        $requestCollection = $request->json()->all();
 
         $this->findOrFailCollection($requestCollection)
             ->each(function (BaseModel $model) {

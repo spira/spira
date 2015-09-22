@@ -9,7 +9,6 @@
  */
 
 use Illuminate\Support\Facades\DB;
-use \Illuminate\Support\Debug\Dumper;
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
@@ -22,9 +21,9 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     public function setUp()
     {
-        $this->bootTraits();
-
         parent::setUp();
+
+        $this->bootTraits();
 
         DB::connection()->beginTransaction(); //start a new transaction
     }
@@ -58,29 +57,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     public function createApplication()
     {
         return require __DIR__.'/../bootstrap/app.php';
-    }
-
-    /**
-     * Assert status code, and on failure print the output to assist debugging.
-     * @param int $code
-     */
-    public function assertResponseStatus($code)
-    {
-        try {
-            parent::assertResponseStatus($code);
-        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-            $content = $this->response->getContent();
-
-            $json = json_decode($content);
-
-            //check to see if the response was valid json, if so assign the object to $content
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $content = $json;
-            }
-
-            (new Dumper)->dump($content); //dump the data (not exiting like dd() as there could be further errors that give context)
-            throw $e;
-        }
     }
 
     /**
@@ -157,6 +133,19 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     public function getJson($uri, array $headers = [])
     {
         return $this->requestJson('GET', $uri, [], $headers);
+    }
+
+    /**
+     * Visit the given URI with a POST request with content type of application/json.
+     *
+     * @param  string  $uri
+     * @param  array  $data
+     * @param  array  $headers
+     * @return $this
+     */
+    public function postJson($uri, array $data = [], array $headers = [])
+    {
+        return $this->requestJson('POST', $uri, $data, $headers);
     }
 
     /**
