@@ -99,11 +99,12 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
 $factory->define(App\Models\AuthToken::class, function () use ($factory) {
 
-    $jwtAuth = Illuminate\Support\Facades\App::make('Tymon\JWTAuth\JWTAuth');
+    /** @var \Spira\Auth\Driver\Guard $jwtAuth */
+    $jwtAuth = Illuminate\Support\Facades\App::make('auth');
 
     $user = $factory->make(\App\Models\User::class);
 
-    $token = $jwtAuth->fromUser($user);
+    $token = $jwtAuth->generateToken($user);
 
     return ['token' => $token];
 });

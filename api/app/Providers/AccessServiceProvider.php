@@ -8,11 +8,14 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Extensions\Lock;
+namespace App\Providers;
 
-use BeatSwitch\Lock\Callers\CallerLock as CallerLockBase;
+use App\Models\User;
+use App\Polices\UserPolicy;
 
-class CallerLock extends CallerLockBase
+class AccessServiceProvider extends \Spira\Auth\Providers\AccessServiceProvider
 {
-    use LockTrait;
+    protected $policies = [
+        User::class => UserPolicy::class,
+    ];
 }

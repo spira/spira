@@ -13,7 +13,6 @@ namespace App\Providers;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\SpiraValidator;
 use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Paginator\PaginatedRequestDecoratorInterface;

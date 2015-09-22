@@ -10,6 +10,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Controller\AuthorizesRequestsTrait;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -24,7 +25,7 @@ use Spira\Responder\Response\ApiResponse;
 
 abstract class ChildEntityController extends ApiController
 {
-    use RequestValidationTrait;
+    use RequestValidationTrait, AuthorizesRequestsTrait;
 
     protected $relationName = null;
 

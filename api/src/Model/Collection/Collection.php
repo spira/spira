@@ -34,12 +34,8 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         $this->className = $className;
     }
 
-    public function count($includingMarkedForDeletion = false)
+    public function count()
     {
-        if ($includingMarkedForDeletion) {
-            return count($this->items);
-        }
-
         return count(array_filter($this->items, function (BaseModel $item) {
             return ! $item->isDeleted();
         }));
@@ -70,38 +66,12 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     {
         $this->checkItem($item);
         if ($item instanceof BaseModel) {
-            $this->preventAddingSameItem($item);
             $this->items[$this->getItemKey($item)] = $item;
         } else {
             $this->items[] = $item;
         }
 
         return $this;
-    }
-
-    /**
-     * @param BaseModel $item
-     */
-    public function remove(BaseModel $item)
-    {
-        $this->checkItem($item);
-        $key = $this->getItemKey($item);
-        $model = null;
-        if (isset($this->items[$key])) {
-            $model = $this->items[$key];
-        }
-
-        if (is_null($model)) {
-            $key = $this->getItemHash($item);
-            if (isset($this->items[$key])) {
-                $model = $this->items[$key];
-            }
-        }
-
-        if (! is_null($model)) {
-            /* @var BaseModel $model */
-            $model->markAsDeleted();
-        }
     }
 
     /**
@@ -113,28 +83,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         $className = $this->className;
         if (! is_null($className) && ! ($item instanceof $className)) {
             throw new ItemTypeException('Item must be instance of '.$className);
-        }
-    }
-
-    /**
-     * Get an iterator for the items.
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new ModelCollectionIterator($this->items);
-    }
-
-    /**
-     * In case new entity was addedm then saved, then added again.
-     * @param BaseModel $item
-     */
-    protected function preventAddingSameItem(BaseModel $item)
-    {
-        $hash = $this->getItemHash($item);
-        if (isset($this->items[$hash])) {
-            unset($this->items[$hash]);
         }
     }
 
@@ -158,5 +106,13 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         }
 
         return $this->getItemHash($model);
+    }
+
+    /**
+     * @return string Name of the Model collection consist of
+     */
+    public function getClassName()
+    {
+        return $this->className;
     }
 }

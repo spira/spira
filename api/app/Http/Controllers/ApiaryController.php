@@ -10,9 +10,9 @@
 
 namespace App\Http\Controllers;
 
+use Faker;
 use Illuminate\Support\Facades\View;
 use Laravel\Lumen\Routing\Controller;
-use Faker;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiaryController extends Controller

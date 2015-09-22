@@ -8,13 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 27.08.15
- * Time: 12:07.
- */
-
 namespace App\Models;
 
 use Spira\Model\Model\BaseModel;
@@ -47,10 +40,5 @@ class ArticleImage extends BaseModel
     public function image()
     {
         return $this->hasOne(Image::class, 'image_id', 'image_id');
-    }
-
-    public function article()
-    {
-        return $this->hasOne(Article::class);
     }
 }
