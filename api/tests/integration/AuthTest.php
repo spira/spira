@@ -9,7 +9,6 @@
  */
 
 use App\Models\User;
-use App\Providers\AuthDriverServiceProvider;
 use GuzzleHttp\Client;
 use Spira\Auth\Driver\Guard;
 
