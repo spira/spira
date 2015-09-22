@@ -2,33 +2,6 @@ namespace app.guest.login {
 
     export const namespace = 'app.guest.login';
 
-    class LoginConfig {
-
-        static $inject = ['ngJwtAuthServiceProvider'];
-
-        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider) {
-
-            let config:NgJwtAuth.INgJwtAuthServiceConfig = {
-                refreshBeforeSeconds: 60 * 10, //10 mins
-                checkExpiryEverySeconds: 60, //1 min
-                apiEndpoints: {
-                    base: '/api/auth/jwt',
-                    login: '/login',
-                    tokenExchange: '/token',
-                    refresh: '/refresh',
-                },
-                cookie: {
-                    enabled: true,
-                    topLevelDomain: true,
-                }
-            };
-
-            ngJwtAuthServiceProvider.configure(config);
-
-        }
-
-    }
-
     export class LoginController {
 
         private credentials:NgJwtAuth.ICredentials;
@@ -125,7 +98,6 @@ namespace app.guest.login {
     }
 
     angular.module(namespace, [])
-        .config(LoginConfig)
         .controller(namespace + '.controller', LoginController);
 
 }

@@ -30,18 +30,6 @@ class SpiraValidator extends Validator
         return false;
     }
 
-    public function validateEquals($attribute, $value, $parameters)
-    {
-        $this->requireParameterCount(1, $parameters, 'equals');
-        $compare = $parameters[0];
-
-        if ($compare == $value) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Register custom validation rule for countries.
      *

@@ -8,13 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 20.08.15
- * Time: 11:55.
- */
-
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\ArticleTagTransformer;

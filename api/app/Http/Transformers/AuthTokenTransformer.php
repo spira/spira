@@ -10,8 +10,6 @@
 
 namespace App\Http\Transformers;
 
-use App;
-use Tymon\JWTAuth\Token;
 use App\Exceptions\NotImplementedException;
 
 class AuthTokenTransformer extends EloquentModelTransformer
@@ -19,27 +17,18 @@ class AuthTokenTransformer extends EloquentModelTransformer
     /**
      * Transform the token string into an response array.
      *
-     * @param  string  $object
+     * @param  string  $token
      * @return array
      */
-    public function transformItem($object)
+    public function transformItem($token)
     {
-        if (is_string($object)) {
-            return $this->transformToken($object);
+        $result = ['token' => (string) $token];
+
+        if (env('APP_DEBUG', false)) {
+            $result['decodedTokenBody'] = \App::make('auth')->getTokenizer()->decode($token);
         }
 
-        return parent::transformItem($this->transformToken($object['token']));
-    }
-
-    protected function transformToken($token)
-    {
-        $token = new Token($token);
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-
-        return [
-            'token' => (string) $token,
-            'decodedTokenBody' => $jwtAuth->decode($token)->toArray(),
-        ];
+        return $result;
     }
 
     /**
