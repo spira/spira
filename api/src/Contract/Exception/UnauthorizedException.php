@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Exceptions;
+namespace Spira\Contract\Exception;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +23,8 @@ class UnauthorizedException extends HttpException
      * @param int $code
      * @param \Exception $previous
      */
-    public function __construct($message = 'Unauthorized.', $code = 0, Exception $previous = null)
+    public function __construct($message = 'Unauthorized.', $code = Response::HTTP_UNAUTHORIZED, Exception $previous = null)
     {
-        parent::__construct(Response::HTTP_UNAUTHORIZED, $message, $previous);
+        parent::__construct($code, $message, $previous);
     }
 }
