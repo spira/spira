@@ -81,11 +81,11 @@ class ModelFactoryInstance implements Arrayable, Jsonable
     /**
      * Make otherwise hidden parameters visible.
      *
-     * @param $makeVisible
+     * @param array $makeVisible
      *
      * @return $this
      */
-    public function makeVisible($makeVisible)
+    public function makeVisible(array $makeVisible)
     {
         $this->makeVisible = $makeVisible;
 
@@ -354,7 +354,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      * Create a collection of models and persist them to the database.
      *
      * @param  array $attributes
-     * @return mixed
+     * @return Collection|BaseModel
      */
     public function create(array $attributes = [])
     {
