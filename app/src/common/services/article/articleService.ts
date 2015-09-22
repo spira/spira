@@ -94,6 +94,17 @@ namespace common.services.article {
         }
 
         /**
+         * Save an article's comment
+         * @param articleId
+         * @param comment
+         * @returns {IPromise<any[]>}
+         */
+        public saveComment(articleId:string, comment:common.models.ArticleComment):ng.IPromise<any> {
+            return this.ngRestAdapter.post('/articles/' + articleId + '/comments', comment)
+                .then((res) => res);
+        }
+
+        /**
          * Save all the related entities concurrently
          * @param article
          * @returns {IPromise<any[]>}
