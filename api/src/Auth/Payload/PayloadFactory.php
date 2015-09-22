@@ -25,7 +25,7 @@ class PayloadFactory
     }
 
     /**
-     * Create payload from a given user
+     * Create payload from a given user.
      * @param Authenticatable $user
      * @return array
      */
@@ -45,7 +45,7 @@ class PayloadFactory
     }
 
     /**
-     * Add a payload generator
+     * Add a payload generator.
      * @param $name
      * @param \Closure $function
      */
