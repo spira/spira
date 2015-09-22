@@ -242,7 +242,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
 
     /**
-     * Get token user provider closure
+     * Get token user provider closure.
      * @return \Closure
      */
     abstract protected function getTokenUserProvider();

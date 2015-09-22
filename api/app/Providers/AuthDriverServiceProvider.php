@@ -20,7 +20,7 @@ use Spira\Auth\Providers\JWTAuthDriverServiceProvider;
 class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
 {
     /**
-     * Get the generators for the payload
+     * Get the generators for the payload.
      * @return array
      */
     protected function getPayloadGenerators()
@@ -46,7 +46,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
     }
 
     /**
-     * Get token user provider closure
+     * Get token user provider closure.
      * @return \Closure
      */
     protected function getTokenUserProvider()
@@ -73,7 +73,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
     }
 
     /**
-     * Get the path to the public key
+     * Get the path to the public key.
      * @return string
      */
     protected function getSecretPublic()
@@ -82,7 +82,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
     }
 
     /**
-     * Get path to the private key
+     * Get path to the private key.
      * @return string
      */
     protected function getSecretPrivate()
