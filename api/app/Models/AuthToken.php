@@ -18,4 +18,8 @@ use Spira\Model\Model\BaseModel;
  */
 class AuthToken extends BaseModel
 {
+    public function __toString()
+    {
+        return $this->getAttribute('token');
+    }
 }

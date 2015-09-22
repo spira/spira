@@ -21,9 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Spira\Model\Collection\Collection;
-use Spira\Model\Validation\ValidationException;
-use Illuminate\Support\MessageBag;
-use Spira\Model\Validation\ValidationExceptionCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
@@ -64,16 +61,6 @@ abstract class BaseModel extends Model
         self::UPDATED_AT => 'datetime',
     ];
 
-    /**
-     * @var MessageBag|null
-     */
-    protected $errors;
-
-    /**
-     * @var MessageBag[]
-     */
-    protected $relationErrors = [];
-
     protected static $validationRules = [];
 
     /**
@@ -90,23 +77,6 @@ abstract class BaseModel extends Model
     public static function getTableName()
     {
         return with(new static())->getTable();
-    }
-
-    /**
-     * @return MessageBag|null
-     */
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param string $relationName
-     * @return \Exception|null
-     */
-    public function getRelationErrors($relationName)
-    {
-        return isset($this->relationErrors[$relationName]) ? $this->relationErrors[$relationName] : null;
     }
 
     /**
@@ -194,20 +164,7 @@ abstract class BaseModel extends Model
      */
     public function push()
     {
-        $validationError = false;
-
-        try {
-            $this->save();
-        } catch (ValidationException $e) {
-            $validationError = true;
-        }
-
-        foreach ($this->deleteStack as $modelToDelete) {
-            if (! $modelToDelete->delete()) {
-                return false;
-            }
-            $this->deleteStack = [];
-        }
+        $this->save();
 
         // To sync all of the relationships to the database, we will simply spin through
         // the relationships and save each model via this "push" method, which allows
@@ -227,39 +184,16 @@ abstract class BaseModel extends Model
             if ($this->isCollection($models)) {
                 /* @var Collection $models */
                 $modelsArray = $models->all(true);
-                $error = false;
-                $errors = [];
                 foreach (array_filter($modelsArray) as $model) {
                     /* @var BaseModel $model */
                     $model->preserveKeys($relation);
-                    try {
-                        $model->push();
-                        $errors[] = null;
-                    } catch (ValidationException $e) {
-                        $errors[] = $e;
-                        $error = true;
-                        $validationError = true;
-                    }
-                }
-                if ($error) {
-                    $this->relationErrors[$key] = new ValidationExceptionCollection($errors);
-                    $this->errors->add($key, $errors);
+                    $model->push();
                 }
             } elseif ($models) {
                 /* @var BaseModel $models */
                 $models->preserveKeys($relation);
-                try {
-                    $models->push();
-                } catch (ValidationException $e) {
-                    $this->errors->add($key, $models->getErrors());
-                    $this->relationErrors[$key] = $e;
-                    $validationError = true;
-                }
+                $models->push();
             }
-        }
-
-        if ($validationError) {
-            throw new ValidationException($this->getErrors());
         }
 
         return true;
@@ -323,20 +257,6 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * @param array $options
-     * @return bool|null
-     * @throws \Exception
-     */
-    public function save(array $options = [])
-    {
-        if ($this->isDeleted()) {
-            return $this->delete();
-        }
-
-        return parent::save($options);
-    }
-
-    /**
      * Fires an event for RevisionableTrait.
      *
      * @param  string $event
@@ -370,14 +290,6 @@ abstract class BaseModel extends Model
     public function isDeleted()
     {
         return $this->isDeleted;
-    }
-
-    /**
-     *
-     */
-    public function markAsDeleted()
-    {
-        $this->isDeleted = true;
     }
 
     /**
