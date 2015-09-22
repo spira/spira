@@ -20,8 +20,8 @@ return [
     */
 
     'token_keys' => [
-        'cookie'  => 'jwtAuthToken',
-        'query' => 'jwtAuthToken',
+        'cookie'  => 'token',
+        'query' => 'token',
     ],
 
 ];

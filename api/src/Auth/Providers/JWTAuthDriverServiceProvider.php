@@ -84,6 +84,9 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        $this->registerConfig();
+
         $this->registerUserProvider();
         $this->registerPayloadFactory();
         $this->registerPayloadValidatorFactory();
@@ -92,6 +95,18 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         $this->registerBlackList();
         $this->registerBlackListDriver();
         $this->registerDriver();
+    }
+
+    /**
+     * Register the configuration file, merging with local config
+     */
+    protected function registerConfig()
+    {
+        $configPath = __DIR__ . '/../config/jwt.php';
+        $this->mergeConfigFrom($configPath, 'jwt');
+
+        $this->requestCookie = $this->app->config->get('jwt.token_keys.cookie', $this->requestCookie);
+        $this->requestQuery = $this->app->config->get('jwt.token_keys.query', $this->requestQuery);
     }
 
     /**
