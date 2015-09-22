@@ -108,7 +108,7 @@
 
                 $httpBackend.expectGET('/api/articles').respond(_.take(articles, 10));
 
-                let articlePaginator = articleService.getArticlesPaginator();
+                let articlePaginator = articleService.getPaginator();
 
                 let firstSet = articlePaginator.getNext(10);
 

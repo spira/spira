@@ -62,9 +62,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Extract the credentials
-        $credential = $request->input('_user_credential', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -81,8 +78,10 @@ class UserController extends EntityController
         $model->save();
 
         // Finally create the credentials
-        $this->validateRequest($credential, UserCredential::getValidationRules());
-        $model->setCredential(new UserCredential($credential));
+        if ($credential = $request->input('_user_credential', null)) {
+            $this->validateRequest($credential, UserCredential::getValidationRules());
+            $model->setCredential(new UserCredential($credential));
+        }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -137,16 +136,15 @@ class UserController extends EntityController
         }
 
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->input('_user_credential', []);
-        if (! empty($credentialUpdateDetails)) {
+        $credentialUpdateDetails = $request->input('_user_credential');
+        if ($credentialUpdateDetails) {
             // Invalidate token for the user when user changes their password
             if ($request->user()->user_id == $model->user_id) {
                 $this->auth->logout();
             }
 
-            $credentials = UserCredential::findOrNew($id);
             /* @var UserCredential $credentials */
-            $credentials->fill($credentialUpdateDetails);
+            $credentials = UserCredential::findOrNew($id)->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
 
@@ -196,37 +194,10 @@ class UserController extends EntityController
         $user = User::find($id);
         $this->auth->login($user, true);
 
-        return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($user))->noContent();
-    }
-
-    /**
-     * Get full user details.
-     *
-     * @param Request $request
-     * @param string $id
-     * @return \Spira\Responder\Response\ApiResponse
-     */
-    public function getOne(Request $request, $id)
-    {
-        /** @var User $user */
-        $user = User::find($id);
-        $this->authorize($user);
-        $userData = $this->transformer->transformItem($user);
-
-        if (is_null($user->userCredential)) {
-            $userData['_user_credential'] = false;
-        } else {
-            $userData['_user_credential'] = $user->userCredential->toArray();
-        }
-
-        if (is_null($user->socialLogins)) {
-            $userData['_social_logins'] = false;
-        } else {
-            $userData['_social_logins'] = $user->socialLogins->toArray();
-        }
 
         return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->item($userData);
+            ->header('Authorization-Update', $this->auth->generateToken($user))
+            ->noContent();
     }
+
 }
