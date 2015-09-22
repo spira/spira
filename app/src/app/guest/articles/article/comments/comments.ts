@@ -25,14 +25,15 @@ namespace app.guest.articles.article.comments {
          */
         public save() {
 
-            this.newComment.createdAt = moment();
-
             this.articleService.saveComment(this.article, this.newComment)
                 .then(() => {
                     this.newComment = new common.models.ArticleComment({_author:this.user});
                     this.newCommentForm.$setPristine();
                     this.newCommentForm.$setUntouched();
                     this.notificationService.toast('Comment successfully added').pop();
+                })
+                .catch((error) => {
+                    this.notificationService.toast('An error has occurred saving your comment, please try again').pop();
                 });
 
         }

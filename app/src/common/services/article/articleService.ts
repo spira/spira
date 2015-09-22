@@ -100,6 +100,8 @@ namespace common.services.article {
          * @returns {IPromise<common.models.ArticleComment>}
          */
         public saveComment(article:common.models.Article, comment:common.models.ArticleComment):ng.IPromise<common.models.ArticleComment> {
+            comment.createdAt = moment();
+
             return this.ngRestAdapter.post('/articles/' + article.articleId + '/comments', comment)
                 .then(() => {
                     article._comments.push(comment);
