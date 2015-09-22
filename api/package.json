@@ -16,6 +16,7 @@
   "author": "Zak Henry",
   "license": "MIT",
   "devDependencies": {
-    "api-blueprint-validator": "^0.1.3"
+    "api-blueprint-validator": "^0.1.3",
+    "protagonist": "^0.19.3"
   }
 }
