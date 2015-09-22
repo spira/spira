@@ -34,6 +34,7 @@ $app->withEloquent();
 $app->configure('hosts');
 $app->configure('elasticquent');
 $app->configure('regions');
+$app->configure('jwt');
 
 /*
 |--------------------------------------------------------------------------
