@@ -54,13 +54,15 @@ namespace common.models {
          */
         protected hydrate(data:any, exists:boolean) {
             if (_.isObject(data)) {
+
                 _.transform(data, (model, value, key) => {
+
                     if(_.has(this.__attributeCastMap, key)) {
                         model[key] = this.__attributeCastMap[key](value);
-                    }
-                    else {
+                    } else {
                         model[key] = value;
                     }
+
                 }, this);
 
                 if (_.size(this.__nestedEntityMap) > 1) {
@@ -73,9 +75,18 @@ namespace common.models {
         /**
          * Converts a date time
          * @param value
+         * @returns {Date}
+         */
+        protected castDate(value:string):Date {
+            return moment(value).toDate();
+        }
+
+        /**
+         * Converts a moment object
+         * @param value
          * @returns {Moment}
          */
-        protected dateTime(value:string):moment.Moment {
+        protected castMoment(value:string):moment.Moment {
             return moment(value);
         }
 

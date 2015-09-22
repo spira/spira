@@ -11,7 +11,7 @@ namespace common.models {
             let seededChance = new Chance(Math.random());
 
             return {
-                dob: moment(seededChance.birthday()).format('YYYY-MM-DD'),
+                dob: moment(seededChance.birthday()).toDate(),
                 mobile: seededChance.phone({ mobile: true }),
                 phone: seededChance.phone(),
                 gender: seededChance.pick(_.pluck(UserProfile.genderOptions, 'value')),

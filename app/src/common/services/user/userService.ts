@@ -4,13 +4,14 @@ namespace common.services.user {
 
     export class UserService extends AbstractApiService {
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', 'ngJwtAuthService', '$mdDialog', ];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', 'ngJwtAuthService', '$mdDialog', 'regionService'];
 
         constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     paginationService:common.services.pagination.PaginationService,
                     $q:ng.IQService,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    private $mdDialog:ng.material.IDialogService) {
+                    private $mdDialog:ng.material.IDialogService,
+                    private regionService:common.services.region.RegionService) {
             super(ngRestAdapter, paginationService, $q);
         }
 
@@ -150,10 +151,14 @@ namespace common.services.user {
          */
         public saveUser(user:common.models.User):ng.IPromise<common.models.User|boolean> {
 
-            let changes = (<common.decorators.IChangeAwareDecorator>user).getChanged();
+            let changes:any = (<common.decorators.IChangeAwareDecorator>user).getChanged();
 
             if (_.isEmpty(changes)){
                 return this.$q.when(false);
+            }
+
+            if (_.has(changes, 'regionCode')){
+                this.regionService.setRegion(this.regionService.getRegionByCode(changes.regionCode));
             }
 
             return this.ngRestAdapter

@@ -4,7 +4,7 @@ namespace common.models {
     export class ArticleComment extends AbstractModel {
 
         protected __attributeCastMap:IAttributeCastMap = {
-            createdAt: this.dateTime,
+            createdAt: this.castMoment,
         };
 
         public articleCommentId:string = undefined;
