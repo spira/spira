@@ -194,10 +194,8 @@ class UserController extends EntityController
         $user = User::find($id);
         $this->auth->login($user, true);
 
-
         return $this->getResponse()
             ->header('Authorization-Update', $this->auth->generateToken($user))
             ->noContent();
     }
-
 }
