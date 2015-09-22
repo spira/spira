@@ -1,1 +1,22 @@
-<h3 class="md-flex">{{  }} Comments</h3>
+<md-subheader class="md-flex">{{ CommentsController.article._comments.length }} Comments</md-subheader>
+
+<form name="newCommentForm" ng-submit="CommentsController.save()">
+    <img ng-src="{{ CommentsController.user.avatarImgUrl }}" class="md-avatar" alt="{{ CommentsController.user.username }}" />
+    <md-input-container>
+        <label>Join the discussion</label>
+        <input type="text" ng-model="CommentsController.newComment" required>
+    </md-input-container>
+
+    <md-button class="md-primary md-raised" ng-disabled="newCommentForm.$invalid" type="submit">Save</md-button>
+</form>
+
+<md-list>
+    <md-list-item class="md-3-line" ng-repeat="comment in CommentsController.article._comments">
+        <img ng-src="{{ comment._author.avatarImgUrl }}" class="md-avatar" alt="{{ comment._author.username }}" />
+        <div class="md-list-item-text" layout="column">
+            <h3>{{ comment._author.username }} | {{ comment._author.createdAt }}</h3>
+            <p>{{ comment.body }}</p>
+            <p>Share Buttons</p>
+        </div>
+    </md-list-item>
+</md-list>

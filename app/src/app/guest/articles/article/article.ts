@@ -36,7 +36,10 @@ namespace app.guest.articles.article {
                 resolve: /*@ngInject*/{
                     article: ($stateParams:IArticleStateParams, articleService:common.services.article.ArticleService):common.models.Article | ng.IPromise<common.models.Article> => {
 
-                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments']);
+                    },
+                    user: (ngJwtAuthService:NgJwtAuth.NgJwtAuthService):common.models.User => {
+                        return <common.models.User>ngJwtAuthService.getUser()
                     }
                 },
                 data: {
