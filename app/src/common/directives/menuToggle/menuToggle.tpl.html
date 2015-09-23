@@ -1,11 +1,15 @@
-<div class="menu-toggle">
+<div class="menu-toggle" ng-class="{collapsed:collapsed}">
     <md-list-item
             ng-click="toggle()"
-            aria-controls="docs-menu-{{state.name}}"
-            aria-expanded="{{isOpen()}}">
+            aria-controls="docs-menu-{{navigationState.name}}"
+            aria-expanded="{{isOpen()}}"
+            ui-sref-active="child-selected"
+            ui-sref="{{navigationState.name}}"
+            >
 
         <md-icon>{{navigationState.data.icon}}</md-icon>
-        <p>{{navigationState.data.title | uppercase}}</p>
+        <p ng-if="!collapsed">{{navigationState.data.title | uppercase}}</p>
+        <md-tooltip md-direction="right" ng-if="collapsed">{{navigationState.data.title | uppercase}}</md-tooltip>
 
         <span aria-hidden="true" class="md-toggle-icon"
               ng-class="{'toggled' : isOpen()}">
@@ -18,14 +22,18 @@
 
     <md-list>
 
-        <md-list-item ng-repeat="state in navigationState.children" ng-click="gotoState(state.name)" ui-sref-active="selected">
+        <md-divider ng-repeat-start="state in navigationState.children track by $index" ng-if="$first && isOpen()"></md-divider>
+
+        <md-list-item ng-click="gotoState(state.name)" ui-sref-active="selected" ui-sref="{{state.name}}">
+
             <md-icon>{{state.data.icon}}</md-icon>
-            <p>{{state.data.title}}</p>
-            <md-divider ng-if="!$last"></md-divider>
+            <p ng-if="!collapsed">{{state.data.title | uppercase}}</p>
+            <md-tooltip md-direction="right" ng-if="collapsed">{{state.data.title | uppercase}}</md-tooltip>
         </md-list-item>
+
+        <md-divider ng-repeat-end ng-if="!$last"></md-divider>
 
     </md-list>
 
 </div>
-
 

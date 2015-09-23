@@ -1,0 +1,17 @@
+@import (reference) "../../../styles/global.less";
+
+
+div#admin-sidenav {
+    &.collapsed {
+        width: 75px;
+    }
+
+    md-list-item.selected > button {
+        background: fade(@adminPrimary, 35%);
+    }
+
+    md-list-item.child-selected > button {
+        background: fade(@adminPrimary, 15%);
+    }
+
+}

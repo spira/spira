@@ -7,6 +7,7 @@ namespace common.directives.menuToggle {
         toggle():void;
         gotoState(stateName:string):void;
         navigationState: ng.ui.IState;
+        collapsed?: boolean;
     }
 
     class MenuToggleDirective implements ng.IDirective {
@@ -15,7 +16,8 @@ namespace common.directives.menuToggle {
         public templateUrl = 'templates/common/directives/menuToggle/menuToggle.tpl.html';
         public replace = true;
         public scope = {
-            navigationState: '='
+            navigationState: '=',
+            collapsed: '=?',
         };
 
         constructor(private $timeout: ng.ITimeoutService, private $state:ng.ui.IStateService) {
