@@ -52,10 +52,10 @@ class ArticleSeeder extends BaseSeeder
 
                         try {
                             $article->comments()->save($comment->toArray(), $users->random());
-                        } catch (HttpException $e){
-                            echo "Caught exception" .get_class($e). ' : '. $e->getMessage() . "\n\n"; //@todo resolve why this occurs
+                        } catch (HttpException $e) {
+                            echo 'Caught exception'.get_class($e).' : '.$e->getMessage()."\n\n"; //@todo resolve why this occurs
                             // Likely not to do with the content of the comment as it still occurs in a random fashion when the same 5 comments are added to all articles
-                            echo "Comment: " . json_encode($comment->toArray()) . "\n\n";
+                            echo 'Comment: '.json_encode($comment->toArray())."\n\n";
                         }
                     });
 
