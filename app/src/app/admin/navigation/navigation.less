@@ -1,5 +1,5 @@
+@import (reference) "../../../styles/global.less";
 
-@adminPrimary: rgb(96,125,139);
 
 div#admin-sidenav {
     &.collapsed {
@@ -7,11 +7,11 @@ div#admin-sidenav {
     }
 
     md-list-item.selected > button {
-        background: @adminPrimary;
+        background: fade(@adminPrimary, 35%);
     }
 
     md-list-item.child-selected > button {
-        background: @adminPrimary;
+        background: fade(@adminPrimary, 15%);
     }
 
 }
