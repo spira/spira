@@ -167,7 +167,6 @@ class GuardTest extends TestCase
         $guard->shouldReceive('getProvider')->twice()->andReturn($provider);
         $result = $guard->attempt(['some fake']);
         $this->assertFalse($result);
-        $this->assertNull($guard->user());
     }
 
     public function testAttempt_fail()
@@ -179,7 +178,6 @@ class GuardTest extends TestCase
         $guard->shouldReceive('getProvider')->once()->andReturn($provider);
         $result = $guard->attempt(['some fake']);
         $this->assertFalse($result);
-        $this->assertNull($guard->user());
     }
 
     public function testBasic()
