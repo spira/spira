@@ -7,7 +7,7 @@ namespace app.guest.articles.article {
         permalink:string;
     }
 
-    class ArticleConfig {
+    export class ArticleConfig {
 
         public static state:global.IState;
 
@@ -34,7 +34,7 @@ namespace app.guest.articles.article {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    article: ($stateParams:IArticleStateParams, articleService:common.services.article.ArticleService):common.models.Article | ng.IPromise<common.models.Article> => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments']);
                     },
@@ -54,7 +54,7 @@ namespace app.guest.articles.article {
 
     }
 
-    class ArticleController {
+    export class ArticleController {
 
         static $inject = ['article'];
         constructor(
