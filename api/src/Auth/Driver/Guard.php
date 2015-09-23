@@ -161,7 +161,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     {
         $token = $this->getTokenFromRequest();
         $payload = $this->getTokenizer()->decode($token);
-        $this->blacklist->check($payload);
+        $this->getBlacklist()->check($payload);
         $this->getValidationFactory()->validatePayload($payload);
         $user = $this->getProvider()->retrieveByToken(null, $payload);
 
@@ -266,7 +266,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     public function loginUsingId($id, $remember = false)
     {
-        $user = $this->provider->retrieveById($id);
+        $user = $this->getProvider()->retrieveById($id);
         if ($user) {
             $this->login($user);
         }
@@ -303,7 +303,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     {
         try {
             $token = $this->getTokenFromRequest();
-            $this->blacklist->add($this->getTokenizer()->decode($token));
+            $this->getBlacklist()->add($this->getTokenizer()->decode($token));
         } catch (\Exception $e) {
         }
         $this->user = false;
