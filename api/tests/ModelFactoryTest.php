@@ -229,10 +229,8 @@ class ModelFactoryTest extends TestCase
             ->make();
     }
 
-
     public function testMixedPredefinedAndSeededMocks()
     {
-
         $testModel = $this->getFactory()
             ->get(TestEntity::class)
             ->make();
@@ -245,7 +243,6 @@ class ModelFactoryTest extends TestCase
 
         $this->assertContains($testModel, $createdModels->all());
         $this->assertCount(5, $createdModels->all());
-
     }
 
     public function testRandomFromPredefinedCollection()
@@ -263,9 +260,5 @@ class ModelFactoryTest extends TestCase
 
         $this->assertInstanceOf(TestEntity::class, $mock);
         $this->assertContains($mock, $testModels->all());
-
     }
-
-
-
 }
