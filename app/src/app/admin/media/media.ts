@@ -37,7 +37,7 @@ namespace app.admin.media {
                 },
                 data: {
                     title: "Media",
-                    icon: 'description',
+                    icon: 'image',
                     navigation: true,
                     navigationGroup: 'cms',
                     sortAfter: app.admin.articles.namespace,

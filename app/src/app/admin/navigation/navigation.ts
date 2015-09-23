@@ -22,6 +22,8 @@ namespace app.admin.navigation {
             }
         ];
 
+        public collapsed:boolean = false;
+
         static $inject = ['stateHelperService', '$window', 'ngJwtAuthService', '$state', '$rootScope'];
 
         constructor(stateHelperService:common.providers.StateHelperService,

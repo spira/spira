@@ -1,0 +1,26 @@
+
+@adminPrimary: rgb(96,125,139);
+
+div#admin-sidenav {
+    &.collapsed {
+        width: 75px;
+    }
+
+    md-list-item.selected > button {
+        background: @adminPrimary;
+    }
+
+    md-list-item.child-selected > button {
+        background: @adminPrimary;
+    }
+
+}
+
+md-sidenav,
+md-sidenav.md-locked-open,
+md-sidenav.md-closed.md-locked-open-add-active {
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
