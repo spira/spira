@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Mockery as m;
 use Mockery\Mock;
 use Spira\Auth\Blacklist\Blacklist;
@@ -16,7 +24,7 @@ class BlacklistTest extends TestCase
 
         $driver->shouldReceive('add')->with('my_key_value', 110)->once()->andReturnNull();
 
-        $this->assertNull($blacklist->add(['my_key'=>'my_key_value', 'exp_key'=> time()+100]));
+        $this->assertNull($blacklist->add(['my_key' => 'my_key_value', 'exp_key' => time() + 100]));
     }
 
     public function testAddExpPast()
@@ -25,7 +33,7 @@ class BlacklistTest extends TestCase
         $driver = m::mock(StorageInterface::class);
         $blacklist = new Blacklist($driver, 'my_key', 'exp_key');
 
-        $this->assertNull($blacklist->add(['my_key'=>'my_key_value', 'exp_key'=> time()-100]));
+        $this->assertNull($blacklist->add(['my_key' => 'my_key_value', 'exp_key' => time() - 100]));
     }
 
     public function testCheckNoError()
@@ -35,7 +43,7 @@ class BlacklistTest extends TestCase
         $blacklist = new Blacklist($driver, 'my_key', 'exp_key');
         $driver->shouldReceive('get')->with('my_key_value')->once()->andReturnNull();
 
-        $this->assertFalse($blacklist->check(['my_key'=>'my_key_value']));
+        $this->assertFalse($blacklist->check(['my_key' => 'my_key_value']));
     }
 
     public function testCheckExpired()
@@ -45,7 +53,6 @@ class BlacklistTest extends TestCase
         $blacklist = new Blacklist($driver, 'my_key', 'exp_key');
         $driver->shouldReceive('get')->with('my_key_value')->once()->andReturn(true);
         $this->setExpectedException(TokenExpiredException::class, 'Token has expired');
-        $blacklist->check(['my_key'=>'my_key_value']);
+        $blacklist->check(['my_key' => 'my_key_value']);
     }
-
 }

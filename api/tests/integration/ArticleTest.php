@@ -41,7 +41,7 @@ class ArticleTest extends TestCase
     {
         foreach ($articles as $article) {
             $this->getFactory()->get(ArticlePermalink::class)
-                ->count(rand(2, 10))->make()->each(function(ArticlePermalink $permalink) use ($article){
+                ->count(rand(2, 10))->make()->each(function (ArticlePermalink $permalink) use ($article) {
                     $article->articlePermalinks()->save($permalink);
                 });
         }
@@ -55,7 +55,7 @@ class ArticleTest extends TestCase
         foreach ($articles as $article) {
             $uniqueMetas = [];
             $this->getFactory()->get(ArticleMeta::class)
-                ->count(4)->make()->each(function(ArticleMeta $meta) use ($article, &$uniqueMetas){
+                ->count(4)->make()->each(function (ArticleMeta $meta) use ($article, &$uniqueMetas) {
                     if (! in_array($meta->meta_name, $uniqueMetas)) {
                         $article->articleMetas()->save($meta);
                         array_push($uniqueMetas, $meta->meta_name);
@@ -426,7 +426,7 @@ class ArticleTest extends TestCase
         $factory = $this->getFactory();
 
         $entities = array_map(function (ArticleMeta $entity) use ($factory) {
-            return $factory->get(ArticleMeta::class)->setModel($entity)->customize(['meta_content'=>'foobar'])->transformed();
+            return $factory->get(ArticleMeta::class)->setModel($entity)->customize(['meta_content' => 'foobar'])->transformed();
         }, $article->articleMetas->all());
 
         $entities[] = $this->getFactory()->get(ArticleMeta::class)->customize(

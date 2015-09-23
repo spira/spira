@@ -1,7 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
-use Mockery as m;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Auth\Token\TokenInvalidException;
 
@@ -11,13 +17,13 @@ class PayloadValidatorFactoryTest extends TestCase
     {
         $payload = ['one' => true, 'two' => 'two'];
         $closure = [
-            'one' => function($payload){return $payload['one'];}
+            'one' => function ($payload) {return $payload['one'];},
         ];
 
         $factory = new PayloadValidationFactory($closure);
         $this->assertNull($factory->validatePayload($payload));
 
-        $factory->addValidationRule('two',function($payload){return $payload['two'] == 'two';});
+        $factory->addValidationRule('two', function ($payload) {return $payload['two'] == 'two';});
         $this->assertNull($factory->validatePayload($payload));
     }
 
@@ -25,7 +31,7 @@ class PayloadValidatorFactoryTest extends TestCase
     {
         $payload = ['one' => true, 'two' => 'two'];
         $closure = [
-            'one' => function(){return false;}
+            'one' => function () {return false;},
         ];
 
         $factory = new PayloadValidationFactory($closure);
@@ -36,7 +42,7 @@ class PayloadValidatorFactoryTest extends TestCase
     public function testMissingRule()
     {
         $closure = [
-            'three' => function($payload){return true;}
+            'three' => function ($payload) {return true;},
         ];
 
         $factory = new PayloadValidationFactory($closure);

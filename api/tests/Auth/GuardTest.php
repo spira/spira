@@ -23,7 +23,6 @@ use Mockery as m;
 
 class GuardTest extends TestCase
 {
-
     /**
      * @return Guard|Mock
      */
@@ -51,8 +50,6 @@ class GuardTest extends TestCase
         $this->assertEquals($user, $guard->user());
         $this->assertTrue($guard->check());
         $this->assertEquals('token', $guard->token());
-
-
     }
 
     public function testLogout()
@@ -131,7 +128,6 @@ class GuardTest extends TestCase
         $this->assertEquals($user, $result);
     }
 
-
     public function testAttempt_success()
     {
         $provider = m::mock(UserProvider::class);
@@ -198,7 +194,6 @@ class GuardTest extends TestCase
         $this->getGuard()->onceBasic();
     }
 
-
     public function testValidate()
     {
         $this->setExpectedException(NotImplementedException::class, 'Not Implemented.');
@@ -235,7 +230,7 @@ class GuardTest extends TestCase
 
     /**
      * covers getters and setters
-     * also covers tricky generateToken and getUserFromRequest
+     * also covers tricky generateToken and getUserFromRequest.
      */
     public function testRealLife()
     {
@@ -266,13 +261,11 @@ class GuardTest extends TestCase
         $this->assertFalse($gate->check());
         $this->assertNull($gate->user());
         $this->assertNull($gate->token());
-
     }
 }
 
 class FakeGuardTokenizer implements  JWTInterface
 {
-
     public function encode(array $payload)
     {
         return 'token';
@@ -301,7 +294,9 @@ class FakePayloadValidationFactory extends PayloadValidationFactory
 
 class FakeUserProvider extends UserProvider
 {
-    public function __construct(){}
+    public function __construct()
+    {
+    }
 
     public function retrieveByToken($identifier, $token)
     {
@@ -319,7 +314,9 @@ class FakeRequestParser extends RequestParser
 
 class FakeBlacklist extends Blacklist
 {
-    public function __construct(){}
+    public function __construct()
+    {
+    }
 
     public function add($payload)
     {
@@ -329,5 +326,4 @@ class FakeBlacklist extends Blacklist
     {
         return false;
     }
-
 }

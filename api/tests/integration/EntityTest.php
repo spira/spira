@@ -37,7 +37,7 @@ class EntityTest extends TestCase
      */
     protected function addRelatedEntities($model)
     {
-        $this->getFactory()->get(SecondTestEntity::class)->count(5)->make()->each(function($secondEntity) use ($model){
+        $this->getFactory()->get(SecondTestEntity::class)->count(5)->make()->each(function ($secondEntity) use ($model) {
             $model->testMany()->save($secondEntity);
         });
     }
@@ -86,7 +86,7 @@ class EntityTest extends TestCase
     public function testGetAllPaginated()
     {
         $defaultLimit = 10;
-        $this->getFactory()->get(TestEntity::class)->count($defaultLimit+1)->create();
+        $this->getFactory()->get(TestEntity::class)->count($defaultLimit + 1)->create();
         $this->getJson('/test/entities/pages', ['Range' => 'entities=0-']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -100,7 +100,7 @@ class EntityTest extends TestCase
     public function testGetAllPaginatedWithNested()
     {
         $defaultLimit = 10;
-        $this->getFactory()->get(TestEntity::class)->count($defaultLimit+1)->create()->each(function(TestEntity $entity){
+        $this->getFactory()->get(TestEntity::class)->count($defaultLimit + 1)->create()->each(function (TestEntity $entity) {
             $this->addRelatedEntities($entity);
         });
 
@@ -351,7 +351,7 @@ class EntityTest extends TestCase
         $id = $entity->entity_id;
 
         $data = $factory
-            ->customize(['entityId'=> (string) Uuid::uuid4()])
+            ->customize(['entityId' => (string) Uuid::uuid4()])
             ->transformed();
 
         $this->putJson('/test/entities/'.$id, $data);
@@ -368,7 +368,7 @@ class EntityTest extends TestCase
     public function testPutOneNewInvalidId()
     {
         $entity = $this->getFactory()->get(TestEntity::class)
-            ->customize(['entityId'=> 'foobar'])
+            ->customize(['entityId' => 'foobar'])
             ->transformed();
 
         $this->putJson('/test/entities/'.$entity['entityId'], $entity);
@@ -444,7 +444,7 @@ class EntityTest extends TestCase
     {
         $entities = $this->getFactory()->get(TestEntity::class)->count(5)
             ->makeVisible(['hidden'])
-            ->customize(['entity_id'=>'foobar'])
+            ->customize(['entity_id' => 'foobar'])
             ->transformed();
 
         $rowCount = TestEntity::count();
@@ -463,7 +463,7 @@ class EntityTest extends TestCase
     {
         $entities = $this->getFactory()->get(TestEntity::class)->count(5)
             ->makeVisible(['hidden'])
-            ->customize(['multi_word_column_title'=>'foobar'])
+            ->customize(['multi_word_column_title' => 'foobar'])
             ->transformed();
 
         $rowCount = TestEntity::count();
