@@ -75,9 +75,9 @@ class ArticleTest extends TestCase
 
     public function testGetAllPaginated()
     {
-        $entities = $this->getFactory()->get(Article::class)->count(5)->create()->all();
+        $entities = $this->getFactory()->get(Article::class)->count(5)->create();
 
-        $entity = current($entities);
+        $entity = $entities->first();
         $entity->excerpt = null;
         $this->addPermalinksToArticles($entities);
 
@@ -90,7 +90,7 @@ class ArticleTest extends TestCase
         $this->assertNotNull($object[0]->excerpt);
         $this->assertObjectNotHasAttribute('content', $object[0]);
 
-        $this->cleanupDiscussions($entities);
+        $this->cleanupDiscussions($entities->all());
     }
 
     public function testGetOne()
