@@ -17,6 +17,7 @@
     <md-list-item class="md-3-line" ng-repeat="comment in CommentsController.article._comments | orderBy:'-createdAt'">
         <img ng-src="{{ comment._author.avatarImgUrl }}" class="md-avatar" alt="{{ comment._author.username }}" />
         <div class="md-list-item-text" layout="column">
+            <!-- @todo: Investigate why when you add a comment it's time as seen below does not update like the other comments until you have refreshed the page -->
             <h3>{{ comment._author.username }} | {{ comment.createdAt.fromNow() }}</h3>
             <p>{{ comment.body }}</p>
             <p>Share Buttons</p>

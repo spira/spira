@@ -9,7 +9,9 @@ namespace app.guest.articles.article.comments {
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
             CommentsController:CommentsController,
-            $q:ng.IQService;
+            $q:ng.IQService,
+            commentToAddSuccess = common.models.ArticleCommentMock.entity(),
+            commentToAddFailure = common.models.ArticleCommentMock.entity({body:'foobar'});
 
         beforeEach(() => {
 
@@ -22,7 +24,11 @@ namespace app.guest.articles.article.comments {
                 articleService = _articleService_;
                 $q = _$q_;
 
-                notificationService.toast = sinon.stub();
+                let stub = sinon.stub();
+                stub.withArgs(article, commentToAddSuccess).returns($q.when(true));
+                stub.withArgs(article, commentToAddFailure).returns($q.reject());
+
+                articleService.saveComment = stub;
 
                 CommentsController = $controller(app.guest.articles.article.comments.namespace + '.controller', {
                     article: article,
@@ -30,7 +36,17 @@ namespace app.guest.articles.article.comments {
                     articleService: articleService,
                     notificationService: notificationService
                 });
+
+                CommentsController.newCommentForm = global.FormControllerMock.getMock();
             });
+
+            sinon.spy(notificationService, 'toast');
+
+        });
+
+        afterEach(() => {
+
+            (<any>notificationService.toast).restore();
 
         });
 
@@ -48,22 +64,33 @@ namespace app.guest.articles.article.comments {
 
         it('should be able to save a new comment', () => {
 
-            articleService.saveComment = sinon.stub().returns($q.when(true));
-
-            let commentToAdd = common.models.ArticleCommentMock.entity();
-
-            CommentsController.newComment = commentToAdd;
+            CommentsController.newComment = commentToAddSuccess;
 
             CommentsController.save();
 
-            expect(articleService.saveComment).to.be.calledWith(article, commentToAdd);
+            expect(articleService.saveComment).to.be.calledWith(article, commentToAddSuccess);
 
-            expect(CommentsController.newComment).to.not.deep.equal(commentToAdd);
+            $scope.$apply();
 
-            expect(notificationService.toast).to.be.calledOnce;
+            expect(CommentsController.newComment).to.not.deep.equal(commentToAddSuccess);
+
+            expect(notificationService.toast).to.be.calledWithMatch('Comment successfully added');
+
+        });
+
+        it('should show error on save comment fail', () => {
+
+            CommentsController.newComment = commentToAddFailure;
+
+            CommentsController.save();
+
+            expect(articleService.saveComment).to.be.calledWith(article, commentToAddFailure);
+
+            $scope.$apply();
+
+            expect(notificationService.toast).to.be.calledWithMatch('An error has occurred saving your comment, please try again');
 
         });
 
     });
-
 }
