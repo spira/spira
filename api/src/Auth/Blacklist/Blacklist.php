@@ -42,7 +42,7 @@ class Blacklist
     {
         $seconds = null;
         if ($this->exp && isset($payload[$this->exp])) {
-            $exp = Carbon::createFromTimeStampUTC($payload['exp']);
+            $exp = Carbon::createFromTimeStampUTC($payload[$this->exp]);
             if ($exp->isPast()) {
                 return;
             }
@@ -51,7 +51,7 @@ class Blacklist
         }
 
         if (isset($payload[$this->key])) {
-            $this->driver->add($payload[$this->key], $seconds);
+            $this->getDriver()->add($payload[$this->key], $seconds);
         }
     }
 
@@ -63,10 +63,18 @@ class Blacklist
      */
     public function check($payload)
     {
-        if (isset($payload[$this->key]) && $this->driver->get($payload[$this->key])) {
+        if (isset($payload[$this->key]) && $this->getDriver()->get($payload[$this->key])) {
             throw new TokenExpiredException;
         }
 
         return false;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    public function getDriver()
+    {
+        return $this->driver;
     }
 }

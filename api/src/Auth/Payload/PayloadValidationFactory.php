@@ -42,6 +42,7 @@ class PayloadValidationFactory
     /**
      * @param $payload
      * @throw TokenInvalidException
+     * @return null
      */
     public function validatePayload($payload)
     {

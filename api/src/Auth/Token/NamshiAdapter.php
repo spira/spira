@@ -12,7 +12,6 @@ namespace Spira\Auth\Token;
 
 use Exception;
 use Namshi\JOSE\JWS;
-use App\Exceptions\TokenInvalidException;
 
 /**
  * The provided NamshiAdapter in the package can not handle RSA keys, which

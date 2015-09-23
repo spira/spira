@@ -15,11 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use LogicException;
 use Spira\Model\Collection\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
@@ -40,19 +35,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 abstract class BaseModel extends Model
 {
     use UuidTrait;
-    /**
-     * @var Relation[]
-     */
-    protected static $relationsCache = [];
-
-    /**
-     * @var BaseModel[]
-     */
-    protected $deleteStack = [];
-
-    protected $isDeleted = false;
-
-    public $exceptionOnError = true;
 
     public $incrementing = false;
 
@@ -86,19 +68,6 @@ abstract class BaseModel extends Model
      */
     public function setAttribute($key, $value)
     {
-        if (method_exists($this, $key)) {
-            $value = $this->prepareValue($value);
-
-            if ($value !== false) {
-                $models = $this->getRelationValue($key);
-                $this->addPreviousValueToDeleteStack($models);
-                $this->isValueCompatibleWithRelation($key, $value);
-                $this->relations[$key] = $value;
-
-                return;
-            }
-        }
-
         if (in_array($key, $this->getDates()) && $value) {
             if (! $value instanceof Carbon && ! $value instanceof \DateTime) {
                 $value = new Carbon($value);
@@ -109,151 +78,6 @@ abstract class BaseModel extends Model
         }
 
         parent::setAttribute($key, $value);
-    }
-
-    /**
-     * Prepare value for proper assignment.
-     * @param array|Collection|false|BaseModel $value
-     * Can be array, empty array, null, false, Collection or Model
-     * @return null|Collection|BaseModel|false  false on bad value
-     */
-    protected function prepareValue($value)
-    {
-        if (empty($value)) {
-            return;
-        }
-
-        if ($this->isModel($value) || $this->isCollection($value)) {
-            return $value;
-        }
-
-        if (is_array($value)) {
-            $firstModel = current($value);
-            if ($firstModel instanceof self) {
-                return $firstModel->newCollection($value);
-            }
-
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $models
-     */
-    protected function addPreviousValueToDeleteStack($models)
-    {
-        /** @var Collection|BaseModel[] $models */
-        $models = $this->isCollection($models) ? $models->all(true) : [$models];
-        $deleteArray = [];
-        foreach ($models as $model) {
-            if ($model && $model->exists) {
-                $deleteArray[] = $model;
-            }
-        }
-
-        $this->deleteStack = array_merge($this->deleteStack, $deleteArray);
-    }
-
-    /**
-     * Save the model and all of its relationships.
-     *
-     * @return bool
-     * @throws \Exception
-     */
-    public function push()
-    {
-        $this->save();
-
-        // To sync all of the relationships to the database, we will simply spin through
-        // the relationships and save each model via this "push" method, which allows
-        // us to recurse into all of these nested relations for the model instance.
-
-        //we need to differentiate collection saving and single model saving
-        //as they rise different exceptions with different logic
-        //1) thus we need to store those exceptions ($this->relationErrors)
-        //2) we need also to add current error, to errors stack ($this->errors)
-        //
-        //$this->relationErrors for ChildEntity
-        //$this->errors for ParentEntity
-
-        foreach ($this->relations as $key => $models) {
-            $relation = static::$relationsCache[$this->getRelationCacheKey($key)];
-
-            if ($this->isCollection($models)) {
-                /* @var Collection $models */
-                $modelsArray = $models->all(true);
-                foreach (array_filter($modelsArray) as $model) {
-                    /* @var BaseModel $model */
-                    $model->preserveKeys($relation);
-                    $model->push();
-                }
-            } elseif ($models) {
-                /* @var BaseModel $models */
-                $models->preserveKeys($relation);
-                $models->push();
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks relation against value.
-     * @param $method
-     * @param $value
-     * @return bool
-     * @throws SetRelationException
-     */
-    protected function isValueCompatibleWithRelation($method, $value)
-    {
-        if (is_null($value)) {
-            return true;
-        }
-
-        $relation = static::$relationsCache[$this->getRelationCacheKey($method)];
-
-        if ($relation instanceof HasOne || $relation instanceof BelongsTo) {
-            if ($this->isCollection($value)) {
-                throw new SetRelationException('Can not set collection, model expected');
-            }
-        } else {
-            if ($this->isModel($value)) {
-                throw new SetRelationException('Can not set model, collection expected');
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param $value
-     * @return bool
-     */
-    protected function isModel($value)
-    {
-        return $value instanceof self;
-    }
-
-    /**
-     * @param $value
-     * @return bool
-     */
-    protected function isCollection($value)
-    {
-        return $value instanceof Collection;
-    }
-
-    /**
-     * @param Relation $relation
-     */
-    protected function preserveKeys(Relation $relation)
-    {
-        if ($relation instanceof HasOneOrMany) {
-            $fk = str_replace($this->getTable().'.', '', $relation->getForeignKey());
-            $this->attributes[$fk] = $relation->getParentKey();
-        }
     }
 
     /**
@@ -285,54 +109,6 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * @return bool
-     */
-    public function isDeleted()
-    {
-        return $this->isDeleted;
-    }
-
-    /**
-     * Get a relationship value from a method.
-     * Relation cache added.
-     *
-     * @param  string  $method
-     * @return mixed
-     *
-     * @throws \LogicException
-     */
-    protected function getRelationshipFromMethod($method)
-    {
-        $relations = $this->$method();
-
-        if (! $relations instanceof Relation) {
-            throw new LogicException('Relationship method must return an object of type '
-                .'Illuminate\Database\Eloquent\Relations\Relation');
-        } else {
-            static::$relationsCache[$this->getRelationCacheKey($method)] = $relations;
-        }
-
-        return $this->relations[$method] = $relations->getResults();
-    }
-
-    /**
-     * Set the specific relationship in the model.
-     *
-     * @param  string $relationName
-     * @param  mixed $value
-     * @param Relation|null $relation
-     * @return $this
-     */
-    public function setRelation($relationName, $value, $relation = null)
-    {
-        if ($relation instanceof Relation) {
-            static::$relationsCache[$this->getRelationCacheKey($relationName)] = $relation;
-        }
-
-        return parent::setRelation($relationName, $value);
-    }
-
-    /**
      * @param mixed $id
      * @return BaseModel
      * @throws ModelNotFoundException
@@ -340,15 +116,6 @@ abstract class BaseModel extends Model
     public function findByIdentifier($id)
     {
         return $this->findOrFail($id);
-    }
-
-    /**
-     * @param $method
-     * @return string
-     */
-    protected function getRelationCacheKey($method)
-    {
-        return spl_object_hash($this).'_'.$method;
     }
 
     /**
