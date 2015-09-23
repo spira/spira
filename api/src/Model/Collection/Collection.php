@@ -34,28 +34,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         $this->className = $className;
     }
 
-    public function count()
-    {
-        return count(array_filter($this->items, function (BaseModel $item) {
-            return ! $item->isDeleted();
-        }));
-    }
-
-    /**
-     * @param bool $includingMarkedForDeletion
-     * @return array
-     */
-    public function all($includingMarkedForDeletion = false)
-    {
-        if ($includingMarkedForDeletion) {
-            return $this->items;
-        }
-
-        return array_filter($this->items, function (BaseModel $item) {
-            return ! $item->isDeleted();
-        });
-    }
-
     /**
      * Add an item to the collection.
      *
