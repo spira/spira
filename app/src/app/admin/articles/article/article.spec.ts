@@ -1,6 +1,6 @@
 namespace app.admin.articles.article {
 
-    describe.only('Article (Admin)', () => {
+    describe('Article (Admin)', () => {
 
         let article:common.models.Article = common.models.ArticleMock.entity({
                 _articleMetas:[common.models.ArticleMetaMock.entity()]
@@ -10,7 +10,6 @@ namespace app.admin.articles.article {
                 _articleMetas:[common.models.ArticleMetaMock.entity()]
             }),
             notificationService:common.services.notification.NotificationService,
-            article:common.models.Article,
             $q:ng.IQService,
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
@@ -92,11 +91,9 @@ namespace app.admin.articles.article {
 
             $stateParams.permalink = 'foobar';
 
-            let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
+            let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
-            $rootScope.$apply();
-
-            expect(retrievedArticle).eventually.to.be.an.instanceOf(common.models.Article);
+            expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
 
             expect(articleService.getArticle).to.have.been.called;
 
