@@ -47,6 +47,7 @@ class Article extends IndexedModel
      * @var string
      */
     public $table = 'articles';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -63,6 +64,8 @@ class Article extends IndexedModel
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
     ];
+
+    protected $indexNested = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
 
     public static function getValidationRules()
     {
