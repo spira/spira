@@ -18,6 +18,15 @@ abstract class IndexedModel extends BaseModel
 {
     use ElasticquentTrait;
 
+    protected $indexNested = [];
+
+    protected $mappingProperties = array(
+        'title' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        )
+    );
+
     /**
      * Create a new Eloquent Collection instance with ElasticquentCollectionTrait.
      *
