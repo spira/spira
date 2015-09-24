@@ -13,8 +13,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\IndexedModel;
 
-class Tag extends BaseModel
+class Tag extends IndexedModel
 {
     public $table = 'tags';
 

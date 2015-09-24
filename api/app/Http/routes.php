@@ -59,6 +59,7 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
+    $app->get('/', ['uses' => 'App\Http\Controllers\TagController@getAllPaginated', 'as' => \App\Models\Tag::class]);
     $app->get('{id}', ['as' => \App\Models\Tag::class, 'uses' => 'App\Http\Controllers\TagController@getOne']);
     $app->post('/', 'App\Http\Controllers\TagController@postOne');
     $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');
