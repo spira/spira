@@ -10,6 +10,7 @@
 
 namespace App\Services;
 
+use App\Models\ArticleContentPiece;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Validation\Validator;
 
@@ -72,5 +73,17 @@ class SpiraValidator extends Validator
         $supportedRegionCodes = array_pluck(config('regions.supported'), 'code');
 
         return in_array($value, $supportedRegionCodes);
+    }
+
+    /**
+     * Register custom validation rule for article content piece types.
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateContentPieceType($attribute, $value, $parameters)
+    {
+        return in_array($value, ArticleContentPiece::$contentTypes);
     }
 }

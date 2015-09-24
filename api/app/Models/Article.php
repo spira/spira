@@ -209,4 +209,10 @@ class Article extends IndexedModel
     {
         return $this->hasOne(User::class, 'user_id', 'author_id');
     }
+
+    public function contentPieces()
+    {
+        return $this->hasMany(ArticleContentPiece::class);
+    }
+
 }
