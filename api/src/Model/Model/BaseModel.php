@@ -54,11 +54,21 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * @return mixed
+     * Get the table name for the instance
+     * @return string
      */
     public static function getTableName()
     {
         return with(new static())->getTable();
+    }
+
+    /**
+     * Get the primary key name for the instance
+     * @return string
+     */
+    public static function getPrimaryKey()
+    {
+        return with(new static())->getKeyName();
     }
 
     /**
