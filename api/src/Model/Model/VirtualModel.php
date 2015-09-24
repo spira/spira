@@ -8,12 +8,10 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Models\ArticleContent;
+namespace Spira\Model\Model;
 
 
-use Spira\Model\Model\BaseModel;
-
-abstract class ArticleContentBase extends BaseModel
+abstract class VirtualModel extends BaseModel
 {
     public $table = false;
 
@@ -21,9 +19,7 @@ abstract class ArticleContentBase extends BaseModel
 
     public $timestamps = false;
 
-
     public function save($options = []){
-        throw new \LogicException("Cannot save json model");
+        throw new \LogicException("Cannot save virtual model");
     }
-
 }

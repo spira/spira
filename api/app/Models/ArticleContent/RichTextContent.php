@@ -11,7 +11,9 @@
 namespace App\Models\ArticleContent;
 
 
-class RichTextContent extends ArticleContentBase
+use Spira\Model\Model\VirtualModel;
+
+class RichTextContent extends VirtualModel
 {
 
     const CONTENT_TYPE = 'rich_text';

@@ -11,7 +11,9 @@
 namespace App\Models\ArticleContent;
 
 
-class ImageContent extends ArticleContentBase
+use Spira\Model\Model\VirtualModel;
+
+class ImageContent extends VirtualModel
 {
 
     const CONTENT_TYPE = 'image';

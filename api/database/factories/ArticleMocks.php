@@ -8,14 +8,15 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\ArticleContent\BlockquoteContent;
-use App\Models\ArticleContent\ImageContent;
-use App\Models\ArticleContent\RichTextContent;
-use App\Models\ArticleContentPiece;
-use App\Models\Image;
 use App\Models\User;
+use App\Models\Image;
 use Illuminate\Support\Str;
+use App\Models\ArticleContentPiece;
 use Spira\Model\Collection\Collection;
+use App\Models\ArticleContent\ImageContent;
+use App\Models\ArticleContentPiecesDisplay;
+use App\Models\ArticleContent\RichTextContent;
+use App\Models\ArticleContent\BlockquoteContent;
 
 
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
@@ -104,6 +105,12 @@ $factory->define(ArticleContentPiece::class, function (\Faker\Generator $faker) 
         'content' => factory($className)->make(),
     ];
 
+});
+
+$factory->define(ArticleContentPiecesDisplay::class, function (\Faker\Generator $faker) {
+    return [
+        'sort_order' => []
+    ];
 });
 
 $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator $faker) {

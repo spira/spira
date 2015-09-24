@@ -8,15 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Models\ArticleContent;
+namespace App\Models;
 
 
 use Spira\Model\Model\VirtualModel;
 
-class BlockquoteContent extends VirtualModel
+class ArticleContentPiecesDisplay extends VirtualModel
 {
-
-    const CONTENT_TYPE = 'blockquote';
 
     /**
      * The attributes that are mass assignable.
@@ -24,13 +22,11 @@ class BlockquoteContent extends VirtualModel
      * @var array
      */
     protected $fillable = [
-        'body',
-        'author'
+        'sort_order',
     ];
 
     protected static $validationRules = [
-        'body' => 'required|text',
-        'author' => 'required|string',
+        'sort_order' => 'required|array',
     ];
 
 

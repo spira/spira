@@ -60,8 +60,8 @@ class EloquentModelTransformer extends BaseTransformer
         foreach ($array as $key => $value) {
 
             // Handle snakecase conversion in sub arrays
-            if (is_array($value)) {
-                $value = $this->renameKeys($value);
+            if (is_array($value) || is_object($value)) {
+                $value = $this->renameKeys((array) $value);
                 $array[$key] = $value;
             }
 
@@ -160,7 +160,7 @@ class EloquentModelTransformer extends BaseTransformer
         foreach ($array as $key => $value) {
 
             // Recursively check if the value is an array that needs parsing too
-            $value = (is_array($value)) ? $this->renameKeys($value) : $value;
+            $value = (is_array($value) || is_object($value)) ? $this->renameKeys((array) $value) : $value;
 
             // Convert snake_case to camelCase
             if (is_string($key) && str_contains($key, '_')) {

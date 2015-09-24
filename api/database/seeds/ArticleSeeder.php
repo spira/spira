@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\ArticleContentPiece;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Image;
@@ -17,6 +16,8 @@ use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
+use App\Models\ArticleContentPiece;
+use App\Models\ArticleContentPiecesDisplay;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleSeeder extends BaseSeeder
@@ -41,12 +42,14 @@ class ArticleSeeder extends BaseSeeder
                 $contentPieces = factory(ArticleContentPiece::class, rand(2, 8))->make();
                 $article->contentPieces()->saveMany($contentPieces);
 
-//                $article->content_pieces_display = [
-//                    'sort_order' => array_map(function(ArticleContentPiece $contentPiece){
-//                        return $contentPiece->getKey();
-//                    }, $contentPieces->all()),
-//                ];
-//                $article->save();
+                $article->content_pieces_display = factory(ArticleContentPiecesDisplay::class)
+                    ->make([
+                        'sort_order' => array_map(function(ArticleContentPiece $contentPiece){
+                            return $contentPiece->getKey();
+                        }, $contentPieces->all()),
+                    ]);
+
+                $article->save();
 
                 //add a meta tag
                 $article->articleMetas()->save(factory(ArticleMeta::class)->make());
