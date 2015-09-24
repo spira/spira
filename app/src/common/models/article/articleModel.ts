@@ -6,7 +6,8 @@ namespace common.models {
         protected __nestedEntityMap:INestedEntityMap = {
             tags: Tag,
             author: User,
-            articleMetas: this.hydrateMetaCollectionFromTemplate
+            articleMetas: this.hydrateMetaCollectionFromTemplate,
+            comments: ArticleComment
         };
 
         public articleId:string = undefined;
@@ -23,6 +24,7 @@ namespace common.models {
         public _articleMetas:common.models.ArticleMeta[] = [];
         public _author:common.models.User = undefined;
         public _tags:common.models.Tag[] = [];
+        public _comments:common.models.ArticleComment[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'

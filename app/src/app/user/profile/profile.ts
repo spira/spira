@@ -111,12 +111,13 @@ namespace app.user.profile {
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public fullUserInfo:common.models.User,
-            private regions:global.ISupportedRegion[],
             public genderOptions:common.models.IGenderOption[],
+            private regions:global.ISupportedRegion[],
             private authService:common.services.auth.AuthService,
             public providerTypes:string[],
             private $location:ng.ILocationService
         ) {
+
             if (this.emailConfirmed) {
                 let updatedUser = userService.getAuthUser();
 

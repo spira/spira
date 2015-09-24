@@ -86,7 +86,7 @@ namespace app.guest.articles {
     }
 
     angular.module(namespace, [
-            'app.guest.articles.post'
+            'app.guest.articles.article'
         ])
         .config(ArticlesConfig)
         .controller(namespace+'.controller', ArticlesController);
