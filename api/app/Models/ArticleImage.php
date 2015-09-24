@@ -14,7 +14,7 @@ use Spira\Model\Model\BaseModel;
 
 class ArticleImage extends BaseModel
 {
-    public $table = 'article_image';
+    public $table = 'article_images';
 
     protected $primaryKey = 'article_image_id';
 

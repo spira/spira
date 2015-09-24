@@ -16,17 +16,21 @@ class CreateArticleContentPiecesTable extends Migration
     public function up()
     {
         Schema::create(ArticleContentPiece::getTableName(), function (Blueprint $table) {
-            $table->uuid(ArticleContentPiece::getPrimaryKey());
-            $table->uuid('article_id')->unique();
 
-            $table->primary(['content_piece_id','article_id']);
+            $pk = ArticleContentPiece::getPrimaryKey();
+            $articleFk = Article::getPrimaryKey();
 
-            $table->foreign('article_id')
-                ->references('article_id')->on(Article::getTableName())
+            $table->uuid($pk);
+            $table->uuid($articleFk);
+
+            $table->primary([$pk,$articleFk]);
+
+            $table->foreign($articleFk)
+                ->references($articleFk)->on(Article::getTableName())
                 ->onDelete('cascade');
 
             $table->json('content');
-            $table->enum('type', ArticleContentPiece::contentTypes);
+            $table->enum('type', ArticleContentPiece::getContentTypes());
             $table->timestamps();
 
         });
@@ -39,6 +43,6 @@ class CreateArticleContentPiecesTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop(ArticleContentPiece::getTableName());
     }
 }

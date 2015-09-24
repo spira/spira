@@ -52,7 +52,18 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id', 'author_display', 'show_author_promo', 'first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id',
+        'title',
+        'excerpt',
+        'permalink',
+        'author_id',
+        'author_display',
+        'show_author_promo',
+        'first_published',
+        'content_piece_display',
+        'primaryImage',
+        'status'
+    ];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -69,11 +80,11 @@ class Article extends IndexedModel
         return [
             'article_id' => 'required|uuid',
             'title' => 'required|string',
-            'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink',
+            'content_pieces_display' => 'array',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
@@ -83,7 +94,7 @@ class Article extends IndexedModel
      *
      * Saving permalink to history
      */
-    protected static function boot()
+    public static function boot()
     {
         parent::boot();
         static::saving(function (Article $model) {
@@ -148,6 +159,19 @@ class Article extends IndexedModel
         } else {
             $this->attributes['permalink'] = null;
         }
+    }
+
+    /**
+     * Parse the json string
+     * @param $content
+     * @return mixed
+     */
+    public function getContentPiecesDisplayAttribute($content)
+    {
+        if (is_string($content)){
+            return json_decode($content);
+        }
+        return $content;
     }
 
     /**

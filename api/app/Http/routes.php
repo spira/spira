@@ -12,6 +12,11 @@ use Laravel\Lumen\Application;
 
 $app->get('/', 'ApiaryController@index');
 
+$app->get('/factory', function(){
+
+    return factory(\App\Models\ArticleContentPiece::class)->make();
+});
+
 $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
 
 $app->get('timezones', 'TimezoneController@getAll');

@@ -84,6 +84,6 @@ class SpiraValidator extends Validator
      */
     protected function validateContentPieceType($attribute, $value, $parameters)
     {
-        return in_array($value, ArticleContentPiece::$contentTypes);
+        return in_array($value, ArticleContentPiece::getContentTypes());
     }
 }

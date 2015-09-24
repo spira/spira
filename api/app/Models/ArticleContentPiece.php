@@ -10,25 +10,18 @@
 
 namespace App\Models;
 
+use App\Models\ArticleContent\BlockquoteContent;
+use App\Models\ArticleContent\ImageContent;
+use App\Models\ArticleContent\RichTextContent;
 use Spira\Model\Model\BaseModel;
 
 class ArticleContentPiece extends BaseModel
 {
-    public $table = 'article_content_piece';
+    public $table = 'article_content_pieces';
 
     protected $primaryKey = 'article_content_piece_id';
 
     public $timestamps = true;
-
-    const CONTENT_TYPE_RICH_TEXT = 'rich_text';
-    const CONTENT_TYPE_IMAGE = 'image';
-    const CONTENT_TYPE_BLOCKQUOTE = 'blockquote';
-
-    public static $contentTypes = [
-        self::CONTENT_TYPE_RICH_TEXT,
-        self::CONTENT_TYPE_IMAGE,
-        self::CONTENT_TYPE_BLOCKQUOTE,
-    ];
 
     /**
      * The attributes that are mass assignable.
@@ -45,9 +38,31 @@ class ArticleContentPiece extends BaseModel
     protected static $validationRules = [
         'article_content_piece_id' => 'required|uuid',
         'article_id' => 'required|uuid',
-        'content' => 'required|json',
+        'content' => 'required|array',
         'type' => 'required|content_piece_type',
     ];
+
+    public static function getContentTypes()
+    {
+        return [
+            RichTextContent::CONTENT_TYPE,
+            BlockquoteContent::CONTENT_TYPE,
+            ImageContent::CONTENT_TYPE,
+        ];
+    }
+
+    /**
+     * Parse the json string
+     * @param $content
+     * @return mixed
+     */
+    public function getContentAttribute($content)
+    {
+        if (is_string($content)){
+            return json_decode($content);
+        }
+        return $content;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
