@@ -11,7 +11,13 @@ namespace common.models {
             hydrate: this.hydrateFunction
         };
 
+        protected __attributeCastMap:IAttributeCastMap = {
+            bar: sinon.stub().returns('bar')
+        };
+
         public foo:string = undefined;
+        public bar:string = undefined;
+        public foobar:string = undefined;
         public _hasOne:TestChildModel;
         public _hasMany:TestChildModel[];
         public _hydrate:TestChildModel[];
@@ -89,7 +95,9 @@ namespace common.models {
             }, false);
 
             expect(model.getAttributes()).to.deep.equal({
-                foo:'bar'
+                foo: 'bar',
+                bar: undefined,
+                foobar: undefined
             });
 
         });
@@ -103,6 +111,8 @@ namespace common.models {
 
             expect(model.getAttributes(true)).to.deep.equal({
                 foo: 'bar',
+                bar: undefined,
+                foobar: undefined,
                 _hydrate : ['foobar'],
                 _hasOne: null,
                 _hasMany: null,
@@ -134,6 +144,19 @@ namespace common.models {
             let uuid:string = TestModel.generateUUID();
 
             expect(uuid.length).to.equal(36);
+
+        });
+
+        it('should run functions in the attribute cast map', () => {
+
+            let model = new TestModel({
+                bar:'foobar',
+                foobar:'foobar'
+            });
+
+            expect(model.bar).to.equal('bar');
+
+            expect(model.foobar).to.equal('foobar');
 
         });
 

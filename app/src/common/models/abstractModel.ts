@@ -23,9 +23,18 @@ namespace common.models {
         [key:string] : IModelClass | IHydrateFunction;
     }
 
+    export interface IAttributeCastFunction {
+        (value:any):any;
+    }
+
+    export interface IAttributeCastMap {
+        [key:string] : IAttributeCastFunction;
+    }
+
     export abstract class AbstractModel implements IModel {
 
         protected __nestedEntityMap:INestedEntityMap;
+        protected __attributeCastMap:IAttributeCastMap;
         private __exists:boolean;
 
         constructor(data?:any, exists:boolean = false) {
@@ -45,13 +54,40 @@ namespace common.models {
          */
         protected hydrate(data:any, exists:boolean) {
             if (_.isObject(data)) {
-                _.assign(this, data);
+
+                _.transform(data, (model, value, key) => {
+
+                    if(_.has(this.__attributeCastMap, key)) {
+                        model[key] = this.__attributeCastMap[key](value);
+                    } else {
+                        model[key] = value;
+                    }
+
+                }, this);
 
                 if (_.size(this.__nestedEntityMap) > 1) {
                     this.hydrateNested(data, exists);
                 }
             }
 
+        }
+
+        /**
+         * Converts a date time
+         * @param value
+         * @returns {Date}
+         */
+        protected castDate(value:string):Date {
+            return moment(value).toDate();
+        }
+
+        /**
+         * Converts a moment object
+         * @param value
+         * @returns {Moment}
+         */
+        protected castMoment(value:string):moment.Moment {
+            return moment(value);
         }
 
         /**

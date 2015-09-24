@@ -177,7 +177,7 @@ class Article extends IndexedModel
     /**
      * Get comment relationship.
      *
-     * @return ArticleComment
+     * @return ArticleDiscussion
      */
     public function comments()
     {

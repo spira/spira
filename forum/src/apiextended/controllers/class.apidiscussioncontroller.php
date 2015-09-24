@@ -24,7 +24,7 @@ class ApiDiscussionController extends DiscussionController
     public function getByForeignId($foreignId = '', $page = '', $perPage = 10)
     {
         if (! $this->isValidUuid($foreignId)) {
-            throw new Gdn_UserException('Bad Request', 400);
+            throw new Gdn_UserException("Invalid UUID (`$foreignId` given)", 400);
         }
 
         if (! array_key_exists('Discussion', $this->Data)) {
@@ -57,7 +57,7 @@ class ApiDiscussionController extends DiscussionController
     public function deleteByForeignId($foreignId = '')
     {
         if (! $this->isValidUuid($foreignId)) {
-            throw new Gdn_UserException('Bad Request', 400);
+            throw new Gdn_UserException("Invalid UUID (`$foreignId` given)", 400);
         }
 
         $discussion = $this->DiscussionModel->getForeignID($foreignId);
