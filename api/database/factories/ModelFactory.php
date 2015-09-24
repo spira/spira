@@ -27,12 +27,6 @@ $factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker
     ];
 });
 
-$factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use ($factory) {
-    $testEntity = $factory->raw(App\Models\TestEntity::class);
-
-    return array_merge($testEntity, ['varchar' => 'custom']);
-});
-
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'user_id' => $faker->uuid,
@@ -62,12 +56,6 @@ $factory->define(App\Models\UserProfile::class, function (\Faker\Generator $fake
         'instagram' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
         'website' => $faker->boolean() ? substr($faker->url(), 0, 100) : null,
     ];
-});
-
-$factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($factory) {
-    $user = $factory->raw(App\Models\User::class);
-
-    return array_merge($user, ['userType' => App\Models\User::USER_TYPE_ADMIN]);
 });
 
 $factory->define(App\Models\UserCredential::class, function ($faker) {
