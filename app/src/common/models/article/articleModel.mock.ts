@@ -20,6 +20,9 @@ namespace common.models {
                 authorId: seededChance.guid(),
                 authorDisplay: seededChance.bool(),
                 showAuthorPromo: seededChance.bool(),
+                _articleMetas: [],
+                _tags: [],
+                _comments: []
             };
 
         }

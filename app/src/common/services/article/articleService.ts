@@ -104,7 +104,6 @@ namespace common.services.article {
 
             return this.ngRestAdapter.post('/articles/' + article.articleId + '/comments', comment)
                 .then(() => {
-                    article._comments.push(comment);
                     return comment;
                 });
         }

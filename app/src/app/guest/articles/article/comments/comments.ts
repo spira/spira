@@ -26,7 +26,8 @@ namespace app.guest.articles.article.comments {
         public save() {
 
             this.articleService.saveComment(this.article, this.newComment)
-                .then(() => {
+                .then((comment) => {
+                    this.article._comments.push(comment);
                     this.newComment = new common.models.ArticleComment({_author:this.user});
                     this.newCommentForm.$setPristine();
                     this.newCommentForm.$setUntouched();

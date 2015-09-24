@@ -55,6 +55,7 @@ class ArticleSeeder extends BaseSeeder
                         } catch (HttpException $e) {
                             echo 'Caught exception'.get_class($e).' : '.$e->getMessage()."\n\n"; //@todo resolve why this occurs
                             // Likely not to do with the content of the comment as it still occurs in a random fashion when the same 5 comments are added to all articles
+                            // Likely not to do with rate limiting as I placed a usleep(1000000); in the try block above and it still threw bad request errors
                             echo 'Comment: '.json_encode($comment->toArray())."\n\n";
                         }
                     });
