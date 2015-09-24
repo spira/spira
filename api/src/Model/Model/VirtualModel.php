@@ -10,7 +10,16 @@
 
 namespace Spira\Model\Model;
 
-class DataModel extends VirtualModel
+
+abstract class VirtualModel extends BaseModel
 {
-    protected static $unguarded = true;
+    public $table = false;
+
+    protected $primaryKey = false;
+
+    public $timestamps = false;
+
+    public function save($options = []){
+        throw new \LogicException("Cannot save virtual model");
+    }
 }
