@@ -22,4 +22,13 @@ abstract class VirtualModel extends BaseModel
     public function save($options = []){
         throw new \LogicException("Cannot save virtual model");
     }
+
+    public function getKey()
+    {
+        if (!$this->getKeyName()){
+            throw new \InvalidArgumentException("Virtual model doesn't have a primary key");
+        }
+        return parent::getKey();
+    }
+
 }

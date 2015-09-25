@@ -1,0 +1,44 @@
+## Article Meta [/articles/{articleId}/meta]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's meta data [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleMeta::class)
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Bulk create/update article meta data [PUT]
+
+#### Restrictions
+* Allowed - [admin, self]
+
++ Request
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleMeta::class)
+                    ->count(3)
+                    ->json()
+            !!}
+
++ Response 201
+
+## Article Meta Entity [/articles/{articleId}/meta/{metaName}]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+    + metaName (required, string, `twitter`) ... Meta data name
+
+### DELETE article's meta data single record [DELETE]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Response 204
+
