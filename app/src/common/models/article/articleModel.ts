@@ -8,7 +8,7 @@ namespace common.models {
             _author: User,
             _articleMetas: this.hydrateMetaCollectionFromTemplate,
             _comments: ArticleComment,
-            _contentPieces: contentPieces.ContentPiece,
+            _sections: sections.Section,
         };
 
         public articleId:string = undefined;
@@ -22,7 +22,7 @@ namespace common.models {
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
 
-        public _contentPieces:contentPieces.ContentPiece[] = [];
+        public _sections:sections.Section[] = [];
         public _articleMetas:ArticleMeta[] = [];
         public _author:User = undefined;
         public _tags:Tag[] = [];

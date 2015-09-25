@@ -14,7 +14,7 @@ $app->get('/', 'ApiaryController@index');
 
 $app->get('/factory', function(){
 
-    return factory(\App\Models\ArticleContentPiece::class)->make();
+    return factory(\App\Models\ArticleSection::class)->make();
 });
 
 $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');

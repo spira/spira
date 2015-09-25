@@ -1,7 +1,7 @@
-namespace common.models.contentPieces {
+namespace common.models.sections {
 
     @common.decorators.changeAware
-    export class ContentPiece extends AbstractModel {
+    export class Section extends AbstractModel {
 
         protected __attributeCastMap:IAttributeCastMap = {
             createdAt: this.castMoment,
@@ -9,10 +9,10 @@ namespace common.models.contentPieces {
         };
 
         protected __nestedEntityMap:INestedEntityMap = {
-            content: this.hydrateContentPieceType,
+            content: this.hydrateSection,
         };
 
-        public articleContentPieceId:string;
+        public articleSectionId:string;
         public articleId:string;
         public content:RichText|Blockquote|Image;
         public type:string;
@@ -26,7 +26,7 @@ namespace common.models.contentPieces {
         }
 
 
-        private hydrateContentPieceType(data:any, exists:boolean):RichText|Blockquote|Image {
+        private hydrateSection(data:any, exists:boolean):RichText|Blockquote|Image {
 
             switch(data.type){
                 case 'rich_text':

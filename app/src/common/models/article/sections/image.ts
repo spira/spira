@@ -1,4 +1,4 @@
-namespace common.models.contentPieces {
+namespace common.models.sections {
 
     export interface IImageContent{
         _image:common.models.Image;

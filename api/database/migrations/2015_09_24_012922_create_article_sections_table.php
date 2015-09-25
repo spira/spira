@@ -1,12 +1,12 @@
 <?php
 
 use App\Models\Article;
-use App\Models\ArticleContentPiece;
+use App\Models\ArticleSection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArticleContentPiecesTable extends Migration
+class CreateArticleSectionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,9 +15,9 @@ class CreateArticleContentPiecesTable extends Migration
      */
     public function up()
     {
-        Schema::create(ArticleContentPiece::getTableName(), function (Blueprint $table) {
+        Schema::create(ArticleSection::getTableName(), function (Blueprint $table) {
 
-            $pk = ArticleContentPiece::getPrimaryKey();
+            $pk = ArticleSection::getPrimaryKey();
             $articleFk = Article::getPrimaryKey();
 
             $table->uuid($pk);
@@ -30,7 +30,7 @@ class CreateArticleContentPiecesTable extends Migration
                 ->onDelete('cascade');
 
             $table->json('content');
-            $table->enum('type', ArticleContentPiece::getContentTypes());
+            $table->enum('type', ArticleSection::getContentTypes());
             $table->timestamps();
 
         });
@@ -43,6 +43,6 @@ class CreateArticleContentPiecesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(ArticleContentPiece::getTableName());
+        Schema::drop(ArticleSection::getTableName());
     }
 }

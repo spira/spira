@@ -34,7 +34,7 @@ class CreateArticlesTable extends Migration
             $table->boolean('author_display')->default(true);
             $table->boolean('show_author_promo')->default(false);
             $table->dateTime('first_published')->nullable();
-            $table->json('content_pieces_display')->nullable();
+            $table->json('sections_display')->nullable();
 
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();

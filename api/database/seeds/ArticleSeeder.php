@@ -16,8 +16,8 @@ use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
-use App\Models\ArticleContentPiece;
-use App\Models\ArticleContentPiecesDisplay;
+use App\Models\ArticleSection;
+use App\Models\ArticleSectionsDisplay;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleSeeder extends BaseSeeder
@@ -37,16 +37,15 @@ class ArticleSeeder extends BaseSeeder
             ->create()
             ->each(function (Article $article) use ($images, $users) {
 
-                //add content pieces
+                //add sections
+                $sections = factory(ArticleSection::class, rand(2, 8))->make();
+                $article->sections()->saveMany($sections);
 
-                $contentPieces = factory(ArticleContentPiece::class, rand(2, 8))->make();
-                $article->contentPieces()->saveMany($contentPieces);
-
-                $article->content_pieces_display = factory(ArticleContentPiecesDisplay::class)
+                $article->sections_display = factory(ArticleSectionsDisplay::class)
                     ->make([
-                        'sort_order' => array_map(function(ArticleContentPiece $contentPiece){
+                        'sort_order' => array_map(function(ArticleSection $contentPiece){
                             return $contentPiece->getKey();
-                        }, $contentPieces->all()),
+                        }, $sections->all()),
                     ]);
 
                 $article->save();

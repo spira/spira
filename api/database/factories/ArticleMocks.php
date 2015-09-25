@@ -11,12 +11,12 @@
 use App\Models\User;
 use App\Models\Image;
 use Illuminate\Support\Str;
-use App\Models\ArticleContentPiece;
+use App\Models\ArticleSection;
 use Spira\Model\Collection\Collection;
-use App\Models\ArticleContent\ImageContent;
-use App\Models\ArticleContentPiecesDisplay;
-use App\Models\ArticleContent\RichTextContent;
-use App\Models\ArticleContent\BlockquoteContent;
+use App\Models\ArticleSections\ImageContent;
+use App\Models\ArticleSectionsDisplay;
+use App\Models\ArticleSections\RichTextContent;
+use App\Models\ArticleSections\BlockquoteContent;
 
 
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
@@ -83,9 +83,9 @@ $factory->define(ImageContent::class, function (\Faker\Generator $faker) {
 
 });
 
-$factory->define(ArticleContentPiece::class, function (\Faker\Generator $faker) {
+$factory->define(ArticleSection::class, function (\Faker\Generator $faker) {
 
-    $type = $faker->randomElement(ArticleContentPiece::getContentTypes());
+    $type = $faker->randomElement(ArticleSection::getContentTypes());
     $className = null;
 
     switch($type){
@@ -107,7 +107,7 @@ $factory->define(ArticleContentPiece::class, function (\Faker\Generator $faker) 
 
 });
 
-$factory->define(ArticleContentPiecesDisplay::class, function (\Faker\Generator $faker) {
+$factory->define(ArticleSectionsDisplay::class, function (\Faker\Generator $faker) {
     return [
         'sort_order' => []
     ];

@@ -10,16 +10,16 @@
 
 namespace App\Models;
 
-use App\Models\ArticleContent\BlockquoteContent;
-use App\Models\ArticleContent\ImageContent;
-use App\Models\ArticleContent\RichTextContent;
+use App\Models\ArticleSections\BlockquoteContent;
+use App\Models\ArticleSections\ImageContent;
+use App\Models\ArticleSections\RichTextContent;
 use Spira\Model\Model\BaseModel;
 
-class ArticleContentPiece extends BaseModel
+class ArticleSection extends BaseModel
 {
-    public $table = 'article_content_pieces';
+    public $table = 'article_sections';
 
-    protected $primaryKey = 'article_content_piece_id';
+    protected $primaryKey = 'article_section_id';
 
     public $timestamps = true;
 
@@ -29,17 +29,17 @@ class ArticleContentPiece extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'article_content_piece_id',
+        'article_section_id',
         'article_id',
         'content',
         'type',
     ];
 
     protected static $validationRules = [
-        'article_content_piece_id' => 'required|uuid',
+        'article_section_id' => 'required|uuid',
         'article_id' => 'required|uuid',
         'content' => 'required|array',
-        'type' => 'required|content_piece_type',
+        'type' => 'required|section_type',
     ];
 
     public static function getContentTypes()

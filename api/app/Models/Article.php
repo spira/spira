@@ -60,7 +60,7 @@ class Article extends IndexedModel
         'author_display',
         'show_author_promo',
         'first_published',
-        'content_piece_display',
+        'section_display',
         'primaryImage',
         'status'
     ];
@@ -84,7 +84,7 @@ class Article extends IndexedModel
             'primaryImage' => 'string',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink',
-            'content_pieces_display' => 'array',
+            'sections_display' => 'array',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
@@ -166,7 +166,7 @@ class Article extends IndexedModel
      * @param $content
      * @return mixed
      */
-    public function getContentPiecesDisplayAttribute($content)
+    public function getSectionsDisplayAttribute($content)
     {
         if (is_string($content)){
             return json_decode($content);
@@ -234,9 +234,9 @@ class Article extends IndexedModel
         return $this->hasOne(User::class, 'user_id', 'author_id');
     }
 
-    public function contentPieces()
+    public function sections()
     {
-        return $this->hasMany(ArticleContentPiece::class);
+        return $this->hasMany(ArticleSection::class);
     }
 
 }
