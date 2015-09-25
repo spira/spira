@@ -117,7 +117,6 @@ class ArticleTest extends TestCase
         $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
 
         $this->assertTrue(is_string($object->title));
-        $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
 
         $this->cleanupDiscussions([$entity]);
@@ -173,7 +172,6 @@ class ArticleTest extends TestCase
         $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
 
         $this->assertTrue(is_string($object->title));
-        $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
 
         $this->cleanupDiscussions([$entity]);
@@ -202,7 +200,6 @@ class ArticleTest extends TestCase
         $this->assertTrue(strlen($object->articleId) === 36, 'UUID has 36 chars');
 
         $this->assertTrue(is_string($object->title));
-        $this->assertTrue(is_string($object->content));
         $this->assertTrue(is_string($object->permalink) || is_null($object->permalink));
 
         $this->cleanupDiscussions([$entity]);

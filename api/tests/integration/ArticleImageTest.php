@@ -145,18 +145,4 @@ class ArticleImageTest extends TestCase
         $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
 
-    public function testGetManyImages()
-    {
-        $article = $this->getFactory()->get(Article::class)->create();
-        $this->addImagesToArticle($article);
-
-        $this->getJson('/articles/'.$article->article_id, ['With-Nested' => 'images']);
-        $object = json_decode($this->response->getContent());
-
-        $this->assertResponseStatus(200);
-        $this->shouldReturnJson();
-
-        $this->assertObjectHasAttribute('_images', $object);
-        $this->assertCount(5, $object->_images);
-    }
 }

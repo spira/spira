@@ -221,14 +221,6 @@ class Article extends IndexedModel
         return $this->hasMany(ArticleImage::class);
     }
 
-    /**
-     * @return HasManyThrough
-     */
-    public function images()
-    {
-        return $this->belongsToMany(Image::class);
-    }
-
     public function author()
     {
         return $this->hasOne(User::class, 'user_id', 'author_id');
