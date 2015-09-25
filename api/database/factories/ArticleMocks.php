@@ -18,7 +18,6 @@ use App\Models\ArticleSectionsDisplay;
 use App\Models\ArticleSections\RichTextContent;
 use App\Models\ArticleSections\BlockquoteContent;
 
-
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 
     /** @var Collection $users */
@@ -66,15 +65,14 @@ $factory->define(BlockquoteContent::class, function (\Faker\Generator $faker) {
 
 $factory->define(ImageContent::class, function (\Faker\Generator $faker) {
 
-
-    if ($faker->boolean()){
+    if ($faker->boolean()) {
         $images = new Collection([Image::all()->random()]);
-    }else{
+    } else {
         $images = Image::all()->random(rand(2, 5));
     }
 
     return [
-        'images' => array_map(function(Image $image) use ($faker){
+        'images' => array_map(function (Image $image) use ($faker) {
             return [
                 '_image' => $image->toArray(),
                 'caption' => $faker->optional()->sentence(),
@@ -90,7 +88,7 @@ $factory->define(ArticleSection::class, function (\Faker\Generator $faker) {
     $type = $faker->randomElement(ArticleSection::getContentTypes());
     $className = null;
 
-    switch($type){
+    switch ($type) {
         case RichTextContent::CONTENT_TYPE:
             $className = RichTextContent::class;
         break;
@@ -111,7 +109,7 @@ $factory->define(ArticleSection::class, function (\Faker\Generator $faker) {
 
 $factory->define(ArticleSectionsDisplay::class, function (\Faker\Generator $faker) {
     return [
-        'sort_order' => []
+        'sort_order' => [],
     ];
 });
 

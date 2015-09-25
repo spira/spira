@@ -12,7 +12,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
@@ -62,7 +61,7 @@ class Article extends IndexedModel
         'first_published',
         'section_display',
         'primaryImage',
-        'status'
+        'status',
     ];
 
     protected $hidden = ['permalinks','metas'];
@@ -162,15 +161,16 @@ class Article extends IndexedModel
     }
 
     /**
-     * Parse the json string
+     * Parse the json string.
      * @param $content
      * @return mixed
      */
     public function getSectionsDisplayAttribute($content)
     {
-        if (is_string($content)){
+        if (is_string($content)) {
             return json_decode($content);
         }
+
         return $content;
     }
 
@@ -230,5 +230,4 @@ class Article extends IndexedModel
     {
         return $this->hasMany(ArticleSection::class);
     }
-
 }

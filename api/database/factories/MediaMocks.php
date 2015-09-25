@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-
 $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
     return [
             'image_id' => $faker->uuid,
@@ -20,4 +19,3 @@ $factory->define(App\Models\Image::class, function (\Faker\Generator $faker) {
             'title' => $faker->optional()->sentence,
     ];
 });
-
