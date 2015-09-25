@@ -79,6 +79,10 @@ abstract class IndexedModel extends BaseModel
 
     public function getIndexDocumentData()
     {
+        if(!empty($this->indexNested)) {
+            $this->load($this->indexNested);
+        }
+
         $modelArray = $this->toArray();
 
         foreach ($modelArray as $attribute => &$value) {
