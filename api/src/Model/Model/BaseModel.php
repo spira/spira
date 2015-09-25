@@ -54,7 +54,7 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * Get the table name for the instance
+     * Get the table name for the instance.
      * @return string
      */
     public static function getTableName()
@@ -63,7 +63,7 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * Get the primary key name for the instance
+     * Get the primary key name for the instance.
      * @return string
      */
     public static function getPrimaryKey()

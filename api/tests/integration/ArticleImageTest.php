@@ -144,5 +144,4 @@ class ArticleImageTest extends TestCase
         $this->assertResponseHasNoContent();
         $this->assertEquals($childCount - 5, Article::find($article->article_id)->articleImages->count());
     }
-
 }

@@ -10,12 +10,10 @@
 
 namespace App\Models\ArticleSections;
 
-
 use Spira\Model\Model\VirtualModel;
 
 class BlockquoteContent extends VirtualModel
 {
-
     const CONTENT_TYPE = 'blockquote';
 
     /**
@@ -25,13 +23,11 @@ class BlockquoteContent extends VirtualModel
      */
     protected $fillable = [
         'body',
-        'author'
+        'author',
     ];
 
     protected static $validationRules = [
         'body' => 'required|text',
         'author' => 'required|string',
     ];
-
-
 }

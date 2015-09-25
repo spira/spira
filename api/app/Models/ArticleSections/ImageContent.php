@@ -10,12 +10,10 @@
 
 namespace App\Models\ArticleSections;
 
-
 use Spira\Model\Model\VirtualModel;
 
 class ImageContent extends VirtualModel
 {
-
     const CONTENT_TYPE = 'image';
 
     /**
@@ -30,6 +28,4 @@ class ImageContent extends VirtualModel
     protected static $validationRules = [
         'images' => 'required|array',
     ];
-
-
 }
