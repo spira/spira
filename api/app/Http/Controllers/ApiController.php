@@ -10,14 +10,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\BadRequestException;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
+use Spira\Model\Model\BaseModel;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Model\Collection\Collection;
-use Spira\Model\Model\BaseModel;
-use Spira\Responder\Contract\TransformerInterface;
+use App\Exceptions\BadRequestException;
 use Spira\Responder\Response\ApiResponse;
+use Spira\Responder\Contract\TransformerInterface;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 abstract class ApiController extends Controller
 {
