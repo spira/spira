@@ -74,7 +74,7 @@ $factory->define(ImageContent::class, function (\Faker\Generator $faker) {
     return [
         'images' => array_map(function(Image $image) use ($faker){
             return [
-                'image' => $image->toArray(),
+                '_image' => $image->toArray(),
                 'caption' => $faker->optional()->sentence(),
                 'transformations' => null,
             ];

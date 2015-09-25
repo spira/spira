@@ -4,10 +4,11 @@ namespace common.models {
     export class Article extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
-            tags: Tag,
-            author: User,
-            articleMetas: this.hydrateMetaCollectionFromTemplate,
-            comments: ArticleComment
+            _tags: Tag,
+            _author: User,
+            _articleMetas: this.hydrateMetaCollectionFromTemplate,
+            _comments: ArticleComment,
+            _contentPieces: contentPieces.ContentPiece,
         };
 
         public articleId:string = undefined;
@@ -21,10 +22,11 @@ namespace common.models {
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
 
-        public _articleMetas:common.models.ArticleMeta[] = [];
-        public _author:common.models.User = undefined;
-        public _tags:common.models.Tag[] = [];
-        public _comments:common.models.ArticleComment[] = [];
+        public _contentPieces:contentPieces.ContentPiece[] = [];
+        public _articleMetas:ArticleMeta[] = [];
+        public _author:User = undefined;
+        public _tags:Tag[] = [];
+        public _comments:ArticleComment[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
