@@ -12,6 +12,9 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 # postgres
   config.vm.network "forwarded_port", guest: 5432, host: 5432
+# elastic search
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
+  config.vm.network "forwarded_port", guest: 9300, host: 9300
 # mysql
   config.vm.network "forwarded_port", guest: 3306, host: 3306
 # mailcatcher

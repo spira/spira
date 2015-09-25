@@ -30,6 +30,8 @@ class Tag extends IndexedModel
      */
     protected $fillable = ['tag_id','tag'];
 
+    protected $touches = ['articles'];
+
     protected static $validationRules = [
         'tag_id' => 'required|uuid',
         'tag' => 'required|string|alphaDashSpace|max:20',

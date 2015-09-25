@@ -42,6 +42,8 @@ class CreateArticlesTable extends Migration
                 ->references('user_id')->on(User::getTableName())
                 ->onDelete('set null');
         });
+
+        Article::putMapping();
     }
 
     /**

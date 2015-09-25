@@ -41,6 +41,9 @@ cache:
     - ./docker/.local.env
 
 elasticsearch:
+  ports:
+    - "9200:9200"
+    - "9300:9300"
   extends:
     file: ./docker/common-services.yml
     service: elasticsearch
