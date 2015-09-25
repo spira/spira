@@ -11,6 +11,7 @@
 namespace App\Services\Api\Vanilla;
 
 use Guzzle\Common\Event;
+use Guzzle\Http\Message\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -35,6 +36,7 @@ class Error
     public function onRequestError(Event $event)
     {
         $request = $event['request'];
+        /** @var Response $response */
         $response = $request->getResponse();
 
         if ($response->isError()) {

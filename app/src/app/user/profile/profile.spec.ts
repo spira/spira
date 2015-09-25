@@ -2,6 +2,7 @@ namespace app.user.profile {
 
     describe('Profile', () => {
 
+        let seededChance = new Chance(Math.random());
         let ProfileController:ProfileController,
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,
@@ -17,7 +18,7 @@ namespace app.user.profile {
                 password:'Password'
             },
             userProfile:common.models.UserProfile = <common.models.UserProfile>{
-                dob:'1921-01-01',
+                dob: seededChance.date(),
                 mobile:'04123123',
                 phone:'',
                 gender:'M',
@@ -42,7 +43,7 @@ namespace app.user.profile {
                 userType:'guest'
             },
             userService = {
-                updateUser: (user:common.models.User) => {
+                saveUserWithRelated: (user:common.models.User) => {
                     if (user.email == 'invalid@email.com') {
                         return $q.reject({data: {message: 'this failure message'}});
                     }

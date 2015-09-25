@@ -10,6 +10,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Controller\AuthorizesRequestsTrait;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -22,9 +23,9 @@ use Spira\Model\Model\BaseModel;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 
-class ChildEntityController extends ApiController
+abstract class ChildEntityController extends ApiController
 {
-    use RequestValidationTrait;
+    use RequestValidationTrait, AuthorizesRequestsTrait;
 
     protected $relationName = null;
 
@@ -82,14 +83,14 @@ class ChildEntityController extends ApiController
      */
     public function getOne(Request $request, $id, $childId = false)
     {
-        $model = $this->findParentEntity($id);
+        $parent = $this->findParentEntity($id);
 
         //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
-        if ($childId === false) {
-            $childId = $id;
+        if ($this->childIdCanFallbackToParent($childId, $parent)) {
+            $childId = $parent->getKey();
         }
 
-        $childModel = $this->findOrFailChildEntity($childId, $model);
+        $childModel = $this->findOrFailChildEntity($childId, $parent);
         $childModel = $this->getWithNested($childModel, $request);
 
         return $this->getResponse()
@@ -133,7 +134,8 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        if ($childId === false) { //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
+        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
+        if ($this->childIdCanFallbackToParent($childId, $parent)) {
             $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel());
             $childId = $parent->getKey();
         } else {
@@ -190,8 +192,8 @@ class ChildEntityController extends ApiController
     {
         $parent = $this->findParentEntity($id);
 
-        if ($childId === false) { //if the child id is not passed in the url, check the child id matches parent id, and use that as child primary key
-            $this->checkEntityIdMatchesRoute($request, $id, $this->getChildModel(), false);
+        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
+        if ($this->childIdCanFallbackToParent($childId, $parent)) {
             $childId = $parent->getKey();
         } else {
             $this->checkEntityIdMatchesRoute($request, $childId, $this->getChildModel(), false);
@@ -240,17 +242,17 @@ class ChildEntityController extends ApiController
      */
     public function deleteOne($id, $childId = false)
     {
-        $model = $this->findParentEntity($id);
+        $parent = $this->findParentEntity($id);
 
-        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id
-        if ($childId === false) {
-            $childId = $id;
+        //If the child id is not passed in the url, fall back to the child id being the parent id (for the case where the relationship is HasOne with primary key being foreign parent id)
+        if ($this->childIdCanFallbackToParent($childId, $parent)) {
+            $childId = $parent->getKey();
         }
 
-        $childModel = $this->findOrFailChildEntity($childId, $model);
+        $childModel = $this->findOrFailChildEntity($childId, $parent);
 
         $childModel->delete();
-        $model->fireRevisionableEvent('deleteChild', [$childModel, $this->relationName]);
+        $parent->fireRevisionableEvent('deleteChild', [$childModel, $this->relationName]);
 
         return $this->getResponse()->noContent();
     }
@@ -396,5 +398,18 @@ class ChildEntityController extends ApiController
     protected function getValidationRules()
     {
         return $this->getChildModel()->getValidationRules();
+    }
+
+    /**
+     * @param $childId
+     * @param BaseModel $parentModel
+     * @return bool
+     */
+    private function childIdCanFallbackToParent($childId, BaseModel $parentModel)
+    {
+        $fk = $this->getRelation($parentModel)->getForeignKey();
+        $parentKey = $parentModel->getKeyName();
+
+        return $childId === false && ends_with($fk, $parentKey);
     }
 }

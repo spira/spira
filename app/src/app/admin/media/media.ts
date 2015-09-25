@@ -29,7 +29,7 @@ namespace app.admin.media {
                 resolve: /*@ngInject*/{
                     perPage: () => 12,
                     imagesPaginator: (imageService:common.services.image.ImageService, perPage:number) => {
-                        return imageService.getImagesPaginator().setCount(perPage);
+                        return imageService.getPaginator().setCount(perPage);
                     },
                     initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
                         return imagesPaginator.getPage($stateParams.page);
@@ -37,7 +37,7 @@ namespace app.admin.media {
                 },
                 data: {
                     title: "Media",
-                    icon: 'description',
+                    icon: 'image',
                     navigation: true,
                     navigationGroup: 'cms',
                     sortAfter: app.admin.articles.namespace,

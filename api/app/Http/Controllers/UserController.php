@@ -10,84 +10,47 @@
 
 namespace App\Http\Controllers;
 
-use App;
-use App\Extensions\JWTAuth\JWTManager;
-use App\Extensions\Lock\Manager;
-use App\Http\Transformers\EloquentModelTransformer;
-use App\Models\SocialLogin;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Spira\Model\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tymon\JWTAuth\JWTAuth;
+use App\Models\SocialLogin;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
+use Illuminate\Contracts\Auth\Guard;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
-use App\Extensions\Lock\Manager as Lock;
+use Spira\Auth\Driver\Guard as SpiraGuard;
+use Symfony\Component\HttpFoundation\Response;
+use Spira\Model\Validation\ValidationException;
+use App\Http\Transformers\EloquentModelTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends EntityController
 {
     use DispatchesJobs;
 
     /**
-     * Permission Lock Manager.
-     *
-     * @var Manager
+     * @var SpiraGuard
      */
-    protected $lock;
-
-    /**
-     * JWT Auth.
-     *
-     * @var \App\Extensions\JWTAuth\JWTAuth|JWTManager
-     */
-    protected $jwtAuth;
+    protected $auth;
 
     /**
      * Assign dependencies.
      *
      * @param  User $model
-     * @param  Lock $lock
-     * @param  JWTAuth $jwtAuth
+     * @param  Guard $auth
      * @param  Request $request
      * @param  EloquentModelTransformer $transformer
      */
     public function __construct(
         User $model,
-        Lock $lock,
-        JWTAuth $jwtAuth,
+        Guard $auth,
         Request $request,
         EloquentModelTransformer $transformer
     ) {
-        $this->lock = $lock;
-        $this->jwtAuth = $jwtAuth;
-        $this->permissions($request);
         parent::__construct($model, $transformer);
-    }
-
-    /**
-     * Set permissions to be used in the controller.
-     *
-     * @param  Request  $request
-     * @return void
-     */
-    public function permissions(Request $request)
-    {
-        $this->lock->setRole(User::$userTypes);
-        $user = $this->jwtAuth->user();
-        $owner = [User::class, 'userIsOwner', $user, last($request->segments())];
-
-        $this->lock->role(User::USER_TYPE_ADMIN)->permit(['readAll', 'readOne', 'update', 'delete']);
-        $this->lock->role(User::USER_TYPE_GUEST)->permit(['readOne', 'update'], [$owner]);
-
-        $this->middleware('permission:readAll', ['only' => 'getAllPaginated']);
-        $this->middleware('permission:readOne', ['only' => 'getOne']);
-        $this->middleware('permission:update', ['only' => 'patchOne']);
-        $this->middleware('permission:delete', ['only' => 'deleteOne']);
+        $this->auth = $auth;
     }
 
     /**
@@ -99,9 +62,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Extract the credentials
-        $credential = $request->input('_user_credential', []);
-
         // Set new users to guest
         $request->merge(['user_type' => 'guest']);
 
@@ -118,8 +78,10 @@ class UserController extends EntityController
         $model->save();
 
         // Finally create the credentials
-        $this->validateRequest($credential, UserCredential::getValidationRules());
-        $model->setCredential(new UserCredential($credential));
+        if ($credential = $request->input('_user_credential', null)) {
+            $this->validateRequest($credential, UserCredential::getValidationRules());
+            $model->setCredential(new UserCredential($credential));
+        }
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -137,7 +99,7 @@ class UserController extends EntityController
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
-
+        $this->authorize($model);
         // Check if the email is being changed, and initialize confirmation
         $email = $request->input('email');
         if ($email && $model->email != $email) {
@@ -163,27 +125,30 @@ class UserController extends EntityController
         $model->fill($request->except('email'));
         $model->save();
 
-        /* @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
+        // Extract the profile and update if necessary
+        $profileUpdateDetails = $request->input('_user_profile', []);
+        if (! empty($profileUpdateDetails)) {
+            /** @var UserProfile $profile */
+            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
+            $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
+            $profile->fill($profileUpdateDetails);
+            $model->setProfile($profile);
+        }
+
         // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->input('_user_credential', []);
-        if (! empty($credentialUpdateDetails)) {
+        $credentialUpdateDetails = $request->input('_user_credential');
+        if ($credentialUpdateDetails) {
             // Invalidate token for the user when user changes their password
-            if ($this->jwtAuth->user()->user_id == $model->user_id) {
-                $token = $this->jwtAuth->getTokenFromRequest();
-                $this->jwtAuth->invalidate($token);
+            if ($request->user()->user_id == $model->user_id) {
+                $this->auth->logout();
             }
 
-            $credentials = UserCredential::findOrNew($id);
             /* @var UserCredential $credentials */
-            $credentials->fill($credentialUpdateDetails);
+            $credentials = UserCredential::findOrNew($id)->fill($credentialUpdateDetails);
             $model->setCredential($credentials);
         }
 
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-
-        $token = $jwtAuth->fromUser($model);
-
-        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
+        return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($model))->noContent();
     }
 
     /**
@@ -225,42 +190,12 @@ class UserController extends EntityController
         }
 
         $socialLogin->delete();
-        /** @var \Tymon\JWTAuth\JWTAuth $jwtAuth */
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-
-        $token = $jwtAuth->fromUser(User::find($id));
-
-        return $this->getResponse()->header('Authorization-Update', $token)->noContent();
-    }
-
-    /**
-     * Get full user details.
-     *
-     * @param Request $request
-     * @param string $id
-     * @return \Spira\Responder\Response\ApiResponse
-     */
-    public function getOne(Request $request, $id)
-    {
         /** @var User $user */
         $user = User::find($id);
-
-        $userData = $this->transformer->transformItem($user);
-
-        if (is_null($user->userCredential)) {
-            $userData['_user_credential'] = false;
-        } else {
-            $userData['_user_credential'] = $user->userCredential->toArray();
-        }
-
-        if (is_null($user->socialLogins)) {
-            $userData['_social_logins'] = false;
-        } else {
-            $userData['_social_logins'] = $user->socialLogins->toArray();
-        }
+        $this->auth->login($user, true);
 
         return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->item($userData);
+            ->header('Authorization-Update', $this->auth->generateToken($user))
+            ->noContent();
     }
 }

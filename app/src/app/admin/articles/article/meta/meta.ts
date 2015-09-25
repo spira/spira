@@ -8,6 +8,12 @@ namespace app.admin.articles.article.meta {
 
         public authors:common.models.User[];
 
+        // @todo: Implementation not complete as model has not been implemented yet
+        public supportedRegions:global.ISupportedRegion[] = common.services.region.supportedRegions;
+
+        public allRegions:boolean = true;
+        // Implementation not complete as model has not been implemented yet
+
         constructor(
             public article:common.models.Article,
             private notificationService:common.services.notification.NotificationService,

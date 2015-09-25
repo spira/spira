@@ -1,61 +1,20 @@
-(() => {
-
-    let seededChance = new Chance(1);
-    let fixtures = {
-
-        buildUser: (overrides = {}) => {
-
-            let userId = seededChance.guid();
-            let defaultUser:global.IUserData = {
-                _self: '/users/'+userId,
-                userId: userId,
-                email: seededChance.email(),
-                firstName: seededChance.first(),
-                lastName: seededChance.last(),
-                _userCredential: {
-                    userCredentialId: seededChance.guid(),
-                    password: seededChance.string(),
-                }
-            };
-
-            return _.merge(defaultUser, overrides);
-        },
-        get user():common.models.User {
-            return new common.models.User(fixtures.buildUser());
-        },
-        get users() {
-            return _.range(10).map(() => fixtures.user);
-        }
-    };
-    let userProfile:common.models.UserProfile = <common.models.UserProfile>{
-            dob:'1921-01-01',
-            mobile:'04123123',
-            phone:'',
-            gender:'M',
-            about:'Lorem',
-            facebook:'',
-            twitter:'',
-            pinterest:'',
-            instagram:'',
-            website:''
-        };
-
-    const seededEmail = 'john.smith@example.com'; //the email that was seeded by the API
+namespace common.services.user {
 
     describe('UserService', () => {
 
-        let userService:common.services.user.UserService;
+        let userService:UserService;
         let $httpBackend:ng.IHttpBackendService;
         let authService:NgJwtAuth.NgJwtAuthService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
         let $mdDialog:ng.material.IDialogService;
         let $timeout:ng.ITimeoutService;
+        let $rootScope:ng.IRootScopeService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_, _$mdDialog_, _$timeout_) => {
+            inject((_$httpBackend_, _userService_, _ngJwtAuthService_, _ngRestAdapter_, _$mdDialog_, _$timeout_, _$rootScope_) => {
 
                 if (!userService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
@@ -64,6 +23,7 @@
                     ngRestAdapter = _ngRestAdapter_;
                     $mdDialog = _$mdDialog_;
                     $timeout = _$timeout_;
+                    $rootScope = _$rootScope_;
                 }
             });
 
@@ -87,13 +47,13 @@
 
             it('should be able to retrieve full info for one user', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
 
                 $httpBackend.expectGET('/api/users/' + user.userId,
                     (headers) => /userCredential, userProfile, socialLogins/.test(headers['With-Nested'])
                 ).respond(200);
 
-                let userDetailsPromise = userService.getUser(user);
+                let userDetailsPromise = userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins']);
 
                 expect(userDetailsPromise).eventually.to.be.fulfilled;
 
@@ -103,9 +63,9 @@
 
             it('should return a new user created from user data', () => {
 
-                let userData = _.clone(fixtures.buildUser());
+                let userData = _.clone(common.models.UserMock.entity());
 
-                let user = common.services.user.UserService.userFactory(userData);
+                let user = userService.modelFactory(userData);
 
                 expect(user).to.be.instanceOf(common.models.User);
 
@@ -139,7 +99,7 @@
                     (<any>ngRestAdapter.get).restore();
                 });
 
-                let users = _.clone(fixtures.users); // Get a set of users
+                let users = _.clone(common.models.UserMock.collection()); // Get a set of users
 
                 it('should return the first set of users', () => {
 
@@ -170,11 +130,17 @@
 
                 it('should be able to create a new user and attempt login immediately',  () => {
 
-                    let user = _.compactObject(fixtures.user);
-                    delete user._self;
+                    let user = _.compactObject(common.models.UserMock.entity());
+
+                    let requiredFields = ['userId', 'email', 'firstName', 'lastName', '_userCredential'];
+
+                    user = <common.models.User>_.pick(user, requiredFields);
+                    user._userCredential = new common.models.UserCredential({
+                        password: 'hunter2',
+                    });
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
-                        return _.isEqual(_.keys(user), _.keys(JSON.parse(requestObj))); //as we are not aware of what the userId or userCredentialId is we cannot test full equality
+                        return _.every(requiredFields, _.hasOwnProperty, JSON.parse(requestObj));
                     }).respond(204);
                     $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                     //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
@@ -193,12 +159,13 @@
                 it('should be able to poll the api to check if an email has been registered', () => {
 
                     let notExistingEmail = 'not-registered@example.com';
+                    let existingEmail = 'registered@example.com';
 
                     $httpBackend.expectHEAD('/api/users/email/'+notExistingEmail).respond(404);
-                    $httpBackend.expectHEAD('/api/users/email/'+seededEmail).respond(200);
+                    $httpBackend.expectHEAD('/api/users/email/'+existingEmail).respond(200);
 
                     let notExistingCheck = userService.isEmailRegistered(notExistingEmail);
-                    let existingCheck = userService.isEmailRegistered(seededEmail);
+                    let existingCheck = userService.isEmailRegistered(existingEmail);
 
                     $httpBackend.flush();
 
@@ -247,7 +214,7 @@
 
             it('should be able to send a patch request to confirm email change', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
 
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
 
@@ -270,7 +237,7 @@
 
             it('should reject the promise if a bogus user id is passed through', () => {
 
-                let user = _.clone(fixtures.user);
+                let user = _.clone(common.models.UserMock.entity());
                 user.userId = 'bogus-user-id';
 
                 const emailToken = 'cf8a43a2646fd46c2081960ff1150a6b48d5ed062da3d59559af5030eea21548';
@@ -290,27 +257,64 @@
 
             it('should be able to send a patch request to update the user details (including profile)', () => {
 
-                let user = fixtures.user;
+                let user = common.models.UserMock.entity();
 
-                let profile = _.clone(userProfile);
+                user.firstName = 'Joe';
+                user._userProfile = common.models.UserProfileMock.entity();
+                user._userProfile.dob = moment('1995-01-01').toDate();
+                user._userProfile.about = 'Ipsum';
 
-                profile.dob = '1995-01-01';
-                profile.about = 'Ipsum';
-                user.firstName = 'FooBar';
+                $httpBackend.expectPATCH('/api/users/' + user.userId, (jsonData:string) => {
+                    let data:common.models.User = JSON.parse(jsonData);
+                    return data.firstName == user.firstName;
+                }).respond(204);
 
-                user._userProfile = profile;
+                $httpBackend.expectPATCH('/api/users/' + user.userId + '/profile', (jsonData:string) => {
+                    let data:any = JSON.parse(jsonData);
+                    return data.dob == user._userProfile.dob.toISOString() && data.about == user._userProfile.about;
+                }).respond(204);
 
-                $httpBackend.expectPATCH('/api/users/' + user.userId,
-                    (jsonData:string) => {
-                        let data:common.models.User = JSON.parse(jsonData);
-                        return data.firstName == 'FooBar' && data._userProfile.dob == '1995-01-01' && data._userProfile.about == 'Ipsum';
-                    }).respond(204);
+                let profileUpdatePromise = userService.saveUserWithRelated(user);
 
-                let profileUpdatePromise = userService.updateUser(user);
+                $rootScope.$apply();
 
                 expect(profileUpdatePromise).eventually.to.be.fulfilled;
 
                 $httpBackend.flush();
+            });
+
+
+            it('should not make an api call if nothing has changed', () => {
+
+                let user = common.models.UserMock.entity();
+                user.setExists(true);
+
+                let savePromise = userService.saveUserWithRelated(user);
+
+                expect(savePromise).eventually.to.equal(user);
+
+            });
+
+
+            it('should update the region setting when the user updates their profile', () => {
+
+                let user = common.models.UserMock.entity({
+                    regionCode: 'us',
+                });
+                user.setExists(true);
+
+                $httpBackend.expectPATCH('/api/users/' + user.userId, {
+                    regionCode: 'au',
+                }).respond(204);
+
+                user.regionCode = 'au';
+
+                let savePromise = userService.saveUserWithRelated(user);
+
+                $httpBackend.flush();
+
+                expect(savePromise).eventually.to.equal(user);
+
             });
 
         });
@@ -318,4 +322,4 @@
     });
 
 
-})();
+}

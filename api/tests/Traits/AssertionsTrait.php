@@ -7,12 +7,19 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+use Laravel\Lumen\Testing\AssertionsTrait as BaseAssertionsTrait;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Additional assertions not offered by Lumen's TestCase or PHPUnit.
  */
 trait AssertionsTrait
 {
+    use BaseAssertionsTrait {
+        BaseAssertionsTrait::assertResponseStatus as baseAssertResponseStatus;
+    }
+
     /**
      * Assert the response is a JSON array.
      *
@@ -98,5 +105,35 @@ trait AssertionsTrait
         $this->assertResponseStatus($statusCode);
         $this->assertContains($message, $body->message);
         $this->assertContains($exception, $body->debug->exception);
+    }
+
+    /**
+     * Assert status code, and on failure print the output to assist debugging.
+     * @param int $code
+     */
+    public function assertResponseStatus($code)
+    {
+        try {
+            $this->baseAssertResponseStatus($code);
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $content = $this->response->getContent();
+
+            $json = json_decode($content);
+
+            //check to see if the response was valid json, if so assign the object to $content
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $content = $json;
+            }
+
+            $originalDefaultOutput = CliDumper::$defaultOutput;
+
+            CliDumper::$defaultOutput = 'php://output';
+            $dumper = new CliDumper();
+            $dumper->dump((new VarCloner)->cloneVar($content));
+
+            CliDumper::$defaultOutput = $originalDefaultOutput;
+
+            throw $e;
+        }
     }
 }

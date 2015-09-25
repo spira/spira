@@ -23,15 +23,24 @@ namespace common.models {
         [key:string] : IModelClass | IHydrateFunction;
     }
 
+    export interface IAttributeCastFunction {
+        (value:any):any;
+    }
+
+    export interface IAttributeCastMap {
+        [key:string] : IAttributeCastFunction;
+    }
+
     export abstract class AbstractModel implements IModel {
 
-        protected _nestedEntityMap:INestedEntityMap;
-        private _exists:boolean;
+        protected __nestedEntityMap:INestedEntityMap;
+        protected __attributeCastMap:IAttributeCastMap;
+        private __exists:boolean;
 
         constructor(data?:any, exists:boolean = false) {
             this.hydrate(data, exists);
 
-            Object.defineProperty(this, "_exists", {
+            Object.defineProperty(this, "__exists", {
                 enumerable: false,
                 writable: true,
                 value: exists,
@@ -45,13 +54,40 @@ namespace common.models {
          */
         protected hydrate(data:any, exists:boolean) {
             if (_.isObject(data)) {
-                _.assign(this, data);
 
-                if (_.size(this._nestedEntityMap) > 1) {
+                _.transform(data, (model, value, key) => {
+
+                    if(_.has(this.__attributeCastMap, key)) {
+                        model[key] = this.__attributeCastMap[key](value);
+                    } else {
+                        model[key] = value;
+                    }
+
+                }, this);
+
+                if (_.size(this.__nestedEntityMap) > 1) {
                     this.hydrateNested(data, exists);
                 }
             }
 
+        }
+
+        /**
+         * Converts a date time
+         * @param value
+         * @returns {Date}
+         */
+        protected castDate(value:string):Date {
+            return moment(value).toDate();
+        }
+
+        /**
+         * Converts a moment object
+         * @param value
+         * @returns {Moment}
+         */
+        protected castMoment(value:string):moment.Moment {
+            return moment(value);
         }
 
         /**
@@ -74,7 +110,7 @@ namespace common.models {
          */
         protected hydrateNested(data:any, exists:boolean){
 
-            _.forIn(this._nestedEntityMap, (nestedObject:IModelClass|IHydrateFunction, nestedKey:string) => {
+            _.forIn(this.__nestedEntityMap, (nestedObject:IModelClass|IHydrateFunction, nestedKey:string) => {
 
                 //if the nested map is not defined with a leading _ prepend one
                 if (!_.startsWith(nestedKey, '_')){
@@ -124,13 +160,17 @@ namespace common.models {
          */
         public getAttributes(includeUnderscoredKeys:boolean = false):Object{
 
-            let attributes = _.clone(this);
+            let allAttributes = _.clone(this);
+
+            let publicAttributes = _.omit(allAttributes, (value, key) => {
+                return _.startsWith(key, '__');
+            });
 
             if (includeUnderscoredKeys){
-                return attributes;
+                return publicAttributes;
             }
 
-            return _.omit(attributes, (value, key) => {
+            return _.omit(publicAttributes, (value, key) => {
                 return _.startsWith(key, '_');
             });
 
@@ -141,7 +181,7 @@ namespace common.models {
          * @returns {boolean}
          */
         public exists():boolean{
-            return this._exists;
+            return this.__exists;
         }
 
         /**
@@ -149,7 +189,7 @@ namespace common.models {
          * @param exists
          */
         public setExists(exists:boolean):void{
-            this._exists = exists;
+            this.__exists = exists;
         }
 
         /**

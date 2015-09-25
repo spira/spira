@@ -61,4 +61,26 @@
             <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" ng-required="false">
         </md-input-container>
     </md-whiteframe>
+
+    <h2>Limitations</h2>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <label>Regional</label>
+        <!-- @todo: Implementation not complete as model has not been implemented yet -->
+        <div layout="row" layout-padding>
+            <div flex>
+                <md-radio-group ng-model="MetaController.allRegions">
+                    <md-radio-button ng-value="true">All regions</md-radio-button>
+                    <md-radio-button ng-value="false">Specific regions only</md-radio-button>
+                </md-radio-group>
+            </div>
+            <div ng-if="!MetaController.allRegions" flex>
+                <md-input-container ng-repeat="region in MetaController.supportedRegions">
+                    <md-checkbox aria-label="{{ region.name }}">
+                        {{ region.name }}
+                    </md-checkbox>
+                </md-input-container>
+            </div>
+        </div>
+        <!-- Implementation not complete as model has not been implemented yet -->
+    </md-whiteframe>
 </div>

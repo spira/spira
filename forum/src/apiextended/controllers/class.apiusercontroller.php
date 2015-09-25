@@ -37,7 +37,7 @@ class ApiUserController extends UserController
         // Create or get existing user
         $id = Gdn::userModel()->connect($uniqueId, $clientId, $user);
         if (! $id) {
-            throw new Gdn_UserException('Bad Request', 400);
+            throw new Gdn_UserException("Invalid user id (`$id` given)", 400);
         }
 
         // Get relevant user information

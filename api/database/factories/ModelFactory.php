@@ -27,12 +27,6 @@ $factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker
     ];
 });
 
-$factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use ($factory) {
-    $testEntity = $factory->raw(App\Models\TestEntity::class);
-
-    return array_merge($testEntity, ['varchar' => 'custom']);
-});
-
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'user_id' => $faker->uuid,
@@ -64,12 +58,6 @@ $factory->define(App\Models\UserProfile::class, function (\Faker\Generator $fake
     ];
 });
 
-$factory->defineAs(App\Models\User::class, 'admin', function ($faker) use ($factory) {
-    $user = $factory->raw(App\Models\User::class);
-
-    return array_merge($user, ['userType' => App\Models\User::USER_TYPE_ADMIN]);
-});
-
 $factory->define(App\Models\UserCredential::class, function ($faker) {
     return [
         'password' => 'password',
@@ -99,11 +87,12 @@ $factory->defineAs(App\Models\TestEntity::class, 'custom', function ($faker) use
 
 $factory->define(App\Models\AuthToken::class, function () use ($factory) {
 
-    $jwtAuth = Illuminate\Support\Facades\App::make('Tymon\JWTAuth\JWTAuth');
+    /** @var \Spira\Auth\Driver\Guard $jwtAuth */
+    $jwtAuth = Illuminate\Support\Facades\App::make('auth');
 
     $user = $factory->make(\App\Models\User::class);
 
-    $token = $jwtAuth->fromUser($user);
+    $token = $jwtAuth->generateToken($user);
 
     return ['token' => $token];
 });

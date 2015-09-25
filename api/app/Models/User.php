@@ -10,19 +10,17 @@
 
 namespace App\Models;
 
-use BeatSwitch\Lock\LockAware;
-use BeatSwitch\Lock\Callers\Caller;
 use Illuminate\Auth\Authenticatable;
-use App\Extensions\Lock\UserOwnership;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Model\Model\IndexedModel;
 
-class User extends IndexedModel implements AuthenticatableContract, Caller, UserOwnership
+class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
-    use Authenticatable, LockAware;
+    use Authenticatable;
 
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_GUEST = 'guest';
@@ -34,6 +32,8 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
      * @var int
      */
     protected $token_ttl = 1440;
+
+    protected $authMethod;
 
     /**
      * The primary key for the model.
@@ -156,19 +156,6 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     }
 
     /**
-     * Set the user's profile.
-     *
-     * @param UserProfile $profile
-     * @return $this
-     */
-    public function setProfile(UserProfile $profile)
-    {
-        $this->userProfile()->save($profile);
-
-        return $this;
-    }
-
-    /**
      * Add or update a social login for the user.
      *
      * @param  SocialLogin  $socialLogin
@@ -229,54 +216,11 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     }
 
     /**
-     * The type of caller for lock permission.
-     *
-     * @return string
-     */
-    public function getCallerType()
-    {
-        return 'users';
-    }
-
-    /**
-     * The unique ID to identify the caller with for lock permission.
-     *
-     * @return string
-     */
-    public function getCallerId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * The caller's roles for lock permission.
-     *
-     * @return array
-     */
-    public function getCallerRoles()
-    {
-        return [$this->user_type];
-    }
-
-    /**
-     * Check if the user is owns the entity.
-     *
-     * @param  \App\Models\User  $user
-     * @param  string            $entityId
-     *
-     * @return bool
-     */
-    public static function userIsOwner($user, $entityId)
-    {
-        return $user->user_id == $entityId;
-    }
-
-    /**
      * Get a user by single use login token.
      *
      * @param string $token
      *
-     * @return mixed
+     * @return User|null
      */
     public function findByLoginToken($token)
     {
@@ -361,5 +305,27 @@ class User extends IndexedModel implements AuthenticatableContract, Caller, User
     public static function findCurrentEmail($newEmail)
     {
         return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
+    }
+
+    public function isAdmin()
+    {
+        return $this->user_type === self::USER_TYPE_ADMIN;
+    }
+
+    /**
+     * @param string $method
+     * @return void
+     */
+    public function setCurrentAuthMethod($method)
+    {
+        $this->authMethod = $method;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentAuthMethod()
+    {
+        return $this->authMethod;
     }
 }

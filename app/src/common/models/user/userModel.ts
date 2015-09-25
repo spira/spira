@@ -3,6 +3,12 @@ namespace common.models {
     @common.decorators.changeAware
     export class User extends AbstractModel implements global.IUserData {
 
+        protected __nestedEntityMap:INestedEntityMap = {
+            userProfile: UserProfile,
+            socialLogins: UserSocialLogin,
+            userCredential: UserCredential,
+        };
+
         public static adminType = 'admin';
         public static guestType = 'guest';
         public static userTypes:string[] = [User.adminType, User.guestType];

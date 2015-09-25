@@ -33,6 +33,22 @@ class UserProfileTest extends TestCase
         UserProfile::boot();
     }
 
+    public function testGetOne()
+    {
+        $user = $this->createUser();
+
+        $user->userProfile()->save($this->getFactory()->get(UserProfile::class)->make());
+
+        $this->getJson('/users/'.$user->user_id.'/profile');
+
+        $this->assertResponseStatus(200);
+
+        $response = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('website', $response);
+        $this->assertEquals($user->userProfile->website, $response->website);
+    }
+
     public function testPutOne()
     {
         $user = $this->createUser();

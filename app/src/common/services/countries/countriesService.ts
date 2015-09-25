@@ -9,10 +9,9 @@ namespace common.services.countries {
 
     export class CountriesService {
 
-        static $inject:string[] = ['ngRestAdapter', '$q'];
+        static $inject:string[] = ['ngRestAdapter'];
 
-        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
-                    private $q:ng.IQService) {
+        constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService) {
 
         }
 
@@ -27,9 +26,7 @@ namespace common.services.countries {
             //store the promise in cache, so next time it is called the countries are resolved immediately.
             if (!this.countriesCachePromise) {
                 this.countriesCachePromise = this.ngRestAdapter.get('/countries')
-                    .then((res) => {
-                        return res.data;
-                    })
+                    .then((res) => res.data)
                 ;
             }
 

@@ -58,29 +58,37 @@ namespace common.services.image {
         promise: IImageUploadPromise<T>;
     }
 
-    export class ImageService {
+    export class ImageService extends AbstractApiService {
 
-        private cachedPaginator:common.services.pagination.Paginator;
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$http', 'Upload', '$timeout'];
 
-        static $inject:string[] = ['Upload', '$q', 'ngRestAdapter', '$http', 'paginationService', '$timeout'];
-
-        constructor(private ngFileUpload:ng.angularFileUpload.IUploadService,
-                    private $q:ng.IQService,
-                    private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+        constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    paginationService:common.services.pagination.PaginationService,
+                    $q:ng.IQService,
                     private $http:ng.IHttpService,
-                    private paginationService:common.services.pagination.PaginationService,
+                    private ngFileUpload:ng.angularFileUpload.IUploadService,
                     private $timeout:ng.ITimeoutService) {
+
+            super(ngRestAdapter, paginationService, $q);
 
         }
 
         /**
          * Get an instance of the Image given data
          * @param data
-         * @returns {common.models.Image}
          * @param exists
+         * @returns {common.models.Image}
          */
-        public static imageFactory(data:any, exists:boolean = false):common.models.Image {
+        protected modelFactory(data:any, exists:boolean = false):common.models.Image {
             return new common.models.Image(data, exists);
+        }
+
+        /**
+         * Get the api endpoint for the model
+         * @returns {string}
+         */
+        protected apiEndpoint():string {
+            return '/images';
         }
 
         /**
@@ -248,7 +256,7 @@ namespace common.services.image {
          */
         private linkImageToApi(uploadOptions:ICloudinaryUploadRequest, cloudinaryResponse:ng.IHttpPromiseCallbackArg<ICloudinaryUploadResponse>, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.IPromise<common.models.Image> {
 
-            let imageModel = ImageService.imageFactory({
+            let imageModel = this.modelFactory({
                 imageId: cloudinaryResponse.data.public_id,
                 version: cloudinaryResponse.data.version,
                 format: cloudinaryResponse.data.format,
@@ -266,22 +274,6 @@ namespace common.services.image {
                 return imageModel;
             });
 
-        }
-
-        /**
-         * Get the image paginator
-         * @returns {Paginator}
-         */
-        public getImagesPaginator():common.services.pagination.Paginator {
-
-            //cache the paginator so subsequent requests can be collection length-aware
-            if (!this.cachedPaginator) {
-                this.cachedPaginator = this.paginationService
-                    .getPaginatorInstance('/images')
-                    .setModelFactory(ImageService.imageFactory);
-            }
-
-            return this.cachedPaginator;
         }
 
     }

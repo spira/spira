@@ -221,7 +221,7 @@ namespace common.services.image {
 
                 $httpBackend.expectGET('/api/images').respond(_.take(images, 10));
 
-                let imagePaginator = imageService.getImagesPaginator();
+                let imagePaginator = imageService.getPaginator();
 
                 let firstSet = imagePaginator.getNext(10);
 

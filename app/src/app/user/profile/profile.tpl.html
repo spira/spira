@@ -29,20 +29,19 @@
                     </md-select>
                 </md-input-container>
 
-                <md-input-container>
-                    <label>Birth Date</label>
-                    <md-datepicker ng-model="ProfileController.fullUserInfo._userProfile.dob" md-placeholder="Enter date"></md-datepicker>
-                </md-input-container>
+                <label>Birth Date</label>
+                <md-datepicker ng-model="ProfileController.fullUserInfo._userProfile.dob" md-placeholder="Enter date"></md-datepicker>
 
-                <md-input-container>
-                    <label>Gender</label>
-                    <md-radio-group ng-model="ProfileController.fullUserInfo._userProfile.gender">
-                        <md-radio-button ng-repeat="option in ProfileController.genderOptions"
-                                         ng-value="option.value">
-                            {{ option.label }}
-                        </md-radio-button>
-                    </md-radio-group>
-                </md-input-container>
+                <label>Gender</label>
+                <md-radio-group ng-model="ProfileController.fullUserInfo._userProfile.gender" class="md-primary">
+                    <md-radio-button
+                        ng-repeat="option in ProfileController.genderOptions"
+                        ng-value="option.value"
+                        aria-label="{{option.label}}">
+                        {{option.label}}
+                    </md-radio-button>
+                </md-radio-group>
+
             </md-whiteframe>
         </md-content>
 

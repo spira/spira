@@ -26,7 +26,7 @@ namespace app.admin.articles.listing {
                 },
                 resolve: /*@ngInject*/{
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getArticlesPaginator().setCount(12);
+                        return articleService.getPaginator().setCount(12);
                     },
                     initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:IArticlesListingStateParams) => {
                         return articlesPaginator.getPage($stateParams.page);
