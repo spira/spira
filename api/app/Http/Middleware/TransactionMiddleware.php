@@ -8,13 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-/**
- * Created by PhpStorm.
- * User: ivanmatveev
- * Date: 10.08.15
- * Time: 17:05.
- */
-
 namespace App\Http\Middleware;
 
 use Closure;

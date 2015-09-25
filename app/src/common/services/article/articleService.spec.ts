@@ -1,58 +1,5 @@
 (() => {
 
-    let seededChance = new Chance(1);
-    let fixtures = {
-
-        getArticle():common.models.Article {
-
-            let title = seededChance.sentence();
-
-            let articleId = seededChance.guid();
-
-            return new common.models.Article({
-                articleId: articleId,
-                title: title,
-                body: seededChance.paragraph(),
-                permalink: title.replace(' ', '-'),
-                _tags: [
-                    {
-                        tagId: seededChance.guid(),
-                        tag: seededChance.word,
-                    },
-                    {
-                        tagId: seededChance.guid(),
-                        tag: seededChance.word,
-                    }
-                ],
-                _articleMetas: [
-                    {
-                        metaName: 'keyword',
-                        metaContent: 'foo',
-                        metaId: seededChance.guid(),
-                        articleId: articleId
-                    },
-                    {
-                        metaName: 'description',
-                        metaContent: 'bar',
-                        metaId: seededChance.guid(),
-                        articleId: articleId
-                    },
-                    {
-                        metaName: 'foobar',
-                        metaContent: 'foobar',
-                        metaId: seededChance.guid(),
-                        articleId: articleId
-                    }
-                ]
-            });
-
-        },
-        getArticles() {
-
-            return chance.unique(fixtures.getArticle, 30);
-        }
-    };
-
     describe('Article Service', () => {
 
         let articleService:common.services.article.ArticleService;
@@ -102,7 +49,7 @@
                 (<any>ngRestAdapter.get).restore();
             });
 
-            let articles = _.clone(fixtures.getArticles()); //get a set of articles
+            let articles = common.models.ArticleMock.collection(30); //get a set of articles
 
             it('should return the first set of articles', () => {
 
@@ -124,7 +71,7 @@
 
         describe('Get article', () => {
 
-            let mockArticle  = fixtures.getArticle();
+            let mockArticle  = common.models.ArticleMock.entity();
 
             it('should be able to retrieve an article by permalink', () => {
 
@@ -146,6 +93,7 @@
         describe('New Article', () => {
 
             it('should be able to get a new article with a UUID', () => {
+
                 let author = common.models.UserMock.entity();
 
                 let article = articleService.newArticle(author);
@@ -160,12 +108,38 @@
 
         });
 
-        describe('Save Article', () => {
+        describe('New Comment', () => {
 
+            it('should be able to save a new comment', () => {
+
+                let article = common.models.ArticleMock.entity();
+
+                let comment = common.models.ArticleCommentMock.entity();
+
+                $httpBackend.expectPOST('/api/articles/' + article.articleId + '/comments').respond(201);
+
+                let savePromise = articleService.saveComment(article, comment);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+
+                expect(savePromise).eventually.to.deep.equal(comment);
+
+                $httpBackend.flush();
+
+            });
+
+        });
+
+        describe('Save Article', () => {
 
             it('should save a new article and all related entities', () => {
 
-                let article = fixtures.getArticle();
+                let article = common.models.ArticleMock.entity();
+                article.setExists(false);
+                article._tags.push(common.models.TagMock.entity());
+                article._tags.push(common.models.TagMock.entity());
+                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
+                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
@@ -182,20 +156,14 @@
 
             });
 
-
             it('should save an existing article with a patch request', () => {
 
-                let article = fixtures.getArticle();
+                let article = common.models.ArticleMock.entity();
                 article.setExists(true);
 
                 article.title = "This title has been updated";
 
-                let newTag = new common.models.Tag({
-                    tagId: seededChance.guid(),
-                    tag: "new tag",
-                });
-
-                article._tags = [newTag];
+                article._tags = [common.models.TagMock.entity()];
 
                 $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
@@ -211,7 +179,7 @@
 
             it('should not make an api call if nothing has changed', () => {
 
-                let article = fixtures.getArticle();
+                let article = common.models.ArticleMock.entity();
                 article.setExists(true);
 
                 let savePromise = articleService.saveArticleWithRelated(article);

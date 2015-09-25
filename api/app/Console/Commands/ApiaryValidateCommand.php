@@ -55,6 +55,10 @@ class ApiaryValidateCommand extends Command
 
         $fs->put($fileLocation, $apib);
 
-        return 0;
+        $validator = base_path().'/node_modules/.bin/api-blueprint-validator';
+
+        exec("$validator $fileLocation", $output, $exitCode);
+
+        return $exitCode;
     }
 }

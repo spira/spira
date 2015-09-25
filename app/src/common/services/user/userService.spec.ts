@@ -261,7 +261,7 @@ namespace common.services.user {
 
                 user.firstName = 'Joe';
                 user._userProfile = common.models.UserProfileMock.entity();
-                user._userProfile.dob = '1995-01-01';
+                user._userProfile.dob = moment('1995-01-01').toDate();
                 user._userProfile.about = 'Ipsum';
 
                 $httpBackend.expectPATCH('/api/users/' + user.userId, (jsonData:string) => {
@@ -270,8 +270,8 @@ namespace common.services.user {
                 }).respond(204);
 
                 $httpBackend.expectPATCH('/api/users/' + user.userId + '/profile', (jsonData:string) => {
-                    let data:common.models.UserProfile = JSON.parse(jsonData);
-                    return data.dob == user._userProfile.dob && data.about == user._userProfile.about;
+                    let data:any = JSON.parse(jsonData);
+                    return data.dob == user._userProfile.dob.toISOString() && data.about == user._userProfile.about;
                 }).respond(204);
 
                 let profileUpdatePromise = userService.saveUserWithRelated(user);
@@ -284,13 +284,34 @@ namespace common.services.user {
             });
 
 
-
             it('should not make an api call if nothing has changed', () => {
 
                 let user = common.models.UserMock.entity();
                 user.setExists(true);
 
                 let savePromise = userService.saveUserWithRelated(user);
+
+                expect(savePromise).eventually.to.equal(user);
+
+            });
+
+
+            it('should update the region setting when the user updates their profile', () => {
+
+                let user = common.models.UserMock.entity({
+                    regionCode: 'us',
+                });
+                user.setExists(true);
+
+                $httpBackend.expectPATCH('/api/users/' + user.userId, {
+                    regionCode: 'au',
+                }).respond(204);
+
+                user.regionCode = 'au';
+
+                let savePromise = userService.saveUserWithRelated(user);
+
+                $httpBackend.flush();
 
                 expect(savePromise).eventually.to.equal(user);
 

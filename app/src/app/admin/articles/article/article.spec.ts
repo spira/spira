@@ -1,65 +1,46 @@
 namespace app.admin.articles.article {
 
-    describe('Article', () => {
+    describe('Article (Admin)', () => {
 
-        let seededChance = new Chance(1),
-            testMeta:common.models.ArticleMeta = new common.models.ArticleMeta({
-                articleId: undefined,
-                id: seededChance.guid(),
-                metaName: 'title',
-                metaContent: 'foobar'
+        let article:common.models.Article = common.models.ArticleMock.entity({
+                _articleMetas:[common.models.ArticleMetaMock.entity()]
             }),
-            getArticle = (title?:string):common.models.Article => {
-
-                if(_.isEmpty(title)) {
-                    title = seededChance.sentence();
-                }
-
-                return new common.models.Article({
-                    title: title,
-                    body: seededChance.paragraph(),
-                    permalink: title.replace(' ', '-'),
-                    _articleMetas: [testMeta]
-                });
-
-            },
+            newArticle:common.models.Article = common.models.ArticleMock.entity({
+                title:'new article',
+                _articleMetas:[common.models.ArticleMetaMock.entity()]
+            }),
             notificationService:common.services.notification.NotificationService,
-            article:common.models.Article,
             $q:ng.IQService,
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
             $stateParams:IArticleStateParams = <IArticleStateParams> {
-                newArticle:true
+                newArticle: true
             },
-            articleService = {
-                saveArticleWithRelated:(article:common.models.Article) => {
-                    return $q.when(true);
-                },
-                getArticle:(identifier:string, nestedEntities:string[]) => {
-                    return $q.when(getArticle(identifier));
-                },
-                newArticle:(author:common.models.User) => {
-                    return getArticle('newArticle');
-                }
-            },
-            ArticleController:ArticleController,
+            articleService:common.services.article.ArticleService,
+            ArticleController:app.admin.articles.article.ArticleController,
             loggedInUser:common.models.User = common.models.UserMock.entity(),
-            userService = {
-                getAuthUser: sinon.stub().returns(loggedInUser),
-                getUsersPaginator: sinon.stub().returns({
-                    setCount: sinon.stub()
-                })
-            };
+            userService:common.services.user.UserService;
 
         beforeEach(() => {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _notificationService_, _$q_) => {
+            inject(($controller, _$rootScope_, _notificationService_, _$q_, _articleService_, _userService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 notificationService = _notificationService_;
                 $q = _$q_;
+                articleService = _articleService_;
+                userService = _userService_;
+
+                articleService.saveArticleWithRelated = sinon.stub().returns($q.when(true));
+                articleService.getArticle = sinon.stub().returns(article);
+                articleService.newArticle = sinon.stub().returns(newArticle);
+
+                userService.getAuthUser = sinon.stub().returns(loggedInUser);
+                userService.getUsersPaginator = sinon.stub().returns({
+                    setCount: sinon.stub()
+                });
 
                 ArticleController = $controller(app.admin.articles.article.namespace + '.controller', {
                     $stateParams: $stateParams,
@@ -67,31 +48,20 @@ namespace app.admin.articles.article {
                     article: article,
                     articleService: articleService,
                     articleMetaTags: []
-
                 });
             });
 
             sinon.spy(notificationService, 'toast');
-            sinon.spy(articleService, 'saveArticleWithRelated');
-            sinon.spy(articleService, 'newArticle');
-            sinon.spy(articleService, 'getArticle');
 
         });
 
         afterEach(() => {
 
             (<any>notificationService).toast.restore();
-            (<any>articleService).saveArticleWithRelated.restore();
-            (<any>articleService).newArticle.restore();
-            (<any>articleService).getArticle.restore();
 
         });
 
         it('should be able to save a new article', () => {
-
-            let article:common.models.Article = getArticle();
-
-            ArticleController.article = article;
 
             ArticleController.save();
 
@@ -107,13 +77,13 @@ namespace app.admin.articles.article {
 
             $stateParams.permalink = 'new';
 
-            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
+            let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
             expect(articleService.newArticle).to.have.been.calledWith(loggedInUser);
 
-            expect(article).to.be.an.instanceOf(common.models.Article);
+            expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
 
-            expect(article.title).to.equal('newArticle');
+            expect(retrievedArticle.title).to.equal('new article');
 
         });
 
@@ -121,11 +91,9 @@ namespace app.admin.articles.article {
 
             $stateParams.permalink = 'foobar';
 
-            let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
+            let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
-            $rootScope.$apply();
-
-            expect(article).eventually.to.be.an.instanceOf(common.models.Article);
+            expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
 
             expect(articleService.getArticle).to.have.been.called;
 
