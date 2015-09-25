@@ -13,3 +13,19 @@ md-sidenav.md-closed.md-locked-open-add-active {
     max-width: none !important;
 }
 
+//Fix for rn-carousel dynamic height issue (https://github.com/revolunet/angular-carousel/issues/309)
+ul[rn-carousel] {
+    img {
+        max-width: 100%;
+    }
+
+    &> li {
+        position: relative;
+        margin-left: -100%;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+
+}

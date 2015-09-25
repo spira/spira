@@ -9,6 +9,7 @@ namespace common.models {
 
         protected __attributeCastMap:IAttributeCastMap = {
             createdAt: this.castMoment,
+            updatedAt: this.castMoment,
         };
 
         public articleCommentId:string = undefined;

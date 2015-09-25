@@ -66,9 +66,11 @@ $factory->define(BlockquoteContent::class, function (\Faker\Generator $faker) {
 
 $factory->define(ImageContent::class, function (\Faker\Generator $faker) {
 
-    $images = Image::all()->random(rand(1, 5));
-    if (!$images instanceof \Illuminate\Support\Collection){
-        $images = new Collection([$images]);
+
+    if ($faker->boolean()){
+        $images = new Collection([Image::all()->random()]);
+    }else{
+        $images = Image::all()->random(rand(2, 5));
     }
 
     return [

@@ -11,6 +11,11 @@ namespace common.models {
             _sections: sections.Section,
         };
 
+        protected __attributeCastMap:IAttributeCastMap = {
+            createdAt: this.castMoment,
+            updatedAt: this.castMoment,
+        };
+
         public articleId:string = undefined;
         public title:string = undefined;
         public permalink:string = undefined;

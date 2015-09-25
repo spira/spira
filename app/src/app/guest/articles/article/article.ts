@@ -22,6 +22,11 @@ namespace app.guest.articles.article {
                         controller: namespace+'.controller',
                         templateUrl: 'templates/app/guest/articles/article/article.tpl.html'
                     },
+                    ['header@'+namespace]: {
+                        controller: namespace+'.header.controller',
+                        controllerAs: 'HeaderController',
+                        templateUrl: 'templates/app/guest/articles/article/header/header.tpl.html'
+                    },
                     ['body@'+namespace]: {
                         controller: namespace+'.body.controller',
                         controllerAs: 'BodyController',
@@ -35,7 +40,6 @@ namespace app.guest.articles.article {
                 },
                 resolve: /*@ngInject*/{
                     article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
-
                         return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments', 'sections']);
                     },
                     user: (ngJwtAuthService:NgJwtAuth.NgJwtAuthService):common.models.User => {
@@ -66,6 +70,7 @@ namespace app.guest.articles.article {
 
     angular.module(namespace, [
         namespace+'.body',
+        namespace+'.header',
         namespace+'.comments',
     ])
         .config(ArticleConfig)

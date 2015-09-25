@@ -59,6 +59,7 @@ namespace config.vendorModules {
         'ngFileUpload', // File uploader - https://github.com/danialfarid/ng-file-upload
         'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
         'hc.marked', //markdown parser - https://github.com/Hypercubed/angular-marked
+        'angular-carousel', //content carousel - https://github.com/revolunet/angular-carousel
     ])
     .config(AuthConfig)
     .config(CloudinaryConfig)
