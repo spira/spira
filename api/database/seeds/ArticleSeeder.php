@@ -38,6 +38,7 @@ class ArticleSeeder extends BaseSeeder
             ->each(function (Article $article) use ($images, $users) {
 
                 //add sections
+                /** @var \Illuminate\Database\Eloquent\Collection $sections */
                 $sections = factory(ArticleSection::class, rand(2, 8))->make();
                 $article->sections()->saveMany($sections);
 
@@ -45,7 +46,7 @@ class ArticleSeeder extends BaseSeeder
                     ->make([
                         'sort_order' => array_map(function(ArticleSection $contentPiece){
                             return $contentPiece->getKey();
-                        }, $sections->all()),
+                        }, $sections->reverse()->all()),
                     ]);
 
                 $article->save();

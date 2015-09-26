@@ -140,7 +140,7 @@ namespace common.models {
          * @returns {common.models.AbstractModel}
          * @param exists
          */
-        private hydrateModel(data:any, Model:IModelClass, exists:boolean){
+        protected hydrateModel(data:any, Model:IModelClass, exists:boolean){
 
             return new Model(data, exists);
         }

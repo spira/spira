@@ -1,5 +1,9 @@
 namespace common.models {
 
+    export interface ISectionsDisplay{
+        sortOrder: string[];
+    }
+
     @common.decorators.changeAware
     export class Article extends AbstractModel {
 
@@ -8,7 +12,7 @@ namespace common.models {
             _author: User,
             _articleMetas: this.hydrateMetaCollectionFromTemplate,
             _comments: ArticleComment,
-            _sections: sections.Section,
+            _sections: this.hydrateSections,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -26,6 +30,7 @@ namespace common.models {
 
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
+        public sectionsDisplay:ISectionsDisplay = undefined;
 
         public _sections:sections.Section[] = [];
         public _articleMetas:ArticleMeta[] = [];
@@ -85,6 +90,23 @@ namespace common.models {
 
         }
 
+
+        protected hydrateSections(data:any, exists:boolean) : sections.Section[]{
+
+            if (!_.has(data, '_sections')){
+                return;
+            }
+
+            let sectionsChain =  _.chain(data._sections)
+                .map((entityData:any) => new sections.Section(entityData, exists));
+
+            if (_.has(data, 'sectionsDisplay.sortOrder')){
+                let sortOrder:string[] = data.sectionsDisplay.sortOrder;
+                sectionsChain = sectionsChain.sortBy((section:sections.Section) => _.indexOf(sortOrder, section.articleSectionId, false));
+            }
+
+            return sectionsChain.value();
+        }
     }
 
 }
