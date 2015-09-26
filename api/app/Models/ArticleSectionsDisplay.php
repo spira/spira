@@ -10,12 +10,10 @@
 
 namespace App\Models;
 
-
 use Spira\Model\Model\VirtualModel;
 
 class ArticleSectionsDisplay extends VirtualModel
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -28,6 +26,4 @@ class ArticleSectionsDisplay extends VirtualModel
     protected static $validationRules = [
         'sort_order' => 'required|array',
     ];
-
-
 }

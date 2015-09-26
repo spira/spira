@@ -10,12 +10,10 @@
 
 namespace App\Models\ArticleSections;
 
-
 use Spira\Model\Model\VirtualModel;
 
 class RichTextContent extends VirtualModel
 {
-
     const CONTENT_TYPE = 'rich_text';
 
     /**
@@ -30,6 +28,4 @@ class RichTextContent extends VirtualModel
     protected static $validationRules = [
         'body' => 'required|text',
     ];
-
-
 }

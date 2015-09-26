@@ -1,18 +1,24 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Extensions\Faker\Provider;
 
 class Markdown extends \Faker\Provider\Base
 {
-
     /**
      * @param int $elements
      * @return string
      */
     public function markdown($elements = null)
     {
-
-        if (!$elements){
+        if (! $elements) {
             $elements = rand(4, 15);
         }
 
@@ -20,7 +26,7 @@ class Markdown extends \Faker\Provider\Base
 
         $text = [];
 
-        for($i = $elements; $i>=0; $i--){
+        for ($i = $elements; $i >= 0; $i--) {
             $text[] = $this->{$this->randomElement($elementTypes)}();
         }
 
@@ -29,15 +35,14 @@ class Markdown extends \Faker\Provider\Base
 
     private function title()
     {
-
         $level = rand(2, 4);
 
-        return str_repeat('#', $level) .' '. $this->generator->realText(rand(10, 30));
+        return str_repeat('#', $level).' '.$this->generator->realText(rand(10, 30));
     }
 
     private function blockquote()
     {
-        return "> " . $this->generator->realText(rand(10, 100));
+        return '> '.$this->generator->realText(rand(10, 100));
     }
 
     /**
@@ -50,7 +55,7 @@ class Markdown extends \Faker\Provider\Base
 
         $text = $this->wrapText($text, 0.1, '**'); //strong
         $text = $this->wrapText($text, 0.05, '_'); //em
-        $text = $this->wrapText($text, 0.02, '[', '](' . $this->generator->url.')');
+        $text = $this->wrapText($text, 0.02, '[', ']('.$this->generator->url.')');
 
         return $text;
     }
@@ -64,17 +69,17 @@ class Markdown extends \Faker\Provider\Base
      */
     private function wrapText($text, $probability = 0.1, $left, $right = null)
     {
-        if (!$right){
+        if (! $right) {
             $right = $left;
         }
 
         $words = explode(' ', $text);
 
-        $transformed = array_map(function($word) use ($left, $right, $probability){
+        $transformed = array_map(function ($word) use ($left, $right, $probability) {
 
             $rand = mt_rand() / mt_getrandmax();
 
-            if($rand >= $probability){
+            if ($rand >= $probability) {
                 return $word;
             }
 
@@ -83,9 +88,5 @@ class Markdown extends \Faker\Provider\Base
         }, $words);
 
         return implode(' ', $transformed);
-
     }
-
-
-
 }

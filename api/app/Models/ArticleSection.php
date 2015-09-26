@@ -52,15 +52,16 @@ class ArticleSection extends BaseModel
     }
 
     /**
-     * Parse the json string
+     * Parse the json string.
      * @param $content
      * @return mixed
      */
     public function getContentAttribute($content)
     {
-        if (is_string($content)){
+        if (is_string($content)) {
             return json_decode($content);
         }
+
         return $content;
     }
 

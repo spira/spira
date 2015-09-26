@@ -44,7 +44,7 @@ class ArticleSeeder extends BaseSeeder
 
                 $article->sections_display = factory(ArticleSectionsDisplay::class)
                     ->make([
-                        'sort_order' => array_map(function(ArticleSection $contentPiece){
+                        'sort_order' => array_map(function (ArticleSection $contentPiece) {
                             return $contentPiece->getKey();
                         }, $sections->reverse()->all()),
                     ]);

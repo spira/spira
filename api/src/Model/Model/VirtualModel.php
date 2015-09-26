@@ -10,7 +10,6 @@
 
 namespace Spira\Model\Model;
 
-
 abstract class VirtualModel extends BaseModel
 {
     public $table = false;
@@ -19,16 +18,17 @@ abstract class VirtualModel extends BaseModel
 
     public $timestamps = false;
 
-    public function save($options = []){
-        throw new \LogicException("Cannot save virtual model");
+    public function save($options = [])
+    {
+        throw new \LogicException('Cannot save virtual model');
     }
 
     public function getKey()
     {
-        if (!$this->getKeyName()){
+        if (! $this->getKeyName()) {
             throw new \InvalidArgumentException("Virtual model doesn't have a primary key");
         }
+
         return parent::getKey();
     }
-
 }
