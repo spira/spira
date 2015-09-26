@@ -18,11 +18,14 @@ abstract class VirtualModel extends BaseModel
 
     public $timestamps = false;
 
-    public function save($options = [])
+    public function save(array $options = [])
     {
         throw new \LogicException('Cannot save virtual model');
     }
 
+    /**
+     * @return mixed
+     */
     public function getKey()
     {
         if (! $this->getKeyName()) {
