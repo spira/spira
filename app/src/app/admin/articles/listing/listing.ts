@@ -85,8 +85,8 @@ namespace app.admin.articles.listing {
         public search():void {
             this.articlesPaginator.complexQuery({
                 _all: this.queryString,
-                _tags: _.pluck(this.usersToFilter, 'tagId'),
-                authorId: _.pluck(this.usersToFilter, 'userId')
+                _tags: {tag_id:_.pluck(this.usersToFilter, 'tagId')},
+                author_id: {user_id:_.pluck(this.usersToFilter, 'userId')}
             })
                 .then((articles) => {
                     this.articles = articles;
