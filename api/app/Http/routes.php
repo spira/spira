@@ -34,28 +34,33 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
 });
 
 $app->group(['prefix' => 'articles'], function (Application $app) {
-    $app->get('/', 'App\Http\Controllers\ArticleController@getAllPaginated');
+    $app->get('/',                          'App\Http\Controllers\ArticleController@getAllPaginated');
     $app->get('{id}', ['as' => \App\Models\Article::class, 'uses' => 'App\Http\Controllers\ArticleController@getOne']);
-    $app->post('/', 'App\Http\Controllers\ArticleController@postOne');
-    $app->put('{id}', 'App\Http\Controllers\ArticleController@putOne');
-    $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
-    $app->delete('{id}', 'App\Http\Controllers\ArticleController@deleteOne');
+    $app->post('/',                         'App\Http\Controllers\ArticleController@postOne');
+    $app->put('{id}',                       'App\Http\Controllers\ArticleController@putOne');
+    $app->patch('{id}',                     'App\Http\Controllers\ArticleController@patchOne');
+    $app->delete('{id}',                    'App\Http\Controllers\ArticleController@deleteOne');
 
-    $app->get('{id}/permalinks', 'App\Http\Controllers\ArticlePermalinkController@getAll');
+    $app->get('{id}/permalinks',            'App\Http\Controllers\ArticlePermalinkController@getAll');
 
-    $app->get('{id}/meta', 'App\Http\Controllers\ArticleMetaController@getAll');
-    $app->put('{id}/meta', 'App\Http\Controllers\ArticleMetaController@putMany');
-    $app->delete('{id}/meta/{childId}', 'App\Http\Controllers\ArticleMetaController@deleteOne');
+    $app->get('{id}/meta',                  'App\Http\Controllers\ArticleMetaController@getAll');
+    $app->put('{id}/meta',                  'App\Http\Controllers\ArticleMetaController@putMany');
+    $app->delete('{id}/meta/{childId}',     'App\Http\Controllers\ArticleMetaController@deleteOne');
 
-    $app->get('{id}/comments', 'App\Http\Controllers\ArticleCommentController@getAll');
-    $app->post('{id}/comments', 'App\Http\Controllers\ArticleCommentController@postOne');
+    $app->get('{id}/comments',              'App\Http\Controllers\ArticleCommentController@getAll');
+    $app->post('{id}/comments',             'App\Http\Controllers\ArticleCommentController@postOne');
 
-    $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
-    $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
+    $app->get('{id}/tags',                  'App\Http\Controllers\ArticleTagController@getAll');
+    $app->put('{id}/tags',                  'App\Http\Controllers\ArticleTagController@putMany');
 
-    $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
-    $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putMany');
-    $app->delete('{id}/article-images', 'App\Http\Controllers\ArticleImageController@deleteMany');
+    $app->get('{id}/sections',              'App\Http\Controllers\ArticleSectionController@getAll');
+    $app->put('{id}/sections',              'App\Http\Controllers\ArticleSectionController@putMany');
+    $app->delete('{id}/sections',           'App\Http\Controllers\ArticleSectionController@deleteMany');
+    $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
+
+    $app->get('{id}/article-images',        'App\Http\Controllers\ArticleImageController@getAll');
+    $app->put('{id}/article-images',        'App\Http\Controllers\ArticleImageController@putMany');
+    $app->delete('{id}/article-images',     'App\Http\Controllers\ArticleImageController@deleteMany');
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
