@@ -339,7 +339,7 @@ abstract class EntityController extends ApiController
         $searchResults = $model->complexSearch(array(
             'index' => $model->getIndexName(),
             'type' => $model->getTypeName(),
-            'body' => array('query' => $query)
+            'body' => $this->translateQuery($query)
         ));
 
         if ($searchResults->totalHits() === 0) {
@@ -351,6 +351,66 @@ abstract class EntityController extends ApiController
         }
 
         return $searchResults;
+    }
+
+    /**
+     * Takes a query and translates it into a query that elastic search understands.
+     *
+     * Expect query to be in form, e.g.:
+     * {
+     *      _all: [ "stringA", "stringB" ],
+     *      someField: [ "stringA" ],
+     *      _nestedEntity: { key: [ "stringA", "stringB" ]
+     * }
+     *
+     * @param $query
+     * @return mixed
+     */
+    private function translateQuery($query)
+    {
+        $processedQuery = array();
+        $processedQuery['query']['bool']['must'] = array();
+
+        foreach($query as $key => $value) {
+            if(substr($key, 0, 1) == "_" && $key != "_all") { // Nested entity
+                $toMatch = array();
+
+                reset($value);
+                $fieldKey = key($value);
+
+                foreach($value[$fieldKey] as $fieldValue) {
+                    array_push($toMatch, array(
+                        'match' => array(
+                            substr($key, 1) . '.' . $fieldKey => $fieldValue
+                        )
+                    ));
+                }
+
+                array_push($processedQuery['query']['bool']['must'],
+                    array(
+                        'nested' => array(
+                            'path' => substr($key, 1),
+                            'query' => array(
+                                'bool' => array(
+                                    'must' => $toMatch // @todo: Issue with using 'must' here as looking for a parent with 2 different children returns 0 results
+                                )
+                            )
+                        )
+                    )
+                );
+            }
+            else {
+                foreach($value as $matchValue) {
+                    array_push($processedQuery['query']['bool']['must'], array(
+                        'match' => array(
+                            $key => $matchValue
+                        )
+                    ));
+                }
+            }
+        }
+
+        return $processedQuery;
     }
 
     /**
