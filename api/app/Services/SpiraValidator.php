@@ -10,8 +10,8 @@
 
 namespace App\Services;
 
-use App\Models\ArticleSection;
 use Rhumsaa\Uuid\Uuid;
+use App\Models\Section;
 use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
@@ -84,6 +84,6 @@ class SpiraValidator extends Validator
      */
     protected function validateSectionType($attribute, $value, $parameters)
     {
-        return in_array($value, ArticleSection::getContentTypes());
+        return in_array($value, Section::getContentTypes());
     }
 }
