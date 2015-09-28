@@ -9,13 +9,13 @@
  */
 
 use App\Models\Article;
-use App\Models\ArticleSection;
+use App\Models\Section;
 
 /**
- * Class ArticleSectionTest.
+ * Class SectionTest.
  * @group integration
  */
-class ArticleSectionTest extends TestCase
+class SectionTest extends TestCase
 {
     public function setUp()
     {
@@ -38,7 +38,7 @@ class ArticleSectionTest extends TestCase
             ->get(Article::class)
             ->create();
 
-        $sections = factory(ArticleSection::class, 5)->make();
+        $sections = factory(Section::class, 5)->make();
         $article->sections()->saveMany($sections);
 
         $this->getJson('/articles/' . $article->article_id . '/sections');
@@ -57,7 +57,7 @@ class ArticleSectionTest extends TestCase
             ->get(Article::class)
             ->create();
 
-        $sections = factory(ArticleSection::class, 5)->make();
+        $sections = factory(Section::class, 5)->make();
         $article->sections()->saveMany($sections);
 
         $this->getJson('/articles/' . $article->article_id, ['with-nested' => 'sections']);
@@ -73,12 +73,12 @@ class ArticleSectionTest extends TestCase
             ->create();
 
         /** @var \Illuminate\Database\Eloquent\Collection $sections */
-        $sections = factory(ArticleSection::class, 5)->make();
+        $sections = factory(Section::class, 5)->make();
         $article->sections()->saveMany($sections);
 
         $deleteSection = $sections->first();
 
-        $this->deleteJson('/articles/' . $article->article_id . '/sections/' . $deleteSection->article_section_id);
+        $this->deleteJson('/articles/' . $article->article_id . '/sections/' . $deleteSection->section_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();

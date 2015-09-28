@@ -32,7 +32,7 @@ namespace common.models {
         public showAuthorPromo:boolean = undefined;
         public sectionsDisplay:ISectionsDisplay = undefined;
 
-        public _sections:sections.Section[] = [];
+        public _sections:Section[] = [];
         public _articleMetas:ArticleMeta[] = [];
         public _author:User = undefined;
         public _tags:Tag[] = [];
@@ -91,18 +91,18 @@ namespace common.models {
         }
 
 
-        protected hydrateSections(data:any, exists:boolean) : sections.Section[]{
+        protected hydrateSections(data:any, exists:boolean) : Section[]{
 
             if (!_.has(data, '_sections')){
                 return;
             }
 
             let sectionsChain =  _.chain(data._sections)
-                .map((entityData:any) => new sections.Section(entityData, exists));
+                .map((entityData:any) => new Section(entityData, exists));
 
             if (_.has(data, 'sectionsDisplay.sortOrder')){
                 let sortOrder:string[] = data.sectionsDisplay.sortOrder;
-                sectionsChain = sectionsChain.sortBy((section:sections.Section) => _.indexOf(sortOrder, section.articleSectionId, false));
+                sectionsChain = sectionsChain.sortBy((section:Section) => _.indexOf(sortOrder, section.sectionId, false));
             }
 
             return sectionsChain.value();

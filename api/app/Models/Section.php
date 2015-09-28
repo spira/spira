@@ -10,16 +10,16 @@
 
 namespace App\Models;
 
-use App\Models\ArticleSections\BlockquoteContent;
-use App\Models\ArticleSections\ImageContent;
-use App\Models\ArticleSections\RichTextContent;
+use App\Models\Sections\BlockquoteContent;
+use App\Models\Sections\ImageContent;
+use App\Models\Sections\RichTextContent;
 use Spira\Model\Model\BaseModel;
 
-class ArticleSection extends BaseModel
+class Section extends BaseModel
 {
-    public $table = 'article_sections';
+    public $table = 'sections';
 
-    protected $primaryKey = 'article_section_id';
+    protected $primaryKey = 'section_id';
 
     public $timestamps = true;
 
@@ -29,15 +29,13 @@ class ArticleSection extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'article_section_id',
-        'article_id',
+        'section_id',
         'content',
         'type',
     ];
 
     protected static $validationRules = [
-        'article_section_id' => 'required|uuid',
-        'article_id' => 'required|uuid',
+        'section_id' => 'required|uuid',
         'content' => 'required|array',
         'type' => 'required|section_type',
     ];
@@ -65,11 +63,4 @@ class ArticleSection extends BaseModel
         return $content;
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function article()
-    {
-        return $this->belongsTo(Article::class);
-    }
 }

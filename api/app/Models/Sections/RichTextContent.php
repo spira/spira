@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace App\Models\ArticleSections;
+namespace App\Models\Sections;
 
 use Spira\Model\Model\VirtualModel;
 
-class ImageContent extends VirtualModel
+class RichTextContent extends VirtualModel
 {
-    const CONTENT_TYPE = 'image';
+    const CONTENT_TYPE = 'rich_text';
 
     /**
      * The attributes that are mass assignable.
@@ -22,10 +22,10 @@ class ImageContent extends VirtualModel
      * @var array
      */
     protected $fillable = [
-        'images',
+        'body',
     ];
 
     protected static $validationRules = [
-        'images' => 'required|array',
+        'body' => 'required|text',
     ];
 }

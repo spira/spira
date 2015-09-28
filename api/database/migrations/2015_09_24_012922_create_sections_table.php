@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Article;
-use App\Models\ArticleSection;
+use App\Models\Section;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateArticleSectionsTable extends Migration
+class CreateSectionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,24 +22,19 @@ class CreateArticleSectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create(ArticleSection::getTableName(), function (Blueprint $table) {
+        Schema::create(Section::getTableName(), function (Blueprint $table) {
 
-            $pk = ArticleSection::getPrimaryKey();
-            $articleFk = Article::getPrimaryKey();
+            $pk = Section::getPrimaryKey();
 
             $table->uuid($pk);
-            $table->uuid($articleFk);
+            $table->uuid('sectionable_id');
+            $table->string('sectionable_type');
 
-            $table->primary([$pk,$articleFk]);
-
-            $table->foreign($articleFk)
-                ->references($articleFk)->on(Article::getTableName())
-                ->onDelete('cascade');
+            $table->primary([$pk,'sectionable_id', 'sectionable_type']);
 
             $table->json('content');
-            $table->enum('type', ArticleSection::getContentTypes());
+            $table->enum('type', Section::getContentTypes());
             $table->timestamps();
-
         });
     }
 
@@ -51,6 +45,6 @@ class CreateArticleSectionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop(ArticleSection::getTableName());
+        Schema::drop(Section::getTableName());
     }
 }

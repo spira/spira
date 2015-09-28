@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Section;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Image;
@@ -39,12 +40,12 @@ class ArticleSeeder extends BaseSeeder
 
                 //add sections
                 /** @var \Illuminate\Database\Eloquent\Collection $sections */
-                $sections = factory(ArticleSection::class, rand(2, 8))->make();
+                $sections = factory(Section::class, rand(2, 8))->make();
                 $article->sections()->saveMany($sections);
 
                 $article->sections_display = factory(ArticleSectionsDisplay::class)
                     ->make([
-                        'sort_order' => array_map(function (ArticleSection $contentPiece) {
+                        'sort_order' => array_map(function (Section $contentPiece) {
                             return $contentPiece->getKey();
                         }, $sections->reverse()->all()),
                     ]);

@@ -1,4 +1,4 @@
-namespace common.models.sections {
+namespace common.models {
 
     @common.decorators.changeAware
     export class Section extends AbstractModel {
@@ -12,9 +12,8 @@ namespace common.models.sections {
             content: this.hydrateSection,
         };
 
-        public articleSectionId:string;
-        public articleId:string;
-        public content:RichText|Blockquote|Image;
+        public sectionId:string;
+        public content:sections.RichText|sections.Blockquote|sections.Image;
         public type:string;
         public createdAt:moment.Moment = undefined;
         public updatedAt:moment.Moment = undefined;
@@ -26,17 +25,17 @@ namespace common.models.sections {
         }
 
 
-        private hydrateSection(data:any, exists:boolean):RichText|Blockquote|Image {
+        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image {
 
             switch(data.type){
                 case 'rich_text':
-                    return new RichText(data.content, exists);
+                    return new sections.RichText(data.content, exists);
                 break;
                 case 'blockquote':
-                    return new Blockquote(data.content, exists);
+                    return new sections.Blockquote(data.content, exists);
                 break;
                 case 'image':
-                    return new Image(data.content, exists);
+                    return new sections.Image(data.content, exists);
                 break;
             }
 

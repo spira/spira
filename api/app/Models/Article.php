@@ -228,6 +228,6 @@ class Article extends IndexedModel
 
     public function sections()
     {
-        return $this->hasMany(ArticleSection::class);
+        return $this->morphMany(Section::class, 'sectionable');
     }
 }
