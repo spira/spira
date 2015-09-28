@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Faker\Generator;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Section;
@@ -17,38 +18,8 @@ use Spira\Model\Collection\Collection;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 
-$factory->define(Section::class, function (\Faker\Generator $faker) {
 
-    $type = $faker->randomElement(Section::getContentTypes());
-    $className = null;
-
-    switch ($type) {
-        case RichTextContent::CONTENT_TYPE:
-            $className = RichTextContent::class;
-            break;
-        case BlockquoteContent::CONTENT_TYPE:
-            $className = BlockquoteContent::class;
-            break;
-        case ImageContent::CONTENT_TYPE:
-            $className = ImageContent::class;
-            break;
-    }
-
-    return [
-        'section_id' => $faker->uuid,
-        'type' => $type,
-        'content' => factory($className)->make(),
-    ];
-
-});
-
-$factory->define(ArticleSectionsDisplay::class, function (\Faker\Generator $faker) {
-    return [
-        'sort_order' => [],
-    ];
-});
-
-$factory->define(RichTextContent::class, function (\Faker\Generator $faker) {
+$factory->define(RichTextContent::class, function (Generator $faker) {
 
     $faker->addProvider(new \App\Extensions\Faker\Provider\Markdown($faker));
 
@@ -58,7 +29,7 @@ $factory->define(RichTextContent::class, function (\Faker\Generator $faker) {
 
 });
 
-$factory->define(BlockquoteContent::class, function (\Faker\Generator $faker) {
+$factory->define(BlockquoteContent::class, function (Generator $faker) {
 
     /** @var User $author */
     $author = User::all()->random();
@@ -70,7 +41,7 @@ $factory->define(BlockquoteContent::class, function (\Faker\Generator $faker) {
 
 });
 
-$factory->define(ImageContent::class, function (\Faker\Generator $faker) {
+$factory->define(ImageContent::class, function (Generator $faker) {
 
     if ($faker->boolean()) {
         $images = new Collection([Image::all()->random()]);
@@ -90,3 +61,56 @@ $factory->define(ImageContent::class, function (\Faker\Generator $faker) {
 
 });
 
+$factory->defineAs(Section::class, RichTextContent::CONTENT_TYPE, function (Generator $faker) {
+
+    return [
+        'section_id' => $faker->uuid,
+        'type' => RichTextContent::CONTENT_TYPE,
+        'content' => factory(RichTextContent::class)->make(),
+    ];
+
+});
+
+$factory->defineAs(Section::class, BlockquoteContent::CONTENT_TYPE, function (Generator $faker) {
+
+    return [
+        'section_id' => $faker->uuid,
+        'type' => BlockquoteContent::CONTENT_TYPE,
+        'content' => factory(BlockquoteContent::class)->make(),
+    ];
+
+});
+
+$factory->defineAs(Section::class, ImageContent::CONTENT_TYPE, function (Generator $faker) {
+
+    return [
+        'section_id' => $faker->uuid,
+        'type' => ImageContent::CONTENT_TYPE,
+        'content' => factory(ImageContent::class)->make(),
+    ];
+
+});
+
+$factory->define(ArticleSectionsDisplay::class, function (Generator $faker) {
+    return [
+        'sort_order' => [],
+    ];
+});
+
+$factory->define(Section::class, function (Generator $faker) use ($factory) {
+
+    $type = $faker->randomElement(Section::getContentTypes());
+
+    switch ($type) {
+        case RichTextContent::CONTENT_TYPE:
+            return $factory->rawOf(Section::class, RichTextContent::CONTENT_TYPE);
+            break;
+        case BlockquoteContent::CONTENT_TYPE:
+            return $factory->rawOf(Section::class, BlockquoteContent::CONTENT_TYPE);
+            break;
+        case ImageContent::CONTENT_TYPE:
+            return $factory->rawOf(Section::class, ImageContent::CONTENT_TYPE);
+            break;
+    }
+
+});
