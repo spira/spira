@@ -368,44 +368,40 @@ abstract class EntityController extends ApiController
      */
     private function translateQuery($query)
     {
-        $processedQuery = array();
-        $processedQuery['query']['bool']['must'] = array();
+        $processedQuery = [];
+        $processedQuery['query']['bool']['must'] = [];
 
         foreach($query as $key => $value) {
             if(substr($key, 0, 1) == "_" && $key != "_all") { // Nested entity
-                $toMatch = array();
-
                 reset($value);
                 $fieldKey = key($value);
 
                 foreach($value[$fieldKey] as $fieldValue) {
-                    array_push($toMatch, array(
-                        'match' => array(
-                            substr($key, 1) . '.' . $fieldKey => $fieldValue
-                        )
-                    ));
+                    array_push($processedQuery['query']['bool']['must'],
+                        [
+                            'nested' => [
+                                'path' => substr($key, 1),
+                                'query' => [
+                                    'bool' => [
+                                        'must' => [
+                                            'match' => [
+                                                substr($key, 1) . '.' . $fieldKey => $fieldValue
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    );
                 }
-
-                array_push($processedQuery['query']['bool']['must'],
-                    array(
-                        'nested' => array(
-                            'path' => substr($key, 1),
-                            'query' => array(
-                                'bool' => array(
-                                    'must' => $toMatch // @todo: Issue with using 'must' here as looking for a parent with 2 different children returns 0 results
-                                )
-                            )
-                        )
-                    )
-                );
             }
             else {
                 foreach($value as $matchValue) {
-                    array_push($processedQuery['query']['bool']['must'], array(
-                        'match' => array(
+                    array_push($processedQuery['query']['bool']['must'], [
+                        'match' => [
                             $key => $matchValue
-                        )
-                    ));
+                        ]
+                    ]);
                 }
             }
         }
