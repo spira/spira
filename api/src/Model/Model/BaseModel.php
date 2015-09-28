@@ -140,6 +140,7 @@ abstract class BaseModel extends Model
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
+            /** @var Model $model */
             $model = null;
             $entityId = isset($item[$keyName]) ? $item[$keyName] : null;
 

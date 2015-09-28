@@ -298,9 +298,6 @@ class EntityTest extends TestCase
         $this->assertResponseStatus(400);
     }
 
-    /**
-     * @group failing
-     */
     public function testPostOneValid()
     {
         $entity = $this->getFactory(TestEntity::class)
