@@ -83,13 +83,17 @@ namespace app.admin.articles.listing {
          * Function called when article is searched for.
          */
         public search():void {
-            this.articlesPaginator.query(this.queryString)
-            .then((articles) => {
-                this.articles = articles;
+            this.articlesPaginator.complexQuery({
+                _all: this.queryString,
+                _tags: _.pluck(this.usersToFilter, 'tagId'),
+                authorId: _.pluck(this.usersToFilter, 'userId')
             })
-            .finally(() => { //@todo handle case where search returns no results
-                this.pages = this.articlesPaginator.getPages();
-            });
+                .then((articles) => {
+                    this.articles = articles;
+                })
+                .finally(() => { //@todo handle case where search returns no results
+                    this.pages = this.articlesPaginator.getPages();
+                });
         }
 
         /**

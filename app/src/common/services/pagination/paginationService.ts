@@ -119,6 +119,20 @@ namespace common.services.pagination {
         }
 
         /**
+         * Set the index back to 0 and get a response from the collection endpoint with added complex query param. If an empty
+         * string is passed through the results are not filtered.
+         * @param query
+         * @returns {ng.IPromise<common.models.IModel[]>}
+         */
+        public complexQuery(query:any):ng.IPromise<any[]> {
+
+            this.queryString = angular.toJson(_.cloneDeep(query));
+
+            return this.reset().getResponse(this.count);
+
+        }
+
+        /**
          * Set the default count to get responses
          * @param count
          * @returns {common.services.pagination.Paginator}

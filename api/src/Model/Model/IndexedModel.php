@@ -12,6 +12,7 @@ namespace Spira\Model\Model;
 
 use Carbon\Carbon;
 use Elasticquent\ElasticquentTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Spira\Model\Collection\IndexedCollection;
 
 abstract class IndexedModel extends BaseModel
@@ -79,19 +80,28 @@ abstract class IndexedModel extends BaseModel
 
     public function getIndexDocumentData()
     {
+        $relations = array();
+
         if(!empty($this->indexNested)) {
-            $this->load($this->indexNested);
-        }
+            // We have to do this because we don't know if the relation is one to or one to many. If it is one to one
+            // we don't want to strip out the keys.
+            foreach($this->indexNested as $nestedModelName) {
 
-        $modelArray = $this->toArray();
+                $results = $this->$nestedModelName()->getResults();
 
-        foreach ($modelArray as $attribute => &$value) {
-            if ($value instanceof Carbon) {
-                $value = $value->toIso8601String();
+                if($results instanceof Collection) {
+                    $relations[snake_case($nestedModelName)] = array_values($results->toArray());
+                }
+                else {
+                    $relations[snake_case($nestedModelName)] = $results->toArray();
+                }
+
             }
         }
 
-        return $modelArray;
+        $attributes = $this->attributesToArray();
+
+        return array_merge($attributes, $relations);
     }
 
     protected static function boot()
