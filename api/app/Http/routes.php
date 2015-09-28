@@ -10,6 +10,9 @@
 
 use Laravel\Lumen\Application;
 
+//use Illuminate\Support\Facades\Event;
+//Event::listen('illuminate.query', function($sql, $params) { echo($sql); var_dump($params); });
+
 $app->get('/', 'ApiaryController@index');
 
 $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
