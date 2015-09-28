@@ -40,29 +40,29 @@ class ArticleImageTest extends TestCase
 
     protected function addImagesToArticle(Article $article, $make = false)
     {
-        $factory = $this->getFactory();
         $method = 'create';
         if ($make) {
             $method = 'make';
         }
 
         $articleImages = [];
-        $factory->get(Image::class)
-                ->count(5)
-                ->create()
-                ->each(function (Image $image) use ($article, $factory, $method, &$articleImages) {
-                    $articleImages[] = $factory->get(ArticleImage::class)->{$method}([
-                        'article_id' => $article->article_id,
-                        'image_id' => $image->image_id,
-                    ]);
-                });
+        $this->getFactory(Image::class)
+            ->count(5)
+            ->create()
+            ->each(function (Image $image) use ($article, $method, &$articleImages) {
+                $articleImages[] = $this->getFactory(ArticleImage::class)->{$method}([
+                    'article_id' => $article->article_id,
+                    'image_id' => $image->image_id,
+                ]);
+            });
 
         return new \Spira\Model\Collection\Collection($articleImages);
     }
 
     public function testGetAll()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)->create();
         $this->addImagesToArticle($article);
         $this->getJson('/articles/'.$article->article_id.'/article-images', ['With-Nested' => 'image']);
         $object = json_decode($this->response->getContent());
@@ -78,11 +78,11 @@ class ArticleImageTest extends TestCase
 
     public function testPutManyNew()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)->create();
         $images = $this->addImagesToArticle($article, true);
 
-        $images = $this->getFactory()
-            ->get(Image::class)
+        $images = $this->getFactory(Image::class)
             ->setCollection($images)
             ->count(5)
             ->transformed();
@@ -101,11 +101,10 @@ class ArticleImageTest extends TestCase
 
     public function testPutManyNewInvalid()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $images = $this->addImagesToArticle($article, true);
 
-        $images = $this->getFactory()
-            ->get(Image::class)
+        $images = $this->getFactory(Image::class)
             ->setCollection($images)
             ->count(5)
             ->customize([
@@ -127,11 +126,10 @@ class ArticleImageTest extends TestCase
 
     public function testDeleteMany()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $images = $this->addImagesToArticle($article);
 
-        $images = $this->getFactory()
-            ->get(Image::class)
+        $images = $this->getFactory(Image::class)
             ->setCollection($images)
             ->count(5)
             ->transformed();

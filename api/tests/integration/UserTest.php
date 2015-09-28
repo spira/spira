@@ -127,11 +127,11 @@ class UserTest extends TestCase
 
     public function testPutOne()
     {
-        $user = $this->getFactory()->get(User::class)
+        $user = $this->getFactory(User::class)
             ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
             ->append(
                 '_userCredential',
-                $this->getFactory()->get(UserCredential::class)
+                $this->getFactory(UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
                     ->customize(['password' => 'password'])
@@ -153,13 +153,9 @@ class UserTest extends TestCase
 
     public function testPutOneNoCredentials()
     {
-        $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name']);
-
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = $transformer->transform($user);
+        $user = $this->getFactory(User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->transformed();
 
         $this->putJson('/users/'.$user['userId'], $user);
 
@@ -172,9 +168,10 @@ class UserTest extends TestCase
         $user = $this->createUser();
         $user['_userCredential'] = ['password' => 'password'];
 
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = array_except($transformer->transform($user), ['_self', 'userType']);
+        $user = $this->getFactory(User::class)
+            ->setModel($user)
+            ->hide(['_self', 'userType'])
+            ->transformed();
 
         $this->putJson('/users/'.$user['userId'], $user);
 

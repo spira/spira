@@ -14,6 +14,7 @@ use App\Models\Section;
 /**
  * Class SectionTest.
  * @group integration
+ * @group testing
  */
 class SectionTest extends TestCase
 {
@@ -34,11 +35,10 @@ class SectionTest extends TestCase
     public function testGetSections()
     {
         /** @var Article $article */
-        $article = $this->getFactory()
-            ->get(Article::class)
+        $article = $this->getFactory(Article::class)
             ->create();
 
-        $sections = factory(Section::class, 5)->make();
+        $sections = $this->getFactory(Section::class)->count(5)->make();
         $article->sections()->saveMany($sections);
 
         $this->getJson('/articles/' . $article->article_id . '/sections');
@@ -53,11 +53,10 @@ class SectionTest extends TestCase
     public function testGetSectionsNestedInArticles()
     {
         /** @var Article $article */
-        $article = $this->getFactory()
-            ->get(Article::class)
+        $article = $this->getFactory(Article::class)
             ->create();
 
-        $sections = factory(Section::class, 5)->make();
+        $sections = $this->getFactory(Section::class)->count(5)->make();
         $article->sections()->saveMany($sections);
 
         $this->getJson('/articles/' . $article->article_id, ['with-nested' => 'sections']);
@@ -65,15 +64,32 @@ class SectionTest extends TestCase
         $this->assertEquals(5, count($object->_sections));
     }
 
+
+    public function testAddSectionsToArticle()
+    {
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)
+            ->create();
+
+        $sections = $this->getFactory(Section::class)->count(5)->make();
+        $article->sections()->saveMany($sections);
+
+        $newSections = $this->getFactory(Section::class)->count(2)->transformed();
+        $this->putJson('/articles/' . $article->article_id, $newSections);
+
+        $this->assertResponseStatus(204);
+
+        $this->assertCount(7, Article::find($article->article_id)->sections);
+    }
+
     public function testDeleteSection()
     {
         /** @var Article $article */
-        $article = $this->getFactory()
-            ->get(Article::class)
+        $article = $this->getFactory(Article::class)
             ->create();
 
         /** @var \Illuminate\Database\Eloquent\Collection $sections */
-        $sections = factory(Section::class, 5)->make();
+        $sections = $this->getFactory(Section::class)->count(5)->make();
         $article->sections()->saveMany($sections);
 
         $deleteSection = $sections->first();

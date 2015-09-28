@@ -24,10 +24,11 @@ trait ModelFactoryTrait
     }
 
     /**
-     * @return ModelFactory
+     * @param string|null $factoryName
+     * @return \App\Services\ModelFactoryInstance
      */
-    public function getFactory()
+    public function getFactory($factoryName = null)
     {
-        return $this->modelFactory;
+        return $this->modelFactory->get($factoryName);
     }
 }

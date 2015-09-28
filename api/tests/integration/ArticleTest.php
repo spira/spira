@@ -40,7 +40,7 @@ class ArticleTest extends TestCase
     protected function addPermalinksToArticles($articles)
     {
         foreach ($articles as $article) {
-            $this->getFactory()->get(ArticlePermalink::class)
+            $this->getFactory(ArticlePermalink::class)
                 ->count(rand(2, 10))->make()->each(function (ArticlePermalink $permalink) use ($article) {
                     $article->articlePermalinks()->save($permalink);
                 });
@@ -54,8 +54,10 @@ class ArticleTest extends TestCase
     {
         foreach ($articles as $article) {
             $uniqueMetas = [];
-            $this->getFactory()->get(ArticleMeta::class)
-                ->count(4)->make()->each(function (ArticleMeta $meta) use ($article, &$uniqueMetas) {
+            $this->getFactory(ArticleMeta::class)
+                ->count(4)
+                ->make()
+                ->each(function (ArticleMeta $meta) use ($article, &$uniqueMetas) {
                     if (! in_array($meta->meta_name, $uniqueMetas)) {
                         $article->articleMetas()->save($meta);
                         array_push($uniqueMetas, $meta->meta_name);
@@ -75,7 +77,7 @@ class ArticleTest extends TestCase
 
     public function testGetAllPaginated()
     {
-        $entities = $this->getFactory()->get(Article::class)->count(5)->create();
+        $entities = $this->getFactory(Article::class)->count(5)->create();
 
         $entity = $entities->first();
         $entity->excerpt = null;
@@ -95,7 +97,7 @@ class ArticleTest extends TestCase
 
     public function testGetOne()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
 
         $this->getJson('/articles/'.$entity->article_id);
@@ -124,8 +126,8 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedTags()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
-        $tags = $this->getFactory()->get(Tag::class)->count(4)->create();
+        $entity = $this->getFactory(Article::class)->create();
+        $tags = $this->getFactory(Tag::class)->count(4)->create();
         $entity->tags()->sync($tags->lists('tag_id')->toArray());
 
         $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'tags']);
@@ -139,7 +141,7 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedAuthor()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
 
         $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'author']);
         $this->assertResponseOk();
@@ -151,7 +153,7 @@ class ArticleTest extends TestCase
 
     public function testGetOneByFirstPermalink()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
 
         $permalink = $entity->articlePermalinks->first();
@@ -179,7 +181,7 @@ class ArticleTest extends TestCase
 
     public function testGetOneByLastPermalink()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
 
         $permalink = $entity->articlePermalinks->last();
@@ -208,7 +210,7 @@ class ArticleTest extends TestCase
     public function testPostOne()
     {
         /** @var Article $entity */
-        $entity = $this->getFactory()->get(Article::class)
+        $entity = $this->getFactory(Article::class)
             ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
             ->transformed();
 
@@ -227,7 +229,7 @@ class ArticleTest extends TestCase
 
     public function testPutOneNew()
     {
-        $entity = $this->getFactory()->get(Article::class)
+        $entity = $this->getFactory(Article::class)
             ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
             ->transformed();
 
@@ -247,7 +249,7 @@ class ArticleTest extends TestCase
 
     public function testPutOneNonExistingAuthor()
     {
-        $entity = $this->getFactory()->get(Article::class)
+        $entity = $this->getFactory(Article::class)
             ->customize(['author_id' => (string) \Rhumsaa\Uuid\Uuid::uuid4()])
             ->transformed();
 
@@ -264,7 +266,7 @@ class ArticleTest extends TestCase
 
     public function testPutMissingIdInBody()
     {
-        $factory = $this->getFactory()->get(Article::class);
+        $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
         $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
             ->hide(['permalink','article_id'])
@@ -279,7 +281,7 @@ class ArticleTest extends TestCase
 
     public function testPatchOne()
     {
-        $factory = $this->getFactory()->get(Article::class);
+        $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
         $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
             ->hide(['permalink','article_id'])
@@ -297,7 +299,7 @@ class ArticleTest extends TestCase
 
     public function testPatchOneNewPermalink()
     {
-        $factory = $this->getFactory()->get(Article::class);
+        $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
         $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
             ->hide(['article_id'])
@@ -320,7 +322,7 @@ class ArticleTest extends TestCase
 
     public function testPatchOneRemovePermalink()
     {
-        $factory = $this->getFactory()->get(Article::class);
+        $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
         $this->addPermalinksToArticles([$entity]);
 
@@ -342,7 +344,7 @@ class ArticleTest extends TestCase
 
     public function testDeleteOne()
     {
-        $entities = $this->getFactory()->get(Article::class)->count(5)->create()->all();
+        $entities = $this->getFactory(Article::class)->count(5)->create()->all();
         $this->addPermalinksToArticles($entities);
 
         $entity = array_shift($entities);
@@ -366,7 +368,7 @@ class ArticleTest extends TestCase
 
     public function testGetPermalinks()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
         $this->addPermalinksToArticles([$entity]);
 
         $count = ArticlePermalink::where('article_id', '=', $entity->article_id)->count();
@@ -392,7 +394,7 @@ class ArticleTest extends TestCase
 
     public function testGetMetas()
     {
-        $entity = $this->getFactory()->get(Article::class)->create();
+        $entity = $this->getFactory(Article::class)->create();
         $this->addMetasToArticles([$entity]);
 
         $count = ArticleMeta::where('article_id', '=', $entity->article_id)->count();
@@ -415,18 +417,16 @@ class ArticleTest extends TestCase
 
     public function testPutMetas()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $this->addMetasToArticles([$article]);
 
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
 
-        $factory = $this->getFactory();
-
-        $entities = array_map(function (ArticleMeta $entity) use ($factory) {
-            return $factory->get(ArticleMeta::class)->setModel($entity)->customize(['meta_content' => 'foobar'])->transformed();
+        $entities = array_map(function (ArticleMeta $entity) {
+            return $this->getFactory(ArticleMeta::class)->setModel($entity)->customize(['meta_content' => 'foobar'])->transformed();
         }, $article->articleMetas->all());
 
-        $entities[] = $this->getFactory()->get(ArticleMeta::class)->customize(
+        $entities[] = $this->getFactory(ArticleMeta::class)->customize(
             [
                 'meta_name' => 'barfoobar',
                 'meta_content' => 'barfoobarfoo',
@@ -453,8 +453,8 @@ class ArticleTest extends TestCase
     public function testPutDuplicateMetaNames()
     {
         /** @var Article $article */
-        $article = $this->getFactory()->get(Article::class)->create();
-        $factory = $this->getFactory()->get(ArticleMeta::class)->customize(
+        $article = $this->getFactory(Article::class)->create();
+        $factory = $this->getFactory(ArticleMeta::class)->customize(
             [
                 'meta_name' => 'foo',
                 'meta_content' => 'bar',
@@ -476,7 +476,7 @@ class ArticleTest extends TestCase
 
     public function deleteMeta()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $this->addMetasToArticles([$article]);
 
         $metaEntity = $article->articleMetas->first();
@@ -490,7 +490,7 @@ class ArticleTest extends TestCase
 
     public function testShouldCreateDiscussionWhenArticleCreated()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
 
         // Get the discussion
         $client = App::make(VanillaClient::class);
@@ -510,7 +510,7 @@ class ArticleTest extends TestCase
     {
         $client = App::make(VanillaClient::class);
 
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $discussion = $client->api('discussions')->findByForeignId($article->article_id);
         $article->delete();
 
@@ -520,7 +520,7 @@ class ArticleTest extends TestCase
 
     public function testShouldGetCommentsForArticle()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $body = 'A comment';
 
         // Get the discussion
@@ -543,7 +543,7 @@ class ArticleTest extends TestCase
 
     public function testShouldGetCommentsForArticleUsingWithNestedHeader()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $body = 'A comment';
 
         // Get the discussion
@@ -567,7 +567,7 @@ class ArticleTest extends TestCase
     public function testShouldPostCommentForArticle()
     {
         $body = 'A comment';
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
@@ -589,7 +589,7 @@ class ArticleTest extends TestCase
 
     public function testShouldNotPostCommentWithoutBodyForArticle()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
 
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
@@ -618,9 +618,9 @@ class ArticleTest extends TestCase
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $token = $this->tokenFromUser($user);
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
 
-        $meta = $this->getFactory()->get(ArticleMeta::class)->make();
+        $meta = $this->getFactory(ArticleMeta::class)->make();
         $entities = [$meta];
 
         $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
@@ -636,7 +636,7 @@ class ArticleTest extends TestCase
 
     public function testShouldLogDeleteMeta()
     {
-        $article = $this->getFactory()->get(Article::class)->create();
+        $article = $this->getFactory(Article::class)->create();
         $this->addMetasToArticles([$article]);
 
         $metaEntity = $article->articleMetas->first();
