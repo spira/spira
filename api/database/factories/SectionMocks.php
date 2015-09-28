@@ -35,6 +35,7 @@ $factory->define(Section::class, function (\Faker\Generator $faker) {
     }
 
     return [
+        'section_id' => $faker->uuid,
         'type' => $type,
         'content' => factory($className)->make(),
     ];

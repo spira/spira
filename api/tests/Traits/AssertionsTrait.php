@@ -29,7 +29,7 @@ trait AssertionsTrait
     {
         $array = json_decode($this->response->getContent(), true);
 
-        $this->assertTrue(is_array($array));
+        $this->assertTrue(is_array($array), "Response is json array");
 
         return $this;
     }
@@ -43,7 +43,7 @@ trait AssertionsTrait
     {
         $array = json_decode($this->response->getContent(), true);
 
-        $this->assertTrue(count($array) > 1);
+        $this->assertTrue(count($array) > 1, "Json response has multiple entries");
 
         return $this;
     }

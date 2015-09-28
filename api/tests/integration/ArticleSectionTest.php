@@ -14,7 +14,6 @@ use App\Models\Section;
 /**
  * Class SectionTest.
  * @group integration
- * @group testing
  */
 class SectionTest extends TestCase
 {
@@ -44,10 +43,12 @@ class SectionTest extends TestCase
         $this->getJson('/articles/' . $article->article_id . '/sections');
         $object = json_decode($this->response->getContent());
 
-        $this->shouldReturnJson();
         $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
 
         $this->assertEquals(count($object), 5);
+        $this->assertInstanceOf(stdClass::class, $object[0]->content);
     }
 
     public function testGetSectionsNestedInArticles()
@@ -75,9 +76,9 @@ class SectionTest extends TestCase
         $article->sections()->saveMany($sections);
 
         $newSections = $this->getFactory(Section::class)->count(2)->transformed();
-        $this->putJson('/articles/' . $article->article_id, $newSections);
+        $this->putJson('/articles/' . $article->article_id . '/sections', $newSections);
 
-        $this->assertResponseStatus(204);
+        $this->assertResponseStatus(201);
 
         $this->assertCount(7, Article::find($article->article_id)->sections);
     }

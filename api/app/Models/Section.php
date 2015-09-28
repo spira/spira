@@ -40,6 +40,12 @@ class Section extends BaseModel
         'type' => 'required|section_type',
     ];
 
+    protected $casts = [
+        self::CREATED_AT => 'datetime',
+        self::UPDATED_AT => 'datetime',
+        'content' => 'json',
+    ];
+
     public static function getContentTypes()
     {
         return [
@@ -47,20 +53,6 @@ class Section extends BaseModel
             BlockquoteContent::CONTENT_TYPE,
             ImageContent::CONTENT_TYPE,
         ];
-    }
-
-    /**
-     * Parse the json string.
-     * @param $content
-     * @return mixed
-     */
-    public function getContentAttribute($content)
-    {
-        if (is_string($content)) {
-            return json_decode($content);
-        }
-
-        return $content;
     }
 
 }
