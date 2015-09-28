@@ -152,6 +152,20 @@ class EntityTest extends TestCase
         $this->assertEquals($last, 19);
     }
 
+    public function testGetAllPaginatedSimpleSearch()
+    {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    public function testGetAllPaginatedComplexSearch()
+    {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
     public function testPaginationBadRanges()
     {
         $this->getFactory()->get(TestEntity::class)->count(20)->create();
