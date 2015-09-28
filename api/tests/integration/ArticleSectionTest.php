@@ -10,10 +10,12 @@
 
 use App\Models\Article;
 use App\Models\Section;
+use App\Models\Sections\RichTextContent;
 
 /**
  * Class SectionTest.
  * @group integration
+ * @group testing
  */
 class SectionTest extends TestCase
 {
@@ -102,4 +104,62 @@ class SectionTest extends TestCase
 
         $this->assertCount(4, Article::find($article->article_id)->sections);
     }
+
+
+    public function testPutInvalidSectionContent()
+    {
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)
+            ->create();
+
+        $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
+            ->customize(['content' => 10])
+            ->transformed();
+
+        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+
+        $this->assertResponseStatus(422);
+    }
+
+    public function testPutInvalidSectionType()
+    {
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)
+            ->create();
+
+        $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
+            ->customize(['type' => 'not_a_type'])
+            ->transformed();
+
+        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * @group failing
+     */
+    public function testPutInvalidSectionObject()
+    {
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)
+            ->create();
+
+        $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
+            ->customize(['content' => [
+                'body' => 10 //should validate text
+            ]])
+            ->transformed();
+
+        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+
+        $this->assertResponseStatus(422);
+
+
+        $object = json_decode($this->response->getContent());
+//        dd($object);
+
+    }
+
+
 }

@@ -25,10 +25,11 @@ trait ModelFactoryTrait
 
     /**
      * @param string|null $factoryName
+     * @param string|null $definedName
      * @return \App\Services\ModelFactoryInstance
      */
-    public function getFactory($factoryName = null)
+    public function getFactory($factoryName = null, $definedName = 'default')
     {
-        return $this->modelFactory->get($factoryName);
+        return $this->modelFactory->get($factoryName, $definedName);
     }
 }
