@@ -44,7 +44,7 @@ class SectionTest extends TestCase
         $sections = $this->getFactory(Section::class)->count(5)->make();
         $article->sections()->saveMany($sections);
 
-        $this->getJson('/articles/' . $article->article_id . '/sections');
+        $this->getJson('/articles/'.$article->article_id.'/sections');
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(200);
@@ -64,11 +64,10 @@ class SectionTest extends TestCase
         $sections = $this->getFactory(Section::class)->count(5)->make();
         $article->sections()->saveMany($sections);
 
-        $this->getJson('/articles/' . $article->article_id, ['with-nested' => 'sections']);
+        $this->getJson('/articles/'.$article->article_id, ['with-nested' => 'sections']);
         $object = json_decode($this->response->getContent());
         $this->assertEquals(5, count($object->_sections));
     }
-
 
     public function testAddSectionsToArticle()
     {
@@ -80,7 +79,7 @@ class SectionTest extends TestCase
         $article->sections()->saveMany($sections);
 
         $newSections = $this->getFactory(Section::class)->count(2)->transformed();
-        $this->putJson('/articles/' . $article->article_id . '/sections', $newSections);
+        $this->putJson('/articles/'.$article->article_id.'/sections', $newSections);
 
         $this->assertResponseStatus(201);
 
@@ -99,14 +98,13 @@ class SectionTest extends TestCase
 
         $deleteSection = $sections->first();
 
-        $this->deleteJson('/articles/' . $article->article_id . '/sections/' . $deleteSection->section_id);
+        $this->deleteJson('/articles/'.$article->article_id.'/sections/'.$deleteSection->section_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
 
         $this->assertCount(4, Article::find($article->article_id)->sections);
     }
-
 
     public function testPutInvalidSectionContent()
     {
@@ -118,7 +116,7 @@ class SectionTest extends TestCase
             ->customize(['content' => 10])
             ->transformed();
 
-        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+        $this->putJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
@@ -133,11 +131,10 @@ class SectionTest extends TestCase
             ->customize(['type' => 'not_a_type'])
             ->transformed();
 
-        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+        $this->putJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
-
 
     public function testPutInvalidSections()
     {
@@ -147,27 +144,24 @@ class SectionTest extends TestCase
 
         $richTextSection = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
             ->customize(['content' => [
-                'body' => 10 //should validate text
+                'body' => 10, //should validate text
             ]])
             ->transformed();
 
         $blockquoteSection = $this->getFactory(Section::class, BlockquoteContent::CONTENT_TYPE)
             ->customize(['content' => [
-                'body' => 10 //should validate text
+                'body' => 10, //should validate text
             ]])
             ->transformed();
 
         $imageSection = $this->getFactory(Section::class, ImageContent::CONTENT_TYPE)
             ->customize(['content' => [
-                'image' => 'not-an-array' //should validate array
+                'image' => 'not-an-array', //should validate array
             ]])
             ->transformed();
 
-        $this->putJson('/articles/' . $article->article_id . '/sections', [$richTextSection, $blockquoteSection, $imageSection]);
+        $this->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection]);
 
         $this->assertResponseStatus(422);
-
     }
-
-
 }

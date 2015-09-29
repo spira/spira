@@ -54,5 +54,4 @@ class Section extends BaseModel
             ImageContent::CONTENT_TYPE,
         ];
     }
-
 }

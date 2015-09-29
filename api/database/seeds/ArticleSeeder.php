@@ -17,7 +17,6 @@ use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
-use App\Models\ArticleSection;
 use App\Models\ArticleSectionsDisplay;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
