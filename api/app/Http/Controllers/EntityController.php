@@ -363,12 +363,15 @@ abstract class EntityController extends ApiController
      *      _nestedEntity: { key: [ "stringA", "stringB" ]
      * }
      *
+     * Notes:
+     * - Empty values will be removed from search completely.
+     * - You must pass an array, even if it only contains 1 string.
+     *
      * @param $query
      * @return mixed
      */
     private function translateQuery($query)
     {
-        $processedQuery = [];
         $processedQuery['query']['bool']['must'] = [];
 
         foreach($query as $key => $value) {
@@ -377,33 +380,41 @@ abstract class EntityController extends ApiController
                 $fieldKey = key($value);
 
                 foreach($value[$fieldKey] as $fieldValue) {
-                    array_push($processedQuery['query']['bool']['must'],
-                        [
-                            'nested' => [
-                                'path' => substr($key, 1),
-                                'query' => [
-                                    'bool' => [
-                                        'must' => [
-                                            'match' => [
-                                                substr($key, 1) . '.' . $fieldKey => $fieldValue
+                    if(!empty($fieldValue)) {
+                        array_push($processedQuery['query']['bool']['must'],
+                            [
+                                'nested' => [
+                                    'path' => snake_case(substr($key, 1)),
+                                    'query' => [
+                                        'bool' => [
+                                            'must' => [
+                                                'match' => [
+                                                    snake_case(substr($key, 1)) . '.' . snake_case($fieldKey) => $fieldValue
+                                                ]
                                             ]
                                         ]
                                     ]
                                 ]
                             ]
-                        ]
-                    );
+                        );
+                    }
                 }
             }
             else {
                 foreach($value as $matchValue) {
-                    array_push($processedQuery['query']['bool']['must'], [
-                        'match' => [
-                            $key => $matchValue
-                        ]
-                    ]);
+                    if(!empty($matchValue)) {
+                        array_push($processedQuery['query']['bool']['must'], [
+                            'match' => [
+                                snake_case($key) => $matchValue
+                            ]
+                        ]);
+                    }
                 }
             }
+        }
+
+        if(empty($processedQuery['query']['bool']['must'])) { // No search params have been supplied, match all
+            return array('query' => ['match_all' => []]);
         }
 
         return $processedQuery;
