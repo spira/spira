@@ -17,7 +17,6 @@ use Spira\Model\Collection\Collection;
 use App\Exceptions\BadRequestException;
 use Spira\Responder\Response\ApiResponse;
 use Spira\Responder\Contract\TransformerInterface;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 abstract class ApiController extends Controller
 {
