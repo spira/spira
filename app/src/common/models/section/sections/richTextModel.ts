@@ -1,9 +1,9 @@
 namespace common.models.sections {
 
-    export class Blockquote extends AbstractModel {
+    export class RichText extends AbstractModel {
+        public static contentType = 'rich_text';
 
         public body:string = undefined;
-        public author:string = undefined;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

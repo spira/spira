@@ -7,6 +7,7 @@ namespace common.models.sections {
     }
 
     export class Image extends AbstractModel {
+        public static contentType = 'image';
 
         public images:IImageContent[] = undefined;
 

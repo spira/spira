@@ -3,6 +3,12 @@ namespace common.models {
     @common.decorators.changeAware
     export class Section extends AbstractModel {
 
+        public __contentTypeMap = {
+            [sections.RichText.contentType]: sections.RichText,
+            [sections.Blockquote.contentType]: sections.Blockquote,
+            [sections.Image.contentType]: sections.Image,
+        };
+
         protected __attributeCastMap:IAttributeCastMap = {
             createdAt: this.castMoment,
             updatedAt: this.castMoment,
@@ -24,23 +30,20 @@ namespace common.models {
             this.hydrate(data, exists);
         }
 
+        public static getContentTypeMap(){
+            return {
+                [sections.RichText.contentType]: sections.RichText,
+                [sections.Blockquote.contentType]: sections.Blockquote,
+                [sections.Image.contentType]: sections.Image,
+            };
+        }
+
 
         private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image {
 
-            switch(data.type){
-                case 'rich_text':
-                    return new sections.RichText(data.content, exists);
-                break;
-                case 'blockquote':
-                    return new sections.Blockquote(data.content, exists);
-                break;
-                case 'image':
-                    return new sections.Image(data.content, exists);
-                break;
-            }
+            let SectionClass = Section.getContentTypeMap()[data.type];
 
-            throw new SpiraException("Invalid type for content piece");
-
+            return new SectionClass(data.content, exists);
         }
 
     }
