@@ -9,6 +9,7 @@
  */
 
 use App\Models\Article;
+use App\Models\ArticleSectionsDisplay;
 use App\Models\Section;
 use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\ImageContent;
@@ -17,7 +18,6 @@ use App\Models\Sections\RichTextContent;
 /**
  * Class SectionTest.
  * @group integration
- * @group testing
  */
 class SectionTest extends TestCase
 {
@@ -164,4 +164,38 @@ class SectionTest extends TestCase
 
         $this->assertResponseStatus(422);
     }
+
+
+    /**
+     * @group testing
+     */
+    public function testPutSortedSections()
+    {
+
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)
+            ->create();
+
+        $newSections = $this->getFactory(Section::class)->count(5)->transformed();
+
+        $displaySections = $this->getFactory(ArticleSectionsDisplay::class)->customize([
+            'sort_order' => array_pluck($newSections, 'sectionId'),
+        ])->transformed();
+
+        $this->putJson('/articles/'.$article->article_id.'/sections', $newSections);
+        $this->assertResponseStatus(201);
+
+        $this->patchJson('/articles/'.$article->article_id, ['sectionsDisplay' => $displaySections]);
+        $this->assertResponseStatus(204);
+
+        $updatedArticle = Article::find($article->article_id);
+
+        dd($updatedArticle->toArray());
+
+        $this->assertCount(5, $updatedArticle->sections);
+        $this->assertObjectHasAttribute('sections_display', $updatedArticle);
+        $this->assertObjectHasAttribute('sort_order', $updatedArticle->sections_display);
+
+    }
+
 }

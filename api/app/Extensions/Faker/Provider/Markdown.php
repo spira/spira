@@ -16,12 +16,8 @@ class Markdown extends \Faker\Provider\Base
      * @param int $elements
      * @return string
      */
-    public function markdown($elements = null)
+    public function markdown($elements = 5)
     {
-        if (! $elements) {
-            $elements = rand(4, 15);
-        }
-
         $elementTypes = ['para', 'title', 'blockquote'];
 
         $text = [];

@@ -42,4 +42,45 @@ class ModelTest extends TestCase
 
         $this->assertEquals($dynamicPrimaryKey, $staticPrimaryKey);
     }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testVirtualModelSaveFailure()
+    {
+
+        $virtualModel = new \Spira\Model\Model\DataModel();
+
+        $virtualModel->save(['foo' => 'bar']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testVirtualModelNoPrimaryKeyAccess()
+    {
+
+        $virtualModel = new \Spira\Model\Model\DataModel();
+
+        $virtualModel->getKey();
+    }
+
+    public function testVirtualModelWithPrimaryKeyAccess()
+    {
+
+        $virtualModel = new MockVirtualPK;
+        $virtualModel->foo_id = 'baz';
+
+        $pk = $virtualModel->getKey();
+
+        $this->assertEquals('baz', $pk);
+    }
+
+
+}
+
+
+
+class MockVirtualPK extends \Spira\Model\Model\VirtualModel{
+    protected $primaryKey = 'foo_id';
 }
