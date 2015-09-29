@@ -34,9 +34,6 @@ class ArticleSectionController extends ChildEntityController
      */
     public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
     {
-        if ($limitToKeysPresent) {
-            $validationRules = array_intersect_key($validationRules, $requestEntity);
-        }
 
         $contentRules = [];
         switch ($requestEntity['type']) {
@@ -59,14 +56,7 @@ class ArticleSectionController extends ChildEntityController
             $validationRules['content.'.$attribute] = $rule;
         }
 
-        /** @var Validator $validation */
-        $validation = $this->getValidationFactory()->make($requestEntity, $validationRules);
-
-        if ($validation->fails()) {
-            throw new ValidationException($validation->messages());
-        }
-
-        return true;
+        return parent::validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
     }
 
 
