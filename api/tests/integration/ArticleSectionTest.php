@@ -165,7 +165,6 @@ class SectionTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-
     public function testPutSortedSections()
     {
 
@@ -192,5 +191,4 @@ class SectionTest extends TestCase
         $this->assertNotNull($updatedArticle->sections_display->sort_order);
         $this->assertCount(5, $updatedArticle->sections_display->sort_order);
     }
-
 }

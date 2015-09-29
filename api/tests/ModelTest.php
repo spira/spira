@@ -48,7 +48,6 @@ class ModelTest extends TestCase
      */
     public function testVirtualModelSaveFailure()
     {
-
         $virtualModel = new \Spira\Model\Model\DataModel();
 
         $virtualModel->save(['foo' => 'bar']);
@@ -59,7 +58,6 @@ class ModelTest extends TestCase
      */
     public function testVirtualModelNoPrimaryKeyAccess()
     {
-
         $virtualModel = new \Spira\Model\Model\DataModel();
 
         $virtualModel->getKey();
@@ -67,7 +65,6 @@ class ModelTest extends TestCase
 
     public function testVirtualModelWithPrimaryKeyAccess()
     {
-
         $virtualModel = new MockVirtualPK;
         $virtualModel->foo_id = 'baz';
 
@@ -75,12 +72,9 @@ class ModelTest extends TestCase
 
         $this->assertEquals('baz', $pk);
     }
-
-
 }
 
-
-
-class MockVirtualPK extends \Spira\Model\Model\VirtualModel{
+class MockVirtualPK extends \Spira\Model\Model\VirtualModel
+{
     protected $primaryKey = 'foo_id';
 }
