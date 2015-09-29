@@ -10,6 +10,8 @@
 
 use App\Models\Article;
 use App\Models\Section;
+use App\Models\Sections\BlockquoteContent;
+use App\Models\Sections\ImageContent;
 use App\Models\Sections\RichTextContent;
 
 /**
@@ -137,19 +139,31 @@ class SectionTest extends TestCase
     }
 
 
-    public function testPutInvalidSectionObject()
+    public function testPutInvalidSections()
     {
         /** @var Article $article */
         $article = $this->getFactory(Article::class)
             ->create();
 
-        $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
+        $richTextSection = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
             ->customize(['content' => [
                 'body' => 10 //should validate text
             ]])
             ->transformed();
 
-        $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
+        $blockquoteSection = $this->getFactory(Section::class, BlockquoteContent::CONTENT_TYPE)
+            ->customize(['content' => [
+                'body' => 10 //should validate text
+            ]])
+            ->transformed();
+
+        $imageSection = $this->getFactory(Section::class, ImageContent::CONTENT_TYPE)
+            ->customize(['content' => [
+                'image' => 'not-an-array' //should validate array
+            ]])
+            ->transformed();
+
+        $this->putJson('/articles/' . $article->article_id . '/sections', [$richTextSection, $blockquoteSection, $imageSection]);
 
         $this->assertResponseStatus(422);
 
