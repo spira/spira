@@ -154,16 +154,88 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedSimpleSearch()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock->shouldReceive('totalHits')
+            ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('searchByQuery')
+            ->with([
+                'match_phrase' => [
+                    '_all' => 'foobar',
+                ],
+            ], null, null, 10, 0)
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $this->getJson('/test/entities/pages?q=foobar', ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(404);
     }
 
     public function testGetAllPaginatedComplexSearch()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock->shouldReceive('totalHits')
+            ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('getIndexName')
+            ->andReturn('defaultIndex')
+            ->shouldReceive('getTypeName')
+            ->andReturn('someTypeName')
+            ->shouldReceive('complexSearch')
+            ->with([
+                'index' => 'defaultIndex',
+                'type' => 'someTypeName',
+                'body' => ['query'=>['bool'=>['must'=>[['match'=>['_all'=>'search term']],['match'=>['author_id'=>'some UUID']],['nested'=>['path'=>'tags','query'=>['bool'=>['must'=>['match'=>['tags.tag_id'=>'tag ID 1']]]]]],['nested'=>['path'=>'tags','query'=>['bool'=>['must'=>['match'=>['tags.tag_id'=>'tag ID 2']]]]]]]]]]
+            ])
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $this->getJson('/test/entities/pages?q=%7B%22_all%22%3A%5B%22search%20term%22%5D%2C%22authorId%22%3A%5B%22some%20UUID%22%5D%2C%22_tags%22%3A%7B%22tagId%22%3A%5B%22tag%20ID%201%22%2C%20%22tag%20ID%202%22%5D%7D%7D', ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(404);
+    }
+
+    public function testGetAllPaginatedComplexSearchMatchAll()
+    {
+        $results = $this->getFactory()->get(TestEntity::class)->count(5)->make();
+
+        $resultsMock = Mockery::mock($results);
+        $resultsMock->shouldReceive('totalHits')
+            ->times(3)
+            ->andReturn(5);
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('getIndexName')
+            ->andReturn('defaultIndex')
+            ->shouldReceive('getTypeName')
+            ->andReturn('someTypeName')
+            ->shouldReceive('complexSearch')
+            ->with([
+                'index' => 'defaultIndex',
+                'type' => 'someTypeName',
+                'body' => ['query' => ['match_all' => []]],
+            ])
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $this->getJson('/test/entities/pages?q=%7B%22authorId%22%3A%5B%22%22%5D%7D', ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(206);
     }
 
     public function testPaginationBadRanges()
