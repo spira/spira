@@ -35,6 +35,8 @@ class UserController extends EntityController
      */
     protected $auth;
 
+    protected $defaultPermission = false;
+
     /**
      * Assign dependencies.
      *

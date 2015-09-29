@@ -3,7 +3,7 @@
 namespace Spira\Rbac\Item;
 
 
-class Item
+abstract class Item
 {
     const TYPE_ROLE = 1;
     const TYPE_PERMISSION = 2;
@@ -32,6 +32,32 @@ class Item
      * @var integer UNIX timestamp representing the item updating time
      */
     public $updatedAt;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRuleName()
+    {
+        return $this->ruleName;
+    }
+
+    public function attachRule(Rule $rule)
+    {
+        if (!is_null($this->ruleName)){
+            throw new \InvalidArgumentException('Only one rule can be attached, first detach the rule');
+        }
+        $this->ruleName = get_class($rule);
+    }
+
+    public function detachRule()
+    {
+        $this->ruleName = null;
+    }
 
 
 }

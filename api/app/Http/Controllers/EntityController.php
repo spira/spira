@@ -10,11 +10,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Extensions\Controller\AuthorizesRequestsTrait;
 use Illuminate\Http\Request;
 use Spira\Model\Model\BaseModel;
 use Elasticquent\ElasticquentTrait;
 use Spira\Model\Collection\Collection;
+use Spira\Rbac\Access\AuthorizesRequestsTrait;
 use Spira\Responder\Response\ApiResponse;
 use Spira\Responder\Paginator\RangeRequest;
 use Spira\Responder\Contract\TransformerInterface;

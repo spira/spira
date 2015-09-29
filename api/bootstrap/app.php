@@ -94,7 +94,7 @@ $app->routeMiddleware([
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
-$app->register(App\Providers\AccessServiceProvider::class);
+$app->register(Spira\Rbac\Providers\RBACProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);

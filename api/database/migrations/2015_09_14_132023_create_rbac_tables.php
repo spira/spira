@@ -15,17 +15,17 @@ class CreateRbacTables extends Migration
     {
 
         Schema::create('auth_item', function (Blueprint $table) {
-            $table->string('name', 64)->primary();
+            $table->string('name', 128)->primary();
             $table->integer('type')->index();
             $table->text('description')->nullable();
-            $table->string('rule_name', 64)->nullable();
+            $table->string('rule_name', 128)->nullable();
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
         });
 
         Schema::create('auth_item_child', function (Blueprint $table) {
-            $table->string('parent', 64);
-            $table->string('child', 64);
+            $table->string('parent', 128);
+            $table->string('child', 128);
             $table->primary(['parent', 'child']);
             $table->foreign('parent')
                 ->references('name')->on('auth_item')
@@ -39,7 +39,7 @@ class CreateRbacTables extends Migration
         });
 
         Schema::create('auth_assignment', function (Blueprint $table) {
-            $table->string('item_name', 64);
+            $table->string('item_name', 128);
             $table->string('user_id', 64);
             $table->dateTime('created_at');
             $table->primary(['item_name', 'user_id']);

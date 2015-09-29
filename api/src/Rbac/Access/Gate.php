@@ -12,6 +12,9 @@ use Spira\Rbac\Storage\StorageInterface;
 
 class Gate implements GateContract
 {
+
+    const GATE_NAME = 'spira.rbac';
+
     /**
      * @var StorageInterface
      */
@@ -91,7 +94,11 @@ class Gate implements GateContract
             return true;
         }
 
-        if (isset($assignments[$itemName]) && $this->executeRule($user, $item, $params)) {
+        if (!$this->executeRule($user, $item, $params)){
+            return false;
+        }
+
+        if (isset($assignments[$itemName])) {
             return true;
         }
 
@@ -106,9 +113,10 @@ class Gate implements GateContract
 
     protected function executeRule(Authenticatable $user, Item $item, $params)
     {
-        if ($item->ruleName !== null){
+        if ($item->getRuleName() !== null){
+            $class = $item->getRuleName();
             /** @var Rule $rule */
-            $rule = new $item->ruleName();
+            $rule = new $class;
             if (!$rule->execute($user, $params)){
                 return false;
             }
