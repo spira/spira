@@ -1,0 +1,17 @@
+## Article Sections [/articles/{articleId}/sections]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's sections [GET]
+#### Restrictions
+* Allowed - [admin]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\Section::class)
+                    ->count(5)
+                    ->json()
+            !!}
+

@@ -12,7 +12,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
@@ -53,7 +52,18 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id', 'title', 'content', 'excerpt', 'permalink', 'author_id', 'author_display', 'show_author_promo', 'first_published', 'primaryImage', 'status'];
+    protected $fillable = ['article_id',
+        'title',
+        'excerpt',
+        'permalink',
+        'author_id',
+        'author_display',
+        'show_author_promo',
+        'first_published',
+        'sections_display',
+        'primaryImage',
+        'status',
+    ];
 
     protected $hidden = ['permalinks','metas'];
 
@@ -63,6 +73,7 @@ class Article extends IndexedModel
         'first_published' => 'datetime',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
+        'sections_display' => 'json',
     ];
 
     protected $indexNested = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
@@ -72,11 +83,11 @@ class Article extends IndexedModel
         return [
             'article_id' => 'required|uuid',
             'title' => 'required|string',
-            'content' => 'required|string',
             'excerpt' => 'string',
             'primaryImage' => 'string',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink',
+            'sections_display' => 'array',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
@@ -101,7 +112,7 @@ class Article extends IndexedModel
      *
      * Saving permalink to history
      */
-    protected static function boot()
+    public static function boot()
     {
         parent::boot();
         static::saving(function (Article $model) {
@@ -169,6 +180,20 @@ class Article extends IndexedModel
     }
 
     /**
+     * Parse the json string.
+     * @param $content
+     * @return mixed
+     */
+    public function getSectionsDisplayAttribute($content)
+    {
+        if (is_string($content)) {
+            return json_decode($content);
+        }
+
+        return $content;
+    }
+
+    /**
      * If there is no defined excerpt for the text, create it from the content.
      * @param $excerpt
      * @return string
@@ -215,16 +240,13 @@ class Article extends IndexedModel
         return $this->hasMany(ArticleImage::class);
     }
 
-    /**
-     * @return HasManyThrough
-     */
-    public function images()
-    {
-        return $this->belongsToMany(Image::class);
-    }
-
     public function author()
     {
         return $this->hasOne(User::class, 'user_id', 'author_id');
+    }
+
+    public function sections()
+    {
+        return $this->morphMany(Section::class, 'sectionable');
     }
 }

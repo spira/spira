@@ -2,6 +2,7 @@ namespace app.guest.articles.article.body {
 
     export const namespace = 'app.guest.articles.article.body';
 
+    /* istanbul ignore next:@todo - skipping controller testing */
     export class BodyController {
 
         static $inject = ['article'];
@@ -9,6 +10,7 @@ namespace app.guest.articles.article.body {
         constructor(
             public article:common.models.Article
         ) {
+            console.log('article', article);
         }
 
     }
