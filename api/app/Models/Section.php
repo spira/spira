@@ -36,7 +36,7 @@ class Section extends BaseModel
 
     protected static $validationRules = [
         'section_id' => 'required|uuid',
-        'content' => 'required|array',
+        'content' => 'required',
         'type' => 'required|section_type',
     ];
 

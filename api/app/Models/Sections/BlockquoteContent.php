@@ -27,7 +27,7 @@ class BlockquoteContent extends VirtualModel
     ];
 
     protected static $validationRules = [
-        'body' => 'required|text',
+        'body' => 'required|string',
         'author' => 'required|string',
     ];
 }

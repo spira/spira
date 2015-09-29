@@ -136,9 +136,7 @@ class SectionTest extends TestCase
         $this->assertResponseStatus(422);
     }
 
-    /**
-     * @group failing
-     */
+
     public function testPutInvalidSectionObject()
     {
         /** @var Article $article */
@@ -154,10 +152,6 @@ class SectionTest extends TestCase
         $this->putJson('/articles/' . $article->article_id . '/sections', [$section]);
 
         $this->assertResponseStatus(422);
-
-
-        $object = json_decode($this->response->getContent());
-//        dd($object);
 
     }
 

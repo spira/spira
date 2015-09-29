@@ -26,6 +26,6 @@ class RichTextContent extends VirtualModel
     ];
 
     protected static $validationRules = [
-        'body' => 'required|text',
+        'body' => 'required|string',
     ];
 }
