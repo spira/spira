@@ -195,7 +195,7 @@ class EntityTest extends TestCase
             ->with([
                 'index' => 'defaultIndex',
                 'type' => 'someTypeName',
-                'body' => ['query'=>['bool'=>['must'=>[['match'=>['_all'=>'search term']],['match'=>['author_id'=>'some UUID']],['nested'=>['path'=>'tags','query'=>['bool'=>['must'=>['match'=>['tags.tag_id'=>'tag ID 1']]]]]],['nested'=>['path'=>'tags','query'=>['bool'=>['must'=>['match'=>['tags.tag_id'=>'tag ID 2']]]]]]]]]]
+                'body' => ['query' => ['bool' => ['must' => [['match' => ['_all' => 'search term']],['match' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
             ])
             ->andReturn($resultsMock);
 
