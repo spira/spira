@@ -4,9 +4,9 @@ namespace common.models {
     export class User extends AbstractModel implements global.IUserData {
 
         protected __nestedEntityMap:INestedEntityMap = {
-            userProfile: UserProfile,
-            socialLogins: UserSocialLogin,
-            userCredential: UserCredential,
+            _userProfile: UserProfile,
+            _socialLogins: UserSocialLogin,
+            _userCredential: UserCredential,
         };
 
         public static adminType = 'admin';

@@ -53,6 +53,11 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
 
+    $app->get('{id}/sections', 'App\Http\Controllers\ArticleSectionController@getAll');
+    $app->put('{id}/sections', 'App\Http\Controllers\ArticleSectionController@putMany');
+    $app->delete('{id}/sections', 'App\Http\Controllers\ArticleSectionController@deleteMany');
+    $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
+
     $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
     $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putMany');
     $app->delete('{id}/article-images', 'App\Http\Controllers\ArticleImageController@deleteMany');

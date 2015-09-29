@@ -37,7 +37,7 @@ class EntityTest extends TestCase
      */
     protected function addRelatedEntities($model)
     {
-        $this->getFactory()->get(SecondTestEntity::class)->count(5)->make()->each(function ($secondEntity) use ($model) {
+        $this->getFactory(SecondTestEntity::class)->count(5)->make()->each(function ($secondEntity) use ($model) {
             $model->testMany()->save($secondEntity);
         });
     }
@@ -54,7 +54,7 @@ class EntityTest extends TestCase
 
     public function testGetAllWithNested()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)->create();
+        $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
         $this->getJson('/test/entities', ['with-nested' => 'testMany']);
@@ -86,7 +86,7 @@ class EntityTest extends TestCase
     public function testGetAllPaginated()
     {
         $defaultLimit = 10;
-        $this->getFactory()->get(TestEntity::class)->count($defaultLimit + 1)->create();
+        $this->getFactory(TestEntity::class)->count($defaultLimit + 1)->create();
         $this->getJson('/test/entities/pages', ['Range' => 'entities=0-']);
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
@@ -100,7 +100,7 @@ class EntityTest extends TestCase
     public function testGetAllPaginatedWithNested()
     {
         $defaultLimit = 10;
-        $this->getFactory()->get(TestEntity::class)->count($defaultLimit + 1)->create()->each(function (TestEntity $entity) {
+        $this->getFactory(TestEntity::class)->count($defaultLimit + 1)->create()->each(function (TestEntity $entity) {
             $this->addRelatedEntities($entity);
         });
 
@@ -137,7 +137,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedSimpleRange()
     {
-        $this->getFactory()->get(TestEntity::class)->count(20)->create();
+        $this->getFactory(TestEntity::class)->count(20)->create();
         $totalCount = TestEntity::count();
         $this->getJson('/test/entities/pages', ['Range' => 'entities=0-19']);
         $object = json_decode($this->response->getContent());
@@ -154,14 +154,14 @@ class EntityTest extends TestCase
 
     public function testPaginationBadRanges()
     {
-        $this->getFactory()->get(TestEntity::class)->count(20)->create();
+        $this->getFactory(TestEntity::class)->count(20)->create();
         $this->getJson('/test/entities/pages', ['Range' => 'entities=19-18']);
         $this->assertResponseStatus(400);
     }
 
     public function testPaginationOutOfRange()
     {
-        $this->getFactory()->get(TestEntity::class)->count(10)->create();
+        $this->getFactory(TestEntity::class)->count(10)->create();
         $totalCount = TestEntity::count();
         $this->getJson('/test/entities/pages', ['Range' => 'entities='.$totalCount.'-']);
         $this->assertResponseStatus(416);
@@ -169,7 +169,7 @@ class EntityTest extends TestCase
 
     public function testPaginationMoreThanInRepo()
     {
-        $this->getFactory()->get(TestEntity::class)->count(10)->create();
+        $this->getFactory(TestEntity::class)->count(10)->create();
         $totalCount = TestEntity::count();
         $this->getJson('/test/entities/pages', ['Range' => 'entities='.($totalCount - 2).'-'.($totalCount + 20)]);
         $object = json_decode($this->response->getContent());
@@ -186,7 +186,7 @@ class EntityTest extends TestCase
 
     public function testPaginationGetLast()
     {
-        $this->getFactory()->get(TestEntity::class)->count(10)->create();
+        $this->getFactory(TestEntity::class)->count(10)->create();
         $totalCount = TestEntity::count();
         $this->getJson('/test/entities/pages', ['Range' => 'entities=-5']);
         $object = json_decode($this->response->getContent());
@@ -224,7 +224,7 @@ class EntityTest extends TestCase
 
     public function testGetOne()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)->create();
+        $entity = $this->getFactory(TestEntity::class)->create();
 
         $this->getJson('/test/entities/'.$entity->entity_id);
 
@@ -260,7 +260,7 @@ class EntityTest extends TestCase
     public function testGetOneWithNested()
     {
         /** @var TestEntity $entity */
-        $entity = $this->getFactory()->get(TestEntity::class)->create();
+        $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
         $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested' => 'testMany']);
@@ -289,7 +289,7 @@ class EntityTest extends TestCase
         $this->markTestSkipped('Skipped until https://github.com/laravel/framework/pull/10309 is fixed');
 
         /** @var TestEntity $entity */
-        $entity = $this->getFactory()->get(TestEntity::class)->create();
+        $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
         $this->getJson('/test/entities/'.$entity->entity_id, ['with-nested' => 'not-a-valid-nesting']);
@@ -300,7 +300,10 @@ class EntityTest extends TestCase
 
     public function testPostOneValid()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)->makeVisible(['hidden'])->transformed();
+        $entity = $this->getFactory(TestEntity::class)
+            ->makeVisible(['hidden'])
+            ->transformed();
+
         $this->postJson('/test/entities', $entity);
 
         $this->shouldReturnJson();
@@ -314,7 +317,7 @@ class EntityTest extends TestCase
 
     public function testPostOneInvalid()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)
+        $entity = $this->getFactory(TestEntity::class)
             ->hide(['text'])
             ->transformed();
 
@@ -331,7 +334,7 @@ class EntityTest extends TestCase
 
     public function testPutOneNew()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)->makeVisible(['hidden'])->transformed();
+        $entity = $this->getFactory(TestEntity::class)->makeVisible(['hidden'])->transformed();
         $rowCount = TestEntity::count();
 
         $this->putJson('/test/entities/'.$entity['entityId'], $entity);
@@ -346,7 +349,7 @@ class EntityTest extends TestCase
 
     public function testPutOneCollidingIds()
     {
-        $factory = $this->getFactory()->get(TestEntity::class);
+        $factory = $this->getFactory(TestEntity::class);
         $entity = $factory->create();
         $id = $entity->entity_id;
 
@@ -367,7 +370,7 @@ class EntityTest extends TestCase
 
     public function testPutOneNewInvalidId()
     {
-        $entity = $this->getFactory()->get(TestEntity::class)
+        $entity = $this->getFactory(TestEntity::class)
             ->customize(['entityId' => 'foobar'])
             ->transformed();
 
@@ -379,7 +382,7 @@ class EntityTest extends TestCase
 
     public function testPutManyNoIds()
     {
-        $entities = $this->getFactory()->get(TestEntity::class)
+        $entities = $this->getFactory(TestEntity::class)
             ->hide(['entity_id'])
             ->count(5)
             ->transformed();
@@ -390,7 +393,7 @@ class EntityTest extends TestCase
 
     public function testPatchManyNoIds()
     {
-        $factory = $this->getFactory()->get(TestEntity::class);
+        $factory = $this->getFactory(TestEntity::class);
         $factory->count(5)->create();
 
         $entities = $factory
@@ -404,7 +407,7 @@ class EntityTest extends TestCase
 
     public function testPutManyNew()
     {
-        $entities = $this->getFactory()->get(TestEntity::class)->count(5)->makeVisible(['hidden'])->transformed();
+        $entities = $this->getFactory(TestEntity::class)->count(5)->makeVisible(['hidden'])->transformed();
 
         $rowCount = TestEntity::count();
 
@@ -421,7 +424,7 @@ class EntityTest extends TestCase
 
     public function testPutManySomeNew()
     {
-        $factory = $this->getFactory()->get(TestEntity::class);
+        $factory = $this->getFactory(TestEntity::class);
         $factory->count(5)->create();
         $entities = $factory->makeVisible(['hidden'])->transformed();
 
@@ -442,7 +445,7 @@ class EntityTest extends TestCase
 
     public function testPutManyNewInvalidId()
     {
-        $entities = $this->getFactory()->get(TestEntity::class)->count(5)
+        $entities = $this->getFactory(TestEntity::class)->count(5)
             ->makeVisible(['hidden'])
             ->customize(['entity_id' => 'foobar'])
             ->transformed();
@@ -461,7 +464,7 @@ class EntityTest extends TestCase
 
     public function testPutManyNewInvalid()
     {
-        $entities = $this->getFactory()->get(TestEntity::class)->count(5)
+        $entities = $this->getFactory(TestEntity::class)->count(5)
             ->makeVisible(['hidden'])
             ->customize(['multi_word_column_title' => 'foobar'])
             ->transformed();

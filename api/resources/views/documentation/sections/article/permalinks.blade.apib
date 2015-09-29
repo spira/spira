@@ -1,0 +1,17 @@
+## Article Permalinks [/articles/{articleId}/permalinks]
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` or `uri` of the article to perform action with.
+
+### Retrieve all article's permalinks [GET]
+#### Restrictions
+* Allowed - [admin, self]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticlePermalink::class)
+                    ->count(3)
+                    ->json()
+            !!}
+

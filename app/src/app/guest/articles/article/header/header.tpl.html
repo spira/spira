@@ -1,0 +1,13 @@
+<h1 ng-bind="HeaderController.article.title"></h1>
+<hr>
+<div layout="row">
+    <md-list-item class="md-2-line">
+        <img ng-src="{{HeaderController.article._author.avatarImgUrl}}" class="md-avatar" alt="{{HeaderController.article._author.fullName()}}" />
+        <div class="md-list-item-text" layout="column">
+            <h3>{{ HeaderController.article._author.fullName() }}</h3>
+            <span>{{HeaderController.article.createdAt.fromNow()}}</span>
+        </div>
+    </md-list-item>
+    <span flex></span>
+    <div>Social Placeholder</div>
+</div>
