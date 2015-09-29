@@ -59,7 +59,7 @@ class Article extends IndexedModel
         'author_display',
         'show_author_promo',
         'first_published',
-        'section_display',
+        'sections_display',
         'primaryImage',
         'status',
     ];
@@ -72,6 +72,7 @@ class Article extends IndexedModel
         'first_published' => 'datetime',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
+        'sections_display' => 'json',
     ];
 
     public static function getValidationRules()

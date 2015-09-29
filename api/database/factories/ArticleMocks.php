@@ -31,6 +31,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'author_display' => $faker->boolean(50),
         'show_author_promo' => $faker->boolean(50),
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
+        'sections_display' => null,
     ];
 });
 

@@ -166,9 +166,6 @@ class SectionTest extends TestCase
     }
 
 
-    /**
-     * @group testing
-     */
     public function testPutSortedSections()
     {
 
@@ -178,24 +175,22 @@ class SectionTest extends TestCase
 
         $newSections = $this->getFactory(Section::class)->count(5)->transformed();
 
-        $displaySections = $this->getFactory(ArticleSectionsDisplay::class)->customize([
+        $sectionsDisplay = $this->getFactory(ArticleSectionsDisplay::class)->customize([
             'sort_order' => array_pluck($newSections, 'sectionId'),
         ])->transformed();
 
         $this->putJson('/articles/'.$article->article_id.'/sections', $newSections);
         $this->assertResponseStatus(201);
 
-        $this->patchJson('/articles/'.$article->article_id, ['sectionsDisplay' => $displaySections]);
+        $this->patchJson('/articles/'.$article->article_id, ['sectionsDisplay' => $sectionsDisplay]);
         $this->assertResponseStatus(204);
 
         $updatedArticle = Article::find($article->article_id);
 
-        dd($updatedArticle->toArray());
-
         $this->assertCount(5, $updatedArticle->sections);
-        $this->assertObjectHasAttribute('sections_display', $updatedArticle);
-        $this->assertObjectHasAttribute('sort_order', $updatedArticle->sections_display);
-
+        $this->assertNotNull($updatedArticle->sections_display);
+        $this->assertNotNull($updatedArticle->sections_display->sort_order);
+        $this->assertCount(5, $updatedArticle->sections_display->sort_order);
     }
 
 }
