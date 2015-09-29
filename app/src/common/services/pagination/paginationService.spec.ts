@@ -396,6 +396,26 @@ interface mockEntity {
 
                 });
 
+                it('should be able to complex query the results to filter them', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection?q=%7B%22_all%22%3A%22foobar%22%2C%22entityId%22%3A%22foobarId%22%7D', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.complexQuery({
+                        _all:'foobar',
+                        entityId:'foobarId'
+                    });
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                });
+
                 it('should be able to query with an empty string', () => {
 
                     let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
