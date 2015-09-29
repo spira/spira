@@ -62,10 +62,9 @@ abstract class EntityController extends ApiController
 
         if ($request->has('q')) {
             $queryArray = json_decode($request->query('q'), true);
-            if(is_array($queryArray)) { // Complex query
+            if (is_array($queryArray)) { // Complex query
                 $collection = $this->complexSearchAllEntities($queryArray, $totalCount);
-            }
-            else {
+            } else {
                 $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
             }
         } else {
@@ -336,11 +335,11 @@ abstract class EntityController extends ApiController
         /* @var ElasticquentTrait $model */
         $model = $this->getModel();
 
-        $searchResults = $model->complexSearch(array(
+        $searchResults = $model->complexSearch([
             'index' => $model->getIndexName(),
             'type' => $model->getTypeName(),
-            'body' => $this->translateQuery($query)
-        ));
+            'body' => $this->translateQuery($query),
+        ]);
 
         if ($searchResults->totalHits() === 0) {
             throw new NotFoundHttpException(sprintf('No results found for model `%s`', get_class($model)));
@@ -374,13 +373,13 @@ abstract class EntityController extends ApiController
     {
         $processedQuery['query']['bool']['must'] = [];
 
-        foreach($query as $key => $value) {
-            if(substr($key, 0, 1) == "_" && $key != "_all") { // Nested entity
+        foreach ($query as $key => $value) {
+            if (substr($key, 0, 1) == '_' && $key != '_all') { // Nested entity
                 reset($value);
                 $fieldKey = key($value);
 
-                foreach($value[$fieldKey] as $fieldValue) {
-                    if(!empty($fieldValue)) {
+                foreach ($value[$fieldKey] as $fieldValue) {
+                    if (! empty($fieldValue)) {
                         array_push($processedQuery['query']['bool']['must'],
                             [
                                 'nested' => [
@@ -389,32 +388,31 @@ abstract class EntityController extends ApiController
                                         'bool' => [
                                             'must' => [
                                                 'match' => [
-                                                    snake_case(substr($key, 1)) . '.' . snake_case($fieldKey) => $fieldValue
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
+                                                    snake_case(substr($key, 1)).'.'.snake_case($fieldKey) => $fieldValue,
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
                             ]
                         );
                     }
                 }
-            }
-            else {
-                foreach($value as $matchValue) {
-                    if(!empty($matchValue)) {
+            } else {
+                foreach ($value as $matchValue) {
+                    if (! empty($matchValue)) {
                         array_push($processedQuery['query']['bool']['must'], [
                             'match' => [
-                                snake_case($key) => $matchValue
-                            ]
+                                snake_case($key) => $matchValue,
+                            ],
                         ]);
                     }
                 }
             }
         }
 
-        if(empty($processedQuery['query']['bool']['must'])) { // No search params have been supplied, match all
-            return array('query' => ['match_all' => []]);
+        if (empty($processedQuery['query']['bool']['must'])) { // No search params have been supplied, match all
+            return ['query' => ['match_all' => []]];
         }
 
         return $processedQuery;

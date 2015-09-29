@@ -81,20 +81,20 @@ class Article extends IndexedModel
         ];
     }
 
-    protected $mappingProperties = array(
-        'tags' => array(
-            'type' => 'nested'
-        ),
-        'article_permalinks' => array(
-            'type' => 'nested'
-        ),
-        'author' => array(
-            'type' => 'nested'
-        ),
-        'article_metas' => array(
-            'type' => 'nested'
-        ),
-    );
+    protected $mappingProperties = [
+        'tags' => [
+            'type' => 'nested',
+        ],
+        'article_permalinks' => [
+            'type' => 'nested',
+        ],
+        'author' => [
+            'type' => 'nested',
+        ],
+        'article_metas' => [
+            'type' => 'nested',
+        ],
+    ];
 
     /**
      * Bootstrap model with event listeners.

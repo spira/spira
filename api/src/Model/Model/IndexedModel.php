@@ -10,7 +10,6 @@
 
 namespace Spira\Model\Model;
 
-use Carbon\Carbon;
 use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Spira\Model\Collection\IndexedCollection;
@@ -21,12 +20,12 @@ abstract class IndexedModel extends BaseModel
 
     protected $indexNested = [];
 
-    protected $mappingProperties = array(
-        'title' => array(
+    protected $mappingProperties = [
+        'title' => [
             'type' => 'string',
-            'analyzer' => 'standard'
-        )
-    );
+            'analyzer' => 'standard',
+        ],
+    ];
 
     /**
      * Create a new Eloquent Collection instance with ElasticquentCollectionTrait.
@@ -80,22 +79,19 @@ abstract class IndexedModel extends BaseModel
 
     public function getIndexDocumentData()
     {
-        $relations = array();
+        $relations = [];
 
-        if(!empty($this->indexNested)) {
+        if (! empty($this->indexNested)) {
             // We have to do this because we don't know if the relation is one to or one to many. If it is one to one
             // we don't want to strip out the keys.
-            foreach($this->indexNested as $nestedModelName) {
-
+            foreach ($this->indexNested as $nestedModelName) {
                 $results = $this->$nestedModelName()->getResults();
 
-                if($results instanceof Collection) {
+                if ($results instanceof Collection) {
                     $relations[snake_case($nestedModelName)] = array_values($results->toArray());
-                }
-                else {
+                } else {
                     $relations[snake_case($nestedModelName)] = $results->toArray();
                 }
-
             }
         }
 
