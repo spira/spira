@@ -8,15 +8,8 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\User;
-use App\Models\Image;
 use Illuminate\Support\Str;
-use App\Models\ArticleSection;
 use Spira\Model\Collection\Collection;
-use App\Models\ArticleSections\ImageContent;
-use App\Models\ArticleSectionsDisplay;
-use App\Models\ArticleSections\RichTextContent;
-use App\Models\ArticleSections\BlockquoteContent;
 
 $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
 

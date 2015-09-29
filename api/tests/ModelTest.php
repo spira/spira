@@ -42,5 +42,4 @@ class ModelTest extends TestCase
 
         $this->assertEquals($dynamicPrimaryKey, $staticPrimaryKey);
     }
-
 }

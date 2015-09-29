@@ -18,7 +18,6 @@ use Spira\Model\Collection\Collection;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 
-
 $factory->define(RichTextContent::class, function (Generator $faker) {
 
     $faker->addProvider(new \App\Extensions\Faker\Provider\Markdown($faker));

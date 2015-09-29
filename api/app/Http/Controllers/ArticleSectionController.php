@@ -15,7 +15,6 @@ use App\Models\Article;
 use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\ImageContent;
 use App\Models\Sections\RichTextContent;
-use Spira\Model\Validation\ValidationException;
 
 class ArticleSectionController extends ChildEntityController
 {
@@ -34,7 +33,6 @@ class ArticleSectionController extends ChildEntityController
      */
     public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
     {
-
         $contentRules = [];
         switch ($requestEntity['type']) {
             case RichTextContent::CONTENT_TYPE:
@@ -52,12 +50,10 @@ class ArticleSectionController extends ChildEntityController
                 break;
         }
 
-        foreach($contentRules as $attribute => $rule){
+        foreach ($contentRules as $attribute => $rule) {
             $validationRules['content.'.$attribute] = $rule;
         }
 
         return parent::validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
     }
-
-
 }
