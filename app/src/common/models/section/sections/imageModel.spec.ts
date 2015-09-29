@@ -12,6 +12,11 @@ namespace common.models.sections {
 
         });
 
+        it('should mock a section image', () => {
+
+            expect(ImageMock.entity()).to.be.instanceOf(common.models.sections.Image);
+        });
+
     });
 
 }

@@ -12,6 +12,11 @@ namespace common.models.sections {
 
         });
 
+        it('should mock a section blockquote', () => {
+
+            expect(BlockquoteMock.entity()).to.be.instanceOf(common.models.sections.Blockquote);
+        });
+
     });
 
 }

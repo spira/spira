@@ -12,6 +12,11 @@ namespace common.models.sections {
 
         });
 
+        it('should mock a section rich text', () => {
+
+            expect(RichTextMock.entity()).to.be.instanceOf(common.models.sections.RichText);
+        });
+
     });
 
 }
