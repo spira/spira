@@ -312,8 +312,7 @@ abstract class EntityController extends ApiController
                 'type' => $model->getTypeName(),
                 'body' => $this->translateQuery($query),
             ]);
-        }
-        else {
+        } else {
             $searchResults = $model->searchByQuery([
                 'match_phrase' => [
                     '_all' => $query,
