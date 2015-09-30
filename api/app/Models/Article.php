@@ -76,7 +76,7 @@ class Article extends IndexedModel
         'sections_display' => 'json',
     ];
 
-    protected $indexNested = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
+    protected $indexRelations = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
 
     public static function getValidationRules()
     {

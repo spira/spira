@@ -18,7 +18,7 @@ abstract class IndexedModel extends BaseModel
 {
     use ElasticquentTrait;
 
-    protected $indexNested = [];
+    protected $indexRelations = [];
 
     protected $mappingProperties = [
         'title' => [
@@ -81,10 +81,10 @@ abstract class IndexedModel extends BaseModel
     {
         $relations = [];
 
-        if (! empty($this->indexNested)) {
+        if (! empty($this->indexRelations)) {
             // We have to do this because we don't know if the relation is one to or one to many. If it is one to one
             // we don't want to strip out the keys.
-            foreach ($this->indexNested as $nestedModelName) {
+            foreach ($this->indexRelations as $nestedModelName) {
                 $results = $this->$nestedModelName()->getResults();
 
                 if ($results instanceof Collection) {

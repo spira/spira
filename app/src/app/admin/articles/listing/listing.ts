@@ -7,6 +7,7 @@ namespace app.admin.articles.listing {
         page:number;
     }
 
+    /* istanbul ignore next:@todo - skipping controller testing */
     export class ArticlesListingConfig {
 
         static $inject = ['stateHelperServiceProvider'];
