@@ -208,7 +208,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedComplexSearchMatchAll()
     {
-        $results = $this->getFactory()->get(TestEntity::class)->count(5)->make();
+        $results = $this->getFactory(TestEntity::class)->count(5)->make();
 
         $resultsMock = Mockery::mock($results);
         $resultsMock->shouldReceive('totalHits')
