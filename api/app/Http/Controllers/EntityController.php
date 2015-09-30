@@ -310,7 +310,7 @@ abstract class EntityController extends ApiController
             $searchResults = $model->complexSearch([
                 'index' => $model->getIndexName(),
                 'type' => $model->getTypeName(),
-                'body' => $this->translateQuery($query),
+                'body' => $this->translateQuery($queryArray),
             ]);
         } else {
             $searchResults = $model->searchByQuery([
@@ -368,7 +368,7 @@ abstract class EntityController extends ApiController
                                         'bool' => [
                                             'must' => [
                                                 'match' => [
-                                                    $snakeKey.'.'.$snakeKey => $fieldValue,
+                                                    $snakeKey.'.'.snake_case($fieldKey) => $fieldValue,
                                                 ],
                                             ],
                                         ],
