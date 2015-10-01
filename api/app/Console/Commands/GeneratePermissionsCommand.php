@@ -1,13 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 01.10.15
- * Time: 19:53
+ * Time: 19:53.
  */
 
 namespace App\Console\Commands;
-
 
 use App\Http\Auth\ManipulateWithOwn;
 use App\Http\Controllers\UserController;
@@ -36,7 +44,7 @@ class GeneratePermissionsCommand extends Command
     {
         $auth = $this->getAuthStorage();
 
-        if (!$auth->getItem(UserController::class.'@getOne')){
+        if (! $auth->getItem(UserController::class.'@getOne')) {
             $getOne = new Permission(UserController::class.'@getOne');
             $getOne->description = 'Get single user record by id';
             $auth->addItem($getOne);
@@ -77,8 +85,6 @@ class GeneratePermissionsCommand extends Command
             $auth->addChild($manipulateWithOwn, $patchOne);
             $auth->addChild($manipulateWithOwn, $getOne);
         }
-
-
     }
 
     /**

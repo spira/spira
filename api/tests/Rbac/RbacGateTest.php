@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Illuminate\Auth\GenericUser;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Permission;
@@ -55,7 +63,7 @@ class RbacGateTest extends TestCase
 
         foreach ($testSuites as $user => $tests) {
             foreach ($tests as $permission => $result) {
-                $genericUser = new GenericUser(['id'=>$user]);
+                $genericUser = new GenericUser(['id' => $user]);
                 $this->assertEquals($result,
                     $this->gate->forUser($genericUser)->check($permission, $params),
                     "Checking $user can $permission"

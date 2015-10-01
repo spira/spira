@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Rbac\Access;
 
 use Spira\Contract\Exception\ForbiddenException;
@@ -7,7 +15,7 @@ use Spira\Contract\Exception\ForbiddenException;
 trait AuthorizesRequestsTrait
 {
     /**
-     * Default permission class name
+     * Default permission class name.
      */
     protected $defaultPermission = null;
 
@@ -23,21 +31,21 @@ trait AuthorizesRequestsTrait
     public function authorize($ability, $arguments = [])
     {
         $permission = null;
-        if (is_string($ability)){
+        if (is_string($ability)) {
             $permission = $ability;
-        }else{
+        } else {
             $arguments['model'] = $ability;
         }
 
-        if (is_null($permission) && is_null($this->defaultPermission)){
+        if (is_null($permission) && is_null($this->defaultPermission)) {
             return;
         }
 
-        if ((!$permission) && $this->defaultPermission){
+        if ((! $permission) && $this->defaultPermission) {
             $permission = $this->defaultPermission.'@'.$this->getAction();
         }
 
-        if (!$permission){
+        if (! $permission) {
             $permission = static::class.'@'.$this->getAction();
         }
 
@@ -46,7 +54,6 @@ trait AuthorizesRequestsTrait
         }
     }
 
-
     /**
      * @return mixed
      */
@@ -54,7 +61,6 @@ trait AuthorizesRequestsTrait
     {
         return debug_backtrace(false, 3)[2]['function'];
     }
-
 
     /**
      * @return Gate

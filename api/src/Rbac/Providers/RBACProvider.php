@@ -1,9 +1,18 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 24.09.15
- * Time: 19:19
+ * Time: 19:19.
  */
 
 namespace Spira\Rbac\Providers;
@@ -47,16 +56,13 @@ class RBACProvider extends ServiceProvider
         });
     }
 
-
     /**
-     * Rbac rules storage
+     * Rbac rules storage.
      */
     protected function registerStorage()
     {
-        $this->app->bind(StorageInterface::class, function(Application $app){
+        $this->app->bind(StorageInterface::class, function (Application $app) {
             return $app->make(DbStorage::class);
         });
     }
-
-
 }

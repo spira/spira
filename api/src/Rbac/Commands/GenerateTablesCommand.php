@@ -1,9 +1,18 @@
 <?php
+
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
  * Created by PhpStorm.
  * User: ivanmatveev
  * Date: 01.10.15
- * Time: 17:51
+ * Time: 17:51.
  */
 
 namespace Spira\Rbac\Commands;
@@ -29,7 +38,7 @@ class GenerateTablesCommand extends Command
 
     public function handle()
     {
-        if (! \Schema::hasTable('auth_item')){
+        if (! \Schema::hasTable('auth_item')) {
             \Schema::create('auth_item', function (Blueprint $table) {
                 $table->string('name', 128)->primary();
                 $table->integer('type')->index();
@@ -40,9 +49,7 @@ class GenerateTablesCommand extends Command
             });
         }
 
-
         if (! \Schema::hasTable('auth_item_child')) {
-
             \Schema::create('auth_item_child', function (Blueprint $table) {
                 $table->string('parent', 128);
                 $table->string('child', 128);

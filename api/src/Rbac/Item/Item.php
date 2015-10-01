@@ -1,7 +1,14 @@
 <?php
 
-namespace Spira\Rbac\Item;
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
+namespace Spira\Rbac\Item;
 
 abstract class Item
 {
@@ -9,7 +16,7 @@ abstract class Item
     const TYPE_PERMISSION = 2;
 
     /**
-     * @var integer the type of the item. This should be either [[TYPE_ROLE]] or [[TYPE_PERMISSION]].
+     * @var int the type of the item. This should be either [[TYPE_ROLE]] or [[TYPE_PERMISSION]].
      */
     public $type;
     /**
@@ -25,11 +32,11 @@ abstract class Item
      */
     public $ruleName;
     /**
-     * @var integer UNIX timestamp representing the item creation time
+     * @var int UNIX timestamp representing the item creation time
      */
     public $createdAt;
     /**
-     * @var integer UNIX timestamp representing the item updating time
+     * @var int UNIX timestamp representing the item updating time
      */
     public $updatedAt;
 
@@ -47,25 +54,23 @@ abstract class Item
     }
 
     /**
-     * Add rule to the item
+     * Add rule to the item.
      *
      * @param Rule $rule
      */
     public function attachRule(Rule $rule)
     {
-        if (!is_null($this->ruleName)){
+        if (! is_null($this->ruleName)) {
             throw new \InvalidArgumentException('Only one rule can be attached, first detach the rule');
         }
         $this->ruleName = get_class($rule);
     }
 
     /**
-     * Remove currently attached rule
+     * Remove currently attached rule.
      */
     public function detachRule()
     {
         $this->ruleName = null;
     }
-
-
 }

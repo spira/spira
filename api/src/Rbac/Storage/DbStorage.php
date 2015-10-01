@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Rbac\Storage;
-
-
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\ConnectionResolverInterface;
@@ -24,7 +30,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAssignments($userId)
     {
@@ -49,27 +55,27 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getItem($itemName)
     {
         if (empty($itemName)) {
-            return null;
+            return;
         }
 
         $row = $this->getConnection()->selectOne(
             'select * from auth_item where name = ?', [$itemName]
         );
 
-        if (!$row) {
-            return null;
+        if (! $row) {
+            return;
         }
 
         return $this->populateItem($row);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getParentNames($itemName)
     {
@@ -82,12 +88,11 @@ class DbStorage implements StorageInterface
             $parents[] = $row->parent;
         }
 
-
         return $parents;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getChildren($name)
     {
@@ -105,9 +110,8 @@ class DbStorage implements StorageInterface
         return $children;
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addItem(Item $item)
     {
@@ -120,7 +124,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeItem(Item $item)
     {
@@ -132,11 +136,10 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function updateItem($name, Item $item)
     {
-
         $this->getConnection()->update(
             'update auth_item set name = ?, description = ?, rule_name = ?, updated_at = now() where name = ?',
             [$item->name, $item->description, $item->getRuleName(), $name]
@@ -146,16 +149,16 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function addChild(Item $parent,Item $child)
+    public function addChild(Item $parent, Item $child)
     {
         if ($parent->name === $child->name) {
             throw new \InvalidArgumentException("Cannot add '{$parent->name}' as a child of itself.");
         }
 
         if ($parent instanceof Permission && $child instanceof Role) {
-            throw new \InvalidArgumentException("Cannot add a role as a child of a permission.");
+            throw new \InvalidArgumentException('Cannot add a role as a child of a permission.');
         }
 
         if ($this->detectLoop($parent, $child)) {
@@ -171,7 +174,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function assign(Role $role, $userId)
     {
@@ -187,7 +190,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revoke(Role $role, $userId)
     {
@@ -207,7 +210,7 @@ class DbStorage implements StorageInterface
      * Checks whether there is a loop in the authorization item hierarchy.
      * @param Item $parent the parent item
      * @param Item $child the child item to be added to the hierarchy
-     * @return boolean whether a loop exists
+     * @return bool whether a loop exists
      */
     protected function detectLoop($parent, $child)
     {
@@ -219,11 +222,12 @@ class DbStorage implements StorageInterface
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Populates an auth item with the data fetched from database
+     * Populates an auth item with the data fetched from database.
      * @param array $row the data from the auth item table
      * @return Item the populated auth item instance (either Role or Permission)
      */
@@ -232,8 +236,8 @@ class DbStorage implements StorageInterface
         $class = $row->type == Item::TYPE_PERMISSION ? Permission::class : Role::class;
 
         $object = new $class($row->name);
-        $object->type=$row->type;
-        $object->description=$row->description;
+        $object->type = $row->type;
+        $object->description = $row->description;
         $object->ruleName = $row->rule_name;
         $object->createdAt = $row->created_at;
         $object->updatedAt = $row->updated_at;

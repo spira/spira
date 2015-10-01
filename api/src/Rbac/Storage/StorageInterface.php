@@ -1,18 +1,24 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Rbac\Storage;
 
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Role;
 
-
 interface StorageInterface
 {
-
     /**
      * Returns all role assignment information for the specified user.
-     * @param string|integer $userId the user ID
+     * @param string|int $userId the user ID
      * @return Assignment[] the assignments indexed by role names. An empty array will be
      * returned if there is no role assigned to the user.
      */
@@ -26,13 +32,12 @@ interface StorageInterface
     public function getItem($itemName);
 
     /**
-     * Get names of the item's parents
+     * Get names of the item's parents.
      *
      * @param string $itemName
      * @return array name of the parents of the item
      */
     public function getParentNames($itemName);
-
 
     /**
      * Returns the child permissions and/or roles.
@@ -45,14 +50,14 @@ interface StorageInterface
     /**
      * Adds an auth item to the RBAC system.
      * @param Item $item the item to add
-     * @return boolean whether the auth item is successfully added to the system
+     * @return bool whether the auth item is successfully added to the system
      */
     public function addItem(Item $item);
 
     /**
      * Removes an auth item from the RBAC system.
      * @param Item $item the item to remove
-     * @return boolean whether the role or permission is successfully removed
+     * @return bool whether the role or permission is successfully removed
      */
     public function removeItem(Item $item);
 
@@ -60,7 +65,7 @@ interface StorageInterface
      * Updates an auth item in the RBAC system.
      * @param string $name the name of the item being updated
      * @param Item $item the updated item
-     * @return boolean whether the auth item is successfully updated
+     * @return bool whether the auth item is successfully updated
      */
     public function updateItem($name, Item $item);
 
@@ -76,7 +81,7 @@ interface StorageInterface
      * Assigns a role to a user.
      *
      * @param Role $role
-     * @param string|integer $userId the user ID
+     * @param string|int $userId the user ID
      * @return Assignment the role assignment information.
      */
     public function assign(Role $role, $userId);
@@ -85,10 +90,8 @@ interface StorageInterface
      * Revokes a role from a user.
      *
      * @param Role $role
-     * @param string|integer $userId the user ID
-     * @return boolean whether the revoking is successful
+     * @param string|int $userId the user ID
+     * @return bool whether the revoking is successful
      */
     public function revoke(Role $role, $userId);
-
-
 }

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Rbac\Item;
 
 abstract class Rule
@@ -9,7 +17,7 @@ abstract class Rule
      *
      * @param callable $userResolver
      * @param array $params parameters passed to check.
-     * @return boolean a value indicating whether the rule permits the auth item it is associated with.
+     * @return bool a value indicating whether the rule permits the auth item it is associated with.
      */
     abstract public function execute(callable $userResolver, $params);
 }

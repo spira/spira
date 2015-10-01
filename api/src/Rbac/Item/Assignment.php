@@ -1,7 +1,14 @@
 <?php
 
-namespace Spira\Rbac\Item;
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
+namespace Spira\Rbac\Item;
 
 /**
  * Assignment represents an assignment of a role to a user.
@@ -9,7 +16,7 @@ namespace Spira\Rbac\Item;
 class Assignment
 {
     /**
-     * @var string|integer user ID
+     * @var string|int user ID
      */
     public $userId;
     /**
@@ -17,7 +24,7 @@ class Assignment
      */
     public $roleName;
     /**
-     * @var integer UNIX timestamp representing the assignment creation time
+     * @var int UNIX timestamp representing the assignment creation time
      */
     public $createdAt;
 }

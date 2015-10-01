@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\DbStorage;
@@ -16,7 +24,6 @@ class DbRbacStorageTest extends TestCase
         parent::setUp();
         $this->auth = $this->app->make(DbStorage::class);
     }
-
 
     public function testAdd()
     {
@@ -40,7 +47,6 @@ class DbRbacStorageTest extends TestCase
         $this->auth->addChild($user, $changeName);
         $this->assertCount(1, $this->auth->getChildren($user->name));
     }
-
 
     protected function prepareData()
     {
@@ -87,8 +93,6 @@ class DbRbacStorageTest extends TestCase
         $this->auth->assign($author, 'author B');
         $this->auth->assign($admin, 'admin C');
     }
-
- 
 
     public function testAssignMultipleRoles()
     {
