@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 
 class CreateRbacTables extends Migration
 {
@@ -13,7 +20,6 @@ class CreateRbacTables extends Migration
      */
     public function up()
     {
-
         Schema::create('auth_item', function (Blueprint $table) {
             $table->string('name', 128)->primary();
             $table->integer('type')->index();
