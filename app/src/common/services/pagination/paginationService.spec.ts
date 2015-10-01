@@ -383,7 +383,7 @@ interface mockEntity {
 
                     let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
 
-                    $httpBackend.expectGET('/api/collection?q=foo%40bar.com', (headers) => {
+                    $httpBackend.expectGET('/api/collection?q=' + btoa('foo@bar.com'), (headers) => {
                         return headers.Range == 'entities=0-2'
                     })
                         .respond(206, _.take(collection, 3));
@@ -400,15 +400,17 @@ interface mockEntity {
 
                     let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
 
-                    $httpBackend.expectGET('/api/collection?q=%7B%22_all%22%3A%22foobar%22%2C%22entityId%22%3A%22foobarId%22%7D', (headers) => {
+                    let query = {
+                        _all:'foobar',
+                        entityId:'foobarId'
+                    };
+
+                    $httpBackend.expectGET('/api/collection?q=' + btoa(angular.toJson(query)), (headers) => {
                         return headers.Range == 'entities=0-2'
                     })
                         .respond(206, _.take(collection, 3));
 
-                    let results = paginator.complexQuery({
-                        _all:'foobar',
-                        entityId:'foobarId'
-                    });
+                    let results = paginator.complexQuery(query);
 
                     $httpBackend.flush();
 
@@ -437,7 +439,7 @@ interface mockEntity {
 
                     let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
 
-                    $httpBackend.expectGET('/api/collection?q=findnothing', (headers) => {
+                    $httpBackend.expectGET('/api/collection?q=' + btoa('findnothing'), (headers) => {
                         return headers.Range == 'entities=0-2'
                     })
                     .respond(404);

@@ -172,7 +172,7 @@ class EntityTest extends TestCase
 
         $this->app->instance(TestEntity::class, $mockModel);
 
-        $this->getJson('/test/entities/pages?q=foobar', ['Range' => 'entities=0-']);
+        $this->getJson('/test/entities/pages?q=' . base64_encode('foobar'), ['Range' => 'entities=0-']);
 
         $this->assertResponseStatus(404);
     }
@@ -201,7 +201,15 @@ class EntityTest extends TestCase
 
         $this->app->instance(TestEntity::class, $mockModel);
 
-        $this->getJson('/test/entities/pages?q=%7B%22_all%22%3A%5B%22search%20term%22%5D%2C%22authorId%22%3A%5B%22some%20UUID%22%5D%2C%22_tags%22%3A%7B%22tagId%22%3A%5B%22tag%20ID%201%22%2C%20%22tag%20ID%202%22%5D%7D%7D', ['Range' => 'entities=0-']);
+        $query = [
+            '_all' => ['search term'],
+            'authorId' => ['some UUID'],
+            '_tags'=> ['tagId' =>
+                ['tag ID 1', 'tag ID 2']
+            ]
+        ];
+
+        $this->getJson('/test/entities/pages?q=' . base64_encode(json_encode($query)), ['Range' => 'entities=0-']);
 
         $this->assertResponseStatus(404);
     }
@@ -233,7 +241,11 @@ class EntityTest extends TestCase
 
         $this->app->instance(TestEntity::class, $mockModel);
 
-        $this->getJson('/test/entities/pages?q=%7B%22authorId%22%3A%5B%22%22%5D%7D', ['Range' => 'entities=0-']);
+        $query = [
+            'authorId' => ['']
+        ];
+
+        $this->getJson('/test/entities/pages?q=' . base64_encode(json_encode($query)), ['Range' => 'entities=0-']);
 
         $this->assertResponseStatus(206);
     }
@@ -723,7 +735,7 @@ class EntityTest extends TestCase
 
         sleep(1); //give the elastic search agent time to index
 
-        $this->getJson('/test/entities/pages?q=searchforthisstring', ['Range' => 'entities=0-9']);
+        $this->getJson('/test/entities/pages?q=' . base64_encode('searchforthisstring'), ['Range' => 'entities=0-9']);
 
         $collection = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
@@ -737,7 +749,7 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-        $this->getJson('/test/entities/pages?q=thisstringwontreturnresults', ['Range' => 'entities=0-9']);
+        $this->getJson('/test/entities/pages?q=' . base64_encode('thisstringwontreturnresults'), ['Range' => 'entities=0-9']);
 
         $this->assertResponseStatus(404);
         $this->shouldReturnJson();

@@ -74,7 +74,7 @@ namespace common.services.pagination {
 
             let url = this.url;
             if(!_.isEmpty(this.queryString)) {
-                url += '?q=' + (<any>this.$window).encodeURIComponent(this.queryString);
+                url += '?q=' + btoa(this.queryString);
             }
 
             return this.ngRestAdapter

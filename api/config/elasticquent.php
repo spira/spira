@@ -37,6 +37,6 @@ return [
     | Elastiquent models.
     */
 
-    'default_index' => 'sprout',
+    'default_index' => 'spira',
 
 ];

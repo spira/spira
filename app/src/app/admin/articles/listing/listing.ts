@@ -92,7 +92,10 @@ namespace app.admin.articles.listing {
                 .then((articles) => {
                     this.articles = articles;
                 })
-                .finally(() => { //@todo handle case where search returns no results
+                .catch(() => {
+                    this.articles = [];
+                })
+                .finally(() => {
                     this.pages = this.articlesPaginator.getPages();
                 });
         }
