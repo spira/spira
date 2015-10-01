@@ -62,7 +62,7 @@
     "scripts": {
         "post-install-cmd": [
             "npm install",
-            "php artisan auth:generate-keys",
+            "php artisan auth:generate-keys"
         ],
         "post-update-cmd": [
             "php artisan ide-helper:generate"
