@@ -62,7 +62,7 @@ abstract class EntityController extends ApiController
         $offset = $rangeRequest->isGetLast() ? $totalCount - $limit : $rangeRequest->getOffset();
 
         if ($request->has('q')) {
-            $collection = $this->searchAllEntities($request->query('q'), $limit, $offset, $totalCount);
+            $collection = $this->searchAllEntities(base64_decode($request->query('q')), $limit, $offset, $totalCount);
         } else {
             $collection = $this->getAllEntities($limit, $offset);
         }
@@ -293,7 +293,7 @@ abstract class EntityController extends ApiController
     }
 
     /**
-     * @param $queryString
+     * @param $query
      * @param null $limit
      * @param null $offset
      * @param null $totalCount
