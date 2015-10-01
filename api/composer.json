@@ -63,8 +63,6 @@
         "post-install-cmd": [
             "npm install",
             "php artisan auth:generate-keys",
-            "php artisan rbac:generate-tables",
-            "php artisan rbac:permissions"
         ],
         "post-update-cmd": [
             "php artisan ide-helper:generate"
