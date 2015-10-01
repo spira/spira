@@ -48,6 +48,9 @@ class RBACProvider extends ServiceProvider
     }
 
 
+    /**
+     * Rbac rules storage
+     */
     protected function registerStorage()
     {
         $this->app->bind(StorageInterface::class, function(Application $app){

@@ -4,6 +4,7 @@ namespace Spira\Rbac\Storage;
 
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Item;
+use Spira\Rbac\Item\Role;
 
 
 interface StorageInterface
@@ -18,16 +19,76 @@ interface StorageInterface
     public function getAssignments($userId);
 
     /**
-     * @param string $itemName
-     * @return Item
+     * Returns the named auth item.
+     * @param string $itemName the auth item name.
+     * @return Item the auth item corresponding to the specified name. Null is returned if no such item.
      */
     public function getItem($itemName);
 
     /**
+     * Get names of the item's parents
+     *
      * @param string $itemName
-     * @return Item[]
+     * @return array name of the parents of the item
      */
     public function getParentNames($itemName);
+
+
+    /**
+     * Returns the child permissions and/or roles.
+     *
+     * @param string $name the parent name
+     * @return Item[] the child permissions and/or roles
+     */
+    public function getChildren($name);
+
+    /**
+     * Adds an auth item to the RBAC system.
+     * @param Item $item the item to add
+     * @return boolean whether the auth item is successfully added to the system
+     */
+    public function addItem(Item $item);
+
+    /**
+     * Removes an auth item from the RBAC system.
+     * @param Item $item the item to remove
+     * @return boolean whether the role or permission is successfully removed
+     */
+    public function removeItem(Item $item);
+
+    /**
+     * Updates an auth item in the RBAC system.
+     * @param string $name the name of the item being updated
+     * @param Item $item the updated item
+     * @return boolean whether the auth item is successfully updated
+     */
+    public function updateItem($name, Item $item);
+
+    /**
+     * Adds an item as a child of another item.
+     *
+     * @param Item $parent
+     * @param Item $child
+     */
+    public function addChild(Item $parent, Item $child);
+
+    /**
+     * Assigns a role to a user.
+     *
+     * @param Role $role
+     * @param string|integer $userId the user ID
+     * @return Assignment the role assignment information.
+     */
+    public function assign(Role $role, $userId);
+
+    /**
+     * Revokes a role from a user.
+     *
+     * @param Role $role
+     * @param string|integer $userId the user ID
+     * @return boolean whether the revoking is successful
+     */
+    public function revoke(Role $role, $userId);
 
 
 }

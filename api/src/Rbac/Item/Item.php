@@ -46,6 +46,11 @@ abstract class Item
         return $this->ruleName;
     }
 
+    /**
+     * Add rule to the item
+     *
+     * @param Rule $rule
+     */
     public function attachRule(Rule $rule)
     {
         if (!is_null($this->ruleName)){
@@ -54,6 +59,9 @@ abstract class Item
         $this->ruleName = get_class($rule);
     }
 
+    /**
+     * Remove currently attached rule
+     */
     public function detachRule()
     {
         $this->ruleName = null;

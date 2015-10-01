@@ -6,6 +6,9 @@ use Spira\Contract\Exception\ForbiddenException;
 
 trait AuthorizesRequestsTrait
 {
+    /**
+     * Default permission class name
+     */
     protected $defaultPermission = null;
 
     /**
@@ -44,6 +47,9 @@ trait AuthorizesRequestsTrait
     }
 
 
+    /**
+     * @return mixed
+     */
     protected function getAction()
     {
         return debug_backtrace(false, 3)[2]['function'];

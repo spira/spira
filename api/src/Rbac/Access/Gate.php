@@ -4,7 +4,6 @@ namespace Spira\Rbac\Access;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Guard;
 use Spira\Contract\Exception\NotImplementedException;
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Rule;
@@ -120,11 +119,26 @@ class Gate implements GateContract
         return $this->checkAccessRecursive($itemName, $arguments, $assignments);
     }
 
+    /**
+     * Get Gate service for particular user
+     *
+     * @param Authenticatable $user
+     * @return static
+     */
     public function forUser(Authenticatable $user)
     {
         return new static($this->getStorage(), function() use ($user) {return $user;}, $this->defaultRoles);
     }
 
+    /**
+     * Check permissions and roles recursively
+     *
+     * @param $itemName
+     * @param $params
+     * @param array $assignments
+     * @param array $itemStack
+     * @return bool
+     */
     protected function checkAccessRecursive($itemName, $params, $assignments = [], $itemStack = [])
     {
         if (!($item = $this->getItem($itemName))){
@@ -166,6 +180,11 @@ class Gate implements GateContract
         return static::$itemCache[$itemName];
     }
 
+    /**
+     * @param Item $item
+     * @param $params
+     * @return bool
+     */
     protected function executeRule(Item $item, $params)
     {
         if ($item->getRuleName() !== null){

@@ -24,10 +24,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * Returns all role assignment information for the specified user.
-     * @param string|integer $userId the user ID
-     * @return Assignment[] the assignments indexed by role names. An empty array will be
-     * returned if there is no role assigned to the user.
+     * @inheritdoc
      */
     public function getAssignments($userId)
     {
@@ -52,8 +49,7 @@ class DbStorage implements StorageInterface
     }
 
     /**
-     * @param string $itemName
-     * @return Item
+     * @inheritdoc
      */
     public function getItem($itemName)
     {
@@ -69,12 +65,11 @@ class DbStorage implements StorageInterface
             return null;
         }
 
-        return $this->populateItem($row);;
+        return $this->populateItem($row);
     }
 
     /**
-     * @param string $itemName
-     * @return array name of the parents of the item
+     * @inheritdoc
      */
     public function getParentNames($itemName)
     {
@@ -91,6 +86,9 @@ class DbStorage implements StorageInterface
         return $parents;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getChildren($name)
     {
         $rows = $this->getConnection()->select(
@@ -108,6 +106,9 @@ class DbStorage implements StorageInterface
     }
 
 
+    /**
+     * @inheritdoc
+     */
     public function addItem(Item $item)
     {
         $this->getConnection()->insert(
@@ -144,6 +145,9 @@ class DbStorage implements StorageInterface
         return true;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function addChild(Item $parent,Item $child)
     {
         if ($parent->name === $child->name) {
@@ -166,6 +170,9 @@ class DbStorage implements StorageInterface
         return true;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function assign(Role $role, $userId)
     {
         $assignment = new Assignment();
@@ -179,6 +186,9 @@ class DbStorage implements StorageInterface
         return $assignment;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function revoke(Role $role, $userId)
     {
         if (empty($userId)) {
@@ -189,6 +199,8 @@ class DbStorage implements StorageInterface
             'delete from auth_assignment WHERE user_id = ? and item_name = ?',
             [(string) $userId, $role->name]
         );
+
+        return true;
     }
 
     /**
