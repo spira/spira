@@ -10,12 +10,9 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Polices\UserPolicy;
+use Spira\Rbac\Providers\RBACProvider;
 
-class AccessServiceProvider extends \Spira\Auth\Providers\AccessServiceProvider
+class AccessServiceProvider extends RBACProvider
 {
-    protected $policies = [
-        User::class => UserPolicy::class,
-    ];
+    protected $defaultRoles = ['user'];
 }

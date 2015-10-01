@@ -11,11 +11,13 @@ namespace Spira\Rbac\Providers;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 use Spira\Rbac\Access\Gate;
+use Spira\Rbac\Commands\GenerateTablesCommand;
 use Spira\Rbac\Storage\DbStorage;
 use Spira\Rbac\Storage\StorageInterface;
 
 class RBACProvider extends ServiceProvider
 {
+    protected $defaultRoles = [];
 
     /**
      * Register the service provider.
@@ -26,6 +28,7 @@ class RBACProvider extends ServiceProvider
     {
         $this->registerAccessGate();
         $this->registerStorage();
+        $this->commands(GenerateTablesCommand::class);
     }
 
     /**
@@ -36,9 +39,11 @@ class RBACProvider extends ServiceProvider
     protected function registerAccessGate()
     {
         $this->app->singleton(Gate::GATE_NAME, function (Application $app) {
-            //init auth with gate just in case
-            $app->make('auth');
-            return $app->make(Gate::class);
+            return new Gate(
+                    $app->make(StorageInterface::class),
+                    function () use ($app) { return $app['auth']->user(); },
+                    $this->defaultRoles
+                );
         });
     }
 
