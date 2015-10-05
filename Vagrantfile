@@ -42,7 +42,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell, inline: "apt-get update"
 # provision with docker
   config.vm.provision :docker, version: "1.6.2"
-  config.vm.provision :docker_compose
+  config.vm.provision :docker_compose, compose_version: "1.3.1"
 
 # Provision the box with boostrap file
   config.vm.provision :shell, path: "vagrant/bootstrap.sh"
