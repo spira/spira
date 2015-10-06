@@ -152,6 +152,103 @@ class EntityTest extends TestCase
         $this->assertEquals($last, 19);
     }
 
+    public function testGetAllPaginatedSimpleSearch()
+    {
+        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock->shouldReceive('totalHits')
+            ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('searchByQuery')
+            ->with([
+                'match_phrase' => [
+                    '_all' => 'foobar',
+                ],
+            ], null, null, 10, 0)
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $this->getJson('/test/entities/pages?q='.base64_encode('foobar'), ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(404);
+    }
+
+    public function testGetAllPaginatedComplexSearch()
+    {
+        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock->shouldReceive('totalHits')
+            ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('getIndexName')
+            ->andReturn('defaultIndex')
+            ->shouldReceive('getTypeName')
+            ->andReturn('someTypeName')
+            ->shouldReceive('complexSearch')
+            ->with([
+                'index' => 'defaultIndex',
+                'type' => 'someTypeName',
+                'body' => ['query' => ['bool' => ['must' => [['match' => ['_all' => 'search term']],['match' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
+            ])
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $query = [
+            '_all' => ['search term'],
+            'authorId' => ['some UUID'],
+            '_tags' => ['tagId' => ['tag ID 1', 'tag ID 2'],
+            ],
+        ];
+
+        $this->getJson('/test/entities/pages?q='.base64_encode(json_encode($query)), ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(404);
+    }
+
+    public function testGetAllPaginatedComplexSearchMatchAll()
+    {
+        $results = $this->getFactory(TestEntity::class)->count(5)->make();
+
+        $resultsMock = Mockery::mock($results);
+        $resultsMock->shouldReceive('totalHits')
+            ->times(3)
+            ->andReturn(5);
+
+        $mockModel = Mockery::mock(TestEntity::class);
+        $mockModel
+            ->shouldReceive('count')
+            ->andReturn(10)
+            ->shouldReceive('getIndexName')
+            ->andReturn('defaultIndex')
+            ->shouldReceive('getTypeName')
+            ->andReturn('someTypeName')
+            ->shouldReceive('complexSearch')
+            ->with([
+                'index' => 'defaultIndex',
+                'type' => 'someTypeName',
+                'body' => ['query' => ['match_all' => []]],
+            ])
+            ->andReturn($resultsMock);
+
+        $this->app->instance(TestEntity::class, $mockModel);
+
+        $query = [
+            'authorId' => [''],
+        ];
+
+        $this->getJson('/test/entities/pages?q='.base64_encode(json_encode($query)), ['Range' => 'entities=0-']);
+
+        $this->assertResponseStatus(206);
+    }
+
     public function testPaginationBadRanges()
     {
         $this->getFactory(TestEntity::class)->count(20)->create();
@@ -637,7 +734,7 @@ class EntityTest extends TestCase
 
         sleep(1); //give the elastic search agent time to index
 
-        $this->getJson('/test/entities/pages?q=searchforthisstring', ['Range' => 'entities=0-9']);
+        $this->getJson('/test/entities/pages?q='.base64_encode('searchforthisstring'), ['Range' => 'entities=0-9']);
 
         $collection = json_decode($this->response->getContent());
         $this->assertResponseStatus(206);
@@ -651,7 +748,7 @@ class EntityTest extends TestCase
 
     public function testEntitySearchNoResults()
     {
-        $this->getJson('/test/entities/pages?q=thisstringwontreturnresults', ['Range' => 'entities=0-9']);
+        $this->getJson('/test/entities/pages?q='.base64_encode('thisstringwontreturnresults'), ['Range' => 'entities=0-9']);
 
         $this->assertResponseStatus(404);
         $this->shouldReturnJson();
