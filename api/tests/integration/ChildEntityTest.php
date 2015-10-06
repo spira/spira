@@ -60,7 +60,7 @@ class ChildEntityTest extends TestCase
      */
     protected function addRelatedEntities(TestEntity $model)
     {
-        $this->getFactory()->get(SecondTestEntity::class)->count(5)->make()
+        $this->getFactory(SecondTestEntity::class)->count(5)->make()
             ->each(function (SecondTestEntity $entity) use ($model) {
                 $model->testMany()->save($entity);
             });

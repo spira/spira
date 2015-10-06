@@ -175,6 +175,9 @@ abstract class ChildEntityController extends ApiController
 
         $this->getRelation($parent)->saveMany($childModels);
 
+        // @Todo: Ran into an issue where updating a child entity through "putMany" request ("hasMany"/"belongsTo" relationship) does not fire the parent's "updated" event (which means that the parent object isn't reindexed in elastic search so it will not contain the new information). "putMany" does appear to update the parent's updated timestamp which does suggest that it is touched in some way (confirmed that Laravel is issuing the command to update the time stamp of the parent). Manually touching the parent fixes this problem.
+        $parent->touch();
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->createdCollection($childModels);
