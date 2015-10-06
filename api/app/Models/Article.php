@@ -46,6 +46,7 @@ class Article extends IndexedModel
      * @var string
      */
     public $table = 'articles';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -75,6 +76,8 @@ class Article extends IndexedModel
         'sections_display' => 'json',
     ];
 
+    protected $indexRelations = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
+
     public static function getValidationRules()
     {
         return [
@@ -88,6 +91,21 @@ class Article extends IndexedModel
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }
+
+    protected $mappingProperties = [
+        'tags' => [
+            'type' => 'nested',
+        ],
+        'article_permalinks' => [
+            'type' => 'nested',
+        ],
+        'author' => [
+            'type' => 'nested',
+        ],
+        'article_metas' => [
+            'type' => 'nested',
+        ],
+    ];
 
     /**
      * Bootstrap model with event listeners.

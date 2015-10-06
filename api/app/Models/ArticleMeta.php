@@ -27,6 +27,8 @@ class ArticleMeta extends BaseModel
 
     protected $guarded = ['meta_name'];
 
+    protected $touches = ['article'];
+
     public static function getValidationRules()
     {
         return [

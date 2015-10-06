@@ -74,7 +74,7 @@ namespace common.services.pagination {
 
             let url = this.url;
             if(!_.isEmpty(this.queryString)) {
-                url += '?q=' + (<any>this.$window).encodeURIComponent(this.queryString);
+                url += '?q=' + btoa(this.queryString);
             }
 
             return this.ngRestAdapter
@@ -113,6 +113,20 @@ namespace common.services.pagination {
         public query(query:string):ng.IPromise<any[]> {
 
             this.queryString = query;
+
+            return this.reset().getResponse(this.count);
+
+        }
+
+        /**
+         * Set the index back to 0 and get a response from the collection endpoint with added complex query param. If an empty
+         * string is passed through the results are not filtered.
+         * @param query
+         * @returns {ng.IPromise<common.models.IModel[]>}
+         */
+        public complexQuery(query:any):ng.IPromise<any[]> {
+
+            this.queryString = angular.toJson(_.cloneDeep(query));
 
             return this.reset().getResponse(this.count);
 
