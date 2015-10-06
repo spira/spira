@@ -14,7 +14,6 @@ namespace common.models {
                 articleId: seededChance.guid(),
                 title: seededChance.string(),
                 permalink: seededChance.url(),
-                content: seededChance.paragraph(),
                 primaryImage: seededChance.url(),
                 status: seededChance.pick(['draft', 'published', 'ready']),
                 authorId: seededChance.guid(),
@@ -22,7 +21,8 @@ namespace common.models {
                 showAuthorPromo: seededChance.bool(),
                 _articleMetas: [],
                 _tags: [],
-                _comments: []
+                _comments: [],
+                _sections: [],
             };
 
         }

@@ -3,8 +3,13 @@ namespace common.models {
     @common.decorators.changeAware
     export class ArticleComment extends AbstractModel {
 
+        protected __nestedEntityMap:INestedEntityMap = {
+            _author: User,
+        };
+
         protected __attributeCastMap:IAttributeCastMap = {
             createdAt: this.castMoment,
+            updatedAt: this.castMoment,
         };
 
         public articleCommentId:string = undefined;

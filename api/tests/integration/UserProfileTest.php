@@ -37,7 +37,7 @@ class UserProfileTest extends TestCase
     {
         $user = $this->createUser();
 
-        $user->userProfile()->save($this->getFactory()->get(UserProfile::class)->make());
+        $user->userProfile()->save($this->getFactory(UserProfile::class)->make());
 
         $this->getJson('/users/'.$user->user_id.'/profile');
 
@@ -53,12 +53,12 @@ class UserProfileTest extends TestCase
     {
         $user = $this->createUser();
 
-        $userProfile = $this->getFactory()->get(UserProfile::class)->make([
+        $userProfile = $this->getFactory(UserProfile::class)->make([
             'website' => 'http://some-website.com',
         ]);
         $userProfile->user_id = $user->user_id;
 
-        $profileTransformed = $this->getFactory()->get(UserProfile::class)->setModel($userProfile)->transformed();
+        $profileTransformed = $this->getFactory(UserProfile::class)->setModel($userProfile)->transformed();
 
         $this->putJson('/users/'.$user->user_id.'/profile', $profileTransformed);
 
@@ -77,11 +77,11 @@ class UserProfileTest extends TestCase
     {
         $user = $this->createUser();
 
-        $user->userProfile()->save($this->getFactory()->get(UserProfile::class)->make());
+        $user->userProfile()->save($this->getFactory(UserProfile::class)->make());
 
         $user->userProfile->website = 'http://example.com';
 
-        $profileTransformed = $this->getFactory()->get(UserProfile::class)->setModel($user->userProfile)->transformed();
+        $profileTransformed = $this->getFactory(UserProfile::class)->setModel($user->userProfile)->transformed();
 
         $this->patchJson('/users/'.$user->user_id.'/profile', $profileTransformed);
 

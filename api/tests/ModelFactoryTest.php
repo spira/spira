@@ -209,7 +209,7 @@ class ModelFactoryTest extends TestCase
 
     public function testNullFactoryPredefined()
     {
-        $testModel = $this->getFactory()->get(TestEntity::class)->make();
+        $testModel = $this->getFactory(TestEntity::class)->make();
 
         $createdModel = $this->modelFactoryTest
             ->get()
@@ -231,8 +231,7 @@ class ModelFactoryTest extends TestCase
 
     public function testMixedPredefinedAndSeededMocks()
     {
-        $testModel = $this->getFactory()
-            ->get(TestEntity::class)
+        $testModel = $this->getFactory(TestEntity::class)
             ->make();
 
         $createdModels = $this->modelFactoryTest
@@ -247,13 +246,11 @@ class ModelFactoryTest extends TestCase
 
     public function testRandomFromPredefinedCollection()
     {
-        $testModels = $this->getFactory()
-            ->get(TestEntity::class)
+        $testModels = $this->getFactory(TestEntity::class)
             ->count(10)
             ->make();
 
         $mock = $this->getFactory()
-            ->get()
             ->setCollection($testModels)
             ->count(1)
             ->make();

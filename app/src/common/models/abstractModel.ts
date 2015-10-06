@@ -65,7 +65,7 @@ namespace common.models {
 
                 }, this);
 
-                if (_.size(this.__nestedEntityMap) > 1) {
+                if (!_.isEmpty(this.__nestedEntityMap)) {
                     this.hydrateNested(data, exists);
                 }
             }
@@ -112,11 +112,6 @@ namespace common.models {
 
             _.forIn(this.__nestedEntityMap, (nestedObject:IModelClass|IHydrateFunction, nestedKey:string) => {
 
-                //if the nested map is not defined with a leading _ prepend one
-                if (!_.startsWith(nestedKey, '_')){
-                    nestedKey = '_' + nestedKey;
-                }
-
                 let nestedData = null;
 
                 if(this.isModelClass(nestedObject)) {
@@ -145,12 +140,9 @@ namespace common.models {
          * @returns {common.models.AbstractModel}
          * @param exists
          */
-        private hydrateModel(data:any, Model:IModelClass, exists:boolean){
+        protected hydrateModel(data:any, Model:IModelClass, exists:boolean){
 
-            let model = new Model(data);
-            model.setExists(exists);
-
-            return model;
+            return new Model(data, exists);
         }
 
         /**

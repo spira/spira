@@ -6,9 +6,9 @@ namespace common.models {
     class TestModel extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
-            hasOne: TestChildModel,
-            hasMany: TestChildModel,
-            hydrate: this.hydrateFunction
+            _hasOne: TestChildModel,
+            _hasMany: TestChildModel,
+            _hydrate: this.hydrateFunction
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
