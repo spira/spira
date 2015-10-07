@@ -14,7 +14,12 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Commands\GenerateTablesCommand;
+use Spira\Rbac\Storage\AssignmentStorageInterface;
+use Spira\Rbac\Storage\Db\AssignmentStorage;
+use Spira\Rbac\Storage\Db\ItemStorage;
 use Spira\Rbac\Storage\DbStorage;
+use Spira\Rbac\Storage\ItemStorageInterface;
+use Spira\Rbac\Storage\Storage;
 use Spira\Rbac\Storage\StorageInterface;
 
 class RBACProvider extends ServiceProvider
@@ -30,7 +35,6 @@ class RBACProvider extends ServiceProvider
     {
         $this->registerAccessGate();
         $this->registerStorage();
-        $this->commands(GenerateTablesCommand::class);
     }
 
     /**
@@ -54,8 +58,16 @@ class RBACProvider extends ServiceProvider
      */
     protected function registerStorage()
     {
+        $this->app->bind(ItemStorageInterface::class, function (Application $app) {
+            return $app->make(ItemStorage::class);
+        });
+
+        $this->app->bind(AssignmentStorageInterface::class, function (Application $app) {
+            return $app->make(AssignmentStorage::class);
+        });
+
         $this->app->bind(StorageInterface::class, function (Application $app) {
-            return $app->make(DbStorage::class);
+            return $app->make(Storage::class);
         });
     }
 }

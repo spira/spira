@@ -12,7 +12,6 @@ use App\Http\Auth\ManipulateWithOwn;
 use Illuminate\Database\Migrations\Migration;
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
-use Spira\Rbac\Storage\DbStorage;
 use App\Http\Controllers\UserController;
 
 class AddPermissions extends Migration
@@ -78,10 +77,10 @@ class AddPermissions extends Migration
     }
 
     /**
-     * @return DbStorage
+     * @return Spira\Rbac\Storage\Storage
      */
     protected function getAuthStorage()
     {
-        return app(DbStorage::class);
+        return app(Spira\Rbac\Storage\Storage::class);
     }
 }

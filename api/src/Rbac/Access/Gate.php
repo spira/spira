@@ -106,10 +106,6 @@ class Gate implements GateContract
      */
     public function check($itemName, $arguments = [])
     {
-        if (! ($item = $this->getItem($itemName))) {
-            return true;
-        }
-
         try {
             //default roles check
             if (! empty($this->defaultRoles) && $this->checkAccessRecursive($itemName, $arguments)) {

@@ -10,6 +10,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Spira\Rbac\Item\Item;
 
 class CreateRbacTables extends Migration
 {
@@ -22,7 +23,7 @@ class CreateRbacTables extends Migration
     {
         Schema::create('auth_item', function (Blueprint $table) {
             $table->string('name', 128)->primary();
-            $table->integer('type')->index();
+            $table->enum('type',[Item::TYPE_ROLE, Item::TYPE_PERMISSION])->index();
             $table->text('description')->nullable();
             $table->string('rule_name', 128)->nullable();
             $table->dateTime('created_at');

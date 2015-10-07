@@ -13,7 +13,7 @@ use App\Models\UserProfile;
 use Illuminate\Support\Facades\Cache;
 use App\Models\UserCredential;
 use Illuminate\Support\Facades\Hash;
-use Spira\Rbac\Storage\DbStorage;
+use Spira\Rbac\Storage\Storage;
 
 /**
  * Class UserTest.
@@ -513,11 +513,11 @@ class UserTest extends TestCase
     }
 
     /**
-     * @return DbStorage
+     * @return Storage
      */
     protected function getAuthStorage()
     {
-        return $this->app->make(DbStorage::class);
+        return $this->app->make(Storage::class);
     }
 
     protected function assignAdmin($user)

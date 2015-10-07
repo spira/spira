@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\SocialLogin;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
@@ -35,7 +36,9 @@ class UserController extends EntityController
      */
     protected $auth;
 
-    protected $defaultPermission = false;
+    protected $permissionsEnabled = true;
+
+    protected $defaultAdminPermissions = false;
 
     /**
      * Assign dependencies.
@@ -101,7 +104,7 @@ class UserController extends EntityController
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
-        $this->authorize($model);
+        $this->authorize(static::class.'@patchOne',['model'=>$model]);
         // Check if the email is being changed, and initialize confirmation
         $email = $request->input('email');
         if ($email && $model->email != $email) {

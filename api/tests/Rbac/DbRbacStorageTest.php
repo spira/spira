@@ -10,19 +10,19 @@
 
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
-use Spira\Rbac\Storage\DbStorage;
+use Spira\Rbac\Storage\Storage;
 
 class DbRbacStorageTest extends TestCase
 {
     /**
-     * @var DbStorage
+     * @var Storage
      */
     protected $auth;
 
     public function setUp()
     {
         parent::setUp();
-        $this->auth = $this->app->make(DbStorage::class);
+        $this->auth = $this->app->make(Storage::class);
     }
 
     public function testAdd()

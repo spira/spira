@@ -24,7 +24,7 @@ class Assignment
      */
     public $roleName;
     /**
-     * @var int UNIX timestamp representing the assignment creation time
+     * @var string datetime representing the assignment creation time
      */
     public $createdAt;
 }

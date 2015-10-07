@@ -12,12 +12,12 @@ use Illuminate\Auth\GenericUser;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
-use Spira\Rbac\Storage\DbStorage;
+use Spira\Rbac\Storage\Storage;
 
 class RbacGateTest extends TestCase
 {
     /**
-     * @var DbStorage
+     * @var Storage
      */
     protected $auth;
 
@@ -29,7 +29,7 @@ class RbacGateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->auth = $this->app->make(DbStorage::class);
+        $this->auth = $this->app->make(Storage::class);
         $this->gate = $this->app->make(Gate::GATE_NAME);
     }
 

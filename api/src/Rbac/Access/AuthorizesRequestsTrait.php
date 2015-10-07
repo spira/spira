@@ -15,51 +15,19 @@ use Spira\Contract\Exception\ForbiddenException;
 trait AuthorizesRequestsTrait
 {
     /**
-     * Default permission class name.
-     */
-    protected $defaultPermission = null;
-
-    /**
      * Authorize a given action against a set of arguments.
      *
-     * @param  mixed  $ability
+     * @param  mixed  $permission
      * @param  mixed|array  $arguments
      * @return void
      *
      * @throws ForbiddenException
      */
-    public function authorize($ability, $arguments = [])
+    public function authorize($permission, $arguments = [])
     {
-        $permission = null;
-        if (is_string($ability)) {
-            $permission = $ability;
-        } else {
-            $arguments['model'] = $ability;
-        }
-
-        if (is_null($permission) && is_null($this->defaultPermission)) {
-            return;
-        }
-
-        if ((! $permission) && $this->defaultPermission) {
-            $permission = $this->defaultPermission.'@'.$this->getAction();
-        }
-
-        if (! $permission) {
-            $permission = static::class.'@'.$this->getAction();
-        }
-
         if (! $this->getGate()->check($permission, $arguments)) {
-            throw $this->createGateUnauthorizedException($ability, $arguments);
+            throw $this->createGateUnauthorizedException($permission, $arguments);
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getAction()
-    {
-        return debug_backtrace(false, 3)[2]['function'];
     }
 
     /**
