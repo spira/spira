@@ -20,12 +20,12 @@ namespace common.models {
 
         }
 
-        public static entity(overrides:Object = {}, exists:boolean = true):Section {
-            return <Section> new this().buildEntity(overrides, exists);
+        public static entity(overrides:Object = {}, exists:boolean = true):Section<any> {
+            return <Section<any>> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Section[] {
-            return <Section[]>new this().buildCollection(count);
+        public static collection(count:number = 10):Section<any>[] {
+            return <Section<any>[]>new this().buildCollection(count);
         }
 
         public static getContentTypeMap(){

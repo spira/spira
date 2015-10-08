@@ -3,7 +3,7 @@ namespace common.directives.contentSectionsInput {
     export const namespace = 'common.directives.contentSectionsInput';
 
     interface IContentSectionsInputScope extends ng.IScope{
-        ngModel():common.models.Section[];
+        ngModel():common.models.Section<any>[];
     }
 
     interface ISectionType {
@@ -18,7 +18,7 @@ namespace common.directives.contentSectionsInput {
     class ContentSectionsInputController {
 
         public sectionTypes: ISectionTypeMap;
-        public sections:common.models.Section[];
+        public sections:common.models.Section<any>[];
 
         static $inject = ['ngRestAdapter'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService){
@@ -43,18 +43,18 @@ namespace common.directives.contentSectionsInput {
         }
 
         public addSectionType(sectionTypeKey:string):void{
-            this.sections.push(new common.models.Section({
+            this.sections.push(new common.models.Section<any>({
                 sectionId: this.ngRestAdapter.uuid(),
                 type: sectionTypeKey,
             }));
         }
 
-        public removeSection(section:common.models.Section):void{
+        public removeSection(section:common.models.Section<any>):void{
 
             this.sections = _.without(this.sections, section);
         }
 
-        public moveSection(section:common.models.Section, moveUp:boolean = true):void{
+        public moveSection(section:common.models.Section<any>, moveUp:boolean = true):void{
 
             let sectionIndex:number = _.findIndex(this.sections, section);
             let swapIndex:number = sectionIndex;

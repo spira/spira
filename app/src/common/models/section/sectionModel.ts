@@ -1,7 +1,7 @@
 namespace common.models {
 
     @common.decorators.changeAware
-    export class Section extends AbstractModel {
+    export class Section<T extends AbstractModel> extends AbstractModel {
 
         public __contentTypeMap = {
             [sections.RichText.contentType]: sections.RichText,
@@ -19,7 +19,7 @@ namespace common.models {
         };
 
         public sectionId:string;
-        public content:sections.RichText|sections.Blockquote|sections.Image;
+        public content:T;
         public type:string;
         public createdAt:moment.Moment = undefined;
         public updatedAt:moment.Moment = undefined;

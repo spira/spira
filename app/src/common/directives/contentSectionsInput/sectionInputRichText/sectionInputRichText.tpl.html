@@ -3,10 +3,8 @@
     <md-input-container flex>
         <label>Content</label>
 
-        <textarea ng-model="SectionInputRichTextController.section.content.body" name="contentBody" columns="1" md-maxlength="140"></textarea>
-        <ng-messages for="SectionInputRichTextController.richTextForm.contentBody.$error">
-            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
-        </ng-messages>
+        <pen-editor ng-model="SectionInputRichTextController.section.content.body"></pen-editor>
+
     </md-input-container>
 
 </ng-form>

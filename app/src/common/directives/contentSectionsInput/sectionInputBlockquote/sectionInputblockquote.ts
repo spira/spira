@@ -4,7 +4,7 @@ namespace common.directives.contentSectionsInput.sectionInputBlockquote {
 
     class SectionInputBlockquoteController {
 
-        public section:common.models.Section;
+        public section:common.models.Section<common.models.sections.Blockquote>;
         public blockquoteForm:ng.IFormController;
 
         static $inject = [];

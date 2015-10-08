@@ -4,7 +4,7 @@ namespace common.directives.contentSectionsInput.sectionInputRichText {
 
     class SectionInputRichTextController {
 
-        public section:common.models.Section;
+        public section:common.models.Section<common.models.sections.RichText>;
         public richTextForm:ng.IFormController;
 
         static $inject = [];

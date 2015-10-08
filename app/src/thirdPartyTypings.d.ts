@@ -21,4 +21,36 @@ declare module lil {
 
 }
 
-declare var lil:  lil.lilStatic;
+declare var lil: lil.lilStatic;
+
+/**
+ * https://github.com/sofish/pen
+ */
+declare module Pen {
+
+    interface PenConfig {
+        editor: HTMLElement; // {DOM Element} [required]
+        class?: string; // {String} class of the editor,
+        debug?: boolean; // {Boolean} false by default
+        textarea?: string; // fallback for old browsers
+        list?: string[]; // editor menu list
+    }
+
+    interface PenStatic {
+
+        new(config: PenConfig): Pen;
+
+    }
+
+    interface Pen {
+
+        destroy():Pen;
+        rebuild():Pen;
+        toMd():string;
+
+    }
+
+}
+
+declare var pen: Pen.Pen;
+declare var Pen: Pen.PenStatic;
