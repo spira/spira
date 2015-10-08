@@ -9,10 +9,14 @@
  */
 
 use Illuminate\Auth\GenericUser;
+use Laravel\Lumen\Application;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
+use Spira\Rbac\Storage\Db\AssignmentStorage;
+use Spira\Rbac\Storage\Db\ItemStorage;
 use Spira\Rbac\Storage\Storage;
+use Spira\Rbac\Storage\StorageInterface;
 
 class RbacGateTest extends TestCase
 {
@@ -29,8 +33,13 @@ class RbacGateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->auth = $this->app->make(Storage::class);
+
+        $this->app->singleton(StorageInterface::class, function(Application $app){
+           return new Storage($app->make(ItemStorage::class), $app->make(AssignmentStorage::class));
+        });
+
         $this->gate = $this->app->make(Gate::GATE_NAME);
+        $this->auth = $this->gate->getStorage();
     }
 
     public function testCheckAccess()

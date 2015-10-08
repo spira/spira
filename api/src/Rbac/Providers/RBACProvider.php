@@ -57,14 +57,14 @@ class RBACProvider extends ServiceProvider
 
     protected function registerAssignmentStorage()
     {
-        $this->app->bind(AssignmentStorageInterface::class, function (Application $app) {
+        $this->app->singleton(AssignmentStorageInterface::class, function (Application $app) {
             return $app->make(AssignmentStorage::class);
         });
     }
 
     protected function registerItemStorage()
     {
-        $this->app->bind(ItemStorageInterface::class, function (Application $app) {
+        $this->app->singleton(ItemStorageInterface::class, function (Application $app) {
             return $app->make(ItemStorage::class);
         });
     }
@@ -74,7 +74,7 @@ class RBACProvider extends ServiceProvider
      */
     protected function registerBaseStorage()
     {
-        $this->app->bind(StorageInterface::class, function (Application $app) {
+        $this->app->singleton(StorageInterface::class, function (Application $app) {
             return $app->make(Storage::class);
         });
     }

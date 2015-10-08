@@ -10,6 +10,8 @@
 
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
+use Spira\Rbac\Storage\Db\AssignmentStorage;
+use Spira\Rbac\Storage\Db\ItemStorage;
 use Spira\Rbac\Storage\Storage;
 
 class DbRbacStorageTest extends TestCase
@@ -22,7 +24,7 @@ class DbRbacStorageTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->auth = $this->app->make(Storage::class);
+        $this->auth = new Storage($this->app->make(ItemStorage::class), $this->app->make(AssignmentStorage::class));
     }
 
     public function testAdd()
