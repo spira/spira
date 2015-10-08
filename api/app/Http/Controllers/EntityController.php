@@ -32,13 +32,13 @@ abstract class EntityController extends ApiController
     protected $model;
 
     /**
-     * Enable permissions checks
+     * Enable permissions checks.
      */
     protected $permissionsEnabled = false;
 
     /**
      * Name of the admin role to check against
-     * Should be set to false to enable route based permissions
+     * Should be set to false to enable route based permissions.
      */
     protected $defaultAdminPermissions = 'admin';
 
@@ -58,7 +58,7 @@ abstract class EntityController extends ApiController
     {
         $collection = $this->getAllEntities();
         $collection = $this->getWithNested($collection, $request);
-        $this->checkPermission(static::class.'@getAll',['model'=>$collection]);
+        $this->checkPermission(static::class.'@getAll', ['model' => $collection]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -78,7 +78,7 @@ abstract class EntityController extends ApiController
         }
 
         $collection = $this->getWithNested($collection, $request);
-        $this->checkPermission(static::class.'@getAllPaginated',['model'=>$collection]);
+        $this->checkPermission(static::class.'@getAllPaginated', ['model' => $collection]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -96,7 +96,7 @@ abstract class EntityController extends ApiController
     {
         $model = $this->findOrFailEntity($id);
         $model = $this->getWithNested($model, $request);
-        $this->checkPermission(static::class.'@getOne',['model'=>$model]);
+        $this->checkPermission(static::class.'@getOne', ['model' => $model]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -114,7 +114,7 @@ abstract class EntityController extends ApiController
         $model = $this->getModel()->newInstance();
         $this->validateRequest($request->json()->all(), $this->getValidationRules());
         $model->fill($request->json()->all());
-        $this->checkPermission(static::class.'@postOne',['model'=>$model]);
+        $this->checkPermission(static::class.'@postOne', ['model' => $model]);
         $model->save();
 
         return $this->getResponse()
@@ -137,7 +137,7 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
         $model->fill($request->json()->all());
-        $this->checkPermission(static::class.'@putOne',['model'=>$model]);
+        $this->checkPermission(static::class.'@putOne', ['model' => $model]);
         $model->save();
 
         return $this->getResponse()
@@ -161,7 +161,7 @@ abstract class EntityController extends ApiController
         $modelCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels);
 
-        $this->checkPermission(static::class.'@putMany',['model'=>$modelCollection]);
+        $this->checkPermission(static::class.'@putMany', ['model' => $modelCollection]);
 
         $modelCollection->each(function (BaseModel $model) {
                 return $model->save();
@@ -188,7 +188,7 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
 
         $model->fill($request->json()->all());
-        $this->checkPermission(static::class.'@patchOne',['model'=>$model]);
+        $this->checkPermission(static::class.'@patchOne', ['model' => $model]);
         $model->save();
 
         return $this->getResponse()->noContent();
@@ -211,7 +211,7 @@ abstract class EntityController extends ApiController
         $modelsCollection = $this->getModel()
             ->hydrateRequestCollection($requestCollection, $existingModels);
 
-        $this->checkPermission(static::class.'@patchMany',['model'=>$existingModels]);
+        $this->checkPermission(static::class.'@patchMany', ['model' => $existingModels]);
 
         $modelsCollection->each(function (BaseModel $model) {
                 return $model->save();
@@ -230,7 +230,7 @@ abstract class EntityController extends ApiController
     {
         $entity = $this->findOrFailEntity($id);
 
-        $this->checkPermission(static::class.'@deleteOne',['model'=>$entity]);
+        $this->checkPermission(static::class.'@deleteOne', ['model' => $entity]);
 
         $entity->delete();
 
@@ -249,7 +249,7 @@ abstract class EntityController extends ApiController
 
         $modelsCollection = $this->findOrFailCollection($requestCollection);
 
-        $this->checkPermission(static::class.'@deleteMany',['model'=>$modelsCollection]);
+        $this->checkPermission(static::class.'@deleteMany', ['model' => $modelsCollection]);
 
         $modelsCollection->each(function (BaseModel $model) {
                 $model->delete();
@@ -385,19 +385,17 @@ abstract class EntityController extends ApiController
      * @param  mixed  $permission
      * @param  mixed|array  $arguments
      * @return void
-     *
      */
     public function checkPermission($permission, $arguments = [])
     {
-
-        if (!$this->permissionsEnabled){
+        if (! $this->permissionsEnabled) {
             return;
         }
 
-        if ($this->defaultAdminPermissions){
+        if ($this->defaultAdminPermissions) {
             $permission = $this->defaultAdminPermissions;
         }
 
-        $this->authorize($permission,$arguments);
+        $this->authorize($permission, $arguments);
     }
 }
