@@ -1,0 +1,41 @@
+<div class="content-sections-input">
+
+    <h2>Content Sections input</h2>
+
+    <md-fab-toolbar md-direction="left" md-open="demo.isOpen">
+        <md-fab-trigger class="align-with-text">
+            <md-button aria-label="menu" class="md-fab md-primary">
+                <md-icon>add_circle</md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-toolbar>
+            <md-fab-actions class="md-toolbar-tools">
+                <md-button
+                        aria-label="{{sectionType.name}}"
+                        class="md-icon-button"
+                        ng-repeat="sectionType in ContentSectionsInputController.sectionTypes"
+                        ng-click="ContentSectionsInputController.addSectionType(sectionType.key)"
+                        >
+                    <md-icon>{{sectionType.icon}}</md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-toolbar>
+    </md-fab-toolbar>
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button
+                    aria-label="{{sectionType.name}}"
+                    class="md-icon-button"
+                    ng-repeat="sectionType in ContentSectionsInputController.sectionTypes"
+                    ng-click="ContentSectionsInputController.addSectionType(sectionType.key)"
+                    >
+                <md-icon>{{sectionType.icon}}</md-icon>
+            </md-button>
+            <p>@todo remove this toolbar and use the fab toolbar above (background is broken for some reason)</p>
+        </div>
+    </md-toolbar>
+
+    <pre highlight="">{{ContentSectionsInputController.sections|json}}</pre>
+
+</div>
