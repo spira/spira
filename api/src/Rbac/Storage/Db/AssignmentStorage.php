@@ -69,4 +69,26 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
 
         return true;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAllAssignments(Role $role)
+    {
+        $this->getConnection()
+            ->table('auth_assignment')
+            ->where('item_name', '=', $role->name)
+            ->delete();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function updateAllAssignments($oldName, Role $role)
+    {
+        $this->getConnection()
+            ->table('auth_assignment')
+            ->where('item_name', '=', $oldName)
+            ->update(['item_name' => $role->name]);
+    }
 }

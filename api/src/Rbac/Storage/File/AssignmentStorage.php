@@ -28,9 +28,6 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
      */
     public function assign(Role $role, $userId)
     {
-//        if (!isset($this->items[$role->name])) {
-//            throw new InvalidParamException("Unknown role '{$role->name}'.");
-
         if (isset($this->assignments[$userId][$role->name])) {
             throw new \InvalidArgumentException("Authorization item '{$role->name}' has already been assigned to user '$userId'.");
         } else {
@@ -57,6 +54,35 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
         } else {
             return false;
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeAllAssignments(Role $role)
+    {
+       foreach ($this->assignments as &$assignments) {
+           unset($assignments[$role->name]);
+       }
+
+        $this->saveAssignments();
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateAllAssignments($oldName, Role $role)
+    {
+        foreach ($this->assignments as &$assignments) {
+            if (isset($assignments[$oldName])) {
+                $assignments[$role->name] = $assignments[$oldName];
+                unset($assignments[$oldName]);
+            }
+        }
+
+        $this->saveAssignments();
+        return true;
     }
 
     /**

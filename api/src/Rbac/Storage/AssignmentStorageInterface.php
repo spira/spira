@@ -33,4 +33,17 @@ interface AssignmentStorageInterface
      * @return bool whether the revoking is successful
      */
     public function revoke(Role $role, $userId);
+
+    /**
+     * @param Role $role
+     * @return bool
+     */
+    public function removeAllAssignments(Role $role);
+
+    /**
+     * @param $oldName
+     * @param Role $role
+     * @return bool
+     */
+    public function updateAllAssignments($oldName, Role $role);
 }

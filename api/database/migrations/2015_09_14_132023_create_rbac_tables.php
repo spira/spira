@@ -50,11 +50,6 @@ class CreateRbacTables extends Migration
             $table->string('user_id', 64);
             $table->dateTime('created_at');
             $table->primary(['item_name', 'user_id']);
-
-            $table->foreign('item_name')
-                ->references('name')->on('auth_item')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
         });
     }
 

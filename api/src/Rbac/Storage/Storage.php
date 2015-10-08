@@ -3,8 +3,6 @@
 
 namespace Spira\Rbac\Storage;
 
-
-use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Role;
 
@@ -27,10 +25,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Returns all role assignment information for the specified user.
-     * @param string|int $userId the user ID
-     * @return Assignment[] the assignments indexed by role names. An empty array will be
-     * returned if there is no role assigned to the user.
+     * @inheritdoc
      */
     public function getAssignments($userId)
     {
@@ -38,23 +33,19 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Assigns a role to a user.
-     *
-     * @param Role $role
-     * @param string|int $userId the user ID
-     * @return Assignment the role assignment information.
+     * @inheritdoc
      */
     public function assign(Role $role, $userId)
     {
+        if (!$this->itemStorage->getItem($role->name)){
+            throw new \InvalidArgumentException("Unknown role '{$role->name}'.");
+        }
+
         return $this->assignmentStorage->assign($role, $userId);
     }
 
     /**
-     * Revokes a role from a user.
-     *
-     * @param Role $role
-     * @param string|int $userId the user ID
-     * @return bool whether the revoking is successful
+     * @inheritdoc
      */
     public function revoke(Role $role, $userId)
     {
@@ -62,9 +53,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Returns the named auth item.
-     * @param string $itemName the auth item name.
-     * @return Item the auth item corresponding to the specified name. Null is returned if no such item.
+     * @inheritdoc
      */
     public function getItem($itemName)
     {
@@ -72,10 +61,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Get names of the item's parents.
-     *
-     * @param string $itemName
-     * @return array name of the parents of the item
+     * @inheritdoc
      */
     public function getParentNames($itemName)
     {
@@ -83,10 +69,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Returns the child permissions and/or roles.
-     *
-     * @param string $name the parent name
-     * @return Item[] the child permissions and/or roles
+     * @inheritdoc
      */
     public function getChildren($name)
     {
@@ -94,9 +77,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Adds an auth item to the RBAC system.
-     * @param Item $item the item to add
-     * @return bool whether the auth item is successfully added to the system
+     * @inheritdoc
      */
     public function addItem(Item $item)
     {
@@ -104,34 +85,52 @@ class Storage implements StorageInterface
     }
 
     /**
-     * Removes an auth item from the RBAC system.
-     * @param Item $item the item to remove
-     * @return bool whether the role or permission is successfully removed
+     * @inheritdoc
      */
     public function removeItem(Item $item)
     {
-        return $this->itemStorage->removeItem($item);
+        $result = $this->itemStorage->removeItem($item);
+        if ($result && $item instanceof Role){
+            $this->removeAllAssignments($item);
+        }
+        return $result;
     }
 
     /**
-     * Updates an auth item in the RBAC system.
-     * @param string $name the name of the item being updated
-     * @param Item $item the updated item
-     * @return bool whether the auth item is successfully updated
+     * @inheritdoc
      */
     public function updateItem($name, Item $item)
     {
-        return $this->itemStorage->updateItem($name, $item);
+        $result = $this->itemStorage->updateItem($name, $item);
+
+        if ($name !== $item->name && $item instanceof Role){
+            $this->updateAllAssignments($name, $item);
+        }
+
+        return $result;
     }
 
     /**
-     * Adds an item as a child of another item.
-     *
-     * @param Item $parent
-     * @param Item $child
+     * @inheritdoc
      */
     public function addChild(Item $parent, Item $child)
     {
         return $this->itemStorage->addChild($parent, $child);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeAllAssignments(Role $role)
+    {
+        return $this->assignmentStorage->removeAllAssignments($role);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateAllAssignments($oldName, Role $role)
+    {
+        return $this->assignmentStorage->updateAllAssignments($oldName, $role);
     }
 }

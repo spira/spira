@@ -81,9 +81,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
             foreach ($this->children as &$children) {
                 unset($children[$item->name]);
             }
-//            foreach ($this->assignments as &$assignments) {
-//                unset($assignments[$item->name]);
-//            }
+
             unset($this->items[$item->name]);
             $this->saveItems();
             return true;
@@ -114,12 +112,6 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
                         unset($children[$name]);
                     }
                 }
-//                foreach ($this->assignments as &$assignments) {
-//                    if (isset($assignments[$name])) {
-//                        $assignments[$item->name] = $assignments[$name];
-//                        unset($assignments[$name]);
-//                    }
-//                }
             }
         }
 

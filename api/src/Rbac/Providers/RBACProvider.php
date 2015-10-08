@@ -34,7 +34,9 @@ class RBACProvider extends ServiceProvider
     public function register()
     {
         $this->registerAccessGate();
-        $this->registerStorage();
+        $this->registerItemStorage();
+        $this->registerAssignmentStorage();
+        $this->registerBaseStorage();
     }
 
     /**
@@ -53,19 +55,25 @@ class RBACProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Rbac rules storage.
-     */
-    protected function registerStorage()
+    protected function registerAssignmentStorage()
+    {
+        $this->app->bind(AssignmentStorageInterface::class, function (Application $app) {
+            return $app->make(AssignmentStorage::class);
+        });
+    }
+
+    protected function registerItemStorage()
     {
         $this->app->bind(ItemStorageInterface::class, function (Application $app) {
             return $app->make(ItemStorage::class);
         });
+    }
 
-        $this->app->bind(AssignmentStorageInterface::class, function (Application $app) {
-            return $app->make(AssignmentStorage::class);
-        });
-
+    /**
+     * Rbac rules storage.
+     */
+    protected function registerBaseStorage()
+    {
         $this->app->bind(StorageInterface::class, function (Application $app) {
             return $app->make(Storage::class);
         });
