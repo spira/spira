@@ -23,7 +23,7 @@ class CreateRbacTables extends Migration
     {
         Schema::create('auth_item', function (Blueprint $table) {
             $table->string('name', 128)->primary();
-            $table->enum('type',[Item::TYPE_ROLE, Item::TYPE_PERMISSION])->index();
+            $table->enum('type', [Item::TYPE_ROLE, Item::TYPE_PERMISSION])->index();
             $table->text('description')->nullable();
             $table->string('rule_name', 128)->nullable();
             $table->dateTime('created_at');

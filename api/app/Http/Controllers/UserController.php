@@ -104,7 +104,7 @@ class UserController extends EntityController
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
-        $this->authorize(static::class.'@patchOne',['model'=>$model]);
+        $this->authorize(static::class.'@patchOne', ['model' => $model]);
         // Check if the email is being changed, and initialize confirmation
         $email = $request->input('email');
         if ($email && $model->email != $email) {

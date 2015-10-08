@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage\File;
-
 
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Permission;
@@ -22,7 +28,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     protected $children;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getItem($itemName)
     {
@@ -30,7 +36,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getParentNames($itemName)
     {
@@ -45,7 +51,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getChildren($name)
     {
@@ -53,7 +59,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addItem(Item $item)
     {
@@ -73,7 +79,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeItem(Item $item)
     {
@@ -84,6 +90,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
 
             unset($this->items[$item->name]);
             $this->saveItems();
+
             return true;
         } else {
             return false;
@@ -91,7 +98,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function updateItem($name, Item $item)
     {
@@ -118,15 +125,16 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
         $this->items[$item->name] = $item;
 
         $this->saveItems();
+
         return true;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addChild(Item $parent, Item $child)
     {
-        if (!isset($this->items[$parent->name], $this->items[$child->name])) {
+        if (! isset($this->items[$parent->name], $this->items[$child->name])) {
             throw new \InvalidArgumentException("Either '{$parent->name}' or '{$child->name}' does not exist.");
         }
 
@@ -134,7 +142,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
             throw new \InvalidArgumentException("Cannot add '{$parent->name} ' as a child of itself.");
         }
         if ($parent instanceof Permission && $child instanceof Role) {
-            throw new \InvalidArgumentException("Cannot add a role as a child of a permission.");
+            throw new \InvalidArgumentException('Cannot add a role as a child of a permission.');
         }
 
         if ($this->detectLoop($parent, $child)) {
@@ -168,7 +176,6 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
             $itemObj->createdAt = $itemsMtime;
             $itemObj->updatedAt = $itemsMtime;
             $this->items[$name] = $itemObj;
-
         }
 
         foreach ($items as $name => $item) {
@@ -212,14 +219,14 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
      *
      * @param Item $parent parent item
      * @param Item $child the child item that is to be added to the hierarchy
-     * @return boolean whether a loop exists
+     * @return bool whether a loop exists
      */
     protected function detectLoop($parent, $child)
     {
         if ($child->name === $parent->name) {
             return true;
         }
-        if (!isset($this->children[$child->name], $this->items[$parent->name])) {
+        if (! isset($this->children[$child->name], $this->items[$parent->name])) {
             return false;
         }
         foreach ($this->children[$child->name] as $grandchild) {

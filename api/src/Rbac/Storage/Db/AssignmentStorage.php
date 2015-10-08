@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage\Db;
 
@@ -9,7 +16,6 @@ use Spira\Rbac\Storage\AssignmentStorageInterface;
 
 class AssignmentStorage extends AbstractStorage implements AssignmentStorageInterface
 {
-
     /**
      * {@inheritdoc}
      */
@@ -21,7 +27,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
 
         $data = $this->getConnection()
             ->table('auth_assignment')
-            ->where('user_id','=', $userId)
+            ->where('user_id', '=', $userId)
             ->get();
 
         $assignments = [];
@@ -46,7 +52,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
         $assignment->roleName = $role->name;
         $this->getConnection()
             ->table('auth_assignment')
-            ->insert(['user_id'=>$assignment->userId, 'item_name' =>$assignment->roleName, 'created_at' => 'now()']);
+            ->insert(['user_id' => $assignment->userId, 'item_name' => $assignment->roleName, 'created_at' => 'now()']);
 
         return $assignment;
     }
@@ -65,7 +71,6 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
             ->where('user_id', '=', (string) $userId)
             ->where('item_name', '=', $role->name)
             ->delete();
-
 
         return true;
     }

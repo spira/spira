@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage\File;
-
 
 abstract class AbstractStorage
 {
@@ -28,12 +34,11 @@ abstract class AbstractStorage
     protected function loadFromFile($file)
     {
         if (is_file($file)) {
-            return require($file);
+            return require $file;
         } else {
             return [];
         }
     }
-
 
     /**
      * Saves the authorization data to a PHP script file.
@@ -43,6 +48,6 @@ abstract class AbstractStorage
      */
     protected function saveToFile($data, $file)
     {
-        file_put_contents($file, "<?php\nreturn " . var_export($data, true) . ";\n", LOCK_EX);
+        file_put_contents($file, "<?php\nreturn ".var_export($data, true).";\n", LOCK_EX);
     }
 }

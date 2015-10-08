@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage;
 
@@ -19,13 +26,12 @@ class Storage implements StorageInterface
 
     public function __construct(ItemStorageInterface $itemStorage, AssignmentStorageInterface $assignmentStorage)
     {
-
         $this->itemStorage = $itemStorage;
         $this->assignmentStorage = $assignmentStorage;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAssignments($userId)
     {
@@ -33,11 +39,11 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function assign(Role $role, $userId)
     {
-        if (!$this->itemStorage->getItem($role->name)){
+        if (! $this->itemStorage->getItem($role->name)) {
             throw new \InvalidArgumentException("Unknown role '{$role->name}'.");
         }
 
@@ -45,7 +51,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revoke(Role $role, $userId)
     {
@@ -53,7 +59,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getItem($itemName)
     {
@@ -61,7 +67,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getParentNames($itemName)
     {
@@ -69,7 +75,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getChildren($name)
     {
@@ -77,7 +83,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addItem(Item $item)
     {
@@ -85,25 +91,26 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeItem(Item $item)
     {
         $result = $this->itemStorage->removeItem($item);
-        if ($result && $item instanceof Role){
+        if ($result && $item instanceof Role) {
             $this->removeAllAssignments($item);
         }
+
         return $result;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function updateItem($name, Item $item)
     {
         $result = $this->itemStorage->updateItem($name, $item);
 
-        if ($name !== $item->name && $item instanceof Role){
+        if ($name !== $item->name && $item instanceof Role) {
             $this->updateAllAssignments($name, $item);
         }
 
@@ -111,7 +118,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addChild(Item $parent, Item $child)
     {
@@ -119,7 +126,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeAllAssignments(Role $role)
     {
@@ -127,7 +134,7 @@ class Storage implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function updateAllAssignments($oldName, Role $role)
     {

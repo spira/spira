@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage\File;
-
 
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Role;
@@ -16,7 +22,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
     protected $assignments;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAssignments($userId)
     {
@@ -24,7 +30,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function assign(Role $role, $userId)
     {
@@ -36,20 +42,22 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
             $assignmentObj->roleName = $role->name;
             $assignmentObj->createdAt = time();
             $this->assignments[$userId][$role->name] = $assignmentObj;
-            
+
             $this->saveAssignments();
+
             return $this->assignments[$userId][$role->name];
         }
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revoke(Role $role, $userId)
     {
         if (isset($this->assignments[$userId][$role->name])) {
             unset($this->assignments[$userId][$role->name]);
             $this->saveAssignments();
+
             return true;
         } else {
             return false;
@@ -57,20 +65,21 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeAllAssignments(Role $role)
     {
-       foreach ($this->assignments as &$assignments) {
-           unset($assignments[$role->name]);
-       }
+        foreach ($this->assignments as &$assignments) {
+            unset($assignments[$role->name]);
+        }
 
         $this->saveAssignments();
+
         return true;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function updateAllAssignments($oldName, Role $role)
     {
@@ -82,6 +91,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
         }
 
         $this->saveAssignments();
+
         return true;
     }
 

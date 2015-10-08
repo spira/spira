@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Spira\Rbac\Storage\Db;
 
@@ -78,12 +85,12 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
         $this->getConnection()
             ->table('auth_item')
             ->insert([
-                'name'=>$item->name,
-                'type'=>$item->type,
-                'description'=>$item->description,
-                'rule_name'=>$item->getRuleName(),
-                'created_at'=>'now()',
-                'updated_at'=>'now()'
+                'name' => $item->name,
+                'type' => $item->type,
+                'description' => $item->description,
+                'rule_name' => $item->getRuleName(),
+                'created_at' => 'now()',
+                'updated_at' => 'now()',
             ]);
 
         return true;
@@ -139,7 +146,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
 
         $this->getConnection()
             ->table('auth_item_child')
-            ->insert(['parent'=>$parent->name, 'child' => $child->name]);
+            ->insert(['parent' => $parent->name, 'child' => $child->name]);
 
         return true;
     }

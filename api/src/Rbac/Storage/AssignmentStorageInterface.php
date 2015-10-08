@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace Spira\Rbac\Storage;
 
 use Spira\Rbac\Item\Assignment;
@@ -14,7 +22,6 @@ interface AssignmentStorageInterface
      * returned if there is no role assigned to the user.
      */
     public function getAssignments($userId);
-
 
     /**
      * Assigns a role to a user.

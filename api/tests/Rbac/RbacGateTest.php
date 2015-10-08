@@ -34,7 +34,7 @@ class RbacGateTest extends TestCase
     {
         parent::setUp();
 
-        $this->app->singleton(StorageInterface::class, function(Application $app){
+        $this->app->singleton(StorageInterface::class, function (Application $app) {
            return new Storage($app->make(ItemStorage::class), $app->make(AssignmentStorage::class));
         });
 
@@ -68,7 +68,7 @@ class RbacGateTest extends TestCase
             ],
         ];
 
-        $params = ['authorID' => 'author B'];
+        $params = ['author_id' => 'author B'];
 
         foreach ($testSuites as $user => $tests) {
             foreach ($tests as $permission => $result) {

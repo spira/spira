@@ -26,6 +26,6 @@ class AuthorRule extends Rule
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $user = $userResolver();
 
-        return $params['authorID'] == $user->getAuthIdentifier();
+        return $params['author_id'] == $user->getAuthIdentifier();
     }
 }

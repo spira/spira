@@ -10,11 +10,6 @@
 
 namespace Spira\Rbac\Storage;
 
-use Spira\Rbac\Item\Assignment;
-use Spira\Rbac\Item\Item;
-use Spira\Rbac\Item\Role;
-
 interface StorageInterface extends AssignmentStorageInterface, ItemStorageInterface
 {
-
 }
