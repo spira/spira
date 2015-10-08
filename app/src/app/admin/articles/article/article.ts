@@ -63,7 +63,9 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                        return articleService.getArticle($stateParams.permalink, [
+                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections'
+                        ]);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
                         return userService.getUsersPaginator().setCount(10);

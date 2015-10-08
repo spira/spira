@@ -1,0 +1,12 @@
+<ng-form class="sections-input-rich-text" name="SectionInputRichTextController.richTextForm" >
+
+    <md-input-container flex>
+        <label>Content</label>
+
+        <textarea ng-model="SectionInputRichTextController.section.content.body" name="contentBody" columns="1" md-maxlength="140"></textarea>
+        <ng-messages for="SectionInputRichTextController.richTextForm.contentBody.$error">
+            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+</ng-form>

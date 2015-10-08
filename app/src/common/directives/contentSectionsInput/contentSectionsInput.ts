@@ -7,39 +7,66 @@ namespace common.directives.contentSectionsInput {
     }
 
     interface ISectionType {
-        key: string,
         name: string,
         icon: string,
     }
 
+    interface ISectionTypeMap {
+        [key:string]: ISectionType;
+    }
+
     class ContentSectionsInputController {
 
-        public sectionTypes: ISectionType[];
+        public sectionTypes: ISectionTypeMap;
         public sections:common.models.Section[];
 
-        constructor(){
-            this.sectionTypes = [
-                {
-                    key: common.models.sections.RichText.contentType,
+        static $inject = ['ngRestAdapter'];
+        constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService){
+            this.sectionTypes = {
+                [common.models.sections.RichText.contentType] : {
                     name: "Rich Text",
                     icon: 'format_align_left',
                 },
-                {
-                    key: common.models.sections.Blockquote.contentType,
+                [common.models.sections.Blockquote.contentType] : {
                     name: "Blockquote",
                     icon: 'format_quote',
+                },
+                [common.models.sections.Image.contentType] : {
+                    name: "Image",
+                    icon: 'image',
                 }
-            ];
+            };
 
             if (!this.sections){
                 this.sections = [];
             }
         }
 
-        public addSectionType(sectionTypeKey:string){
+        public addSectionType(sectionTypeKey:string):void{
             this.sections.push(new common.models.Section({
+                sectionId: this.ngRestAdapter.uuid(),
                 type: sectionTypeKey,
             }));
+        }
+
+        public removeSection(section:common.models.Section):void{
+
+            this.sections = _.without(this.sections, section);
+        }
+
+        public moveSection(section:common.models.Section, moveUp:boolean = true):void{
+
+            let sectionIndex:number = _.findIndex(this.sections, section);
+            let swapIndex:number = sectionIndex;
+
+            if(moveUp){
+                swapIndex --;
+            }else{
+                swapIndex++;
+            }
+
+            this.sections[sectionIndex] = this.sections[swapIndex];
+            this.sections[swapIndex] = section;
         }
 
     }
@@ -72,7 +99,10 @@ namespace common.directives.contentSectionsInput {
         }
     }
 
-    angular.module(namespace, [])
+    angular.module(namespace, [
+        namespace + '.sectionInputRichText',
+        namespace + '.sectionInputBlockquote',
+    ])
         .directive('contentSectionsInput', ContentSectionsInputDirective.factory())
     ;
 
