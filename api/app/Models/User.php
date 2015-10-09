@@ -307,7 +307,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
     }
 
-
     /**
      * @param string $method
      * @return void

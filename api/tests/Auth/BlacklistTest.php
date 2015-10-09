@@ -59,7 +59,7 @@ class BlacklistTest extends TestCase
     public function testActualStorage()
     {
         $repo = m::mock('Illuminate\Contracts\Cache\Repository');
-        $repo->shouldReceive('add')->with('some id','some id', 60)->once()->andReturn(true);
+        $repo->shouldReceive('add')->with('some id', 'some id', 60)->once()->andReturn(true);
         $driver = new \Spira\Auth\Blacklist\CacheDriver($repo);
         $driver->add('some id');
     }

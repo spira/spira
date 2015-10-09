@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\File\AssignmentStorage;
@@ -20,13 +28,11 @@ class FileRbacStorageTest extends DbRbacStorageTest
 
     public function testAssignSame()
     {
-
         $role = new Role('some role');
         $this->auth->addItem($role);
         $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
         $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \'some user\'.');
         $this->auth->assign($role, 'some user');
-
     }
 
     public function testRemoveAllAssignments()
@@ -36,7 +42,6 @@ class FileRbacStorageTest extends DbRbacStorageTest
         $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
         $this->auth->removeAllAssignments($role);
         $this->assertEmpty($this->auth->getAssignments('some user'));
-
     }
 
     public function testLoad()
@@ -55,11 +60,11 @@ class FileRbacStorageTest extends DbRbacStorageTest
 
     protected function clean()
     {
-        if (file_exists(__DIR__.'/item.php')){
+        if (file_exists(__DIR__.'/item.php')) {
             unlink(__DIR__.'/item.php');
         }
 
-        if (file_exists(__DIR__.'/assignment.php')){
+        if (file_exists(__DIR__.'/assignment.php')) {
             unlink(__DIR__.'/assignment.php');
         }
     }
