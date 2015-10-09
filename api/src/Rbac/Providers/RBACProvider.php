@@ -20,6 +20,9 @@ use Spira\Rbac\Storage\ItemStorageInterface;
 use Spira\Rbac\Storage\Storage;
 use Spira\Rbac\Storage\StorageInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class RBACProvider extends ServiceProvider
 {
     protected $defaultRoles = [];
