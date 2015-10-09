@@ -9,6 +9,7 @@
  */
 
 use Spira\Rbac\Item\Assignment;
+use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\File\AssignmentStorage;
 use Spira\Rbac\Storage\File\ItemStorage;
@@ -58,9 +59,30 @@ class FileRbacStorageTest extends DbRbacStorageTest
         $this->auth->updateItem('some new role', $role2);
     }
 
-    public function testAddChildExtra()
+    public function testAddChildNotExist()
     {
+        $permission = new Permission('some permission 1');
+        $permission2 = new Permission('some permission 2');
 
+        $this->auth->addItem($permission);
+
+        $this->setExpectedException('InvalidArgumentException', 'Either \'some permission 1\' or \'some permission 2\' does not exist.');
+        $this->auth->addChild($permission, $permission2);
+    }
+
+    public function testAddChildExistingChild()
+    {
+        $permission = new Permission('some permission 1');
+        $permission2 = new Permission('some permission 2');
+
+        $this->auth->addItem($permission);
+        $this->auth->addItem($permission2);
+
+        $this->auth->addChild($permission, $permission2);
+
+        $this->setExpectedException('InvalidArgumentException', 'The item \'some permission 1\' already has a child \'some permission 2\'.');
+
+        $this->auth->addChild($permission, $permission2);
     }
 
     public function testLoad()
