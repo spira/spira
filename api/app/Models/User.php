@@ -307,10 +307,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
     }
 
-    public function isAdmin()
-    {
-        return $this->user_type === self::USER_TYPE_ADMIN;
-    }
 
     /**
      * @param string $method

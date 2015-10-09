@@ -39,6 +39,20 @@ class UserTest extends TestCase
         UserCredential::boot();
     }
 
+    public function testNoUserInToken()
+    {
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+        $userToGet = $this->createUser();
+        $token = $this->tokenFromUser($user, ['_user' => '', 'sub' => false]);
+
+        $this->getJson('/users/'.$userToGet->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
     public function testGetAllPaginatedByAdminUser()
     {
         $this->createUsers(10);
@@ -74,8 +88,8 @@ class UserTest extends TestCase
     {
         $user = $this->createUser();
         $this->assignAdmin($user);
-        $userToGet = $this->createUser(['user_type' => 'guest']);
-        $token = $this->tokenFromUser($user);
+        $userToGet = $this->createUser();
+        $token = $this->tokenFromUser($user, ['_user' => '']);
 
         $this->getJson('/users/'.$userToGet->user_id, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,

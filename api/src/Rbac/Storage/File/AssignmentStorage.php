@@ -85,6 +85,7 @@ class AssignmentStorage extends AbstractStorage implements AssignmentStorageInte
     {
         foreach ($this->assignments as &$assignments) {
             if (isset($assignments[$oldName])) {
+                $assignments[$oldName]->roleName = $role->name;
                 $assignments[$role->name] = $assignments[$oldName];
                 unset($assignments[$oldName]);
             }

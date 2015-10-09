@@ -31,7 +31,7 @@ class CacheDriver implements StorageInterface
      */
     public function add($id, $seconds = null)
     {
-        if ($seconds = null) {
+        if (!$seconds) {
             $seconds = 60 * 60;
         }
 

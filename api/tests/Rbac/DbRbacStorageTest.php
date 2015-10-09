@@ -64,6 +64,7 @@ class DbRbacStorageTest extends TestCase
     {
         $role = new Role('some role');
         $this->auth->addItem($role);
+        $this->auth->assign($role, 'some user');
         $role->name = 'some new role name';
 
         $result = $this->auth->updateItem('some role', $role);
@@ -72,6 +73,9 @@ class DbRbacStorageTest extends TestCase
 
         $this->assertNull($this->auth->getItem('some role'));
         $this->assertInstanceOf(Role::class, $this->auth->getItem('some new role name'));
+        $assignments = $this->auth->getAssignments('some user');
+        $assignment = current($assignments);
+        $this->assertEquals($assignment->roleName, $role->name);
     }
 
     public function testAddChild()

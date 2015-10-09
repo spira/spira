@@ -1,5 +1,7 @@
 <?php
 
+use Spira\Rbac\Item\Assignment;
+use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\File\AssignmentStorage;
 use Spira\Rbac\Storage\File\ItemStorage;
 use Spira\Rbac\Storage\Storage;
@@ -14,6 +16,35 @@ class FileRbacStorageTest extends DbRbacStorageTest
                 new ItemStorage(__DIR__.'/item.php'),
                 new AssignmentStorage(__DIR__.'/assignment.php')
             );
+    }
+
+    public function testAssignSame()
+    {
+
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+        $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \'some user\'.');
+        $this->auth->assign($role, 'some user');
+
+    }
+
+    public function testRemoveAllAssignments()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+        $this->auth->removeAllAssignments($role);
+        $this->assertEmpty($this->auth->getAssignments('some user'));
+
+    }
+
+    public function testLoad()
+    {
+        $storage = new AssignmentStorage(__DIR__.'/assignment_test.php');
+        $assignments = $storage->getAssignments('some user');
+        $assignment = current($assignments);
+        $this->assertEquals($assignment->roleName, 'some role');
     }
 
     public function tearDown()
