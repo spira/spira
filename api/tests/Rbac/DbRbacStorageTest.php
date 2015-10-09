@@ -81,7 +81,6 @@ class DbRbacStorageTest extends TestCase
         $permission2 = new Permission('some permission 2');
         $permission3 = new Permission('some permission 3');
 
-
         $this->setExpectedException('InvalidArgumentException', 'Cannot add \'some role \' as a child of itself.');
         $this->auth->addChild($role, $role);
 
@@ -155,8 +154,8 @@ class DbRbacStorageTest extends TestCase
     public function testAssign()
     {
         $role = new Role('some role');
-        $this->setExpectedException('InvalidArgumentException','Unknown role \'some role\'.');
-        $this->auth->assign($role,'some user');
+        $this->setExpectedException('InvalidArgumentException', 'Unknown role \'some role\'.');
+        $this->auth->assign($role, 'some user');
 
         $this->auth->addItem($role);
         $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
