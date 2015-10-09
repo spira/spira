@@ -11,6 +11,7 @@
 namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
+use App\Models\Section;
 use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
@@ -72,5 +73,17 @@ class SpiraValidator extends Validator
         $supportedRegionCodes = array_pluck(config('regions.supported'), 'code');
 
         return in_array($value, $supportedRegionCodes);
+    }
+
+    /**
+     * Register custom validation rule for article content piece types.
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateSectionType($attribute, $value, $parameters)
+    {
+        return in_array($value, Section::getContentTypes());
     }
 }

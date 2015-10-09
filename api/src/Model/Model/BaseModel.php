@@ -54,11 +54,21 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * @return mixed
+     * Get the table name for the instance.
+     * @return string
      */
     public static function getTableName()
     {
         return with(new static())->getTable();
+    }
+
+    /**
+     * Get the primary key name for the instance.
+     * @return string
+     */
+    public static function getPrimaryKey()
+    {
+        return with(new static())->getKeyName();
     }
 
     /**
@@ -130,6 +140,7 @@ abstract class BaseModel extends Model
         $keyName = $this->getKeyName();
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
+            /** @var Model $model */
             $model = null;
             $entityId = isset($item[$keyName]) ? $item[$keyName] : null;
 
