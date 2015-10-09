@@ -94,7 +94,6 @@ trait HelpersTrait
         $auth = $this->app->make('auth');
         $payload = $auth->getPayloadFactory()->createFromUser($user);
         $payload = array_merge($payload, $customClaims);
-
         return $auth->getTokenizer()->encode($payload);
     }
 }
