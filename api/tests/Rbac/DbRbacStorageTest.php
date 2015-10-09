@@ -53,11 +53,15 @@ class DbRbacStorageTest extends TestCase
     public function testRemove()
     {
         $role = new Role('some role');
+        $permission = new Permission('some permission');
         $this->auth->addItem($role);
+        $this->auth->addItem($permission);
+        $this->auth->addChild($role, $permission);
         $this->assertInstanceOf(Role::class, $this->auth->getItem('some role'));
 
         $this->auth->removeItem($role);
         $this->assertNull($this->auth->getItem('some role'));
+        $this->assertNotNull($this->auth->getItem('some permission'));
     }
 
     public function testUpdate()
@@ -65,6 +69,11 @@ class DbRbacStorageTest extends TestCase
         $role = new Role('some role');
         $this->auth->addItem($role);
         $this->auth->assign($role, 'some user');
+
+        $permission = new Permission('some permission');
+        $this->auth->addItem($permission);
+        $this->auth->addChild($role, $permission);
+
         $role->name = 'some new role name';
 
         $result = $this->auth->updateItem('some role', $role);
@@ -78,24 +87,42 @@ class DbRbacStorageTest extends TestCase
         $this->assertEquals($assignment->roleName, $role->name);
     }
 
-    public function testAddChild()
+    public function testAddChildSelf()
     {
         $role = new Role('some role');
-        $permission = new Permission('some permission 1');
-        $permission2 = new Permission('some permission 2');
-        $permission3 = new Permission('some permission 3');
-
+        $this->auth->addItem($role);
         $this->setExpectedException('InvalidArgumentException', 'Cannot add \'some role \' as a child of itself.');
         $this->auth->addChild($role, $role);
 
+
+    }
+
+    public function testAddChildPermissionOverROle()
+    {
+        $role = new Role('some role');
+        $permission = new Permission('some permission 1');
+        $this->auth->addItem($role);
+        $this->auth->addItem($permission);
+
         $this->setExpectedException('InvalidArgumentException', 'Cannot add a role as a child of a permission.');
         $this->auth->addChild($permission, $role);
+    }
+
+    public function testAddChildLoop()
+    {
+        $permission = new Permission('some permission 1');
+        $permission2 = new Permission('some permission 2');
+        $permission3 = new Permission('some permission 3');
+        $this->auth->addItem($permission);
+        $this->auth->addItem($permission2);
+        $this->auth->addItem($permission3);
 
         $this->setExpectedException('InvalidArgumentException', "Cannot add 'some permission 1' as a child of 'some permission 3'. A loop has been detected.");
         $this->auth->addChild($permission, $permission2);
         $this->auth->addChild($permission2, $permission3);
         $this->auth->addChild($permission3, $permission);
     }
+
 
     public function testGetChildren()
     {

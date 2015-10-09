@@ -44,6 +44,25 @@ class FileRbacStorageTest extends DbRbacStorageTest
         $this->assertEmpty($this->auth->getAssignments('some user'));
     }
 
+    public function testUpdateNameToExistingItem()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+
+        $role2 = new Role('some new role');
+        $this->auth->addItem($role2);
+
+        $this->setExpectedException('InvalidArgumentException', 'Unable to change the item name. The name \'some role\' is already used by another item.');
+
+        $role2->name = 'some role';
+        $this->auth->updateItem('some new role', $role2);
+    }
+
+    public function testAddChildExtra()
+    {
+
+    }
+
     public function testLoad()
     {
         $storage = new AssignmentStorage(__DIR__.'/assignment_test.php');

@@ -91,10 +91,9 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
             unset($this->items[$item->name]);
             $this->saveItems();
 
-            return true;
-        } else {
-            return false;
         }
+
+        return true;
     }
 
     /**
