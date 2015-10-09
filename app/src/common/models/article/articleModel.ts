@@ -1,13 +1,23 @@
 namespace common.models {
 
+    export interface ISectionsDisplay{
+        sortOrder: string[];
+    }
+
     @common.decorators.changeAware
     export class Article extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
-            tags: Tag,
-            author: User,
-            articleMetas: this.hydrateMetaCollectionFromTemplate,
-            comments: ArticleComment
+            _tags: Tag,
+            _author: User,
+            _articleMetas: this.hydrateMetaCollectionFromTemplate,
+            _comments: ArticleComment,
+            _sections: this.hydrateSections,
+        };
+
+        protected __attributeCastMap:IAttributeCastMap = {
+            createdAt: this.castMoment,
+            updatedAt: this.castMoment,
         };
 
         public articleId:string = undefined;
@@ -20,11 +30,13 @@ namespace common.models {
 
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
+        public sectionsDisplay:ISectionsDisplay = undefined;
 
-        public _articleMetas:common.models.ArticleMeta[] = [];
-        public _author:common.models.User = undefined;
-        public _tags:common.models.Tag[] = [];
-        public _comments:common.models.ArticleComment[] = [];
+        public _sections:Section[] = [];
+        public _articleMetas:ArticleMeta[] = [];
+        public _author:User = undefined;
+        public _tags:Tag[] = [];
+        public _comments:ArticleComment[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
@@ -78,6 +90,23 @@ namespace common.models {
 
         }
 
+
+        protected hydrateSections(data:any, exists:boolean) : Section[]{
+
+            if (!_.has(data, '_sections')){
+                return;
+            }
+
+            let sectionsChain =  _.chain(data._sections)
+                .map((entityData:any) => new Section(entityData, exists));
+
+            if (_.has(data, 'sectionsDisplay.sortOrder')){
+                let sortOrder:string[] = data.sectionsDisplay.sortOrder;
+                sectionsChain = sectionsChain.sortBy((section:Section) => _.indexOf(sortOrder, section.sectionId, false));
+            }
+
+            return sectionsChain.value();
+        }
     }
 
 }

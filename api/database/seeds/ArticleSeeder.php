@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Section;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Image;
@@ -16,6 +17,7 @@ use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
+use App\Models\ArticleSectionsDisplay;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleSeeder extends BaseSeeder
@@ -34,6 +36,20 @@ class ArticleSeeder extends BaseSeeder
         factory(Article::class, 50)
             ->create()
             ->each(function (Article $article) use ($images, $users) {
+
+                //add sections
+                /** @var \Illuminate\Database\Eloquent\Collection $sections */
+                $sections = factory(Section::class, rand(2, 8))->make();
+                $article->sections()->saveMany($sections);
+
+                $article->sections_display = factory(ArticleSectionsDisplay::class)
+                    ->make([
+                        'sort_order' => array_map(function (Section $contentPiece) {
+                            return $contentPiece->getKey();
+                        }, $sections->reverse()->all()),
+                    ]);
+
+                $article->save();
 
                 //add a meta tag
                 $article->articleMetas()->save(factory(ArticleMeta::class)->make());

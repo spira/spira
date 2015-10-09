@@ -22,13 +22,13 @@ class TagTest extends TestCase
         $tags = null;
         if ($same) {
             /** @var Collection $tags */
-            $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
+            $tags = $this->getFactory(\App\Models\Tag::class)->count(4)->create();
         }
         /** @var Tag[] $parentTags */
         foreach ($parentTags as $parentTag) {
             if (! $same) {
                 /** @var Collection $tags */
-                $tags = $this->getFactory()->get(\App\Models\Tag::class)->count(4)->create();
+                $tags = $this->getFactory(\App\Models\Tag::class)->count(4)->create();
             }
 
             $parentTag->childTags()->sync($tags->lists('tag_id')->toArray());
@@ -37,7 +37,7 @@ class TagTest extends TestCase
 
     public function testGetTagByIdAndName()
     {
-        $tag = $this->getFactory()->get(Tag::class)->create();
+        $tag = $this->getFactory(Tag::class)->create();
         $this->getJson('/tags/'.$tag->tag);
 
         $object = json_decode($this->response->getContent());
@@ -73,9 +73,9 @@ class TagTest extends TestCase
     public function testGetTagWithNestedChildrenAndParents()
     {
         /** @var Tag $tag */
-        $tag = $this->getFactory()->get(Tag::class)->create();
-        $tagChildren = $this->getFactory()->get(Tag::class)->count(3)->create();
-        $tagParents = $this->getFactory()->get(Tag::class)->count(5)->create();
+        $tag = $this->getFactory(Tag::class)->create();
+        $tagChildren = $this->getFactory(Tag::class)->count(3)->create();
+        $tagParents = $this->getFactory(Tag::class)->count(5)->create();
 
         $tag->childTags()->sync($tagChildren->lists('tag_id')->toArray());
         $tag->parentTags()->sync($tagParents->lists('tag_id')->toArray());
@@ -96,7 +96,7 @@ class TagTest extends TestCase
 
     public function testPostTag()
     {
-        $tag = $this->getFactory()->get(Tag::class)->transformed();
+        $tag = $this->getFactory(Tag::class)->transformed();
 
         $this->postJson('/tags', $tag);
 
@@ -111,7 +111,7 @@ class TagTest extends TestCase
 
     public function testPostTagInvalid()
     {
-        $tag = $this->getFactory()->get(Tag::class)
+        $tag = $this->getFactory(Tag::class)
             ->customize(['tag' => '%$@""'])
             ->transformed();
 
@@ -127,7 +127,7 @@ class TagTest extends TestCase
 
     public function testPatchTag()
     {
-        $factory = $this->getFactory()->get(Tag::class);
+        $factory = $this->getFactory(Tag::class);
         $factory->create();
         $tag = $factory
             ->customize(['tag' => 'foo'])
@@ -143,7 +143,7 @@ class TagTest extends TestCase
 
     public function testPatchTagInvalid()
     {
-        $factory = $this->getFactory()->get(Tag::class);
+        $factory = $this->getFactory(Tag::class);
         $factory->create();
         $tag = $factory
             ->customize(['tag' => '%$@""'])
@@ -168,7 +168,7 @@ class TagTest extends TestCase
      */
     public function testPutTags()
     {
-        $entity = $this->getFactory()->get(Tag::class)->create();
+        $entity = $this->getFactory(Tag::class)->create();
         $this->addTagsToTags([$entity]);
 
         // re-acquire for collection to have ids as key
@@ -176,11 +176,11 @@ class TagTest extends TestCase
 
         $previousTagsWillBeRemoved = $entity->childTags;
 
-        $existingTagWillStay = $this->getFactory()->get(Tag::class)
+        $existingTagWillStay = $this->getFactory(Tag::class)
             ->setModel($previousTagsWillBeRemoved->first())
             ->transformed();
 
-        $newTags = $this->getFactory()->get(Tag::class)
+        $newTags = $this->getFactory(Tag::class)
             ->count(4)
             ->transformed();
 

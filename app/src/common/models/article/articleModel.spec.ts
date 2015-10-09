@@ -1,4 +1,4 @@
-(() => {
+namespace common.models {
 
     let seededChance = new Chance(1);
 
@@ -104,6 +104,47 @@
 
         });
 
+        it('should hydrate nested sections when an new article is created', () => {
+
+            let sections = common.models.SectionMock.collection(5);
+
+            let article = common.models.ArticleMock.entity({
+                _sections: sections
+            });
+
+            expect(article._sections).to.have.lengthOf(5);
+            expect(article._sections[0]).to.be.instanceOf(common.models.Section);
+
+            let expectedType = common.models.Section.getContentTypeMap()[article._sections[0].type];
+
+            expect(article._sections[0].content).to.be.instanceOf(expectedType);
+
+
+        });
+
+        it('should sort the sections by the article sort order', () => {
+
+            let sections = common.models.SectionMock.collection(3);
+
+            let setOrder = [
+                sections[1].sectionId,
+                sections[0].sectionId,
+                sections[2].sectionId,
+            ];
+
+            let article = common.models.ArticleMock.entity({
+                _sections: sections,
+                sectionsDisplay: {
+                    sortOrder: setOrder
+                }
+            });
+
+
+            expect(_.pluck(article._sections, 'sectionId')).to.deep.equal(setOrder);
+
+        });
+
+
     });
 
-})();
+}

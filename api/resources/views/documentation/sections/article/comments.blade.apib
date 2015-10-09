@@ -1,0 +1,56 @@
+## Article Comments [/articles/{articleId}/comments]
+
++ Parameters
+    + articleId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the article to get comments for.
+
+### Retrieve all comments for article [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
+                    ->count(3)
+                    ->json()
+            !!}
+
+### Post a comment for article [POST]
+#### Restrictions
+* Allowed - [all]
+
++ Request
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->showOnly(['body'])
+                    ->json();
+            !!}
+
+
++ Response 200 (application/json)
+    + Body
+
+            {!!
+                $factory->get(\App\Models\ArticleComment::class)
+                    ->append('_author',
+                        $factory->get(\App\Models\User::class)
+                            ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
+                            ->hide(['_self'])
+                            ->transformed()
+                    )
+                    ->json()
+            !!}
+
