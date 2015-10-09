@@ -11,6 +11,7 @@
 namespace Spira\Rbac\Storage;
 
 use Spira\Rbac\Item\Item;
+use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
 
 class Storage implements StorageInterface
@@ -122,6 +123,13 @@ class Storage implements StorageInterface
      */
     public function addChild(Item $parent, Item $child)
     {
+        if ($parent->name == $child->name) {
+            throw new \InvalidArgumentException("Cannot add '{$parent->name} ' as a child of itself.");
+        }
+        if ($parent instanceof Permission && $child instanceof Role) {
+            throw new \InvalidArgumentException('Cannot add a role as a child of a permission.');
+        }
+
         return $this->itemStorage->addChild($parent, $child);
     }
 

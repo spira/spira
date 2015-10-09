@@ -132,14 +132,6 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
      */
     public function addChild(Item $parent, Item $child)
     {
-        if ($parent->name === $child->name) {
-            throw new \InvalidArgumentException("Cannot add '{$parent->name}' as a child of itself.");
-        }
-
-        if ($parent instanceof Permission && $child instanceof Role) {
-            throw new \InvalidArgumentException('Cannot add a role as a child of a permission.');
-        }
-
         if ($this->detectLoop($parent, $child)) {
             throw new \InvalidArgumentException("Cannot add '{$child->name}' as a child of '{$parent->name}'. A loop has been detected.");
         }

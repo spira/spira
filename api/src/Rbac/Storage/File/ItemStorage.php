@@ -138,19 +138,14 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
             throw new \InvalidArgumentException("Either '{$parent->name}' or '{$child->name}' does not exist.");
         }
 
-        if ($parent->name == $child->name) {
-            throw new \InvalidArgumentException("Cannot add '{$parent->name} ' as a child of itself.");
-        }
-        if ($parent instanceof Permission && $child instanceof Role) {
-            throw new \InvalidArgumentException('Cannot add a role as a child of a permission.');
-        }
-
         if ($this->detectLoop($parent, $child)) {
             throw new \InvalidArgumentException("Cannot add '{$child->name}' as a child of '{$parent->name}'. A loop has been detected.");
         }
+
         if (isset($this->children[$parent->name][$child->name])) {
             throw new \InvalidArgumentException("The item '{$parent->name}' already has a child '{$child->name}'.");
         }
+
         $this->children[$parent->name][$child->name] = $this->items[$child->name];
         $this->saveItems();
 

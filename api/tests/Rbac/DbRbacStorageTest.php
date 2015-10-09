@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\Db\AssignmentStorage;
@@ -27,6 +28,17 @@ class DbRbacStorageTest extends TestCase
         $this->auth = new Storage($this->app->make(ItemStorage::class), $this->app->make(AssignmentStorage::class));
     }
 
+    public function testGet()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+
+        $this->assertNull($this->auth->getItem(''));
+        $this->assertNull($this->auth->getItem('role does not exist'));
+
+        $this->assertInstanceOf(Role::class, $this->auth->getItem('some role'));
+    }
+
     public function testAdd()
     {
         $role = new Role('admin Z');
@@ -36,6 +48,50 @@ class DbRbacStorageTest extends TestCase
         $permission = new Permission('edit post');
         $permission->description = 'edit a post';
         $this->assertTrue($this->auth->addItem($permission));
+    }
+
+    public function testRemove()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Role::class, $this->auth->getItem('some role'));
+
+        $this->auth->removeItem($role);
+        $this->assertNull($this->auth->getItem('some role'));
+    }
+
+    public function testUpdate()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+        $role->name = 'some new role name';
+
+        $result = $this->auth->updateItem('some role', $role);
+
+        $this->assertTrue($result);
+
+        $this->assertNull($this->auth->getItem('some role'));
+        $this->assertInstanceOf(Role::class, $this->auth->getItem('some new role name'));
+    }
+
+    public function testAddChild()
+    {
+        $role = new Role('some role');
+        $permission = new Permission('some permission 1');
+        $permission2 = new Permission('some permission 2');
+        $permission3 = new Permission('some permission 3');
+
+
+        $this->setExpectedException('InvalidArgumentException', 'Cannot add \'some role \' as a child of itself.');
+        $this->auth->addChild($role, $role);
+
+        $this->setExpectedException('InvalidArgumentException', 'Cannot add a role as a child of a permission.');
+        $this->auth->addChild($permission, $role);
+
+        $this->setExpectedException('InvalidArgumentException', "Cannot add 'some permission 1' as a child of 'some permission 3'. A loop has been detected.");
+        $this->auth->addChild($permission, $permission2);
+        $this->auth->addChild($permission2, $permission3);
+        $this->auth->addChild($permission3, $permission);
     }
 
     public function testGetChildren()
@@ -94,6 +150,32 @@ class DbRbacStorageTest extends TestCase
         $this->auth->assign($reader, 'reader A');
         $this->auth->assign($author, 'author B');
         $this->auth->assign($admin, 'admin C');
+    }
+
+    public function testAssign()
+    {
+        $role = new Role('some role');
+        $this->setExpectedException('InvalidArgumentException','Unknown role \'some role\'.');
+        $this->auth->assign($role,'some user');
+
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+
+        $assignments = $this->auth->getAssignments('some user');
+        $this->assertNotEmpty($assignments);
+        $this->assertEquals($assignments[0]->roleName, $role->name);
+    }
+
+    public function testRevoke()
+    {
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+
+        $this->assertFalse($this->auth->revoke($role, ''));
+
+        $this->auth->revoke($role, 'some user');
+        $this->assertEmpty($this->auth->getAssignments('some user'));
     }
 
     public function testAssignMultipleRoles()
