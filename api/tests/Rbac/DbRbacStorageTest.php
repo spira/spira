@@ -93,8 +93,6 @@ class DbRbacStorageTest extends TestCase
         $this->auth->addItem($role);
         $this->setExpectedException('InvalidArgumentException', 'Cannot add \'some role \' as a child of itself.');
         $this->auth->addChild($role, $role);
-
-
     }
 
     public function testAddChildPermissionOverROle()
@@ -122,7 +120,6 @@ class DbRbacStorageTest extends TestCase
         $this->auth->addChild($permission2, $permission3);
         $this->auth->addChild($permission3, $permission);
     }
-
 
     public function testGetChildren()
     {
