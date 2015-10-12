@@ -101,8 +101,6 @@ namespace app.admin.articles.article {
          */
         public save(){
 
-            debugger;
-
             return this.articleService.saveArticleWithRelated(this.article)
                 .then(() => {
                     this.notificationService.toast('Article saved').pop();

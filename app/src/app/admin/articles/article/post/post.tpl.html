@@ -17,17 +17,6 @@
         <input id="articleFormPermalink" ng-model="ArticleController.article.permalink" name="permalink" type="text" ng-change="ArticleController.updatePermalink()" ng-required="false">
     </md-input-container>
 
-
-    <div flex>
-
-        <content-sections-input
-            id="articleFormContent"
-            ng-model="ArticleController.article._sections"
-            ng-required="true"
-        ></content-sections-input>
-
-    </div>
-
     <md-input-container flex>
         <label for="articleFormExcerpt">Excerpt</label>
 
@@ -36,6 +25,14 @@
             <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
         </ng-messages>
     </md-input-container>
+
+    <div flex>
+        <content-sections-input
+            id="articleFormContent"
+            ng-model="ArticleController.article._sections"
+            ng-required="true"
+        ></content-sections-input>
+    </div>
 
     <md-chips
         ng-model="PostController.tags"

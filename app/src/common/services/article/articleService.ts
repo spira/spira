@@ -116,8 +116,9 @@ namespace common.services.article {
         private saveRelatedEntities(article:common.models.Article):ng.IPromise<any> {
 
             return this.$q.all([ //save all related entities
+                this.saveArticleSections(article),
                 this.saveArticleTags(article),
-                this.saveArticleMetas(article)
+                this.saveArticleMetas(article),
             ]);
 
         }
@@ -169,6 +170,29 @@ namespace common.services.article {
             return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
                 .then(() => {
                     return article._articleMetas;
+                });
+        }
+
+        /**
+         * Save article sections
+         * @param article
+         * @returns {any}
+         */
+        private saveArticleSections(article:common.models.Article):ng.IPromise<common.models.Section<any>[]|boolean> {
+
+            let sectionData = _.clone(article._sections);
+
+            if (article.exists()) {
+
+                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+                if (!_.has(changes, '_sections')) {
+                    return this.$q.when(false);
+                }
+            }
+
+            return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', sectionData)
+                .then(() => {
+                    return article._sections;
                 });
         }
 

@@ -34,6 +34,7 @@ declare module Pen {
         debug?: boolean; // {Boolean} false by default
         textarea?: string; // fallback for old browsers
         list?: string[]; // editor menu list
+        stay?: boolean; // show warning message on change
     }
 
     interface PenStatic {
