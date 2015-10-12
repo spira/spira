@@ -60,5 +60,5 @@ return  [
   'testrole' => [
       'type' => 'role',
       'description' => 'Simple test role',
-  ]
+  ],
 ];

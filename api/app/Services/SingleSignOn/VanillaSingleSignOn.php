@@ -151,11 +151,10 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     protected function getMappedRoles()
     {
         $user = $this->user;
-        if ($user instanceof User){
+        if ($user instanceof User) {
             $assignments = $this->getGate()->getStorage()->getAssignments($user->getAuthIdentifier());
             $roles = $this->getGate()->getDefaultRoles();
-
-        }else{
+        } else {
             $assignments = [];
             $roles = [];
         }
@@ -164,7 +163,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
             $roles[] = $assignment->roleName;
         }
 
-        array_walk($roles, function(&$item){
+        array_walk($roles, function (&$item) {
             $mapping = [
                 'admin' => 'administrator',
                 'user' => 'member',
