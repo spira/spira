@@ -2,7 +2,7 @@
 
     <div layout="flex">
 
-        <md-card ng-repeat="section in ContentSectionsInputController.sections">
+        <md-card ng-repeat="section in ContentSectionsInputController.sections" class="animate-repeat md-whiteframe-z3">
 
             <md-card-content class="section-input" ng-switch="section.type">
                 <section-input-rich-text ng-switch-when="rich_text" section="section"></section-input-rich-text>

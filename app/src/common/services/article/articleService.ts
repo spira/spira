@@ -180,7 +180,7 @@ namespace common.services.article {
          */
         private saveArticleSections(article:common.models.Article):ng.IPromise<common.models.Section<any>[]|boolean> {
 
-            let sectionData = _.clone(article._sections);
+            let sections = article._sections;
 
             if (article.exists()) {
 
@@ -190,7 +190,12 @@ namespace common.services.article {
                 }
             }
 
-            return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', sectionData)
+            sections = _.filter((sections), (section:common.models.Section<any>) => {
+                debugger;
+               return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
+            });
+
+            return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', _.clone(sections))
                 .then(() => {
                     return article._sections;
                 });
