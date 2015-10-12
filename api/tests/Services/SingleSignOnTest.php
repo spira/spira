@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Support\Collection;
 use App\Exceptions\NotImplementedException;
 use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Services\SingleSignOn\VanillaSingleSignOn;
