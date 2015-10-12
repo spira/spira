@@ -230,4 +230,12 @@ class Gate implements GateContract
     {
         return call_user_func($this->userResolver);
     }
+
+    /**
+     * @return array
+     */
+    public function getDefaultRoles()
+    {
+        return $this->defaultRoles;
+    }
 }

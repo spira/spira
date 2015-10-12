@@ -569,7 +569,7 @@ class ArticleTest extends TestCase
         $body = 'A comment';
         $article = $this->getFactory(Article::class)->create();
 
-        $user = $this->createUser(['user_type' => 'guest']);
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body], [
@@ -591,7 +591,7 @@ class ArticleTest extends TestCase
     {
         $article = $this->getFactory(Article::class)->create();
 
-        $user = $this->createUser(['user_type' => 'guest']);
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
         $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => ''], [
@@ -616,7 +616,7 @@ class ArticleTest extends TestCase
 
     public function testShouldLogPutMetas()
     {
-        $user = $this->createUser(['user_type' => 'guest']);
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
         $article = $this->getFactory(Article::class)->create();
 

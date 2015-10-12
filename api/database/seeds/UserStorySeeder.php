@@ -28,7 +28,6 @@ class UserStorySeeder extends BaseSeeder
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
-            'user_type' => 'admin',
             'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
         ]);
 

@@ -57,4 +57,8 @@ return  [
         'manipulateWithOwn',
       ],
     ],
+  'testrole' => [
+      'type' => 'role',
+      'description' => 'Simple test role',
+  ]
 ];

@@ -67,9 +67,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Set new users to guest
-        $request->merge(['user_type' => 'guest']);
-
         if ($this->getModel()->find($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])

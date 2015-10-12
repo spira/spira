@@ -22,10 +22,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
 {
     use Authenticatable;
 
-    const USER_TYPE_ADMIN = 'admin';
-    const USER_TYPE_GUEST = 'guest';
-    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
-
     /**
      * Login/email confirm token time to live in minutes.
      *
@@ -54,7 +50,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'last_name',
         'email_confirmed',
         'timezone_identifier',
-        'user_type',
         'avatar_img_url',
         'email',
         'region_code',
@@ -123,22 +118,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function socialLogins()
     {
         return $this->hasMany(SocialLogin::class);
-    }
-
-    /**
-     * @todo Replace these two methods with the hasMany relationship for roles
-     *       when implementing. For now they "simulate" the relationship so
-     *       functionality accessing roles will get a similar dataset as when
-     *       the relation is implemented
-     */
-    public function roles()
-    {
-        return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
-    }
-
-    public function getRolesAttribute()
-    {
-        return $this->roles();
     }
 
     /**
