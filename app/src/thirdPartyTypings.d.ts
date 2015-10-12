@@ -24,34 +24,62 @@ declare module lil {
 declare var lil: lil.lilStatic;
 
 /**
- * https://github.com/sofish/pen
+ * https://github.com/NextStepWebs/simplemde-markdown-editor
  */
-declare module Pen {
+declare module SimpleMDE {
 
-    interface PenConfig {
-        editor: HTMLElement; // {DOM Element} [required]
-        class?: string; // {String} class of the editor,
-        debug?: boolean; // {Boolean} false by default
-        textarea?: string; // fallback for old browsers
-        list?: string[]; // editor menu list
-        stay?: boolean; // show warning message on change
+    interface CodeMirror {
+        on(event:string, handler: () => any);
     }
 
-    interface PenStatic {
+    interface MDETool {
+        [key:string]: string;
+    }
 
-        new(config: PenConfig): Pen;
+    interface SimpleMDEConfig {
+        element: HTMLElement; // {DOM Element} [required]
+        toolbar?: boolean|string[]|MDETool[]; //https://github.com/NextStepWebs/simplemde-markdown-editor/#toolbar-icons
+        autofocus?: boolean;
+        autosave?: {
+            enabled?: boolean;
+            unique_id?: string;
+            delay?: number;
+        };
+        hideIcons?: string[];
+        indentWithTabs?: boolean;
+        initialValue?: string;
+        lineWrapping?: boolean;
+        parsingConfig?: {
+            allowAtxHeaderWithoutSpace?: boolean;
+            strikethrough?: boolean;
+            underscoresBreakWords?: boolean;
+        };
+        previewRender?: (plainText?:string, preview?:HTMLElement) => string;
+        renderingConfig?: {
+            singleLineBreaks?: boolean;
+            codeSyntaxHighlighting?: boolean;
+        };
+        spellChecker?: boolean;
+        status?: boolean|string[]; // Optional usage
+        tabSize?: number;
+        toolbarTips?: boolean;
+    }
+
+    interface SimpleMDEStatic {
+
+        new(config: SimpleMDEConfig): SimpleMDE;
 
     }
 
-    interface Pen {
+    interface SimpleMDE {
 
-        destroy():Pen;
-        rebuild():Pen;
-        toMd():string;
+        value():string;
+        value(value:string):SimpleMDE;
+        codemirror:CodeMirror;
 
     }
 
 }
 
-declare var pen: Pen.Pen;
-declare var Pen: Pen.PenStatic;
+declare var simpleMDE: SimpleMDE.SimpleMDE;
+declare var SimpleMDE: SimpleMDE.SimpleMDEStatic;

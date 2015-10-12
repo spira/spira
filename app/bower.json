@@ -42,7 +42,7 @@
     "ngInfiniteScroll": "~1.2.1",
     "toposort": "~0.3.1",
     "angular-carousel": "~0.3.13",
-    "pen": "~0.2.2"
+    "simplemde-markdown-editor": "https://github.com/NextStepWebs/simplemde-markdown-editor.git#1.7.4"
   },
   "devDependencies": {
     "angular-mocks": "~1.4",
@@ -58,15 +58,10 @@
         "jquery": ">=1.6"
       }
     },
-    "pen": {
+    "simplemde-markdown-editor": {
       "main": [
-        "src/pen.js",
-        "src/markdown.js",
-        "src/pen.css",
-        "src/font/fontello.eot",
-        "src/font/fontello.svg",
-        "src/font/fontello.ttf",
-        "src/font/fontello.woff"
+        "dist/simplemde.min.css",
+        "dist/simplemde.min.js"
       ]
     }
   }
