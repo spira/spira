@@ -15,6 +15,10 @@ use App\Models\TestEntity;
 
 class TestController extends EntityController
 {
+    protected $permissionsEnabled = true;
+
+    protected $defaultAdminPermissions = 'user';
+
     public function __construct(TestEntity $model, EloquentModelTransformer $transformer)
     {
         parent::__construct($model, $transformer);
