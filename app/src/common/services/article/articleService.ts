@@ -191,7 +191,6 @@ namespace common.services.article {
             }
 
             sections = _.filter((sections), (section:common.models.Section<any>) => {
-                debugger;
                return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
             });
 
