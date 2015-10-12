@@ -61,7 +61,11 @@
             "main": [
                 "src/pen.js",
                 "src/markdown.js",
-                "src/pen.css"
+                "src/pen.css",
+                "src/font/fontello.eot",
+                "src/font/fontello.svg",
+                "src/font/fontello.ttf",
+                "src/font/fontello.woff"
             ]
         }
     }

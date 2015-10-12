@@ -1,6 +1,6 @@
 <section md-theme="adminTheme" layout="column" layout-fill>
 
-    <div layout="row" flex>
+    <div layout="row">
 
         <md-sidenav
                 class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
@@ -11,7 +11,6 @@
 
         <div flex layout="column"
              tabIndex="-1"
-             role="main"
              class="md-whiteframe-z2"
                 >
 
@@ -24,10 +23,11 @@
             </md-toolbar>
 
             <div layout="column"
+                 layout-fill
                  role="main"
                  id="content"
                  ui-view="main"
-                    >
+            >
 
             </div>
 

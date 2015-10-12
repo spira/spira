@@ -11,30 +11,33 @@ namespace common.directives.penEditor {
         public scope = {
         };
 
-        public pen:Pen.Pen;
-
         constructor(private marked: any) {
         }
 
         public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $ngModelController: ng.INgModelController) => {
 
+            let pen:Pen.Pen;
 
             $ngModelController.$render = () => {
 
-                let htmlContent = this.marked($ngModelController.$modelValue);
-                let htmlElement = $element.html(`<div>${htmlContent}</div>`);
+                let htmlContent = $ngModelController.$modelValue? this.marked($ngModelController.$modelValue) : 'Your content here';
+                let htmlElement = $element.html(`<div>${htmlContent}</div>`)[0];
 
-                if (!this.pen){
+                if (!pen){
 
-                    this.pen = new Pen({
-                        editor: htmlElement[0]
+                    pen = new Pen({
+                        editor: htmlElement,
+                        stay: false,
                     });
+
+                    htmlElement.addEventListener('input', () => {
+                        $ngModelController.$setViewValue(pen.toMd());
+                    }, false);
+
                 }
 
                 $ngModelController.$setValidity('foo', true);
             };
-
-            //@todo detect changes to the content (register events?) and commit the change by mutating $ngModelController.$modelValue
 
 
         };
