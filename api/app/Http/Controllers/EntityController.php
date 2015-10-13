@@ -444,5 +444,4 @@ abstract class EntityController extends ApiController
     {
         return $this->getModel()->getValidationRules();
     }
-
 }
