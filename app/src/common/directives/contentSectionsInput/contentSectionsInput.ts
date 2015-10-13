@@ -102,6 +102,7 @@ namespace common.directives.contentSectionsInput {
     angular.module(namespace, [
         namespace + '.sectionInputRichText',
         namespace + '.sectionInputBlockquote',
+        namespace + '.sectionInputImage',
     ])
         .directive('contentSectionsInput', ContentSectionsInputDirective.factory())
     ;

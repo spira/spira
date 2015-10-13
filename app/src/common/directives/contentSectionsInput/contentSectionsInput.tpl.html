@@ -1,12 +1,13 @@
 <div class="content-sections-input">
 
-    <div layout="flex">
+    <div layout="column">
 
         <md-card ng-repeat="section in ContentSectionsInputController.sections" class="animate-repeat md-whiteframe-z3">
 
             <md-card-content class="section-input" ng-switch="section.type">
                 <section-input-rich-text ng-switch-when="rich_text" section="section"></section-input-rich-text>
                 <section-input-blockquote ng-switch-when="blockquote" section="section"></section-input-blockquote>
+                <section-input-image ng-switch-when="image" section="section"></section-input-image>
             </md-card-content>
 
             <md-toolbar>

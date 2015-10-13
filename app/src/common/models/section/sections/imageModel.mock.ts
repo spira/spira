@@ -14,7 +14,8 @@ namespace common.models.sections {
                 images: {
                     _image: common.models.ImageMock.entity(),
                     caption: seededChance.sentence(),
-                    transformations: null
+                    size: _.pick<common.models.sections.ISizeOption, common.models.sections.ISizeOption[]>(common.models.sections.Image.sizeOptions).key,
+                    alignment: _.pick<common.models.sections.IAlignmentOption, common.models.sections.IAlignmentOption[]>(common.models.sections.Image.alignmentOptions).key,
                 }
             };
         }

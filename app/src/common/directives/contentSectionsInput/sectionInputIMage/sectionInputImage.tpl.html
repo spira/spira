@@ -1,0 +1,49 @@
+<div class="sections-input-rich-text">
+
+    <md-tabs md-selected="SectionInputImageController.selectedIndex" md-border-bottom md-autoselect>
+        <md-tab ng-repeat="imageContent in SectionInputImageController.section.content.images" label="Image {{$index + 1}}">
+
+            <div layout-gt-md="row">
+                <div flex>
+                    <cl-image width="100%" public-id="{{imageContent._image.imageId}}" format="{{imageContent._image.format}}">
+                        <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+                    </cl-image>
+                </div>
+
+                <ng-form name="SectionInputImageController.imageForm" flex>
+
+                    <md-input-container flex>
+                        <label>Caption</label>
+
+                        <input ng-model="imageContent.caption" name="caption">
+                        <ng-messages for="SectionInputImageController.imageForm.caption.$error">
+                            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+                        </ng-messages>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Alignment</label>
+                        <md-select ng-model="imageContent.alignment" aria-label="Alignment" placeholder="Select image alignment">
+                            <md-option ng-value="alignmentOption.key" ng-repeat="alignmentOption in SectionInputImageController.alignmentOptions" ng-bind-html="alignmentOption.name"></md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container>
+                        <label>Size</label>
+                        <md-select ng-model="imageContent.size" aria-label="Size" placeholder="Select image size">
+                            <md-option ng-value="sizeOption.key" ng-repeat="sizeOption in SectionInputImageController.sizeOptions" ng-bind-html="sizeOption.name"></md-option>
+                        </md-select>
+                    </md-input-container>
+
+                </ng-form>
+
+            </div>
+
+
+
+
+            <pre>{{imageContent|json}}</pre>
+
+        </md-tab>
+    </md-tabs>
+</div>
