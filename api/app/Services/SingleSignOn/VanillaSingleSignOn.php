@@ -151,12 +151,12 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
     protected function getMappedRoles()
     {
         $user = $this->user;
+        $assignments = [];
+        $roles = [];
+
         if ($user instanceof User) {
             $assignments = $this->getGate()->getStorage()->getAssignments($user->getAuthIdentifier());
             $roles = $this->getGate()->getDefaultRoles();
-        } else {
-            $assignments = [];
-            $roles = [];
         }
 
         foreach ($assignments as $assignment) {
