@@ -15,7 +15,6 @@ use Illuminate\Support\Str;
 use Spira\Model\Model\BaseModel;
 use Elasticquent\ElasticquentTrait;
 use Spira\Model\Collection\Collection;
-use Spira\Rbac\Access\AuthorizesRequestsTrait;
 use Spira\Responder\Response\ApiResponse;
 use Spira\Responder\Paginator\RangeRequest;
 use Spira\Responder\Contract\TransformerInterface;
@@ -25,23 +24,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
 {
-    use RequestValidationTrait, AuthorizesRequestsTrait;
+    use RequestValidationTrait;
 
     /**
      * @var BaseModel
      */
     protected $model;
-
-    /**
-     * Enable permissions checks.
-     */
-    protected $permissionsEnabled = false;
-
-    /**
-     * Name of the admin role to check against
-     * Should be set to false to enable route based permissions.
-     */
-    protected $defaultAdminPermissions = 'admin';
 
     public function __construct(BaseModel $model, TransformerInterface $transformer)
     {
@@ -457,23 +445,4 @@ abstract class EntityController extends ApiController
         return $this->getModel()->getValidationRules();
     }
 
-    /**
-     * Authorize a given action against a set of arguments.
-     *
-     * @param  mixed  $permission
-     * @param  mixed|array  $arguments
-     * @return void
-     */
-    public function checkPermission($permission, $arguments = [])
-    {
-        if (! $this->permissionsEnabled) {
-            return;
-        }
-
-        if ($this->defaultAdminPermissions) {
-            $permission = $this->defaultAdminPermissions;
-        }
-
-        $this->authorize($permission, $arguments);
-    }
 }

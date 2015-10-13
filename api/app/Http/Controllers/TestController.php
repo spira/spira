@@ -17,7 +17,7 @@ class TestController extends EntityController
 {
     protected $permissionsEnabled = true;
 
-    protected $defaultAdminPermissions = 'user';
+    protected $defaultRole = 'user';
 
     public function __construct(TestEntity $model, EloquentModelTransformer $transformer)
     {
