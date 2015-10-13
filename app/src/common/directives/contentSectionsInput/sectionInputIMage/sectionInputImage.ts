@@ -10,11 +10,40 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
         public alignmentOptions:common.models.sections.IAlignmentOption[];
         public sizeOptions:common.models.sections.ISizeOption[];
 
-        static $inject = [];
-        constructor(){
+        static $inject = ['$mdDialog'];
+        constructor(private $mdDialog){
 
             this.alignmentOptions = common.models.sections.Image.alignmentOptions;
             this.sizeOptions = common.models.sections.Image.sizeOptions;
+        }
+
+
+        public addImage(){
+
+            this.section.content.images.push({
+                _image:null,
+                caption:null,
+                size:null,
+                alignment:null,
+            });
+        }
+
+        public removeImage(image) {
+            console.log('removing image');
+
+            var confirm = this.$mdDialog.confirm()
+                .title("Are you sure you want to delete this image?")
+                .content('This action <strong>cannot</strong> be undone')
+                .ariaLabel("Confirm delete")
+                .ok("Delete this image!")
+                .cancel("Nope! Don't delete it.");
+
+            this.$mdDialog.show(confirm).then(() => {
+
+                this.section.content.images = _.without(this.section.content.images, image);
+                this.selectedIndex = this.section.content.images.length - 1;
+            });
+
         }
 
     }

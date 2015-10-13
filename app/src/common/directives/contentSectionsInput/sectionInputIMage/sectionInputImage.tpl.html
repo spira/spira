@@ -1,9 +1,9 @@
 <div class="sections-input-rich-text">
 
-    <md-tabs md-selected="SectionInputImageController.selectedIndex" md-border-bottom md-autoselect>
+    <md-tabs md-selected="SectionInputImageController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
         <md-tab ng-repeat="imageContent in SectionInputImageController.section.content.images" label="Image {{$index + 1}}">
 
-            <div layout-gt-md="row">
+            <div layout-gt-md="row" >
                 <div flex>
                     <cl-image width="100%" public-id="{{imageContent._image.imageId}}" format="{{imageContent._image.format}}">
                         <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
@@ -39,11 +39,22 @@
 
             </div>
 
+            <div layout="row">
+
+                <span flex></span>
+
+                <md-button class="md-raised" ng-click="SectionInputImageController.removeImage(imageContent)">
+                    <md-icon>delete</md-icon>
+                </md-button>
+
+            </div>
 
 
-
-            <pre>{{imageContent|json}}</pre>
-
+        </md-tab>
+        <md-tab md-on-select="SectionInputImageController.addImage()">
+            <md-label>
+                <span>Add Image <md-icon>add_to_photos</md-icon></span>
+            </md-label>
         </md-tab>
     </md-tabs>
 </div>
