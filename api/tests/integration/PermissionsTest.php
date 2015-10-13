@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 class PermissionsTest extends TestCase
 {
@@ -22,8 +29,8 @@ class PermissionsTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
-        $this->assertTrue(in_array('user', $result),'check if user has default role');
-        $this->assertTrue(in_array('testrole', $result),'check if user has assigned test role');
+        $this->assertTrue(in_array('user', $result), 'check if user has default role');
+        $this->assertTrue(in_array('testrole', $result), 'check if user has assigned test role');
     }
 
     public function testAdminGetSelfRoles()
@@ -43,8 +50,8 @@ class PermissionsTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
-        $this->assertTrue(in_array('user', $result),'check if user has default role');
-        $this->assertTrue(in_array('testrole', $result),'check if user has assigned test role');
+        $this->assertTrue(in_array('user', $result), 'check if user has default role');
+        $this->assertTrue(in_array('testrole', $result), 'check if user has assigned test role');
     }
 
     public function testGuestGetRoles()
@@ -79,7 +86,7 @@ class PermissionsTest extends TestCase
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
-        $this->assertTrue(in_array('user', $result),'check if user has default role');
-        $this->assertTrue(in_array('testrole', $result),'check if user has assigned test role');
+        $this->assertTrue(in_array('user', $result), 'check if user has default role');
+        $this->assertTrue(in_array('testrole', $result), 'check if user has assigned test role');
     }
 }

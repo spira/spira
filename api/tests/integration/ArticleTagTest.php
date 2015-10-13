@@ -175,7 +175,7 @@ class ArticleTagTest extends TestCase
         $revisions = $article->revisionHistory->toArray();
         $tagRevision = false;
         foreach ($revisions as $revision) {
-            if ($revision['key'] === 'tags'){
+            if ($revision['key'] === 'tags') {
                 $tagRevision = true;
             }
         }

@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Http\Controllers;
-
 
 use App\Http\Transformers\PermissionsTransformer;
 use Spira\Rbac\Item\Assignment;
@@ -16,7 +22,6 @@ class PermissionsController extends ApiController
 
     protected $defaultRole = false;
 
-
     public function __construct(PermissionsTransformer $transformer)
     {
         parent::__construct($transformer);
@@ -27,7 +32,7 @@ class PermissionsController extends ApiController
         $assignments = $this->getGate()->getStorage()->getAssignments($id);
 
         foreach ($this->getGate()->getDefaultRoles() as $role) {
-            if (!isset($assignments[$role])){
+            if (! isset($assignments[$role])) {
                 $defaultAssignment = new Assignment();
                 $defaultAssignment->roleName = $role;
                 $defaultAssignment->userId = $id;
@@ -35,7 +40,7 @@ class PermissionsController extends ApiController
             }
         }
 
-        $this->authorize(static::class.'@getUserRoles',['model'=>(object)['user_id'=>$id]]);
+        $this->authorize(static::class.'@getUserRoles', ['model' => (object) ['user_id' => $id]]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
