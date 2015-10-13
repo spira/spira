@@ -17,8 +17,7 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
             this.sizeOptions = common.models.sections.Image.sizeOptions;
         }
 
-
-        public addImage(){
+        public addImage():void{
 
             this.section.content.images.push({
                 _image:null,
@@ -26,10 +25,18 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
                 size:null,
                 alignment:null,
             });
+
         }
 
-        public removeImage(image) {
-            console.log('removing image');
+        public imageChanged(imageContent:common.models.sections.IImageContent):void {
+
+            if (!imageContent.caption){
+                imageContent.caption = imageContent._image.alt;
+            }
+
+        }
+
+        public removeImage(image):ng.IPromise<number> {
 
             var confirm = this.$mdDialog.confirm()
                 .title("Are you sure you want to delete this image?")
@@ -38,10 +45,12 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
                 .ok("Delete this image!")
                 .cancel("Nope! Don't delete it.");
 
-            this.$mdDialog.show(confirm).then(() => {
+            return this.$mdDialog.show(confirm).then(() => {
 
                 this.section.content.images = _.without(this.section.content.images, image);
                 this.selectedIndex = this.section.content.images.length - 1;
+
+                return this.section.content.images.length;
             });
 
         }

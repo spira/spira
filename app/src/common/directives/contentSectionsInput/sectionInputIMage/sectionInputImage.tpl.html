@@ -5,34 +5,44 @@
 
             <div layout-gt-md="row" >
                 <div flex>
-                    <cl-image width="100%" public-id="{{imageContent._image.imageId}}" format="{{imageContent._image.format}}">
+                    <cl-image ng-if="!!imageContent._image" width="100%" public-id="{{imageContent._image.imageId}}" format="{{imageContent._image.format}}">
                         <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
                     </cl-image>
+
+                    <select-media-image ng-model="imageContent._image" ng-change="SectionInputImageController.imageChanged(imageContent)"></select-media-image>
+
                 </div>
 
-                <ng-form name="SectionInputImageController.imageForm" flex>
+                <ng-form name="imageForm" flex>
 
                     <md-input-container flex>
                         <label>Caption</label>
 
-                        <input ng-model="imageContent.caption" name="caption">
-                        <ng-messages for="SectionInputImageController.imageForm.caption.$error">
+                        <input ng-model="imageContent.caption" name="caption" required>
+                        <ng-messages for="imageForm.caption.$error">
+                            <ng-message when="required">Caption is required</ng-message>
                             <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
                         </ng-messages>
                     </md-input-container>
 
                     <md-input-container>
                         <label>Alignment</label>
-                        <md-select ng-model="imageContent.alignment" aria-label="Alignment" placeholder="Select image alignment">
+                        <md-select ng-model="imageContent.alignment" name="alignment" aria-label="Alignment" placeholder="Select image alignment" required="true">
                             <md-option ng-value="alignmentOption.key" ng-repeat="alignmentOption in SectionInputImageController.alignmentOptions" ng-bind-html="alignmentOption.name"></md-option>
                         </md-select>
+                        <ng-messages for="imageForm.alignment.$error">
+                            <ng-message when="required">Alignment is required</ng-message>
+                        </ng-messages>
                     </md-input-container>
 
                     <md-input-container>
                         <label>Size</label>
-                        <md-select ng-model="imageContent.size" aria-label="Size" placeholder="Select image size">
+                        <md-select ng-model="imageContent.size" name="size" aria-label="Size" placeholder="Select image size" required="true">
                             <md-option ng-value="sizeOption.key" ng-repeat="sizeOption in SectionInputImageController.sizeOptions" ng-bind-html="sizeOption.name"></md-option>
                         </md-select>
+                        <ng-messages for="imageForm.size.$error">
+                            <ng-message when="required">Alignment is required</ng-message>
+                        </ng-messages>
                     </md-input-container>
 
                 </ng-form>
@@ -43,8 +53,8 @@
 
                 <span flex></span>
 
-                <md-button class="md-raised" ng-click="SectionInputImageController.removeImage(imageContent)">
-                    <md-icon>delete</md-icon>
+                <md-button class="md-warn" ng-click="SectionInputImageController.removeImage(imageContent)">
+                    <span>Remove image <md-icon>delete</md-icon></span>
                 </md-button>
 
             </div>

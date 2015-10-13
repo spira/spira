@@ -43,7 +43,6 @@ namespace common.directives.markdownEditor {
 
                 }
 
-                $ngModelController.$setValidity('foo', true);
             };
 
 
