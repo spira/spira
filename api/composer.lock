@@ -3603,12 +3603,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/revisionable.git",
-                "reference": "08fcaa3f54a4d5284e112e6b114972b19002e464"
+                "reference": "1fb46e62e0d9e998b6cbcf42f23129dd3bd0f8e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/revisionable/zipball/08fcaa3f54a4d5284e112e6b114972b19002e464",
-                "reference": "08fcaa3f54a4d5284e112e6b114972b19002e464",
+                "url": "https://api.github.com/repos/spira/revisionable/zipball/1fb46e62e0d9e998b6cbcf42f23129dd3bd0f8e4",
+                "reference": "1fb46e62e0d9e998b6cbcf42f23129dd3bd0f8e4",
                 "shasum": ""
             },
             "require": {
@@ -3646,7 +3646,7 @@
                 "issues": "https://github.com/VentureCraft/revisionable/issues",
                 "source": "https://github.com/VentureCraft/revisionable"
             },
-            "time": "2015-09-11 00:02:39"
+            "time": "2015-10-14 11:10:06"
         },
         {
             "name": "vlucas/phpdotenv",
