@@ -615,6 +615,7 @@ class ArticleTest extends TestCase
     }
 
     //articleMetas
+
     public function testShouldLogPutMetas()
     {
         $user = $this->createUser();
@@ -644,7 +645,6 @@ class ArticleTest extends TestCase
         $this->assertTrue($metaRevision);
 
         $this->cleanupDiscussions([$article]);
-
     }
 
     public function testShouldLogDeleteMeta()
