@@ -60,10 +60,12 @@ namespace app.guest.articles.article {
 
     export class ArticleController {
 
-        static $inject = ['article'];
+        static $inject = ['article', '$state'];
         constructor(
-            public article:common.models.Article
+            public article:common.models.Article,
+            public $state:ng.ui.IStateService
         ) {
+            $state.current.data.meta = article._articleMetas;
         }
 
     }
