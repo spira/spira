@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="app" ng-strict-di>
-    <head>
+    <head ng-controller="app.head.controller as HeadController">
         <title>spira - AngularJS Seed App</title>
         <base href="/" />
         <meta charset="utf-8">
@@ -25,6 +25,8 @@
 
         <!-- remote stylesheets -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <meta ng-repeat="meta in HeadController.$state.current.data.meta" name="{{ meta.metaName }}" content="{{ meta.metaContent }}">
 
     </head>
 
