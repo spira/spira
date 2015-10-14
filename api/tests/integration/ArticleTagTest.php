@@ -158,10 +158,6 @@ class ArticleTagTest extends TestCase
 
     public function testShouldLogPutTags()
     {
-        $this->markTestIncomplete(
-            'This test is broken and has not been fixed yet.'
-        );
-
         $article = factory(Article::class)->create();
 
         $tags = $this->getFactory(Tag::class)
