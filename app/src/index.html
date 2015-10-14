@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="app" ng-strict-di>
     <head ng-controller="app.head.controller as HeadController">
-        <title>spira - AngularJS Seed App</title>
+        <title>spira{{ HeadController.$state.current.data.title ? ' - ' + HeadController.$state.current.data.title : '' }}</title>
         <base href="/" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
