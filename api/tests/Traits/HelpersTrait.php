@@ -110,6 +110,8 @@ trait HelpersTrait
 
     protected function tokenFromUser($user, $customClaims = [])
     {
+        $user = User::findOrFail($user->user_id);
+
         /** @var Guard $auth */
         $auth = $this->app->make('auth');
         $payload = $auth->getPayloadFactory()->createFromUser($user);
