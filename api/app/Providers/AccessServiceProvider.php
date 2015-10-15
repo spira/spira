@@ -10,10 +10,10 @@
 
 namespace App\Providers;
 
+use App\Extensions\Rbac\UserAssignmentStorage;
 use Laravel\Lumen\Application;
 use Spira\Rbac\Providers\RBACProvider;
 use Spira\Rbac\Storage\AssignmentStorageInterface;
-use Spira\Rbac\Storage\Db\AssignmentStorage;
 use Spira\Rbac\Storage\File\ItemStorage;
 use Spira\Rbac\Storage\ItemStorageInterface;
 
@@ -24,7 +24,7 @@ class AccessServiceProvider extends RBACProvider
     protected function registerAssignmentStorage()
     {
         $this->app->singleton(AssignmentStorageInterface::class, function (Application $app) {
-            return $app->make(AssignmentStorage::class);
+            return $app->make(UserAssignmentStorage::class);
         });
     }
 

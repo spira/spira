@@ -9,6 +9,7 @@
  */
 
 use App\Exceptions\NotImplementedException;
+use App\Models\User;
 use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Services\SingleSignOn\VanillaSingleSignOn;
 
@@ -51,6 +52,7 @@ class SingleSignOnTest extends TestCase
         $user = $this->createUser();
         $this->assignAdmin($user);
         $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
 
         $requester = SingleSignOnFactory::create('vanilla', $request, $user);
         $roles = $requester->formatUser()['roles'];
@@ -165,6 +167,7 @@ class SingleSignOnTest extends TestCase
         $user = $this->createUser();
         $this->assignAdmin($user);
         $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
 
         $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
         $timestamp = time();
@@ -187,6 +190,7 @@ class SingleSignOnTest extends TestCase
         $user = $this->createUser();
         $this->assignAdmin($user);
         $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
 
         $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
         $request = $this->mockRequest($clientId);

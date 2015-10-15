@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Cache;
 use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Model\Model\IndexedModel;
 
+/**
+ * Class User
+ * @package App\Models
+ *
+ * @property array $roles
+ */
 class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
     use Authenticatable;
@@ -162,6 +168,26 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function getFullNameAttribute()
     {
         return sprintf('%s %s', $this->first_name, $this->last_name);
+    }
+
+    public function getRolesAttribute()
+    {
+        if ($roles = $this->getAttributeFromArray('roles')){
+            return explode(',', $roles);
+        }
+
+        return [];
+    }
+
+    public function setRolesAttribute(array $roles = [])
+    {
+        $roles = array_unique($roles);
+
+        if (!empty($roles)){
+            $this->attributes['roles'] = implode(',', $roles);
+        }else{
+            $this->attributes['roles'] = null;
+        }
     }
 
     /**
