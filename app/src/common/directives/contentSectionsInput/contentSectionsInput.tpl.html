@@ -45,7 +45,6 @@
 
     </div>
 
-
     <md-fab-toolbar md-direction="left" md-open="demo.isOpen">
         <md-fab-trigger class="align-with-text">
             <md-button aria-label="menu" class="md-fab md-primary">
@@ -65,19 +64,5 @@
             </md-fab-actions>
         </md-toolbar>
     </md-fab-toolbar>
-
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <md-button
-                    aria-label="{{sectionType.name}}"
-                    class="md-icon-button"
-                    ng-repeat="(sectionKey, sectionType) in ContentSectionsInputController.sectionTypes"
-                    ng-click="ContentSectionsInputController.addSectionType(sectionKey)"
-                    >
-                <md-icon>{{sectionType.icon}}</md-icon>
-            </md-button>
-            <p>@todo remove this toolbar and use the fab toolbar above (background is broken for some reason)</p>
-        </div>
-    </md-toolbar>
 
 </div>

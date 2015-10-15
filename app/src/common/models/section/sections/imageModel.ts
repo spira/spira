@@ -52,7 +52,7 @@ namespace common.models.sections {
             }
         ];
 
-        public images:IImageContent[] = undefined;
+        public images:IImageContent[] = [];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
