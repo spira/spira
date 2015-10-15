@@ -144,7 +144,6 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $this->auth->assign($author, $user->user_id);
     }
 
-
     public function tearDown()
     {
         parent::tearDown();
