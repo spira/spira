@@ -82,6 +82,69 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $this->auth->removeItem($role);
     }
 
+    public function testAssignSame()
+    {
+        $role = new Role('some role');
+        $user = $this->createUser();
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, $user->user_id));
+        $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \''.$user->user_id.'\'.');
+        $this->auth->assign($role, $user->user_id);
+    }
+
+    protected function prepareData()
+    {
+        $rule = new AuthorRule;
+
+        $createPost = new Permission('createPost');
+        $createPost->description = 'create a post';
+        $this->auth->addItem($createPost);
+
+        $readPost = new Permission('readPost');
+        $readPost->description = 'read a post';
+        $this->auth->addItem($readPost);
+
+        $updatePost = new Permission('updatePost');
+        $updatePost->description = 'update a post';
+        $updatePost->attachRule($rule);
+        $this->auth->addItem($updatePost);
+
+        $updateAnyPost = new Permission('updateAnyPost');
+        $updateAnyPost->description = 'update any post';
+        $this->auth->addItem($updateAnyPost);
+
+        $deletePost = new Permission('deletePost');
+        $deletePost->description = 'delete a post';
+        $this->auth->addItem($deletePost);
+
+        $reader = new Role('reader');
+        $this->auth->addItem($reader);
+        $this->auth->addChild($reader, $readPost);
+
+        $author = new Role('author');
+        $this->auth->addItem($author);
+        $this->auth->addChild($author, $createPost);
+        $this->auth->addChild($author, $updatePost);
+        $this->auth->addChild($author, $reader);
+        $this->auth->addChild($author, $deletePost);
+
+        $admin = new Role('admin C');
+        $this->auth->addItem($admin);
+        $this->auth->addChild($admin, $author);
+        $this->auth->addChild($admin, $updateAnyPost);
+    }
+
+    public function testAssignMultipleRoles()
+    {
+        $this->prepareData();
+        $user = $this->createUser();
+        $reader = $this->auth->getItem('reader');
+        $author = $this->auth->getItem('author');
+        $this->auth->assign($reader, $user->user_id);
+        $this->auth->assign($author, $user->user_id);
+    }
+
+
     public function tearDown()
     {
         parent::tearDown();
