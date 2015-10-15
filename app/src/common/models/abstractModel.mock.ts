@@ -16,10 +16,10 @@ namespace common.models {
             return model;
         }
 
-        public buildCollection(count:number = 10){
+        public buildCollection(count:number = 10, overrides:Object = {}, exists:boolean = true){
 
             //return _.fill(Array(count), this.entity());
-            return chance.unique(() => this.buildEntity(), count);
+            return chance.unique(() => this.buildEntity(overrides, exists), count);
         }
 
     }

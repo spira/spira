@@ -140,8 +140,10 @@
                 article._tags.push(common.models.TagMock.entity());
                 article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
                 article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
+                article._sections = common.models.SectionMock.collection(2, {}, false);
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections', _.clone(article._sections, true)).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
                     return !_.isEmpty(item.metaContent)
