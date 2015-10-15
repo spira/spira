@@ -12,6 +12,7 @@ namespace App\Models;
 
 use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\ImageContent;
+use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use Spira\Model\Model\BaseModel;
 
@@ -36,7 +37,7 @@ class Section extends BaseModel
 
     protected static $validationRules = [
         'section_id' => 'required|uuid',
-        'content' => 'required',
+        'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE,','.ImageContent::CONTENT_TYPE,
         'type' => 'required|section_type',
     ];
 
@@ -52,6 +53,7 @@ class Section extends BaseModel
             RichTextContent::CONTENT_TYPE,
             BlockquoteContent::CONTENT_TYPE,
             ImageContent::CONTENT_TYPE,
+            PromoContent::CONTENT_TYPE,
         ];
     }
 }

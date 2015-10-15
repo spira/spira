@@ -1,13 +1,16 @@
 <section ng-repeat="section in BodyController.article._sections" class="{{section.type}}" ng-switch="section.type">
 
-    <div ng-switch-when="rich_text" marked="section.content.body">
-
-    </div>
+    <div ng-switch-when="rich_text" marked="section.content.body"></div>
 
     <blockquote ng-switch-when="blockquote" cite="{{section.content.author}}">
         <div marked="section.content.body"></div>
         <small class="author">{{section.content.author}}</small>
     </blockquote>
+
+
+    <div ng-switch-when="promo" class="md-whiteframe-z2">
+        <h3>Promo Section</h3>
+    </div>
 
     <div ng-switch-when="image">
 
@@ -18,7 +21,7 @@
                         width="100%"
                         public-id="{{image._image.imageId}}"
                         format="{{image._image.format}}"
-                        ></cl-image>
+                    ></cl-image>
                 </div>
             </li>
         </ul>

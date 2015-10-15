@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Image;
 use App\Models\Section;
 use App\Models\Sections\ImageContent;
+use App\Models\Sections\PromoContent;
 use App\Models\ArticleSectionsDisplay;
 use Spira\Model\Collection\Collection;
 use App\Models\Sections\RichTextContent;
@@ -60,6 +61,11 @@ $factory->define(ImageContent::class, function (Generator $faker) {
 
 });
 
+$factory->define(PromoContent::class, function (Generator $faker) {
+
+    return [];
+});
+
 $factory->defineAs(Section::class, RichTextContent::CONTENT_TYPE, function (Generator $faker) {
 
     return [
@@ -90,6 +96,16 @@ $factory->defineAs(Section::class, ImageContent::CONTENT_TYPE, function (Generat
 
 });
 
+$factory->defineAs(Section::class, PromoContent::CONTENT_TYPE, function (Generator $faker) {
+
+    return [
+        'section_id' => $faker->uuid,
+        'type' => PromoContent::CONTENT_TYPE,
+        'content' => factory(PromoContent::class)->make(),
+    ];
+
+});
+
 $factory->define(ArticleSectionsDisplay::class, function (Generator $faker) {
     return [
         'sort_order' => [],
@@ -109,6 +125,9 @@ $factory->define(Section::class, function (Generator $faker) use ($factory) {
             break;
         case ImageContent::CONTENT_TYPE:
             return $factory->rawOf(Section::class, ImageContent::CONTENT_TYPE);
+            break;
+        case PromoContent::CONTENT_TYPE:
+            return $factory->rawOf(Section::class, PromoContent::CONTENT_TYPE);
             break;
     }
 

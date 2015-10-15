@@ -13,6 +13,7 @@ use App\Models\ArticleSectionsDisplay;
 use App\Models\Section;
 use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\ImageContent;
+use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 
 /**
@@ -52,7 +53,9 @@ class SectionTest extends TestCase
         $this->assertJsonArray();
 
         $this->assertEquals(count($object), 5);
-        $this->assertInstanceOf(stdClass::class, $object[0]->content);
+        if ($object[0]->type !== PromoContent::CONTENT_TYPE){ //promo content does not have a content body so the type will not be stdClass
+            $this->assertInstanceOf(stdClass::class, $object[0]->content);
+        }
     }
 
     public function testGetSectionsNestedInArticles()
@@ -160,7 +163,12 @@ class SectionTest extends TestCase
             ]])
             ->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection]);
+        $promoSection = $this->getFactory(Section::class, PromoContent::CONTENT_TYPE)
+            ->customize(['content' => [
+            ]])
+            ->transformed();
+
+        $this->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection, $promoSection]);
 
         $this->assertResponseStatus(422);
     }
