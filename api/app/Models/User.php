@@ -19,8 +19,7 @@ use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Model\Model\IndexedModel;
 
 /**
- * Class User
- * @package App\Models
+ * Class User.
  *
  * @property array $roles
  */
@@ -172,7 +171,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
 
     public function getRolesAttribute()
     {
-        if ($roles = $this->getAttributeFromArray('roles')){
+        if ($roles = $this->getAttributeFromArray('roles')) {
             return explode(',', $roles);
         }
 
@@ -183,9 +182,9 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     {
         $roles = array_unique($roles);
 
-        if (!empty($roles)){
+        if (! empty($roles)) {
             $this->attributes['roles'] = implode(',', $roles);
-        }else{
+        } else {
             $this->attributes['roles'] = null;
         }
     }

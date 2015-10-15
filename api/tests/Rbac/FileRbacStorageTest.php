@@ -17,7 +17,6 @@ use Spira\Rbac\Storage\Storage;
 
 class FileRbacStorageTest extends DbRbacStorageTest
 {
-
     public function initAuth()
     {
         $this->clean();

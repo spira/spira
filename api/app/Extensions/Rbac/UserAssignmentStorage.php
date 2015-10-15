@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Extensions\Rbac;
-
 
 use App\Models\User;
 use Spira\Contract\Exception\NotImplementedException;
@@ -12,7 +18,6 @@ use Spira\Rbac\Storage\AssignmentStorageInterface;
 
 class UserAssignmentStorage implements AssignmentStorageInterface
 {
-
     /**
      * Returns all role assignment information for the specified user.
      * @param string|int $userId the user ID
@@ -24,8 +29,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
         $user = User::findOrFail($userId);
         $assignments = [];
 
-        foreach($user->roles as $role)
-        {
+        foreach ($user->roles as $role) {
             $assignment = new Assignment();
             $assignment->userId = $userId;
             $assignment->roleName = $role;
@@ -47,7 +51,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
         /** @var User $user */
         $user = User::findOrFail($userId);
         $roles = $user->roles;
-        if (array_search($role->name, $roles) !== false){
+        if (array_search($role->name, $roles) !== false) {
             throw new \InvalidArgumentException("Authorization item '{$role->name}' has already been assigned to user '$userId'.");
         }
         $roles[] = $role->name;
@@ -70,14 +74,14 @@ class UserAssignmentStorage implements AssignmentStorageInterface
      */
     public function revoke(Role $role, $userId)
     {
-        if (!$userId){
+        if (! $userId) {
             return false;
         }
 
         /** @var User $user */
         $user = User::findOrFail($userId);
         $roles = $user->roles;
-        if (($key = array_search($role->name, $roles)) !== false){
+        if (($key = array_search($role->name, $roles)) !== false) {
             unset($roles[$key]);
             $user->roles = $roles;
             $user->save();
