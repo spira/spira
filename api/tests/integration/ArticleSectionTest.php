@@ -53,7 +53,7 @@ class SectionTest extends TestCase
         $this->assertJsonArray();
 
         $this->assertEquals(count($object), 5);
-        if ($object[0]->type !== PromoContent::CONTENT_TYPE){ //promo content does not have a content body so the type will not be stdClass
+        if ($object[0]->type !== PromoContent::CONTENT_TYPE) { //promo content does not have a content body so the type will not be stdClass
             $this->assertInstanceOf(stdClass::class, $object[0]->content);
         }
     }
