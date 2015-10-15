@@ -23,7 +23,7 @@ namespace app.admin.articles.article.post {
         /**
          * Update the article tags on the article model. If new, create a new Tag model.
          */
-        public updateArticleTags():void{
+        public updateArticleTags():void {
 
             this.article._tags = _.chain(this.tags)
                 .map((tag:string):common.models.Tag => {
@@ -41,6 +41,15 @@ namespace app.admin.articles.article.post {
                 })
                 .value();
 
+        }
+
+        /**
+         * Update the article sort order
+         * @param action
+         */
+        public updateSortOrder(action:string):void {
+
+            this.article.updateSectionsDisplay();
         }
 
     }

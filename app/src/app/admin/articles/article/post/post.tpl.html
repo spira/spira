@@ -31,6 +31,7 @@
             id="articleFormContent"
             ng-model="ArticleController.article._sections"
             ng-required="true"
+            on-sort-update="PostController.updateSortOrder(action)"
         ></content-sections-input>
     </div>
 

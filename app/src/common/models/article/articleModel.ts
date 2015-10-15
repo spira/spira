@@ -90,7 +90,13 @@ namespace common.models {
 
         }
 
-
+        /**
+         * Hyrate the data:
+         * - Pre-sort the sections based on the sectionsDisplay field
+         * @param data
+         * @param exists
+         * @returns {any}
+         */
         protected hydrateSections(data:any, exists:boolean) : Section<any>[]{
 
             if (!_.has(data, '_sections')){
@@ -107,6 +113,22 @@ namespace common.models {
 
             return sectionsChain.value();
         }
+
+        /**
+         * Update the sort order display to match the section object
+         */
+        public updateSectionsDisplay():void {
+            if (!_.has(this, '_sections')){
+                return;
+            }
+
+            let sectionOrder:string[] = _.map(this._sections, (section:Section<any>) => {
+                return section.sectionId;
+            });
+
+            this.sectionsDisplay.sortOrder = sectionOrder;
+        }
+
     }
 
 }

@@ -19,9 +19,10 @@ namespace common.directives.contentSectionsInput {
 
         public sectionTypes: ISectionTypeMap;
         public sections:common.models.Section<any>[];
+        public onSortUpdate:(paramObject: {action:string})=>void;
 
-        static $inject = ['ngRestAdapter'];
-        constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService){
+        static $inject = ['ngRestAdapter', '$mdDialog'];
+        constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService, private $mdDialog:ng.material.IDialogService){
             this.sectionTypes = {
                 [common.models.sections.RichText.contentType] : {
                     name: "Rich Text",
@@ -47,11 +48,26 @@ namespace common.directives.contentSectionsInput {
                 sectionId: this.ngRestAdapter.uuid(),
                 type: sectionTypeKey,
             }));
+            this.onSortUpdate({action: 'add'});
         }
 
-        public removeSection(section:common.models.Section<any>):void{
+        public removeSection(section:common.models.Section<any>):ng.IPromise<string>{
 
-            this.sections = _.without(this.sections, section);
+            var confirm = this.$mdDialog.confirm()
+                .title("Are you sure you want to delete this section?")
+                .content('This action <strong>cannot</strong> be undone')
+                .ariaLabel("Confirm delete")
+                .ok("Delete this section!")
+                .cancel("Nope! Don't delete it.");
+
+            return this.$mdDialog.show(confirm).then(() => {
+
+                this.sections = _.without(this.sections, section);
+                this.onSortUpdate({action: 'delete'});
+
+                return section.sectionId;
+            });
+
         }
 
         public moveSection(section:common.models.Section<any>, moveUp:boolean = true):void{
@@ -67,6 +83,7 @@ namespace common.directives.contentSectionsInput {
 
             this.sections[sectionIndex] = this.sections[swapIndex];
             this.sections[swapIndex] = section;
+            this.onSortUpdate({action: 'move'});
         }
 
     }
@@ -79,6 +96,7 @@ namespace common.directives.contentSectionsInput {
         public replace = true;
         public scope = {
             sections: '=ngModel',
+            onSortUpdate: '&?',
         };
 
 
