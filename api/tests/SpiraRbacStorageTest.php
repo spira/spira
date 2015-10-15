@@ -128,6 +128,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $this->auth->addChild($author, $reader);
         $this->auth->addChild($author, $deletePost);
 
+
         $admin = new Role('admin C');
         $this->auth->addItem($admin);
         $this->auth->addChild($admin, $author);
