@@ -38,7 +38,6 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $this->setExpectedException('Spira\Contract\Exception\NotImplementedException', 'Massive update via Storage is disabled');
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f');
 
         $permission = new Permission('some permission');
         $this->auth->addItem($permission);
@@ -54,8 +53,20 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $this->setExpectedException('Spira\Contract\Exception\NotImplementedException', 'Massive removal via Storage is disabled');
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
         $this->auth->removeAllAssignments($role);
+    }
+
+    public function testRevoke()
+    {
+        $role = new Role('some role');
+        $user = $this->createUser();
+        $this->auth->addItem($role);
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, $user->user_id));
+
+        $this->assertFalse($this->auth->revoke($role, ''));
+
+        $this->auth->revoke($role, $user->user_id);
+        $this->assertEmpty($this->auth->getAssignments($user->user_id));
     }
 
     public function testRemove()
