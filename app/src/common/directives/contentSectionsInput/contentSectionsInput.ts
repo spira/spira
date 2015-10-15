@@ -15,11 +15,20 @@ namespace common.directives.contentSectionsInput {
         [key:string]: ISectionType;
     }
 
+    interface ISectionUpdateParams{
+        event:string;
+        section:common.models.Section<any>;
+    }
+
+    interface ISectionUpdateCallback{
+        (paramObject: ISectionUpdateParams):void;
+    }
+
     class ContentSectionsInputController {
 
         public sectionTypes: ISectionTypeMap;
         public sections:common.models.Section<any>[];
-        public onSortUpdate:(paramObject: {action:string})=>void;
+        public onSectionUpdate:ISectionUpdateCallback;
 
         static $inject = ['ngRestAdapter', '$mdDialog'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService, private $mdDialog:ng.material.IDialogService){
@@ -44,11 +53,18 @@ namespace common.directives.contentSectionsInput {
         }
 
         public addSectionType(sectionTypeKey:string):void{
-            this.sections.push(new common.models.Section<any>({
+
+            let section = new common.models.Section<any>({
                 sectionId: this.ngRestAdapter.uuid(),
                 type: sectionTypeKey,
-            }));
-            this.onSortUpdate({action: 'add'});
+            });
+
+            this.sections.push(section);
+
+            this.onSectionUpdate({
+                event: 'added',
+                section: section
+            });
         }
 
         public removeSection(section:common.models.Section<any>):ng.IPromise<string>{
@@ -63,7 +79,10 @@ namespace common.directives.contentSectionsInput {
             return this.$mdDialog.show(confirm).then(() => {
 
                 this.sections = _.without(this.sections, section);
-                this.onSortUpdate({action: 'delete'});
+                this.onSectionUpdate({
+                    event: 'deleted',
+                    section: section
+                });
 
                 return section.sectionId;
             });
@@ -83,7 +102,10 @@ namespace common.directives.contentSectionsInput {
 
             this.sections[sectionIndex] = this.sections[swapIndex];
             this.sections[swapIndex] = section;
-            this.onSortUpdate({action: 'move'});
+            this.onSectionUpdate({
+                event: 'moved',
+                section: section
+            });
         }
 
     }
@@ -96,7 +118,7 @@ namespace common.directives.contentSectionsInput {
         public replace = true;
         public scope = {
             sections: '=ngModel',
-            onSortUpdate: '&?',
+            onSectionUpdate: '&?',
         };
 
 

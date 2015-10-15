@@ -6,8 +6,13 @@ namespace app.admin.articles.article.post {
 
         public tags:string[];
 
-        static $inject = ['article', 'tagService', '$scope'];
-        constructor(public article:common.models.Article, private tagService:common.services.tag.TagService, public $scope:ng.IScope) {
+        static $inject = ['article', 'tagService', '$scope', 'articleService'];
+        constructor(
+            public article:common.models.Article,
+            private tagService:common.services.tag.TagService,
+            public $scope:ng.IScope,
+            private articleService:common.services.article.ArticleService
+        ) {
 
 
             this.tags = _.pluck(article._tags, 'tag');
@@ -45,11 +50,18 @@ namespace app.admin.articles.article.post {
 
         /**
          * Update the article sort order
-         * @param action
+         * @param event
+         * @param section
          */
-        public updateSortOrder(action:string):void {
+        public sectionUpdated(event:string, section:common.models.Section<any>):void {
 
             this.article.updateSectionsDisplay();
+
+            if (event == 'deleted' && section.exists()){
+                this.articleService.addQueuedSaveProcessFunction(() => {
+                    return this.articleService.deleteSection(this.article, section);
+                });
+            }
         }
 
     }

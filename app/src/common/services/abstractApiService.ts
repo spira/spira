@@ -1,8 +1,13 @@
 namespace common.services {
 
+    export interface IQueuedSaveProcess {
+        ():ng.IPromise<any>;
+    }
+
     export abstract class AbstractApiService {
 
 
+        protected queuedSaveProcessFunctions:IQueuedSaveProcess[] = [];
         protected cachedPaginator:common.services.pagination.Paginator;
 
         constructor(protected ngRestAdapter:NgRestAdapter.INgRestAdapterService,
@@ -46,6 +51,21 @@ namespace common.services {
                     return withNested.join(', ');
                 }
             });
+        }
+
+        protected runQueuedSaveFunctions():ng.IPromise<any> {
+
+            let promises = _.map(this.getQueuedSaveProcessFunctions(), (queuedSaveFunction:IQueuedSaveProcess) => queuedSaveFunction());
+
+            return this.$q.all(promises);
+        }
+
+        protected getQueuedSaveProcessFunctions():IQueuedSaveProcess[] {
+            return this.queuedSaveProcessFunctions;
+        }
+
+        public addQueuedSaveProcessFunction(fn:IQueuedSaveProcess):void {
+            this.queuedSaveProcessFunctions.push(fn);
         }
 
 

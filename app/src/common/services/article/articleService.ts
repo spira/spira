@@ -59,7 +59,10 @@ namespace common.services.article {
         public saveArticleWithRelated(article:common.models.Article):ng.IPromise<common.models.Article> {
 
             return this.saveArticle(article)
-                .then(() => this.saveRelatedEntities(article))
+                .then(() => this.$q.when([
+                    this.saveRelatedEntities(article),
+                    this.runQueuedSaveFunctions(),
+                ]))
                 .then(() => {
                     (<common.decorators.IChangeAwareDecorator>article).resetChanged(); //reset so next save only saves the changed ones
                     article.setExists(true);
@@ -197,6 +200,14 @@ namespace common.services.article {
             return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', _.clone(sections))
                 .then(() => {
                     return article._sections;
+                });
+        }
+
+
+        public deleteSection(article:common.models.Article, section:common.models.Section<any>):ng.IPromise<boolean> {
+            return this.ngRestAdapter.remove('/articles/' + article.articleId + '/sections/' + section.sectionId)
+                .then(() => {
+                    return true;
                 });
         }
 
