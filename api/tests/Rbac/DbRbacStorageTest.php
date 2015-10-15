@@ -25,6 +25,11 @@ class DbRbacStorageTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->initAuth();
+    }
+
+    public function initAuth()
+    {
         $this->auth = new Storage($this->app->make(ItemStorage::class), $this->app->make(AssignmentStorage::class));
     }
 
@@ -68,7 +73,7 @@ class DbRbacStorageTest extends TestCase
     {
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->auth->assign($role, 'some user');
+        $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f');
 
         $permission = new Permission('some permission');
         $this->auth->addItem($permission);
@@ -82,7 +87,7 @@ class DbRbacStorageTest extends TestCase
 
         $this->assertNull($this->auth->getItem('some role'));
         $this->assertInstanceOf(Role::class, $this->auth->getItem('some new role name'));
-        $assignments = $this->auth->getAssignments('some user');
+        $assignments = $this->auth->getAssignments('e9f941b8-50f2-31af-a740-87fe9aa3f60f');
         $assignment = current($assignments);
         $this->assertEquals($assignment->roleName, $role->name);
     }
@@ -174,9 +179,9 @@ class DbRbacStorageTest extends TestCase
         $this->auth->addChild($admin, $author);
         $this->auth->addChild($admin, $updateAnyPost);
 
-        $this->auth->assign($reader, 'reader A');
-        $this->auth->assign($author, 'author B');
-        $this->auth->assign($admin, 'admin C');
+        $this->auth->assign($reader, 'd2acdd06-81a3-3c3f-b105-8f8082e8a6fb');
+        $this->auth->assign($author, '0bea1048-180f-3f45-b63d-828c06d50718');
+        $this->auth->assign($admin, 'ea9ffb41-0412-3769-93f0-38062fe1d302');
     }
 
     public function testAssign()
@@ -197,12 +202,12 @@ class DbRbacStorageTest extends TestCase
     {
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
 
         $this->assertFalse($this->auth->revoke($role, ''));
 
-        $this->auth->revoke($role, 'some user');
-        $this->assertEmpty($this->auth->getAssignments('some user'));
+        $this->auth->revoke($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f');
+        $this->assertEmpty($this->auth->getAssignments('e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
     }
 
     public function testAssignMultipleRoles()
@@ -211,22 +216,7 @@ class DbRbacStorageTest extends TestCase
 
         $reader = $this->auth->getItem('reader');
         $author = $this->auth->getItem('author');
-        $this->auth->assign($reader, 'readingAuthor');
-        $this->auth->assign($author, 'readingAuthor');
-    }
-
-    public function testAssignmentsToIntegerId()
-    {
-        $this->prepareData();
-
-        $reader = $this->auth->getItem('reader');
-        $author = $this->auth->getItem('author');
-        $this->auth->assign($reader, 42);
-        $this->auth->assign($author, 1337);
-        $this->auth->assign($reader, 1337);
-
-        $this->assertEquals(0, count($this->auth->getAssignments(0)));
-        $this->assertEquals(1, count($this->auth->getAssignments(42)));
-        $this->assertEquals(2, count($this->auth->getAssignments(1337)));
+        $this->auth->assign($reader, 'c0f30c58-7bae-39d8-b070-3f537157f5d2');
+        $this->auth->assign($author, 'c0f30c58-7bae-39d8-b070-3f537157f5d2');
     }
 }

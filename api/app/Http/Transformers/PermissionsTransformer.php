@@ -23,7 +23,5 @@ class PermissionsTransformer extends BaseTransformer
         if ($object instanceof Assignment) {
             return $object->roleName;
         }
-
-        return;
     }
 }

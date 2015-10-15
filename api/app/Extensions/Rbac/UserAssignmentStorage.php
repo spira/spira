@@ -47,7 +47,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
         /** @var User $user */
         $user = User::findOrFail($userId);
         $roles = $user->roles;
-        if ($key = array_search($role->name, $roles)){
+        if (array_search($role->name, $roles) !== false){
             throw new \InvalidArgumentException("Authorization item '{$role->name}' has already been assigned to user '$userId'.");
         }
         $roles[] = $role->name;
@@ -70,10 +70,14 @@ class UserAssignmentStorage implements AssignmentStorageInterface
      */
     public function revoke(Role $role, $userId)
     {
+        if (!$userId){
+            return false;
+        }
+
         /** @var User $user */
         $user = User::findOrFail($userId);
         $roles = $user->roles;
-        if ($key = array_search($role->name, $roles)){
+        if (($key = array_search($role->name, $roles)) !== false){
             unset($roles[$key]);
             $user->roles = $roles;
             $user->save();

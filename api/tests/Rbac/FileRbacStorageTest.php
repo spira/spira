@@ -17,32 +17,32 @@ use Spira\Rbac\Storage\Storage;
 
 class FileRbacStorageTest extends DbRbacStorageTest
 {
-    public function setUp()
+
+    public function initAuth()
     {
-        parent::setUp();
         $this->clean();
         $this->auth = new Storage(
-                new ItemStorage(__DIR__.'/item.php'),
-                new AssignmentStorage(__DIR__.'/assignment.php')
-            );
+            new ItemStorage(__DIR__.'/item.php'),
+            new AssignmentStorage(__DIR__.'/assignment.php')
+        );
     }
 
     public function testAssignSame()
     {
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
-        $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \'some user\'.');
-        $this->auth->assign($role, 'some user');
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
+        $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \'e9f941b8-50f2-31af-a740-87fe9aa3f60f\'.');
+        $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f');
     }
 
     public function testRemoveAllAssignments()
     {
         $role = new Role('some role');
         $this->auth->addItem($role);
-        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'some user'));
+        $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, 'e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
         $this->auth->removeAllAssignments($role);
-        $this->assertEmpty($this->auth->getAssignments('some user'));
+        $this->assertEmpty($this->auth->getAssignments('e9f941b8-50f2-31af-a740-87fe9aa3f60f'));
     }
 
     public function testUpdateNameToExistingItem()
