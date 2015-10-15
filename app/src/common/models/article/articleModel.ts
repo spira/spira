@@ -126,7 +126,9 @@ namespace common.models {
                 return section.sectionId;
             });
 
-            this.sectionsDisplay.sortOrder = sectionOrder;
+            if (!_.isEqual(this.sectionsDisplay.sortOrder, sectionOrder)){ //only update the value if it has changed
+                this.sectionsDisplay.sortOrder = sectionOrder;
+            }
         }
 
     }

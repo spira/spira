@@ -33,6 +33,7 @@ namespace common.models {
                 [sections.RichText.contentType]: sections.RichTextMock,
                 [sections.Blockquote.contentType]: sections.BlockquoteMock,
                 [sections.Image.contentType]: sections.ImageMock,
+                [sections.Promo.contentType]: sections.PromoMock,
             };
         }
 

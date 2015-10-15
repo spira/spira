@@ -7,6 +7,7 @@ namespace common.models {
             [sections.RichText.contentType]: sections.RichText,
             [sections.Blockquote.contentType]: sections.Blockquote,
             [sections.Image.contentType]: sections.Image,
+            [sections.Promo.contentType]: sections.Promo,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -35,11 +36,12 @@ namespace common.models {
                 [sections.RichText.contentType]: sections.RichText,
                 [sections.Blockquote.contentType]: sections.Blockquote,
                 [sections.Image.contentType]: sections.Image,
+                [sections.Promo.contentType]: sections.Promo,
             };
         }
 
 
-        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image {
+        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image|sections.Promo {
 
             let SectionClass = Section.getContentTypeMap()[data.type];
 

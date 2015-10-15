@@ -44,6 +44,10 @@ namespace common.directives.contentSectionsInput {
                 [common.models.sections.Image.contentType] : {
                     name: "Image",
                     icon: 'image',
+                },
+                [common.models.sections.Promo.contentType] : {
+                    name: "Promo",
+                    icon: 'announcement',
                 }
             };
 
@@ -140,9 +144,10 @@ namespace common.directives.contentSectionsInput {
     }
 
     angular.module(namespace, [
+        namespace + '.sectionInputImage',
+        namespace + '.sectionInputPromo',
         namespace + '.sectionInputRichText',
         namespace + '.sectionInputBlockquote',
-        namespace + '.sectionInputImage',
     ])
         .directive('contentSectionsInput', ContentSectionsInputDirective.factory())
     ;
