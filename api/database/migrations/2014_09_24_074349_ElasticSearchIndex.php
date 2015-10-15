@@ -21,7 +21,36 @@ class ElasticSearchIndex extends Migration
     public function up()
     {
         if (! TestEntity::indexExists()) {
-            TestEntity::createIndex(); // Creates the default index as specified in api/config/elasticquent.php
+            $testEntity = new TestEntity;
+
+            $settings = [
+                'index' => $testEntity->getIndexName(),
+                'body' => [
+                    'settings' => [
+                        'analysis' => [
+                            'filter' => [
+                                'autocomplete_filter' => [
+                                    'type' => 'edge_ngram',
+                                    'min_gram' => 1,
+                                    'max_gram' => 20
+                                ]
+                            ],
+                            'analyzer' => [
+                                'autocomplete' => [
+                                    'type' => 'custom',
+                                    'tokenizer' => 'standard',
+                                    'filter' => [
+                                        'lowercase',
+                                        'autocomplete_filter'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+            $testEntity->getElasticSearchClient()->indices()->create($settings);
         }
     }
 

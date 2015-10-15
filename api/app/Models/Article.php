@@ -93,6 +93,11 @@ class Article extends IndexedModel
     }
 
     protected $mappingProperties = [
+        'title' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
         'tags' => [
             'type' => 'nested',
         ],
