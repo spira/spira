@@ -24,11 +24,11 @@ namespace common.directives.contentSectionsInput {
         (paramObject: ISectionUpdateParams):void;
     }
 
-    class ContentSectionsInputController {
+    export class ContentSectionsInputController {
 
-        public sectionTypes: ISectionTypeMap;
+        private sectionTypes: ISectionTypeMap;
         public sections:common.models.Section<any>[];
-        public onSectionUpdate:ISectionUpdateCallback;
+        private onSectionUpdate:ISectionUpdateCallback;
 
         static $inject = ['ngRestAdapter', '$mdDialog'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService, private $mdDialog:ng.material.IDialogService){

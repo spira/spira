@@ -4,7 +4,7 @@ namespace common.directives.markdownEditor {
         testModel: any;
     }
 
-    describe('Markdown editor directive', function() {
+    describe('Markdown editor directive', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:TestScope
@@ -21,24 +21,24 @@ namespace common.directives.markdownEditor {
 
         });
 
-        it('should initialise the directive', function() {
+        it('should initialise the directive', () => {
 
             $rootScope.testModel = "Some **markdown** text";
 
-            var element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
+            let element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
 
             $rootScope.$digest();
 
             expect(element.html()).to.contain('<div class="CodeMirror');
         });
 
-        it('should change the model', function() {
+        it('should change the model', () => {
 
             let testText = "Some **markdown** text";
 
             $rootScope.testModel = testText;
 
-            var element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
+            let element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
 
             $rootScope.$digest();
 
