@@ -85,7 +85,7 @@ namespace app.admin.articles.listing {
          */
         public search():void {
             this.articlesPaginator.complexQuery({
-                _all: [this.queryString],
+                title: [this.queryString],
                 authorId: _.pluck(this.usersToFilter, 'userId'),
                 _tags: {tagId:_.pluck(this.usersToFilter, 'tagId')}
             })
@@ -106,7 +106,9 @@ namespace app.admin.articles.listing {
          * @returns {ng.IPromise<any[]>}
          */
         public searchTags(query:string):ng.IPromise<any> {
-            return this.tagsPaginator.query(query);
+            return this.tagsPaginator.complexQuery({
+                tag:query
+            });
         }
 
         /**
@@ -123,7 +125,9 @@ namespace app.admin.articles.listing {
          * @returns {ng.IPromise<any[]>}
          */
         public searchUsers(query:string):ng.IPromise<any> {
-            return this.usersPaginator.query(query);
+            return this.usersPaginator.complexQuery({
+                _all:query
+            });
         }
 
         /**

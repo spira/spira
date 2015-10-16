@@ -37,6 +37,14 @@ class Tag extends IndexedModel
         'tag' => 'required|string|alphaDashSpace|max:20',
     ];
 
+    protected $mappingProperties = [
+        'tag' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ]
+    ];
+
     /**
      * @param mixed $id
      * @return BaseModel
