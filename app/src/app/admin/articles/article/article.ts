@@ -91,6 +91,9 @@ namespace app.admin.articles.article {
                         return userService.getUsersPaginator().setCount(10);
                     }
                 },
+                onExit: ['articleService', (articleService:common.services.article.ArticleService) => {
+                    articleService.dumpQueueSaveFunctions();
+                }],
                 data: {
                     title: "Article",
                     icon: 'library_books',

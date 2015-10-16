@@ -57,7 +57,9 @@ namespace common.services {
 
             let promises = _.map(this.getQueuedSaveProcessFunctions(), (queuedSaveFunction:IQueuedSaveProcess) => queuedSaveFunction());
 
-            return this.$q.all(promises);
+            return this.$q.all(promises).then(() => {
+                this.dumpQueueSaveFunctions();
+            });
         }
 
         protected getQueuedSaveProcessFunctions():IQueuedSaveProcess[] {
@@ -68,6 +70,9 @@ namespace common.services {
             this.queuedSaveProcessFunctions.push(fn);
         }
 
+        public dumpQueueSaveFunctions():void{
+            this.queuedSaveProcessFunctions = [];
+        }
 
     }
 }
