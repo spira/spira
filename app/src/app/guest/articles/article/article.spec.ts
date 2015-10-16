@@ -11,25 +11,30 @@ namespace app.guest.articles.article {
             user:common.models.User = common.models.UserMock.entity(),
             $stateParams:IArticleStateParams = <IArticleStateParams> {
                 permalink: 'foobar'
-            };
+            },
+            $state:ng.ui.IStateService;
 
         beforeEach(() => {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _articleService_, _ngJwtAuthService_) => {
+            inject(($controller, _$rootScope_, _articleService_, _ngJwtAuthService_, _$state_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 articleService = _articleService_;
                 ngJwtAuthService = _ngJwtAuthService_;
+                $state = _$state_;
 
                 articleService.getArticle = sinon.stub().returns(article);
 
                 ngJwtAuthService.getUser = sinon.stub().returns(user);
 
+                $state.current.data = [];
+
                 ArticleController = $controller(app.guest.articles.article.namespace + '.controller', {
                     $stateParams: $stateParams,
                     article: article,
+                    $state: $state
                 });
             });
 

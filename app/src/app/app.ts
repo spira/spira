@@ -109,6 +109,7 @@ namespace app {
         'config.vendorModules',
         'config.commonModules',
         'config.stateManager',
+        'app.head'
     ])
         .config(AppConfig)
         .run(AppInit)
