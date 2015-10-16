@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class ArticleMock extends AbstractMock {
+    export class ArticleMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return common.models.Article;
@@ -31,8 +31,8 @@ namespace common.models {
             return <Article> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Article[] {
-            return <Article[]>new this().buildCollection(count);
+        public static collection(count:number = 10, overrides:Object = {}, exists:boolean = true):Article[] {
+            return <Article[]>new this().buildCollection(count, overrides, exists);
         }
 
     }

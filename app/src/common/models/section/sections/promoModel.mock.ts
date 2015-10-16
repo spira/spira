@@ -1,6 +1,6 @@
 namespace common.models.sections {
 
-    export class PromoMock extends AbstractMock {
+    export class PromoMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return Promo;

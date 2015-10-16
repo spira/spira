@@ -118,7 +118,7 @@ namespace common.models {
          * Update the sort order display to match the section object
          */
         public updateSectionsDisplay():void {
-            if (!_.has(this, '_sections')){
+            if (_.isEmpty(this._sections)){
                 return;
             }
 

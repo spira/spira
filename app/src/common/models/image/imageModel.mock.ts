@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class ImageMock extends AbstractMock{
+    export class ImageMock extends AbstractMock implements IMock{
 
         public getModelClass():IModelClass {
             return common.models.Image;
@@ -25,8 +25,8 @@ namespace common.models {
             return <Image> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Image[] {
-            return <Image[]>new this().buildCollection(count);
+        public static collection(count:number = 10, overrides:Object = {}, exists:boolean = true):Image[] {
+            return <Image[]>new this().buildCollection(count, overrides, exists);
         }
 
     }

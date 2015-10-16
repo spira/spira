@@ -1,6 +1,6 @@
 namespace common.models.sections {
 
-    export class RichTextMock extends AbstractMock {
+    export class RichTextMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return RichText;

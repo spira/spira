@@ -1,5 +1,16 @@
 namespace common.models {
 
+    export interface IMock {
+        getModelClass():IModelClass;
+        getMockData():Object;
+    }
+
+    export interface IMockStatic {
+        new():IMock;
+        entity(overrides?:Object, exists?:boolean):IModel;
+        collection(count?:number, overrides?:Object, exists?:boolean):IModel[]
+    }
+
     export abstract class AbstractMock{
 
         public abstract getMockData():Object;

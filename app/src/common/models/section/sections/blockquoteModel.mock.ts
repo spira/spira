@@ -1,6 +1,6 @@
 namespace common.models.sections {
 
-    export class BlockquoteMock extends AbstractMock {
+    export class BlockquoteMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return Blockquote;

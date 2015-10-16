@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class TagMock extends AbstractMock {
+    export class TagMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return common.models.Tag;
@@ -21,8 +21,8 @@ namespace common.models {
             return <Tag> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Tag[] {
-            return <Tag[]>new this().buildCollection(count);
+        public static collection(count:number = 10, overrides:Object = {}, exists:boolean = true):Tag[] {
+            return <Tag[]>new this().buildCollection(count, overrides, exists);
         }
 
     }

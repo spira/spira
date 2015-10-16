@@ -1,6 +1,6 @@
 namespace common.models.sections {
 
-    export class ImageMock extends AbstractMock {
+    export class ImageMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return Image;

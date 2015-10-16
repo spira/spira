@@ -1,23 +1,25 @@
-(() => {
+namespace common.services.article {
 
     describe('Article Service', () => {
 
-        let articleService:common.services.article.ArticleService;
+        let articleService:ArticleService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
         let $rootScope:ng.IRootScopeService;
+        let $q:ng.IQService;
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _articleService_, _ngRestAdapter_, _$rootScope_) => {
+            inject((_$httpBackend_, _articleService_, _ngRestAdapter_, _$rootScope_, _$q_) => {
 
                 if (!articleService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     articleService = _articleService_;
                     ngRestAdapter = _ngRestAdapter_;
                     $rootScope = _$rootScope_;
+                    $q = _$q_;
                 }
             });
 
@@ -138,8 +140,7 @@
                 article.setExists(false);
                 article._tags.push(common.models.TagMock.entity());
                 article._tags.push(common.models.TagMock.entity());
-                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
-                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
+                article._articleMetas = article._articleMetas.concat(common.models.ArticleMetaMock.collection(2, {articleId:article.articleId}));
                 article._sections = common.models.SectionMock.collection(2, {}, false);
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
@@ -190,8 +191,50 @@
 
             });
 
+            describe('queued save functions', () => {
+
+                it('should be able to queue a function (delete section) to be run when save is called', () => {
+
+                    let article = common.models.ArticleMock.entity({
+                        _sections: common.models.SectionMock.collection(2, {}, true),
+                    }, true);
+
+                    let queuedSaveFunction = () => {
+                        return articleService.deleteSection(article, article._sections[0]);
+                    };
+
+                    articleService.addQueuedSaveProcessFunction(queuedSaveFunction);
+
+                    $httpBackend.expectDELETE('/api/articles/'+article.articleId+'/sections/'+article._sections[0].sectionId).respond(201);
+
+                    let savePromise = articleService.saveArticleWithRelated(article);
+
+                    expect(savePromise).eventually.to.equal(article);
+
+
+                    $httpBackend.flush();
+
+                });
+
+                it('should be able to clear the queued save functions', () => {
+
+                    let queuedSaveFunction = ():ng.IPromise<boolean> => {
+                        return $q.when(true);
+                    };
+
+                    articleService.addQueuedSaveProcessFunction(queuedSaveFunction);
+
+                    expect((<any>articleService).queuedSaveProcessFunctions).to.have.length(1);
+
+                    articleService.dumpQueueSaveFunctions();
+
+                    expect((<any>articleService).queuedSaveProcessFunctions).to.be.empty;
+                });
+
+            });
+
         });
 
     });
 
-})();
+}
