@@ -21,18 +21,7 @@ namespace common.directives.markdownEditor {
 
         });
 
-        it('should initialise the directive', () => {
-
-            $rootScope.testModel = "Some **markdown** text";
-
-            let element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
-
-            $rootScope.$digest();
-
-            expect(element.html()).to.contain('<div class="CodeMirror');
-        });
-
-        it('should change the model', () => {
+        it('should initialise the directive and change the model', () => {
 
             let testText = "Some **markdown** text";
 
