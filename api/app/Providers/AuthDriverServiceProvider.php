@@ -32,6 +32,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
             parent::getPayloadGenerators(),
             [
                 '_user' => function (Authenticatable $user) {
+                    $user->roles;
                     /** @var EloquentModelTransformer $transformer */
                     $transformer = $this->app->make(EloquentModelTransformer::class);
 
@@ -58,15 +59,6 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                 foreach ($userData as $key => $value) {
                     if (is_string($value)) {
                         $user->{snake_case($key)} = $value;
-                    }
-
-                    if ($key == '_roles') {
-                        $roles = [];
-                        foreach ($value as $role) {
-                            $role = new \App\Models\Role($role);
-                            $roles[] = $role;
-                        }
-                        $user->setRelation('roles', $roles);
                     }
                 }
 
