@@ -63,7 +63,7 @@ class UserStorySeeder extends BaseSeeder
     protected function assignRandomRole(User $user)
     {
         $role = new \App\Models\Role();
-        $role->role_name = (rand(0,1) > 0)?'testrole':'admin';
+        $role->role_name = (rand(0, 1) > 0) ? 'testrole' : 'admin';
         $user->roles()->save($role);
     }
 }

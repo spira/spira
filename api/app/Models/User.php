@@ -127,7 +127,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     }
 
     /**
-     * Get the user role objects
+     * Get the user role objects.
      *
      * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */

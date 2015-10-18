@@ -60,7 +60,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                         $user->{snake_case($key)} = $value;
                     }
 
-                    if ($key == '_roles'){
+                    if ($key == '_roles') {
                         $roles = [];
                         foreach ($value as $role) {
                             $role = new \App\Models\Role($role);

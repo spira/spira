@@ -78,7 +78,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
             return false;
         }
 
-        $role = \App\Models\Role::where('user_id','=',$userId)->where('role_name','=',$role->name)->first();
+        $role = \App\Models\Role::where('user_id', '=', $userId)->where('role_name', '=', $role->name)->first();
 
         if ($role && $role->delete()) {
             return true;
