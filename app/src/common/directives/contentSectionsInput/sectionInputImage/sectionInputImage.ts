@@ -2,7 +2,7 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
 
     export const namespace = 'common.directives.contentSectionsInput.sectionInputImage';
 
-    class SectionInputImageController {
+    export class SectionInputImageController {
 
         public selectedIndex:number = 0;
         public section:common.models.Section<common.models.sections.Image>;
@@ -17,9 +17,13 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
             this.sizeOptions = common.models.sections.Image.sizeOptions;
         }
 
-        public addImage():void{
+        /**
+         * Add empty image tab
+         * @returns {number}
+         */
+        public addImage():number{
 
-            this.section.content.images.push({
+            return this.section.content.images.push({
                 _image:null,
                 caption:null,
                 size:null,
@@ -28,6 +32,10 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
 
         }
 
+        /**
+         * When image content changes update caption to alt by default
+         * @param imageContent
+         */
         public imageChanged(imageContent:common.models.sections.IImageContent):void {
 
             if (!imageContent.caption){
@@ -36,6 +44,11 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
 
         }
 
+        /**
+         * Delete an image with prompt
+         * @param image
+         * @returns {IPromise<number>}
+         */
         public removeImage(image):ng.IPromise<number> {
 
             var confirm = this.$mdDialog.confirm()

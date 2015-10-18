@@ -11,12 +11,14 @@ namespace common.models.sections {
             let seededChance = new Chance(Math.random());
 
             return {
-                images: {
-                    _image: common.models.ImageMock.entity(),
-                    caption: seededChance.sentence(),
-                    size: _.pick<common.models.sections.ISizeOption, common.models.sections.ISizeOption[]>(common.models.sections.Image.sizeOptions).key,
-                    alignment: _.pick<common.models.sections.IAlignmentOption, common.models.sections.IAlignmentOption[]>(common.models.sections.Image.alignmentOptions).key,
-                }
+                images: [
+                    {
+                        _image: common.models.ImageMock.entity(),
+                        caption: seededChance.sentence(),
+                        size: _.pick<common.models.sections.ISizeOption, common.models.sections.ISizeOption[]>(common.models.sections.Image.sizeOptions).key,
+                        alignment: _.pick<common.models.sections.IAlignmentOption, common.models.sections.IAlignmentOption[]>(common.models.sections.Image.alignmentOptions).key,
+                    }
+                ]
             };
         }
 
