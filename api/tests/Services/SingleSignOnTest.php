@@ -53,7 +53,6 @@ class SingleSignOnTest extends TestCase
         $this->assignAdmin($user);
         $this->assignTest($user);
         $user = User::findOrFail($user->user_id);
-
         $requester = SingleSignOnFactory::create('vanilla', $request, $user);
         $roles = $requester->formatUser()['roles'];
 
