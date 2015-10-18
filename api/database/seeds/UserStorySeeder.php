@@ -24,15 +24,21 @@ class UserStorySeeder extends BaseSeeder
     {
         $faker = Faker::create('au_AU');
 
-        $this->createUser([
+        $user = $this->createUser([
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
             'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
         ]);
 
+        $adminRole = new \App\Models\Role();
+        $adminRole->role_name = 'admin';
+
+        $user->roles()->save($adminRole);
+
         for ($i = 0; $i < 99; $i++) {
-            $this->createUser();
+            $user = $this->createUser();
+            $this->assignRandomRole($user);
         }
     }
 
@@ -40,7 +46,7 @@ class UserStorySeeder extends BaseSeeder
      * Create a new user with credentials.
      *
      * @param   array   $attributes
-     * @return  void
+     * @return  User
      */
     protected function createUser(array $attributes = [])
     {
@@ -50,5 +56,14 @@ class UserStorySeeder extends BaseSeeder
 
         $user->userProfile()->save(factory(UserProfile::class)->make());
         $user->setCredential(factory(UserCredential::class)->make());
+
+        return $user;
+    }
+
+    protected function assignRandomRole(User $user)
+    {
+        $role = new \App\Models\Role();
+        $role->role_name = (rand(0,1) > 0)?'testrole':'admin';
+        $user->roles()->save($role);
     }
 }

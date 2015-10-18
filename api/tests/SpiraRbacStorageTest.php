@@ -88,7 +88,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
         $user = $this->createUser();
         $this->auth->addItem($role);
         $this->assertInstanceOf(Assignment::class, $this->auth->assign($role, $user->user_id));
-        $this->setExpectedException('InvalidArgumentException', 'Authorization item \'some role\' has already been assigned to user \''.$user->user_id.'\'.');
+        $this->setExpectedException('Illuminate\Database\QueryException');
         $this->auth->assign($role, $user->user_id);
     }
 

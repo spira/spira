@@ -56,8 +56,17 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                 $userData = $payload['_user'];
                 $user = $provider->createModel();
                 foreach ($userData as $key => $value) {
-                    if (is_string($value) || $key == 'roles') {
+                    if (is_string($value)) {
                         $user->{snake_case($key)} = $value;
+                    }
+
+                    if ($key == '_roles'){
+                        $roles = [];
+                        foreach ($value as $role) {
+                            $role = new \App\Models\Role($role);
+                            $roles[] = $role;
+                        }
+                        $user->setRelation('roles', $roles);
                     }
                 }
 

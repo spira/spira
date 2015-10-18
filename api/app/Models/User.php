@@ -16,12 +16,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 use Spira\Auth\User\SocialiteAuthenticatable;
+use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
 
 /**
  * Class User.
  *
- * @property array $roles
+ * @property Role[]|Collection $roles
  */
 class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
@@ -126,6 +127,16 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     }
 
     /**
+     * Get the user role objects
+     *
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
+     */
+    public function roles()
+    {
+        return $this->hasMany(Role::class, 'user_id', 'user_id');
+    }
+
+    /**
      * Set the user's credentials.
      *
      * @param  UserCredential  $credential
@@ -167,26 +178,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function getFullNameAttribute()
     {
         return sprintf('%s %s', $this->first_name, $this->last_name);
-    }
-
-    public function getRolesAttribute()
-    {
-        if ($roles = $this->getAttributeFromArray('roles')) {
-            return explode(',', $roles);
-        }
-
-        return [];
-    }
-
-    public function setRolesAttribute(array $roles = [])
-    {
-        $roles = array_unique($roles);
-
-        if (! empty($roles)) {
-            $this->attributes['roles'] = implode(',', $roles);
-        } else {
-            $this->attributes['roles'] = null;
-        }
     }
 
     /**

@@ -26,14 +26,16 @@ class UserAssignmentStorage implements AssignmentStorageInterface
      */
     public function getAssignments($userId)
     {
+        /** @var User $user */
         $user = User::findOrFail($userId);
         $assignments = [];
 
+        /** @var \App\Models\Role $role */
         foreach ($user->roles as $role) {
             $assignment = new Assignment();
             $assignment->userId = $userId;
-            $assignment->roleName = $role;
-            $assignments[$role] = $assignment;
+            $assignment->roleName = $role->role_name;
+            $assignments[$role->role_name] = $assignment;
         }
 
         return $assignments;
@@ -50,13 +52,11 @@ class UserAssignmentStorage implements AssignmentStorageInterface
     {
         /** @var User $user */
         $user = User::findOrFail($userId);
-        $roles = $user->roles;
-        if (array_search($role->name, $roles) !== false) {
-            throw new \InvalidArgumentException("Authorization item '{$role->name}' has already been assigned to user '$userId'.");
-        }
-        $roles[] = $role->name;
-        $user->roles = $roles;
-        $user->save();
+
+        $roleModel = new \App\Models\Role();
+        $roleModel->role_name = $role->name;
+
+        $user->roles()->save($roleModel);
 
         $assignment = new Assignment();
         $assignment->userId = $userId;
@@ -78,14 +78,9 @@ class UserAssignmentStorage implements AssignmentStorageInterface
             return false;
         }
 
-        /** @var User $user */
-        $user = User::findOrFail($userId);
-        $roles = $user->roles;
-        if (($key = array_search($role->name, $roles)) !== false) {
-            unset($roles[$key]);
-            $user->roles = $roles;
-            $user->save();
+        $role = \App\Models\Role::where('user_id','=',$userId)->where('role_name','=',$role->name)->first();
 
+        if ($role && $role->delete()) {
             return true;
         }
 
