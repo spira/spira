@@ -55,4 +55,12 @@ class BlacklistTest extends TestCase
         $this->setExpectedException(TokenExpiredException::class, 'Token has expired');
         $blacklist->check(['my_key' => 'my_key_value']);
     }
+
+    public function testActualStorage()
+    {
+        $repo = m::mock('Illuminate\Contracts\Cache\Repository');
+        $repo->shouldReceive('add')->with('some id', 'some id', 60)->once()->andReturn(true);
+        $driver = new \Spira\Auth\Blacklist\CacheDriver($repo);
+        $driver->add('some id');
+    }
 }
