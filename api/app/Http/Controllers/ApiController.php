@@ -15,11 +15,14 @@ use Spira\Model\Model\BaseModel;
 use Laravel\Lumen\Routing\Controller;
 use Spira\Model\Collection\Collection;
 use App\Exceptions\BadRequestException;
+use Spira\Rbac\Access\AuthorizesRequestsTrait;
 use Spira\Responder\Response\ApiResponse;
 use Spira\Responder\Contract\TransformerInterface;
 
 abstract class ApiController extends Controller
 {
+    use AuthorizesRequestsTrait;
+
     protected $paginatorDefaultLimit = 10;
     protected $paginatorMaxLimit = 50;
 
@@ -27,6 +30,18 @@ abstract class ApiController extends Controller
      * @var TransformerInterface
      */
     protected $transformer;
+
+    /**
+     * Enable permissions checks.
+     */
+    protected $permissionsEnabled = false;
+
+    /**
+     * Name of the default role to check against
+     * Designed for default rules
+     * Should be set to false to enable route based permissions.
+     */
+    protected $defaultRole = 'admin';
 
     public function __construct(TransformerInterface $transformer)
     {
@@ -87,5 +102,25 @@ abstract class ApiController extends Controller
         }
 
         return [];
+    }
+
+    /**
+     * Authorize a given action against a set of arguments.
+     *
+     * @param  mixed  $permission
+     * @param  mixed|array  $arguments
+     * @return void
+     */
+    public function checkPermission($permission, $arguments = [])
+    {
+        if (! $this->permissionsEnabled) {
+            return;
+        }
+
+        if ($this->defaultRole) {
+            $permission = $this->defaultRole;
+        }
+
+        $this->authorize($permission, $arguments);
     }
 }

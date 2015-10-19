@@ -384,8 +384,6 @@ class EntityTest extends TestCase
 
     public function testGetOneWithInvalidNested()
     {
-        $this->markTestSkipped('Skipped until https://github.com/laravel/framework/pull/10309 is fixed');
-
         /** @var TestEntity $entity */
         $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);

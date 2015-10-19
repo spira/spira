@@ -11,6 +11,7 @@
 use App\Models\User;
 use Faker\Factory as Faker;
 use Spira\Auth\Driver\Guard;
+use Spira\Rbac\Storage\StorageInterface;
 
 trait HelpersTrait
 {
@@ -69,7 +70,6 @@ trait HelpersTrait
         $default = [
             'email' => $faker->unique()->email,
             'username' => $faker->unique()->username,
-            'user_type' => 'admin',
         ];
         $attr = array_merge($default, $attributes);
 
@@ -88,8 +88,30 @@ trait HelpersTrait
         }
     }
 
+    /**
+     * @return Spira\Rbac\Storage\Storage
+     */
+    protected function getAuthStorage()
+    {
+        return $this->app->make(StorageInterface::class);
+    }
+
+    protected function assignAdmin($user)
+    {
+        $adminRole = $this->getAuthStorage()->getItem('admin');
+        $this->getAuthStorage()->assign($adminRole, $user->user_id);
+    }
+
+    protected function assignTest($user)
+    {
+        $testRole = $this->getAuthStorage()->getItem('testrole');
+        $this->getAuthStorage()->assign($testRole, $user->user_id);
+    }
+
     protected function tokenFromUser($user, $customClaims = [])
     {
+        $user = User::findOrFail($user->user_id);
+
         /** @var Guard $auth */
         $auth = $this->app->make('auth');
         $payload = $auth->getPayloadFactory()->createFromUser($user);
