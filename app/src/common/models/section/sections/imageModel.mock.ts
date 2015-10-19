@@ -8,7 +8,7 @@ namespace common.models.sections {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             return {
                 images: [
