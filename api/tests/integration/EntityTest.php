@@ -10,6 +10,7 @@
 
 use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
+use Illuminate\Support\Facades\Cache;
 use Rhumsaa\Uuid\Uuid;
 
 /**
@@ -757,15 +758,14 @@ class EntityTest extends TestCase
 
     public function testLocalisedPutOneNew()
     {
-        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = $this->getFactory(TestEntity::class)
+            ->makeVisible(['hidden'])
+            ->transformed();
 
+        $id = $entity['entityId'];
         $locale = 'au';
-        $id = $entity->entity_id;
-        $entity = $this->prepareEntity($entity);
 
-        $rowCount = TestEntity::count();
-
-        $this->putJson('/test/entities/'.$id, $entity, ['Content-Region' => $locale]);
+        $this->putJson('/test/entities/' . $id, $entity, ['Content-Region' => $locale]);
 
         // Assert the cache
         $key = sprintf('l10n:%s:%s', $id, $locale);
@@ -777,12 +777,9 @@ class EntityTest extends TestCase
 
     public function testLocalisedPutManySomeLocalised()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = $this->getFactory(TestEntity::class)->count(5)->makeVisible(['hidden'])->transformed();
         $locale = 'au';
 
-        $entities = array_map(function ($entity) {
-            return $this->prepareEntity($entity);
-        }, $entities->all());
         $entities[1]['text'] = 'localised text';
         $entities[2]['text'] = 'localised text';
 
