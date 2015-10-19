@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\SocialLogin;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
@@ -34,6 +35,10 @@ class UserController extends EntityController
      * @var SpiraGuard
      */
     protected $auth;
+
+    protected $permissionsEnabled = true;
+
+    protected $defaultRole = false;
 
     /**
      * Assign dependencies.
@@ -62,9 +67,6 @@ class UserController extends EntityController
      */
     public function putOne(Request $request, $id)
     {
-        // Set new users to guest
-        $request->merge(['user_type' => 'guest']);
-
         if ($this->getModel()->find($id)) {
             throw new ValidationException(
                 new MessageBag(['uuid' => 'Users are not permitted to be replaced.'])
@@ -99,7 +101,7 @@ class UserController extends EntityController
     {
         /** @var User $model */
         $model = $this->findOrFailEntity($id);
-        $this->authorize($model);
+        $this->authorize(static::class.'@patchOne', ['model' => $model]);
         // Check if the email is being changed, and initialize confirmation
         $email = $request->input('email');
         if ($email && $model->email != $email) {

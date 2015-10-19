@@ -10,7 +10,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Extensions\Controller\AuthorizesRequestsTrait;
 use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
+use Spira\Rbac\Access\AuthorizesRequestsTrait;
 use Spira\Responder\Contract\TransformerInterface;
 use Spira\Responder\Response\ApiResponse;
 

@@ -40,7 +40,6 @@ namespace app.user.profile {
                 timezoneIdentifier:'America/Guyana',
                 _userCredential:userCredential,
                 _userProfile:userProfile,
-                userType:'guest'
             },
             userService = {
                 saveUserWithRelated: (user:common.models.User) => {

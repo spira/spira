@@ -43,11 +43,15 @@ namespace common.models {
 
         it('should be able to check if the user is an administrator', () => {
 
-            userData.userType = 'admin';
+            let adminUser = UserMock.entity({
+                _roles: [
+                    RoleAssignmentMock.entity({
+                        roleKey: RoleAssignment.adminRoleKey,
+                    }),
+                ],
+            });
 
-            let user = new User(_.clone(userData, true));
-
-            expect(user.isAdmin()).to.be.true;
+            expect(adminUser.isAdmin()).to.be.true;
 
         });
 

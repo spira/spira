@@ -215,7 +215,7 @@ class Article extends IndexedModel
 
     public function articleMetas()
     {
-        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id');
+        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id', 'articleMetas');
     }
 
     /**

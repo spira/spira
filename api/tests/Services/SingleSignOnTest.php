@@ -8,8 +8,8 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Support\Collection;
 use App\Exceptions\NotImplementedException;
+use App\Models\User;
 use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Services\SingleSignOn\VanillaSingleSignOn;
 
@@ -48,21 +48,17 @@ class SingleSignOnTest extends TestCase
     public function testGetMappedRoles()
     {
         $request = Mockery::mock('Illuminate\Http\Request');
-        $roles = new Collection([['name' => 'admin'], ['name' => 'guest'], ['name' => 'foobar']]);
-        $user = (object) [
-            'user_id' => '',
-            'username' => '',
-            'email' => '',
-            'avatar_img_url' => '',
-            'roles' => $roles,
-        ];
 
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+        $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
         $requester = SingleSignOnFactory::create('vanilla', $request, $user);
         $roles = $requester->formatUser()['roles'];
 
         $this->assertContains('administrator', $roles);
         $this->assertContains('member', $roles);
-        $this->assertContains('foobar', $roles);
+        $this->assertContains('testrole', $roles);
     }
 
     public function testMissingClient()
@@ -167,14 +163,10 @@ class SingleSignOnTest extends TestCase
 
     public function testUnsecureUser()
     {
-        $roles = new Collection([['name' => 'admin'], ['name' => 'guest'], ['name' => 'foobar']]);
-        $user = (object) [
-            'user_id' => '',
-            'username' => '',
-            'email' => '',
-            'avatar_img_url' => '',
-            'roles' => $roles,
-        ];
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+        $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
 
         $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
         $timestamp = time();
@@ -194,14 +186,10 @@ class SingleSignOnTest extends TestCase
 
     public function testPublicWithUser()
     {
-        $roles = new Collection([['name' => 'admin'], ['name' => 'guest'], ['name' => 'foobar']]);
-        $user = (object) [
-            'user_id' => '',
-            'username' => 'foobar',
-            'email' => 'foo@bar.com',
-            'avatar_img_url' => 'http://foobar',
-            'roles' => $roles,
-        ];
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+        $this->assignTest($user);
+        $user = User::findOrFail($user->user_id);
 
         $clientId = env('VANILLA_JSCONNECT_CLIENT_ID');
         $request = $this->mockRequest($clientId);

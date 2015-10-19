@@ -188,7 +188,7 @@ class AuthController extends ApiController
             $user = $userModel->findByEmail($socialUser->email);
         } catch (ModelNotFoundException $e) {
             $user = $userModel->newInstance();
-            $user->fill(array_merge($socialUser->toArray(), ['user_type' => 'guest']));
+            $user->fill(array_merge($socialUser->toArray()));
             $user->save();
         }
 
