@@ -16,20 +16,20 @@ trait ModelFactoryTrait
      * Making it static not to reinit for each TestCase.
      * @var ModelFactory
      */
-    protected static $modelFactory;
+    protected $modelFactory;
 
     public function bootModelFactoryTrait()
     {
-        if (is_null(static::$modelFactory)) {
-            static::$modelFactory = \App::make(ModelFactory::class);
-        }
+        $this->modelFactory = $this->app->make(ModelFactory::class);
     }
 
     /**
-     * @return ModelFactory
+     * @param string|null $factoryName
+     * @param string|null $definedName
+     * @return \App\Services\ModelFactoryInstance
      */
-    public function getFactory()
+    public function getFactory($factoryName = null, $definedName = 'default')
     {
-        return static::$modelFactory;
+        return $this->modelFactory->get($factoryName, $definedName);
     }
 }

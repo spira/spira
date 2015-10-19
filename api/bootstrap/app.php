@@ -33,6 +33,8 @@ $app->withEloquent();
 
 $app->configure('hosts');
 $app->configure('elasticquent');
+$app->configure('regions');
+$app->configure('jwt');
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +69,6 @@ $app->singleton(
 */
 
 $app->middleware([
-    App\Http\Middleware\UserResolverMiddleware::class,
     App\Http\Middleware\TransformInputDataMiddleware::class,
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
@@ -77,7 +78,6 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'permission' => 'App\Http\Middleware\PermissionMiddleware',
     'transaction' => App\Http\Middleware\TransactionMiddleware::class,
 ]);
 
@@ -93,10 +93,11 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\LockServiceProvider::class);
-$app->register(App\Providers\JWTAuthServiceProvider::class);
+$app->register(App\Providers\AuthDriverServiceProvider::class);
+$app->register(App\Providers\AccessServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
+$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
