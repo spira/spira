@@ -10,11 +10,13 @@
 
 namespace App\Services\SingleSignOn;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\SingleSignOn\Exceptions\VanillaException;
 use App\Services\SingleSignOn\Exceptions\VanillaAccessDeniedException;
 use App\Services\SingleSignOn\Exceptions\VanillaInvalidClientException;
 use App\Services\SingleSignOn\Exceptions\VanillaInvalidRequestException;
+use Spira\Rbac\Access\Gate;
 
 class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnContract
 {
@@ -148,23 +150,39 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function getMappedRoles()
     {
-        $roles = $this->user->roles->pluck('name');
+        $user = $this->user;
+        $roles = $this->getGate()->getDefaultRoles();
 
-        // Map Spira to Vanilla roles
-        $roles = $roles->map(function ($role) {
+        if ($user instanceof User) {
+            $userRoles = $user->roles;
+            if ($userRoles) {
+                $userRoles = $userRoles->lists('role_key')->toArray();
+            } else {
+                $userRoles = [];
+            }
+            $roles = array_merge($roles, $userRoles);
+        }
+
+        array_walk($roles, function (&$item) {
             $mapping = [
                 'admin' => 'administrator',
-                'guest' => 'member',
+                'user' => 'member',
             ];
 
-            if (array_key_exists($role, $mapping)) {
-                return $mapping[$role];
+            if (array_key_exists($item, $mapping)) {
+                $item = $mapping[$item];
             }
-
-            return $role;
         });
 
-        return $roles->implode(',');
+        return implode(',', $roles);
+    }
+
+    /**
+     * @return Gate
+     */
+    protected function getGate()
+    {
+        return \App::make(Gate::GATE_NAME);
     }
 
     /**

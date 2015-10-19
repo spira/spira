@@ -171,7 +171,20 @@ class ArticleTagTest extends TestCase
         $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
 
         $article = Article::find($article->article_id);
-        $this->assertCount(1, $article->revisionHistory->toArray());
+
+        //as far as tag touch article i.e. update article timestamps, there can be 2 records
+        //sp we need more complex logics here than
+        //$this->assertCount(1, $article->revisionHistory->toArray());
+
+        $revisions = $article->revisionHistory->toArray();
+        $tagRevision = false;
+        foreach ($revisions as $revision) {
+            if ($revision['key'] === 'tags') {
+                $tagRevision = true;
+            }
+        }
+
+        $this->assertTrue($tagRevision);
 
         $this->cleanupDiscussions([$article]);
     }

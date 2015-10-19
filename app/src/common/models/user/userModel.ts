@@ -7,11 +7,8 @@ namespace common.models {
             _userProfile: UserProfile,
             _socialLogins: UserSocialLogin,
             _userCredential: UserCredential,
+            _roles: RoleAssignment,
         };
-
-        public static adminType = 'admin';
-        public static guestType = 'guest';
-        public static userTypes:string[] = [User.adminType, User.guestType];
 
         public userId:string = undefined;
         public email:string = undefined;
@@ -25,7 +22,7 @@ namespace common.models {
         public _userCredential:global.IUserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
-        public userType:string = undefined;
+        public _roles:common.models.RoleAssignment[] = undefined;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
@@ -45,7 +42,8 @@ namespace common.models {
          * @returns {boolean}
          */
         public isAdmin():boolean {
-            return this.userType == User.adminType;
+
+            return _.any(this._roles, {roleKey: common.models.RoleAssignment.adminRoleKey});
         }
 
         /**

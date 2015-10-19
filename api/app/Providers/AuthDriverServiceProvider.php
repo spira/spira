@@ -32,6 +32,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
             parent::getPayloadGenerators(),
             [
                 '_user' => function (Authenticatable $user) {
+                    $user->roles;
                     /** @var EloquentModelTransformer $transformer */
                     $transformer = $this->app->make(EloquentModelTransformer::class);
 
