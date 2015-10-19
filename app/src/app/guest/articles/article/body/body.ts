@@ -10,7 +10,6 @@ namespace app.guest.articles.article.body {
         constructor(
             public article:common.models.Article
         ) {
-            console.log('article', article);
         }
 
     }
