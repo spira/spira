@@ -10,12 +10,28 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Polices\UserPolicy;
+use App\Extensions\Rbac\UserAssignmentStorage;
+use Laravel\Lumen\Application;
+use Spira\Rbac\Providers\RBACProvider;
+use Spira\Rbac\Storage\AssignmentStorageInterface;
+use Spira\Rbac\Storage\File\ItemStorage;
+use Spira\Rbac\Storage\ItemStorageInterface;
 
-class AccessServiceProvider extends \Spira\Auth\Providers\AccessServiceProvider
+class AccessServiceProvider extends RBACProvider
 {
-    protected $policies = [
-        User::class => UserPolicy::class,
-    ];
+    protected $defaultRoles = ['user'];
+
+    protected function registerAssignmentStorage()
+    {
+        $this->app->singleton(AssignmentStorageInterface::class, function (Application $app) {
+            return $app->make(UserAssignmentStorage::class);
+        });
+    }
+
+    protected function registerItemStorage()
+    {
+        $this->app->singleton(ItemStorageInterface::class, function (Application $app) {
+            return new ItemStorage($app->basePath().'/config/permissions.php');
+        });
+    }
 }

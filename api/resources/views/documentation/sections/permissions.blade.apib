@@ -1,0 +1,25 @@
+# Group Permissions
+Role based access control system.
+
+## User roles [/permissions/users/{userId}]
+Roles array assigned to user
+
++ Parameters
+    + userId (required, uuid, `{!! $faker->uuid !!}`) ... Unique `id` of the user entity to perform action with.
+
+### Get all user roles [GET]
+#### Restrictions
+* Denied - [all]
+* Allowed - [admin, self]
+
++ Request
+
+    + Headers
+
+        Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 200 (application/json)
+
+    + Body
+
+        {!! json_encode(['user','admin','testuser']) !!}

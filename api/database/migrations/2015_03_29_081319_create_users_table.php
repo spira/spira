@@ -32,7 +32,6 @@ class CreateUsersTable extends Migration
             $table->string('country', 2)->nullable();
             $table->string('region_code', 2)->nullable();
             $table->string('timezone_identifier', 40)->nullable();
-            $table->enum('user_type', User::$userTypes);
             $table->string('avatar_img_url')->nullable();
 
             $table->dateTime('created_at');

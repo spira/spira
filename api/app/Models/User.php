@@ -16,15 +16,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 use Spira\Auth\User\SocialiteAuthenticatable;
+use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
 
+/**
+ * Class User.
+ *
+ * @property Role[]|Collection $roles
+ */
 class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
     use Authenticatable;
-
-    const USER_TYPE_ADMIN = 'admin';
-    const USER_TYPE_GUEST = 'guest';
-    public static $userTypes = [self::USER_TYPE_ADMIN, self::USER_TYPE_GUEST];
 
     /**
      * Login/email confirm token time to live in minutes.
@@ -54,7 +56,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'last_name',
         'email_confirmed',
         'timezone_identifier',
-        'user_type',
         'avatar_img_url',
         'email',
         'region_code',
@@ -126,19 +127,13 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     }
 
     /**
-     * @todo Replace these two methods with the hasMany relationship for roles
-     *       when implementing. For now they "simulate" the relationship so
-     *       functionality accessing roles will get a similar dataset as when
-     *       the relation is implemented
+     * Get the user role objects.
+     *
+     * @return HasMany|\Illuminate\Database\Eloquent\Builder
      */
     public function roles()
     {
-        return new \Illuminate\Support\Collection([['name' => $this->user_type]]);
-    }
-
-    public function getRolesAttribute()
-    {
-        return $this->roles();
+        return $this->hasMany(Role::class, 'user_id', 'user_id');
     }
 
     /**
@@ -305,11 +300,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public static function findCurrentEmail($newEmail)
     {
         return Cache::get('email_change_'.$newEmail, false); // Return false on cache miss
-    }
-
-    public function isAdmin()
-    {
-        return $this->user_type === self::USER_TYPE_ADMIN;
     }
 
     /**

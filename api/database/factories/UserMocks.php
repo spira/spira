@@ -19,7 +19,6 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
         'country' => $faker->randomElement(['AU', 'BE', 'DE', 'NZ', 'US']),
         'timezone_identifier' => $faker->timezone,
         'avatar_img_url' => $faker->optional(0.8)->imageUrl(500, 500, 'people'),
-        'user_type' => $faker->randomElement(App\Models\User::$userTypes),
         'region_code' => $faker->optional(0.9)->randomElement(array_pluck(config('regions.supported'), 'code')),
     ];
 });

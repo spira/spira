@@ -19,7 +19,6 @@ namespace common.models {
                 country:seededChance.country(),
                 avatarImgUrl:seededChance.url(),
                 regionCode: seededChance.pick(['uk', 'us', 'gb']),
-                userType: seededChance.pick(User.userTypes),
             };
 
         }

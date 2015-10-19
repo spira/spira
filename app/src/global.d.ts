@@ -44,7 +44,6 @@ declare namespace global {
         userId:string;
         firstName:string; //make compulsory
         lastName:string; //make compulsory
-        userType?:string;
         emailConfirmed?:string;
         avatarImgUrl?:string;
         country?:string;
