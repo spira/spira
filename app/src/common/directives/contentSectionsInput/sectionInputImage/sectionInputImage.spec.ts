@@ -59,7 +59,7 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
             expect($(compiledElement).hasClass('section-input-image')).to.be.true;
         });
 
-        it('should be able to add a image section', () => {
+        it('should be able to add an image section', () => {
 
             let currentImageCount = directiveController.section.content.images.length;
 

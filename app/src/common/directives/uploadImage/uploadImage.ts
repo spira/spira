@@ -46,6 +46,7 @@ namespace common.directives.uploadImage {
         public queuedImage:common.services.image.IImageUploadOptions;
         public imageUploadForm:ng.IFormController;
         private imageUploadedHandler:IImageUploadedHandler;
+        public currentImage:common.models.Image
 
         constructor(private imageService:common.services.image.ImageService) {
 
@@ -74,6 +75,7 @@ namespace common.directives.uploadImage {
 
                 this.queuedImage = null;
                 this.imageUploadForm.$setPristine();
+                this.currentImage = image
 
             };
 
@@ -101,7 +103,7 @@ namespace common.directives.uploadImage {
         public restrict = 'E';
         public require = ['ngModel','uploadImage'];
         public templateUrl = 'templates/common/directives/uploadImage/uploadImage.tpl.html';
-        public replace = false;
+        public replace = true;
         public scope = {
         };
 
@@ -125,7 +127,7 @@ namespace common.directives.uploadImage {
 
             $ngModelController.$render = () => {
 
-                //directiveController.currentImage = $ngModelController.$modelValue;
+                directiveController.currentImage = $ngModelController.$modelValue;
             };
 
         };
