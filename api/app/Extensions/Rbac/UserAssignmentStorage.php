@@ -34,8 +34,8 @@ class UserAssignmentStorage implements AssignmentStorageInterface
         foreach ($user->roles as $role) {
             $assignment = new Assignment();
             $assignment->userId = $userId;
-            $assignment->roleName = $role->role_name;
-            $assignments[$role->role_name] = $assignment;
+            $assignment->roleName = $role->role_key;
+            $assignments[$role->role_key] = $assignment;
         }
 
         return $assignments;
@@ -54,7 +54,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
         $user = User::findOrFail($userId);
 
         $roleModel = new \App\Models\Role();
-        $roleModel->role_name = $role->name;
+        $roleModel->role_key = $role->name;
 
         $user->roles()->save($roleModel);
 
@@ -78,7 +78,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
             return false;
         }
 
-        $role = \App\Models\Role::where('user_id', '=', $userId)->where('role_name', '=', $role->name)->first();
+        $role = \App\Models\Role::where('user_id', '=', $userId)->where('role_key', '=', $role->name)->first();
 
         if ($role && $role->delete()) {
             return true;

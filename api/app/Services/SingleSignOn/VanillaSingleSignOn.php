@@ -156,7 +156,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
         if ($user instanceof User) {
             $userRoles = $user->roles;
             if ($userRoles) {
-                $userRoles = $userRoles->lists('role_name')->toArray();
+                $userRoles = $userRoles->lists('role_key')->toArray();
             } else {
                 $userRoles = [];
             }

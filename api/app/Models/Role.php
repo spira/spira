@@ -15,13 +15,13 @@ use Spira\Model\Model\BaseModel;
 /**
  * Class Role.
  *
- * @property string $role_name name of the current role
+ * @property string role_key name of the current role
  */
 class Role extends BaseModel
 {
     public $table = 'roles';
 
-    protected $primaryKey = 'role_name';
+    protected $primaryKey = 'role_key';
 
     public $timestamps = false;
 
@@ -30,5 +30,5 @@ class Role extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['user_id','role_name'];
+    protected $fillable = ['user_id','role_key'];
 }

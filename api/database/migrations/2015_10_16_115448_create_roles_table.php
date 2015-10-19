@@ -22,9 +22,9 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->string('role_name', 128);
+            $table->string('role_key', 128);
             $table->uuid('user_id')->index();
-            $table->primary(['role_name', 'user_id']);
+            $table->primary(['role_key', 'user_id']);
 
             $table->foreign('user_id')
                 ->references('user_id')->on(User::getTableName())
