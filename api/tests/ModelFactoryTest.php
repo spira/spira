@@ -206,4 +206,56 @@ class ModelFactoryTest extends TestCase
 
         $this->assertEquals($entity->first()->entity_id, $entityTransformed[0]['entityId']);
     }
+
+    public function testNullFactoryPredefined()
+    {
+        $testModel = $this->getFactory(TestEntity::class)->make();
+
+        $createdModel = $this->modelFactoryTest
+            ->get()
+            ->setModel($testModel)
+            ->make();
+
+        $this->assertEquals($testModel, $createdModel);
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testNullFactoryMockAttempt()
+    {
+        $this->modelFactoryTest
+            ->get()
+            ->make();
+    }
+
+    public function testMixedPredefinedAndSeededMocks()
+    {
+        $testModel = $this->getFactory(TestEntity::class)
+            ->make();
+
+        $createdModels = $this->modelFactoryTest
+            ->get(TestEntity::class)
+            ->setModel($testModel)
+            ->count(5)
+            ->make();
+
+        $this->assertContains($testModel, $createdModels->all());
+        $this->assertCount(5, $createdModels->all());
+    }
+
+    public function testRandomFromPredefinedCollection()
+    {
+        $testModels = $this->getFactory(TestEntity::class)
+            ->count(10)
+            ->make();
+
+        $mock = $this->getFactory()
+            ->setCollection($testModels)
+            ->count(1)
+            ->make();
+
+        $this->assertInstanceOf(TestEntity::class, $mock);
+        $this->assertContains($mock, $testModels->all());
+    }
 }

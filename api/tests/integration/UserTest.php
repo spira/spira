@@ -40,7 +40,7 @@ class UserTest extends TestCase
 
     public function testGetAllPaginatedByAdminUser()
     {
-        $this->createUser([], 10);
+        $this->createUsers(10);
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
@@ -48,7 +48,6 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
             'Range' => 'entities=0-19',
         ]);
-
         $this->assertResponseStatus(206);
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -128,82 +127,35 @@ class UserTest extends TestCase
 
     public function testPutOne()
     {
-        $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(User::class)
+        $user = $this->getFactory(User::class)
             ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
             ->append(
                 '_userCredential',
-                $factory->get(UserCredential::class)
+                $this->getFactory(UserCredential::class)
                     ->hide(['self'])
                     ->makeVisible(['password'])
                     ->customize(['password' => 'password'])
                     ->toArray()
             )
-            ->append(
-                '_userProfile',
-                $factory->get(UserProfile::class)
-                    ->hide(['self'])
-                    ->transformed()
-            );
-
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = $transformer->transform($user);
+            ->transformed();
 
         $this->putJson('/users/'.$user['userId'], $user);
 
         $response = json_decode($this->response->getContent());
 
         $createdUser = User::find($user['userId']);
-        $userProfile = UserProfile::find($user['userId']);
-        $this->assertResponseStatus(201);
-        $this->assertEquals($user['firstName'], $createdUser->first_name);
-        $this->assertEquals($user['_userProfile']['dob'], $userProfile->dob->toDateString());
-        $this->assertObjectNotHasAttribute('_userCredential', $response);
-        $this->assertObjectNotHasAttribute('_userProfile', $response);
-    }
 
-    public function testPutOneNoProfile()
-    {
-        $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'username', 'email', 'first_name', 'last_name'])
-            ->append(
-                '_userCredential',
-                $factory->get(UserCredential::class)
-                    ->hide(['self'])
-                    ->makeVisible(['password'])
-                    ->customize(['password' => 'password'])
-                    ->toArray()
-            );
-
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = $transformer->transform($user);
-
-        $this->putJson('/users/'.$user['userId'], $user);
-
-        $response = json_decode($this->response->getContent());
-
-        $createdUser = User::find($user['userId']);
         $this->assertResponseStatus(201);
         $this->assertEquals($user['firstName'], $createdUser->first_name);
         $this->assertObjectNotHasAttribute('_userCredential', $response);
         $this->assertObjectNotHasAttribute('_userProfile', $response);
-
-        $userProfile = UserProfile::find($user['userId']);
-        $this->assertNull($userProfile);
     }
 
     public function testPutOneNoCredentials()
     {
-        $factory = $this->app->make('App\Services\ModelFactory');
-        $user = $factory->get(User::class)
-            ->showOnly(['user_id', 'email', 'first_name', 'last_name']);
-
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = $transformer->transform($user);
+        $user = $this->getFactory(User::class)
+            ->showOnly(['user_id', 'email', 'first_name', 'last_name'])
+            ->transformed();
 
         $this->putJson('/users/'.$user['userId'], $user);
 
@@ -216,35 +168,15 @@ class UserTest extends TestCase
         $user = $this->createUser();
         $user['_userCredential'] = ['password' => 'password'];
 
-        $transformerService = $this->app->make(App\Services\TransformerService::class);
-        $transformer = new App\Http\Transformers\EloquentModelTransformer($transformerService);
-        $user = array_except($transformer->transform($user), ['_self', 'userType']);
+        $user = $this->getFactory(User::class)
+            ->setModel($user)
+            ->hide(['_self', 'userType'])
+            ->transformed();
 
         $this->putJson('/users/'.$user['userId'], $user);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
-    }
-
-    public function testPatchOneByAdminUserNoProfile()
-    {
-        $user = $this->createUser(['user_type' => 'admin']);
-        $userToUpdate = $this->createUser(['user_type' => 'guest']);
-        $token = $this->tokenFromUser($user);
-
-        $update = [
-            'firstName' => 'foobar',
-        ];
-
-        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
-
-        $updatedUser = User::find($userToUpdate->user_id);
-
-        $this->assertResponseStatus(204);
-        $this->assertResponseHasNoContent();
-        $this->assertEquals('foobar', $updatedUser->first_name);
     }
 
     public function testPatchOneByAdminUser()
@@ -255,9 +187,6 @@ class UserTest extends TestCase
 
         $update = [
             'firstName' => 'foobar',
-            '_userProfile' => [
-                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
-            ],
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
@@ -265,12 +194,10 @@ class UserTest extends TestCase
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
-        $updatedProfile = UserProfile::find($userToUpdate->user_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals('foobar', $updatedUser->first_name);
-        $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
     }
 
     public function testPatchOneByAdminUserPassword()
@@ -319,11 +246,12 @@ class UserTest extends TestCase
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
 
         // Assert token is invalid
-        $jwtAuth = App::make('Tymon\JWTAuth\JWTAuth');
-        $blacklist = $jwtAuth->getBlacklist();
-        $payload = $jwtAuth->getJWTProvider()->decode($token);
-        $payload = $jwtAuth->getPayloadFactory()->setRefreshFlow(false)->make($payload);
-        $this->assertTrue($blacklist->has($payload));
+
+        /** @var \Spira\Auth\Driver\Guard $auth */
+        $auth = $this->app['auth'];
+        $payload = $auth->getTokenizer()->decode($token);
+        $this->setExpectedException(\Spira\Auth\Token\TokenExpiredException::class, 'Token has expired');
+        $auth->getBlacklist()->check($payload);
     }
 
     public function testPatchOneByGuestUser()
@@ -339,7 +267,7 @@ class UserTest extends TestCase
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
 
-    public function testPatchOneBySelfUserNoProfile()
+    public function testPatchOneBySelfUser()
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
@@ -360,17 +288,14 @@ class UserTest extends TestCase
         $this->assertEquals('foobar', $updatedUser->first_name);
     }
 
-    public function testPatchOneBySelfUser()
+    public function testPatchRegionCodeInvalid()
     {
         $user = $this->createUser(['user_type' => 'guest']);
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
 
         $update = [
-            'firstName' => 'foobar',
-            '_userProfile' => [
-                'dob' => '1221-05-14', // We have to change the dob to a date we know will never get randomly generated
-            ],
+            'regionCode' => 'zz', //an invalid region
         ];
 
         $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
@@ -378,12 +303,15 @@ class UserTest extends TestCase
         ]);
 
         $updatedUser = User::find($userToUpdate->user_id);
-        $updatedProfile = UserProfile::find($userToUpdate->user_id);
 
-        $this->assertResponseStatus(204);
-        $this->assertResponseHasNoContent();
-        $this->assertEquals('foobar', $updatedUser->first_name);
-        $this->assertEquals('1221-05-14', $updatedProfile->dob->toDateString());
+        $this->assertResponseStatus(422);
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertObjectHasAttribute('regionCode', $object->invalid);
+
+        $this->assertEquals($user->region_code, $updatedUser->region_code);
     }
 
     public function testPatchOneBySelfUserUUID()
@@ -434,11 +362,9 @@ class UserTest extends TestCase
         ]);
 
         $user = User::find($userToDelete->user_id);
-        $profile = UserProfile::find($userToDelete->user_id);
 
         $this->assertResponseStatus(403);
         $this->assertNotNull($user);
-        $this->assertNotNull($profile);
     }
 
     public function testResetPasswordMail()
@@ -480,7 +406,7 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Token '.$token,
         ]);
 
-        $this->assertException('invalid', 401, 'UnauthorizedException');
+        $this->assertException('Invalid', 422, 'TokenInvalidException');
     }
 
     public function testResetPasswordMailInvalidEmail()

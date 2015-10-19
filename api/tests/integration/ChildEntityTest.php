@@ -8,7 +8,11 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Http\Controllers\ChildEntityController;
+use App\Http\Transformers\EloquentModelTransformer;
+use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
+use App\Services\TransformerService;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 
@@ -51,10 +55,37 @@ class ChildEntityTest extends TestCase
         return $entity;
     }
 
-    protected function addRelatedEntities(\Spira\Model\Model\BaseModel $model)
+    /**
+     * @param TestEntity $model
+     */
+    protected function addRelatedEntities(TestEntity $model)
     {
-        $model->testMany = factory(App\Models\SecondTestEntity::class, 5)->make()->all();
-        $model->push();
+        $this->getFactory(SecondTestEntity::class)->count(5)->make()
+            ->each(function (SecondTestEntity $entity) use ($model) {
+                $model->testMany()->save($entity);
+            });
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testMissingRelationName()
+    {
+        $transformerService = App::make(TransformerService::class);
+        $transformer = new EloquentModelTransformer($transformerService);
+
+        new MockMissingRelationNameController(new App\Models\TestEntity, $transformer);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInvalidRelationName()
+    {
+        $transformerService = App::make(TransformerService::class);
+        $transformer = new EloquentModelTransformer($transformerService);
+
+        new MockInvalidRelationNameController(new App\Models\TestEntity, $transformer);
     }
 
     public function testGetAll()
@@ -105,7 +136,7 @@ class ChildEntityTest extends TestCase
         $this->addRelatedEntities($entity);
         $childEntity = factory(App\Models\SecondTestEntity::class)->make();
 
-        $this->post('/test/entities/'.$entity->entity_id.'/child', $this->prepareEntity($childEntity));
+        $this->postJson('/test/entities/'.$entity->entity_id.'/child', $this->prepareEntity($childEntity));
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(201);
@@ -119,7 +150,7 @@ class ChildEntityTest extends TestCase
         $childEntity = $this->prepareEntity($childEntity);
         unset($childEntity['value']);
 
-        $this->post('/test/entities/'.$entity->entity_id.'/child', $childEntity);
+        $this->postJson('/test/entities/'.$entity->entity_id.'/child', $childEntity);
 
         $object = json_decode($this->response->getContent());
 
@@ -456,4 +487,13 @@ class ChildEntityTest extends TestCase
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
     }
+}
+
+class MockMissingRelationNameController extends ChildEntityController
+{
+}
+
+class MockInvalidRelationNameController extends ChildEntityController
+{
+    protected $relationName = 'noSuchRelation';
 }

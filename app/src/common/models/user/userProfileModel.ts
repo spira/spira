@@ -4,9 +4,14 @@ module common.models {
         value:string;
     }
 
+    @common.decorators.changeAware
     export class UserProfile extends AbstractModel {
 
-        public dob:string = undefined;
+        protected __attributeCastMap:IAttributeCastMap = {
+            dob: this.castDate,
+        };
+
+        public dob:Date = undefined;
         public mobile:string = undefined;
         public phone:string = undefined;
         public gender:string = undefined;
@@ -24,7 +29,9 @@ module common.models {
         ];
 
         constructor(data:any, exists:boolean = false) {
+
             super(data, exists);
+
             this.hydrate(data, exists);
         }
 

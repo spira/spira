@@ -1,6 +1,6 @@
 module common.models {
 
-    export class UserSocialLogin extends AbstractModel {
+    export class UserSocialLogin extends AbstractModel implements global.ISocialLogin {
 
         public static googleType = 'google';
         public static facebookType = 'facebook';

@@ -11,6 +11,7 @@
 namespace App\Services;
 
 use Rhumsaa\Uuid\Uuid;
+use App\Models\Section;
 use Spira\Model\Validation\Validator;
 
 class SpiraValidator extends Validator
@@ -27,18 +28,6 @@ class SpiraValidator extends Validator
 
     public function validateNotFound()
     {
-        return false;
-    }
-
-    public function validateEquals($attribute, $value, $parameters)
-    {
-        $this->requireParameterCount(1, $parameters, 'equals');
-        $compare = $parameters[0];
-
-        if ($compare == $value) {
-            return true;
-        }
-
         return false;
     }
 
@@ -70,5 +59,31 @@ class SpiraValidator extends Validator
     protected function validateAlphaDashSpace($attribute, $value, $parameters)
     {
         return preg_match('/^[\pL\pN\s._-]+$/u', $value);
+    }
+
+    /**
+     * Register custom validation rule for supported region codes.
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateSupportedRegion($attribute, $value, $parameters)
+    {
+        $supportedRegionCodes = array_pluck(config('regions.supported'), 'code');
+
+        return in_array($value, $supportedRegionCodes);
+    }
+
+    /**
+     * Register custom validation rule for article content piece types.
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateSectionType($attribute, $value, $parameters)
+    {
+        return in_array($value, Section::getContentTypes());
     }
 }

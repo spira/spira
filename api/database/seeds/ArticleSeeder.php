@@ -8,12 +8,17 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Section;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticleImage;
+use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
+use App\Models\ArticleSectionsDisplay;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleSeeder extends BaseSeeder
 {
@@ -26,21 +31,50 @@ class ArticleSeeder extends BaseSeeder
     {
         $images = Image::all();
 
+        $users = User::all();
+
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) use ($images) {
+            ->each(function (Article $article) use ($images, $users) {
 
-                //add metas
-                $metas = factory(ArticleMeta::class, 2)->make()->all();
-                $article->metas()->saveMany($metas);
+                //add sections
+                /** @var \Illuminate\Database\Eloquent\Collection $sections */
+                $sections = factory(Section::class, rand(2, 8))->make();
+                $article->sections()->saveMany($sections);
+
+                $article->sections_display = factory(ArticleSectionsDisplay::class)
+                    ->make([
+                        'sort_order' => array_map(function (Section $contentPiece) {
+                            return $contentPiece->getKey();
+                        }, $sections->reverse()->all()),
+                    ]);
+
+                $article->save();
+
+                //add a meta tag
+                $article->articleMetas()->save(factory(ArticleMeta::class)->make());
 
                 //add permalinks
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
-                $article->permalinks()->saveMany($permalinks);
+                $article->articlePermalinks()->saveMany($permalinks);
 
                 //add tags
                 $tags = factory(Tag::class, 2)->make()->all();
                 $article->tags()->saveMany($tags);
+
+                //add comments
+                $this->randomElements(factory(ArticleComment::class, 10)->make())
+                    ->each(function (ArticleComment $comment) use ($article, $users) {
+
+                        try {
+                            $article->comments()->save($comment->toArray(), $users->random());
+                        } catch (HttpException $e) {
+                            echo 'Caught exception'.get_class($e).' : '.$e->getMessage()."\n\n"; //@todo resolve why this occurs
+                            // Likely not to do with the content of the comment as it still occurs in a random fashion when the same 5 comments are added to all articles
+                            // Likely not to do with rate limiting as I placed a usleep(1000000); in the try block above and it still threw bad request errors
+                            echo 'Comment: '.json_encode($comment->toArray())."\n\n";
+                        }
+                    });
 
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {

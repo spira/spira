@@ -95,12 +95,17 @@ class TransformerTest extends TestCase
 
     public function testRelationSelf()
     {
-        $entity = factory(App\Models\TestEntity::class)->make();
+        /** @var App\Models\TestEntity $entity */
+        $entity = factory(App\Models\TestEntity::class)->create();
         $hasOneEntity = factory(App\Models\SecondTestEntity::class)->make();
         $hasManyEntity = factory(App\Models\SecondTestEntity::class, 2)->make()->all();
 
-        $entity->testOne = $hasOneEntity;
-        $entity->testMany = $hasManyEntity;
+        $entity->testOne()->save($hasOneEntity);
+        $entity->testMany()->saveMany($hasManyEntity);
+
+        $check = $entity->testOne;
+        $check = $entity->testMany;
+
         $data = $this->transformer->transformItem($entity);
 
         $this->assertArrayHasKey('_self', $data);

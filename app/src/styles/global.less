@@ -1,5 +1,31 @@
-@h1color: #4882AC;
 
-h1 {
-//    color: @h1color;
+/*
+    Theme colours
+*/
+@adminPrimary: rgb(96,125,139);
+
+
+md-sidenav,
+md-sidenav.md-locked-open,
+md-sidenav.md-closed.md-locked-open-add-active {
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+//Fix for rn-carousel dynamic height issue (https://github.com/revolunet/angular-carousel/issues/309)
+ul[rn-carousel] {
+    img {
+        max-width: 100%;
+    }
+
+    &> li {
+        position: relative;
+        margin-left: -100%;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+
 }

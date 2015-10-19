@@ -21,18 +21,19 @@ class ArticleMeta extends BaseModel
      */
     public $table = 'article_metas';
 
-    protected $primaryKey = 'meta_name';
+    protected $primaryKey = 'meta_id';
 
-    protected $fillable = ['meta_name', 'meta_content', 'meta_property'];
+    protected $fillable = ['meta_id', 'article_id', 'meta_name', 'meta_content'];
 
     protected $guarded = ['meta_name'];
+
+    protected $touches = ['article'];
 
     public static function getValidationRules()
     {
         return [
             'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'meta_property' => 'string',
         ];
     }
 

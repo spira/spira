@@ -27,12 +27,14 @@ class CreateArticlesTable extends Migration
             $table->uuid('article_id')->primary();
             $table->string('title', 255);
             $table->enum('status', Article::$statuses)->default(Article::STATUS_DRAFT);
-            $table->text('content');
             $table->text('excerpt')->nullable();
             $table->string('primary_image')->nullable();
             $table->string('permalink')->index()->nullable();
             $table->uuid('author_id')->index();
+            $table->boolean('author_display')->default(true);
+            $table->boolean('show_author_promo')->default(false);
             $table->dateTime('first_published')->nullable();
+            $table->json('sections_display')->nullable();
 
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
@@ -40,6 +42,8 @@ class CreateArticlesTable extends Migration
                 ->references('user_id')->on(User::getTableName())
                 ->onDelete('set null');
         });
+
+        Article::putMapping();
     }
 
     /**

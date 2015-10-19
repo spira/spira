@@ -42,6 +42,7 @@ class ModelFactory
     public function get($factoryClass = null, $definedName = 'default')
     {
         if (is_string($factoryClass)) {
+            $this->factory = Container::getInstance()->make('Illuminate\Database\Eloquent\Factory');
             $instance = $this->factory->of($factoryClass, $definedName);
         } else {
             $instance = null;

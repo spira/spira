@@ -1,0 +1,33 @@
+<section ng-repeat="section in BodyController.article._sections" class="{{section.type}}" ng-switch="section.type">
+
+    <div ng-switch-when="rich_text" marked="section.content.body">
+
+    </div>
+
+    <blockquote ng-switch-when="blockquote" cite="{{section.content.author}}">
+        <div marked="section.content.body"></div>
+        <small class="author">{{section.content.author}}</small>
+    </blockquote>
+
+    <div ng-switch-when="image">
+
+        <ul rn-carousel class="image" rn-carousel-index="section.carouselIndex">
+            <li ng-repeat="image in section.content.images">
+                <div class="layer">
+                    <cl-image
+                        width="100%"
+                        public-id="{{image._image.imageId}}"
+                        format="{{image._image.format}}"
+                        ></cl-image>
+                </div>
+            </li>
+        </ul>
+        <div rn-carousel-indicators
+             ng-if="section.content.images.length > 1"
+             slides="section.content.images"
+             rn-carousel-index="section.carouselIndex"
+             style="position: relative;top: -35px;left: 2px;">
+        </div>
+    </div>
+
+</section>

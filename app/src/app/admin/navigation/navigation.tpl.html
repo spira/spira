@@ -1,42 +1,54 @@
-<md-toolbar class="md-theme-indigo">
-    <h1 class="md-toolbar-tools">CMS</h1>
-</md-toolbar>
+<div id="admin-sidenav" ng-class="{collapsed:AdminNavigationController.collapsed}">
+    <md-toolbar class="md-theme-indigo">
+        <div class="md-toolbar-tools">
+            <h2 ng-if="!AdminNavigationController.collapsed">CMS</h2>
+            <span flex ng-if="!AdminNavigationController.collapsed"></span>
+            <md-button aria-label="collapse-menu" class="md-icon-button" ng-click="AdminNavigationController.collapsed = !AdminNavigationController.collapsed">
+                <md-icon ng-if="!AdminNavigationController.collapsed">chevron_left</md-icon>
+                <md-icon ng-if="AdminNavigationController.collapsed">chevron_right</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
 
-<md-list>
-    <md-list-item ng-click="AppController.goToUserProfile($event)">
-        <img ng-src="{{AdminNavigationController.ngJwtAuthService.user.avatarImgUrl}}" alt="{{AdminNavigationController.ngJwtAuthService.user.fullName()}}" class="md-avatar"/>
-        <p>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
-    </md-list-item>
-</md-list>
+    <md-list>
+        <md-list-item ng-click="AppController.goToUserProfile($event)">
+            <img ng-src="{{AdminNavigationController.ngJwtAuthService.user.avatarImgUrl}}" alt="{{AdminNavigationController.ngJwtAuthService.user.fullName()}}" class="md-avatar"/>
+            <p ng-if="!AdminNavigationController.collapsed">{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
+            <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">Profile</md-tooltip>
+        </md-list-item>
+    </md-list>
 
-<md-divider></md-divider>
+    <md-divider></md-divider>
 
-<md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
+    <md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
 
-    <md-list-item ng-if="!!stateGroup.name">
-        <p><small>{{ stateGroup.name | uppercase}}</small></p>
-    </md-list-item>
+        <md-list-item ng-if="!!stateGroup.name && !AdminNavigationController.collapsed">
+            <p><small>{{ stateGroup.name | uppercase}}</small></p>
+        </md-list-item>
 
-    <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref-active="selected">
-        <md-icon>{{state.data.icon}}</md-icon>
-        <p>{{state.data.title | uppercase}}</p>
+        <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref="{{state.name}}" ui-sref-active="selected">
+            <md-icon>{{state.data.icon}}</md-icon>
+            <p ng-if="!AdminNavigationController.collapsed">{{state.data.title | uppercase}}</p>
+            <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">{{state.data.title | uppercase}}</md-tooltip>
+        </md-list-item>
 
-    </md-list-item>
+        <menu-toggle
+                ng-if="state.abstract && state.children.length > 0"
+                navigation-state="state"
+                collapsed="AdminNavigationController.collapsed"
+                >
+        </menu-toggle>
 
-    <menu-toggle
-         ng-if="state.abstract && state.children.length > 0"
-         navigation-state="state"
-    >
-    </menu-toggle>
+        <md-divider ng-repeat-end></md-divider>
 
-    <md-divider ng-repeat-end></md-divider>
+    </md-list>
 
-</md-list>
+    <md-list>
 
-<md-list>
-
-    <md-list-item ng-click="AdminNavigationController.logout()">
-        <md-icon>exit_to_app</md-icon>
-        <p>Logout</p>
-    </md-list-item>
-</md-list>
+        <md-list-item ng-click="AppController.logout()">
+            <md-icon>exit_to_app</md-icon>
+            <p ng-if="!AdminNavigationController.collapsed">Logout</p>
+            <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">Logout</md-tooltip>
+        </md-list-item>
+    </md-list>
+</div>

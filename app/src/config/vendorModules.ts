@@ -11,6 +11,35 @@ namespace config.vendorModules {
         }
     }
 
+    class AuthConfig {
+
+        static $inject = ['ngJwtAuthServiceProvider'];
+
+        constructor(private ngJwtAuthServiceProvider:NgJwtAuth.NgJwtAuthServiceProvider) {
+
+            let config:NgJwtAuth.INgJwtAuthServiceConfig = {
+                refreshBeforeSeconds: 60 * 10, //10 mins
+                checkExpiryEverySeconds: 60, //1 min
+                storageKeyName: 'jwtAuthToken',
+                apiEndpoints: {
+                    base: '/api/auth/jwt',
+                    login: '/login',
+                    tokenExchange: '/token',
+                    refresh: '/refresh',
+                },
+                cookie: {
+                    enabled: true,
+                    name: 'jwtAuthToken',
+                    topLevelDomain: true,
+                }
+            };
+
+            ngJwtAuthServiceProvider.configure(config);
+
+        }
+
+    }
+
     angular.module(namespace, [
         'ngMessages', //nice validation messages
         'ngMaterial', //angular material
@@ -29,7 +58,10 @@ namespace config.vendorModules {
         'ui.validate', // Field validator - https://github.com/angular-ui/ui-validate
         'ngFileUpload', // File uploader - https://github.com/danialfarid/ng-file-upload
         'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
+        'hc.marked', //markdown parser - https://github.com/Hypercubed/angular-marked
+        'angular-carousel', //content carousel - https://github.com/revolunet/angular-carousel
     ])
+    .config(AuthConfig)
     .config(CloudinaryConfig)
 
 }

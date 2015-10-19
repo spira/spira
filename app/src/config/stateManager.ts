@@ -35,13 +35,9 @@ namespace config.stateManager {
             $locationProvider.html5Mode(true);
 
             $urlRouterProvider.otherwise(function ($injector, $location) {
-                var $state = $injector.get('$state');
+                var errorService:common.services.error.ErrorService = $injector.get('errorService');
 
-                $state.go(app.guest.error.namespace, {
-                    title: "Page not found",
-                    message: 'Could not find a state associated with url "' + $location.$$url + '"',
-                    url: $location.$$absUrl
-                });
+                errorService.showError("Page not found", `Could not find a state associated with url <code>${$location.$$url}</code>`);
             });
         }
 

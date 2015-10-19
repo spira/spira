@@ -18,7 +18,7 @@ namespace app.guest.articles {
                 },
                 resolve: /*@ngInject*/{
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getArticlesPaginator().setCount(5);
+                        return articleService.getPaginator().setCount(5);
                     },
                     initialArticles: (articlesPaginator:common.services.pagination.Paginator) => {
                         return articlesPaginator.getNext();
@@ -86,7 +86,7 @@ namespace app.guest.articles {
     }
 
     angular.module(namespace, [
-            'app.guest.articles.post'
+            'app.guest.articles.article'
         ])
         .config(ArticlesConfig)
         .controller(namespace+'.controller', ArticlesController);

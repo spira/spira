@@ -9,8 +9,8 @@
  */
 
 use App\Models\User;
-use App\Models\UserProfile;
 use Faker\Factory as Faker;
+use Spira\Auth\Driver\Guard;
 
 trait HelpersTrait
 {
@@ -60,50 +60,41 @@ trait HelpersTrait
 
     /**
      * @param  array  $attributes
-     * @param  int    $times
      *
-     * @return User|void
+     * @return User
      */
-    protected function createUser(array $attributes = [], $times = 1)
+    protected function createUser(array $attributes = [])
     {
-        for ($i = 0; $i < $times; $i++) {
-            $faker = $this->getFakerWithUniqueUserData();
-            $default = [
-                'email' => $faker->unique()->email,
-                'username' => $faker->unique()->username,
-                'user_type' => 'admin',
-            ];
-            $attr = array_merge($default, $attributes);
+        $faker = $this->getFakerWithUniqueUserData();
+        $default = [
+            'email' => $faker->unique()->email,
+            'username' => $faker->unique()->username,
+            'user_type' => 'admin',
+        ];
+        $attr = array_merge($default, $attributes);
 
-            $user = factory(User::class)->create($attr);
+        $user = factory(User::class)->create($attr);
 
-            $user->setProfile(factory(UserProfile::class)->make());
-        }
+        return $user;
+    }
 
-        if ($times === 1) {
-            return $user;
-        } else {
-            return;
+    /**
+     * @param int $count
+     */
+    protected function createUsers($count = 10)
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $this->createUser();
         }
     }
 
     protected function tokenFromUser($user, $customClaims = [])
     {
-        $cfg = $this->app->config->get('jwt');
-        $validator = new Tymon\JWTAuth\Validators\PayloadValidator;
-        $request = new Illuminate\Http\Request;
-        $claimFactory = new Tymon\JWTAuth\Claims\Factory;
+        /** @var Guard $auth */
+        $auth = $this->app->make('auth');
+        $payload = $auth->getPayloadFactory()->createFromUser($user);
+        $payload = array_merge($payload, $customClaims);
 
-        $adapter = new App\Extensions\JWTAuth\NamshiAdapter($cfg['secret'], $cfg['algo']);
-        $payloadFactory = new App\Extensions\JWTAuth\PayloadFactory($claimFactory, $request, $validator);
-
-        $claims = ['sub' => $user->user_id, '_user' => $user];
-        $claims = array_merge($customClaims, $claims);
-
-        $payload = $payloadFactory->make($claims);
-
-        $token = $adapter->encode($payload->get());
-
-        return $token;
+        return $auth->getTokenizer()->encode($payload);
     }
 }

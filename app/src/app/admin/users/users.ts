@@ -75,9 +75,9 @@ namespace app.admin.users {
         /**
          * Search for users and update the user set.
          */
-        public search(searchTerm:string):void {
+        public search(query:string):void {
 
-            this.usersPaginator.query(searchTerm)
+            this.usersPaginator.query(query)
                 .then((users) => {
                     this.users = users;
                 }).finally(() => { //@todo handle case where search returns no results

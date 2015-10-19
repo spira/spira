@@ -10,6 +10,9 @@
 
 use Laravel\Lumen\Application;
 
+//use Illuminate\Support\Facades\Event;
+//Event::listen('illuminate.query', function($sql, $params) { echo($sql); var_dump($params); });
+
 $app->get('/', 'ApiaryController@index');
 
 $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
@@ -23,7 +26,13 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+
+    $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
+    $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);
+    $app->patch('{id}/profile', ['uses' => 'UserProfileController@patchOne']);
+
     $app->delete('{email}/password', ['uses' => 'UserController@resetPassword']);
+
     $app->delete('{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
 });
 
@@ -47,12 +56,18 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
     $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putMany');
 
+    $app->get('{id}/sections', 'App\Http\Controllers\ArticleSectionController@getAll');
+    $app->put('{id}/sections', 'App\Http\Controllers\ArticleSectionController@putMany');
+    $app->delete('{id}/sections', 'App\Http\Controllers\ArticleSectionController@deleteMany');
+    $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
+
     $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
     $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putMany');
     $app->delete('{id}/article-images', 'App\Http\Controllers\ArticleImageController@deleteMany');
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
+    $app->get('/', ['uses' => 'App\Http\Controllers\TagController@getAllPaginated', 'as' => \App\Models\Tag::class]);
     $app->get('{id}', ['as' => \App\Models\Tag::class, 'uses' => 'App\Http\Controllers\TagController@getOne']);
     $app->post('/', 'App\Http\Controllers\TagController@postOne');
     $app->patch('{id}', 'App\Http\Controllers\TagController@patchOne');

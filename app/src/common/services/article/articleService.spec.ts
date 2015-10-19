@@ -1,36 +1,5 @@
 (() => {
 
-    let seededChance = new Chance(1);
-    let fixtures = {
-
-        getArticle():common.models.Article {
-
-            let title = seededChance.sentence();
-
-            return new common.models.Article({
-                articleId: seededChance.guid(),
-                title: title,
-                body: seededChance.paragraph(),
-                permalink: title.replace(' ', '-'),
-                _tags: [
-                    {
-                        tagId: seededChance.guid(),
-                        tag: seededChance.word,
-                    },
-                    {
-                        tagId: seededChance.guid(),
-                        tag: seededChance.word,
-                    }
-                ]
-            });
-
-        },
-        getArticles() {
-
-            return chance.unique(fixtures.getArticle, 30);
-        }
-    };
-
     describe('Article Service', () => {
 
         let articleService:common.services.article.ArticleService;
@@ -80,13 +49,13 @@
                 (<any>ngRestAdapter.get).restore();
             });
 
-            let articles = _.clone(fixtures.getArticles()); //get a set of articles
+            let articles = common.models.ArticleMock.collection(30); //get a set of articles
 
             it('should return the first set of articles', () => {
 
                 $httpBackend.expectGET('/api/articles').respond(_.take(articles, 10));
 
-                let articlePaginator = articleService.getArticlesPaginator();
+                let articlePaginator = articleService.getPaginator();
 
                 let firstSet = articlePaginator.getNext(10);
 
@@ -102,13 +71,15 @@
 
         describe('Get article', () => {
 
-            let mockArticle  = fixtures.getArticle();
+            let mockArticle  = common.models.ArticleMock.entity();
 
             it('should be able to retrieve an article by permalink', () => {
 
-                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink).respond(mockArticle);
+                $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
+                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                }).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink);
+                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -123,9 +94,37 @@
 
             it('should be able to get a new article with a UUID', () => {
 
-                let article = articleService.newArticle();
+                let author = common.models.UserMock.entity();
+
+                let article = articleService.newArticle(author);
 
                 expect(article.articleId).to.be.ok;
+
+                expect(article.authorId).to.equal(author.userId);
+
+                expect(article._author).to.deep.equal(author);
+
+            });
+
+        });
+
+        describe('New Comment', () => {
+
+            it('should be able to save a new comment', () => {
+
+                let article = common.models.ArticleMock.entity();
+
+                let comment = common.models.ArticleCommentMock.entity();
+
+                $httpBackend.expectPOST('/api/articles/' + article.articleId + '/comments').respond(201);
+
+                let savePromise = articleService.saveComment(article, comment);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+
+                expect(savePromise).eventually.to.deep.equal(comment);
+
+                $httpBackend.flush();
 
             });
 
@@ -133,13 +132,20 @@
 
         describe('Save Article', () => {
 
-
             it('should save a new article and all related entities', () => {
 
-                let article = fixtures.getArticle();
+                let article = common.models.ArticleMock.entity();
+                article.setExists(false);
+                article._tags.push(common.models.TagMock.entity());
+                article._tags.push(common.models.TagMock.entity());
+                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
+                article._articleMetas.push(common.models.ArticleMetaMock.entity({articleId:article.articleId}));
 
                 $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
+                    return !_.isEmpty(item.metaContent)
+                })).respond(201);
 
                 let savePromise = articleService.saveArticleWithRelated(article);
 
@@ -150,20 +156,14 @@
 
             });
 
-
             it('should save an existing article with a patch request', () => {
 
-                let article = fixtures.getArticle();
+                let article = common.models.ArticleMock.entity();
                 article.setExists(true);
 
                 article.title = "This title has been updated";
 
-                let newTag = new common.models.Tag({
-                    tagId: seededChance.guid(),
-                    tag: "new tag",
-                });
-
-                article._tags = [newTag];
+                article._tags = [common.models.TagMock.entity()];
 
                 $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
@@ -177,8 +177,18 @@
 
             });
 
-        });
+            it('should not make an api call if nothing has changed', () => {
 
+                let article = common.models.ArticleMock.entity();
+                article.setExists(true);
+
+                let savePromise = articleService.saveArticleWithRelated(article);
+
+                expect(savePromise).eventually.to.equal(article);
+
+            });
+
+        });
 
     });
 

@@ -2,23 +2,93 @@
 
     <h2>Articles</h2>
 
-    <md-fab-toolbar class="md-right">
-        <md-fab-trigger class="align-with-text">
-            <md-button aria-label="menu" class="md-fab md-primary">
-                <md-icon>menu</md-icon>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-input-container ng-show="ArticlesListingController.searchButton">
+                <input ng-change="ArticlesListingController.search()"
+                        ng-model="ArticlesListingController.queryString"
+                        ng-model-options="{ debounce:500 }"
+                        placeholder="Search..."
+                        aria-label="Search...">
+            </md-input-container>
+            <md-button aria-label="Search" class="md-icon-button" ng-click="ArticlesListingController.searchButton = !ArticlesListingController.searchButton">
+                <md-icon>search</md-icon>
+                <md-tooltip>Search for article</md-tooltip>
             </md-button>
-        </md-fab-trigger>
-        <md-toolbar>
-            <md-fab-actions class="md-toolbar-tools">
-                <md-button aria-label="Add Article" class="md-fab" ui-sref="app.admin.articles.article()">
-                    <md-icon>add_circle</md-icon>
-                </md-button>
-                <md-button aria-label="Search" class="md-fab md-primary md-hue-2">
-                    <md-icon>search</md-icon>
-                </md-button>
-            </md-fab-actions>
-        </md-toolbar>
-    </md-fab-toolbar>
+            <md-button aria-label="Filter" class="md-icon-button" ng-click="ArticlesListingController.filterButton = !ArticlesListingController.filterButton">
+                <md-icon>filter_list</md-icon>
+                <md-tooltip>Filer Articles</md-tooltip>
+            </md-button>
+            <span flex></span>
+            <md-button aria-label="Add Article" ui-sref="app.admin.articles.article()" class="md-icon-button">
+                <md-icon>add_circle</md-icon>
+                <md-tooltip>Add article</md-tooltip>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-content ng-show="ArticlesListingController.filterButton" layout-padding>
+        <label>Tags</label>
+        <md-chips class="md-contact-chips"
+                  ng-model="ArticlesListingController.tagsToFilter"
+                  ng-model-options="{ debounce: 500 }"
+                  md-autocomplete-snap
+                  md-on-append="ArticlesListingController.addTagToFilter(ArticlesListingController.selectedTag)"
+                  md-on-remove="ArticlesListingController.search()">
+
+            <md-autocomplete md-menu-class="md-contact-chips-suggestions"
+                md-search-text="ArticlesListingController.tagSearchText"
+                md-selected-item="ArticlesListingController.selectedTag"
+                md-items="tag in ArticlesListingController.searchTags(ArticlesListingController.tagSearchText)"
+                md-item-text="tag.tag"
+                md-no-cache="true"
+                md-autoselect>
+                <div class="md-contact-suggestion">
+                    {{ tag.tag }}
+                </div>
+            </md-autocomplete>
+
+            <md-chip-template>
+                {{ $chip.tag }}
+            </md-chip-template>
+        </md-chips>
+
+        <label>Author</label>
+        <md-chips class="md-contact-chips"
+            ng-model="ArticlesListingController.usersToFilter"
+            ng-model-options="{ debounce: 500 }"
+            md-autocomplete-snap
+            md-on-append="ArticlesListingController.addUserToFilter(ArticlesListingController.selectedUser)"
+            md-on-remove="ArticlesListingController.search()">
+
+            <md-autocomplete md-menu-class="md-contact-chips-suggestions"
+                md-search-text="ArticlesListingController.userSearchText"
+                md-selected-item="ArticlesListingController.selectedUser"
+                md-items="user in ArticlesListingController.searchUsers(ArticlesListingController.userSearchText)"
+                md-item-text="user.firstName"
+                md-no-cache="true"
+                md-autoselect>
+                <div class="md-contact-suggestion">
+                    <img ng-src="{{ item.avatarImgUrl }}"
+                        alt="{{ item.firstName }}" />
+                    {{ item.fullName() }}
+                    <span class="md-contact-email" >{{ item.email }}</span>
+                </div>
+            </md-autocomplete>
+
+            <md-chip-template>
+                <div class="md-contact-avatar">
+                    <img ng-src="{{ $chip.avatarImgUrl }}"
+                        alt="{{ $chip.firstName }}" />
+                </div>
+                <div class="md-contact-name">
+                    {{ $chip.firstName }}
+                </div>
+            </md-chip-template>
+        </md-chips>
+    </md-content>
+
+    <div ng-if="ArticlesListingController.articles.length < 1"><h3>No articles found!</h3></div>
 
     <md-grid-list
             md-cols-sm="1"
