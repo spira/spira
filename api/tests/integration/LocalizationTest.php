@@ -17,10 +17,8 @@ use App\Models\Localization;
  */
 class LocalizationTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function shouldGetOneAttribute()
+
+    public function testShouldGetOneAttribute()
     {
         $entity = factory(Localization::class)->create();
         $localizations = json_decode($entity->localizations, true);
@@ -33,16 +31,12 @@ class LocalizationTest extends TestCase
         ));
 
         $attributes = json_decode($this->response->getContent(), true);
-        print_r($attributes);
 
         $this->assertCount(1, $attributes);
         $this->assertEquals($localizations[$attribute], $attributes[$attribute]);
     }
 
-    /**
-     * @test
-     */
-    public function shouldGetAllAttributes()
+    public function testShouldGetAllAttributes()
     {
         $entity = factory(Localization::class)->create();
         $localizations = json_decode($entity->localizations, true);

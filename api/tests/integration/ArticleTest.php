@@ -687,7 +687,7 @@ class ArticleTest extends TestCase
 
         $data = [
             'title' => 'localised title',
-            'content' => $content = 'localised content',
+            'excerpt' => $excerpt = 'localised excerpt',
         ];
 
         $article->fill($data);
@@ -710,13 +710,13 @@ class ArticleTest extends TestCase
 
         $this->assertCount(1, $localised);
         $this->assertEquals($title, $localisations['title']);
-        $this->assertEquals($content, $localisations['content']);
+        $this->assertEquals($excerpt, $localisations['excerpt']);
 
         // Assert the cache
         $key = sprintf('l10n:%s:%s', $article->article_id, $locale);
         $cached = json_decode(Cache::get($key), true);
         $this->assertEquals($title, $cached['title']);
-        $this->assertEquals($content, $cached['content']);
+        $this->assertEquals($excerpt, $cached['excerpt']);
 
         $this->cleanupDiscussions([$article]);
     }
