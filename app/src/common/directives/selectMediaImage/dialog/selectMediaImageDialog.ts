@@ -11,7 +11,7 @@ namespace common.directives.selectMediaImage.dialog {
         private imagesPaginator:common.services.pagination.Paginator;
         private perPage:number = 12;
         public pages:number[];
-        private currentPage:number = 1;
+        public currentPage:number = 1;
         private currentPageIndex:number;
 
         static $inject = ['$mdDialog', 'imageService'];
@@ -19,6 +19,10 @@ namespace common.directives.selectMediaImage.dialog {
         constructor(private $mdDialog:ng.material.IDialogService,
                     private imageService:common.services.image.ImageService) {
 
+            this.init();
+        }
+
+        private init() {
             this.imagesPaginator = this.imageService.getPaginator().setCount(this.perPage);
 
             this.imagesPaginator.getPage(this.currentPage)

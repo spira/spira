@@ -22,7 +22,6 @@ namespace common.directives.uploadImage {
         minSize:string;
     }
 
-    //this is an almost complete copy from app/src/app/admin/media/media.ts. @todo refactor MediaController to use this directive and use that controllers spec to test this directive controller
     export class UploadImageController {
 
         static $inject = ['imageService'];
@@ -75,6 +74,7 @@ namespace common.directives.uploadImage {
 
                 this.queuedImage = null;
                 this.imageUploadForm.$setPristine();
+                this.imageUploadForm.$setUntouched();
                 this.currentImage = image
 
             };
@@ -103,7 +103,7 @@ namespace common.directives.uploadImage {
         public restrict = 'E';
         public require = ['ngModel','uploadImage'];
         public templateUrl = 'templates/common/directives/uploadImage/uploadImage.tpl.html';
-        public replace = true;
+        public replace = false;
         public scope = {
         };
 
@@ -111,7 +111,7 @@ namespace common.directives.uploadImage {
         public controller = UploadImageController;
         public bindToController = true;
 
-        constructor(private $mdDialog:ng.material.IDialogService) {
+        constructor() {
         }
 
         public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ng.INgModelController, UploadImageController]) => {
@@ -133,8 +133,7 @@ namespace common.directives.uploadImage {
         };
 
         static factory(): ng.IDirectiveFactory {
-            const directive =  (imageService) => new UploadImageDirective(imageService);
-            directive.$inject = ['imageService'];
+            const directive = () => new UploadImageDirective();
             return directive;
         }
     }

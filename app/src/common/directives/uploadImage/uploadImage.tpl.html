@@ -1,5 +1,5 @@
 <div class="upload-image">
-    <form name="UploadImageController.imageUploadForm" novalidate>
+    <ng-form name="UploadImageController.imageUploadForm" novalidate>
         <div layout layout-sm="column">
 
             <md-input-container>
@@ -34,7 +34,7 @@
 
                 <img width="200" ng-show="UploadImageController.imageUploadForm.file.$valid" ngf-src="UploadImageController.queuedImage.file">
 
-                <ng-messages ng-hide="UploadImageController.imageUploadForm.file.$pristine" for="UploadImageController.imageUploadForm.file.$error">
+                <ng-messages ng-hide="UploadImageController.imageUploadForm.file.$untouched" for="UploadImageController.imageUploadForm.file.$error">
                     <ng-message when="required">Image is required.</ng-message>
                     <ng-message when="maxHeight">Image must be less than {{UploadImageController.imageConstraints.maxHeight}} pixels high. ({{UploadImageController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
                     <ng-message when="minHeight">Image must be more than {{UploadImageController.imageConstraints.minHeight}} pixels high. ({{UploadImageController.imageUploadForm.file.$modelValue.height}}px) given.</ng-message>
@@ -46,12 +46,12 @@
 
             </md-input-container>
 
-            <md-button ng-if="UploadImageController.imageUploadForm.$valid" ng-click="UploadImageController.uploadImage(UploadImageController.queuedImage)" class="md-raised md-primary">Upload</md-button>
+            <md-button ng-disabled="UploadImageController.imageUploadForm.$invalid" ng-click="UploadImageController.uploadImage(UploadImageController.queuedImage)" class="md-raised md-primary">Upload</md-button>
 
         </div>
 
 
-    </form>
+    </ng-form>
 
 
     <div ng-if="UploadImageController.progressBar.visible">

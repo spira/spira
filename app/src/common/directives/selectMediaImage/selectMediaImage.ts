@@ -2,11 +2,11 @@ namespace common.directives.selectMediaImage {
 
     export const namespace = 'common.directives.selectMediaImage';
 
-    interface IImageChangeHandler {
+    export interface IImageChangeHandler {
         (image:common.models.Image):void;
     }
 
-    class SelectMediaImageController {
+    export class SelectMediaImageController {
 
         private changeHandler:IImageChangeHandler;
         public currentImage:common.models.Image;
@@ -19,7 +19,7 @@ namespace common.directives.selectMediaImage {
             this.changeHandler = handler;
         }
 
-        public promptSelectImage():ng.IPromise<any> {
+        public promptSelectImage():ng.IPromise<common.models.Image> {
 
             let dialogConfig:ng.material.IDialogOptions = {
                 templateUrl: 'templates/common/directives/selectMediaImage/dialog/selectMediaImageDialog.tpl.html',
@@ -31,10 +31,14 @@ namespace common.directives.selectMediaImage {
 
             return this.$mdDialog.show(dialogConfig)
                 .then((image:common.models.Image) => {
+
                     this.currentImage = image;
+
                     if (this.changeHandler){
                         this.changeHandler(image);
                     }
+
+                    return image;
                 });
 
         }

@@ -64,47 +64,14 @@ namespace app.admin.media {
                 expect(MediaController.images[0]).to.be.instanceOf(common.models.Image);
             });
 
-        });
+            it('should push in a new image to the library when one is uploaded', () => {
 
-        describe('Image upload', () => {
+                let imageCount = MediaController.images.length;
+                let newImage = common.models.ImageMock.entity();
+                MediaController.imageUploaded(newImage);
 
-
-            it('should be able to upload an image', () => {
-
-                let imageViewCount = MediaController.images.length;
-                let mockUploadDeferred = $q.defer();
-
-                sinon.stub((<any>MediaController).imageService, 'uploadImage').returns(mockUploadDeferred.promise); //mock the image service
-
-                let image = {
-                    file: new function File(){
-                        this.lastModifiedDate = new Date();
-                        this.name = 'upload.jpg';
-                    },
-                    alt: "Image alt test",
-                    title: "Image title"
-                };
-
-                MediaController.uploadImage(image);
-
-                mockUploadDeferred.notify({
-                    event: 'cloudinary_signature'
-                });
-                mockUploadDeferred.notify({
-                    event: 'cloudinary_upload'
-                });
-                mockUploadDeferred.notify({
-                    event: 'api_link'
-                });
-
-                mockUploadDeferred.resolve(common.models.ImageMock.entity({title:image.title, alt:image.alt}));
-
-                $scope.$apply();
-
-                expect(MediaController.images.length).to.equal(imageViewCount); //length should not have changed
-                expect(MediaController.images[0].title).to.equal(image.title); //first image should have been pushed on
-                expect(MediaController.imageUploadForm.$setPristine).to.have.been.called;
-
+                expect(MediaController.images[0].imageId).to.equal(newImage.imageId);
+                expect(MediaController.images).to.have.length(imageCount);
             });
 
         });
