@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\LocalizationTransformer;
 use App\Models\Localization;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -70,18 +71,63 @@ class LocalizationsController extends EntityController
     }
 
     /**
-     * Find entity by compound key.
+     * Update an entity's localization.
      *
-     * @param array $compound
+     * @param Request $request
+     * @param string $region
+     * @param string $id
+     * @param string $attribute
+     * @return Response
      *
-     * @return BaseModel
+     * Expects the content of $request to be a string.
      */
-    protected function findOrFailEntity(array $compound)
+    public function putOneAttribute(Request $request, $region, $id, $attribute)
     {
-        try {
-            return $this->getModel()->findByCompoundKey($compound);
-        } catch (ModelNotFoundException $e) {
-            throw $this->notFoundException($this->getModel()->getKeyName());
+        $model = $this->findOrNewEntity(array('region_code' => $region, 'entity_id' => $id));
+
+        $localizations = json_decode($model->localizations, true);
+
+        $newLocalization = array($attribute => $request->getContent());
+
+        if(empty($localizations)) {
+            $model->localizations = $newLocalization;
+            $model->entity_id = $id;
+            $model->region_code = $region;
         }
+        else {
+            $model->localizations = array_merge($localizations, $newLocalization);
+        }
+
+        $model->save();
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->createdItem($model);
+
+    }
+
+    /**
+     * Put an entity.
+     *
+     * @param Request $request
+     * @param string $region
+     * @param string $id
+     * @param string $attribute
+     * @return Response
+     *
+     * Expects the content of $request to be a string.
+     */
+    public function putOne(Request $request, $region, $id)
+    {
+        $model = $this->findOrNewEntity(array('region_code' => $region, 'entity_id' => $id));
+
+        $model->localizations = $request->json()->all();
+
+        $model->save();
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->createdItem($model);
+
     }
 }

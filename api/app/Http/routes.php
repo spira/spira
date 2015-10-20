@@ -120,8 +120,10 @@ $app->group(['prefix' => 'test'], function (Application $app) {
 });
 
 $app->group(['prefix' => 'localizations', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('{region}/{id}', 'LocalizationsController@getAll');
     $app->get('{region}/{id}/{attribute}', 'LocalizationsController@getOne');
+    $app->get('{region}/{id}', 'LocalizationsController@getAll');
+    $app->put('{region}/{id}/{attribute}', 'LocalizationsController@putOneAttribute');
+    $app->put('{region}/{id}', 'LocalizationsController@putOne');
 });
 
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
