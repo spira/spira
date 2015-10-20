@@ -32,7 +32,7 @@ namespace common.models {
         public showAuthorPromo:boolean = undefined;
         public sectionsDisplay:ISectionsDisplay = undefined;
 
-        public _sections:Section[] = [];
+        public _sections:Section<any>[] = [];
         public _articleMetas:ArticleMeta[] = [];
         public _author:User = undefined;
         public _tags:Tag[] = [];
@@ -90,8 +90,14 @@ namespace common.models {
 
         }
 
-
-        protected hydrateSections(data:any, exists:boolean) : Section[]{
+        /**
+         * Hyrate the data:
+         * - Pre-sort the sections based on the sectionsDisplay field
+         * @param data
+         * @param exists
+         * @returns {any}
+         */
+        protected hydrateSections(data:any, exists:boolean) : Section<any>[]{
 
             if (!_.has(data, '_sections')){
                 return;
@@ -102,11 +108,29 @@ namespace common.models {
 
             if (_.has(data, 'sectionsDisplay.sortOrder')){
                 let sortOrder:string[] = data.sectionsDisplay.sortOrder;
-                sectionsChain = sectionsChain.sortBy((section:Section) => _.indexOf(sortOrder, section.sectionId, false));
+                sectionsChain = sectionsChain.sortBy((section:Section<any>) => _.indexOf(sortOrder, section.sectionId, false));
             }
 
             return sectionsChain.value();
         }
+
+        /**
+         * Update the sort order display to match the section object
+         */
+        public updateSectionsDisplay():void {
+            if (_.isEmpty(this._sections)){
+                return;
+            }
+
+            let sectionOrder:string[] = _.map(this._sections, (section:Section<any>) => {
+                return section.sectionId;
+            });
+
+            if (!_.isEqual(this.sectionsDisplay.sortOrder, sectionOrder)){ //only update the value if it has changed
+                this.sectionsDisplay.sortOrder = sectionOrder;
+            }
+        }
+
     }
 
 }

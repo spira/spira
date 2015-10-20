@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class UserMock extends AbstractMock{
+    export class UserMock extends AbstractMock implements IMock{
 
         public getModelClass():IModelClass {
             return common.models.User;
@@ -8,7 +8,7 @@ namespace common.models {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             return {
                 userId:seededChance.guid(),
@@ -27,8 +27,8 @@ namespace common.models {
             return <User> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):User[] {
-            return <User[]>new this().buildCollection(count);
+        public static collection(count:number = 10, overrides:Object = {}, exists:boolean = true):User[] {
+            return <User[]>new this().buildCollection(count, overrides, exists);
         }
 
     }

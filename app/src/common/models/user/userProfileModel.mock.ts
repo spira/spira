@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class UserProfileMock extends AbstractMock {
+    export class UserProfileMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return UserProfile;
@@ -8,7 +8,7 @@ namespace common.models {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             return {
                 dob: moment(seededChance.birthday()).toDate(),

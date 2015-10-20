@@ -144,6 +144,44 @@ namespace common.models {
 
         });
 
+        it('should update the section sort order when prompted', () => {
+
+            let sections = common.models.SectionMock.collection(3);
+
+            let article = common.models.ArticleMock.entity({
+                _sections: sections,
+                sectionsDisplay: {
+                    sortOrder: _.pluck(sections, 'sectionId')
+                }
+            });
+
+            article._sections.pop();
+
+            article.updateSectionsDisplay();
+
+            expect(article._sections).to.have.length(2);
+            expect(article.sectionsDisplay.sortOrder).to.have.length(2);
+            expect(article.sectionsDisplay.sortOrder).to.deep.equal(_.pluck(article._sections, 'sectionId'));
+            expect((<common.decorators.IChangeAwareDecorator>article).getChanged()).to.haveOwnProperty('sectionsDisplay');
+
+        });
+
+        it('should not update the section display property sort order when there are no sections', () => {
+
+            let article = common.models.ArticleMock.entity({
+                sectionsDisplay: {
+                    sortOrder: []
+                }
+            });
+
+            article.updateSectionsDisplay();
+
+            expect(article._sections).to.be.empty;
+            expect(article.sectionsDisplay.sortOrder).to.be.empty;
+            expect((<common.decorators.IChangeAwareDecorator>article).getChanged()).to.be.empty;
+
+        });
+
 
     });
 

@@ -233,6 +233,7 @@ gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
         .pipe(cssFilter)
 
         .pipe(plugins.replace('../fonts/fontawesome', '/vendor/assets/font-awesome/fonts/fontawesome'))
+        .pipe(plugins.replace('font/fontello', '/vendor/assets/pen/src/font/fontello'))
         .on('error', onError)
         .pipe(gulp.dest(paths.dest.vendor+'/css'))
         .pipe(cssFilter.restore())

@@ -1,25 +1,35 @@
 
-<form novalidate name="articleForm" ng-submit="ArticleController.save()">
+<form novalidate name="articleForm" >
 
-    <md-tabs md-dynamic-height md-border-bottom>
-        <md-tab label="Post">
-            <md-content class="md-padding" ui-view="post"></md-content>
-        </md-tab>
-        <md-tab label="Media">
-            <md-content class="md-padding" ui-view="media"></md-content>
-        </md-tab>
-        <md-tab label="Meta">
-            <md-content class="md-padding" ui-view="meta"></md-content>
-        </md-tab>
-        <md-tab label="Stats">
-            <md-content class="md-padding" ui-view="stats"></md-content>
-        </md-tab>
-        <md-tab label="History">
-            <md-content class="md-padding" ui-view="history"></md-content>
-        </md-tab>
-    </md-tabs>
+    <div layout="row">
+        <md-tabs flex md-dynamic-height md-border-bottom>
+            <md-tab label="Post">
+                <md-content class="md-padding" ui-view="post"></md-content>
+            </md-tab>
+            <md-tab label="Media">
+                <md-content class="md-padding" ui-view="media"></md-content>
+            </md-tab>
+            <md-tab label="Meta">
+                <md-content class="md-padding" ui-view="meta"></md-content>
+            </md-tab>
+            <md-tab label="Stats">
+                <md-content class="md-padding" ui-view="stats"></md-content>
+            </md-tab>
+            <md-tab label="History">
+                <md-content class="md-padding" ui-view="history"></md-content>
+            </md-tab>
+        </md-tabs>
+
+        <md-content flex ui-view="preview" ng-if="ArticleController.showPreview" ng-class="md-whiteframe-z2">
+
+        </md-content>
+
+    </div>
 
 
-    <md-button class="md-primary md-raised" ng-disabled="articleForm.$invalid" type="submit">Save</md-button>
+    <md-button class="md-primary md-raised" ng-disabled="articleForm.$invalid" ng-click="ArticleController.save()">Save</md-button>
+    <md-button class="md-raised" ng-click="ArticleController.togglePreview()">
+        <md-icon>remove_red_eye</md-icon>
+    </md-button>
 
 </form>

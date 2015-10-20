@@ -61,6 +61,21 @@ namespace common.services.user {
 
             });
 
+            it('should not request `With-Nested` when nested entities are not requested', () => {
+
+                let user = common.models.UserMock.entity();
+
+                $httpBackend.expectGET('/api/users/' + user.userId,
+                    (headers) => !_.has(headers, 'With-Nested')
+                ).respond(200);
+
+                let userDetailsPromise = userService.getUser(user);
+
+                expect(userDetailsPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+            });
+
             it('should return a new user created from user data', () => {
 
                 let userData = _.clone(common.models.UserMock.entity());
@@ -286,8 +301,9 @@ namespace common.services.user {
 
             it('should not make an api call if nothing has changed', () => {
 
-                let user = common.models.UserMock.entity();
-                user.setExists(true);
+                let user = common.models.UserMock.entity({
+                    _userProfile: common.models.UserProfileMock.entity(),
+                }, true);
 
                 let savePromise = userService.saveUserWithRelated(user);
 

@@ -1,0 +1,84 @@
+<md-dialog flex="80" id="selectMediaImageDialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Select Media</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="SelectMediaImageDialogController.cancelDialog()">
+                <md-icon aria-label="Close dialog">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <md-tabs md-selected="SelectMediaImageDialogController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
+            <md-tab label="Upload new">
+
+                <upload-image ng-if="!SelectMediaImageDialogController.selectedImage" ng-model="SelectMediaImageDialogController.selectedImage"></upload-image>
+
+                <dl ng-if="SelectMediaImageDialogController.selectedImage">
+                    <dt>Image</dt>
+                    <dd>
+                        <cl-image public-id="{{SelectMediaImageDialogController.selectedImage.imageId}}" format="{{SelectMediaImageDialogController.selectedImage.format}}">
+                            <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+                        </cl-image>
+                    </dd>
+                    <dt>Alt</dt>
+                    <dd>{{SelectMediaImageDialogController.selectedImage.alt}}</dd>
+                    <dt>Title</dt>
+                    <dd>{{SelectMediaImageDialogController.selectedImage.title}}</dd>
+                </dl>
+
+            </md-tab>
+            <md-tab label="Select From Library">
+
+                <md-grid-list
+                        md-cols-sm="1"
+                        md-cols-md="2"
+                        md-cols-gt-md="4"
+                        md-row-height="1:1"
+                        md-gutter="12px"
+                        md-gutter-gt-sm="8px">
+
+                    <md-grid-tile
+                            ng-repeat="image in SelectMediaImageDialogController.library"
+                            ng-click="SelectMediaImageDialogController.toggleImageSelection(image)"
+                            md-ink-ripple style="cursor:pointer"
+                            ng-class="{'selected':SelectMediaImageDialogController.selectedImage == image}"
+                            >
+
+                        <md-grid-tile-header>
+                            <h3>{{image.alt | uppercase}}</h3>
+                        </md-grid-tile-header>
+
+                        <cl-image width="100%" public-id="{{image.imageId}}" format="{{image.format}}">
+                            <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+                        </cl-image>
+
+                        <md-grid-tile-footer ng-if="!!image.title">
+                            <h3>{{image.title}}</h3>
+                        </md-grid-tile-footer>
+                    </md-grid-tile>
+
+                </md-grid-list>
+
+                <md-toolbar>
+                    <md-tabs md-dynamic-height md-selected="SelectMediaImageDialogController.currentPageIndex">
+
+                        <md-tab ng-repeat="pageNumber in SelectMediaImageDialogController.pages"
+                                ng-click="SelectMediaImageDialogController.goToPage(pageNumber)"
+                                label="{{pageNumber}}">
+                        </md-tab>
+
+                    </md-tabs>
+                </md-toolbar>
+
+            </md-tab>
+        </md-tabs>
+
+    </md-dialog-content>
+
+    <div class="md-actions">
+        <md-button ng-disabled="!SelectMediaImageDialogController.selectedImage" ng-click="SelectMediaImageDialogController.selectImage()" class="md-primary">Select Image</md-button>
+        <md-button ng-click="SelectMediaImageDialogController.cancelDialog()" class="md-warn">Cancel</md-button>
+    </div>
+</md-dialog>

@@ -1,6 +1,6 @@
 namespace common.models {
 
-    export class SectionMock extends AbstractMock {
+    export class SectionMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return common.models.Section;
@@ -8,7 +8,7 @@ namespace common.models {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             let type = seededChance.pick(_.keys(Section.getContentTypeMap()));
 
@@ -20,12 +20,12 @@ namespace common.models {
 
         }
 
-        public static entity(overrides:Object = {}, exists:boolean = true):Section {
-            return <Section> new this().buildEntity(overrides, exists);
+        public static entity(overrides:Object = {}, exists:boolean = true):Section<any> {
+            return <Section<any>> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Section[] {
-            return <Section[]>new this().buildCollection(count);
+        public static collection(count:number = 10, overrides:Object = {}, exists:boolean = true):Section<any>[] {
+            return <Section<any>[]>new this().buildCollection(count, overrides, exists);
         }
 
         public static getContentTypeMap(){
@@ -33,6 +33,7 @@ namespace common.models {
                 [sections.RichText.contentType]: sections.RichTextMock,
                 [sections.Blockquote.contentType]: sections.BlockquoteMock,
                 [sections.Image.contentType]: sections.ImageMock,
+                [sections.Promo.contentType]: sections.PromoMock,
             };
         }
 

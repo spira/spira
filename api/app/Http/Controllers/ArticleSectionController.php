@@ -14,6 +14,7 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
 use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\ImageContent;
+use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 
 class ArticleSectionController extends ChildEntityController
@@ -47,6 +48,10 @@ class ArticleSectionController extends ChildEntityController
             case ImageContent::CONTENT_TYPE:
 
                 $contentRules = with(new ImageContent)->getValidationRules();
+                break;
+            case PromoContent::CONTENT_TYPE:
+
+                $contentRules = with(new PromoContent)->getValidationRules();
                 break;
         }
 

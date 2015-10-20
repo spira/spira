@@ -1,8 +1,13 @@
 namespace common.services {
 
+    export interface IQueuedSaveProcess {
+        ():ng.IPromise<any>;
+    }
+
     export abstract class AbstractApiService {
 
 
+        protected queuedSaveProcessFunctions:IQueuedSaveProcess[] = [];
         protected cachedPaginator:common.services.pagination.Paginator;
 
         constructor(protected ngRestAdapter:NgRestAdapter.INgRestAdapterService,
@@ -48,6 +53,41 @@ namespace common.services {
             });
         }
 
+        /**
+         * Run all queued save functions, returning promise of success
+         * @returns {IPromise<TResult>}
+         */
+        protected runQueuedSaveFunctions():ng.IPromise<any> {
+
+            let promises = _.map(this.getQueuedSaveProcessFunctions(), (queuedSaveFunction:IQueuedSaveProcess) => queuedSaveFunction());
+
+            return this.$q.all(promises).then(() => {
+                this.dumpQueueSaveFunctions();
+            });
+        }
+
+        /**
+         * Get all the queued save functions
+         * @returns {IQueuedSaveProcess[]}
+         */
+        protected getQueuedSaveProcessFunctions():IQueuedSaveProcess[] {
+            return this.queuedSaveProcessFunctions;
+        }
+
+        /**
+         * Add a new queued save function
+         * @param fn
+         */
+        public addQueuedSaveProcessFunction(fn:IQueuedSaveProcess):void {
+            this.queuedSaveProcessFunctions.push(fn);
+        }
+
+        /**
+         * Clear all queued save functions
+         */
+        public dumpQueueSaveFunctions():void{
+            this.queuedSaveProcessFunctions = [];
+        }
 
     }
 }
