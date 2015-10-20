@@ -123,6 +123,25 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
     /**
+     * Visit the given URI with a PUT request with content type of text/plain.
+     *
+     * @param  string  $uri
+     * @param  array  $data
+     * @param  array  $headers
+     * @return $this
+     */
+    public function putText($uri, $data, array $headers = [])
+    {
+        $server = $this->transformHeadersToServerVars(array_merge([
+            'Content-Type' => 'text/plain'
+        ], $headers));
+
+        $this->call('PUT', $uri, [], [], [], $server, $data);
+
+        return $this;
+    }
+
+    /**
      * Visit the given URI with a GET request with content type of application/json.
      *
      * @param  string  $uri
