@@ -10,7 +10,8 @@
 
 $factory->define(App\Models\Localization::class, function ($faker) {
     return [
-        'entity_id' => $faker->uuid,
+        'localizable_id' => $faker->uuid,
+        'localizable_type' => $faker->word,
         'region_code' => $faker->randomElement(['au', 'uk', 'us']),
         'localizations' => json_encode([
             'varchar' => $faker->word,

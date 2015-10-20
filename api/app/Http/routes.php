@@ -108,6 +108,11 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 
+    // @Todo: Implement these
+    $app->get('/entities/{id}/localizations', 'App\Http\Controllers\TestController@getAllLocalizations');
+    $app->get('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@getOneLocalization');
+    $app->put('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@putOneLocalization');
+
     $app->get('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@getAll');
     $app->get('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@getOne');
     $app->post('/entities/{id}/child', 'App\Http\Controllers\ChildTestController@postOne');
@@ -117,13 +122,6 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@patchMany');
     $app->delete('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@deleteOne');
     $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
-});
-
-$app->group(['prefix' => 'localizations', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('{region}/{id}/{attribute}', 'LocalizationsController@getOne');
-    $app->get('{region}/{id}', 'LocalizationsController@getAll');
-    $app->put('{region}/{id}/{attribute}', 'LocalizationsController@putOneAttribute');
-    $app->put('{region}/{id}', 'LocalizationsController@putOne');
 });
 
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {

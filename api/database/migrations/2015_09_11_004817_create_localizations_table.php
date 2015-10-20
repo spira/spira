@@ -23,11 +23,16 @@ class CreateLocalizationsTable extends Migration
     public function up()
     {
         Schema::create(static::TABLE_NAME, function (Blueprint $table) {
-            $table->uuid('entity_id');
+
+            $table->uuid('localizable_id');
+            $table->string('localizable_type');
+
             $table->char('region_code', 2);
             $table->json('localizations');
 
-            $table->index(['entity_id', 'region_code']);
+            $table->primary(['localizable_id', 'localizable_type']);
+
+            $table->index(['localizable_id', 'localizable_type']);
         });
     }
 

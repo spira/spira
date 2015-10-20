@@ -24,7 +24,7 @@ class Localization extends BaseModel
      *
      * @var array
      */
-    protected $primaryKey = ['region_code', 'entity_id'];
+    protected $primaryKey = ['localizable_id', 'localizable_type'];
 
     /**
      * Indicates if the model should be timestamped.

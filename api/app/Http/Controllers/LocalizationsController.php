@@ -81,13 +81,13 @@ class LocalizationsController extends EntityController
      *
      * Expects the content of $request to be a string.
      */
-    public function putOneAttribute(Request $request, $region, $id, $attribute)
+    public function patchOne(Request $request, $region, $id)
     {
         $model = $this->findOrNewEntity(array('region_code' => $region, 'entity_id' => $id));
 
         $localizations = json_decode($model->localizations, true);
 
-        $newLocalization = array($attribute => $request->getContent());
+        $newLocalization = $request->json()->all();
 
         if(empty($localizations)) {
             $model->localizations = $newLocalization;
