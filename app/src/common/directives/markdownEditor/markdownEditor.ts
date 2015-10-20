@@ -2,6 +2,10 @@ namespace common.directives.markdownEditor {
 
     export const namespace = 'common.directives.markdownEditor';
 
+    interface IMarkdownEditorDirectiveScope extends ng.IScope{
+        spellChecker:string;
+    }
+
     class MarkdownEditorDirective implements ng.IDirective {
 
         public restrict = 'E';
@@ -9,12 +13,13 @@ namespace common.directives.markdownEditor {
         public templateUrl = 'templates/common/directives/markdownEditor/markdownEditor.tpl.html';
         public replace = false;
         public scope = {
+            spellChecker : '@',
         };
 
         constructor(private marked: any) {
         }
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $ngModelController: ng.INgModelController) => {
+        public link = ($scope: IMarkdownEditorDirectiveScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $ngModelController: ng.INgModelController) => {
 
             let editor:SimpleMDE.SimpleMDE;
 
@@ -25,6 +30,7 @@ namespace common.directives.markdownEditor {
                 if (!editor){
 
                     editor = new SimpleMDE({
+                        spellChecker: $scope.spellChecker == 'true',
                         element: $element.find('textarea')[0],
                         toolbar: [
                             'bold', 'italic', 'heading-2', 'heading-3', 'quote', '|',
