@@ -28,7 +28,7 @@ use Spira\Model\Model\LocalizableTrait;
  */
 class Article extends IndexedModel
 {
-    use RevisionableTrait, LocalizableTrait;
+    use RevisionableTrait;
 
     const defaultExcerptWordCount = 30;
 

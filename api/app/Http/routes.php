@@ -108,7 +108,6 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
 
-    // @Todo: Implement these
     $app->get('/entities/{id}/localizations', 'App\Http\Controllers\TestController@getAllLocalizations');
     $app->get('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@getOneLocalization');
     $app->put('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@putOneLocalization');

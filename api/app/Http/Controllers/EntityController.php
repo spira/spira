@@ -128,7 +128,7 @@ abstract class EntityController extends ApiController
         $model->fill($request->json()->all());
 
         $this->checkPermission(static::class.'@putOne', ['model' => $model]);
-        $model->save($this->isLocalised($request));
+        $model->save();
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -154,7 +154,7 @@ abstract class EntityController extends ApiController
         $this->checkPermission(static::class.'@putMany', ['model' => $modelCollection]);
 
         $modelCollection->each(function (BaseModel $model) use ($request) {
-            return $model->save($this->isLocalised($request));
+            return $model->save();
         });
 
         return $this->getResponse()
