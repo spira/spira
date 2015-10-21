@@ -126,7 +126,6 @@ abstract class EntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules());
 
         $model->fill($request->json()->all());
-
         $this->checkPermission(static::class.'@putOne', ['model' => $model]);
         $model->save();
 
@@ -153,7 +152,7 @@ abstract class EntityController extends ApiController
 
         $this->checkPermission(static::class.'@putMany', ['model' => $modelCollection]);
 
-        $modelCollection->each(function (BaseModel $model) use ($request) {
+        $modelCollection->each(function (BaseModel $model) {
             return $model->save();
         });
 

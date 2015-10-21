@@ -17,7 +17,6 @@ use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
 use Venturecraft\Revisionable\RevisionableTrait;
-use Spira\Model\Model\LocalizableTrait;
 
 /**
  * @property ArticlePermalink[]|Collection $permalinks
