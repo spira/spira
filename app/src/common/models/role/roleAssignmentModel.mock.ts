@@ -8,7 +8,7 @@ namespace common.models {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             return {
                 userId: seededChance.guid(),
@@ -17,12 +17,12 @@ namespace common.models {
 
         }
 
-        public static entity(overrides:Object = {}, exists:boolean = true):Image {
-            return <Image> new this().buildEntity(overrides, exists);
+        public static entity(overrides:Object = {}, exists:boolean = true):RoleAssignment {
+            return <RoleAssignment> new this().buildEntity(overrides, exists);
         }
 
-        public static collection(count:number = 10):Image[] {
-            return <Image[]>new this().buildCollection(count);
+        public static collection(count:number = 10):RoleAssignment[] {
+            return <RoleAssignment[]>new this().buildCollection(count);
         }
 
     }

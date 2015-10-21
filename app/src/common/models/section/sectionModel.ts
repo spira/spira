@@ -1,12 +1,13 @@
 namespace common.models {
 
     @common.decorators.changeAware
-    export class Section extends AbstractModel {
+    export class Section<T extends AbstractModel> extends AbstractModel {
 
         public __contentTypeMap = {
             [sections.RichText.contentType]: sections.RichText,
             [sections.Blockquote.contentType]: sections.Blockquote,
             [sections.Image.contentType]: sections.Image,
+            [sections.Promo.contentType]: sections.Promo,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -19,7 +20,7 @@ namespace common.models {
         };
 
         public sectionId:string;
-        public content:sections.RichText|sections.Blockquote|sections.Image;
+        public content:T;
         public type:string;
         public createdAt:moment.Moment = undefined;
         public updatedAt:moment.Moment = undefined;
@@ -35,11 +36,12 @@ namespace common.models {
                 [sections.RichText.contentType]: sections.RichText,
                 [sections.Blockquote.contentType]: sections.Blockquote,
                 [sections.Image.contentType]: sections.Image,
+                [sections.Promo.contentType]: sections.Promo,
             };
         }
 
 
-        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image {
+        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image|sections.Promo {
 
             let SectionClass = Section.getContentTypeMap()[data.type];
 

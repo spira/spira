@@ -54,7 +54,7 @@ namespace common.decorators {
                 enumerable: false,
                 value: function (includeUnderscoredKeys:boolean = false) {
 
-                    return _.transform(this, (changes, value, key) => {
+                    return _.transform(angular.copy(this), (changes, value, key) => {
 
                         if(!includeUnderscoredKeys && _.startsWith(key, '_')) {
                             return;

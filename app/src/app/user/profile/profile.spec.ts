@@ -2,7 +2,7 @@ namespace app.user.profile {
 
     describe('Profile', () => {
 
-        let seededChance = new Chance(Math.random());
+        let seededChance = new Chance();
         let ProfileController:ProfileController,
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,

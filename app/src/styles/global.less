@@ -29,3 +29,61 @@ ul[rn-carousel] {
     }
 
 }
+
+.animate-repeat {
+    transition: all 0.5s ease;
+}
+
+.animate-repeat.ng-move {
+    position: relative;
+    top: 50px;
+}
+
+.animate-repeat.ng-move.animate-repeat.ng-move-active {
+    transition: all 0.5s ease;
+    top: 0;
+}
+
+.animate-repeat.ng-move + md-card {
+    /* cannot have transition on this element */
+    /*transition: all 1s ease;*/
+    position: relative;
+    top: -50px;
+}
+
+.animate-repeat.ng-move.animate-repeat.ng-move-active + md-card {
+    transition: all 0.5s ease;
+    position: relative;
+    top: 0;
+}
+
+.animate-repeat.ng-enter {
+    position: relative;
+    opacity: 0.0;
+    height: 0;
+    left: 100px;
+}
+
+.animate-repeat.ng-enter.animate-repeat.ng-enter-active {
+    transition: all 0.5s ease;
+    opacity: 1.0;
+    left: 0;
+    height: 50px;
+}
+
+
+.animate-repeat.ng-leave {
+    position: relative;
+    opacity: 1.0;
+    left: 0;
+    height: 50px;
+    z-index: -100;
+}
+
+.animate-repeat.ng-leave.animate-repeat.ng-leave-active {
+    transition: all 0.5s ease;
+    opacity: 0.0;
+    left: 100px;
+    height: 0;
+    top: -25px;
+}

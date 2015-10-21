@@ -59,7 +59,10 @@ namespace common.services.article {
         public saveArticleWithRelated(article:common.models.Article):ng.IPromise<common.models.Article> {
 
             return this.saveArticle(article)
-                .then(() => this.saveRelatedEntities(article))
+                .then(() => this.$q.when([
+                    this.saveRelatedEntities(article),
+                    this.runQueuedSaveFunctions(),
+                ]))
                 .then(() => {
                     (<common.decorators.IChangeAwareDecorator>article).resetChanged(); //reset so next save only saves the changed ones
                     article.setExists(true);
@@ -116,8 +119,9 @@ namespace common.services.article {
         private saveRelatedEntities(article:common.models.Article):ng.IPromise<any> {
 
             return this.$q.all([ //save all related entities
+                this.saveArticleSections(article),
                 this.saveArticleTags(article),
-                this.saveArticleMetas(article)
+                this.saveArticleMetas(article),
             ]);
 
         }
@@ -169,6 +173,41 @@ namespace common.services.article {
             return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
                 .then(() => {
                     return article._articleMetas;
+                });
+        }
+
+        /**
+         * Save article sections
+         * @param article
+         * @returns {any}
+         */
+        private saveArticleSections(article:common.models.Article):ng.IPromise<common.models.Section<any>[]|boolean> {
+
+            let sections = article._sections;
+
+            if (article.exists()) {
+
+                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+                if (!_.has(changes, '_sections')) {
+                    return this.$q.when(false);
+                }
+            }
+
+            sections = _.filter((sections), (section:common.models.Section<any>) => {
+               return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
+            });
+
+            return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', _.clone(sections))
+                .then(() => {
+                    return article._sections;
+                });
+        }
+
+
+        public deleteSection(article:common.models.Article, section:common.models.Section<any>):ng.IPromise<boolean> {
+            return this.ngRestAdapter.remove('/articles/' + article.articleId + '/sections/' + section.sectionId)
+                .then(() => {
+                    return true;
                 });
         }
 

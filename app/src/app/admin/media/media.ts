@@ -70,26 +70,10 @@ namespace app.admin.media {
 
         static $inject = ['perPage', 'imageService', 'imagesPaginator', 'initialImages', '$stateParams'];
 
-        public progressBar:IProgressBar = {
-            statusText: 'Saving...',
-            visible: false,
-            mode: 'query',
-            value: 0
-        };
-
-        public imageConstraints:IImageConstraints = {
-            maxHeight:2500,
-            minHeight:100,
-            maxWidth:2500,
-            minWidth:100,
-            maxSize:'20MB',
-            minSize:'10KB',
-        };
-
         public pages:number[] = [];
         public currentPageIndex:number;
-        public queuedImage:common.services.image.IImageUploadOptions;
         public imageUploadForm:ng.IFormController;
+        public uploadedImage:common.models.Image;
 
         constructor(private perPage:number,
                     private imageService:common.services.image.ImageService,
@@ -103,45 +87,15 @@ namespace app.admin.media {
 
         }
 
-        /**
-         * Upload files
-         * @param image
-         */
-        public uploadImage(image:common.services.image.IImageUploadOptions):void {
+        public imageUploaded(image:common.models.Image){
 
-            this.progressBar.visible = true;
+            if (this.images.length >= this.perPage) {
+                this.images.pop();
+            }
 
-            let onSuccess = (image:common.models.Image) => {
+            this.images.unshift(image);
+            this.imagesPaginator.setCount(this.imagesPaginator.getCount() + 1);
 
-                this.progressBar.visible = false;
-
-                if (this.images.length >= this.perPage) {
-                    this.images.pop();
-                }
-
-                this.images.unshift(image);
-                this.imagesPaginator.setCount(this.imagesPaginator.getCount() + 1);
-
-                this.queuedImage = null;
-                this.imageUploadForm.$setPristine();
-
-            };
-
-            let onNotify = (notification:common.services.image.IImageNotification) => {
-
-                this.progressBar.statusText = notification.message;
-                switch (notification.event) {
-                    case 'cloudinary_upload':
-                        this.progressBar.mode = 'determinate';
-                        this.progressBar.value = notification.progressValue;
-                        break;
-                    default:
-                        this.progressBar.mode = 'indeterminate';
-                }
-            };
-
-            this.imageService.uploadImage(image)
-                .then(onSuccess, null, onNotify);
         }
 
     }

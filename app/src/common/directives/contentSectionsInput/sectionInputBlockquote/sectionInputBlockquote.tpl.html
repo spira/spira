@@ -1,0 +1,21 @@
+<ng-form class="section-input-blockquote" name="SectionInputBlockquoteController.blockquoteForm" >
+
+    <md-input-container flex>
+        <label>Quote</label>
+
+        <textarea ng-model="SectionInputBlockquoteController.section.content.body" name="body" columns="1" md-maxlength="140" required></textarea>
+        <ng-messages for="SectionInputBlockquoteController.blockquoteForm.body.$error">
+            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+    <md-input-container flex>
+        <label>Attribution</label>
+
+        <input placeholder="Attribute the quote (optional)" ng-model="SectionInputBlockquoteController.section.content.author" name="author" type="text" md-maxlength="140">
+        <ng-messages for="SectionInputBlockquoteController.blockquoteForm.author.$error">
+            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+        </ng-messages>
+    </md-input-container>
+
+</ng-form>

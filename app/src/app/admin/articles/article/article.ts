@@ -51,7 +51,27 @@ namespace app.admin.articles.article {
                         controller: namespace+'.history.controller',
                         controllerAs: 'HistoryController',
                         templateUrl: 'templates/app/admin/articles/article/history/history.tpl.html'
-                    }
+                    },
+                    ['preview@'+namespace] : {
+                        controller: app.guest.articles.article.namespace+'.controller',
+                        controllerAs: 'ArticleController',
+                        templateUrl: 'templates/app/guest/articles/article/article.tpl.html'
+                    },
+                    ['header@'+namespace]: {
+                        controller: app.guest.articles.article.namespace+'.header.controller',
+                        controllerAs: 'HeaderController',
+                        templateUrl: 'templates/app/guest/articles/article/header/header.tpl.html'
+                    },
+                    ['body@'+namespace]: {
+                        controller: app.guest.articles.article.namespace+'.body.controller',
+                        controllerAs: 'BodyController',
+                        templateUrl: 'templates/app/guest/articles/article/body/body.tpl.html'
+                    },
+                    ['footer@'+namespace]: {
+                        controller: app.guest.articles.article.namespace+'.footer.controller',
+                        controllerAs: 'FooterController',
+                        templateUrl: 'templates/app/guest/articles/article/header/header.tpl.html'
+                    },
                 },
                 resolve: /*@ngInject*/{
                     article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
@@ -63,12 +83,17 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                        return articleService.getArticle($stateParams.permalink, [
+                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections'
+                        ]);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
                         return userService.getUsersPaginator().setCount(10);
                     }
                 },
+                onExit: ['articleService', (articleService:common.services.article.ArticleService) => {
+                    articleService.dumpQueueSaveFunctions();
+                }],
                 data: {
                     title: "Article",
                     icon: 'library_books',
@@ -83,6 +108,10 @@ namespace app.admin.articles.article {
     }
 
     export class ArticleController {
+
+
+
+        public showPreview:boolean = false;
 
         static $inject = ['article', '$stateParams', 'articleService', 'notificationService'];
         constructor(
@@ -103,6 +132,11 @@ namespace app.admin.articles.article {
                 .then(() => {
                     this.notificationService.toast('Article saved').pop();
                 });
+        }
+
+
+        public togglePreview(){
+            this.showPreview = !this.showPreview;
         }
 
     }

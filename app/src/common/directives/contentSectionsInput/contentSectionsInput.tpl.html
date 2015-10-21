@@ -1,0 +1,69 @@
+<div class="content-sections-input">
+
+    <div layout="column">
+
+        <md-card ng-repeat="section in ContentSectionsInputController.sections" class="animate-repeat md-whiteframe-z3">
+
+            <md-card-content class="section-input" ng-switch="section.type">
+                <section-input-rich-text ng-switch-when="rich_text" section="section"></section-input-rich-text>
+                <section-input-blockquote ng-switch-when="blockquote" section="section"></section-input-blockquote>
+                <section-input-image ng-switch-when="image" section="section"></section-input-image>
+                <section-input-promo ng-switch-when="promo" section="section"></section-input-promo>
+            </md-card-content>
+
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+
+                    <md-icon>{{ContentSectionsInputController.sectionTypes[section.type].icon}}</md-icon>
+                    <span flex></span>
+                    <md-button
+                            ng-disabled="$first"
+                            aria-label="Move Section Up"
+                            class="md-icon-button"
+                            ng-click="ContentSectionsInputController.moveSection(section, true)"
+                            >
+                        <md-icon>keyboard_arrow_up</md-icon>
+                    </md-button>
+                    <md-button
+                            ng-disabled="$last"
+                            aria-label="Move Section Down"
+                            class="md-icon-button"
+                            ng-click="ContentSectionsInputController.moveSection(section, false)"
+                            >
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                    <md-button
+                            aria-label="Remove Section"
+                            class="md-icon-button"
+                            ng-click="ContentSectionsInputController.removeSection(section)"
+                            >
+                        <md-icon>delete</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+
+        </md-card>
+
+    </div>
+
+    <md-fab-toolbar md-direction="left" md-open="demo.isOpen">
+        <md-fab-trigger class="align-with-text">
+            <md-button aria-label="menu" class="md-fab md-primary">
+                <md-icon>add_circle</md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-toolbar>
+            <md-fab-actions class="md-toolbar-tools">
+                <md-button
+                        aria-label="{{sectionType.name}}"
+                        class="md-icon-button"
+                        ng-repeat="(sectionKey, sectionType) in ContentSectionsInputController.sectionTypes"
+                        ng-click="ContentSectionsInputController.addSectionType(sectionKey)"
+                        >
+                    <md-icon>{{sectionType.icon}}</md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-toolbar>
+    </md-fab-toolbar>
+
+</div>

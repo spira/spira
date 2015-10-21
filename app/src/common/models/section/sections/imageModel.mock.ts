@@ -1,6 +1,6 @@
 namespace common.models.sections {
 
-    export class ImageMock extends AbstractMock {
+    export class ImageMock extends AbstractMock implements IMock {
 
         public getModelClass():IModelClass {
             return Image;
@@ -8,14 +8,17 @@ namespace common.models.sections {
 
         public getMockData():Object {
 
-            let seededChance = new Chance(Math.random());
+            let seededChance = new Chance();
 
             return {
-                images: {
-                    _image: common.models.ImageMock.entity(),
-                    caption: seededChance.sentence(),
-                    transformations: null
-                }
+                images: [
+                    {
+                        _image: common.models.ImageMock.entity(),
+                        caption: seededChance.sentence(),
+                        size: _.pick<common.models.sections.ISizeOption, common.models.sections.ISizeOption[]>(common.models.sections.Image.sizeOptions).key,
+                        alignment: _.pick<common.models.sections.IAlignmentOption, common.models.sections.IAlignmentOption[]>(common.models.sections.Image.alignmentOptions).key,
+                    }
+                ]
             };
         }
 
