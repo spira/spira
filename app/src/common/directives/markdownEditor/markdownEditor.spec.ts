@@ -27,7 +27,7 @@ namespace common.directives.markdownEditor {
 
             $rootScope.testModel = testText;
 
-            let element = $compile(`<markdown-editor ng-model="testModel"></markdown-editor>`)($rootScope);
+            let element = $compile(`<markdown-editor ng-model="testModel" spell-checker="false"></markdown-editor>`)($rootScope);
 
             $rootScope.$digest();
 
