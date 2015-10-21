@@ -12,6 +12,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use League\Flysystem\Adapter\Local;
 use Spira\Model\Model\BaseModel;
 use Spira\Model\Model\CompoundKeyTrait;
 
@@ -32,6 +33,8 @@ class Localization extends BaseModel
      * @var bool
      */
     public $timestamps = false;
+
+    protected $fillable = ['localizations', 'region_code'];
 
     /**
      * Determine if a localized attribute exists on the model.
@@ -56,29 +59,21 @@ class Localization extends BaseModel
     }
 
     /**
-     * Save the model. This function has been overridden because Laravel is unable to save using composite keys.
+     * Save the model.
      *
+     * @param array $options
      * @return mixed
      */
-    public function save()
+    public function save(array $options = [])
     {
         $this->updateCache();
 
-        if ($this->exists) {
-            return DB::table('localizations')
-                ->where('entity_id', $this->entity_id)
-                ->where('region_code', $this->region_code)
-                ->update(['localizations' => json_encode($this->localizations)]);
-        }
-        else {
-            return DB::table('localizations')->insert([
-                'entity_id' => $this->entity_id,
-                'region_code' => $this->region_code,
-                'localizations' => json_encode($this->localizations),
-            ]);
-        }
+        parent::save($options);
     }
 
+    /**
+     * Update the cache.
+     */
     private function updateCache()
     {
         $key = sprintf('l10n:%s:%s', $this->entity_id, $this->region_code);

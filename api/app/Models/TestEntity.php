@@ -11,7 +11,6 @@
 namespace App\Models;
 
 use Spira\Model\Model\IndexedModel;
-use Spira\Model\Model\LocalizableTrait;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -21,8 +20,6 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class TestEntity extends IndexedModel
 {
-    use LocalizableTrait;
-
     /**
      * The database table used by the model.
      *
@@ -81,5 +78,10 @@ class TestEntity extends IndexedModel
     public function testMany()
     {
         return $this->hasMany(SecondTestEntity::class, 'check_entity_id', 'entity_id');
+    }
+
+    public function localizations()
+    {
+        return $this->morphOne(Localization::class, 'localizable');
     }
 }

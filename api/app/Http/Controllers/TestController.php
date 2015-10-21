@@ -16,7 +16,7 @@ use App\Models\TestEntity;
 
 class TestController extends EntityController
 {
-    use LocalizationTrait;
+    use LocalizableTrait;
 
     protected $permissionsEnabled = true;
 
