@@ -80,7 +80,11 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     protected function getItemKey(BaseModel $model)
     {
         if ($model->exists) {
-            return $model->getKey();
+            // In the case of a composite key, the primary key is an array of values. In this case just use
+            // the item hash instead.
+            if(!is_array($model->getKeyName())) {
+                return $model->getKey();
+            }
         }
 
         return $this->getItemHash($model);

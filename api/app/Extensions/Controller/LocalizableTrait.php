@@ -10,6 +10,7 @@
 
 namespace App\Extensions\Controller;
 
+use App\Models\Localization;
 use Illuminate\Http\Request;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
@@ -20,10 +21,7 @@ trait LocalizableTrait
 
     public function getAllLocalizations(Request $request, $id)
     {
-        if(!$collection = $this
-            ->findOrFailEntity($id)
-            ->localizations()
-            ->getResults()->all()) {
+        if(!$collection = Localization::where('localizable_id', '=', $id)->get()) {
             throw new NotFoundHttpException('No localizations found for entity.');
         }
 

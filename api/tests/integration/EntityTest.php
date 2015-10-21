@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Localization;
 use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
 use Illuminate\Support\Facades\Cache;
@@ -754,42 +755,102 @@ class EntityTest extends TestCase
         $this->assertJsonArray();
     }
 
-    public function testLocalisedPutOneNew()
+    public function testPutOneLocalization()
     {
-        $entity = $this->getFactory(TestEntity::class)
-            ->makeVisible(['hidden'])
-            ->transformed();
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
 
-        $id = $entity['entityId'];
-        $locale = 'au';
+        $region = 'au';
 
-        $this->putJson('/test/entities/' . $id, $entity, ['Content-Region' => $locale]);
+        $localization = [
+            'varchar' => 'foobar',
+            'decimal' => 0.234
+        ];
+
+        // Give entity a localization
+        $this->putJson('/test/entities/' . $entity->entity_id . '/localizations/' . $region, $localization);
+        $this->assertResponseStatus(201);
+
+        // Get the saved localization
+        $localizationModel = $entity->localizations->where('region_code', $region)->first();
+
+        $savedLocalization = json_decode($localizationModel->localizations, true);
+
+        // Ensure localization was saved correctly
+        $this->assertEquals($localization, $savedLocalization);
 
         // Assert the cache
-        $key = sprintf('l10n:%s:%s', $id, $locale);
-        $cached = json_decode(Cache::get($key), true);
+        $cachedLocalization = json_decode(Cache::get($localizationModel->getCacheKey()), true);
 
-        $this->assertEquals($entity['varchar'], $cached['varchar']);
-        $this->assertEquals($entity['text'], $cached['text']);
+        $this->assertEquals($localization, $cachedLocalization);
+
     }
 
-    public function testLocalisedPutManySomeLocalised()
+    public function testGetOneLocalization()
     {
-        $entities = $this->getFactory(TestEntity::class)->count(5)->makeVisible(['hidden'])->transformed();
-        $locale = 'au';
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
 
-        $entities[1]['text'] = 'localised text';
-        $entities[2]['text'] = 'localised text';
+        $region = 'au';
 
-        $this->putJson('/test/entities', $entities, ['Content-Region' => $locale]);
+        $localization = [
+            'varchar' => 'barfoo',
+            'decimal' => 0.236
+        ];
 
-        // Assert the cache
-        $key1 = sprintf('l10n:%s:%s', $entities[1]['entityId'], $locale);
-        $key2 = sprintf('l10n:%s:%s', $entities[2]['entityId'], $locale);
-        $cached1 = json_decode(Cache::get($key1), true);
-        $cached2 = json_decode(Cache::get($key2), true);
+        // Give it a localization
+        $entity->localizations()->create([
+            'region_code' => $region,
+            'localizations' => json_encode($localization)
+        ])->save();
 
-        $this->assertEquals($entities[1]['text'], $cached1['text']);
-        $this->assertEquals($entities[2]['text'], $cached2['text']);
+        // Retrieve the localization
+        $this->getJson('/test/entities/' . $entity->entity_id . '/localizations/' . $region);
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals($response['regionCode'], $region);
+        $this->assertEquals(json_decode($response['localizations'], true), $localization);
+    }
+
+    public function testGetAllLocalizations()
+    {
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $regionOne = 'au';
+        $regionTwo = 'gb';
+
+        $localizationOne = [
+            'varchar' => 'foofoo',
+            'decimal' => 0.2
+        ];
+
+        $localizationTwo = [
+            'varchar' => 'barbar',
+            'decimal' => 0.3
+        ];
+
+        // Give it localizations
+        $entity->localizations()->create([
+            'region_code' => $regionOne,
+            'localizations' => json_encode($localizationOne)
+        ])->save();
+
+        $entity->localizations()->create([
+            'region_code' => $regionTwo,
+            'localizations' => json_encode($localizationTwo)
+        ])->save();
+
+        // Retrieve the localizations
+        $this->getJson('/test/entities/' . $entity->entity_id . '/localizations');
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals(count($response), 2);
     }
 }
