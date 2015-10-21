@@ -137,4 +137,20 @@ trait CompoundKeyTrait
     {
         return $this->getTable().'.'.$column;
     }
+
+    /**
+     * Set the keys for a save update query.
+     *
+     * @param  $query
+     * @return $query
+     */
+    protected function setKeysForSaveQuery($query)
+    {
+        foreach($this->getKeyName() as $key) {
+            $query->where($key, '=', $this->getAttribute($key));
+
+        }
+
+        return $query;
+    }
 }
