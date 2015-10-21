@@ -11,8 +11,6 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use League\Flysystem\Adapter\Local;
 use Spira\Model\Model\BaseModel;
 use Spira\Model\Model\CompoundKeyTrait;
 
@@ -20,12 +18,14 @@ class Localization extends BaseModel
 {
     use CompoundKeyTrait;
 
+    const cacheKeyBuilder = 'l10n:%s:%s';
+
     /**
      * The primary key for the model.
      *
      * @var array
      */
-    protected $primaryKey = ['localizable_id', 'localizable_type'];
+    protected $primaryKey = ['localizable_id', 'localizable_type', 'region_code'];
 
     /**
      * Indicates if the model should be timestamped.
@@ -66,18 +66,18 @@ class Localization extends BaseModel
      */
     public function save(array $options = [])
     {
-        $this->updateCache();
+        Cache::put($this->getCacheKey(), $this->localizations, 0);
 
         parent::save($options);
     }
 
     /**
-     * Update the cache.
+     * Get the cache key for this model.
+     *
+     * @return string
      */
-    private function updateCache()
+    public function getCacheKey()
     {
-        $key = sprintf('l10n:%s:%s', $this->entity_id, $this->region_code);
-
-        Cache::put($key, json_encode($this->localizations), 0);
+        return sprintf(Localization::cacheKeyBuilder, $this->entity_id, $this->region_code);
     }
 }

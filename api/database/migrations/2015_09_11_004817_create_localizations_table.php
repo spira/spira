@@ -30,7 +30,7 @@ class CreateLocalizationsTable extends Migration
             $table->char('region_code', 2);
             $table->json('localizations');
 
-            $table->primary(['localizable_id', 'localizable_type']);
+            $table->primary(['localizable_id', 'localizable_type', 'region_code']);
 
             $table->index(['localizable_id', 'localizable_type']);
         });
