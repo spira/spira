@@ -82,6 +82,6 @@ class TestEntity extends IndexedModel
 
     public function localizations()
     {
-        return $this->morphOne(Localization::class, 'localizable');
+        return $this->morphMany(Localization::class, 'localizable');
     }
 }
