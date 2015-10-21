@@ -18,10 +18,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait LocalizableTrait
 {
-
     public function getAllLocalizations(Request $request, $id)
     {
-        if(!$collection = Localization::where('localizable_id', '=', $id)->get()) {
+        if (! $collection = Localization::where('localizable_id', '=', $id)->get()) {
             throw new NotFoundHttpException('No localizations found for entity.');
         }
 
@@ -32,10 +31,10 @@ trait LocalizableTrait
 
     public function getOneLocalization(Request $request, $id, $region)
     {
-        if(!$model = $this
+        if (! $model = $this
             ->findOrFailEntity($id)
             ->localizations()
-            ->where('region_code', $region)->first()){
+            ->where('region_code', $region)->first()) {
             throw new NotFoundHttpException(sprintf('No localizations found for region `%s`.', $region));
         }
 
@@ -51,8 +50,8 @@ trait LocalizableTrait
         $model = $this->findOrFailEntity($id);
 
         // Check to see if parameters exist in model
-        foreach($localizations as $parameter => $localization) {
-            if(!$model->isFillable($parameter)) {
+        foreach ($localizations as $parameter => $localization) {
+            if (! $model->isFillable($parameter)) {
                 throw new ValidationException(
                     new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
                 );
@@ -72,5 +71,4 @@ trait LocalizableTrait
             ->transformer($this->getTransformer())
             ->createdItem($model);
     }
-
 }

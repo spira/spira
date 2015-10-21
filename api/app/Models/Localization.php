@@ -78,6 +78,6 @@ class Localization extends BaseModel
      */
     public function getCacheKey()
     {
-        return sprintf(Localization::cacheKeyBuilder, $this->entity_id, $this->region_code);
+        return sprintf(self::cacheKeyBuilder, $this->entity_id, $this->region_code);
     }
 }
