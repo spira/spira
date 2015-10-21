@@ -14,6 +14,7 @@ use App\Models\Localization;
 use Illuminate\Http\Request;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
+use Spira\Responder\Response\ApiResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait LocalizableTrait
@@ -70,5 +71,19 @@ trait LocalizableTrait
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->createdItem($model);
+    }
+
+    /**
+     * Check headers to see if we should localize the content, if so, create a new response and get it to do the
+     * localization.
+     *
+     * @return ApiResponse
+     */
+    public function getResponse()
+    {
+        // Todo: Check here if localization headers exist, if they do load up a new ApiReponse and ask it to localize the content, ApiResponse will need an extra method to do this.
+
+
+        return new ApiResponse();
     }
 }

@@ -69,8 +69,6 @@ class ApiResponse extends Response
      */
     public function item($item, $statusCode = self::HTTP_OK)
     {
-        // @Todo: If the request has localization headers check the cache for localization and exchange attributes. Need to find a way to find out how to access the request object here.
-
         if ($this->transformer) {
             $item = $this->transformer->transformItem($item);
         }
