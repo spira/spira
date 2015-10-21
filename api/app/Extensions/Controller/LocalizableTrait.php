@@ -13,18 +13,37 @@ namespace App\Extensions\Controller;
 use Illuminate\Http\Request;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait LocalizableTrait
 {
 
     public function getAllLocalizations(Request $request, $id)
     {
+        if(!$collection = $this
+            ->findOrFailEntity($id)
+            ->localizations()
+            ->getResults()->all()) {
+            throw new NotFoundHttpException('No localizations found for entity.');
+        }
 
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->collection($collection);
     }
 
     public function getOneLocalization(Request $request, $id, $region)
     {
+        if(!$model = $this
+            ->findOrFailEntity($id)
+            ->localizations()
+            ->where('region_code', $region)->first()){
+            throw new NotFoundHttpException(sprintf('No localizations found for region `%s`.', $region));
+        }
 
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->item($model);
     }
 
     public function putOneLocalization(Request $request, $id, $region)
