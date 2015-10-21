@@ -146,9 +146,8 @@ trait CompoundKeyTrait
      */
     protected function setKeysForSaveQuery($query)
     {
-        foreach($this->getKeyName() as $key) {
+        foreach ($this->getKeyName() as $key) {
             $query->where($key, '=', $this->getAttribute($key));
-
         }
 
         return $query;

@@ -82,7 +82,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         if ($model->exists) {
             // In the case of a composite key, the primary key is an array of values. In this case just use
             // the item hash instead.
-            if(!is_array($model->getKeyName())) {
+            if (! is_array($model->getKeyName())) {
                 return $model->getKey();
             }
         }

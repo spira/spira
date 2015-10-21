@@ -764,11 +764,11 @@ class EntityTest extends TestCase
 
         $localization = [
             'varchar' => 'foobar',
-            'decimal' => 0.234
+            'decimal' => 0.234,
         ];
 
         // Give entity a localization
-        $this->putJson('/test/entities/' . $entity->entity_id . '/localizations/' . $region, $localization);
+        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/'.$region, $localization);
         $this->assertResponseStatus(201);
 
         // Get the saved localization
@@ -783,7 +783,6 @@ class EntityTest extends TestCase
         $cachedLocalization = json_decode(Cache::get($localizationModel->getCacheKey()), true);
 
         $this->assertEquals($localization, $cachedLocalization);
-
     }
 
     public function testGetOneLocalization()
@@ -795,17 +794,17 @@ class EntityTest extends TestCase
 
         $localization = [
             'varchar' => 'barfoo',
-            'decimal' => 0.236
+            'decimal' => 0.236,
         ];
 
         // Give it a localization
         $entity->localizations()->create([
             'region_code' => $region,
-            'localizations' => json_encode($localization)
+            'localizations' => json_encode($localization),
         ])->save();
 
         // Retrieve the localization
-        $this->getJson('/test/entities/' . $entity->entity_id . '/localizations/' . $region);
+        $this->getJson('/test/entities/'.$entity->entity_id.'/localizations/'.$region);
         $this->assertResponseStatus(200);
         $this->shouldReturnJson();
 
@@ -825,27 +824,27 @@ class EntityTest extends TestCase
 
         $localizationOne = [
             'varchar' => 'foofoo',
-            'decimal' => 0.2
+            'decimal' => 0.2,
         ];
 
         $localizationTwo = [
             'varchar' => 'barbar',
-            'decimal' => 0.3
+            'decimal' => 0.3,
         ];
 
         // Give it localizations
         $entity->localizations()->create([
             'region_code' => $regionOne,
-            'localizations' => json_encode($localizationOne)
+            'localizations' => json_encode($localizationOne),
         ])->save();
 
         $entity->localizations()->create([
             'region_code' => $regionTwo,
-            'localizations' => json_encode($localizationTwo)
+            'localizations' => json_encode($localizationTwo),
         ])->save();
 
         // Retrieve the localizations
-        $this->getJson('/test/entities/' . $entity->entity_id . '/localizations');
+        $this->getJson('/test/entities/'.$entity->entity_id.'/localizations');
         $this->assertResponseStatus(200);
         $this->shouldReturnJson();
 
