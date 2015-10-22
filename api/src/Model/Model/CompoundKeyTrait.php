@@ -142,10 +142,10 @@ trait CompoundKeyTrait
     /**
      * Set the keys for a save update query.
      *
-     * @param  $query
-     * @return $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function setKeysForSaveQuery($query)
+    protected function setKeysForSaveQuery(Builder $query)
     {
         foreach ($this->getKeyName() as $key) {
             $query->where($key, '=', $this->getAttribute($key));
