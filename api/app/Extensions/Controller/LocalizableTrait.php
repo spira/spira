@@ -11,7 +11,6 @@
 namespace App\Extensions\Controller;
 
 use App\Models\Localization;
-use Cloudinary\Api;
 use Illuminate\Http\Request;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
@@ -83,7 +82,7 @@ trait LocalizableTrait
      */
     public function getResponse()
     {
-        if($region = RequestFacade::header('Accept-Region')) {
+        if ($region = RequestFacade::header('Accept-Region')) {
             return new ApiResponse($region);
         }
 
