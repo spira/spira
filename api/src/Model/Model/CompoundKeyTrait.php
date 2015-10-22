@@ -12,6 +12,7 @@ namespace Spira\Model\Model;
 
 use LogicException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
 
 trait CompoundKeyTrait
 {
