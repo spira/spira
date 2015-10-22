@@ -11,11 +11,13 @@
 namespace App\Extensions\Controller;
 
 use App\Models\Localization;
+use Cloudinary\Api;
 use Illuminate\Http\Request;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Responder\Response\ApiResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 trait LocalizableTrait
 {
@@ -81,8 +83,9 @@ trait LocalizableTrait
      */
     public function getResponse()
     {
-        // Todo: Check here if localization headers exist, if they do load up a new ApiReponse and ask it to localize the content, ApiResponse will need an extra method to do this.
-
+        if($region = RequestFacade::header('Accept-Region')) {
+            return new ApiResponse($region);
+        }
 
         return new ApiResponse();
     }

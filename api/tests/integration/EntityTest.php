@@ -780,7 +780,7 @@ class EntityTest extends TestCase
         $this->assertEquals($localization, $savedLocalization);
 
         // Assert the cache
-        $cachedLocalization = json_decode(Cache::get($localizationModel->getCacheKey()), true);
+        $cachedLocalization = Localization::getFromCache($localizationModel->localizable_id, $localizationModel->region_code);
 
         $this->assertEquals($localization, $cachedLocalization);
     }
@@ -851,5 +851,45 @@ class EntityTest extends TestCase
         $response = json_decode($this->response->getContent(), true);
 
         $this->assertEquals(count($response), 2);
+    }
+
+    public function testShouldGetLocalizedContent()
+    {
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $regionOne = 'au';
+        $regionTwo = 'gb';
+
+        $localizationOne = [
+            'varchar' => 'foofoo',
+            'decimal' => 0.2,
+        ];
+
+        $localizationTwo = [
+            'varchar' => 'barbar',
+            'decimal' => 0.3,
+        ];
+
+        // Give it localizations
+        $entity->localizations()->create([
+            'region_code' => $regionOne,
+            'localizations' => json_encode($localizationOne),
+        ])->save();
+
+        $entity->localizations()->create([
+            'region_code' => $regionTwo,
+            'localizations' => json_encode($localizationTwo),
+        ])->save();
+
+        // Retrieve the entity asking for localized content
+        $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $regionOne]);
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $localizedEntity = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals($localizedEntity['varchar'], $localizationOne['varchar']);
+        $this->assertEquals($localizedEntity['decimal'], $localizationOne['decimal']);
     }
 }
