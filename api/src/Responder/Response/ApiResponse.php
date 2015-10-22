@@ -23,7 +23,8 @@ class ApiResponse extends Response
 
     private $localizeToRegion = false;
 
-    public function __construct($localizeToRegion = false) {
+    public function __construct($localizeToRegion = false)
+    {
         $this->localizeToRegion = $localizeToRegion;
 
         parent::__construct();
@@ -230,8 +231,8 @@ class ApiResponse extends Response
      */
     private function applyLocalizations($item)
     {
-        if($localizations = Localization::getFromCache($item->getKey(), $this->localizeToRegion)) {
-            foreach($localizations as $parameter => $localization) {
+        if ($localizations = Localization::getFromCache($item->getKey(), $this->localizeToRegion)) {
+            foreach ($localizations as $parameter => $localization) {
                 $item->$parameter = $localization;
             }
         }
