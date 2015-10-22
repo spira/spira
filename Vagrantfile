@@ -19,6 +19,8 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 3306, host: 3306
 # mailcatcher
   config.vm.network "forwarded_port", guest: 1080, host: 1080
+# cache
+  config.vm.network "forwarded_port", guest: 6379, host: 6379
 # vm static ip binding
   config.vm.network "private_network", ip: "192.168.2.2"
 

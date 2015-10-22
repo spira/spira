@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
+use Spira\Model\Model\LocalizableModelTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -27,7 +28,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  */
 class Article extends IndexedModel
 {
-    use RevisionableTrait;
+    use RevisionableTrait, LocalizableModelTrait;
 
     const defaultExcerptWordCount = 30;
 
@@ -248,10 +249,5 @@ class Article extends IndexedModel
     public function sections()
     {
         return $this->morphMany(Section::class, 'sectionable');
-    }
-
-    public function localizations()
-    {
-        return $this->morphMany(Localization::class, 'localizable');
     }
 }
