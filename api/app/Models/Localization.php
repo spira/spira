@@ -66,7 +66,7 @@ class Localization extends BaseModel
      */
     public function save(array $options = [])
     {
-        Cache::put($this->getCacheKey(), $this->localizations, 0);
+        Cache::put(self::getCacheKey($this->localizable_id, $this->region_code), $this->localizations, 0);
 
         parent::save($options);
     }
@@ -74,10 +74,24 @@ class Localization extends BaseModel
     /**
      * Get the cache key for this model.
      *
+     * @param $entityId
+     * @param $regionCode
      * @return string
      */
-    public function getCacheKey()
+    private static function getCacheKey($entityId, $regionCode)
     {
-        return sprintf(self::cacheKeyBuilder, $this->entity_id, $this->region_code);
+        return sprintf(self::cacheKeyBuilder, $entityId, $regionCode);
+    }
+
+    /**
+     * Get localization from cache.
+     *
+     * @param $entityId
+     * @param $regionCode
+     * @return mixed
+     */
+    public static function getFromCache($entityId, $regionCode)
+    {
+        return json_decode(Cache::get(self::getCacheKey($entityId, $regionCode)), true);
     }
 }
