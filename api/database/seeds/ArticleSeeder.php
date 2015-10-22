@@ -59,7 +59,7 @@ class ArticleSeeder extends BaseSeeder
                     'region_code' => $region['code'],
                     'localizations' => json_encode([
                         'title' => $faker->sentence,
-                        'excerpt' => $faker->paragraph()
+                        'excerpt' => $faker->paragraph(),
                     ]),
                 ])->save();
 
