@@ -249,4 +249,9 @@ class Article extends IndexedModel
     {
         return $this->morphMany(Section::class, 'sectionable');
     }
+
+    public function localizations()
+    {
+        return $this->morphMany(Localization::class, 'localizable');
+    }
 }

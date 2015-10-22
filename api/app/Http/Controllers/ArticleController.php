@@ -10,11 +10,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
 
 class ArticleController extends EntityController
 {
+    use LocalizableTrait;
+
     /**
      * Assign dependencies.
      * @param Article $model

@@ -20,6 +20,25 @@ class Localization extends BaseModel
 
     const cacheKeyBuilder = 'l10n:%s:%s';
 
+    // This is a duplicate of the supportedRegions object found in regionService.ts
+    public static $supportedRegions = [
+        [
+            'code' => 'au',
+            'name' => 'Australia',
+            'icon' => '&#x1F1E6;&#x1F1FA;',
+        ],
+        [
+            'code' => 'uk',
+            'name' => 'United Kingdom',
+            'icon' => '&#x1F1EC;&#x1F1E7;',
+        ],
+        [
+            'code' => 'us',
+            'name' => 'United States',
+            'icon' => '&#x1F1FA;&#x1F1F8;',
+        ]
+    ];
+
     /**
      * The primary key for the model.
      *
