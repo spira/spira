@@ -58,7 +58,7 @@ class ArticleSeeder extends BaseSeeder
                 $region = $faker->randomElement($supportedRegions);
 
                 $article->localizations()->create([
-                    'region_code' => $region['code'],
+                    'region_code' => $region,
                     'localizations' => json_encode([
                         'title' => $faker->sentence,
                         'excerpt' => $faker->paragraph(),
