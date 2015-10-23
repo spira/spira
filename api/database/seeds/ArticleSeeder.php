@@ -36,9 +36,11 @@ class ArticleSeeder extends BaseSeeder
 
         $faker = Faker::create('au_AU');
 
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) use ($images, $users, $faker) {
+            ->each(function (Article $article) use ($images, $users, $faker, $supportedRegions) {
 
                 //add sections
                 /** @var \Illuminate\Database\Eloquent\Collection $sections */
@@ -53,7 +55,7 @@ class ArticleSeeder extends BaseSeeder
                     ]);
 
                 //add localizations
-                $region = $faker->randomElement(\App\Models\Localization::$supportedRegions);
+                $region = $faker->randomElement($supportedRegions);
 
                 $article->localizations()->create([
                     'region_code' => $region['code'],
