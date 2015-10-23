@@ -56,28 +56,6 @@ class Localization extends BaseModel
     protected $fillable = ['localizations', 'region_code'];
 
     /**
-     * Determine if a localized attribute exists on the model.
-     *
-     * @param  string  $attribute
-     *
-     * @return bool
-     */
-    public function hasLocalizedAttribute($attribute)
-    {
-        return array_key_exists($attribute, $this->getLocalizedAttributes());
-    }
-
-    /**
-     * Get all localized attributes in model.
-     *
-     * @return array
-     */
-    public function getLocalizedAttributes()
-    {
-        return json_decode($this->localizations, true);
-    }
-
-    /**
      * Save the model.
      *
      * @param array $options

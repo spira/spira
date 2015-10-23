@@ -11,7 +11,6 @@
 use App\Models\Localization;
 use App\Models\SecondTestEntity;
 use App\Models\TestEntity;
-use Illuminate\Support\Facades\Cache;
 use Rhumsaa\Uuid\Uuid;
 
 /**
@@ -785,6 +784,40 @@ class EntityTest extends TestCase
         $this->assertEquals($localization, $cachedLocalization);
     }
 
+    public function testPutOneLocalizationInvalidParameter()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $localization = [
+            'foobar' => 'foobar',
+            'decimal' => 0.17,
+        ];
+
+        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', $localization);
+        $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
+    }
+
+    public function testGetOneLocalizationNotFound()
+    {
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $localization = [
+            'varchar' => 'barfoo',
+            'decimal' => 0.236,
+        ];
+
+        // Give it a localization
+        $entity->localizations()->create([
+            'region_code' => 'au',
+            'localizations' => json_encode($localization),
+        ])->save();
+
+        $this->getJson('/test/entities/'.$entity->entity_id.'/localizations/zz');
+
+        $this->assertResponseStatus(404);
+    }
+
     public function testGetOneLocalization()
     {
         // Create an entity
@@ -812,6 +845,12 @@ class EntityTest extends TestCase
 
         $this->assertEquals($response['regionCode'], $region);
         $this->assertEquals(json_decode($response['localizations'], true), $localization);
+    }
+
+    public function testGetAllLocalizationsNotFound()
+    {
+        $this->getJson('/test/entities/1c6f512f-b6a5-37aa-8e4a-509745762e82/localizations');
+        $this->assertResponseStatus(404);
     }
 
     public function testGetAllLocalizations()
