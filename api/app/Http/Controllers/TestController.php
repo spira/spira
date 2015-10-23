@@ -10,11 +10,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\TestEntity;
 
 class TestController extends EntityController
 {
+    use LocalizableTrait;
+
     protected $permissionsEnabled = true;
 
     protected $defaultRole = 'user';

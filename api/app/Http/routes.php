@@ -48,6 +48,10 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
     $app->delete('{id}', 'App\Http\Controllers\ArticleController@deleteOne');
 
+    $app->get('{id}/localizations', 'App\Http\Controllers\ArticleController@getAllLocalizations');
+    $app->get('{id}/localizations/{region}', 'App\Http\Controllers\ArticleController@getOneLocalization');
+    $app->put('{id}/localizations/{region}', 'App\Http\Controllers\ArticleController@putOneLocalization');
+
     $app->get('{id}/permalinks', 'App\Http\Controllers\ArticlePermalinkController@getAll');
 
     $app->get('{id}/meta', 'App\Http\Controllers\ArticleMetaController@getAll');
@@ -107,6 +111,10 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities', 'App\Http\Controllers\TestController@patchMany');
     $app->delete('/entities/{id}', 'App\Http\Controllers\TestController@deleteOne');
     $app->delete('/entities', 'App\Http\Controllers\TestController@deleteMany');
+
+    $app->get('/entities/{id}/localizations', 'App\Http\Controllers\TestController@getAllLocalizations');
+    $app->get('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@getOneLocalization');
+    $app->put('/entities/{id}/localizations/{region}', 'App\Http\Controllers\TestController@putOneLocalization');
 
     $app->get('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@getAll');
     $app->get('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@getOne');
