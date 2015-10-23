@@ -62,10 +62,12 @@ trait LocalizableTrait
             }
         }
 
-        // Localizations are partial updates so only validate the fields which were sent with the request
-        $this->validateRequest($request->json()->all(), $model->getValidationRules(), true);
-
+        // Validate the region
         $regionCode = ['region_code' => $region];
+        $this->validateRequest($regionCode, Localization::getValidationRules());
+
+        // Localizations are partial updates so only validate the fields which were sent with the request
+        $this->validateRequest($localizations, $model->getValidationRules(), true);
 
         $model->localizations()->updateOrCreate($regionCode, array_merge(
             $regionCode, ['localizations' => json_encode($localizations)]
