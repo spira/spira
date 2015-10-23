@@ -759,7 +759,8 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
 
         $localization = [
             'varchar' => 'foobar',
@@ -823,7 +824,8 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
 
         $localization = [
             'varchar' => 'barfoo',
@@ -899,7 +901,8 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
 
         $localization = [
             'varchar' => 'foofoo',
