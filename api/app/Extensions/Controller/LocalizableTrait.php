@@ -93,5 +93,5 @@ trait LocalizableTrait
         }
 
         return $apiResponse;
-}
+    }
 }
