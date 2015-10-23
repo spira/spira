@@ -23,13 +23,6 @@ class ApiResponse extends Response
 
     private $localizeToRegion = false;
 
-    public function __construct($localizeToRegion = false)
-    {
-        $this->localizeToRegion = $localizeToRegion;
-
-        parent::__construct();
-    }
-
     /**
      * Set the transformer to use for building entities.
      * @param TransformerInterface $transformer
@@ -221,6 +214,16 @@ class ApiResponse extends Response
         if (! $this->isRedirect()) {
             throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
         }
+    }
+
+    /**
+     * Set the localization region (typically done right after instantiation of this class)
+     *
+     * @param $region
+     */
+    public function setLocalizationRegion($region)
+    {
+        $this->localizeToRegion = $region;
     }
 
     /**
