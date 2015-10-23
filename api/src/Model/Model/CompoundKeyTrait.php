@@ -11,7 +11,6 @@
 namespace Spira\Model\Model;
 
 use LogicException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 
 trait CompoundKeyTrait
@@ -38,62 +37,9 @@ trait CompoundKeyTrait
      */
     protected static function bootCompoundKeyTrait()
     {
-        $vars = get_class_vars(__CLASS__);
-        if (! is_array($vars['primaryKey'])) {
+        if(! is_array(self::getPrimaryKey())) {
             throw new LogicException('primaryKey must be an array');
         }
-    }
-
-    /**
-     * Find model by compound key.
-     *
-     * @param  array $compound
-     *
-     * @return BaseModel
-     */
-    public function findByCompoundKey(array $compound)
-    {
-        return $this->findOrFail($compound);
-    }
-
-    /**
-     * Find a model by its compound key or throw an exception.
-     *
-     * @param  array $compound
-     * @param  array $columns
-     *
-     * @return BaseModel
-     *
-     * @throws ModelNotFoundException
-     */
-    public function findOrFail($compound, $columns = ['*'])
-    {
-        $result = $this->find($compound, $columns);
-
-        if (! is_null($result)) {
-            return $result;
-        }
-
-        throw (new ModelNotFoundException)->setModel(get_class($this->model));
-    }
-
-    /**
-     * Find a model by its compound key.
-     *
-     * @param  array $compound
-     * @param  array $columns
-     *
-     * @return BaseModel|null
-     */
-    public function find(array $compound, $columns = ['*'])
-    {
-        $query = $this->newQuery();
-
-        foreach ($compound as $column => $value) {
-            $query->where($this->getQualifiedColumnName($column), '=', $value);
-        }
-
-        return $query->first($columns);
     }
 
     /**
@@ -112,21 +58,6 @@ trait CompoundKeyTrait
         }
 
         return parent::getAttribute($key);
-    }
-
-    /**
-     * Insert the given attributes on the model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array  $attributes
-     *
-     * @return void
-     */
-    protected function insertAndSetId(Builder $query, $attributes)
-    {
-        // With the case of a compount primary key, we do not have a specific id
-        // to set, so we override this method and leave out the part to set id.
-        $query->insert($attributes);
     }
 
     /**
