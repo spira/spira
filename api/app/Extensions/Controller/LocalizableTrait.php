@@ -22,7 +22,9 @@ trait LocalizableTrait
 {
     public function getAllLocalizations(Request $request, $id)
     {
-        if (! $collection = Localization::where('localizable_id', '=', $id)->get()) {
+        $collection = Localization::where('localizable_id', '=', $id)->get();
+
+        if ($collection->count() < 1) {
             throw new NotFoundHttpException('No localizations found for entity.');
         }
 
