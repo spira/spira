@@ -20,9 +20,7 @@ class CompoundKeyTraitTest extends TestCase
      */
     public function testBootCompoundKeyTrait()
     {
-
         MockSinglePK::bootCompoundKeyTrait();
-
     }
 
     public function testGetQualifiedColumnName()
@@ -33,7 +31,6 @@ class CompoundKeyTraitTest extends TestCase
 
         $this->assertEquals($qualifiedColumnName, 'localizations.region_code');
     }
-
 }
 
 class MockSinglePK extends Localization
