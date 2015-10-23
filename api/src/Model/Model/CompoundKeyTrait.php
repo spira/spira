@@ -37,7 +37,7 @@ trait CompoundKeyTrait
      */
     protected static function bootCompoundKeyTrait()
     {
-        if(! is_array(self::getPrimaryKey())) {
+        if (! is_array(self::getPrimaryKey())) {
             throw new LogicException('primaryKey must be an array');
         }
     }
