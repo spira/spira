@@ -86,10 +86,12 @@ trait LocalizableTrait
      */
     public function getResponse()
     {
+        $apiResponse = new ApiResponse();
+
         if ($region = RequestFacade::header('Accept-Region')) {
-            return (new ApiResponse())->setLocalizationRegion($region);
+            $apiResponse->setLocalizationRegion($region);
         }
 
-        return new ApiResponse();
-    }
+        return $apiResponse;
+}
 }

@@ -759,7 +759,7 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $region = 'au';
+        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
 
         $localization = [
             'varchar' => 'foobar',
@@ -823,7 +823,7 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $region = 'au';
+        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
 
         $localization = [
             'varchar' => 'barfoo',
@@ -858,8 +858,10 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $regionOne = 'au';
-        $regionTwo = 'gb';
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+
+        $regionOne = array_pop($supportedRegions);
+        $regionTwo = array_pop($supportedRegions);
 
         $localizationOne = [
             'varchar' => 'foofoo',
@@ -897,38 +899,27 @@ class EntityTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $regionOne = 'au';
-        $regionTwo = 'gb';
+        $region = array_pop(array_pluck(config('regions.supported'), 'code'));
 
-        $localizationOne = [
+        $localization = [
             'varchar' => 'foofoo',
             'decimal' => 0.2,
         ];
 
-        $localizationTwo = [
-            'varchar' => 'barbar',
-            'decimal' => 0.3,
-        ];
-
         // Give it localizations
         $entity->localizations()->create([
-            'region_code' => $regionOne,
-            'localizations' => json_encode($localizationOne),
-        ])->save();
-
-        $entity->localizations()->create([
-            'region_code' => $regionTwo,
-            'localizations' => json_encode($localizationTwo),
+            'region_code' => $region,
+            'localizations' => json_encode($localization),
         ])->save();
 
         // Retrieve the entity asking for localized content
-        $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $regionOne]);
+        $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $region]);
         $this->assertResponseStatus(200);
         $this->shouldReturnJson();
 
         $localizedEntity = json_decode($this->response->getContent(), true);
 
-        $this->assertEquals($localizedEntity['varchar'], $localizationOne['varchar']);
-        $this->assertEquals($localizedEntity['decimal'], $localizationOne['decimal']);
+        $this->assertEquals($localizedEntity['varchar'], $localization['varchar']);
+        $this->assertEquals($localizedEntity['decimal'], $localization['decimal']);
     }
 }
