@@ -31,6 +31,25 @@ class CompoundKeyTraitTest extends TestCase
 
         $this->assertEquals($qualifiedColumnName, 'localizations.region_code');
     }
+
+    public function testSetKeysForSaveQuery()
+    {
+        // Create an entity
+        $entity = factory(App\Models\TestEntity::class)->create();
+
+        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+            'varchar' => 'foo',
+            'decimal' => 0.234,
+        ]);
+
+        // For some reason the only way to access the function setKeysForSaveQuery is to put a
+        // localization where one already exists. Can not access method directly.
+        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+            'varchar' => 'foobar'
+        ]);
+        $this->assertResponseStatus(201);
+
+    }
 }
 
 class MockSinglePK extends Localization
