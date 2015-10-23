@@ -69,7 +69,7 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         user:common.models.User //inherited from parent state
                     ) => {
-                        return userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins'])
+                        return userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins', 'uploadedAvatar'])
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;
@@ -102,7 +102,7 @@ namespace app.user.profile {
 
     export class ProfileController {
 
-        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'regions', 'authService', 'providerTypes', '$location'];
+        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'regions', 'authService', 'providerTypes', '$location', 'imageService', '$mdDialog'];
 
         constructor(
             private userService:common.services.user.UserService,
@@ -115,7 +115,9 @@ namespace app.user.profile {
             private regions:global.ISupportedRegion[],
             private authService:common.services.auth.AuthService,
             public providerTypes:string[],
-            private $location:ng.ILocationService
+            private $location:ng.ILocationService,
+            private imageService:common.services.image.ImageService,
+            private $mdDialog:ng.material.IDialogService
         ) {
 
             if (this.emailConfirmed) {
@@ -140,14 +142,15 @@ namespace app.user.profile {
 
         /**
          * Edit profile form submit function
+         * @returns {ng.IPromise<any>}
          */
-        public updateUser():void {
+        public updateUser():ng.IPromise<any> {
 
             if(_.isEmpty(this.fullUserInfo._userCredential)) {
                 delete this.fullUserInfo._userCredential;
             }
 
-            this.userService.saveUserWithRelated(this.fullUserInfo)
+            return this.userService.saveUserWithRelated(this.fullUserInfo)
                 .then(() => {
                     this.notificationService.toast('Profile update was successful').pop();
                 },
@@ -182,6 +185,26 @@ namespace app.user.profile {
                     this.notificationService.toast('Your ' + _.capitalize(type) + ' has been unlinked from your account').pop();
                 });
 
+        }
+
+        /**
+         * User has just uploaded a new avatar, update user info.
+         * @param image
+         * @returns {ng.IPromise<any>}
+         */
+        public updatedAvatar(image:common.models.Image):ng.IPromise<any> {
+            this.$mdDialog.hide();
+
+            this.fullUserInfo.avatarImgId = image.imageId;
+
+            return this.updateUser();
+        }
+
+        public openChangeAvatarDialog():void {
+            this.$mdDialog.show({
+                templateUrl: 'templates/app/user/profile/change-avatar.tpl.html',
+                clickOutsideToClose: true,
+            });
         }
     }
 

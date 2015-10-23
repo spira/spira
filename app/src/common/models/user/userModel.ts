@@ -18,6 +18,7 @@ namespace common.models {
         public country:string = undefined;
         public regionCode:string = undefined;
         public avatarImgUrl:string = undefined;
+        public avatarImgId:string = undefined;
         public timezoneIdentifier:string = undefined;
         public _userCredential:global.IUserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;

@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Image;
 use App\Models\User;
 use Faker\Factory as Faker;
 use App\Models\UserProfile;
@@ -24,11 +25,14 @@ class UserStorySeeder extends BaseSeeder
     {
         $faker = Faker::create('au_AU');
 
+        $images = Image::all();
+
         $user = $this->createUser([
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
             'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
+            'avatar_img_id' => $images->random()->image_id,
         ]);
 
         $adminRole = new \App\Models\Role();
@@ -37,7 +41,7 @@ class UserStorySeeder extends BaseSeeder
         $user->roles()->save($adminRole);
 
         for ($i = 0; $i < 99; $i++) {
-            $user = $this->createUser();
+            $user = $faker->boolean() ? $this->createUser() : $this->createUser(['avatar_img_id' => $images->random()->image_id]);
             $this->assignRandomRole($user);
         }
     }

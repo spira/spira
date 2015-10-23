@@ -59,6 +59,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'avatar_img_url',
         'email',
         'region_code',
+        'avatar_img_id',
     ];
 
     /**
@@ -76,6 +77,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'country' => 'country',
         'region_code' => 'string|supported_region',
         'timezone_identifier' => 'timezone',
+        'avatar_img_id' => 'uuid',
     ];
 
     /**
@@ -134,6 +136,16 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function roles()
     {
         return $this->hasMany(Role::class, 'user_id', 'user_id');
+    }
+
+    /**
+     * Get the user's uploaded avatar image if they have one.
+     *
+     * @return HasOne|\Illuminate\Database\Eloquent\Builder
+     */
+    public function uploadedAvatar()
+    {
+        return $this->hasOne(Image::class, 'image_id', 'avatar_img_id');
     }
 
     /**
