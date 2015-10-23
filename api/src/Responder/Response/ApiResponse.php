@@ -217,7 +217,7 @@ class ApiResponse extends Response
     }
 
     /**
-     * Set the localization region (typically done right after instantiation of this class)
+     * Set the localization region (typically done right after instantiation of this class).
      *
      * @param $region
      */
