@@ -34,6 +34,8 @@ vanilladatabase:
     - ./docker/.local.env
 
 cache:
+  ports:
+    - "6379:6379"
   extends:
     file: ./docker/common-services.yml
     service: cache

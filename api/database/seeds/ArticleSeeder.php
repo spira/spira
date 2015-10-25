@@ -19,6 +19,7 @@ use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
 use App\Models\ArticleSectionsDisplay;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Faker\Factory as Faker;
 
 class ArticleSeeder extends BaseSeeder
 {
@@ -33,9 +34,13 @@ class ArticleSeeder extends BaseSeeder
 
         $users = User::all();
 
+        $faker = Faker::create('au_AU');
+
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) use ($images, $users) {
+            ->each(function (Article $article) use ($images, $users, $faker, $supportedRegions) {
 
                 //add sections
                 /** @var \Illuminate\Database\Eloquent\Collection $sections */
@@ -48,6 +53,17 @@ class ArticleSeeder extends BaseSeeder
                             return $contentPiece->getKey();
                         }, $sections->reverse()->all()),
                     ]);
+
+                //add localizations
+                $region = $faker->randomElement($supportedRegions);
+
+                $article->localizations()->create([
+                    'region_code' => $region,
+                    'localizations' => json_encode([
+                        'title' => $faker->sentence,
+                        'excerpt' => $faker->paragraph(),
+                    ]),
+                ])->save();
 
                 $article->save();
 

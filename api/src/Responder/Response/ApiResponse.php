@@ -10,6 +10,7 @@
 
 namespace Spira\Responder\Response;
 
+use App\Models\Localization;
 use InvalidArgumentException;
 use Illuminate\Http\Response;
 use Spira\Responder\Contract\TransformerInterface;
@@ -19,6 +20,8 @@ class ApiResponse extends Response
 {
     /** @var TransformerInterface */
     protected $transformer = null;
+
+    private $localizeToRegion = false;
 
     /**
      * Set the transformer to use for building entities.
@@ -69,6 +72,11 @@ class ApiResponse extends Response
      */
     public function item($item, $statusCode = self::HTTP_OK)
     {
+        // Localize the item if required
+        if ($this->localizeToRegion) {
+            $item = $this->applyLocalizations($item);
+        }
+
         if ($this->transformer) {
             $item = $this->transformer->transformItem($item);
         }
@@ -206,5 +214,32 @@ class ApiResponse extends Response
         if (! $this->isRedirect()) {
             throw new InvalidArgumentException(sprintf('The HTTP status code is not a redirect ("%s" given).', $status));
         }
+    }
+
+    /**
+     * Set the localization region (typically done right after instantiation of this class).
+     *
+     * @param $region
+     */
+    public function setLocalizationRegion($region)
+    {
+        $this->localizeToRegion = $region;
+    }
+
+    /**
+     * Localize the entity to a region if a localization exists.
+     *
+     * @param $item
+     * @return mixed
+     */
+    private function applyLocalizations($item)
+    {
+        if ($localizations = Localization::getFromCache($item->getKey(), $this->localizeToRegion)) {
+            foreach ($localizations as $parameter => $localization) {
+                $item->$parameter = $localization;
+            }
+        }
+
+        return $item;
     }
 }
