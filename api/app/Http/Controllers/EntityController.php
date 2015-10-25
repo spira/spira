@@ -153,8 +153,8 @@ abstract class EntityController extends ApiController
         $this->checkPermission(static::class.'@putMany', ['model' => $modelCollection]);
 
         $modelCollection->each(function (BaseModel $model) {
-                return $model->save();
-            });
+            return $model->save();
+        });
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
