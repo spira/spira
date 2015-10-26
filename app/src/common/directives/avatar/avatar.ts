@@ -6,18 +6,35 @@ namespace common.directives.avatar {
         (user:common.models.User):void;
     }
 
+    export interface IAvatarActions {
+        action:() => void;
+        label:string;
+        icon:string;
+    }
+
     export class AvatarController {
 
-        static $inject = ['userService', '$mdDialog', 'notificationService'];
+        static $inject = ['userService', '$mdDialog', 'notificationService', '$mdBottomSheet', '$scope'];
 
         public user:common.models.User;
 
         private avatarChangedHandler:IAvatarChangedHandler;
 
+        public avatarActions:IAvatarActions[] = [
+            {action:() => {
+                this.openChangeAvatarDialog();
+            }, label: 'Change Avatar', icon: 'face'},
+            {action:() => {
+                this.removeAvatar();
+            }, label: 'Remove Avatar', icon: 'remove circle'}
+        ];
+
         constructor(
             private userService:common.services.user.UserService,
             private $mdDialog:ng.material.IDialogService,
-            private notificationService:common.services.notification.NotificationService
+            private notificationService:common.services.notification.NotificationService,
+            private $mdBottomSheet:ng.material.IBottomSheetService,
+            private $scope:ng.IScope
         ) {
         }
 
@@ -25,34 +42,57 @@ namespace common.directives.avatar {
             this.avatarChangedHandler = handler;
         }
 
+        public openAvatarActions():ng.IPromise<any> {
+            return this.$mdBottomSheet.show({
+                templateUrl: 'templates/common/directives/avatar/avatarActionsBottomSheet.tpl.html',
+                scope: this.$scope,
+                preserveScope: true
+            });
+        }
+
         public openChangeAvatarDialog():ng.IPromise<any> {
+            this.$mdBottomSheet.hide();
 
             return this.$mdDialog.show({
-                templateUrl: 'templates/common/directives/avatar/dialog/changeAvatarDialog.tpl.html',
-                controller: namespace+'.dialog.controller',
-                controllerAs: 'ChangeAvatarDialogController',
-                clickOutsideToClose: true,
-                locals: {
-                    uploadedAvatar: this.user._uploadedAvatar
-                }
+                templateUrl: 'templates/common/directives/avatar/changeAvatarDialog.tpl.html',
+                scope: this.$scope,
+                preserveScope: true
             })
-                .then((uploadedAvatar:common.models.Image) => {
-                    if (this.avatarChangedHandler){
-                        this.avatarChangedHandler(this.user);
-                    }
+        }
 
-                    this.user._uploadedAvatar = uploadedAvatar;
-                    this.user.avatarImgId = uploadedAvatar.imageId;
+        public updatedAvatar():ng.IPromise<any> {
+            if (this.avatarChangedHandler){
+                this.avatarChangedHandler(this.user);
+            }
 
-                    // Update user data
-                    return this.userService.saveUser(this.user)
-                        .then(() => {
-                            this.notificationService.toast('Profile update was successful').pop();
-                        },
-                        (err) => {
-                            this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
-                        })
-                });
+            this.user.avatarImgId = this.user._uploadedAvatar.imageId;
+
+            return this.saveUser();
+        }
+
+        public removeAvatar():ng.IPromise<any> {
+            if (this.avatarChangedHandler){
+                this.avatarChangedHandler(this.user);
+            }
+
+            this.user.avatarImgId = null;
+            this.user._uploadedAvatar = null;
+
+            return this.saveUser();
+        }
+
+        private saveUser():ng.IPromise<any> {
+
+            this.$mdDialog.hide();
+
+            return this.userService.saveUser(this.user)
+                .then(() => {
+                    this.notificationService.toast('Profile update was successful').pop();
+                },
+                (err) => {
+                    this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
+                })
+
         }
 
     }
@@ -97,9 +137,7 @@ namespace common.directives.avatar {
         }
     }
 
-    angular.module(namespace, [
-        'common.directives.avatar.dialog',
-    ])
+    angular.module(namespace, [])
         .directive('avatar', AvatarDirective.factory());
 
 }
