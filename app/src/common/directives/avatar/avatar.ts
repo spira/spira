@@ -14,11 +14,14 @@ namespace common.directives.avatar {
 
     export class AvatarController {
 
-        static $inject = ['userService', '$mdDialog', 'notificationService', '$mdBottomSheet', '$scope'];
+        static $inject = ['userService', '$mdDialog', 'notificationService', '$mdBottomSheet'];
 
         public user:common.models.User;
 
         private avatarChangedHandler:IAvatarChangedHandler;
+
+        public $scope:ng.IScope;
+        public $element:ng.IAugmentedJQuery;
 
         public avatarActions:IAvatarActions[] = [
             {action:() => {
@@ -33,8 +36,7 @@ namespace common.directives.avatar {
             private userService:common.services.user.UserService,
             private $mdDialog:ng.material.IDialogService,
             private notificationService:common.services.notification.NotificationService,
-            private $mdBottomSheet:ng.material.IBottomSheetService,
-            private $scope:ng.IScope
+            private $mdBottomSheet:ng.material.IBottomSheetService
         ) {
         }
 
@@ -44,6 +46,7 @@ namespace common.directives.avatar {
 
         public openAvatarActions():ng.IPromise<any> {
             return this.$mdBottomSheet.show({
+                parent: this.$element,
                 templateUrl: 'templates/common/directives/avatar/avatarActionsBottomSheet.tpl.html',
                 scope: this.$scope,
                 preserveScope: true
@@ -128,6 +131,9 @@ namespace common.directives.avatar {
 
                 directiveController.user = $ngModelController.$modelValue;
             };
+
+            directiveController.$scope = $scope;
+            directiveController.$element = $element;
 
         };
 

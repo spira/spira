@@ -1,4 +1,4 @@
-<div flex ng-click="AvatarController.openAvatarActions()" id="avatarDirective">
+<div flex ng-click="AvatarController.openAvatarActions()">
     <cl-image ng-if="AvatarController.user._uploadedAvatar" width="100%" public-id="{{AvatarController.user._uploadedAvatar.imageId}}" format="{{AvatarController.user._uploadedAvatar.format}}">
         <cl-transformation height="200" width="200" crop="fill" gravity="north"/>
     </cl-image>
