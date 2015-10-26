@@ -60,6 +60,10 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
      */
     public function transformItem($item)
     {
+        if(!is_object($item)) {
+            return $item;
+        }
+
         return $this->getService()->item($item, $this);
     }
 }
