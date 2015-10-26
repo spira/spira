@@ -6,15 +6,9 @@ namespace common.directives.avatar {
         (user:common.models.User):void;
     }
 
-    export interface IAvatarActions {
-        action:() => void;
-        label:string;
-        icon:string;
-    }
-
     export class AvatarController {
 
-        static $inject = ['userService', '$mdDialog', 'notificationService', '$mdBottomSheet'];
+        static $inject = ['userService', '$mdDialog', 'notificationService'];
 
         public user:common.models.User;
 
@@ -23,20 +17,10 @@ namespace common.directives.avatar {
         public $scope:ng.IScope;
         public $element:ng.IAugmentedJQuery;
 
-        public avatarActions:IAvatarActions[] = [
-            {action:() => {
-                this.openChangeAvatarDialog();
-            }, label: 'Change Avatar', icon: 'face'},
-            {action:() => {
-                this.removeAvatar();
-            }, label: 'Remove Avatar', icon: 'remove circle'}
-        ];
-
         constructor(
             private userService:common.services.user.UserService,
             private $mdDialog:ng.material.IDialogService,
-            private notificationService:common.services.notification.NotificationService,
-            private $mdBottomSheet:ng.material.IBottomSheetService
+            private notificationService:common.services.notification.NotificationService
         ) {
         }
 
@@ -44,25 +28,33 @@ namespace common.directives.avatar {
             this.avatarChangedHandler = handler;
         }
 
-        public openAvatarActions():ng.IPromise<any> {
-            return this.$mdBottomSheet.show({
-                parent: this.$element,
-                templateUrl: 'templates/common/directives/avatar/avatarActionsBottomSheet.tpl.html',
-                scope: this.$scope,
-                preserveScope: true
-            });
-        }
-
-        public openChangeAvatarDialog():ng.IPromise<any> {
-            this.$mdBottomSheet.hide();
+        /**
+         * Action called when the profile picture is clicked on.
+         * @returns {angular.IPromise<any>}
+         */
+        public openAvatarDialog():ng.IPromise<any> {
 
             return this.$mdDialog.show({
                 templateUrl: 'templates/common/directives/avatar/changeAvatarDialog.tpl.html',
                 scope: this.$scope,
-                preserveScope: true
+                preserveScope: true,
+                clickOutsideToClose: true
             })
         }
 
+        /**
+         * Action called when the close button is clicked.
+         */
+        public closeAvatarDialog():void {
+
+            this.$mdDialog.hide();
+
+        }
+
+        /**
+         * Action called by upload-image directive when the avatar has been uploaded.
+         * @returns {ng.IPromise<any>}
+         */
         public updatedAvatar():ng.IPromise<any> {
             if (this.avatarChangedHandler){
                 this.avatarChangedHandler(this.user);
@@ -73,15 +65,32 @@ namespace common.directives.avatar {
             return this.saveUser();
         }
 
+        /**
+         * Action bound to the remove avatar button.
+         * @returns {IPromise<TResult>}
+         */
         public removeAvatar():ng.IPromise<any> {
-            if (this.avatarChangedHandler){
-                this.avatarChangedHandler(this.user);
-            }
 
-            this.user.avatarImgId = null;
-            this.user._uploadedAvatar = null;
+            var confirm = this.$mdDialog.confirm()
+                .title("Are you sure you want to remove your avatar?")
+                .content("This action <strong>cannot</strong> be undone.")
+                .ariaLabel("Confirm remove")
+                .ok("Remove")
+                .cancel("Don't remove it");
 
-            return this.saveUser();
+            return this.$mdDialog.show(confirm).then(() => {
+
+                if (this.avatarChangedHandler){
+                    this.avatarChangedHandler(this.user);
+                }
+
+                this.user.avatarImgId = null;
+                this.user._uploadedAvatar = null;
+
+                return this.saveUser();
+
+            });
+
         }
 
         private saveUser():ng.IPromise<any> {

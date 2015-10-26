@@ -3,4 +3,8 @@
             ng-model="AvatarController.user._uploadedAvatar"
             ng-change="AvatarController.updatedAvatar()">
     </upload-image>
+
+    <md-button class="md-raised md-warn" ng-click="AvatarController.removeAvatar()">Remove Avatar</md-button>
+
+    <md-button class="md-raised" ng-click="AvatarController.closeAvatarDialog()">Close</md-button>
 </md-dialog>
