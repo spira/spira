@@ -24,6 +24,7 @@ namespace common.models {
         public _userProfile:common.models.UserProfile = undefined;
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public _roles:common.models.RoleAssignment[] = undefined;
+        public _uploadedAvatar:common.models.Image = undefined;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

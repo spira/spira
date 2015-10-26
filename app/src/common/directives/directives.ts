@@ -8,6 +8,7 @@ namespace common.directives {
         namespace + '.markdownEditor',
         namespace + '.selectMediaImage',
         namespace + '.contentSectionsInput',
+        namespace + '.avatar'
     ])
     ;
 

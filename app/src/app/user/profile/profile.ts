@@ -186,26 +186,6 @@ namespace app.user.profile {
                 });
 
         }
-
-        /**
-         * User has just uploaded a new avatar, update user info.
-         * @param image
-         * @returns {ng.IPromise<any>}
-         */
-        public updatedAvatar(image:common.models.Image):ng.IPromise<any> {
-            this.$mdDialog.hide();
-
-            this.fullUserInfo.avatarImgId = image.imageId;
-
-            return this.updateUser();
-        }
-
-        public openChangeAvatarDialog():void {
-            this.$mdDialog.show({
-                templateUrl: 'templates/app/user/profile/change-avatar.tpl.html',
-                clickOutsideToClose: true,
-            });
-        }
     }
 
     angular.module(namespace, [])

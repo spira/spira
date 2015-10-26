@@ -1,12 +1,6 @@
 <div layout-padding>
     <div layout="row" style="background-color: grey">
-        <div flex ng-click="ProfileController.openChangeAvatarDialog()">
-            <cl-image ng-if="ProfileController.fullUserInfo._uploadedAvatar" width="100%" public-id="{{ProfileController.fullUserInfo._uploadedAvatar.imageId}}" format="{{ProfileController.fullUserInfo._uploadedAvatar.format}}">
-                <cl-transformation height="200" width="200" crop="fill" gravity="north"/>
-            </cl-image>
-
-            <img ng-if="!ProfileController.fullUserInfo._uploadedAvatar" ng-src="{{ProfileController.fullUserInfo.avatarImgUrl}}" alt="{{ProfileController.fullUserInfo.fullName()}}" />
-        </div>
+        <avatar ng-model="ProfileController.fullUserInfo"></avatar>
     </div>
 
     <form novalidate name="editProfileForm" ng-submit="ProfileController.updateUser()">

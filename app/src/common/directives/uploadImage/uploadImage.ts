@@ -45,7 +45,7 @@ namespace common.directives.uploadImage {
         public queuedImage:common.services.image.IImageUploadOptions;
         public imageUploadForm:ng.IFormController;
         private imageUploadedHandler:IImageUploadedHandler;
-        public currentImage:common.models.Image
+        public currentImage:common.models.Image;
 
         constructor(private imageService:common.services.image.ImageService) {
 

@@ -1,0 +1,7 @@
+<div flex ng-click="AvatarController.openChangeAvatarDialog()">
+    <cl-image ng-if="AvatarController.user._uploadedAvatar" width="100%" public-id="{{AvatarController.user._uploadedAvatar.imageId}}" format="{{AvatarController.user._uploadedAvatar.format}}">
+        <cl-transformation height="200" width="200" crop="fill" gravity="north"/>
+    </cl-image>
+
+    <img ng-if="!AvatarController.user._uploadedAvatar" ng-src="{{AvatarController.user.avatarImgUrl}}" alt="{{AvatarController.user.fullName()}}" />
+</div>
