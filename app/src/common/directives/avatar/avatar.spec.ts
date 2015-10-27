@@ -19,7 +19,7 @@ namespace common.directives.avatar {
 
             module('app');
 
-            inject((_$compile_, $controller, _$rootScope_, _userService_, _$mdDialog_, _notificationService_, _$q_) => {
+            inject((_$compile_, $controller, _$rootScope_, _$mdDialog_, _$q_) => {
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
@@ -46,12 +46,6 @@ namespace common.directives.avatar {
 
                 (<any>AvatarController).$mdDialog.show = sinon.stub().returns($q.when(true));
                 (<any>AvatarController).$mdDialog.hide = sinon.stub();
-
-                (<any>AvatarController).notificationService.toast = () => {
-                    return {
-                        pop: sinon.stub()
-                    }
-                };
 
             }
 
@@ -127,21 +121,7 @@ namespace common.directives.avatar {
 
         describe('Avatar functions', () => {
 
-            beforeEach(() => {
-
-                sinon.spy((<any>AvatarController).notificationService, 'toast');
-
-            });
-
-            afterEach(() => {
-
-                (<any>AvatarController).notificationService.toast.restore();
-
-            });
-
             it('should be able to save the update to the avatar', () => {
-
-                (<any>AvatarController).userService.saveUser = sinon.stub().returns($q.when(true));
 
                 AvatarController.updatedAvatar();
 
@@ -151,27 +131,9 @@ namespace common.directives.avatar {
 
                 expect((<any>AvatarController).$mdDialog.hide).to.be.called;
 
-                expect((<any>AvatarController).userService.saveUser).to.be.calledWith(AvatarController.user);
-
-                expect((<any>AvatarController).notificationService.toast).to.be.calledWith('Profile update was successful');
-
-            });
-
-            it('should alert when the user was not able to be saved', () => {
-
-                (<any>AvatarController).userService.saveUser = sinon.stub().returns($q.reject());
-
-                AvatarController.updatedAvatar();
-
-                $rootScope.$digest();
-
-                expect((<any>AvatarController).notificationService.toast).to.be.calledWith('Profile update was unsuccessful, please try again');
-
             });
 
             it('should be able to remove the avatar', () => {
-
-                (<any>AvatarController).userService.saveUser = sinon.stub().returns($q.when(true));
 
                 let removePromise = AvatarController.removeAvatar();
 
@@ -185,9 +147,7 @@ namespace common.directives.avatar {
 
                     expect(AvatarController.user._uploadedAvatar).to.equal(null);
 
-                    expect((<any>AvatarController).userService.saveUser).to.be.calledWith(AvatarController.user);
-
-                    expect((<any>AvatarController).notificationService.toast).to.be.calledWith('Profile update was successful');
+                    expect((<any>AvatarController).$mdDialog.hide).to.be.called;
 
                 });
 

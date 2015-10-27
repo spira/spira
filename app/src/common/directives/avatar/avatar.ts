@@ -8,7 +8,7 @@ namespace common.directives.avatar {
 
     export class AvatarController {
 
-        static $inject = ['userService', '$mdDialog', 'notificationService'];
+        static $inject = ['$mdDialog'];
 
         public user:common.models.User;
 
@@ -24,9 +24,7 @@ namespace common.directives.avatar {
         public width:number;
 
         constructor(
-            private userService:common.services.user.UserService,
-            private $mdDialog:ng.material.IDialogService,
-            private notificationService:common.services.notification.NotificationService
+            private $mdDialog:ng.material.IDialogService
         ) {
             if(typeof this.canEdit === 'undefined') {
                 this.canEdit = false;
@@ -71,16 +69,16 @@ namespace common.directives.avatar {
 
         /**
          * Action called by upload-image directive when the avatar has been uploaded.
-         * @returns {ng.IPromise<any>}
+         * @returns void
          */
-        public updatedAvatar():ng.IPromise<any> {
+        public updatedAvatar():void {
             if (this.avatarChangedHandler){
                 this.avatarChangedHandler(this.user);
             }
 
             this.user.avatarImgId = this.user._uploadedAvatar.imageId;
 
-            return this.saveUser();
+            this.$mdDialog.hide();
         }
 
         /**
@@ -105,23 +103,9 @@ namespace common.directives.avatar {
                 this.user.avatarImgId = null;
                 this.user._uploadedAvatar = null;
 
-                return this.saveUser();
+                this.$mdDialog.hide();
 
             });
-
-        }
-
-        private saveUser():ng.IPromise<any> {
-
-            this.$mdDialog.hide();
-
-            return this.userService.saveUser(this.user)
-                .then(() => {
-                    this.notificationService.toast('Profile update was successful').pop();
-                },
-                (err) => {
-                    this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
-                })
 
         }
 
