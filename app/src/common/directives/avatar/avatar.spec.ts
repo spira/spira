@@ -137,19 +137,23 @@ namespace common.directives.avatar {
 
                 (<any>AvatarController).userService.saveUser = sinon.stub().returns($q.when(true));
 
-                AvatarController.removeAvatar();
+                let removePromise = AvatarController.removeAvatar();
 
                 $rootScope.$digest();
 
                 expect((<any>AvatarController).$mdDialog.show).to.be.called;
 
-                expect(AvatarController.user.avatarImgId).to.equal(null);
+                removePromise.then(() => {
 
-                expect(AvatarController.user._uploadedAvatar).to.equal(null);
+                    expect(AvatarController.user.avatarImgId).to.equal(null);
 
-                expect((<any>AvatarController).userService.saveUser).to.be.calledWith(AvatarController.user);
+                    expect(AvatarController.user._uploadedAvatar).to.equal(null);
 
-                expect((<any>AvatarController).notificationService.toast).to.be.calledWith('Profile update was successful');
+                    expect((<any>AvatarController).userService.saveUser).to.be.calledWith(AvatarController.user);
+
+                    expect((<any>AvatarController).notificationService.toast).to.be.calledWith('Profile update was successful');
+
+                });
 
             });
 
