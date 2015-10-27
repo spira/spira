@@ -12,7 +12,7 @@ namespace common.directives.avatar {
             $scope:ng.IScope,
             AvatarController:AvatarController,
             directiveScope:TestScope,
-            compiledElement: ng.IAugmentedJQuery,
+            compiledElement:ng.IAugmentedJQuery,
             $q:ng.IQService;
 
         beforeEach(() => {
@@ -37,7 +37,7 @@ namespace common.directives.avatar {
                 });
 
                 compiledElement = $compile(`
-                        <avatar ng-model="testUser"></avatar>
+                        <avatar ng-model="testUser" can-edit="true"></avatar>
                     `)(directiveScope);
 
                 $rootScope.$digest();
@@ -62,6 +62,22 @@ namespace common.directives.avatar {
             it('should initialise the directive', () => {
 
                 expect($(compiledElement).hasClass('avatar-directive')).to.be.true;
+
+                expect(AvatarController.canEdit).to.be.true;
+
+            });
+
+            it('should not be able to edit the avatar by default', () => {
+
+                let displayOnlyCompiledElement:ng.IAugmentedJQuery = $compile(`
+                    <avatar ng-model="testUser"></avatar>
+                `)(directiveScope);
+
+                $rootScope.$digest();
+
+                let DisplayOnlyAvatarController = (<TestScope>displayOnlyCompiledElement.isolateScope()).AvatarController;
+
+                expect(DisplayOnlyAvatarController.canEdit).to.be.false;
 
             });
 

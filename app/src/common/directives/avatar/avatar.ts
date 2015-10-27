@@ -17,11 +17,16 @@ namespace common.directives.avatar {
         public $scope:ng.IScope;
         public $element:ng.IAugmentedJQuery;
 
+        public canEdit:boolean;
+
         constructor(
             private userService:common.services.user.UserService,
             private $mdDialog:ng.material.IDialogService,
             private notificationService:common.services.notification.NotificationService
         ) {
+            if(typeof this.canEdit === 'undefined') {
+                this.canEdit = false;
+            }
         }
 
         public registerAvatarChangedHandler(handler:IAvatarChangedHandler):void {
@@ -40,6 +45,7 @@ namespace common.directives.avatar {
                 preserveScope: true,
                 clickOutsideToClose: true
             })
+
         }
 
         /**
@@ -116,6 +122,7 @@ namespace common.directives.avatar {
         public templateUrl = 'templates/common/directives/avatar/avatar.tpl.html';
         public replace = true;
         public scope = {
+            canEdit: '=?'
         };
 
         public controllerAs = 'AvatarController';
