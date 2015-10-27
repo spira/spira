@@ -19,6 +19,10 @@ namespace common.directives.avatar {
 
         public canEdit:boolean;
 
+        public height:number;
+
+        public width:number;
+
         constructor(
             private userService:common.services.user.UserService,
             private $mdDialog:ng.material.IDialogService,
@@ -26,6 +30,14 @@ namespace common.directives.avatar {
         ) {
             if(typeof this.canEdit === 'undefined') {
                 this.canEdit = false;
+            }
+
+            if(_.isNaN(Number(this.height))) {
+                this.height = 200;
+            }
+
+            if(_.isNaN(Number(this.width))) {
+                this.width = 200;
             }
         }
 
@@ -122,7 +134,9 @@ namespace common.directives.avatar {
         public templateUrl = 'templates/common/directives/avatar/avatar.tpl.html';
         public replace = true;
         public scope = {
-            canEdit: '=?'
+            canEdit: '=?',
+            height: '=?',
+            width: '=?'
         };
 
         public controllerAs = 'AvatarController';

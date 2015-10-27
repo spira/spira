@@ -65,6 +65,10 @@ namespace common.directives.avatar {
 
                 expect(AvatarController.canEdit).to.be.true;
 
+                expect(AvatarController.width).to.equal(200);
+
+                expect(AvatarController.height).to.equal(200);
+
             });
 
             it('should not be able to edit the avatar by default', () => {
@@ -78,6 +82,22 @@ namespace common.directives.avatar {
                 let DisplayOnlyAvatarController = (<TestScope>displayOnlyCompiledElement.isolateScope()).AvatarController;
 
                 expect(DisplayOnlyAvatarController.canEdit).to.be.false;
+
+            });
+
+            it('should not be able to set the avatar dimensions', () => {
+
+                let displayOnlyCompiledElement:ng.IAugmentedJQuery = $compile(`
+                    <avatar ng-model="testUser" width="100" height="150"></avatar>
+                `)(directiveScope);
+
+                $rootScope.$digest();
+
+                let DisplayOnlyAvatarController = (<TestScope>displayOnlyCompiledElement.isolateScope()).AvatarController;
+
+                expect(DisplayOnlyAvatarController.width).to.equal(100);
+
+                expect(DisplayOnlyAvatarController.height).to.equal(150);
 
             });
 
