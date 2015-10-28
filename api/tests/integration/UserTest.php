@@ -529,7 +529,7 @@ class UserTest extends TestCase
         $avatar = factory(Image::class)->create();
 
         $user = $this->createUser([
-            'avatar_img_id' => $avatar->image_id
+            'avatar_img_id' => $avatar->image_id,
         ]);
 
         $token = $this->tokenFromUser($user);
@@ -545,6 +545,5 @@ class UserTest extends TestCase
         $response = json_decode($this->response->getContent(), true);
 
         $this->assertEquals($response['_uploadedAvatar']['imageId'], $avatar->image_id);
-
     }
 }
