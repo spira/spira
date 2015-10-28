@@ -1,7 +1,7 @@
 <md-dialog>
     <upload-image
-            ng-model="AvatarController.user._uploadedAvatar"
-            ng-change="AvatarController.updatedAvatar()">
+            ng-model="AvatarController.uploadedAvatar"
+            ng-change="AvatarController.updatedAvatar(AvatarController.uploadedAvatar.imageId)">
     </upload-image>
 
     <md-button class="md-raised md-warn" ng-click="AvatarController.removeAvatar()">Remove Avatar</md-button>

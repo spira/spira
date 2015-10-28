@@ -2,6 +2,7 @@ namespace common.directives.avatar {
 
     interface TestScope extends ng.IRootScopeService {
         testUser: common.models.User;
+        testUserAvatarId: string;
         AvatarController: AvatarController;
     }
 
@@ -36,8 +37,10 @@ namespace common.directives.avatar {
                     _uploadedAvatar: common.models.ImageMock.entity()
                 });
 
+                directiveScope.testUserAvatarId = directiveScope.testUser.avatarImgId;
+
                 compiledElement = $compile(`
-                        <avatar ng-model="testUser" can-edit="true"></avatar>
+                        <avatar user="testUser" ng-model="testUserAvatarId"></avatar>
                     `)(directiveScope);
 
                 $rootScope.$digest();
@@ -46,6 +49,7 @@ namespace common.directives.avatar {
 
                 (<any>AvatarController).$mdDialog.show = sinon.stub().returns($q.when(true));
                 (<any>AvatarController).$mdDialog.hide = sinon.stub();
+                (<any>AvatarController).avatarChangedHandler = sinon.stub();
 
             }
 
@@ -68,7 +72,7 @@ namespace common.directives.avatar {
             it('should not be able to edit the avatar by default', () => {
 
                 let displayOnlyCompiledElement:ng.IAugmentedJQuery = $compile(`
-                    <avatar ng-model="testUser"></avatar>
+                    <avatar user="testUser"></avatar>
                 `)(directiveScope);
 
                 $rootScope.$digest();
@@ -79,10 +83,10 @@ namespace common.directives.avatar {
 
             });
 
-            it('should not be able to set the avatar dimensions', () => {
+            it('should be able to set the avatar dimensions', () => {
 
                 let displayOnlyCompiledElement:ng.IAugmentedJQuery = $compile(`
-                    <avatar ng-model="testUser" width="100" height="150"></avatar>
+                    <avatar user="testUser" width="100" height="150"></avatar>
                 `)(directiveScope);
 
                 $rootScope.$digest();
@@ -123,11 +127,15 @@ namespace common.directives.avatar {
 
             it('should be able to save the update to the avatar', () => {
 
-                AvatarController.updatedAvatar();
+                let seededChance = new Chance();
+
+                let imageId = seededChance.guid();
+
+                AvatarController.updatedAvatar(imageId);
 
                 $rootScope.$digest();
 
-                expect(AvatarController.user.avatarImgId).to.equal(AvatarController.user._uploadedAvatar.imageId);
+                expect((<any>AvatarController).avatarChangedHandler).to.be.calledWith(imageId);
 
                 expect((<any>AvatarController).$mdDialog.hide).to.be.called;
 
@@ -143,9 +151,7 @@ namespace common.directives.avatar {
 
                 removePromise.then(() => {
 
-                    expect(AvatarController.user.avatarImgId).to.equal(null);
-
-                    expect(AvatarController.user._uploadedAvatar).to.equal(null);
+                    expect((<any>AvatarController).avatarChangedHandler).to.be.calledWith(null);
 
                     expect((<any>AvatarController).$mdDialog.hide).to.be.called;
 

@@ -1,6 +1,6 @@
 <div layout-padding>
     <div layout="row" style="background-color: grey">
-        <avatar ng-model="ProfileController.fullUserInfo" can-edit="true"></avatar>
+        <avatar user="ProfileController.fullUserInfo" ng-model="ProfileController.fullUserInfo.avatarImgId"></avatar>
     </div>
 
     <form novalidate name="editProfileForm" ng-submit="ProfileController.updateUser()">

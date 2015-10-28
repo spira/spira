@@ -3,33 +3,30 @@ namespace common.directives.avatar {
     export const namespace = 'common.directives.avatar';
 
     export interface IAvatarChangedHandler {
-        (user:common.models.User):void;
+        (avatarImgId:string):void;
     }
 
     export class AvatarController {
 
         static $inject = ['$mdDialog'];
 
-        public user:common.models.User;
-
         private avatarChangedHandler:IAvatarChangedHandler;
 
         public $scope:ng.IScope;
-        public $element:ng.IAugmentedJQuery;
 
-        public canEdit:boolean;
+        public user:common.models.User;
+
+        public canEdit:boolean = false;
 
         public height:number;
 
         public width:number;
 
+        public uploadedAvatar:common.models.Image;
+
         constructor(
             private $mdDialog:ng.material.IDialogService
         ) {
-            if(typeof this.canEdit === 'undefined') {
-                this.canEdit = false;
-            }
-
             if(_.isNaN(Number(this.height))) {
                 this.height = 200;
             }
@@ -71,12 +68,8 @@ namespace common.directives.avatar {
          * Action called by upload-image directive when the avatar has been uploaded.
          * @returns void
          */
-        public updatedAvatar():void {
-            if (this.avatarChangedHandler){
-                this.avatarChangedHandler(this.user);
-            }
-
-            this.user.avatarImgId = this.user._uploadedAvatar.imageId;
+        public updatedAvatar(imageId:string):void {
+            this.avatarChangedHandler(imageId);
 
             this.$mdDialog.hide();
         }
@@ -96,12 +89,7 @@ namespace common.directives.avatar {
 
             return this.$mdDialog.show(confirm).then(() => {
 
-                if (this.avatarChangedHandler){
-                    this.avatarChangedHandler(this.user);
-                }
-
-                this.user.avatarImgId = null;
-                this.user._uploadedAvatar = null;
+                this.avatarChangedHandler(null);
 
                 this.$mdDialog.hide();
 
@@ -114,11 +102,11 @@ namespace common.directives.avatar {
     class AvatarDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public require = ['ngModel', 'avatar'];
+        public require = ['?ngModel', 'avatar'];
         public templateUrl = 'templates/common/directives/avatar/avatar.tpl.html';
         public replace = true;
         public scope = {
-            canEdit: '=?',
+            user: '=',
             height: '=?',
             width: '=?'
         };
@@ -135,19 +123,25 @@ namespace common.directives.avatar {
             let $ngModelController = $controllers[0];
             let directiveController = $controllers[1];
 
-            directiveController.registerAvatarChangedHandler((user:common.models.User) => {
-                $ngModelController.$setViewValue(user);
-
+            directiveController.registerAvatarChangedHandler((avatarImgId:string) => {
                 $ngModelController.$setDirty();
+                $ngModelController.$setTouched();
+                $ngModelController.$setViewValue(avatarImgId);
             });
 
-            $ngModelController.$render = () => {
+            if($ngModelController) {
 
-                directiveController.user = $ngModelController.$modelValue;
-            };
+                $ngModelController.$render = () => {
+
+                    directiveController.user.avatarImgId = $ngModelController.$modelValue;
+
+                };
+
+                directiveController.canEdit = true;
+
+            }
 
             directiveController.$scope = $scope;
-            directiveController.$element = $element;
 
         };
 
