@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Image;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Cache;
@@ -166,6 +167,7 @@ class UserTest extends TestCase
         $this->assertEquals($user['firstName'], $createdUser->first_name);
         $this->assertObjectNotHasAttribute('_userCredential', $response);
         $this->assertObjectNotHasAttribute('_userProfile', $response);
+        $this->assertObjectNotHasAttribute('_uploadedAvatar', $response);
     }
 
     public function testPutOneNoCredentials()
@@ -520,5 +522,29 @@ class UserTest extends TestCase
             'Email-Confirm-Token' => $emailToken,
         ]);
         $this->assertResponseStatus(422);
+    }
+
+    public function testGetAvatarImage()
+    {
+        $avatar = factory(Image::class)->create();
+
+        $user = $this->createUser([
+            'avatar_img_id' => $avatar->image_id
+        ]);
+
+        $token = $this->tokenFromUser($user);
+
+        $this->getJson('/users/'.$user->user_id, [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'With-Nested' => 'uploadedAvatar',
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $response = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals($response['_uploadedAvatar']['imageId'], $avatar->image_id);
+
     }
 }
