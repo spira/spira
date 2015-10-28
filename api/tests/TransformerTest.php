@@ -93,6 +93,13 @@ class TransformerTest extends TestCase
         $this->assertTrue(is_array($item));
     }
 
+    public function testNullItem()
+    {
+        $item = $this->transformer->transformItem(null);
+
+        $this->assertTrue(is_null($item));
+    }
+
     public function testRelationSelf()
     {
         /** @var App\Models\TestEntity $entity */
