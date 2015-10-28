@@ -1,5 +1,7 @@
 <div layout-padding>
-    <h2>User Profile</h2>
+    <div layout="row" style="background-color: grey">
+        <avatar user="ProfileController.fullUserInfo" ng-model="ProfileController.fullUserInfo.avatarImgId"></avatar>
+    </div>
 
     <form novalidate name="editProfileForm" ng-submit="ProfileController.updateUser()">
         <md-content layout-padding>

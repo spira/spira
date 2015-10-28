@@ -18,11 +18,13 @@ namespace common.models {
         public country:string = undefined;
         public regionCode:string = undefined;
         public avatarImgUrl:string = undefined;
+        public avatarImgId:string = undefined;
         public timezoneIdentifier:string = undefined;
         public _userCredential:global.IUserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public _roles:common.models.RoleAssignment[] = undefined;
+        public _uploadedAvatar:common.models.Image = undefined;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

@@ -32,7 +32,8 @@ class CreateUsersTable extends Migration
             $table->string('country', 2)->nullable();
             $table->string('region_code', 2)->nullable();
             $table->string('timezone_identifier', 40)->nullable();
-            $table->string('avatar_img_url')->nullable();
+            $table->string('avatar_img_url')->nullable(); // The user's social login's picture
+            $table->uuid('avatar_img_id')->nullable(); // The user has uploaded their own picture
 
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();

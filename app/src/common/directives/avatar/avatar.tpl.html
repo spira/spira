@@ -1,0 +1,8 @@
+<div flex ng-click="!AvatarController.canEdit || AvatarController.openAvatarDialog()" class="avatar-directive">
+    <!-- ng-disabled doesn't work on divs -->
+    <cl-image ng-if="AvatarController.user.avatarImgId" width="100%" public-id="{{AvatarController.user.avatarImgId}}">
+        <cl-transformation height="{{ AvatarController.height }}" width="{{ AvatarController.width }}" crop="fill" gravity="north"/>
+    </cl-image>
+
+    <img ng-if="!AvatarController.user.avatarImgId" ng-src="{{AvatarController.user.avatarImgUrl}}" alt="{{AvatarController.user.fullName()}}" />
+</div>

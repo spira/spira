@@ -57,7 +57,7 @@ namespace common.directives.selectMediaImage {
         public controller = SelectMediaImageController;
         public bindToController = true;
 
-        constructor(private $mdDialog:ng.material.IDialogService) {
+        constructor() {
         }
 
         public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ng.INgModelController, SelectMediaImageController]) => {
@@ -79,8 +79,7 @@ namespace common.directives.selectMediaImage {
         };
 
         static factory(): ng.IDirectiveFactory {
-            const directive =  ($mdDialog) => new SelectMediaImageDirective($mdDialog);
-            directive.$inject = ['$mdDialog'];
+            const directive =  () => new SelectMediaImageDirective();
             return directive;
         }
     }

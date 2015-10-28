@@ -8,7 +8,7 @@
         <md-fab-speed-dial md-open="false" md-direction="left" id="profileMenu" ng-if="AppController.ngJwtAuthService.loggedIn">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab" layout="row" layout-align="center">
-                    <img ng-src="{{AppController.ngJwtAuthService.user.avatarImgUrl}}" alt="{{AppController.ngJwtAuthService.user.fullName()}}" />
+                    <avatar user="AppController.ngJwtAuthService.user"></avatar>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
