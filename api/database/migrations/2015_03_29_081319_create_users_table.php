@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Bosnadev\Database\Schema\Blueprint;
@@ -37,6 +38,10 @@ class CreateUsersTable extends Migration
 
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
+
+            $table->foreign('avatar_img_id')
+                ->references('image_id')->on(Image::getTableName())
+                ->onDelete('set null');
 
             $table->primary('user_id');
         });
