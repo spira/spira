@@ -27,6 +27,10 @@ class Localization extends BaseModel
      */
     protected $primaryKey = ['localizable_id', 'localizable_type', 'region_code'];
 
+    protected $casts = [
+        'localizations' => 'json',
+    ];
+
     /**
      * Model validation.
      *
