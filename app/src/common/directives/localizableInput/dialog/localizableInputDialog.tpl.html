@@ -15,9 +15,9 @@
             <md-tab label="{{region.name}}"ng-repeat="region in LocalizableInputDialogController.regionService.supportedRegions">
 
                 <md-input-container flex ng-switch="LocalizableInputDialogController.inputNodeName">
-                    <textarea ng-switch-when="textarea" ng-model="LocalizableInputDialogController.localizationMap[region.code]"></textarea>
-                    <input ng-switch-when="input" ng-model="LocalizableInputDialogController.localizationMap[region.code]">
-                    <markdown-editor ng-switch-when="markdown-editor" ng-model="testModel"></markdown-editor>
+                    <textarea aria-label="Add localisation for {{region.name}}" ng-switch-when="textarea" ng-model="LocalizableInputDialogController.localizationMap[region.code]"></textarea>
+                    <input aria-label="Add localisation for {{region.name}}" ng-switch-when="input" ng-model="LocalizableInputDialogController.localizationMap[region.code]">
+                    <markdown-editor aria-label="Add localisation for {{region.name}}" ng-switch-when="markdown-editor" ng-model="testModel"></markdown-editor>
                 </md-input-container>
 
                 <md-button ng-click="LocalizableInputDialogController.copyFromOriginal(region.code)">

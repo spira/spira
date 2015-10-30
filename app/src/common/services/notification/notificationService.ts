@@ -29,9 +29,8 @@ namespace common.services.notification {
             this.toastOptions = {
                 hideDelay: 2000,
                 position: 'top',
-                //template: '<md-toast class="md-toast-fixed">' + message + '</md-toast>',
                 template: `
-                    <md-toast md-theme="{{ toast.theme }}" ng-class="{\'md-capsule\': toast.capsule}">
+                    <md-toast class="md-toast-fixed" md-theme="{{ toast.theme }}" ng-class="{\'md-capsule\': toast.capsule}">
                         <span flex>{{toast.content}}</span>
                         <md-button class="md-action" ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">
                             {{ toast.action }}
@@ -52,7 +51,7 @@ namespace common.services.notification {
 
             _.merge(this.toastOptions, toastOptions);
             if(_.has(toastOptions, 'parent')) {
-                this.toastOptions.template = '<md-toast>' + this.message + '</md-toast>';
+                this.toastOptions.template = this.toastOptions.template.replace('class="md-toast-fixed"', '');
             }
 
             return this;

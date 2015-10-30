@@ -38,14 +38,19 @@ namespace common.directives.localizableInput.dialog {
 
 
             let actionName = 'Undo';
-            this.notificationService.toast('Content Copied')
+            this.notificationService
+                .toast('Content Copied')
+                .options({parent:'#localizableInputDialog'})
                 .action(actionName)
                 .pop()
                 .then((action:any) => {
                     if(actionName == action){
                         this.localizationMap[regionCode] = prevValue;
 
-                        this.notificationService.toast('Copy Undone').pop();
+                        this.notificationService
+                            .toast('Copy Undone')
+                            .options({parent:'#localizableInputDialog'})
+                            .pop();
                     }
                 });
         }
