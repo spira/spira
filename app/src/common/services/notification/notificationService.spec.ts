@@ -1,8 +1,8 @@
-(() => {
+namespace common.services.notification {
 
-    describe('Notification Service', () => {
+    describe.only('Notification Service', () => {
 
-        let notificationService:common.services.notification.NotificationService,
+        let notificationService:NotificationService,
             $mdToast:ng.material.IToastService,
             $rootScope:global.IRootScope,
             $timeout:ng.ITimeoutService;
@@ -61,8 +61,7 @@
 
                 notificationService.toast('foobar').pop();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast class="md-toast-fixed">/)));
+                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast class="md-toast-fixed"/)));
 
             });
 
@@ -70,8 +69,7 @@
 
                 notificationService.toast('foobar').options({parent:'#parent'}).pop();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast>/)));
+                expect($mdToast.show).not.to.have.been.calledWith(sinon.match.has("template", sinon.match(/md-toast-fixed/)));
                 expect($mdToast.show).to.have.been.calledWith(sinon.match.has("parent", sinon.match(/#parent/)));
 
             });
@@ -88,7 +86,7 @@
 
                 $timeout.flush();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
+                expect($mdToast.show).to.have.been.calledWith(sinon.match({scope:{toast:{content: 'foobar'}}}));
 
             });
 
@@ -96,4 +94,4 @@
 
     });
 
-})();
+}
