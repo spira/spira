@@ -1,6 +1,6 @@
 namespace common.services.notification {
 
-    describe.only('Notification Service', () => {
+    describe('Notification Service', () => {
 
         let notificationService:NotificationService,
             $mdToast:ng.material.IToastService,

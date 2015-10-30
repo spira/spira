@@ -118,7 +118,7 @@ namespace common.directives.localizableInput {
     }
 
     angular.module(namespace, [
-        'common.directives.localizableInput.dialog',
+        namespace + '.dialog',
     ])
         .directive('localizableInput', LocalizableInputDirective.factory())
     ;
