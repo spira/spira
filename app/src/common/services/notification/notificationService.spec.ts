@@ -90,6 +90,18 @@ namespace common.services.notification {
 
             });
 
+            it('should be able to set an action which is resolved in the template', () => {
+
+
+                let toast = notificationService.toast('foobar').action('testAction');
+                let notificationPromise = toast.pop();
+
+                (<any>toast).toastOptions.scope.toast.resolve();
+
+                expect(notificationPromise).eventually.to.become('testAction');
+
+            });
+
         });
 
     });
