@@ -8,7 +8,7 @@ namespace common.directives.localizableInput.dialog {
 
     export class LocalizableInputDialogController {
 
-        static $inject = ['localizations', 'attributeKey', 'inputNodeName', 'originalValue', 'regionService', '$mdDialog', 'ngRestAdapter'];
+        static $inject = ['localizations', 'attributeKey', 'inputNodeName', 'originalValue', 'regionService', '$mdDialog', 'notificationService', 'ngRestAdapter'];
 
         public selectedIndex:number = 0;
         public localizationMap:ILocalizationMap;
@@ -19,6 +19,7 @@ namespace common.directives.localizableInput.dialog {
                     public originalValue:string,
                     public regionService:common.services.region.RegionService,
                     private $mdDialog:ng.material.IDialogService,
+                    private notificationService:common.services.notification.NotificationService,
                     private ngRestAdapter:NgRestAdapter.NgRestAdapterService
         ) {
 
@@ -27,6 +28,26 @@ namespace common.directives.localizableInput.dialog {
                 return localizationMap;
             }, {});
 
+        }
+
+
+        public copyFromOriginal(regionCode:string):void{
+
+            let prevValue = this.localizationMap[regionCode];
+            this.localizationMap[regionCode] = this.originalValue;
+
+
+            let actionName = 'Undo';
+            this.notificationService.toast('Content Copied')
+                .action(actionName)
+                .pop()
+                .then((action:any) => {
+                    if(actionName == action){
+                        this.localizationMap[regionCode] = prevValue;
+
+                        this.notificationService.toast('Copy Undone').pop();
+                    }
+                });
         }
 
         private getLocalizationValueForRegion(regionCode:string):string {
@@ -42,15 +63,20 @@ namespace common.directives.localizableInput.dialog {
         public saveLocalizations(){
 
             let updatedLocalizations = _.reduce(this.localizationMap, (updatedLocalizations:common.models.Localization<any>[], translation:string, regionCode:string) => {
-                if(!translation){
-                    return updatedLocalizations;
-                }
 
                 let existing = _.find(this.localizations, {regionCode: regionCode});
 
                 if(existing){
-                    existing.localizations[this.attributeKey] = translation;
+                    if(!translation){
+                        delete existing.localizations[this.attributeKey];
+                    }else{
+                        existing.localizations[this.attributeKey] = translation;
+                    }
                     updatedLocalizations.push(existing);
+                    return updatedLocalizations;
+                }
+
+                if(!translation){
                     return updatedLocalizations;
                 }
 

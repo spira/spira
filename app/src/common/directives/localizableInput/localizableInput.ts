@@ -10,13 +10,17 @@ namespace common.directives.localizableInput {
         ngModel: string;
     }
 
+    interface ILocalizableInputScope extends ng.IScope{
+        localizableInput: common.models.Localization<any>[];
+    }
+
     export class LocalizableInputController {
 
         public localizableInput:common.models.Localization<any>[];
         private changeHandler:ILocalizationChangeHandler;
         private attributeKey:string;
         private inputNodeName:string;
-        public originalValue:string;
+        public $ngModelController:ng.INgModelController;
 
         static $inject = ['$mdDialog', '$compile'];
         constructor(private $mdDialog:ng.material.IDialogService, private $compile:ng.ICompileService) {
@@ -59,7 +63,7 @@ namespace common.directives.localizableInput {
                     localizations: this.localizableInput,
                     attributeKey: this.attributeKey,
                     inputNodeName: this.inputNodeName,
-                    originalValue: this.originalValue,
+                    originalValue: this.$ngModelController.$modelValue,
                 }
             };
 
@@ -67,6 +71,7 @@ namespace common.directives.localizableInput {
                 .then((updatedLocalizations:common.models.Localization<any>[]) => {
 
                     this.changeHandler(updatedLocalizations);
+                    this.localizableInput = updatedLocalizations;
 
                     return updatedLocalizations;
                 });
@@ -90,7 +95,7 @@ namespace common.directives.localizableInput {
         constructor() {
         }
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: IInputElementAttributes, $controllers: [ng.INgModelController, LocalizableInputController]) => {
+        public link = ($scope: ILocalizableInputScope, $element: ng.IAugmentedJQuery, $attrs: IInputElementAttributes, $controllers: [ng.INgModelController, LocalizableInputController]) => {
 
             let $ngModelController = $controllers[0];
             let directiveController = $controllers[1];
@@ -103,10 +108,7 @@ namespace common.directives.localizableInput {
                 $ngModelController.$setDirty();
             });
 
-            //@todo resolve how to get the following to run the first time, consider $render, but that causes the ngmodel to be blank for some reason
-            $ngModelController.$viewChangeListeners.push(() => {
-                directiveController.originalValue = $ngModelController.$modelValue;
-            });
+            directiveController.$ngModelController = $ngModelController;
 
         };
 
