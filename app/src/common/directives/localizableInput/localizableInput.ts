@@ -3,43 +3,72 @@ namespace common.directives.localizableInput {
     export const namespace = 'common.directives.localizableInput';
 
     export interface ILocalizationChangeHandler {
-        (localizations:common.models.Localization[]):void;
+        (localizations:common.models.Localization<any>[]):void;
+    }
+
+    export interface IInputElementAttributes extends ng.IAttributes{
+        ngModel: string;
     }
 
     export class LocalizableInputController {
 
-        public localizableInput:common.models.Localization[];
+        public localizableInput:common.models.Localization<any>[];
         private changeHandler:ILocalizationChangeHandler;
-        public localizationObject:common.models.Localization;
+        private attributeKey:string;
+        private inputNodeName:string;
+        public originalValue:string;
 
-        static $inject = ['$mdDialog'];
-        constructor(private $mdDialog) {
+        static $inject = ['$mdDialog', '$compile'];
+        constructor(private $mdDialog:ng.material.IDialogService, private $compile:ng.ICompileService) {
         }
 
         public registerChangeHandler(handler:ILocalizationChangeHandler){
             this.changeHandler = handler;
         }
 
-        public promptAddLocalization($event:MouseEvent):ng.IPromise<string> {
+        public getButtonElement($scope:ng.IScope):ng.IAugmentedJQuery{
+
+            return this.$compile(`<md-icon ng-click="LocalizableInputController.promptAddLocalization($event)">translate</md-icon>`)($scope);
+        }
+
+        /**
+         * Get the attribute name by parsing the ng-model="path.to.attribute" attribute.
+         * @todo consider alternative method as this relies on the attribute being at the top level of the localisation
+         * @param $element
+         * @param $attrs
+         */
+        public setInputAttributes($element:ng.IAugmentedJQuery, $attrs:IInputElementAttributes):void {
+            this.attributeKey =  _.last($attrs.ngModel.split('.'));
+            this.inputNodeName =  $element.prop('nodeName').toLowerCase();
+        }
+
+        /**
+         * Prompt the localisation dialog to pop up
+         * @param $event
+         * @returns {IPromise<common.models.Localization<any>[]>}
+         */
+        public promptAddLocalization($event:MouseEvent):ng.IPromise<common.models.Localization<any>[]> {
 
             let dialogConfig:ng.material.IDialogOptions = {
-                templateUrl: 'templates/common/directives/LocalizableInput/dialog/localizableInputDialog.tpl.html',
+                targetEvent: $event,
+                templateUrl: 'templates/common/directives/localizableInput/dialog/localizableInputDialog.tpl.html',
                 controller: namespace+'.dialog.controller',
                 controllerAs: 'LocalizableInputDialogController',
                 clickOutsideToClose: true,
-                locals: {}
+                locals: {
+                    localizations: this.localizableInput,
+                    attributeKey: this.attributeKey,
+                    inputNodeName: this.inputNodeName,
+                    originalValue: this.originalValue,
+                }
             };
 
             return this.$mdDialog.show(dialogConfig)
-                .then((localization:string) => {
+                .then((updatedLocalizations:common.models.Localization<any>[]) => {
 
-                    //this.localizationObject = localization;
-                    //
-                    //if (this.changeHandler){
-                    //    this.changeHandler(localization);
-                    //}
+                    this.changeHandler(updatedLocalizations);
 
-                    return localization;
+                    return updatedLocalizations;
                 });
 
         }
@@ -47,9 +76,8 @@ namespace common.directives.localizableInput {
 
     class LocalizableInputDirective implements ng.IDirective {
 
-        public restrict = 'E';
+        public restrict = 'A';
         public require = ['ngModel','localizableInput'];
-        public templateUrl = 'templates/common/directives/localizableInput/localizableInput.tpl.html';
         public replace = false;
         public scope = {
             localizableInput: '='
@@ -62,19 +90,23 @@ namespace common.directives.localizableInput {
         constructor() {
         }
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ng.INgModelController, LocalizableInputController]) => {
+        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: IInputElementAttributes, $controllers: [ng.INgModelController, LocalizableInputController]) => {
 
             let $ngModelController = $controllers[0];
             let directiveController = $controllers[1];
 
-            directiveController.registerChangeHandler((localizations:common.models.Localization[]) => {
+            directiveController.setInputAttributes($element, $attrs);
 
+            $element.after(directiveController.getButtonElement($scope));
+
+            directiveController.registerChangeHandler((localizations:common.models.Localization<any>[]) => {
                 $ngModelController.$setDirty();
             });
 
-            $ngModelController.$render = () => {
-                //do something when the primary input changes?
-            };
+            //@todo resolve how to get the following to run the first time, consider $render, but that causes the ngmodel to be blank for some reason
+            $ngModelController.$viewChangeListeners.push(() => {
+                directiveController.originalValue = $ngModelController.$modelValue;
+            });
 
         };
 

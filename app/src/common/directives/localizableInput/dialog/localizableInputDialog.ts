@@ -2,65 +2,72 @@ namespace common.directives.localizableInput.dialog {
 
     export const namespace = 'common.directives.localizableInput.dialog';
 
+    export interface ILocalizationMap {
+        [regionCode:string] : string;
+    }
 
     export class LocalizableInputDialogController {
 
-        public selectedIndex:number;
-        public selectedImage:common.models.Image;
-        public library:common.models.Image[];
-        private imagesPaginator:common.services.pagination.Paginator;
-        private perPage:number = 12;
-        public pages:number[];
-        public currentPage:number = 1;
-        private currentPageIndex:number;
+        static $inject = ['localizations', 'attributeKey', 'inputNodeName', 'originalValue', 'regionService', '$mdDialog', 'ngRestAdapter'];
 
-        static $inject = ['$mdDialog', 'imageService'];
+        public selectedIndex:number = 0;
+        public localizationMap:ILocalizationMap;
 
-        constructor(private $mdDialog:ng.material.IDialogService,
-                    private imageService:common.services.image.ImageService) {
+        constructor(public localizations:common.models.Localization<any>[],
+                    public attributeKey:string,
+                    public inputNodeName:string,
+                    public originalValue:string,
+                    public regionService:common.services.region.RegionService,
+                    private $mdDialog:ng.material.IDialogService,
+                    private ngRestAdapter:NgRestAdapter.NgRestAdapterService
+        ) {
 
-            this.init();
+            this.localizationMap = _.reduce(regionService.supportedRegions, (localizationMap, region:global.ISupportedRegion) => {
+                localizationMap[region.code] = this.getLocalizationValueForRegion(region.code);
+                return localizationMap;
+            }, {});
+
         }
 
-        private init() {
-            this.imagesPaginator = this.imageService.getPaginator().setCount(this.perPage);
+        private getLocalizationValueForRegion(regionCode:string):string {
+            let localization =  _.find(this.localizations, {regionCode: regionCode});
 
-            this.imagesPaginator.getPage(this.currentPage)
-                .then((images:common.models.Image[]) => {
-                    this.library = images;
-                    this.pages = this.imagesPaginator.getPages();
-                });
-
-            this.currentPageIndex = this.currentPage - 1;
-        }
-
-        public toggleImageSelection(selectedImage:common.models.Image) {
-
-            if (this.selectedImage == selectedImage){
-                this.selectedImage = null;
-            }else{
-                this.selectedImage = selectedImage;
-            }
-        }
-
-        public selectImage() {
-
-            if (!this.selectedImage) {
-                this.$mdDialog.cancel('closed');
+            if (!localization){
+                return null;
             }
 
-            this.$mdDialog.hide(this.selectedImage);
+            return localization.localizations[this.attributeKey];
         }
 
-        public goToPage(page:number):ng.IPromise<common.models.Image[]>  {
+        public saveLocalizations(){
 
-            this.currentPage = page;
+            let updatedLocalizations = _.reduce(this.localizationMap, (updatedLocalizations:common.models.Localization<any>[], translation:string, regionCode:string) => {
+                if(!translation){
+                    return updatedLocalizations;
+                }
 
-            return this.imagesPaginator.getPage(this.currentPage)
-                .then((images:common.models.Image[]) => {
-                    this.library = images;
-                    return this.library;
-                });
+                let existing = _.find(this.localizations, {regionCode: regionCode});
+
+                if(existing){
+                    existing.localizations[this.attributeKey] = translation;
+                    updatedLocalizations.push(existing);
+                    return updatedLocalizations;
+                }
+
+                updatedLocalizations.push(new common.models.Localization<any>({
+                    localizableId: this.ngRestAdapter.uuid(),
+                    localizableType: null, //this is determined by the api
+                    localizations: {
+                        [this.attributeKey]: translation
+                    },
+                    regionCode: regionCode,
+                }));
+
+                return updatedLocalizations;
+
+            }, []);
+
+            this.$mdDialog.hide(updatedLocalizations);
         }
 
         /**

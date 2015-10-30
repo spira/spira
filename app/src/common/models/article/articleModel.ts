@@ -8,11 +8,12 @@ namespace common.models {
     export class Article extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
-            _tags: Tag,
-            _author: User,
-            _articleMetas: this.hydrateMetaCollectionFromTemplate,
-            _comments: ArticleComment,
             _sections: this.hydrateSections,
+            _articleMetas: this.hydrateMetaCollectionFromTemplate,
+            _author: User,
+            _tags: Tag,
+            _comments: ArticleComment,
+            _localizations: Localization,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -37,6 +38,7 @@ namespace common.models {
         public _author:User = undefined;
         public _tags:Tag[] = [];
         public _comments:ArticleComment[] = [];
+        public _localizations:Localization<Article>[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
