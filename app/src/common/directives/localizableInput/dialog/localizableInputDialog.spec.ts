@@ -1,11 +1,11 @@
 namespace common.directives.localizableInput.dialog {
 
-    describe.only('Localizable input dialog controller', () => {
+    describe('Localizable input dialog controller', () => {
 
         let images:common.models.Image[] = common.models.ImageMock.collection(12),
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
-            imageService:common.services.image.ImageService,
+            notificationService:common.services.notification.NotificationService,
             LocalizableInputDialogController:LocalizableInputDialogController,
             $q:ng.IQService,
             mockInitLocalizations:common.models.Localization<common.models.Article>[] = [
@@ -27,24 +27,21 @@ namespace common.directives.localizableInput.dialog {
                     },
                     regionCode: 'nz',
                 })
-            ];
+            ],
+            toastMock:common.services.notification.Toast;
 
         beforeEach(() => {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _imageService_, _$q_, _ngRestAdapter_) => {
+            inject(($controller, _$rootScope_, _$q_, _ngRestAdapter_, _notificationService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
 
-                imageService = _imageService_;
+                notificationService = _notificationService_;
                 $q = _$q_;
 
-                let imagePaginatorMock:common.services.pagination.Paginator = imageService.getPaginator();
-                imagePaginatorMock.setCount = sinon.stub().returns(imagePaginatorMock);
-                imagePaginatorMock.getPages = sinon.stub().returns(3);
-                imagePaginatorMock.getPage = sinon.stub().returns($q.when(images));
-                imageService.getPaginator = sinon.stub().returns(imagePaginatorMock);
+                toastMock = notificationService.toast('test');
 
                 LocalizableInputDialogController = $controller(common.directives.localizableInput.dialog.namespace + '.controller', {
                     localizations: mockInitLocalizations,
@@ -79,7 +76,7 @@ namespace common.directives.localizableInput.dialog {
                         cancel: sinon.stub(),
                         hide: sinon.stub()
                     },
-                    notificationService: null,
+                    notificationService: notificationService,
                     ngRestAdapter: _ngRestAdapter_
                 });
 
@@ -100,6 +97,27 @@ namespace common.directives.localizableInput.dialog {
 
         it('should be able to copy the original value to a localization', () => {
 
+            toastMock.pop = sinon.stub().returns($q.when(null));
+            (<any>LocalizableInputDialogController).notificationService.toast = sinon.stub().returns(toastMock);
+
+            LocalizableInputDialogController.copyFromOriginal('au');
+
+            $rootScope.$apply();
+            expect(LocalizableInputDialogController.localizationMap['au']).to.equal(LocalizableInputDialogController.originalValue);
+        });
+
+        it('should be able to copy the original value to a localization, then undo when user changes their mind', () => {
+
+            toastMock.pop = sinon.stub().returns($q.when('Undo'));
+            (<any>LocalizableInputDialogController).notificationService.toast = sinon.stub().returns(toastMock);
+
+            let originalValue = LocalizableInputDialogController.localizationMap['au'];
+            LocalizableInputDialogController.copyFromOriginal('au');
+
+            expect(LocalizableInputDialogController.localizationMap['au']).to.equal(LocalizableInputDialogController.originalValue);
+            $rootScope.$apply();
+            expect((<any>LocalizableInputDialogController).notificationService.toast).to.have.been.calledWith('Copy Undone');
+            expect(LocalizableInputDialogController.localizationMap['au']).to.equal(originalValue);
         });
 
         it('should be able to resolve the updated localizations', () => {
