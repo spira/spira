@@ -156,7 +156,7 @@ abstract class ChildEntityController extends ApiController
 
     /**
      * Put many entities.
-     * Internally make use of Relation::saveMany()
+     * Internally make use of Relation::saveMany().
      *
      * @param string $id
      * @param  Request $request
@@ -186,7 +186,7 @@ abstract class ChildEntityController extends ApiController
 
     /**
      * Put many entities.
-     * Internally make use of Relation::sync()
+     * Internally make use of Relation::sync().
      *
      * @param string $id
      * @param  Request $request
@@ -204,7 +204,7 @@ abstract class ChildEntityController extends ApiController
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels)
             ->each(function (BaseModel $model) {
-                if (!$model->exists || $model->isDirty()) {
+                if (! $model->exists || $model->isDirty()) {
                     $model->save();
                 }
             });
@@ -446,7 +446,6 @@ abstract class ChildEntityController extends ApiController
      */
     protected function prepareSyncList(Collection $childModels, array $requestCollection)
     {
-
         $childPk = $this->getChildModel()->getPrimaryKey();
 
         $childModels->keyBy($childPk);
@@ -454,16 +453,18 @@ abstract class ChildEntityController extends ApiController
         $requestCollection = new Collection($requestCollection);
         $requestCollection->keyBy($childPk);
 
-        $syncList = $childModels->reduce(function($syncList, $childModel) use ($requestCollection, $childPk){
+        $syncList = $childModels->reduce(function ($syncList, $childModel) use ($requestCollection, $childPk) {
 
             $key = $childModel->{$childPk};
             $requestItem = $requestCollection[$key];
-            if (isset($requestItem['_pivot'])){
+            if (isset($requestItem['_pivot'])) {
                 $syncList[$key] = $requestItem['_pivot'];
+
                 return $syncList;
             }
 
             $syncList[] = $key;
+
             return $syncList;
         }, []);
 
