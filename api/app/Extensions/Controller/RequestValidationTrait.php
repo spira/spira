@@ -91,7 +91,7 @@ trait RequestValidationTrait
      */
     public function validateRequest($requestEntity, $validationRules, BaseModel $existingModel = null, $limitToKeysPresent = false)
     {
-        if ($existingModel){
+        if ($existingModel) {
             $fillableModelValues = $existingModel->withHidden($existingModel->getFillable())->attributesToArray();
             $requestEntity = array_merge($fillableModelValues, $requestEntity);
         }
