@@ -19,6 +19,16 @@ use Spira\Model\Model\BaseModel;
  */
 class Role extends BaseModel
 {
+    const SUPER_ADMIN_ROLE = 'superAdmin';
+    const ADMIN_ROLE = 'admin';
+    const USER_ROLE = 'user';
+
+    public static $roles = [
+        self::ADMIN_ROLE,
+        self::SUPER_ADMIN_ROLE,
+        self::USER_ROLE
+    ];
+
     public $table = 'roles';
 
     protected $primaryKey = 'role_key';

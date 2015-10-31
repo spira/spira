@@ -10,6 +10,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\TagTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -21,14 +22,13 @@ use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * @property ArticlePermalink[]|Collection $permalinks
- * @property ArticleMeta[]|Collection $metas
  * @property string $permalink
  *
  * Class Article
  */
 class Article extends IndexedModel
 {
-    use RevisionableTrait, LocalizableModelTrait;
+    use RevisionableTrait, LocalizableModelTrait, TagTrait;
 
     const defaultExcerptWordCount = 30;
 
@@ -53,7 +53,8 @@ class Article extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['article_id',
+    protected $fillable = [
+        'article_id',
         'title',
         'excerpt',
         'permalink',
@@ -66,7 +67,7 @@ class Article extends IndexedModel
         'status',
     ];
 
-    protected $hidden = ['permalinks','metas'];
+    protected $hidden = ['permalinks'];
 
     protected $primaryKey = 'article_id';
 
@@ -93,18 +94,53 @@ class Article extends IndexedModel
         ];
     }
 
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-core-types.html
     protected $mappingProperties = [
+        'article_id' => [
+            'type' => 'string',
+            'index' => 'no' // also sets 'include_in_all' = false
+        ],
+        'primary_image' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'permalink' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'author_id' => [
+            'type' => 'string',
+            'include_in_all' => false // This is filtered by exact ID, do not include in _all
+        ],
+        'sections_display' => [
+            'type' => 'object',
+            'index' => 'no'
+        ],
+        'excerpt' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
+        'title' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
         'tags' => [
             'type' => 'nested',
+            'include_in_all' => false
         ],
         'article_permalinks' => [
             'type' => 'nested',
+            'include_in_all' => false
         ],
         'author' => [
             'type' => 'nested',
+            'include_in_all' => false
         ],
         'article_metas' => [
             'type' => 'nested',
+            'include_in_all' => false
         ],
     ];
 
@@ -228,11 +264,6 @@ class Article extends IndexedModel
         return (new ArticleDiscussion)->setArticle($this);
     }
 
-    public function tags()
-    {
-        return $this->belongsToManyRevisionable(Tag::class, 'tag_article', 'article_id', 'tag_id', 'tags');
-    }
-
     /**
      * @return HasMany
      */
@@ -250,4 +281,5 @@ class Article extends IndexedModel
     {
         return $this->morphMany(Section::class, 'sectionable');
     }
+
 }

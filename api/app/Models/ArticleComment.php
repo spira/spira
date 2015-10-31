@@ -62,4 +62,16 @@ class ArticleComment extends BaseModel
 
         return $this;
     }
+
+    /**
+     * Article comments finding shouldn't be attempted by the hydrator on create as they can't be found from the database
+     * @param $id
+     * @param array $columns
+     * @return BaseModel|void
+     */
+    public static function find($id, $columns = ['*'])
+    {
+        return;
+    }
+
 }

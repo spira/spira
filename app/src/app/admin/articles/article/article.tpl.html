@@ -1,10 +1,33 @@
 
 <form novalidate name="articleForm" >
 
+    <div style="background-color: lightgrey">
+        <h1>{{ArticleController.entity.status | uppercase}}</h1>
+        <div layout="row">
+            <div flex>
+                {{ArticleController.entity.createdAt.format('dddd, MMMM Do YYYY')}}
+            </div>
+            <div flex>
+                {{ArticleController.entity.createdAt.format('h:mm:ss a')}}
+            </div>
+            <div flex>
+                {{ArticleController.entity.createdAt.fromNow()}}
+            </div>
+            <div flex>
+                <md-button class="md-fab md-mini" aria-label="Schedule">
+                    <md-icon>access_time</md-icon>
+                </md-button>
+            </div>
+        </div>
+    </div>
+
     <div layout="row">
+
         <md-tabs flex md-dynamic-height md-border-bottom>
-            <md-tab label="Post">
-                <md-content class="md-padding" ui-view="post"></md-content>
+            <md-tab label="Content">
+                <h2 ng-if="ArticleController.$stateParams.newEntity">Create</h2>
+                <h2 ng-if="!ArticleController.$stateParams.newEntity">Edit</h2>
+                <md-content class="md-padding" ui-view="content"></md-content>
             </md-tab>
             <md-tab label="Media">
                 <md-content class="md-padding" ui-view="media"></md-content>

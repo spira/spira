@@ -8,14 +8,19 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Image;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\Image;
 use Faker\Factory as Faker;
 use App\Models\UserProfile;
 use App\Models\UserCredential;
 
 class UserStorySeeder extends BaseSeeder
 {
+
+    /** @var \Faker\Generator */
+    private $faker;
+
     /**
      * Run the database seeds.
      *
@@ -23,7 +28,7 @@ class UserStorySeeder extends BaseSeeder
      */
     public function run()
     {
-        $faker = Faker::create('au_AU');
+        $this->faker = Faker::create('au_AU');
 
         $images = Image::all();
 
@@ -31,17 +36,21 @@ class UserStorySeeder extends BaseSeeder
             'first_name' => 'John',
             'last_name' => 'Smith',
             'email' => 'john.smith@example.com',
-            'avatar_img_url' => $faker->imageUrl(100, 100, 'people'),
+            'avatar_img_url' => $this->faker->imageUrl(100, 100, 'people'),
             'avatar_img_id' => $images->random()->image_id,
         ]);
 
-        $adminRole = new \App\Models\Role();
-        $adminRole->role_key = 'admin';
-
-        $user->roles()->save($adminRole);
+        $user->roles()->saveMany([
+            new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
+            new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
 
         for ($i = 0; $i < 99; $i++) {
-            $user = $faker->boolean() ? $this->createUser() : $this->createUser(['avatar_img_id' => $images->random()->image_id]);
+
+            $user = $this->createUser([
+                'avatar_img_id' => $this->faker->optional()->randomElement($images->pluck('image_id')->toArray()),
+            ]);
+
             $this->assignRandomRole($user);
         }
     }
@@ -66,8 +75,6 @@ class UserStorySeeder extends BaseSeeder
 
     protected function assignRandomRole(User $user)
     {
-        $role = new \App\Models\Role();
-        $role->role_key = (rand(0, 1) > 0) ? 'testrole' : 'admin';
-        $user->roles()->save($role);
+        $user->roles()->save(new Role(['role_key' => $this->faker->randomElement(Role::$roles)]));
     }
 }

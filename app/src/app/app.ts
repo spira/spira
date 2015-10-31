@@ -21,7 +21,7 @@ namespace app {
             $mdThemingProvider.setDefaultTheme('defaultTheme');
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
-                color: 'green',
+                color: 'white',
                 height: '2px',
             };
 
@@ -56,7 +56,7 @@ namespace app {
 
         constructor(private $mdSidenav:ng.material.ISidenavService,
                     public ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
-                    private $state:ng.ui.IStateService,
+                    public $state:ng.ui.IStateService,
                     public regionService:common.services.region.RegionService) {
         }
 
@@ -109,7 +109,7 @@ namespace app {
         'config.vendorModules',
         'config.commonModules',
         'config.stateManager',
-        'app.head'
+        'app.root'
     ])
         .config(AppConfig)
         .run(AppInit)

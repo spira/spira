@@ -112,7 +112,7 @@ class TagTest extends TestCase
     public function testPostTagInvalid()
     {
         $tag = $this->getFactory(Tag::class)
-            ->customize(['tag' => '%$@""'])
+            ->customize(['tag' => 'This tag is longer than 30 characters'])
             ->transformed();
 
         $this->postJson('/tags', $tag);
@@ -122,7 +122,7 @@ class TagTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('invalid', $object);
         $this->assertObjectHasAttribute('tag', $object->invalid);
-        $this->assertEquals('The tag may only contain letters, numbers, dashes and spaces.', $object->invalid->tag[0]->message);
+        $this->assertEquals('The tag may not be greater than 30 characters.', $object->invalid->tag[0]->message);
     }
 
     public function testPatchTag()
@@ -146,7 +146,7 @@ class TagTest extends TestCase
         $factory = $this->getFactory(Tag::class);
         $factory->create();
         $tag = $factory
-            ->customize(['tag' => '%$@""'])
+            ->customize(['tag' => 'This tag is longer than 30 characters'])
             ->transformed();
 
         $this->patchJson('/tags/'.$tag['tagId'], $tag);
@@ -155,7 +155,7 @@ class TagTest extends TestCase
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('invalid', $object);
         $this->assertObjectHasAttribute('tag', $object->invalid);
-        $this->assertEquals('The tag may only contain letters, numbers, dashes and spaces.', $object->invalid->tag[0]->message);
+        $this->assertEquals('The tag may not be greater than 30 characters.', $object->invalid->tag[0]->message);
     }
 
     /**

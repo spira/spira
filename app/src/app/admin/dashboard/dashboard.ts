@@ -8,7 +8,7 @@ namespace app.admin.dashboard {
         constructor(private stateHelperServiceProvider){
 
             let state:global.IState = {
-                url: '/',
+                url: '',
                 views: {
                     "main@app.admin": {
                         controller: namespace+'.controller',

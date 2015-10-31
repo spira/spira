@@ -53,7 +53,7 @@ namespace common.services.user {
                     (headers) => /userCredential, userProfile, socialLogins/.test(headers['With-Nested'])
                 ).respond(200);
 
-                let userDetailsPromise = userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins']);
+                let userDetailsPromise = userService.getModel(user.userId, ['userCredential', 'userProfile', 'socialLogins']);
 
                 expect(userDetailsPromise).eventually.to.be.fulfilled;
 
@@ -69,7 +69,7 @@ namespace common.services.user {
                     (headers) => !_.has(headers, 'With-Nested')
                 ).respond(200);
 
-                let userDetailsPromise = userService.getUser(user);
+                let userDetailsPromise = userService.getModel(user.userId);
 
                 expect(userDetailsPromise).eventually.to.be.fulfilled;
 
@@ -142,25 +142,26 @@ namespace common.services.user {
 
             describe('Username/Password (non social)', () => {
 
-
                 it('should be able to create a new user and attempt login immediately',  () => {
 
-                    let user = _.compactObject(common.models.UserMock.entity());
-
-                    let requiredFields = ['userId', 'email', 'firstName', 'lastName', '_userCredential'];
-
-                    user = <common.models.User>_.pick(user, requiredFields);
+                    let user = common.models.UserMock.entity();
                     user._userCredential = new common.models.UserCredential({
                         password: 'hunter2',
                     });
 
                     $httpBackend.expectPUT(/\/api\/users\/.+/, (requestObj) => {
-                        return _.every(requiredFields, _.hasOwnProperty, JSON.parse(requestObj));
+                        return _.every(['userId', 'email', 'username', 'firstName', 'lastName'], _.hasOwnProperty, JSON.parse(requestObj));
                     }).respond(204);
+
+                    $httpBackend.expectPUT(/\/api\/users\/.+\/credentials/, (requestObj) => {
+                        return _.every(['userId', 'userCredentialId','password'], _.hasOwnProperty, JSON.parse(requestObj));
+                    }).respond(204);
+
+
                     $httpBackend.expectGET('/api/auth/jwt/login', (headers) => /Basic .*/.test(headers['Authorization'])).respond(200);
                     //note the above auth request does not return a valid token so the login will not be successful so we can't test for that
 
-                    userService.registerAndLogin(user.email, user._userCredential.password, user.firstName, user.lastName);
+                    userService.registerAndLogin(user.email, user.username, user._userCredential.password, user.firstName, user.lastName);
 
                     $httpBackend.flush();
 
@@ -302,8 +303,9 @@ namespace common.services.user {
             it('should not make an api call if nothing has changed', () => {
 
                 let user = common.models.UserMock.entity({
-                    _userProfile: common.models.UserProfileMock.entity(),
+                    _userProfile: common.models.UserProfileMock.entity(null, true),
                 }, true);
+
 
                 let savePromise = userService.saveUserWithRelated(user);
 
@@ -316,8 +318,8 @@ namespace common.services.user {
 
                 let user = common.models.UserMock.entity({
                     regionCode: 'us',
-                });
-                user.setExists(true);
+                    _userProfile: common.models.UserProfileMock.entity(null, true),
+                }, true);
 
                 $httpBackend.expectPATCH('/api/users/' + user.userId, {
                     regionCode: 'au',

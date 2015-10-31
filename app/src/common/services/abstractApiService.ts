@@ -1,23 +1,29 @@
 namespace common.services {
 
+    export interface IExtendedApiService {
+        save?(entity):ng.IPromise<any>;
+        getPublicUrl?(entity):string;
+    }
+
     export interface IQueuedSaveProcess {
         ():ng.IPromise<any>;
     }
 
     export abstract class AbstractApiService {
 
-
         protected queuedSaveProcessFunctions:IQueuedSaveProcess[] = [];
         protected cachedPaginator:common.services.pagination.Paginator;
 
         constructor(protected ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     protected paginationService:common.services.pagination.PaginationService,
-                    protected $q:ng.IQService) {
+                    protected $q:ng.IQService,
+                    protected $location:ng.ILocationProvider,
+                    protected $state:ng.ui.IState) {
         }
 
-
         protected abstract modelFactory(data:any, exists?:boolean):common.models.IModel;
-        protected abstract apiEndpoint():string;
+
+        public abstract apiEndpoint(entity?:common.models.IModel):string;
 
         /**
          * Get the paginator
@@ -26,7 +32,7 @@ namespace common.services {
         public getPaginator():common.services.pagination.Paginator {
 
             //cache the paginator so subsequent requests can be collection length-aware
-            if (!this.cachedPaginator){
+            if (!this.cachedPaginator) {
                 this.cachedPaginator = this.paginationService
                     .getPaginatorInstance(this.apiEndpoint())
                     .setModelFactory(this.modelFactory);
@@ -36,21 +42,79 @@ namespace common.services {
         }
 
         /**
-         * Get model response given an identifier (uuid or permalink)
+         * Returns the public url for a given entity given it's (public) configuration state and params.
+         * You should extend this function in your service.
+         * @param params
+         * @param state
+         * @returns {string}
+         */
+        protected getPublicUrlForEntity(params:any, state:global.IState):string {
+
+            // @Todo: Typings for $location and $state are not up to date
+            return (<any>this.$location).protocol() + '://' + (<any>this.$location).host() + (<any>this.$state).href(state, params);
+
+        }
+
+        /**
+         * Get model given an identifier (uuid or permalink)
          * @param identifier
          * @param withNested
-         * @returns {ng.IHttpPromise<any>}
+         * @returns {ng.IPromise<T>}
          */
-        protected getModel(identifier:string, withNested:string[] = null):ng.IPromise<ng.IHttpPromiseCallbackArg<any>> {
+        public getModel<T extends common.models.AbstractModel>(identifier:string, withNested:string[] = null):ng.IPromise<T> {
 
-            return this.ngRestAdapter.get(this.apiEndpoint()+'/'+identifier, {
-                'With-Nested' : () => {
-                    if (!withNested){
+            return this.ngRestAdapter.get(this.apiEndpoint() + '/' + identifier, {
+                'With-Nested': () => {
+                    if (!withNested) {
                         return null;
                     }
                     return withNested.join(', ');
                 }
-            });
+            }).then((res:ng.IHttpPromiseCallbackArg<T>) => this.modelFactory(res.data, true));
+        }
+
+    /**
+     * Get all instances of a model
+     * Usually a paginator should be used, but sometimes the entire dataset is required
+     * @param withNested
+     * @returns {ng.IPromise<T[]>}
+     * @param endpoint
+     */
+        public getAllModels<T extends common.models.AbstractModel>(withNested:string[] = null, endpoint:string = this.apiEndpoint()):ng.IPromise<T[]> {
+
+            return this.ngRestAdapter.get(endpoint, {
+                'With-Nested': () => {
+                    if (!withNested) {
+                        return null;
+                    }
+                    return withNested.join(', ');
+                }
+            }).then((res:ng.IHttpPromiseCallbackArg<T[]>) => _.map(res.data, (modelData) => this.modelFactory(modelData, true)));
+        }
+
+        /**
+         * Save model given the entity and endpoint
+         * @todo swap params to follow common pattern of rest adapter
+         * @param entity
+         * @param endPoint
+         * @returns {any}
+         */
+        public saveModel<T extends common.models.AbstractModel>(entity:T, endPoint:string):ng.IPromise<T|boolean> {
+            let method = entity.exists() ? 'patch' : 'put';
+
+            let saveData = entity.getAttributes();
+
+            if (entity.exists()) {
+                saveData = (<common.decorators.IChangeAwareDecorator>entity).getChanged();
+            }
+
+            if (_.size(saveData) == 0) { // If there is nothing to save, don't make an API call
+                return this.$q.when(true);
+            }
+
+            return this.ngRestAdapter[method](endPoint, saveData)
+                .then(() => entity);
+
         }
 
         /**
@@ -85,11 +149,11 @@ namespace common.services {
         /**
          * Clear all queued save functions
          */
-        public dumpQueueSaveFunctions():void{
+        public dumpQueueSaveFunctions():void {
             this.queuedSaveProcessFunctions = [];
         }
-
     }
+
 }
 
 

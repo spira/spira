@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Article;
 use App\Models\ArticleMeta;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -35,7 +36,7 @@ class CreateArticleMetaTable extends Migration
             $table->unique(['article_id', 'meta_name']);
 
             $table->foreign('article_id')
-                ->references('article_id')->on(\App\Models\Article::getTableName())
+                ->references('article_id')->on(Article::getTableName())
                 ->onDelete('cascade');
             });
     }

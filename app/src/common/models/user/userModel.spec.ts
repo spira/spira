@@ -1,6 +1,6 @@
 namespace common.models {
 
-    let seededChance = new Chance(1);
+    let seededChance = new Chance();
 
     describe('User Model', () => {
 
@@ -92,6 +92,23 @@ namespace common.models {
             user._socialLogins.push(userLoginDataGoogle);
 
             expect(user.hasSocialLogin(common.models.UserSocialLogin.facebookType)).to.be.false;
+
+        });
+
+        it('should be able to display a set of roles in a human readable form', () => {
+
+            let user = UserMock.entity({
+                _roles: [
+                    RoleAssignmentMock.entity({
+                        roleKey: "roleName1",
+                    }),
+                    RoleAssignmentMock.entity({
+                        roleKey: "roleName2",
+                    }),
+                ],
+            });
+
+            expect(user.rolesDisplay()).to.equal("Role Name 1, Role Name 2");
 
         });
 

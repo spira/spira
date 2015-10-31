@@ -31,6 +31,14 @@ namespace common.models {
         [key:string] : IAttributeCastFunction;
     }
 
+    export interface IExtendedAbstractModel extends ITagGroupsModel, AbstractModel {
+
+    }
+
+    export interface ITagGroupsModel {
+        getTagGroups?():string[];
+    }
+
     export abstract class AbstractModel implements IModel {
 
         protected __nestedEntityMap:INestedEntityMap;
@@ -39,12 +47,6 @@ namespace common.models {
 
         constructor(data?:any, exists:boolean = false) {
             this.hydrate(data, exists);
-
-            Object.defineProperty(this, "__exists", {
-                enumerable: false,
-                writable: true,
-                value: exists,
-            });
         }
 
         /**
@@ -53,6 +55,13 @@ namespace common.models {
          * @param exists
          */
         protected hydrate(data:any, exists:boolean) {
+
+            Object.defineProperty(this, "__exists", {
+                enumerable: false,
+                writable: true,
+                value: exists,
+            });
+
             if (_.isObject(data)) {
 
                 _.transform(data, (model, value, key) => {
@@ -100,7 +109,7 @@ namespace common.models {
          * @param entity
          */
         private isModelClass(entity: any):boolean {
-            return entity.prototype && entity.prototype instanceof AbstractModel;
+            return entity && entity.prototype && entity.prototype instanceof AbstractModel;
         }
 
         /**
@@ -123,8 +132,10 @@ namespace common.models {
                         }
                     }
                 }
-                else {
+                else if (_.isFunction(nestedObject)) {
                     nestedData = (<IHydrateFunction>nestedObject)(data, exists);
+                }else{
+                    console.log('data', data);
                 }
 
                 this[nestedKey] = nestedData;
@@ -141,7 +152,6 @@ namespace common.models {
          * @param exists
          */
         protected hydrateModel(data:any, Model:IModelClass, exists:boolean){
-
             return new Model(data, exists);
         }
 

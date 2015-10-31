@@ -222,18 +222,20 @@ class UserTest extends TestCase
 
     public function testPatchOneByAdminUserPassword()
     {
-        $user = $this->createUser();
-        $this->assignAdmin($user);
+        $admin = $this->createUser();
+        $this->assignAdmin($admin);
+        $token = $this->tokenFromUser($admin);
+
         $userToUpdate = $this->createUser();
-        $token = $this->tokenFromUser($user);
+        $userToUpdate->setCredential(new UserCredential([
+            'password' => 'hunter2',
+        ]));
 
         $update = [
-            '_userCredential' => [
-                'password' => 'foobarfoobar',
-            ],
+            'password' => 'foobarfoobar',
         ];
 
-        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->getKey().'/credentials', $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
@@ -244,23 +246,25 @@ class UserTest extends TestCase
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
     }
 
+
     public function testPatchOneBySelfUserPassword()
     {
         $user = $this->createUser();
         $userToUpdate = $user;
         $token = $this->tokenFromUser($user);
+        $user->setCredential(new UserCredential([
+            'password' => 'hunter2',
+        ]));
 
         $update = [
-            '_userCredential' => [
-                'password' => 'foobarfoobar',
-            ],
+            'password' => 'foobarfoobar',
         ];
 
-        $this->patchJson('/users/'.$userToUpdate->user_id, $update, [
+        $this->patchJson('/users/'.$userToUpdate->getKey().'/credentials', $update, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
-        $updatedCredentials = UserCredential::find($userToUpdate->user_id);
+        $updatedCredentials = UserCredential::find($userToUpdate->getKey());
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();

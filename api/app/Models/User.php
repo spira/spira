@@ -98,6 +98,53 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         self::UPDATED_AT => 'datetime',
     ];
 
+    protected $mappingProperties = [
+        'user_id' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'email_confirmed' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'timezone_identifier' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'avatar_img_url' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'created_at' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'updated_at' => [
+            'type' => 'string',
+            'index' => 'no'
+        ],
+        'username' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
+        'email' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
+        'first_name' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ],
+        'last_name' => [
+            'type' => 'string',
+            'index_analyzer' => 'autocomplete',
+            'search_analyzer' => 'standard'
+        ]
+    ];
+
     /**
      * Get the credentials associated with the user.
      *

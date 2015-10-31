@@ -2,12 +2,6 @@ namespace app.admin.articles.article {
 
     export const namespace = 'app.admin.articles.article';
 
-    export interface IArticleStateParams extends ng.ui.IStateParamsService
-    {
-        permalink:string;
-        newArticle:boolean;
-    }
-
     export class ArticleConfig {
 
         public static state:global.IState;
@@ -17,9 +11,9 @@ namespace app.admin.articles.article {
         constructor(private stateHelperServiceProvider){
 
             ArticleConfig.state = {
-                url: '/article/{permalink}',
+                url: '/article/{id}',
                 params: {
-                    newArticle: false,
+                    newEntity: false,
                 },
                 views: {
                     "main@app.admin": {
@@ -27,10 +21,10 @@ namespace app.admin.articles.article {
                         controllerAs: 'ArticleController',
                         templateUrl: 'templates/app/admin/articles/article/article.tpl.html'
                     },
-                    ['post@'+namespace] : {
-                        controller: namespace+'.post.controller',
-                        controllerAs: 'PostController',
-                        templateUrl: 'templates/app/admin/articles/article/post/post.tpl.html'
+                    ['content@'+namespace] : {
+                        controller: namespace+'.content.controller',
+                        controllerAs: 'ContentController',
+                        templateUrl: 'templates/app/admin/articles/article/content/content.tpl.html'
                     },
                     ['media@'+namespace] : {
                         controller: namespace+'.media.controller',
@@ -74,28 +68,31 @@ namespace app.admin.articles.article {
                     },
                 },
                 resolve: /*@ngInject*/{
-                    article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
+                    article: (articleService:common.services.article.ArticleService, $stateParams:app.admin.ICommonStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
-                        if (!$stateParams.permalink || $stateParams.permalink == 'new'){
+                        if (!$stateParams.id || $stateParams.id == 'new'){
                             let newArticle = articleService.newArticle(userService.getAuthUser());
-                            $stateParams.permalink = 'new';
-                            $stateParams.newArticle = true;
+                            $stateParams.id = 'new';
+                            $stateParams.newEntity = true;
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.permalink, [
+                        return articleService.getModel($stateParams.id, [
                             'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections'
                         ]);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
                         return userService.getUsersPaginator().setCount(10);
+                    },
+                    groupTags: (tagService:common.services.tag.TagService, articleService:common.services.article.ArticleService) => {
+                        return tagService.getTagCategories(articleService);
                     }
                 },
                 onExit: ['articleService', (articleService:common.services.article.ArticleService) => {
                     articleService.dumpQueueSaveFunctions();
                 }],
                 data: {
-                    title: "Article",
+                    title: "Compose Article",
                     icon: 'library_books',
                     navigation: false,
                 }
@@ -107,32 +104,12 @@ namespace app.admin.articles.article {
 
     }
 
-    export class ArticleController {
+    export class ArticleController extends app.admin.AbstractEntitiesController<common.models.Article, common.services.article.ArticleService> {
 
+        static $inject = ['article', 'articleService', '$stateParams', 'notificationService', 'groupTags'];
 
 
         public showPreview:boolean = false;
-
-        static $inject = ['article', '$stateParams', 'articleService', 'notificationService'];
-        constructor(
-            public article:common.models.Article,
-            public $stateParams:IArticleStateParams,
-            private articleService:common.services.article.ArticleService,
-            private notificationService:common.services.notification.NotificationService
-        ) {
-        }
-
-        /**
-         * Save the article
-         * @returns {any}
-         */
-        public save(){
-
-            return this.articleService.saveArticleWithRelated(this.article)
-                .then(() => {
-                    this.notificationService.toast('Article saved').pop();
-                });
-        }
 
 
         public togglePreview(){
@@ -142,7 +119,7 @@ namespace app.admin.articles.article {
     }
 
     angular.module(namespace, [
-        namespace+'.post',
+        namespace+'.content',
         namespace+'.media',
         namespace+'.meta',
         namespace+'.stats',

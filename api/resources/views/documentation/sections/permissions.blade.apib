@@ -16,10 +16,12 @@ Roles array assigned to user
 
     + Headers
 
-        Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
 + Response 200 (application/json)
 
     + Body
 
-        {!! json_encode(['user','admin','testuser']) !!}
+            {!! json_encode(['user','admin','testuser']) !!}
+
+
