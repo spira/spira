@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Models;
-
 
 use Illuminate\Support\Str;
 use Spira\Model\Model\BaseModel;
@@ -24,6 +30,7 @@ abstract class Meta extends BaseModel
             $model->touches[] = Str::snake(class_basename($className));
             $touches = array_unique($model->touches);
             $model->setTouchedRelations($touches);
+
             return true;
         });
 
@@ -48,7 +55,7 @@ abstract class Meta extends BaseModel
      */
     public function __call($method, $parameters)
     {
-        if ($method === $this->getMethodName()){
+        if ($method === $this->getMethodName()) {
             return $this->belongsTo($this->getParentClassName(), null, null, $method);
         }
 
@@ -59,7 +66,6 @@ abstract class Meta extends BaseModel
      * @return BaseModel
      */
     abstract public function getParentClassName();
-
 
     /**
      * @return string

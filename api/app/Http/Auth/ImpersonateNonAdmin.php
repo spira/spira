@@ -28,7 +28,7 @@ class ImpersonateNonAdmin extends Rule
     {
         $roles = $targetUser->roles()->get()->pluck('role_key')->toArray();
 
-        if(!in_array(Role::ADMIN_ROLE, $roles)) {
+        if (! in_array(Role::ADMIN_ROLE, $roles)) {
             return true;
         }
 

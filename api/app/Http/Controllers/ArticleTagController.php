@@ -15,10 +15,8 @@ use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleTagController extends AbstractTagController
 {
-
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
     }
-
 }

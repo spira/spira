@@ -12,10 +12,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Tag;
-use Illuminate\Http\Request;
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\BaseModel;
-use Spira\Responder\Response\ApiResponse;
 
 class ChildTagController extends ChildEntityController
 {
@@ -25,5 +21,4 @@ class ChildTagController extends ChildEntityController
     {
         parent::__construct($parentModel, $transformer);
     }
-
 }

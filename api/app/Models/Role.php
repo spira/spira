@@ -26,7 +26,7 @@ class Role extends BaseModel
     public static $roles = [
         self::ADMIN_ROLE,
         self::SUPER_ADMIN_ROLE,
-        self::USER_ROLE
+        self::USER_ROLE,
     ];
 
     public $table = 'roles';

@@ -585,7 +585,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/' . $impersonateUser->getKey(), [
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
             'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
         ]);
 
@@ -609,11 +609,11 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginUnauthorized()
     {
-        $this->markTestIncomplete("Authorization required routes have not yet been implemented");
+        $this->markTestIncomplete('Authorization required routes have not yet been implemented');
 
         $impersonateUser = $this->createUser();
 
-        $this->getJson('/auth/jwt/user/' . $impersonateUser->getKey());
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(401);
     }
@@ -623,13 +623,12 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginDeniedForNormalUser()
     {
-
         $originalUser = $this->createUser();
         $impersonateUser = $this->createUser();
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/' . $impersonateUser->getKey(), [
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
             'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
         ]);
 
@@ -641,7 +640,6 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginDeniedForAdmin()
     {
-
         $originalUser = $this->createUser();
         $originalUser->roles()->saveMany([
             new Role(['role_key' => Role::ADMIN_ROLE]),
@@ -654,12 +652,11 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/' . $impersonateUser->getKey(), [
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
             'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
         ]);
 
         $this->assertResponseStatus(403);
-
     }
 
     /**
@@ -667,7 +664,6 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginAllowedForSuperAdmin()
     {
-
         $originalUser = $this->createUser();
         $originalUser->roles()->saveMany([
             new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
@@ -680,12 +676,10 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/' . $impersonateUser->getKey(), [
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
             'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
         ]);
 
         $this->assertResponseStatus(200);
-
     }
-
 }

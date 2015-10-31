@@ -42,7 +42,6 @@ class CreateTagTagTable extends Migration
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
         });
-
     }
 
     /**

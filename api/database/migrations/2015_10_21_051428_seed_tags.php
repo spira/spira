@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use App\Models\Tag;
 use Faker\Factory as Faker;
@@ -7,7 +14,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class SeedTags extends Migration
 {
-
     /** @var \Faker\Generator */
     private $faker;
 
@@ -49,19 +55,17 @@ class SeedTags extends Migration
         ],
     ];
 
-
     private function getTagInserts($tagDefinitionGroup, $parentTag = null, $existingInserts = [])
     {
         $tagInserts = [];
         $tagRelationshipInserts = [];
 
-        if (!$this->faker){
+        if (! $this->faker) {
             $this->faker = Faker::create();
         }
 
-        foreach($tagDefinitionGroup as $tagName => $tagDefinition){
-
-            if (is_string($tagDefinition)){
+        foreach ($tagDefinitionGroup as $tagName => $tagDefinition) {
+            if (is_string($tagDefinition)) {
                 $tagName = $tagDefinition;
                 $tagDefinition = [];
             }
@@ -69,10 +73,9 @@ class SeedTags extends Migration
             $tagDefinition = array_replace_recursive(self::$defaultTagDefinition, $tagDefinition); //apply defaults
 
             $tagData = null;
-            if(isset($existingInserts[$tagName])) {
+            if (isset($existingInserts[$tagName])) {
                 $tagData = $existingInserts[$tagName];
-            }else{
-
+            } else {
                 $tagData = [
                     'tag_id' => $this->faker->uuid(),
                     'tag' => $tagName,
@@ -82,8 +85,7 @@ class SeedTags extends Migration
                 $tagInserts[$tagName] = $tagData;
             }
 
-            if($parentTag){
-
+            if ($parentTag) {
                 $tagRelationshipInserts[] = array_merge(
                     $tagDefinition['pivot'],
                     [
@@ -93,8 +95,7 @@ class SeedTags extends Migration
                 );
             }
 
-            if(isset($tagDefinition['children'])){
-
+            if (isset($tagDefinition['children'])) {
                 $childTagInserts = $this->getTagInserts($tagDefinition['children'], $tagData, $tagInserts);
 
                 $tagInserts = array_merge($childTagInserts['tag_inserts'], $tagInserts);
@@ -111,15 +112,15 @@ class SeedTags extends Migration
     private function getTagNames($tagDefinitionGroup)
     {
         $names = [];
-        foreach($tagDefinitionGroup as $tagName => $tagDefinition){
-            if (is_string($tagDefinition)){
+        foreach ($tagDefinitionGroup as $tagName => $tagDefinition) {
+            if (is_string($tagDefinition)) {
                 $tagName = $tagDefinition;
                 $tagDefinition = [];
             }
 
             $names[] = $tagName;
 
-            if(isset($tagDefinition['children'])){
+            if (isset($tagDefinition['children'])) {
                 array_push($names, $this->getTagNames($tagDefinition['children']));
             }
         }
@@ -141,7 +142,6 @@ class SeedTags extends Migration
         DB::table(CreateTagTagTable::TABLE_NAME)->insert($tagInserts['tag_relationship_inserts']);
 
         Tag::reindex();
-
     }
 
     /**
@@ -151,7 +151,7 @@ class SeedTags extends Migration
      */
     public function down()
     {
-        if(!Schema::hasTable(Tag::getTableName())){
+        if (! Schema::hasTable(Tag::getTableName())) {
             return;
         }
 

@@ -32,8 +32,8 @@ class CreateElasticSearchIndex extends Migration
                                 'autocomplete_filter' => [
                                     'type' => 'edge_ngram',
                                     'min_gram' => 1,
-                                    'max_gram' => 20
-                                ]
+                                    'max_gram' => 20,
+                                ],
                             ],
                             'analyzer' => [
                                 'autocomplete' => [
@@ -41,13 +41,13 @@ class CreateElasticSearchIndex extends Migration
                                     'tokenizer' => 'standard',
                                     'filter' => [
                                         'lowercase',
-                                        'autocomplete_filter'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'autocomplete_filter',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ];
 
             $testEntity->getElasticSearchClient()->indices()->create($settings);

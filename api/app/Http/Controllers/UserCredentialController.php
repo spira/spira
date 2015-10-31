@@ -17,7 +17,6 @@ use Spira\Auth\Driver\Guard;
 
 class UserCredentialController extends ChildEntityController
 {
-
     /** @var Guard $auth */
     protected $auth;
 
@@ -29,7 +28,6 @@ class UserCredentialController extends ChildEntityController
         $this->auth = $auth;
     }
 
-
     /**
      * @param Request $request
      * @param string $id
@@ -40,9 +38,9 @@ class UserCredentialController extends ChildEntityController
     {
         $response = parent::patchOne($request, $id, $childId);
 
-        if ($id == $request->user()->getKey()){
+        if ($id == $request->user()->getKey()) {
 
-            /**
+            /*
              * When the credentials are updated by the user, invalidate the old token.
              * If this action isn't completed by the owner we can't invalidate the owners token as it isn't related
              * to this request.
@@ -55,5 +53,4 @@ class UserCredentialController extends ChildEntityController
 
         return $response;
     }
-
 }

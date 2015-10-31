@@ -10,13 +10,12 @@
 
 namespace App\Models;
 
-
 use Spira\Model\Model\BaseModel;
 
 class ArticleMeta extends Meta
 {
-
     public $table = 'metas_article';
+
     /**
      * @return BaseModel
      */
