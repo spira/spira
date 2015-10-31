@@ -156,12 +156,13 @@ abstract class ChildEntityController extends ApiController
 
     /**
      * Put many entities.
+     * Internally make use of Relation::saveMany()
      *
      * @param string $id
      * @param  Request $request
      * @return ApiResponse
      */
-    public function putMany(Request $request, $id)
+    public function putManyAdd(Request $request, $id)
     {
         $parent = $this->findParentEntity($id);
 
@@ -177,6 +178,38 @@ abstract class ChildEntityController extends ApiController
 
         // @Todo: Ran into an issue where updating a child entity through "putMany" request ("hasMany"/"belongsTo" relationship) does not fire the parent's "updated" event (which means that the parent object isn't reindexed in elastic search so it will not contain the new information). "putMany" does appear to update the parent's updated timestamp which does suggest that it is touched in some way (confirmed that Laravel is issuing the command to update the time stamp of the parent). Manually touching the parent fixes this problem.
         $parent->touch();
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->createdCollection($childModels);
+    }
+
+    /**
+     * Put many entities.
+     * Internally make use of Relation::sync()
+     *
+     * @param string $id
+     * @param  Request $request
+     * @return ApiResponse
+     */
+    public function putManyReplace(Request $request, $id)
+    {
+        $parent = $this->findParentEntity($id);
+
+        $requestCollection = $request->json()->all();
+        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+
+        $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
+
+        $childModels = $this->getChildModel()
+            ->hydrateRequestCollection($requestCollection, $existingChildModels)
+            ->each(function (BaseModel $model) {
+                if (!$model->exists || $model->isDirty()) {
+                    $model->save();
+                }
+            });
+
+        $this->getRelation($parent)->sync($this->prepareSyncList($childModels, $requestCollection));
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -204,7 +237,7 @@ abstract class ChildEntityController extends ApiController
 
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules(), $childModel);
 
         $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
@@ -384,7 +417,7 @@ abstract class ChildEntityController extends ApiController
     /**
      * @param $requestCollection
      * @param BaseModel $parent
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     protected function findChildrenCollection($requestCollection, BaseModel $parent)
     {
@@ -400,7 +433,41 @@ abstract class ChildEntityController extends ApiController
      */
     protected function getValidationRules()
     {
-        return $this->getChildModel()->getValidationRules();
+        $childRules = $this->getChildModel()->getValidationRules();
+        $pivotRules = $this->getPivotValidationRules();
+
+        return array_merge($childRules, $pivotRules);
+    }
+
+    /**
+     * @param Collection $childModels
+     * @param array $requestCollection
+     * @return array
+     */
+    protected function prepareSyncList(Collection $childModels, array $requestCollection)
+    {
+
+        $childPk = $this->getChildModel()->getPrimaryKey();
+
+        $childModels->keyBy($childPk);
+
+        $requestCollection = new Collection($requestCollection);
+        $requestCollection->keyBy($childPk);
+
+        $syncList = $childModels->reduce(function($syncList, $childModel) use ($requestCollection, $childPk){
+
+            $key = $childModel->{$childPk};
+            $requestItem = $requestCollection[$key];
+            if (isset($requestItem['_pivot'])){
+                $syncList[$key] = $requestItem['_pivot'];
+                return $syncList;
+            }
+
+            $syncList[] = $key;
+            return $syncList;
+        }, []);
+
+        return $syncList;
     }
 
     /**
@@ -414,5 +481,10 @@ abstract class ChildEntityController extends ApiController
         $parentKey = $parentModel->getKeyName();
 
         return $childId === false && ends_with($fk, $parentKey);
+    }
+
+    protected function getPivotValidationRules()
+    {
+        return [];
     }
 }
