@@ -1,19 +1,39 @@
 namespace common.directives.localizableInput.dialog {
 
-    describe.skip('Localizable input dialog controller', () => {
+    describe.only('Localizable input dialog controller', () => {
 
         let images:common.models.Image[] = common.models.ImageMock.collection(12),
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
             imageService:common.services.image.ImageService,
             LocalizableInputDialogController:LocalizableInputDialogController,
-            $q:ng.IQService;
+            $q:ng.IQService,
+            mockInitLocalizations:common.models.Localization<common.models.Article>[] = [
+                common.models.LocalizationMock.entity({
+                    localizations: {
+                        title: "This is a title",
+                    },
+                    regionCode: 'uk',
+                }),
+                common.models.LocalizationMock.entity({
+                    localizations: {
+                        body: "This is the body",
+                    },
+                    regionCode: 'au',
+                }),
+                common.models.LocalizationMock.entity({
+                    localizations: {
+                        title: "Kiwi Title",
+                    },
+                    regionCode: 'nz',
+                })
+            ];
 
         beforeEach(() => {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _imageService_, _$q_) => {
+            inject(($controller, _$rootScope_, _imageService_, _$q_, _ngRestAdapter_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
 
@@ -27,13 +47,41 @@ namespace common.directives.localizableInput.dialog {
                 imageService.getPaginator = sinon.stub().returns(imagePaginatorMock);
 
                 LocalizableInputDialogController = $controller(common.directives.localizableInput.dialog.namespace + '.controller', {
+                    localizations: mockInitLocalizations,
+                    attributeKey: 'title',
+                    inputNodeName: 'input',
+                    originalValue: 'Original Title',
+                    regionService: {
+                        supportedRegions: [
+                            {
+                                code: 'au',
+                                name: 'Australia',
+                            },
+                            {
+                                code: 'uk',
+                                name: 'United Kingdom',
+                            },
+                            {
+                                code: 'nz',
+                                name: 'New Zealand',
+                            },
+                            {
+                                code: 'us',
+                                name: 'USA',
+                            },
+                            {
+                                code: 'fr',
+                                name: 'France',
+                            },
+                        ]
+                    },
                     $mdDialog: {
                         cancel: sinon.stub(),
                         hide: sinon.stub()
                     },
-                    imageService: imageService
+                    notificationService: null,
+                    ngRestAdapter: _ngRestAdapter_
                 });
-
 
                 $rootScope.$apply();
 
@@ -41,59 +89,63 @@ namespace common.directives.localizableInput.dialog {
 
         });
 
-        it('should be able to resolve image paginator with initial images', () => {
+        it('should initialise a localizations map from source localizations', () => {
 
+            expect(LocalizableInputDialogController.localizationMap).to.have.property('uk', "This is a title");
+            expect(LocalizableInputDialogController.localizationMap).to.have.property('au', undefined);
+            expect(LocalizableInputDialogController.localizationMap).to.have.property('nz', "Kiwi Title");
+            expect(LocalizableInputDialogController.localizationMap).to.have.property('us', undefined);
+            expect(LocalizableInputDialogController.localizationMap).to.have.property('fr', undefined);
+        });
 
-            expect(LocalizableInputDialogController.library).to.have.length(12);
-            expect(LocalizableInputDialogController.library[0]).to.be.instanceOf(common.models.Image);
+        it('should be able to copy the original value to a localization', () => {
 
         });
 
-        it('should be able to toggle selection of an image', () => {
+        it('should be able to resolve the updated localizations', () => {
 
-            LocalizableInputDialogController.selectedImage = null;
+            LocalizableInputDialogController.localizationMap['au'] = "Aussie title";
+            LocalizableInputDialogController.localizationMap['nz'] = "";
+            LocalizableInputDialogController.localizationMap['us'] = "Murican title";
 
-            LocalizableInputDialogController.toggleImageSelection(LocalizableInputDialogController.library[2]);
+            LocalizableInputDialogController.saveLocalizations();
 
-            expect(LocalizableInputDialogController.selectedImage).to.deep.equal(LocalizableInputDialogController.library[2]);
-
-            LocalizableInputDialogController.toggleImageSelection(LocalizableInputDialogController.library[2]);
-
-            expect(LocalizableInputDialogController.selectedImage).to.be.null;
-
+            expect((<any>LocalizableInputDialogController).$mdDialog.hide).to.have.been.calledWith([
+                {
+                    localizableId: sinon.match.string,
+                    localizableType: sinon.match.falsy,
+                    localizations: {
+                        body: "This is the body",
+                        title: "Aussie title"
+                    },
+                    regionCode: 'au'
+                },
+                {
+                    localizableId: sinon.match.string,
+                    localizableType: sinon.match.falsy,
+                    localizations: {
+                        title: "This is a title"
+                    },
+                    regionCode: 'uk'
+                },
+                {
+                    localizableId: sinon.match.string,
+                    localizableType: sinon.match.falsy,
+                    localizations: {
+                    },
+                    regionCode: 'nz'
+                },
+                {
+                    localizableId: sinon.match.string,
+                    localizableType: sinon.match.falsy,
+                    localizations: {
+                        title: "Murican title"
+                    },
+                    regionCode: 'us'
+                }
+            ]);
         });
 
-        it('should be able to resolve a selected image', () => {
-
-            LocalizableInputDialogController.toggleImageSelection(LocalizableInputDialogController.library[0]);
-
-            LocalizableInputDialogController.selectImage();
-
-            expect((<any>LocalizableInputDialogController).$mdDialog.hide).to.have.been.calledWith(LocalizableInputDialogController.selectedImage);
-
-        });
-
-        it('should cancel the dialog when no image is selected', () => {
-
-            LocalizableInputDialogController.selectedImage = null;
-
-            LocalizableInputDialogController.selectImage();
-
-            expect((<any>LocalizableInputDialogController).$mdDialog.cancel).to.have.been.called;
-
-        });
-
-        it('should be able to browse through multiple pages of images', () => {
-
-            let pageChangePromise = LocalizableInputDialogController.goToPage(2);
-
-            expect(LocalizableInputDialogController.currentPage).to.equal(2);
-
-            $rootScope.$apply();
-
-            expect(pageChangePromise).eventually.to.deep.equal(images);
-
-        });
 
         it('should be able to cancel the dialog', () => {
 
@@ -102,8 +154,6 @@ namespace common.directives.localizableInput.dialog {
             expect((<any>LocalizableInputDialogController).$mdDialog.cancel).to.have.been.called;
 
         });
-
-
 
     });
 

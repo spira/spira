@@ -59,7 +59,7 @@ namespace common.directives.localizableInput.dialog {
             let localization =  _.find(this.localizations, {regionCode: regionCode});
 
             if (!localization){
-                return null;
+                return undefined;
             }
 
             return localization.localizations[this.attributeKey];
