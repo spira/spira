@@ -1,8 +1,8 @@
-(() => {
+namespace common.services.tag {
 
     describe('Tag Service', () => {
 
-        let tagService:common.services.tag.TagService;
+        let tagService:TagService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
@@ -116,4 +116,4 @@
 
     });
 
-})();
+}

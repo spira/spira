@@ -1,9 +1,9 @@
-interface mockEntity {
-    id:number;
-    body:string
-}
+namespace common.services.pagination {
 
-(() => {
+    interface mockEntity {
+        id:number;
+        body:string
+    }
 
     let seededChance = new Chance(1);
     let fixtures = {
@@ -458,4 +458,4 @@ interface mockEntity {
 
     });
 
-})();
+}

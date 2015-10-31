@@ -1,4 +1,4 @@
-(() => {
+namespace common.models {
 
     let seededChance = new Chance();
 
@@ -12,12 +12,12 @@
 
         it('should instantiate a new user profile', () => {
 
-            let userProfile = new common.models.UserProfile(userProfileData);
+            let userProfile = new UserProfile(userProfileData);
 
-            expect(userProfile).to.be.instanceOf(common.models.UserProfile);
+            expect(userProfile).to.be.instanceOf(UserProfile);
 
         });
 
     });
 
-})();
+}
