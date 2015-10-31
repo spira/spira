@@ -326,7 +326,7 @@ gulp.task('watch', 'starts up browsersync server and runs task watchers', [], fu
     });
 
     browserSync.init({
-        proxy: "http://local.app.iquitsugar.com"
+        proxy: "http://local.app.spira.io"
     });
 
     gulp.watch(paths.src.templates, ['templates']);
