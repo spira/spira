@@ -107,5 +107,4 @@ class ArticleSeeder extends BaseSeeder
 
             });
     }
-
 }

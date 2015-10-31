@@ -40,7 +40,7 @@ class SpiraValidator extends Validator
 
         $values = array_slice($parameters, 1);
 
-        if (in_array((string)$data, $values)) {
+        if (in_array((string) $data, $values)) {
             return false;
         }
 

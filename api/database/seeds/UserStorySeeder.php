@@ -17,7 +17,6 @@ use App\Models\UserCredential;
 
 class UserStorySeeder extends BaseSeeder
 {
-
     /** @var \Faker\Generator */
     private $faker;
 
@@ -46,7 +45,6 @@ class UserStorySeeder extends BaseSeeder
         ]);
 
         for ($i = 0; $i < 99; $i++) {
-
             $user = $this->createUser([
                 'avatar_img_id' => $this->faker->optional()->randomElement($images->pluck('image_id')->toArray()),
             ]);

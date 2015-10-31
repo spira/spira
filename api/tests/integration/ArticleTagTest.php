@@ -41,7 +41,6 @@ class ArticleTagTest extends TestCase
         $this->categoryTagId = Tag::where('tag', '=', SeedTags::categoryTagName)->firstOrFail()->tag_id;
         $this->topicTagId = Tag::where('tag', '=', SeedTags::topicTagName)->firstOrFail()->tag_id;
         $this->articleGroupTagId = Tag::where('tag', '=', SeedTags::articleGroupTagName)->value('tag_id');
-
     }
 
     /**
@@ -118,7 +117,7 @@ class ArticleTagTest extends TestCase
             ->transformed();
 
         // Add the tag category
-        foreach($newTags as &$newTag) {
+        foreach ($newTags as &$newTag) {
             $newTag['_pivot']['tagGroupId'] = $this->faker->randomElement([$this->categoryTagId, $this->topicTagId]);
             $newTag['_pivot']['tagGroupParentId'] = $this->articleGroupTagId;
         }
@@ -153,7 +152,7 @@ class ArticleTagTest extends TestCase
             ->transformed();
 
         // Add the tag category
-        foreach($tags as &$newTag) {
+        foreach ($tags as &$newTag) {
             $newTag['_pivot']['tagGroupId'] = $this->faker->randomElement([$this->categoryTagId, $this->topicTagId]);
             $newTag['_pivot']['tagGroupParentId'] = $this->articleGroupTagId;
         }
@@ -209,7 +208,7 @@ class ArticleTagTest extends TestCase
                 '_pivot' => [
                     'tag_group_id' => $this->categoryTagId,
                     'tag_group_parent_id' => $this->articleGroupTagId,
-                ]
+                ],
             ])
             ->transformed();
 
@@ -230,7 +229,7 @@ class ArticleTagTest extends TestCase
             }
         }
 
-        $this->assertTrue($tagRevision, "Article revisions has tag entry(ies)");
+        $this->assertTrue($tagRevision, 'Article revisions has tag entry(ies)');
 
         $this->cleanupDiscussions([$article]);
     }

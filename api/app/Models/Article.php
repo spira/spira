@@ -98,49 +98,49 @@ class Article extends IndexedModel
     protected $mappingProperties = [
         'article_id' => [
             'type' => 'string',
-            'index' => 'no' // also sets 'include_in_all' = false
+            'index' => 'no', // also sets 'include_in_all' = false
         ],
         'primary_image' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'permalink' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'author_id' => [
             'type' => 'string',
-            'include_in_all' => false // This is filtered by exact ID, do not include in _all
+            'include_in_all' => false, // This is filtered by exact ID, do not include in _all
         ],
         'sections_display' => [
             'type' => 'object',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'excerpt' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
+            'search_analyzer' => 'standard',
         ],
         'title' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
+            'search_analyzer' => 'standard',
         ],
         'tags' => [
             'type' => 'nested',
-            'include_in_all' => false
+            'include_in_all' => false,
         ],
         'article_permalinks' => [
             'type' => 'nested',
-            'include_in_all' => false
+            'include_in_all' => false,
         ],
         'author' => [
             'type' => 'nested',
-            'include_in_all' => false
+            'include_in_all' => false,
         ],
         'article_metas' => [
             'type' => 'nested',
-            'include_in_all' => false
+            'include_in_all' => false,
         ],
     ];
 
@@ -281,5 +281,4 @@ class Article extends IndexedModel
     {
         return $this->morphMany(Section::class, 'sectionable');
     }
-
 }

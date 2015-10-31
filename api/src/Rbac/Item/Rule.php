@@ -20,5 +20,4 @@ abstract class Rule
      * @return bool a value indicating whether the rule permits the auth item it is associated with.
      */
     abstract public function execute(callable $userResolver, $params);
-
 }

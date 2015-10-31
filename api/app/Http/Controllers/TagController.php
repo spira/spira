@@ -14,7 +14,6 @@ use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
-
 class TagController extends EntityController
 {
     public function __construct(Tag $model, EloquentModelTransformer $transformer)

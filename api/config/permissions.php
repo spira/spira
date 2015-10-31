@@ -17,27 +17,26 @@ use App\Models\Role;
 return [
 
     //basic permissions
-    UserController::class . '@getOne' => [
+    UserController::class.'@getOne' => [
         'type' => 'permission',
         'description' => 'Get single user record by id',
     ],
-    UserController::class . '@getAllPaginated' => [
+    UserController::class.'@getAllPaginated' => [
         'type' => 'permission',
         'description' => 'Get all users',
     ],
-    UserController::class . '@patchOne' => [
+    UserController::class.'@patchOne' => [
         'type' => 'permission',
         'description' => 'Update user record by id',
     ],
-    UserController::class . '@deleteOne' => [
+    UserController::class.'@deleteOne' => [
         'type' => 'permission',
         'description' => 'Delete user by id',
     ],
-    PermissionsController::class . '@getUserRoles' => [
+    PermissionsController::class.'@getUserRoles' => [
         'type' => 'permission',
         'description' => 'Get all roles assigned to user',
     ],
-
 
     'impersonateUser' =>  [
         'type' => 'permission',
@@ -59,19 +58,17 @@ return [
         ],
     ],
 
-
     //special permissions
     'manipulateWithOwn' => [
         'type' => 'permission',
         'description' => 'General permission to update record which belongs to the user',
         'ruleName' => ManipulateWithOwn::class,
         'children' => [
-            UserController::class . '@getOne',
-            UserController::class . '@patchOne',
-            PermissionsController::class . '@getUserRoles',
+            UserController::class.'@getOne',
+            UserController::class.'@patchOne',
+            PermissionsController::class.'@getUserRoles',
         ],
     ],
-
 
     //roles
     Role::SUPER_ADMIN_ROLE => [
@@ -79,18 +76,18 @@ return [
         'description' => 'Super Admin role, can do all actions',
         'children' => [
             Role::ADMIN_ROLE,
-            'impersonateAllUsers'
+            'impersonateAllUsers',
         ],
     ],
     Role::ADMIN_ROLE => [
         'type' => 'role',
         'description' => 'Admin role',
         'children' => [
-            UserController::class . '@getOne',
-            UserController::class . '@getAllPaginated',
-            UserController::class . '@patchOne',
-            UserController::class . '@deleteOne',
-            PermissionsController::class . '@getUserRoles',
+            UserController::class.'@getOne',
+            UserController::class.'@getAllPaginated',
+            UserController::class.'@patchOne',
+            UserController::class.'@deleteOne',
+            PermissionsController::class.'@getUserRoles',
             'impersonateNonAdmin',
             Role::USER_ROLE,
         ],

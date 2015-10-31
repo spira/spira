@@ -122,7 +122,7 @@ class UserController extends EntityController
         $response = $this->getResponse();
 
         //If the update is requested by the user, send an updated token
-        if($request->user()->getKey() == $model->getKey()){
+        if ($request->user()->getKey() == $model->getKey()) {
             $response->header('Authorization-Update', $this->auth->generateToken($model));
         }
 
@@ -177,7 +177,7 @@ class UserController extends EntityController
         $response = $this->getResponse();
 
         //If the update is requested by the user, send an updated token
-        if($request->user()->getKey() == $user->getKey()){
+        if ($request->user()->getKey() == $user->getKey()) {
             $response->header('Authorization-Update', $this->auth->generateToken($user));
         }
 

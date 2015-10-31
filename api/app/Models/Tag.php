@@ -40,13 +40,13 @@ class Tag extends IndexedModel
     protected $mappingProperties = [
         'tag_id' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'tag' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
-        ]
+            'search_analyzer' => 'standard',
+        ],
     ];
 
     protected $taggedModels = [
@@ -60,6 +60,7 @@ class Tag extends IndexedModel
             $touches = array_merge($model->touches, array_keys($model->taggedModels));
             $touches = array_unique($touches);
             $model->setTouchedRelations($touches);
+
             return true;
         });
 
@@ -89,25 +90,24 @@ class Tag extends IndexedModel
      */
     public static function getGroupedTagPivots(Collection $tags, $parentTagName, array $tagDefinition = null)
     {
-
-        if (!$tagDefinition){
+        if (! $tagDefinition) {
             $tagDefinition = SeedTags::$tagHierarchy[$parentTagName];
         }
 
-        array_walk($tagDefinition['children'], function(&$value, $key){
-            if(is_string($key)){
+        array_walk($tagDefinition['children'], function (&$value, $key) {
+            if (is_string($key)) {
                 $value = $key;
             }
         });
 
         $tagGroupNames = array_values($tagDefinition['children']);
 
-        $groupTagIds = Tag::whereIn('tag', $tagGroupNames)
+        $groupTagIds = self::whereIn('tag', $tagGroupNames)
             ->lists('tag_id');
 
-        $parentTagId = Tag::where('tag', '=', $parentTagName)->value('tag_id');
+        $parentTagId = self::where('tag', '=', $parentTagName)->value('tag_id');
 
-        $syncTags = $tags->map(function(Tag $tag) use ($parentTagId, $groupTagIds){
+        $syncTags = $tags->map(function (Tag $tag) use ($parentTagId, $groupTagIds) {
             return [
                 'tag_group_id' => $groupTagIds->random(),
                 'tag_group_parent_id' => $parentTagId,
@@ -125,7 +125,7 @@ class Tag extends IndexedModel
                 'required',
                 'linked_tags_must_exist',
                 'linked_tags_must_be_children',
-                'linked_tags_limit'
+                'linked_tags_limit',
             ]);
     }
 
@@ -136,7 +136,7 @@ class Tag extends IndexedModel
                 'required',
                 'linked_tags_must_exist',
                 'linked_tags_must_be_children',
-                'linked_tags_limit'
+                'linked_tags_limit',
             ]);
     }
 
@@ -172,8 +172,8 @@ class Tag extends IndexedModel
      */
     public function __call($method, $parameters)
     {
-        if (isset($this->taggedModels[$method])){
-            return $this->belongsToMany($this->taggedModels[$method],null, null, null, $method)->withPivot('tag_group_id', 'tag_group_parent_id');
+        if (isset($this->taggedModels[$method])) {
+            return $this->belongsToMany($this->taggedModels[$method], null, null, null, $method)->withPivot('tag_group_id', 'tag_group_parent_id');
         }
 
         return parent::__call($method, $parameters);

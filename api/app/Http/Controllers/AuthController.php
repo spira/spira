@@ -142,7 +142,6 @@ class AuthController extends ApiController
             ->item($this->auth->generateToken($user));
     }
 
-
     public function loginAsUser(Request $request, User $userModel, $userId)
     {
 
@@ -152,10 +151,10 @@ class AuthController extends ApiController
         $this->checkPermission('impersonateUser', $user);
 
         $user->setCurrentAuthMethod('impersonation');
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($this->auth->generateToken($user));
-
     }
 
     /**

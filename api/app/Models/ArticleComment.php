@@ -64,7 +64,7 @@ class ArticleComment extends BaseModel
     }
 
     /**
-     * Article comments finding shouldn't be attempted by the hydrator on create as they can't be found from the database
+     * Article comments finding shouldn't be attempted by the hydrator on create as they can't be found from the database.
      * @param $id
      * @param array $columns
      * @return BaseModel|void
@@ -73,5 +73,4 @@ class ArticleComment extends BaseModel
     {
         return;
     }
-
 }
