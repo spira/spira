@@ -32,7 +32,7 @@ namespace common.directives.localizableInput {
 
         public getButtonElement($scope:ng.IScope):ng.IAugmentedJQuery{
 
-            return this.$compile(`<md-icon ng-click="LocalizableInputController.promptAddLocalization($event)">translate</md-icon>`)($scope);
+            return this.$compile(`<md-button ng-click="LocalizableInputController.promptAddLocalization($event)" class="md-icon-button localizable-input"><md-icon>translate</md-icon></md-button>`)($scope);
         }
 
         /**
@@ -103,6 +103,11 @@ namespace common.directives.localizableInput {
             directiveController.setInputAttributes($element, $attrs);
 
             $element.after(directiveController.getButtonElement($scope));
+
+            let parent = $element.parent('md-input-container');
+            if (parent.length){
+                parent.addClass('localizable');
+            }
 
             directiveController.registerChangeHandler((localizations:common.models.Localization<any>[]) => {
                 $ngModelController.$setDirty();
