@@ -1,6 +1,6 @@
-(() => {
+namespace common.models {
 
-    let seededChance = new Chance(1);
+    let seededChance = new Chance();
 
     describe('Image Model', () => {
 
@@ -15,12 +15,12 @@
 
         it('should instantiate a new image', () => {
 
-            let image = new common.models.Image(imageData);
+            let image = new Image(imageData);
 
-            expect(image).to.be.instanceOf(common.models.Image);
+            expect(image).to.be.instanceOf(Image);
 
         });
 
     });
 
-})();
+}

@@ -13,6 +13,7 @@ namespace common.models {
             return {
                 userId:seededChance.guid(),
                 email:seededChance.email(),
+                username: seededChance.name().toLowerCase().replace(' ', '.'),
                 firstName:seededChance.first(),
                 lastName:seededChance.last(),
                 emailConfirmed: moment(seededChance.date()).toISOString(),

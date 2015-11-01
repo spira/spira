@@ -1,7 +1,5 @@
 <div layout-padding>
 
-    <h2>Articles</h2>
-
     <md-toolbar>
         <div class="md-toolbar-tools">
             <md-input-container ng-show="ArticlesListingController.searchButton">
@@ -17,7 +15,7 @@
             </md-button>
             <md-button aria-label="Filter" class="md-icon-button" ng-click="ArticlesListingController.filterButton = !ArticlesListingController.filterButton">
                 <md-icon>filter_list</md-icon>
-                <md-tooltip>Filer Articles</md-tooltip>
+                <md-tooltip>Filter Articles</md-tooltip>
             </md-button>
             <span flex></span>
             <md-button aria-label="Add Article" ui-sref="app.admin.articles.article()" class="md-icon-button">
@@ -29,23 +27,20 @@
 
     <md-content ng-show="ArticlesListingController.filterButton" layout-padding>
         <label>Tags</label>
-        <md-chips class="md-contact-chips"
-                  ng-model="ArticlesListingController.tagsToFilter"
+        <md-chips ng-model="ArticlesListingController.tagsToFilter"
                   ng-model-options="{ debounce: 500 }"
-                  md-autocomplete-snap
-                  md-on-append="ArticlesListingController.addTagToFilter(ArticlesListingController.selectedTag)"
-                  md-on-remove="ArticlesListingController.search()">
+                  md-autocomplete-snap>
 
-            <md-autocomplete md-menu-class="md-contact-chips-suggestions"
+            <md-autocomplete
                 md-search-text="ArticlesListingController.tagSearchText"
                 md-selected-item="ArticlesListingController.selectedTag"
                 md-items="tag in ArticlesListingController.searchTags(ArticlesListingController.tagSearchText)"
                 md-item-text="tag.tag"
                 md-no-cache="true"
                 md-autoselect>
-                <div class="md-contact-suggestion">
+                <span md-highlight-text="ArticlesListingController.tagSearchText">
                     {{ tag.tag }}
-                </div>
+                </span>
             </md-autocomplete>
 
             <md-chip-template>
@@ -54,12 +49,10 @@
         </md-chips>
 
         <label>Author</label>
-        <md-chips class="md-contact-chips"
+        <md-chips
             ng-model="ArticlesListingController.usersToFilter"
             ng-model-options="{ debounce: 500 }"
-            md-autocomplete-snap
-            md-on-append="ArticlesListingController.addUserToFilter(ArticlesListingController.selectedUser)"
-            md-on-remove="ArticlesListingController.search()">
+            md-autocomplete-snap>
 
             <md-autocomplete md-menu-class="md-contact-chips-suggestions"
                 md-search-text="ArticlesListingController.userSearchText"
@@ -88,7 +81,7 @@
         </md-chips>
     </md-content>
 
-    <div ng-if="ArticlesListingController.articles.length < 1"><h3>No articles found!</h3></div>
+    <div ng-if="ArticlesListingController.entities.length < 1"><h3>No articles found!</h3></div>
 
     <md-grid-list
             md-cols-sm="1"
@@ -99,8 +92,8 @@
             md-gutter-gt-sm="8px">
 
         <md-grid-tile
-                ng-repeat="article in ArticlesListingController.articles"
-                ui-sref="app.admin.articles.article({permalink: article.getIdentifier()})"
+                ng-repeat="article in ArticlesListingController.entities"
+                ui-sref="app.admin.articles.article({id: article.getIdentifier()})"
                 md-ink-ripple style="cursor:pointer">
 
             <md-grid-tile-header>

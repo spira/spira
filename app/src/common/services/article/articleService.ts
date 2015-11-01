@@ -2,9 +2,25 @@ namespace common.services.article {
 
     export const namespace = 'common.services.article';
 
-    export class ArticleService extends AbstractApiService {
+    export class ArticleService extends AbstractApiService implements common.services.IExtendedApiService, common.mixins.SectionableApiService, common.mixins.TaggableApiService {
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q'];
+
+        //SectionableApiService
+        public saveEntitySections: (entity:mixins.SectionableModel) => ng.IPromise<common.models.Section<any>[]|boolean>;
+        public deleteSection: (entity:mixins.SectionableModel, section:common.models.Section<any>) => ng.IPromise<boolean>;
+
+        //TaggbleApiService
+        public saveEntityTags: (entity:mixins.TaggableModel) => ng.IPromise<common.models.Tag[]|boolean>;
+
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state'];
+
+        constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
+                    paginationService:common.services.pagination.PaginationService,
+                    $q:ng.IQService,
+                    $location:ng.ILocationProvider,
+                    $state:ng.ui.IState) {
+            super(ngRestAdapter, paginationService, $q, $location, $state);
+        }
 
         /**
          * Get an instance of the Article given data
@@ -17,10 +33,14 @@ namespace common.services.article {
         }
 
         /**
-         * Get the api endpoint for the model
+         * Get the api endpoint for the entity @todo declare with generic type that can be made specific in the implementation
+         * @param entity
          * @returns {string}
          */
-        protected apiEndpoint():string {
+        public apiEndpoint(article?:common.models.Article):string {
+            if(article){
+                return '/articles/' + article.articleId;
+            }
             return '/articles';
         }
 
@@ -39,15 +59,13 @@ namespace common.services.article {
         }
 
         /**
-         * Get an Article given an identifier (uuid or permalink)
-         * @param identifier
-         * @returns {IPromise<common.models.Article>}
-         * @param withNested
+         * Returns the public facing URL for an article
+         * @param article
+         * @returns {string}
          */
-        public getArticle(identifier:string, withNested:string[] = null):ng.IPromise<common.models.Article> {
+        public getPublicUrl(article:common.models.Article):string {
 
-            return this.getModel(identifier, withNested)
-                .then((res) => this.modelFactory(res.data, true));
+            return this.getPublicUrlForEntity({permalink:article.getIdentifier()}, app.guest.articles.article.ArticleConfig.state);
 
         }
 
@@ -56,9 +74,9 @@ namespace common.services.article {
          * @param article
          * @returns {IPromise<common.models.Article>}
          */
-        public saveArticleWithRelated(article:common.models.Article):ng.IPromise<common.models.Article> {
+        public save(article:common.models.Article):ng.IPromise<common.models.Article> {
 
-            return this.saveArticle(article)
+            return this.saveModel(article, this.apiEndpoint() + '/' + article.articleId)
                 .then(() => this.$q.when([
                     this.saveRelatedEntities(article),
                     this.runQueuedSaveFunctions(),
@@ -67,32 +85,7 @@ namespace common.services.article {
                     (<common.decorators.IChangeAwareDecorator>article).resetChanged(); //reset so next save only saves the changed ones
                     article.setExists(true);
                     return article;
-                })
-            ;
-
-        }
-
-        /**
-         * Save the article
-         * @param article
-         * @returns ng.IPromise<common.models.Article>
-         */
-        public saveArticle(article:common.models.Article):ng.IPromise<common.models.Article|boolean> {
-
-            let method = article.exists() ? 'patch' : 'put';
-
-            let saveData = article.getAttributes();
-
-            if (article.exists()) {
-                saveData = (<common.decorators.IChangeAwareDecorator>article).getChanged();
-            }
-
-            if (_.size(saveData) == 0) { //if there is nothing to save, don't make an api call
-                return this.$q.when(true);
-            }
-
-            return this.ngRestAdapter[method]('/articles/' + article.articleId, saveData)
-                .then(() => article);
+                });
 
         }
 
@@ -119,34 +112,10 @@ namespace common.services.article {
         private saveRelatedEntities(article:common.models.Article):ng.IPromise<any> {
 
             return this.$q.all([ //save all related entities
-                this.saveArticleSections(article),
-                this.saveArticleTags(article),
+                this.saveEntitySections(article),
+                this.saveEntityTags(article),
                 this.saveArticleMetas(article),
             ]);
-
-        }
-
-        /**
-         * Save the tags to the article.
-         * @param article
-         * @returns {any}
-         */
-        private saveArticleTags(article:common.models.Article):ng.IPromise<common.models.Tag[]|boolean> {
-
-            let tagData = _.clone(article._tags);
-
-            if (article.exists()) {
-
-                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
-                if (!_.has(changes, '_tags')) {
-                    return this.$q.when(false);
-                }
-            }
-
-            return this.ngRestAdapter.put('/articles/' + article.articleId + '/tags', tagData)
-                .then(() => {
-                    return article._tags;
-                });
 
         }
 
@@ -176,42 +145,8 @@ namespace common.services.article {
                 });
         }
 
-        /**
-         * Save article sections
-         * @param article
-         * @returns {any}
-         */
-        private saveArticleSections(article:common.models.Article):ng.IPromise<common.models.Section<any>[]|boolean> {
-
-            let sections = article._sections;
-
-            if (article.exists()) {
-
-                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
-                if (!_.has(changes, '_sections')) {
-                    return this.$q.when(false);
-                }
-            }
-
-            sections = _.filter((sections), (section:common.models.Section<any>) => {
-               return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
-            });
-
-            return this.ngRestAdapter.put('/articles/' + article.articleId + '/sections', _.clone(sections))
-                .then(() => {
-                    return article._sections;
-                });
-        }
-
-
-        public deleteSection(article:common.models.Article, section:common.models.Section<any>):ng.IPromise<boolean> {
-            return this.ngRestAdapter.remove('/articles/' + article.articleId + '/sections/' + section.sectionId)
-                .then(() => {
-                    return true;
-                });
-        }
-
     }
+
 
     angular.module(namespace, [])
         .service('articleService', ArticleService);

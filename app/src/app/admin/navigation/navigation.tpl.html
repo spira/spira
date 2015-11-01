@@ -1,7 +1,7 @@
 <div id="admin-sidenav" ng-class="{collapsed:AdminNavigationController.collapsed}">
     <md-toolbar class="md-theme-indigo">
         <div class="md-toolbar-tools">
-            <h2 ng-if="!AdminNavigationController.collapsed">CMS</h2>
+            <h2 ng-if="!AdminNavigationController.collapsed">Administration</h2>
             <span flex ng-if="!AdminNavigationController.collapsed"></span>
             <md-button aria-label="collapse-menu" class="md-icon-button" ng-click="AdminNavigationController.collapsed = !AdminNavigationController.collapsed">
                 <md-icon ng-if="!AdminNavigationController.collapsed">chevron_left</md-icon>
@@ -11,9 +11,12 @@
     </md-toolbar>
 
     <md-list>
-        <md-list-item aria-label="Go to your profile" ng-click="AppController.goToUserProfile($event)">
+        <md-list-item aria-label="Go to your profile" class="md-2-line" ng-click="AppController.goToUserProfile($event)">
             <avatar user="AdminNavigationController.ngJwtAuthService.user" width="70" height="70"></avatar>
-            <p ng-if="!AdminNavigationController.collapsed">{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</p>
+            <div class="md-list-item-text" ng-if="!AdminNavigationController.collapsed">
+                <h3>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</h3>
+                <p>{{ AdminNavigationController.ngJwtAuthService.user.rolesDisplay() }}</p>
+            </div>
             <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">Profile</md-tooltip>
         </md-list-item>
     </md-list>

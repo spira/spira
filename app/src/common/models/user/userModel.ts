@@ -10,8 +10,14 @@ namespace common.models {
             _roles: RoleAssignment,
         };
 
+        protected __attributeCastMap:IAttributeCastMap = {
+            createdAt: this.castMoment,
+            updatedAt: this.castMoment,
+        };
+
         public userId:string = undefined;
         public email:string = undefined;
+        public username:string = undefined;
         public firstName:string = undefined;
         public lastName:string = undefined;
         public emailConfirmed:string = undefined;
@@ -20,7 +26,7 @@ namespace common.models {
         public avatarImgUrl:string = undefined;
         public avatarImgId:string = undefined;
         public timezoneIdentifier:string = undefined;
-        public _userCredential:global.IUserCredential = undefined;
+        public _userCredential:UserCredential = undefined;
         public _userProfile:common.models.UserProfile = undefined;
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public _roles:common.models.RoleAssignment[] = undefined;
@@ -55,6 +61,18 @@ namespace common.models {
         public hasSocialLogin(provider:string):boolean {
             // Typings for lodash must not have this callback shorthand
             return (<any>_).some(this._socialLogins, 'provider', provider);
+        }
+
+        /**
+         * Get comma separated display value for user's roles
+         * @returns {any}
+         */
+        public rolesDisplay():string {
+
+            return _.map(this._roles, (role: common.models.RoleAssignment) => {
+                return _.capitalize(_.words(role.roleKey).join(' '));
+            }).join(', ');
+
         }
 
     }

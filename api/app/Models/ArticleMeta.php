@@ -12,33 +12,15 @@ namespace App\Models;
 
 use Spira\Model\Model\BaseModel;
 
-class ArticleMeta extends BaseModel
+class ArticleMeta extends Meta
 {
+    public $table = 'metas_article';
+
     /**
-     * The database table used by the model.
-     *
-     * @var string
+     * @return BaseModel
      */
-    public $table = 'article_metas';
-
-    protected $primaryKey = 'meta_id';
-
-    protected $fillable = ['meta_id', 'article_id', 'meta_name', 'meta_content'];
-
-    protected $guarded = ['meta_name'];
-
-    protected $touches = ['article'];
-
-    public static function getValidationRules()
+    public function getParentClassName()
     {
-        return [
-            'meta_name' => 'required|string',
-            'meta_content' => 'string',
-        ];
-    }
-
-    public function article()
-    {
-        return $this->belongsTo(Article::class, 'article_id', 'article_id');
+        return Article::class;
     }
 }

@@ -10,12 +10,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
-use App\Models\Sections\BlockquoteContent;
+use Spira\Model\Model\BaseModel;
 use App\Models\Sections\ImageContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
+use App\Models\Sections\BlockquoteContent;
+use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleSectionController extends ChildEntityController
 {
@@ -29,10 +30,11 @@ class ArticleSectionController extends ChildEntityController
     /**
      * @param $requestEntity
      * @param array $validationRules
+     * @param BaseModel $existingModel
      * @param bool $limitToKeysPresent
      * @return bool
      */
-    public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
+    public function validateRequest($requestEntity, $validationRules, BaseModel $existingModel = null, $limitToKeysPresent = false)
     {
         $contentRules = [];
         switch ($requestEntity['type']) {
@@ -59,6 +61,6 @@ class ArticleSectionController extends ChildEntityController
             $validationRules['content.'.$attribute] = $rule;
         }
 
-        return parent::validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
+        return parent::validateRequest($requestEntity, $validationRules, $existingModel, $limitToKeysPresent);
     }
 }

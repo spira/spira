@@ -1,0 +1,27 @@
+
+<div>
+    <h1>{{EditUserController.fullUserInfo.fullName() | uppercase}}</h1>
+    <div layout="row">
+        <div flex>
+            {{EditUserController.fullUserInfo.createdAt.format('dddd, MMMM Do YYYY')}}
+        </div>
+        <div flex>
+            {{EditUserController.fullUserInfo.createdAt.format('h:mm:ss a')}}
+        </div>
+        <div flex>
+            {{EditUserController.fullUserInfo.createdAt.fromNow()}}
+        </div>
+    </div>
+</div>
+
+<md-tabs md-dynamic-height md-border-bottom>
+
+    <md-tab label="Profile">
+        <h2>Profile</h2>
+        <md-content class="md-padding" ui-view="profile"></md-content>
+    </md-tab>
+    <md-tab label="Roles">
+        <md-content class="md-padding" ui-view="roles"></md-content>
+    </md-tab>
+
+</md-tabs>

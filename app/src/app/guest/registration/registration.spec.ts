@@ -10,7 +10,7 @@ describe('Registration', () => {
             userService:common.services.user.UserService,
             $q:ng.IQService,
             userServiceMock:common.services.user.UserService = <common.services.user.UserService>{
-                registerAndLogin: (email, password, first, last) => $q.when(true),
+                registerAndLogin: (email, username, password, first, last) => $q.when(true),
             },
             $state:ng.ui.IStateService
         ;
@@ -51,22 +51,22 @@ describe('Registration', () => {
             (<any>$state.go).restore();
         });
 
-        let email = 'email@example.com', password = 'hunter2', first = 'Joe', last = 'Bloggs';
+        let email = 'email@example.com', username = 'joe.bloggs', password = 'hunter2', first = 'Joe', last = 'Bloggs';
 
         it('should attempt registration of a user', () => {
 
-            RegistrationController.registerUser(email, password, first, last);
+            RegistrationController.registerUser(email, username, password, first, last);
 
-            expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, password, first, last);
+            expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, username, password, first, last);
             expect($state.go).not.to.have.been.called;
 
         });
 
         it('should attempt registration of a user and redirect to the profile page when requested', () => {
 
-            let userPromise = RegistrationController.registerUser(email, password, first, last, true);
+            let userPromise = RegistrationController.registerUser(email, username, password, first, last, true);
 
-            expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, password, first, last);
+            expect(userServiceMock.registerAndLogin).to.have.been.calledWithExactly(email, username, password, first, last);
 
             expect(userPromise).eventually.to.be.fulfilled;
 

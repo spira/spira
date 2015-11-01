@@ -24,7 +24,8 @@ class CreateTagsTable extends Migration
     {
         Schema::create(Tag::getTableName(), function (Blueprint $table) {
             $table->uuid('tag_id')->primary();
-            $table->string('tag', 20)->unique();
+            $table->string('tag', 30)->unique();
+            $table->boolean('searchable')->default(true);
         });
     }
 

@@ -12,9 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\SocialLogin;
-use App\Models\UserProfile;
 use Illuminate\Http\Request;
-use App\Models\UserCredential;
 use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
 use Illuminate\Contracts\Auth\Guard;
@@ -79,12 +77,6 @@ class UserController extends EntityController
         $model->fill($request->json()->all());
         $model->save();
 
-        // Finally create the credentials
-        if ($credential = $request->input('_user_credential', null)) {
-            $this->validateRequest($credential, UserCredential::getValidationRules());
-            $model->setCredential(new UserCredential($credential));
-        }
-
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->createdItem($model);
@@ -123,34 +115,18 @@ class UserController extends EntityController
             }
         }
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
-        $this->validateRequest($request->except('email'), $this->getValidationRules(), true);
+        $this->validateRequest($request->except('email'), $this->getValidationRules(), null, true);
         $model->fill($request->except('email'));
         $model->save();
 
-        // Extract the profile and update if necessary
-        $profileUpdateDetails = $request->input('_user_profile', []);
-        if (! empty($profileUpdateDetails)) {
-            /** @var UserProfile $profile */
-            $profile = UserProfile::findOrNew($id); // The user profile may not exist for the user
-            $this->validateRequest($profileUpdateDetails, UserProfile::getValidationRules(), $profile->exists);
-            $profile->fill($profileUpdateDetails);
-            $model->setProfile($profile);
+        $response = $this->getResponse();
+
+        //If the update is requested by the user, send an updated token
+        if ($request->user()->getKey() == $model->getKey()) {
+            $response->header('Authorization-Update', $this->auth->generateToken($model));
         }
 
-        // Extract the credentials and update if necessary
-        $credentialUpdateDetails = $request->input('_user_credential');
-        if ($credentialUpdateDetails) {
-            // Invalidate token for the user when user changes their password
-            if ($request->user()->user_id == $model->user_id) {
-                $this->auth->logout();
-            }
-
-            /* @var UserCredential $credentials */
-            $credentials = UserCredential::findOrNew($id)->fill($credentialUpdateDetails);
-            $model->setCredential($credentials);
-        }
-
-        return $this->getResponse()->header('Authorization-Update', $this->auth->generateToken($model))->noContent();
+        return $response->noContent();
     }
 
     /**
@@ -179,11 +155,13 @@ class UserController extends EntityController
     /**
      * Deletes a social login entry from the database.
      *
+     * @param Request $request
      * @param $id
      * @param $provider
      * @return \Spira\Responder\Response\ApiResponse
+     * @throws \Exception
      */
-    public function unlinkSocialLogin($id, $provider)
+    public function unlinkSocialLogin(Request $request, $id, $provider)
     {
         if (! $socialLogin = SocialLogin::where('user_id', '=', $id)
             ->where('provider', '=', $provider)
@@ -196,8 +174,13 @@ class UserController extends EntityController
         $user = User::find($id);
         $this->auth->login($user, true);
 
-        return $this->getResponse()
-            ->header('Authorization-Update', $this->auth->generateToken($user))
-            ->noContent();
+        $response = $this->getResponse();
+
+        //If the update is requested by the user, send an updated token
+        if ($request->user()->getKey() == $user->getKey()) {
+            $response->header('Authorization-Update', $this->auth->generateToken($user));
+        }
+
+        return $response->noContent();
     }
 }

@@ -10,6 +10,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Arr;
 use Rhumsaa\Uuid\Uuid;
 use App\Models\Section;
 use Spira\Model\Validation\Validator;
@@ -29,6 +30,21 @@ class SpiraValidator extends Validator
     public function validateNotFound()
     {
         return false;
+    }
+
+    public function validateNotRequiredIf($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'not_required_if');
+
+        $data = Arr::get($this->data, $parameters[0]);
+
+        $values = array_slice($parameters, 1);
+
+        if (in_array((string) $data, $values)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -2,8 +2,16 @@ namespace common.services.auth {
 
     export const namespace = 'common.services.auth';
 
+    export interface IImpersonationObject {
+        originalUser: common.models.User;
+        originalUserToken: string;
+        impersonatedUser: common.models.User;
+    }
+
     export class AuthService {
 
+        public static impersonationStorageKey = 'impersonation';
+        public impersonation:IImpersonationObject = null;
         public initialisedPromise:ng.IPromise<any>;
 
         static $inject:string[] = ['ngJwtAuthService', '$q', '$location', '$timeout', '$mdDialog', '$state', 'notificationService', '$window', 'ngRestAdapter'];
@@ -19,6 +27,8 @@ namespace common.services.auth {
                     private ngRestAdapter:NgRestAdapter.INgRestAdapterService
         ) {
 
+            this.loadStoredImpersonation();
+
             this.initialisedPromise = this.initialiseJwtAuthService().finally(() => {
 
                 return this.$q.all([
@@ -30,6 +40,16 @@ namespace common.services.auth {
                 console.error("Auth Initialisation failed: ", e);
             });
 
+        }
+
+        public loadStoredImpersonation() {
+            let storedImpersonation:IImpersonationObject = angular.fromJson(this.$window.localStorage.getItem(AuthService.impersonationStorageKey));
+
+            if (storedImpersonation) {
+                storedImpersonation.originalUser = new common.models.User(storedImpersonation.originalUser);
+                storedImpersonation.impersonatedUser = new common.models.User(storedImpersonation.impersonatedUser);
+                this.impersonation = storedImpersonation;
+            }
         }
 
         /**
@@ -155,6 +175,36 @@ namespace common.services.auth {
                 .catch((err) => {
                     this.notificationService.toast('Sorry, you have already tried to log in using this link').options({position:'top right'}).pop();
                 });
+        }
+
+        public impersonateUser(user:common.models.User):ng.IPromise<common.models.User> {
+
+            let userIdentifier = user.userId;
+            let currentUser = this.ngJwtAuthService.getUser();
+
+            this.impersonation = {
+                originalUser : <common.models.User>currentUser,
+                originalUserToken : this.ngJwtAuthService.rawToken,
+                impersonatedUser: user
+            };
+
+            this.$window.localStorage.setItem(AuthService.impersonationStorageKey, angular.toJson(this.impersonation));
+
+            return this.ngJwtAuthService.loginAsUser(userIdentifier);
+        }
+
+        public restoreFromImpersonation():ng.IPromise<any>{
+
+            if (!this.impersonation){
+                return this.$q.reject("No stashed token to restore");
+            }
+
+            return this.ngJwtAuthService.processNewToken(this.impersonation.originalUserToken).then(() => {
+                this.impersonation = null;
+                this.$window.localStorage.removeItem(AuthService.impersonationStorageKey);
+                this.$state.reload();
+                return this.ngJwtAuthService.refreshToken();
+            });
         }
 
     }

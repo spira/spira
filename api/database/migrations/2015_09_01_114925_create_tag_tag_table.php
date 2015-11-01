@@ -27,6 +27,10 @@ class CreateTagTagTable extends Migration
         Schema::create(static::TABLE_NAME, function (Blueprint $table) {
             $table->uuid('tag_id');
             $table->uuid('parent_tag_id');
+            $table->boolean('required')->default(false);
+            $table->boolean('linked_tags_must_exist')->default(false);
+            $table->boolean('linked_tags_must_be_children')->default(false);
+            $table->tinyInteger('linked_tags_limit')->nullable()->default(null);
 
             $table->primary(['tag_id','parent_tag_id']);
 

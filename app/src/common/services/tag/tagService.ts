@@ -10,7 +10,7 @@ namespace common.services.tag {
          * Get the api endpoint for the model
          * @returns {string}
          */
-        protected apiEndpoint():string {
+        public apiEndpoint():string {
             return '/tags';
         }
 
@@ -28,11 +28,11 @@ namespace common.services.tag {
          * Get a new tag with no values and a set uuid
          * @returns {common.models.Tag}
          */
-        public newTag():common.models.Tag {
+        public newTag(overrides:any = {}):common.models.Tag {
 
-            return this.modelFactory({
+            return this.modelFactory(_.merge({
                 tagId: this.ngRestAdapter.uuid(),
-            });
+            }, overrides));
 
         }
 
@@ -49,6 +49,17 @@ namespace common.services.tag {
                     return tag;
                 });
 
+        }
+
+        /**
+         * Get top level group tags for a particular group (e.g. articles).
+         *
+         * @returns {IPromise<common.models.Tag[]>}
+         * @param service
+         */
+        public getTagCategories(service:common.services.AbstractApiService):ng.IPromise<common.models.CategoryTag[]> {
+
+            return this.getAllModels<common.models.CategoryTag>(['childTags'], service.apiEndpoint() + '/tag-categories');
         }
 
     }

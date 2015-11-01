@@ -1,0 +1,44 @@
+<div class="grouped-tags">
+
+    <ng-form name="group.form" ng-repeat="group in GroupedTagsController.entityTagGroups track by $index">
+        <md-input-container>
+            <label>{{group.groupTag.tag}}<span ng-if="group.groupTag._pivot.linkedTagsLimit"> (Max Count: {{group.groupTag._pivot.linkedTagsLimit}})</span></label>
+            <md-chips ng-model="group.tags"
+                      name="tags"
+                      placeholder="Enter a {{group.groupTag.tag}}"
+                      delete-button-label="Remove {{group.groupTag.tag}}"
+                      delete-hint="Press delete to remove {{group.groupTag.tag}}"
+                      secondary-placeholder="+{{group.groupTag.tag}}"
+                      ng-model-options="{ debounce: 500 }"
+                      md-autocomplete-snap
+                      md-require-match="true"
+                      ng-required="group.groupTag._pivot.required"
+                    >
+
+                <md-autocomplete
+                    ng-hide="!!group.groupTag._pivot.linkedTagsLimit && group.tags.length >= group.groupTag._pivot.linkedTagsLimit"
+                    md-search-text="searchText"
+                    md-selected-item="selectedTag"
+                    md-items="tag in GroupedTagsController.searchTags(searchText, group.groupTag)"
+                    md-item-text="tag.tag"
+                    md-selected-item-change="searchText = ''"
+                    md-autoselect="true"
+                    md-no-cache="true">
+                        <span md-highlight-text="searchText">{{ tag.tag }}</span>
+                        <small ng-if="!tag.exists()"> (New Tag)</small>
+                </md-autocomplete>
+
+                <md-chip-template>
+                    {{ $chip.tag }}
+                </md-chip-template>
+
+            </md-chips>
+            <ng-messages for="group.form.tags.$error">
+                <ng-message when="required">This is required.</ng-message>
+                <ng-message when="limit">A maximum of {{group.groupTag._pivot.linkedTagsLimit}} tags is allowed</ng-message>
+            </ng-messages>
+
+        </md-input-container>
+    </ng-form>
+
+</div>

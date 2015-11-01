@@ -48,7 +48,9 @@ namespace common.services.article {
             });
 
             afterEach(() => {
+
                 (<any>ngRestAdapter.get).restore();
+
             });
 
             let articles = common.models.ArticleMock.collection(30); //get a set of articles
@@ -81,7 +83,7 @@ namespace common.services.article {
                     return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
                 }).respond(mockArticle);
 
-                let article = articleService.getArticle(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                let article = articleService.getModel(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -138,8 +140,8 @@ namespace common.services.article {
 
                 let article = common.models.ArticleMock.entity();
                 article.setExists(false);
-                article._tags.push(common.models.TagMock.entity());
-                article._tags.push(common.models.TagMock.entity());
+                article._tags.push(common.models.LinkingTagMock.entity());
+                article._tags.push(common.models.LinkingTagMock.entity());
                 article._articleMetas = article._articleMetas.concat(common.models.ArticleMetaMock.collection(2, {articleId:article.articleId}));
                 article._sections = common.models.SectionMock.collection(2, {}, false);
 
@@ -150,7 +152,7 @@ namespace common.services.article {
                     return !_.isEmpty(item.metaContent)
                 })).respond(201);
 
-                let savePromise = articleService.saveArticleWithRelated(article);
+                let savePromise = articleService.save(article);
 
                 expect(savePromise).eventually.to.be.fulfilled;
                 expect(savePromise).eventually.to.deep.equal(article);
@@ -166,12 +168,12 @@ namespace common.services.article {
 
                 article.title = "This title has been updated";
 
-                article._tags = [common.models.TagMock.entity()];
+                article._tags = [common.models.LinkingTagMock.entity()];
 
                 $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
 
-                let savePromise = articleService.saveArticleWithRelated(article);
+                let savePromise = articleService.save(article);
 
                 expect(savePromise).eventually.to.be.fulfilled;
                 expect(savePromise).eventually.to.deep.equal(article);
@@ -185,7 +187,7 @@ namespace common.services.article {
                 let article = common.models.ArticleMock.entity();
                 article.setExists(true);
 
-                let savePromise = articleService.saveArticleWithRelated(article);
+                let savePromise = articleService.save(article);
 
                 expect(savePromise).eventually.to.equal(article);
 
@@ -207,7 +209,7 @@ namespace common.services.article {
 
                     $httpBackend.expectDELETE('/api/articles/'+article.articleId+'/sections/'+article._sections[0].sectionId).respond(201);
 
-                    let savePromise = articleService.saveArticleWithRelated(article);
+                    let savePromise = articleService.save(article);
 
                     expect(savePromise).eventually.to.equal(article);
 
@@ -234,6 +236,23 @@ namespace common.services.article {
             });
 
         });
+
+        describe('Public URL', () => {
+
+            it('should be able to get the public URL of an article', () => {
+
+                (<any>articleService).getPublicUrlForEntity = sinon.stub().returns(true);
+
+                let article = common.models.ArticleMock.entity();
+                article.setExists(true);
+
+                articleService.getPublicUrl(article);
+
+                expect((<any>articleService).getPublicUrlForEntity).to.have.been.calledWith({permalink:article.getIdentifier()}, app.guest.articles.article.ArticleConfig.state)
+
+            });
+
+        })
 
     });
 

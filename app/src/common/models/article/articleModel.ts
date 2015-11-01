@@ -1,11 +1,7 @@
 namespace common.models {
 
-    export interface ISectionsDisplay{
-        sortOrder: string[];
-    }
-
     @common.decorators.changeAware
-    export class Article extends AbstractModel {
+    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
             _sections: this.hydrateSections,
@@ -23,6 +19,7 @@ namespace common.models {
 
         public articleId:string = undefined;
         public title:string = undefined;
+        public shortTitle:string = undefined;
         public permalink:string = undefined;
         public content:string = undefined;
         public primaryImage:string = undefined;
@@ -31,18 +28,26 @@ namespace common.models {
 
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
-        public sectionsDisplay:ISectionsDisplay = undefined;
+        public sectionsDisplay:mixins.ISectionsDisplay = undefined;
 
         public _sections:Section<any>[] = [];
         public _articleMetas:ArticleMeta[] = [];
         public _author:User = undefined;
-        public _tags:Tag[] = [];
+        public _tags:LinkingTag[] = [];
         public _comments:ArticleComment[] = [];
         public _localizations:Localization<Article>[] = [];
 
         private static articleMetaTemplate:string[] = [
             'name', 'description', 'keyword', 'canonical'
         ];
+
+        public static tagGroups:string[] = [
+            'Category', 'Topic'
+        ];
+
+        //SectionableModel
+        public updateSectionsDisplay: () => void;
+        public hydrateSections: (data:any, exists:boolean) => common.models.Section<any>[];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
@@ -60,12 +65,22 @@ namespace common.models {
         }
 
         /**
+         * Get the tag groups
+         * @returns {string[]}
+         */
+        public getTagGroups():string[] {
+
+            return Article.tagGroups;
+
+        }
+
+        /**
          * Hydrates a meta template with meta which already exists
          * @param data
          * @param exists
-         * @returns {any}
+         * @returns void
          */
-        private hydrateMetaCollectionFromTemplate(data:any, exists:boolean) {
+        private hydrateMetaCollectionFromTemplate(data:any, exists:boolean):void {
 
             return (<any>_).chain(common.models.Article.articleMetaTemplate)
                 .map((metaTagName) => {
@@ -92,48 +107,8 @@ namespace common.models {
 
         }
 
-        /**
-         * Hyrate the data:
-         * - Pre-sort the sections based on the sectionsDisplay field
-         * @param data
-         * @param exists
-         * @returns {any}
-         */
-        protected hydrateSections(data:any, exists:boolean) : Section<any>[]{
-
-            if (!_.has(data, '_sections')){
-                return;
-            }
-
-            let sectionsChain =  _.chain(data._sections)
-                .map((entityData:any) => new Section(entityData, exists));
-
-            if (_.has(data, 'sectionsDisplay.sortOrder')){
-                let sortOrder:string[] = data.sectionsDisplay.sortOrder;
-                sectionsChain = sectionsChain.sortBy((section:Section<any>) => _.indexOf(sortOrder, section.sectionId, false));
-            }
-
-            return sectionsChain.value();
-        }
-
-        /**
-         * Update the sort order display to match the section object
-         */
-        public updateSectionsDisplay():void {
-            if (_.isEmpty(this._sections)){
-                return;
-            }
-
-            let sectionOrder:string[] = _.map(this._sections, (section:Section<any>) => {
-                return section.sectionId;
-            });
-
-            if (!_.isEqual(this.sectionsDisplay.sortOrder, sectionOrder)){ //only update the value if it has changed
-                this.sectionsDisplay.sortOrder = sectionOrder;
-            }
-        }
-
     }
+
 
 }
 

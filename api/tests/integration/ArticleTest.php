@@ -126,17 +126,20 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedTags()
     {
-        $entity = $this->getFactory(Article::class)->create();
-        $tags = $this->getFactory(Tag::class)->count(4)->create();
-        $entity->tags()->sync($tags->lists('tag_id')->toArray());
+        $article = $this->getFactory(Article::class)->create();
 
-        $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'tags']);
+        $tags = factory(Tag::class, 5)->create();
+        $groupedTagPivots = Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName)->toArray();
+
+        $article->tags()->sync($groupedTagPivots);
+
+        $this->getJson('/articles/'.$article->article_id, ['with-nested' => 'tags']);
         $this->assertResponseOk();
         $this->shouldReturnJson();
 
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('_tags', $object);
-        $this->assertEquals(4, count($object->_tags));
+        $this->assertEquals(5, count($object->_tags));
     }
 
     public function testGetOneWithNestedAuthor()
@@ -532,10 +535,11 @@ class ArticleTest extends TestCase
         $client->api('comments')->create($discussionId, $body);
 
         $this->getJson('/articles/'.$article->article_id.'/comments');
-        $array = json_decode($this->response->getContent(), true);
+        $this->assertResponseStatus(200);
+        $response = json_decode($this->response->getContent(), true);
 
-        $this->assertCount(1, $array);
-        $this->assertEquals($body, $array[0]['body']);
+        $this->assertCount(1, $response);
+        $this->assertEquals($body, $response[0]['body']);
 
         // Clean up by removing the discussion created
         $client->api('discussions')->remove($discussion['Discussion']['DiscussionID']);

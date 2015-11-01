@@ -11,6 +11,7 @@ module common.models {
             dob: this.castDate,
         };
 
+        public userId:string = undefined;
         public dob:Date = undefined;
         public mobile:string = undefined;
         public phone:string = undefined;

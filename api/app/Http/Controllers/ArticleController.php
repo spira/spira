@@ -10,13 +10,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Extensions\Controller\LocalizableTrait;
-use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
+use App\Http\Transformers\ArticleTransformer;
+use App\Extensions\Controller\LocalizableTrait;
+use App\Http\Controllers\Traits\TagCategoryTrait;
 
 class ArticleController extends EntityController
 {
     use LocalizableTrait;
+
+    use TagCategoryTrait;
+    protected $rootCategoryTagName = \SeedTags::articleGroupTagName;
 
     /**
      * Assign dependencies.

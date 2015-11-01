@@ -42,6 +42,7 @@
     "ngInfiniteScroll": "~1.2.1",
     "toposort": "~0.3.1",
     "angular-carousel": "~0.3.13",
+    "chance": "~0.7.6",
     "simplemde-markdown-editor": "https://github.com/NextStepWebs/simplemde-markdown-editor.git#1.7.4"
   },
   "devDependencies": {

@@ -13,13 +13,15 @@ namespace app.admin.articles.article {
             $q:ng.IQService,
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
-            $stateParams:IArticleStateParams = <IArticleStateParams> {
-                newArticle: true
+            $stateParams:app.admin.ICommonStateParams = <app.admin.ICommonStateParams> {
+                id: undefined,
+                newEntity: true
             },
             articleService:common.services.article.ArticleService,
             ArticleController:app.admin.articles.article.ArticleController,
             loggedInUser:common.models.User = common.models.UserMock.entity(),
-            userService:common.services.user.UserService;
+            userService:common.services.user.UserService,
+            groupTags:common.models.Tag[] = common.models.TagMock.collection(2);
 
         beforeEach(() => {
 
@@ -33,8 +35,8 @@ namespace app.admin.articles.article {
                 articleService = _articleService_;
                 userService = _userService_;
 
-                articleService.saveArticleWithRelated = sinon.stub().returns($q.when(true));
-                articleService.getArticle = sinon.stub().returns(article);
+                articleService.save = sinon.stub().returns($q.when(true));
+                articleService.getModel = sinon.stub().returns(article);
                 articleService.newArticle = sinon.stub().returns(newArticle);
 
                 userService.getAuthUser = sinon.stub().returns(loggedInUser);
@@ -47,7 +49,7 @@ namespace app.admin.articles.article {
                     notificationService: notificationService,
                     article: article,
                     articleService: articleService,
-                    articleMetaTags: []
+                    groupTags: groupTags
                 });
             });
 
@@ -67,7 +69,7 @@ namespace app.admin.articles.article {
 
             $scope.$apply();
 
-            expect(articleService.saveArticleWithRelated).to.have.been.calledWith(article);
+            expect(articleService.save).to.have.been.calledWith(article);
 
             expect(notificationService.toast).to.have.been.calledOnce;
 
@@ -75,7 +77,7 @@ namespace app.admin.articles.article {
 
         it('should be able to resolve article (new)', () => {
 
-            $stateParams.permalink = 'new';
+            $stateParams.id = 'new';
 
             let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
@@ -89,13 +91,13 @@ namespace app.admin.articles.article {
 
         it('should be able to resolve article (existing)', () => {
 
-            $stateParams.permalink = 'foobar';
+            $stateParams.id = 'foobar';
 
             let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
             expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
 
-            expect(articleService.getArticle).to.have.been.called;
+            expect(articleService.getModel).to.have.been.called;
 
         });
 

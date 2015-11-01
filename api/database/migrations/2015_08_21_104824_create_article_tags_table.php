@@ -15,7 +15,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateArticleTagsTable extends Migration
 {
-    const TABLE_NAME = 'tag_article';
+    const TABLE_NAME = 'article_tag';
 
     /**
      * Run the migrations.
@@ -28,6 +28,9 @@ class CreateArticleTagsTable extends Migration
             $table->uuid('tag_id');
             $table->uuid('article_id');
 
+            $table->uuid('tag_group_id');
+            $table->uuid('tag_group_parent_id');
+
             $table->primary(['tag_id','article_id']);
 
             $table->foreign('article_id')
@@ -35,6 +38,14 @@ class CreateArticleTagsTable extends Migration
                 ->onDelete('cascade');
 
             $table->foreign('tag_id')
+                ->references('tag_id')->on(Tag::getTableName())
+                ->onDelete('cascade');
+
+            $table->foreign('tag_group_id')
+                ->references('tag_id')->on(Tag::getTableName())
+                ->onDelete('cascade');
+
+            $table->foreign('tag_group_parent_id')
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
         });

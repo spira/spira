@@ -16,8 +16,10 @@ The properties of the test entities cover the different column types. These are 
             
 ## Test Entities paginated [/test/entities/pages]
 
-### Retrieve entities with default limit [GET]
+### Retrieve paginated entities with range header [GET]
+See the example requests (right) for examples of different valid Range header options
 + Request
+    Retrieve entites with default limit
     + Headers
     
             Range: entities=0-
@@ -32,8 +34,8 @@ The properties of the test entities cover the different column types. These are 
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(10)->json() !!}
 
-### Retrieve first 2 entities [GET]
 + Request
+    Retrieve first 2 entities
     + Headers
     
             Range: entities=0-2
@@ -49,8 +51,8 @@ The properties of the test entities cover the different column types. These are 
 
             {!! $factory->get(\App\Models\TestEntity::class)->count(2)->json() !!}
             
-### Retrieve last 2 entities [GET]
 + Request
+    Retrieve last 2 entities
     + Headers
     
             Range: entities=-2
@@ -78,3 +80,5 @@ The properties of the test entities cover the different column types. These are 
     + Body
 
             {!! $factory->json(\App\Models\TestEntity::class) !!}
+
+

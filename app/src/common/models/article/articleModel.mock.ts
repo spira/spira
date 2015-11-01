@@ -13,6 +13,7 @@ namespace common.models {
             return {
                 articleId: seededChance.guid(),
                 title: seededChance.string(),
+                shortTitle: seededChance.word(),
                 permalink: seededChance.url(),
                 primaryImage: seededChance.url(),
                 status: seededChance.pick(['draft', 'published', 'ready']),

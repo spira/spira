@@ -38,9 +38,13 @@ class ArticleSeeder extends BaseSeeder
 
         $supportedRegions = array_pluck(config('regions.supported'), 'code');
 
+        $tags = factory(Tag::class, 30)->create();
+
+        $groupedTagPivots = Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
+
         factory(Article::class, 50)
             ->create()
-            ->each(function (Article $article) use ($images, $users, $faker, $supportedRegions) {
+            ->each(function (Article $article) use ($images, $users, $tags, $groupedTagPivots, $faker, $supportedRegions) {
 
                 //add sections
                 /** @var \Illuminate\Database\Eloquent\Collection $sections */
@@ -75,8 +79,7 @@ class ArticleSeeder extends BaseSeeder
                 $article->articlePermalinks()->saveMany($permalinks);
 
                 //add tags
-                $tags = factory(Tag::class, 2)->make()->all();
-                $article->tags()->saveMany($tags);
+                $article->tags()->sync($groupedTagPivots->random(rand(2, 5))->toArray());
 
                 //add comments
                 $this->randomElements(factory(ArticleComment::class, 10)->make())
@@ -99,6 +102,8 @@ class ArticleSeeder extends BaseSeeder
                         'image_id' => $image->image_id,
                     ]);
                 });
+
+                $article->touch(); // Update search index
 
             });
     }

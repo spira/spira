@@ -1,6 +1,6 @@
-(() => {
+namespace common.models {
 
-    let seededChance = new Chance(1);
+    let seededChance = new Chance();
 
     describe('Tag Model', () => {
 
@@ -11,12 +11,12 @@
 
         it('should instantiate a new tag', () => {
 
-            let tag = new common.models.Tag(tagData);
+            let tag = new Tag(tagData);
 
-            expect(tag).to.be.instanceOf(common.models.Tag);
+            expect(tag).to.be.instanceOf(Tag);
 
         });
 
     });
 
-})();
+}

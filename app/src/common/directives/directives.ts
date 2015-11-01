@@ -6,6 +6,7 @@ namespace common.directives {
         namespace + '.avatar',
         namespace + '.menuToggle',
         namespace + '.uploadImage',
+        namespace + '.groupedTags',
         namespace + '.markdownEditor',
         namespace + '.localizableInput',
         namespace + '.selectMediaImage',
