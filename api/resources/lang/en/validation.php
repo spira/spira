@@ -82,6 +82,7 @@ return [
     'url'                  => 'The :attribute format is invalid.',
     'timezone'             => 'The :attribute must be a valid zone.',
     'uuid'                 => 'The :attribute must be an UUID string.',
+    'not_required_if'      => 'The :attribute must be null',
     'decimal'              => 'The :attribute must be a decimal.',
     'not_found'            => 'The selected :attribute is invalid.',
     'country'              => 'The :attribute must be a valid country code.',

@@ -165,7 +165,7 @@ class EntityTest extends TestCase
             ->andReturn(10)
             ->shouldReceive('searchByQuery')
             ->with([
-                'match_phrase' => [
+                'match_phrase_prefix' => [
                     '_all' => 'foobar',
                 ],
             ], null, null, 10, 0)
@@ -196,7 +196,7 @@ class EntityTest extends TestCase
             ->with([
                 'index' => 'defaultIndex',
                 'type' => 'someTypeName',
-                'body' => ['query' => ['bool' => ['must' => [['match' => ['_all' => 'search term']],['match' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
+                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']],['match_phrase_prefix' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
             ])
             ->andReturn($resultsMock);
 
