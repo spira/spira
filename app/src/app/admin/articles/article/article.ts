@@ -77,7 +77,7 @@ namespace app.admin.articles.article {
                             return newArticle;
                         }
 
-                        return articleService.getArticle($stateParams.id, [
+                        return articleService.getModel($stateParams.id, [
                             'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections', 'localizations'
                         ]);
                     },
