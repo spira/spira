@@ -174,7 +174,7 @@ abstract class EntityController extends ApiController
 
         $model = $this->findOrFailEntity($id);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules(), true);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules(), $model);
 
         $model->fill($request->json()->all());
         $this->checkPermission(static::class.'@patchOne', ['model' => $model]);
@@ -313,7 +313,7 @@ abstract class EntityController extends ApiController
             ]);
         } else {
             $searchResults = $model->searchByQuery([
-                'match_phrase' => [
+                'match_phrase_prefix' => [
                     '_all' => $query,
                 ],
             ], null, null, $limit, $offset);
@@ -366,7 +366,7 @@ abstract class EntityController extends ApiController
                                     'query' => [
                                         'bool' => [
                                             'must' => [
-                                                'match' => [
+                                                'match_phrase_prefix' => [
                                                     $snakeKey.'.'.snake_case($fieldKey) => $fieldValue,
                                                 ],
                                             ],
@@ -381,7 +381,7 @@ abstract class EntityController extends ApiController
                 foreach ($value as $matchValue) {
                     if (! empty($matchValue)) {
                         array_push($processedQuery['query']['bool']['must'], [
-                            'match' => [
+                            'match_phrase_prefix' => [
                                 snake_case($key) => $matchValue,
                             ],
                         ]);

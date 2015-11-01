@@ -133,24 +133,27 @@ abstract class BaseModel extends Model
      * The method is more efficient if is passed a Collection of existing entries otherwise it will do a query for every entity.
      * @param array $requestCollection
      * @param EloquentCollection|null $existingModels
+     * @param null $keyName
      * @return Collection
      */
     public function hydrateRequestCollection(array $requestCollection, EloquentCollection $existingModels = null)
     {
         $keyName = $this->getKeyName();
+
         $models = array_map(function ($item) use ($keyName, $existingModels) {
 
             /** @var Model $model */
             $model = null;
             $entityId = isset($item[$keyName]) ? $item[$keyName] : null;
 
+            //if we have known models, get the model from the collection
             if ($existingModels) {
-                //get the model from the collection, or create a new instance
-                $model = $existingModels->get($entityId, function () { //using a closure, so new instance is only created when the default is required
-                    return $this->newInstance();
-                });
-            } else {
-                $this->findOrNew($entityId);
+                $model = $existingModels->get($entityId);
+            }
+
+            //if the model couldn't be found, find it in the database directly, or create a new one
+            if (! $model) {
+                $model = $this->findOrNew($entityId);
             }
 
             $model->fill($item);
@@ -218,5 +221,17 @@ abstract class BaseModel extends Model
             default:
                 return $value;
         }
+    }
+
+    /**
+     * Register a an after boot model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function booted($callback, $priority = 0)
+    {
+        static::registerModelEvent('booted', $callback, $priority);
     }
 }
