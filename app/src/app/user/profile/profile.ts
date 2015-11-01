@@ -1,5 +1,3 @@
-///<reference path="../../../../src/global.d.ts" />
-
 namespace app.user.profile {
 
     export const namespace = 'app.user.profile';
@@ -69,7 +67,7 @@ namespace app.user.profile {
                         userService:common.services.user.UserService,
                         user:common.models.User //inherited from parent state
                     ) => {
-                        return userService.getUser(user, ['userCredential', 'userProfile', 'socialLogins', 'uploadedAvatar'])
+                        return userService.getModel(user.userId, ['userCredential', 'userProfile', 'socialLogins', 'uploadedAvatar']);
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;
@@ -100,25 +98,41 @@ namespace app.user.profile {
         emailConfirmationToken?:string;
     }
 
-    export class ProfileController {
+    export class ProfileController extends app.abstract.profile.AbstractProfileController {
 
-        static $inject = ['userService', 'notificationService', 'emailConfirmed', 'countries', 'timezones', 'fullUserInfo', 'genderOptions', 'regions', 'authService', 'providerTypes', '$location', 'imageService', '$mdDialog'];
+        static $inject = [
+            //from abstract
+            'userService',
+            'notificationService',
+            'authService',
+            'countries',
+            'timezones',
+            'genderOptions',
+            'regions',
+            'providerTypes',
+            'fullUserInfo',
+
+            //ProfileController
+            'emailConfirmed',
+            '$location',
+        ];
 
         constructor(
-            private userService:common.services.user.UserService,
-            private notificationService:common.services.notification.NotificationService,
+            userService:common.services.user.UserService,
+            notificationService:common.services.notification.NotificationService,
+            authService:common.services.auth.AuthService,
+            countries:common.services.countries.ICountryDefinition,
+            timezones:common.services.timezones.ITimezoneDefinition,
+            genderOptions:common.models.IGenderOption[],
+            regions:global.ISupportedRegion[],
+            providerTypes:string[],
+            fullUserInfo:common.models.User,
+
             private emailConfirmed:boolean,
-            public countries:common.services.countries.ICountryDefinition,
-            public timezones:common.services.timezones.ITimezoneDefinition,
-            public fullUserInfo:common.models.User,
-            public genderOptions:common.models.IGenderOption[],
-            private regions:global.ISupportedRegion[],
-            private authService:common.services.auth.AuthService,
-            public providerTypes:string[],
-            private $location:ng.ILocationService,
-            private imageService:common.services.image.ImageService,
-            private $mdDialog:ng.material.IDialogService
+            private $location:ng.ILocationService
         ) {
+            
+            super(userService, notificationService, authService, countries, timezones, genderOptions, regions, providerTypes, fullUserInfo)
 
             if (this.emailConfirmed) {
                 let updatedUser = userService.getAuthUser();
@@ -127,65 +141,18 @@ namespace app.user.profile {
                 this.fullUserInfo.email = updatedUser.email;
             }
 
-            /*
-                Remove loginToken/emailConfirmationToken if present in the URL params. We need to do this so they are
-                not reused. Removing these will not reload state because 'reloadOnSearch' is set to false for this
-                state. Unfortunately these can not be removed in the resolves. loginToken can not be removed in
-                authService.ts:processLoginToken() for reasons undetermined.
+            /**
+             * Remove loginToken/emailConfirmationToken if present in the URL params. We need to do this so they are
+             * not reused. Removing these will not reload state because 'reloadOnSearch' is set to false for this
+             * state. Unfortunately these can not be removed in the resolves. loginToken can not be removed in
+             * authService.ts:processLoginToken() for reasons undetermined.
              */
-
             this.$location.search('loginToken', null);
 
             this.$location.search('emailConfirmationToken', null);
 
         }
 
-        /**
-         * Edit profile form submit function
-         * @returns {ng.IPromise<any>}
-         */
-        public updateUser():ng.IPromise<any> {
-
-            if(_.isEmpty(this.fullUserInfo._userCredential)) {
-                delete this.fullUserInfo._userCredential;
-            }
-
-            return this.userService.saveUserWithRelated(this.fullUserInfo)
-                .then(() => {
-                    this.notificationService.toast('Profile update was successful').pop();
-                },
-                (err) => {
-                    this.notificationService.toast('Profile update was unsuccessful, please try again').pop();
-                })
-        }
-
-        /**
-         * Register social login function for Profile Controller
-         * @param type
-         */
-        public socialLogin(type:string):void {
-
-            this.authService.socialLogin(type);
-
-        }
-
-        /**
-         * Register unlink social login function for Profile Controller
-         * @param type
-         */
-        public unlinkSocialLogin(type:string):void {
-
-            this.authService.unlinkSocialLogin(this.fullUserInfo, type)
-                .then(() => {
-
-                    _.remove(this.fullUserInfo._socialLogins, {
-                        'provider' : type
-                    });
-
-                    this.notificationService.toast('Your ' + _.capitalize(type) + ' has been unlinked from your account').pop();
-                });
-
-        }
     }
 
     angular.module(namespace, [])

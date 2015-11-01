@@ -60,16 +60,18 @@ namespace common.services.image {
 
     export class ImageService extends AbstractApiService {
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$http', 'Upload', '$timeout'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state', '$http', 'Upload', '$timeout'];
 
         constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     paginationService:common.services.pagination.PaginationService,
                     $q:ng.IQService,
+                    $location:ng.ILocationProvider,
+                    $state:ng.ui.IState,
                     private $http:ng.IHttpService,
                     private ngFileUpload:ng.angularFileUpload.IUploadService,
                     private $timeout:ng.ITimeoutService) {
 
-            super(ngRestAdapter, paginationService, $q);
+            super(ngRestAdapter, paginationService, $q, $location, $state);
 
         }
 
@@ -87,7 +89,10 @@ namespace common.services.image {
          * Get the api endpoint for the model
          * @returns {string}
          */
-        protected apiEndpoint():string {
+        public apiEndpoint(entity?:any):string {
+            if(entity){
+                return '/images/' + entity.imageId;
+            }
             return '/images';
         }
 

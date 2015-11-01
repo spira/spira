@@ -1,8 +1,8 @@
-(() => {
+namespace common.services.notification {
 
     describe('Notification Service', () => {
 
-        let notificationService:common.services.notification.NotificationService,
+        let notificationService:NotificationService,
             $mdToast:ng.material.IToastService,
             $rootScope:global.IRootScope,
             $timeout:ng.ITimeoutService;
@@ -96,4 +96,4 @@
 
     });
 
-})();
+}

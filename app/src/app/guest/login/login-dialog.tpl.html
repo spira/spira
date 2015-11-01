@@ -22,7 +22,7 @@
             <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
         </md-button>
 
-        <form novalidate name="loginForm">
+        <form novalidate name="loginForm" ui-keypress="{13:'loginForm.$valid && LoginController.login(user.email, user.password)'}">
 
             <md-input-container class="md-icon-float" >
                 <label for="loginForm.email">Email</label>

@@ -22,16 +22,16 @@ php:
   image: 'spira/docker-hhvm:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
-    - 'API_HOST=http://api.staging.iqstech.net:8080'
+    - 'API_HOST=http://api.staging.spira.io:8080'
     - API_PATH=/api
-    - 'APP_HOST=http://app.staging.iqstech.net'
+    - 'APP_HOST=http://app.staging.spira.io'
     - COOKIE_DOMAIN=spira.io
     - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
     - DATA_ROOT=/data
-    - HOSTNAME_API=api.staging.iqstech.net
-    - HOSTNAME_APP=app.staging.iqstech.net
-    - HOSTNAME_BASE=staging.iqstech.net
-    - HOSTNAME_FORUM=forum.staging.iqstech.net
+    - HOSTNAME_API=api.staging.spira.io
+    - HOSTNAME_APP=app.staging.spira.io
+    - HOSTNAME_BASE=staging.spira.io
+    - HOSTNAME_FORUM=forum.staging.spira.io
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
@@ -62,16 +62,16 @@ queuerunner:
   image: 'spira/docker-artisan-queue-runner:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
-    - 'API_HOST=http://api.staging.iqstech.net:8080'
+    - 'API_HOST=http://api.staging.spira.io:8080'
     - API_PATH=/api
-    - 'APP_HOST=http://app.staging.iqstech.net'
+    - 'APP_HOST=http://app.staging.spira.io'
     - COOKIE_DOMAIN=spira.io
     - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
     - DATA_ROOT=/data
-    - HOSTNAME_API=api.staging.iqstech.net
-    - HOSTNAME_APP=app.staging.iqstech.net
-    - HOSTNAME_BASE=staging.iqstech.net
-    - HOSTNAME_FORUM=forum.staging.iqstech.net
+    - HOSTNAME_API=api.staging.spira.io
+    - HOSTNAME_APP=app.staging.spira.io
+    - HOSTNAME_BASE=staging.spira.io
+    - HOSTNAME_FORUM=forum.staging.spira.io
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
@@ -109,10 +109,10 @@ web:
   image: 'spira/docker-nginx:latest'
   environment:
     - DATA_ROOT=/data
-    - HOSTNAME_API=api.staging.iqstech.net
-    - HOSTNAME_APP=app.staging.iqstech.net
-    - HOSTNAME_BASE=staging.iqstech.net
-    - HOSTNAME_FORUM=forum.staging.iqstech.net
+    - HOSTNAME_API=api.staging.spira.io
+    - HOSTNAME_APP=app.staging.spira.io
+    - HOSTNAME_BASE=staging.spira.io
+    - HOSTNAME_FORUM=forum.staging.spira.io
     - 'NGINX_VHOSTS=vhosts/nginx/production/*.conf'
   links:
     - php

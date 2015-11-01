@@ -1,4 +1,4 @@
-(() => {
+namespace common.services.timezones {
 
     let seededChance = new Chance(1);
     let fixtures = {
@@ -9,7 +9,7 @@
                 mapped = _.chain(timezoneNames)
                     .map((timezoneId:string) => {
 
-                        let timezoneDefinition:common.services.timezones.ITimezoneDefinition = {
+                        let timezoneDefinition:ITimezoneDefinition = {
                             timezoneIdentifier: timezoneId,
                             offset:seededChance.integer({min: -720, max: 720}),
                             isDst: seededChance.bool(),
@@ -27,7 +27,7 @@
 
     describe('TimezonesService', () => {
 
-        let timezonesService:common.services.timezones.TimezonesService;
+        let timezonesService:TimezonesService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
@@ -102,4 +102,4 @@
 
     });
 
-})();
+}

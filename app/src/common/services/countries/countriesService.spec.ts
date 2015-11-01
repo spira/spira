@@ -1,4 +1,4 @@
-(() => {
+namespace common.services.countries {
 
     let seededChance = new Chance(1);
     let fixtures = {
@@ -22,7 +22,7 @@
 
     describe('CountriesService', () => {
 
-        let countriesService:common.services.countries.CountriesService;
+        let countriesService:CountriesService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
@@ -97,4 +97,4 @@
 
     });
 
-})();
+}

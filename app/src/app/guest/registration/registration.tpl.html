@@ -30,6 +30,15 @@ Register with:
         </md-input-container>
 
         <md-input-container class="md-icon-float">
+            <label for="registrationForm.username">Username</label>
+            <md-icon>face</md-icon>
+            <input id="registrationForm.username" name="username" ng-model="user.username" type="text" ng-required="true">
+            <ng-messages for="registrationForm.username.$error">
+                <ng-message when="required">Username is required.</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container class="md-icon-float">
             <label for="registrationForm.password">Password</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
@@ -52,7 +61,7 @@ Register with:
 
         <md-button
                 class="md-raised md-primary"
-                ng-click="RegistrationController.registerUser(user.email, user.password, user.firstName, user.lastName, true)"
+                ng-click="RegistrationController.registerUser(user.email, user.username, user.password, user.firstName, user.lastName, true)"
                 ng-disabled="registrationForm.$invalid"
                 >Register
         </md-button>

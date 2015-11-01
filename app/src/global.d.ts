@@ -6,7 +6,7 @@
 declare namespace global {
 
     export interface IState extends ng.ui.IState {
-        data: {
+        data?: {
             loggedIn?: boolean;
             title?: string;
             role?: string;
@@ -29,6 +29,7 @@ declare namespace global {
     }
 
     export interface IUserCredential{
+        userId: string;
         userCredentialId: string;
         password: string;
     }
@@ -42,8 +43,9 @@ declare namespace global {
     export interface IUserData extends NgJwtAuth.IUser {
         _self?:string;
         userId:string;
-        firstName:string; //make compulsory
-        lastName:string; //make compulsory
+        username:string;
+        firstName?:string;
+        lastName?:string;
         emailConfirmed?:string;
         avatarImgUrl?:string;
         country?:string;

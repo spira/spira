@@ -17,7 +17,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     /**
      * @var null
      */
-    protected $className;
+    public $className;
 
     /**
      * Create a new collection.
@@ -32,6 +32,27 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
             $this->add($item);
         }
         $this->className = $className;
+    }
+
+    /**
+     * Key an associative array by a field or using a callback.
+     *
+     * @param  callable|string  $keyBy
+     * @return static
+     */
+    public function keyBy($keyBy)
+    {
+        $keyBy = $this->valueRetriever($keyBy);
+
+        $results = [];
+
+        foreach ($this->items as $item) {
+            $results[$keyBy($item)] = $item;
+        }
+
+        $this->items = $results;
+
+        return $this;
     }
 
     /**

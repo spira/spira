@@ -46,6 +46,12 @@ class AuthController extends ApiController
     protected $auth;
 
     /**
+     * Enable permissions checks.
+     */
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
+    /**
      * Assign dependencies.
      *
      * @param Auth $auth
@@ -130,6 +136,21 @@ class AuthController extends ApiController
         if (! $user = $userModel->findByLoginToken($token)) {
             throw new TokenInvalidException('Invalid single use token.');
         }
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->item($this->auth->generateToken($user));
+    }
+
+    public function loginAsUser(Request $request, User $userModel, $userId)
+    {
+
+        /** @var User $user */
+        $user = $userModel->findByIdentifier($userId);
+
+        $this->checkPermission('impersonateUser', $user);
+
+        $user->setCurrentAuthMethod('impersonation');
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

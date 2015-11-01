@@ -1,25 +1,8 @@
-(() => {
-
-    let seededChance = new Chance(1);
-    let fixtures = {
-
-        getTag():common.models.Tag {
-
-            return new common.models.Tag({
-                tagId: seededChance.guid(),
-                tag: seededChance.word(),
-            });
-
-        },
-        getTags() {
-
-            return chance.unique(fixtures.getTag, 30);
-        }
-    };
+namespace common.services.tag {
 
     describe('Tag Service', () => {
 
-        let tagService:common.services.tag.TagService;
+        let tagService:TagService;
         let $httpBackend:ng.IHttpBackendService;
         let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
 
@@ -53,7 +36,7 @@
         });
 
 
-        describe('New Tag', () => {
+        describe('Tag CRUD', () => {
 
             it('should be able to get a new tag with a UUID', () => {
 
@@ -63,45 +46,9 @@
 
             });
 
-        });
+            it('should be able to save a tag', () => {
 
-        describe('Retrieve an tag paginator', () => {
-
-            beforeEach(() => {
-
-                sinon.spy(ngRestAdapter, 'get');
-
-            });
-
-            afterEach(() => {
-                (<any>ngRestAdapter.get).restore();
-            });
-
-            let tags = _.clone(fixtures.getTags()); //get a set of tags
-
-            it('should return the first set of tags', () => {
-
-                $httpBackend.expectGET('/api/tags').respond(_.take(tags, 10));
-
-                let tagPaginator = tagService.getPaginator();
-
-                let firstSet = tagPaginator.getNext(10);
-
-                expect(firstSet).eventually.to.be.fulfilled;
-                expect(firstSet).eventually.to.deep.equal(_.take(tags, 10));
-
-                $httpBackend.flush();
-
-            });
-
-
-        });
-
-        describe('Save tag', () => {
-
-            it('should save a tag', () => {
-
-                let tag = fixtures.getTag();
+                let tag = common.models.TagMock.entity();
 
                 $httpBackend.expectPUT('/api/tags/'+tag.tagId, _.clone(tag)).respond(201);
 
@@ -115,10 +62,58 @@
 
             });
 
+            it('should be able to get a collection of group tags', () => {
+
+                sinon.spy(ngRestAdapter, 'get');
+
+                let tags = common.models.TagMock.collection(3);
+
+                $httpBackend.expectGET('/api/entity/tag-categories').respond(tags);
+
+                let mockApiService = {
+                    apiEndpoint: sinon.mock().returns('/entity'),
+                };
+
+                let groupTags = tagService.getTagCategories(<any>mockApiService);
+
+                expect(groupTags).eventually.to.be.fulfilled;
+
+                expect(groupTags).eventually.to.deep.equal(tags);
+
+                $httpBackend.flush();
+
+                (<any>ngRestAdapter.get).restore();
+
+            });
 
         });
 
+        describe('Tag Paginator', () => {
+
+            it('should return the first set of tags', () => {
+
+                sinon.spy(ngRestAdapter, 'get');
+
+                let tags = common.models.TagMock.collection(20);
+
+                $httpBackend.expectGET('/api/tags').respond(_.take(tags, 10));
+
+                let tagPaginator = tagService.getPaginator();
+
+                let firstSet = tagPaginator.getNext(10);
+
+                expect(firstSet).eventually.to.be.fulfilled;
+                expect(firstSet).eventually.to.deep.equal(_.take(tags, 10));
+
+                $httpBackend.flush();
+
+                (<any>ngRestAdapter.get).restore();
+
+            });
+
+
+        });
 
     });
 
-})();
+}

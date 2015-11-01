@@ -27,7 +27,9 @@ queue:
   image: spira/docker-beanstalkd
 
 queuerunner:
-  image: spira/docker-artisan-queue-runner
+  image: spira/docker-hhvm
+  working_dir: /data/api
+  entrypoint: ["hhvm", "artisan", "queue:listen", "--tries=3"]
   env_file:
     - .common.env
 

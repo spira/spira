@@ -21,15 +21,11 @@ namespace common.models {
             let data:any = this.getMockData();
             let modelClass = this.getModelClass();
 
-            let model = new modelClass(_.merge(data, overrides));
-
-            model.setExists(exists);
-            return model;
+            return new modelClass(_.merge(data, overrides), exists);
         }
 
         public buildCollection(count:number = 10, overrides:Object = {}, exists:boolean = true){
 
-            //return _.fill(Array(count), this.entity());
             return chance.unique(() => this.buildEntity(overrides, exists), count);
         }
 

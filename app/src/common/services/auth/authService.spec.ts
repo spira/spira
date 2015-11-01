@@ -12,28 +12,7 @@ namespace common.services.auth {
         ngRestAdapter:NgRestAdapter.INgRestAdapterService,
         $window:ng.IWindowService,
         $httpBackend:ng.IHttpBackendService,
-        fixtures = {
-            buildUser: (overrides = {}) => {
-
-                let userId = seededChance.guid();
-                let defaultUser:global.IUserData = {
-                    _self: '/users/'+userId,
-                    userId: userId,
-                    email: seededChance.email(),
-                    firstName: seededChance.first(),
-                    lastName: seededChance.last(),
-                    _userCredential: {
-                        userCredentialId: seededChance.guid(),
-                        password: seededChance.string(),
-                    }
-                };
-
-                return _.merge(defaultUser, overrides);
-            },
-            get user():common.models.User {
-                return new common.models.User(fixtures.buildUser());
-            }
-        };
+        $rootScope:ng.IRootScopeService;
 
     describe('Auth Service', () => {
 
@@ -57,7 +36,7 @@ namespace common.services.auth {
 
             });
 
-            inject((_$httpBackend_, _authService_, _ngJwtAuthService_, _$q_, _$location_, _$timeout_, _$mdDialog_, _$state_, _notificationService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _authService_, _ngJwtAuthService_, _$q_, _$location_, _$timeout_, _$mdDialog_, _$state_, _notificationService_, _ngRestAdapter_, _$rootScope_) => {
 
                 if (!authService) { // Don't rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
@@ -70,39 +49,146 @@ namespace common.services.auth {
                     $state = _$state_;
                     notificationService = _notificationService_;
                     ngRestAdapter = _ngRestAdapter_;
+                    $rootScope = _$rootScope_;
                 }
 
             });
 
         });
 
-        it('should be able to log in using a social network', () => {
+        describe('Social logins', () => {
 
-            let provider = common.models.UserSocialLogin.facebookType,
-                state = 'app.user.profile',
-                params = null,
-                url = '/auth/social/facebook?returnUrl=%2Fprofile';
+            it('should be able to log in using a social network', () => {
 
-            authService.socialLogin(provider, state, params);
+                let provider = common.models.UserSocialLogin.facebookType,
+                    state = 'app.user.profile',
+                    params = null,
+                    url = '/auth/social/facebook?returnUrl=%2Fprofile';
 
-            expect($window.location.href).to.equal(url);
+                authService.socialLogin(provider, state, params);
+
+                expect($window.location.href).to.equal(url);
+
+            });
+
+            it('should be able to unlink a social network', () => {
+
+                let user = common.models.UserMock.entity(),
+                    provider = common.models.UserSocialLogin.facebookType;
+
+                $httpBackend.expectDELETE('/api/users/' + user.userId + '/socialLogin/' + provider).respond(204);
+
+                let unlinkSocialPromise = authService.unlinkSocialLogin(user, provider);
+
+                expect(unlinkSocialPromise).eventually.to.be.fulfilled;
+
+                $httpBackend.flush();
+
+            });
 
         });
 
-        it('should be able to unlink a social network', () => {
+        describe('User impersonation', () => {
 
-            let user = _.clone(fixtures.user),
-                provider = common.models.UserSocialLogin.facebookType;
+            beforeEach(() => {
+                $window.localStorage.clear();
+            });
 
-            $httpBackend.expectDELETE('/api/users/' + user.userId + '/socialLogin/' + provider).respond(204);
+            it('should be able to load impersonation object from storage', () => {
 
-            let unlinkSocialPromise = authService.unlinkSocialLogin(user, provider);
+                let originalUser = common.models.UserMock.entity();
+                let impersonatedUser = common.models.UserMock.entity();
+                let impersonationJson = angular.toJson({
+                    originalUser : originalUser,
+                    originalUserToken : 'this-is-a-token',
+                    impersonatedUser: impersonatedUser
+                });
+                let localStorageGetItem = sinon.stub($window.localStorage, 'getItem');
+                localStorageGetItem.withArgs(AuthService.impersonationStorageKey).returns(impersonationJson);
 
-            expect(unlinkSocialPromise).eventually.to.be.fulfilled;
+                authService.loadStoredImpersonation();
 
-            $httpBackend.flush();
+                expect(authService.impersonation).not.to.be.null;
+
+                expect(authService.impersonation.impersonatedUser).to.be.instanceOf(common.models.User);
+                expect(authService.impersonation.impersonatedUser.userId).to.equal(impersonatedUser.userId);
+
+                expect(authService.impersonation.originalUser).to.be.instanceOf(common.models.User);
+                expect(authService.impersonation.originalUser.userId).to.equal(originalUser.userId);
+
+                expect(authService.impersonation.originalUserToken).to.equal('this-is-a-token');
+
+                localStorageGetItem.restore();
+            });
+
+            it('should not attempt to restore when there is not impersonation object in storage', () => {
+
+                authService.impersonation = null; //restore to the initial state
+                let restorePromise = authService.restoreFromImpersonation();
+
+                $rootScope.$apply();
+
+                expect(restorePromise).eventually.to.be.rejected;
+
+            });
+
+            it('should be able to impersonate a user', () => {
+
+                let originalUser = common.models.UserMock.entity();
+                let impersonateUser = common.models.UserMock.entity();
+
+                ngJwtAuthService.getUser = sinon.mock().returns(originalUser);
+
+                let localStorageSetItem = sinon.stub($window.localStorage, 'setItem');
+                let loginAsUserCall = sinon.stub(ngJwtAuthService, 'loginAsUser');
+
+                authService.impersonateUser(impersonateUser);
+
+                expect(loginAsUserCall).to.have.been.calledWith(impersonateUser.userId);
+                expect(localStorageSetItem).to.have.been.calledWith(AuthService.impersonationStorageKey, sinon.match.string);
+
+                localStorageSetItem.restore();
+                loginAsUserCall.restore();
+            });
+
+            it('should be able to restore an impersonation, reload the state and refresh the original user token', () => {
+
+                let originalUser = common.models.UserMock.entity();
+                let impersonateUser = common.models.UserMock.entity();
+
+                ngJwtAuthService.getUser = sinon.mock().returns(originalUser);
+
+                let localStorageSetItem = sinon.stub($window.localStorage, 'setItem');
+                let localStorageRemoveItem = sinon.stub($window.localStorage, 'removeItem');
+                let loginAsUserCall = sinon.stub(ngJwtAuthService, 'loginAsUser');
+                let processNewTokenStub = sinon.stub(ngJwtAuthService, 'processNewToken');
+                let refreshTokenStub = sinon.stub(ngJwtAuthService, 'refreshToken');
+                let stateReloadStub = sinon.stub($state, 'reload');
+
+                authService.impersonateUser(impersonateUser);
+
+                processNewTokenStub.withArgs(authService.impersonation.originalUserToken).returns($q.when(true));
+
+                let restorePromise = authService.restoreFromImpersonation();
+
+                $rootScope.$apply();
+
+                expect(localStorageRemoveItem).to.have.been.called;
+                expect(stateReloadStub).to.have.been.called;
+                expect(refreshTokenStub).to.have.been.called;
+                expect(restorePromise).eventually.to.be.fulfilled;
+                expect(authService.impersonation).to.be.null;
+
+                localStorageSetItem.restore();
+                loginAsUserCall.restore();
+                processNewTokenStub.restore();
+                refreshTokenStub.restore();
+
+            });
+
 
         });
+
 
     });
 

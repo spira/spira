@@ -16,6 +16,7 @@ use Spira\Auth\Token\RequestParser;
 use Spira\Auth\Blacklist\Blacklist;
 use Spira\Auth\Payload\PayloadFactory;
 use Illuminate\Contracts\Auth\UserProvider;
+use Spira\Auth\Token\TokenIsMissingException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Contract\Exception\NotImplementedException;
@@ -173,7 +174,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
      */
     protected function getTokenFromRequest()
     {
-        return  $this->getRequestParser()->getToken($this->getRequest());
+        return $this->getRequestParser()->getToken($this->getRequest());
     }
 
     /**
@@ -304,7 +305,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         try {
             $token = $this->getTokenFromRequest();
             $this->getBlacklist()->add($this->getTokenizer()->decode($token));
-        } catch (\Exception $e) {
+        } catch (TokenIsMissingException $e) {
         }
         $this->user = false;
     }

@@ -47,17 +47,18 @@ namespace app.guest.registration {
         /**
          * Register a user
          * @param email
+         * @param username
          * @param password
          * @param first
          * @param last
          * @param goToProfile
          * @returns {IPromise<TResult>}
          */
-        public registerUser(email:string, password:string, first:string, last:string, goToProfile:boolean = false) {
+        public registerUser(email:string, username:string, password:string, first:string, last:string, goToProfile:boolean = false) {
 
             this.submitting = true;
 
-            return this.userService.registerAndLogin(email, password, first, last)
+            return this.userService.registerAndLogin(email, username, password, first, last)
                 .then((createdUser) => {
 
                     if (goToProfile) {

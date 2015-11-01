@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Role;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Spira\Auth\Driver\Guard;
@@ -568,5 +569,117 @@ class AuthTest extends TestCase
 
         $this->callRefreshToken($token);
         $this->assertException('Token invalid due to foo', 422, 'TokenInvalidException');
+    }
+
+    /**
+     * @group impersonation
+     */
+    public function testImpersonationLogin()
+    {
+        $originalUser = $this->createUser();
+        $originalUser->roles()->saveMany([
+            new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
+
+        $impersonateUser = $this->createUser();
+
+        $originalUserToken = $this->tokenFromUser($originalUser);
+
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
+        ]);
+
+        $response = json_decode($this->response->getContent(), true);
+        $this->assertResponseOk();
+        $this->assertArrayHasKey('token', $response);
+
+        // Test that decoding the token, will match the user
+        $payload = $this->app->make('auth')->getTokenizer()->decode($response['token']);
+        $this->assertEquals($impersonateUser->user_id, $payload['sub']);
+
+        $this->assertArrayHasKey('iss', $response['decodedTokenBody']);
+        $this->assertArrayHasKey('userId', $response['decodedTokenBody']['_user']);
+        $this->assertEquals('impersonation', $response['decodedTokenBody']['method']);
+
+        $this->assertEquals($payload, $response['decodedTokenBody']);
+    }
+
+    /**
+     * @group impersonation
+     */
+    public function testImpersonationLoginUnauthorized()
+    {
+        $this->markTestIncomplete('Authorization required routes have not yet been implemented');
+
+        $impersonateUser = $this->createUser();
+
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
+
+        $this->assertResponseStatus(401);
+    }
+
+    /**
+     * @group impersonation
+     */
+    public function testImpersonationLoginDeniedForNormalUser()
+    {
+        $originalUser = $this->createUser();
+        $impersonateUser = $this->createUser();
+
+        $originalUserToken = $this->tokenFromUser($originalUser);
+
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
+        ]);
+
+        $this->assertResponseStatus(403);
+    }
+
+    /**
+     * @group impersonation
+     */
+    public function testImpersonationLoginDeniedForAdmin()
+    {
+        $originalUser = $this->createUser();
+        $originalUser->roles()->saveMany([
+            new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
+
+        $impersonateUser = $this->createUser();
+        $impersonateUser->roles()->saveMany([
+            new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
+
+        $originalUserToken = $this->tokenFromUser($originalUser);
+
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
+        ]);
+
+        $this->assertResponseStatus(403);
+    }
+
+    /**
+     * @group impersonation
+     */
+    public function testImpersonationLoginAllowedForSuperAdmin()
+    {
+        $originalUser = $this->createUser();
+        $originalUser->roles()->saveMany([
+            new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
+        ]);
+
+        $impersonateUser = $this->createUser();
+        $impersonateUser->roles()->saveMany([
+            new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
+
+        $originalUserToken = $this->tokenFromUser($originalUser);
+
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
+        ]);
+
+        $this->assertResponseStatus(200);
     }
 }

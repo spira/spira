@@ -22,7 +22,7 @@ class BlacklistTest extends TestCase
         $driver = m::mock(StorageInterface::class);
         $blacklist = new Blacklist($driver, 'my_key', 'exp_key');
 
-        $driver->shouldReceive('add')->with('my_key_value', 110)->once()->andReturnNull();
+        $driver->shouldReceive('add')->with('my_key_value', \Mockery::anyOf(110, 109))->once()->andReturnNull();
 
         $this->assertNull($blacklist->add(['my_key' => 'my_key_value', 'exp_key' => time() + 100]));
     }

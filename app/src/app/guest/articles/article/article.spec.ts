@@ -25,7 +25,7 @@ namespace app.guest.articles.article {
                 ngJwtAuthService = _ngJwtAuthService_;
                 $state = _$state_;
 
-                articleService.getArticle = sinon.stub().returns(article);
+                articleService.getModel = sinon.stub().returns(article);
 
                 ngJwtAuthService.getUser = sinon.stub().returns(user);
 
@@ -50,7 +50,7 @@ namespace app.guest.articles.article {
 
             let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
 
-            expect(articleService.getArticle).to.have.been.calledWith('foobar', ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments', 'sections']);
+            expect(articleService.getModel).to.have.been.calledWith('foobar', ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments', 'sections']);
 
             expect(article).to.deep.equal(article);
 

@@ -20,15 +20,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call('ImageSeeder');
-        $this->command->info('Images seeded!');
-
         $this->call('UserStorySeeder');
-        $this->command->info('User story seeded!');
-
         $this->call('TestEntitySeeder');
-        $this->command->info('Test entities seeded!');
-
         $this->call('ArticleSeeder');
-        $this->command->info('Articles seeded!');
     }
 }

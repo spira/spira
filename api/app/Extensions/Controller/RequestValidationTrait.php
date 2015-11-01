@@ -85,11 +85,17 @@ trait RequestValidationTrait
     /**
      * @param $requestEntity
      * @param array $validationRules
+     * @param BaseModel $existingModel
      * @param bool $limitToKeysPresent
      * @return bool
      */
-    public function validateRequest($requestEntity, $validationRules, $limitToKeysPresent = false)
+    public function validateRequest($requestEntity, $validationRules, BaseModel $existingModel = null, $limitToKeysPresent = false)
     {
+        if ($existingModel) {
+            $fillableModelValues = $existingModel->withHidden($existingModel->getFillable())->attributesToArray();
+            $requestEntity = array_merge($fillableModelValues, $requestEntity);
+        }
+
         if ($limitToKeysPresent) {
             $validationRules = array_intersect_key($validationRules, $requestEntity);
         }
@@ -118,7 +124,7 @@ trait RequestValidationTrait
 
         foreach ($requestCollection as $requestEntity) {
             try {
-                $this->validateRequest($requestEntity, $validationRules, $limitToKeysPresent);
+                $this->validateRequest($requestEntity, $validationRules, null, $limitToKeysPresent);
                 $errors[] = null;
             } catch (ValidationException $e) {
                 $errors[] = $e;

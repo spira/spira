@@ -2,11 +2,6 @@ namespace app.admin.articles.listing {
 
     export const namespace = 'app.admin.articles.listing';
 
-    export interface IArticlesListingStateParams extends ng.ui.IStateParamsService
-    {
-        page:number;
-    }
-
     /* istanbul ignore next:@todo - skipping controller testing */
     export class ArticlesListingConfig {
 
@@ -29,13 +24,7 @@ namespace app.admin.articles.listing {
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
                         return articleService.getPaginator().setCount(12);
                     },
-                    tagsPaginator: (tagService:common.services.tag.TagService) => {
-                        return tagService.getPaginator().setCount(10);
-                    },
-                    usersPaginator: (userService:common.services.user.UserService) => {
-                        return userService.getPaginator().setCount(10);
-                    },
-                    initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:IArticlesListingStateParams) => {
+                    initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:app.admin.ICommonListingStateParams) => {
                         return articlesPaginator.getPage($stateParams.page);
                     }
                 },
@@ -53,87 +42,9 @@ namespace app.admin.articles.listing {
     }
 
     /* istanbul ignore next:@todo - skipping controller testing */
-    export class ArticlesListingController {
+    export class ArticlesListingController extends app.admin.AbstractListingController<common.models.Article> {
 
-        static $inject = ['articlesPaginator', 'tagsPaginator', 'usersPaginator', 'initArticles', '$stateParams'];
-
-        public articles:common.models.Article[] = [];
-        public pages:number[] = [];
-        public currentPageIndex:number;
-        public tagsToFilter:common.models.Tag[] = [];
-        public usersToFilter:common.models.User[] = [];
-        public queryString:string;
-
-        constructor(
-            private articlesPaginator:common.services.pagination.Paginator,
-            private tagsPaginator:common.services.pagination.Paginator,
-            private usersPaginator:common.services.pagination.Paginator,
-            articles,
-            public $stateParams:IArticlesListingStateParams
-        ) {
-
-            this.articles = articles;
-
-            this.pages = articlesPaginator.getPages();
-
-            this.currentPageIndex = this.$stateParams.page - 1;
-
-        }
-
-        /**
-         * Function called when article is searched for.
-         */
-        public search():void {
-            this.articlesPaginator.complexQuery({
-                _all: [this.queryString],
-                authorId: _.pluck(this.usersToFilter, 'userId'),
-                _tags: {tagId:_.pluck(this.usersToFilter, 'tagId')}
-            })
-                .then((articles) => {
-                    this.articles = articles;
-                })
-                .catch(() => {
-                    this.articles = [];
-                })
-                .finally(() => {
-                    this.pages = this.articlesPaginator.getPages();
-                });
-        }
-
-        /**
-         * Function used in auto-complete to search for tags.
-         * @param query
-         * @returns {ng.IPromise<any[]>}
-         */
-        public searchTags(query:string):ng.IPromise<any> {
-            return this.tagsPaginator.query(query);
-        }
-
-        /**
-         * Function called when a tag is added to the tag filter.
-         * @param tag
-         */
-        public addTagToFilter(tag:common.models.Tag):void {
-            this.tagsToFilter.push(tag);
-        }
-
-        /**
-         * Function used in auto-complete to search for users.
-         * @param query
-         * @returns {ng.IPromise<any[]>}
-         */
-        public searchUsers(query:string):ng.IPromise<any> {
-            return this.usersPaginator.query(query);
-        }
-
-        /**
-         * Function called when a user is added to the author filter.
-         * @param user
-         */
-        public addUserToFilter(user:common.models.User):void {
-            this.usersToFilter.push(user);
-        }
-
+        static $inject = ['articlesPaginator', 'initArticles', 'tagService', 'userService', '$stateParams', '$scope'];
 
     }
 

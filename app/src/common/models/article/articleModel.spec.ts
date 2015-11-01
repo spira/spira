@@ -1,6 +1,6 @@
 namespace common.models {
 
-    let seededChance = new Chance(1);
+    let seededChance = new Chance();
 
     describe('Article Model', () => {
 

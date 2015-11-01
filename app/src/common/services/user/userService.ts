@@ -4,15 +4,17 @@ namespace common.services.user {
 
     export class UserService extends AbstractApiService {
 
-        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', 'ngJwtAuthService', '$mdDialog', 'regionService'];
+        static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state', 'ngJwtAuthService', '$mdDialog', 'regionService'];
 
         constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     paginationService:common.services.pagination.PaginationService,
                     $q:ng.IQService,
+                    $location:ng.ILocationProvider,
+                    $state:ng.ui.IState,
                     private ngJwtAuthService:NgJwtAuth.NgJwtAuthService,
                     private $mdDialog:ng.material.IDialogService,
                     private regionService:common.services.region.RegionService) {
-            super(ngRestAdapter, paginationService, $q);
+            super(ngRestAdapter, paginationService, $q, $location, $state);
         }
 
         /**
@@ -29,7 +31,10 @@ namespace common.services.user {
          * Get the api endpoint for the model
          * @returns {string}
          */
-        protected apiEndpoint():string {
+        public apiEndpoint(user?:common.models.User):string {
+            if(user){
+                return '/users/' + user.userId;
+            }
             return '/users';
         }
 
@@ -45,19 +50,24 @@ namespace common.services.user {
         /**
          * Register a user
          * @param email
+         * @param username
          * @param password
          * @param firstName
          * @param lastName
-         * @returns {IPromise<global.IUserData>}
+         * @returns {IPromise<common.models.User>}
          */
-        private register(email:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUserData> {
+        private register(email:string, username:string, password:string, firstName:string, lastName:string):ng.IPromise<global.IUserData> {
+
+            let userId = this.ngRestAdapter.uuid();
 
             let userData:global.IUserData = {
-                userId: this.ngRestAdapter.uuid(),
+                userId: userId,
                 email: email,
+                username: username,
                 firstName: firstName,
                 lastName: lastName,
                 _userCredential: {
+                    userId: userId,
                     userCredentialId: this.ngRestAdapter.uuid(),
                     password: password,
                 }
@@ -65,7 +75,8 @@ namespace common.services.user {
 
             let user = new common.models.User(userData);
 
-            return this.ngRestAdapter.put(this.apiEndpoint() + '/' + user.userId, user)
+            return this.ngRestAdapter.put(this.apiEndpoint() + '/' + user.userId, user.getAttributes())
+                .then(() => this.ngRestAdapter.put(this.apiEndpoint() + '/' + user.userId + '/credentials', user._userCredential.getAttributes()))
                 .then(() => {
                     user.setExists(true);
                     return user;
@@ -75,18 +86,19 @@ namespace common.services.user {
         /**
          * Register and log in a user
          * @param email
+         * @param username
          * @param password
          * @param firstName
          * @param lastName
          * @returns {IPromise<TResult>}
          */
-        public registerAndLogin(email:string, password:string, firstName:string, lastName:string):ng.IPromise<any> {
+        public registerAndLogin(email:string, username:string, password:string, firstName:string, lastName:string):ng.IPromise<any> {
 
-            return this.register(email, password, firstName, lastName)
+            return this.register(email, username, password, firstName, lastName)
                 .then((user:common.models.User) => {
                     return this.ngJwtAuthService.authenticateCredentials(user.email, user._userCredential.password);
                 })
-                ;
+            ;
 
         }
 
@@ -191,6 +203,7 @@ namespace common.services.user {
 
             return this.$q.all([ //save all related entities
                 this.saveUserProfile(user),
+                this.saveUserCredentials(user),
             ]);
 
         }
@@ -202,32 +215,52 @@ namespace common.services.user {
          */
         private saveUserProfile(user:common.models.User):ng.IPromise<common.models.UserProfile|boolean>{
 
-            if (!user._userProfile){ //don't try to save if there is no profile
-                return this.$q.when(false);
+            let method:string = 'put';
+            let data = user._userProfile.getAttributes();
+
+            if (user._userProfile.exists()){
+                method = 'patch';
+                data = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
+                if (_.isEmpty(data)){
+                    return this.$q.when(false);
+                }
             }
 
-            let changes:any = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
-            if (_.isEmpty(changes)){
-                return this.$q.when(false);
-            }
-
-            return this.ngRestAdapter.patch(`${this.apiEndpoint()}/${user.userId}/profile`, changes)
+            return this.ngRestAdapter[method](`${this.apiEndpoint()}/${user.userId}/profile`, data)
                 .then(() => {
+                    user._userProfile.setExists(true);
                     return user._userProfile;
                 });
 
         }
 
         /**
-         * Get full user information
+         * Save user credentials
          * @param user
-         * @returns {ng.IPromise<common.models.User>}
-         * @param withNested
+         * @returns {any}
          */
-        public getUser(user:common.models.User, withNested:string[] = null):ng.IPromise<common.models.User> {
+        private saveUserCredentials(user:common.models.User):ng.IPromise<common.models.UserCredential|boolean>{
 
-            return this.getModel(user.userId, withNested)
-                .then((res) => this.modelFactory(res.data, true))
+            if (!user._userCredential){
+                return this.$q.when(false);
+            }
+
+            let method:string = 'put';
+            let data = user._userCredential.getAttributes();
+
+            if (user._userCredential.exists()){
+                method = 'patch';
+                data = (<common.decorators.IChangeAwareDecorator>user._userCredential).getChanged();
+                if (_.isEmpty(data)){
+                    return this.$q.when(false);
+                }
+            }
+
+            return this.ngRestAdapter[method](`${this.apiEndpoint()}/${user.userId}/credentials`, data)
+                .then(() => {
+                    user._userCredential.setExists(true);
+                    return user._userCredential;
+                });
 
         }
 
