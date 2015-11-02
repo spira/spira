@@ -37,7 +37,7 @@ abstract class Meta extends BaseModel
         parent::boot();
     }
 
-    public static function getValidationRules()
+    public static function getValidationRules($entityId = null)
     {
         return [
             'meta_id' => 'uuid',

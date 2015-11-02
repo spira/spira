@@ -54,7 +54,7 @@ class ArticleCommentController extends ChildEntityController
             throw new UnauthorizedException('Not logged in.');
         }
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
 
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);

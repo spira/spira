@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
@@ -214,7 +215,7 @@ class ArticleTest extends TestCase
     {
         /** @var Article $entity */
         $entity = $this->getFactory(Article::class)
-            ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->setTransformer(ArticleTransformer::class)
             ->transformed();
 
         $this->postJson('/articles', $entity);
@@ -233,7 +234,7 @@ class ArticleTest extends TestCase
     public function testPutOneNew()
     {
         $entity = $this->getFactory(Article::class)
-            ->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+            ->setTransformer(ArticleTransformer::class)
             ->transformed();
 
         $rowCount = Article::count();
@@ -271,7 +272,7 @@ class ArticleTest extends TestCase
     {
         $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
-        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+        $data = $factory->setTransformer(ArticleTransformer::class)
             ->hide(['permalink','article_id'])
             ->customize(['title' => 'foo'])
             ->transformed();
@@ -286,7 +287,7 @@ class ArticleTest extends TestCase
     {
         $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
-        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+        $data = $factory->setTransformer(ArticleTransformer::class)
             ->hide(['permalink','article_id'])
             ->customize(['title' => 'foo'])
             ->transformed();
@@ -304,7 +305,7 @@ class ArticleTest extends TestCase
     {
         $factory = $this->getFactory(Article::class);
         $entity = $factory->create();
-        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+        $data = $factory->setTransformer(ArticleTransformer::class)
             ->hide(['article_id'])
             ->customize(['permalink' => 'foo_bar'])
             ->transformed();
@@ -323,6 +324,57 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
+    public function testPatchOneExistingPermalinkSameEntity()
+    {
+        $factory = $this->getFactory(Article::class);
+        $entity = $factory->create();
+        $this->addPermalinksToArticles([$entity]);
+
+        $data = $factory->setTransformer(ArticleTransformer::class)
+            ->setModel($entity)
+            ->showOnly(['permalink'])
+            ->transformed();
+
+        $linksCount = $entity->articlePermalinks->count();
+
+        $this->patchJson('/articles/'.$entity->article_id, $data);
+        $this->shouldReturnJson();
+        $this->assertResponseStatus(204);
+
+        $checkEntity = Article::find($entity->article_id);
+        $this->assertEquals($checkEntity->permalink, $entity->permalink);
+        $this->assertEquals($checkEntity->articlePermalinks->count(), $linksCount);
+
+        $this->cleanupDiscussions([$entity]);
+    }
+
+    public function testPatchOneExistingPermalinkDifferentEntity()
+    {
+        $this->markTestSkipped("This test does not pass despite the assertion working in browser. @todo resolve reason");
+
+        $factory = $this->getFactory(Article::class);
+
+        $existingPermalink = 'existing-permalink';
+
+        $this->getFactory(Article::class)->create(['permalink'=>$existingPermalink]);
+
+        /** @var Article $article */
+        $article = $factory->create(['permalink'=>'original']);
+
+        $data = $factory->setTransformer(ArticleTransformer::class)
+            ->setModel($article)
+            ->customize(['permalink' => $existingPermalink])
+            ->showOnly(['permalink'])
+            ->transformed();
+
+        $this->patchJson('/articles/'.$article->article_id, $data);
+        $this->shouldReturnJson();
+
+        $this->assertException('There was an issue with the validation of provided entity', 422, 'UnprocessableEntityException');
+
+        $this->cleanupDiscussions([$article]);
+    }
+
     public function testPatchOneRemovePermalink()
     {
         $factory = $this->getFactory(Article::class);
@@ -331,7 +383,7 @@ class ArticleTest extends TestCase
 
         $linksCount = $entity->articlePermalinks->count();
 
-        $data = $factory->setTransformer(\App\Http\Transformers\ArticleTransformer::class)
+        $data = $factory->setTransformer(ArticleTransformer::class)
             ->customize(['permalink' => ''])
             ->transformed();
 

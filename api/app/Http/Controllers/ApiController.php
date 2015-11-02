@@ -107,4 +107,20 @@ abstract class ApiController extends Controller
 
         $this->authorize($permission, $arguments);
     }
+
+    /**
+     * Get the value of the primary key in a request
+     * @param BaseModel $entityModel
+     * @param array $requestEntity
+     * @return null
+     */
+    public function getKeyFromRequestEntity(BaseModel $entityModel, array $requestEntity)
+    {
+        if (!isset($requestEntity[$entityModel->getPrimaryKey()])){
+            return null;
+        }
+
+        return $requestEntity[$entityModel->getPrimaryKey()];
+    }
+
 }

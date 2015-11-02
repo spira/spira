@@ -101,8 +101,9 @@ abstract class EntityController extends ApiController
     public function postOne(Request $request)
     {
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
-        $model->fill($request->json()->all());
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($this->getKeyFromRequestEntity($this->getModel(), $requestEntity)));
+        $model->fill($requestEntity);
         $this->checkPermission(static::class.'@postOne', ['model' => $model]);
         $model->save();
 
@@ -123,7 +124,7 @@ abstract class EntityController extends ApiController
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel());
         $model = $this->findOrNewEntity($id);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
 
         $model->fill($request->json()->all());
         $this->checkPermission(static::class.'@putOne', ['model' => $model]);
@@ -144,7 +145,7 @@ abstract class EntityController extends ApiController
     {
         $requestCollection = $request->json()->all();
 
-        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+        $this->validateRequestCollection($requestCollection, $this->getModel());
         $existingModels = $this->findCollection($requestCollection);
 
         $modelCollection = $this->getModel()
@@ -174,7 +175,7 @@ abstract class EntityController extends ApiController
 
         $model = $this->findOrFailEntity($id);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules(), $model);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id), $model);
 
         $model->fill($request->json()->all());
         $this->checkPermission(static::class.'@patchOne', ['model' => $model]);
@@ -193,7 +194,7 @@ abstract class EntityController extends ApiController
     {
         $requestCollection = $request->json()->all();
 
-        $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
+        $this->validateRequestCollection($requestCollection, $this->getModel(), true);
 
         $existingModels = $this->findOrFailCollection($requestCollection);
 
@@ -440,8 +441,8 @@ abstract class EntityController extends ApiController
     /**
      * @return array
      */
-    protected function getValidationRules()
+    protected function getValidationRules($entityKey = null)
     {
-        return $this->getModel()->getValidationRules();
+        return $this->getModel()->getValidationRules($entityKey);
     }
 }
