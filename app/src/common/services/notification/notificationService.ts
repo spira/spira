@@ -2,11 +2,22 @@ namespace common.services.notification {
 
     export const namespace = 'common.services.notification';
 
+
+    export interface IToastData{
+        content:string;
+        action?: string;
+        resolve?: () => void
+    }
+    export interface IToastScope extends ng.IScope{
+        toast:IToastData;
+    }
+
     export class Toast {
 
-        private toastOptions:any = {};
+        private toastOptions:ng.material.IToastOptions;
 
         private timeOut:number;
+        private actionName:string;
 
         constructor(
             private message:string,
@@ -14,10 +25,18 @@ namespace common.services.notification {
             private $rootScope:global.IRootScope,
             private $timeout:ng.ITimeoutService
         ) {
+
             this.toastOptions = {
                 hideDelay: 2000,
                 position: 'top',
-                template: '<md-toast class="md-toast-fixed">' + message + '</md-toast>',
+                template: `
+                    <md-toast class="md-toast-fixed" md-theme="{{ toast.theme }}" ng-class="{\'md-capsule\': toast.capsule}">
+                        <span flex>{{toast.content}}</span>
+                        <md-button class="md-action" ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">
+                            {{ toast.action }}
+                        </md-button>
+                    </md-toast>
+                `,
             };
         }
 
@@ -32,7 +51,7 @@ namespace common.services.notification {
 
             _.merge(this.toastOptions, toastOptions);
             if(_.has(toastOptions, 'parent')) {
-                this.toastOptions.template = '<md-toast>' + this.message + '</md-toast>';
+                this.toastOptions.template = this.toastOptions.template.replace('class="md-toast-fixed"', '');
             }
 
             return this;
@@ -52,18 +71,41 @@ namespace common.services.notification {
 
         }
 
+        public action(action:string){
+            this.actionName = action;
+            return this;
+        }
+
         /**
          * Show the toast
          */
-        public pop():void {
+        public pop():ng.IPromise<any> {
+
+            let $scope:IToastScope = <IToastScope>this.$rootScope.$new();
+
+            $scope.toast = {
+                content: this.message,
+                action: this.actionName,
+                resolve: () => {
+                    this.$mdToast.hide(this.actionName);
+                }
+            };
+
+            _.merge(this.toastOptions, {
+                scope: $scope
+            });
 
             if(_.isNumber(this.timeOut)) {
                 // See: https://docs.angularjs.org/api/ng/service/$timeout. ITimeoutService does not have final param
                 // which is passed into your function.
-                (<any>this.$timeout)(this.$mdToast.show, this.timeOut, true, this.toastOptions);
+
+                return this.$timeout(() => {
+                    return this.$mdToast.show(this.toastOptions);
+                }, this.timeOut);
+
             }
             else {
-                this.$mdToast.show(this.toastOptions);
+                return this.$mdToast.show(this.toastOptions);
             }
 
         }

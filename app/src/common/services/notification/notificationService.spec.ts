@@ -61,8 +61,7 @@ namespace common.services.notification {
 
                 notificationService.toast('foobar').pop();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast class="md-toast-fixed">/)));
+                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast class="md-toast-fixed"/)));
 
             });
 
@@ -70,8 +69,7 @@ namespace common.services.notification {
 
                 notificationService.toast('foobar').options({parent:'#parent'}).pop();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/<md-toast>/)));
+                expect($mdToast.show).not.to.have.been.calledWith(sinon.match.has("template", sinon.match(/md-toast-fixed/)));
                 expect($mdToast.show).to.have.been.calledWith(sinon.match.has("parent", sinon.match(/#parent/)));
 
             });
@@ -88,7 +86,19 @@ namespace common.services.notification {
 
                 $timeout.flush();
 
-                expect($mdToast.show).to.have.been.calledWith(sinon.match.has("template", sinon.match(/foobar/)));
+                expect($mdToast.show).to.have.been.calledWith(sinon.match({scope:{toast:{content: 'foobar'}}}));
+
+            });
+
+            it('should be able to set an action which is resolved in the template', () => {
+
+
+                let toast = notificationService.toast('foobar').action('testAction');
+                let notificationPromise = toast.pop();
+
+                (<any>toast).toastOptions.scope.toast.resolve();
+
+                expect(notificationPromise).eventually.to.become('testAction');
 
             });
 
