@@ -88,7 +88,7 @@ class Article extends IndexedModel
             'excerpt' => 'string',
             'primaryImage' => 'string',
             'status' => 'in:'.implode(',', static::$statuses),
-            'permalink' => 'string|unique:article_permalinks,permalink,' . $entityId . ',article_id',
+            'permalink' => 'string|unique:article_permalinks,permalink,'.$entityId.',article_id',
             'sections_display' => 'array',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
