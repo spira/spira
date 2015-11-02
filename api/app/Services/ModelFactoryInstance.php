@@ -99,7 +99,7 @@ class ModelFactoryInstance implements Arrayable, Jsonable
      *
      * @return $this
      */
-    public function showOnly($showOnly)
+    public function showOnly(array $showOnly)
     {
         $this->showOnly = $showOnly;
 
