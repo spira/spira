@@ -350,16 +350,16 @@ class ArticleTest extends TestCase
 
     public function testPatchOneExistingPermalinkDifferentEntity()
     {
-        $this->markTestSkipped("This test does not pass despite the assertion working in browser. @todo resolve reason");
+        $this->markTestSkipped('This test does not pass despite the assertion working in browser. @todo resolve reason');
 
         $factory = $this->getFactory(Article::class);
 
         $existingPermalink = 'existing-permalink';
 
-        $this->getFactory(Article::class)->create(['permalink'=>$existingPermalink]);
+        $this->getFactory(Article::class)->create(['permalink' => $existingPermalink]);
 
         /** @var Article $article */
-        $article = $factory->create(['permalink'=>'original']);
+        $article = $factory->create(['permalink' => 'original']);
 
         $data = $factory->setTransformer(ArticleTransformer::class)
             ->setModel($article)
