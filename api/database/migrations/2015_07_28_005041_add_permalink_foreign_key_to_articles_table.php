@@ -9,6 +9,7 @@
  */
 
 use App\Models\Article;
+use App\Models\ArticlePermalink;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -24,7 +25,7 @@ class AddPermalinkForeignKeyToArticlesTable extends Migration
     {
         Schema::table(Article::getTableName(), function (Blueprint $table) {
             $table->foreign('permalink')
-                ->references('permalink')->on(\App\Models\ArticlePermalink::getTableName());
+                ->references('permalink')->on(ArticlePermalink::getTableName());
         });
     }
 

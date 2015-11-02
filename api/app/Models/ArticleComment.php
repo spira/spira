@@ -39,7 +39,7 @@ class ArticleComment extends BaseModel
      *
      * @return array
      */
-    public static function getValidationRules()
+    public static function getValidationRules($entityId = null)
     {
         return [
             'user_id' => 'required|uuid',

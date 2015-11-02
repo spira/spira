@@ -73,7 +73,7 @@ class UserController extends EntityController
 
         /** @var User $model */
         $model = $this->getModel()->newInstance();
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
         $model->fill($request->json()->all());
         $model->save();
 
@@ -115,7 +115,7 @@ class UserController extends EntityController
             }
         }
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel(), false);
-        $this->validateRequest($request->except('email'), $this->getValidationRules(), null, true);
+        $this->validateRequest($request->except('email'), $this->getValidationRules($id), null, true);
         $model->fill($request->except('email'));
         $model->save();
 

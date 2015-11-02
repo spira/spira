@@ -45,9 +45,9 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      *
      * @return array
      */
-    public static function getValidationRules()
+    public static function getValidationRules($entityId = null)
     {
-        return ArticleComment::getValidationRules();
+        return ArticleComment::getValidationRules($entityId);
     }
 
     /**
