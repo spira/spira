@@ -16,6 +16,7 @@ use Spira\Contract\Exception\NotImplementedException;
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\Storage\StorageInterface;
+use Spira\Rbac\User\UserProxy;
 
 class Gate implements GateContract
 {
@@ -27,9 +28,9 @@ class Gate implements GateContract
     private $storage;
 
     /**
-     * @var callable
+     * @var UserProxy
      */
-    private $userResolver;
+    private $userProxy;
 
     /**
      * @var array
@@ -48,17 +49,7 @@ class Gate implements GateContract
     public function __construct(StorageInterface $storage, callable $userResolver, array $defaultRoles = [])
     {
         $this->storage = $storage;
-
-        $this->userResolver = function () use ($userResolver) {
-
-            $user = call_user_func($userResolver);
-            if (! $user) {
-                throw new UserNotFoundException;
-            }
-
-            return $user;
-        };
-
+        $this->userProxy = new UserProxy($userResolver);
         $this->defaultRoles = $defaultRoles;
     }
 
@@ -112,14 +103,13 @@ class Gate implements GateContract
                 return true;
             }
 
-            $user = $this->resolveUser();
+            //assigned roles check
+            $assignments = $this->getStorage()->getAssignments($this->userProxy->resolveUser()->getAuthIdentifier());
+            return $this->checkAccessRecursive($itemName, $arguments, $assignments);
+
         } catch (UserNotFoundException $e) {
             return false;
         }
-
-        $assignments = $this->getStorage()->getAssignments($user->getAuthIdentifier());
-
-        return $this->checkAccessRecursive($itemName, $arguments, $assignments);
     }
 
     /**
@@ -191,7 +181,7 @@ class Gate implements GateContract
     {
         if ($item->getRuleName() !== null) {
             $rule = $this->getRule($item->getRuleName());
-            if (! $rule->execute($this->userResolver, $params)) {
+            if (! $rule->execute($this->userProxy, $params)) {
                 return false;
             }
         }
@@ -218,17 +208,6 @@ class Gate implements GateContract
     public function getStorage()
     {
         return $this->storage;
-    }
-
-    /**
-     * Resolve the user from the user resolver.
-     *
-     * @return Authenticatable
-     * @throw UserNotFoundException
-     */
-    protected function resolveUser()
-    {
-        return call_user_func($this->userResolver);
     }
 
     /**

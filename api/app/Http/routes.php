@@ -20,9 +20,6 @@ $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
 $app->get('timezones', 'TimezoneController@getAll');
 $app->get('countries', 'CountriesController@getAll');
 
-$app->group(['prefix' => 'permissions', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('/user/{id}', 'PermissionsController@getUserRoles');
-});
 
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('/', ['uses' => 'UserController@getAllPaginated', 'as' => App\Models\User::class]);
@@ -30,6 +27,8 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+
+    $app->get('/{id}/roles', 'PermissionsController@getUserRoles');
 
     $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
     $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);

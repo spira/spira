@@ -9,6 +9,7 @@
  */
 
 use Spira\Rbac\Item\Rule;
+use Spira\Rbac\User\UserProxy;
 
 /**
  * Checks if authorID matches userID passed via params.
@@ -19,13 +20,14 @@ class AuthorRule extends Rule
     public $reallyReally = false;
 
     /**
-     * {@inheritdoc}
+     * Executes the rule.
+     *
+     * @param UserProxy $userProxy
+     * @param array $params parameters passed to check.
+     * @return bool a value indicating whether the rule permits the auth item it is associated with.
      */
-    public function execute(callable $userResolver, $params)
+    public function execute(UserProxy $userProxy, $params)
     {
-        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
-        $user = $userResolver();
-
-        return $params['author_id'] == $user->getAuthIdentifier();
+        return $params['author_id'] == $userProxy->resolveUser()->getAuthIdentifier();
     }
 }

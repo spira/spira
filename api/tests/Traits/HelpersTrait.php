@@ -96,16 +96,25 @@ trait HelpersTrait
         return $this->app->make(StorageInterface::class);
     }
 
+    protected function assignSuperAdmin($user)
+    {
+        $this->assignRole($user, 'superAdmin');
+    }
+
     protected function assignAdmin($user)
     {
-        $adminRole = $this->getAuthStorage()->getItem('admin');
-        $this->getAuthStorage()->assign($adminRole, $user->user_id);
+        $this->assignRole($user, 'admin');
     }
 
     protected function assignTest($user)
     {
-        $testRole = $this->getAuthStorage()->getItem('testrole');
-        $this->getAuthStorage()->assign($testRole, $user->user_id);
+        $this->assignRole($user, 'testrole');
+    }
+
+    protected function assignRole($user, $roleName)
+    {
+        $someRole = $this->getAuthStorage()->getItem($roleName);
+        $this->getAuthStorage()->assign($someRole, $user->user_id);
     }
 
     protected function tokenFromUser($user, $customClaims = [])
