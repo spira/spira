@@ -47,7 +47,7 @@ class PermissionsController extends ApiController
         $nested = $request->headers->get('With-Nested');
         if ($nested) {
             $requestedRelations = explode(', ', $nested);
-            if (array_search('permissions', $requestedRelations) !== false){
+            if (array_search('permissions', $requestedRelations) !== false) {
                 foreach ($roles as $roleName => $role) {
                     $role->_permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($roleName));
                 }
@@ -59,12 +59,12 @@ class PermissionsController extends ApiController
             ->collection($roles);
     }
 
-    protected function getItemsRecursively($type = Item::TYPE_ROLE,array $traversing = [], array &$items = [])
+    protected function getItemsRecursively($type = Item::TYPE_ROLE, array $traversing = [], array &$items = [])
     {
         $storage = $this->getGate()->getStorage();
         /** @var Item[] $traversing */
-        foreach($traversing as $key => $item){
-            if (!isset($items[$key]) && $item->type === $type){
+        foreach ($traversing as $key => $item) {
+            if (! isset($items[$key]) && $item->type === $type) {
                 $items[$key] = $item;
             }
             $this->getItemsRecursively($type, $storage->getChildren($key), $items);

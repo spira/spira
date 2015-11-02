@@ -20,7 +20,6 @@ $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
 $app->get('timezones', 'TimezoneController@getAll');
 $app->get('countries', 'CountriesController@getAll');
 
-
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
     $app->get('/', ['uses' => 'UserController@getAllPaginated', 'as' => App\Models\User::class]);
     $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);

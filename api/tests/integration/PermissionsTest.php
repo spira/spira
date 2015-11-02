@@ -19,7 +19,7 @@ class PermissionsTest extends TestCase
         $token = $this->tokenFromUser($adminUser);
         $this->getJson('/users/'.$adminUser->user_id.'/roles', [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'With-Nested' => 'permissions'
+            'With-Nested' => 'permissions',
         ]);
 
         $result = json_decode($this->response->getContent());
@@ -43,13 +43,12 @@ class PermissionsTest extends TestCase
                 is_array($permission->matchingRoutes) &&
                 $permission->matchingRoutes[0]->method === 'GET' &&
                 $permission->matchingRoutes[0]->uri === '/users/{id}/roles'
-            ){
+            ) {
                 $structureCheck = true;
             }
         }
 
         $this->assertTrue($structureCheck);
-
     }
 
     public function testAdminGetRoles()

@@ -105,8 +105,8 @@ class Gate implements GateContract
 
             //assigned roles check
             $assignments = $this->getStorage()->getAssignments($this->userProxy->resolveUser()->getAuthIdentifier());
-            return $this->checkAccessRecursive($itemName, $arguments, $assignments);
 
+            return $this->checkAccessRecursive($itemName, $arguments, $assignments);
         } catch (UserNotFoundException $e) {
             return false;
         }

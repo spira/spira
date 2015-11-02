@@ -26,15 +26,14 @@ class PermissionsTransformer extends BaseTransformer
     protected function prepareRoutes($routes)
     {
         foreach ($routes as $uri => $route) {
-            if (isset($route['action']['uses']) && isset($route['uri'])){
+            if (isset($route['action']['uses']) && isset($route['uri'])) {
                 $this->routes[$route['action']['uses']][] = [
                     'uri' => $route['uri'],
-                    'method' => isset($route['method'])?$route['method']:null
+                    'method' => isset($route['method']) ? $route['method'] : null,
                 ];
             }
         }
     }
-
 
     /**
      * @param $object
@@ -46,7 +45,7 @@ class PermissionsTransformer extends BaseTransformer
             $viewObj = new \StdClass();
             $viewObj->key = $object->name;
 
-            if (isset($this->routes[$object->name])){
+            if (isset($this->routes[$object->name])) {
                 $matchingRoutes = [];
                 foreach ($this->routes[$object->name] as $route) {
                     $matchingRouteObject = new \StdClass();
@@ -60,9 +59,10 @@ class PermissionsTransformer extends BaseTransformer
 
             $viewObj->type = $object->type;
             $viewObj->description = $object->description;
-            if (isset($object->_permissions)){
+            if (isset($object->_permissions)) {
                 $viewObj->_permissions = $this->transformCollection($object->_permissions);
             }
+
             return $viewObj;
         }
     }
