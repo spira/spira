@@ -112,7 +112,7 @@ abstract class ChildEntityController extends ApiController
         $parent = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
 
         $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
@@ -144,7 +144,7 @@ abstract class ChildEntityController extends ApiController
 
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules());
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($childId));
 
         $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
@@ -167,7 +167,7 @@ abstract class ChildEntityController extends ApiController
         $parent = $this->findParentEntity($id);
 
         $requestCollection = $request->json()->all();
-        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+        $this->validateRequestCollection($requestCollection, $this->getChildModel());
 
         $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
 
@@ -197,7 +197,7 @@ abstract class ChildEntityController extends ApiController
         $parent = $this->findParentEntity($id);
 
         $requestCollection = $request->json()->all();
-        $this->validateRequestCollection($requestCollection, $this->getValidationRules());
+        $this->validateRequestCollection($requestCollection, $this->getChildModel());
 
         $existingChildModels = $this->findChildrenCollection($requestCollection, $parent);
 
@@ -237,7 +237,7 @@ abstract class ChildEntityController extends ApiController
 
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules(), $childModel);
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($id), $childModel);
 
         $childModel->fill($request->json()->all());
         $this->getRelation($parent)->save($childModel);
@@ -256,7 +256,7 @@ abstract class ChildEntityController extends ApiController
     {
         $requestCollection = $request->json()->all();
 
-        $this->validateRequestCollection($requestCollection, $this->getValidationRules(), true);
+        $this->validateRequestCollection($requestCollection, $this->getChildModel(), true);
 
         $parent = $this->findParentEntity($id);
         $existingChildModels = $this->findOrFailChildrenCollection($requestCollection, $parent);
@@ -431,9 +431,9 @@ abstract class ChildEntityController extends ApiController
     /**
      * @return array
      */
-    protected function getValidationRules()
+    protected function getValidationRules($entityId = null)
     {
-        $childRules = $this->getChildModel()->getValidationRules();
+        $childRules = $this->getChildModel()->getValidationRules($entityId);
         $pivotRules = $this->getPivotValidationRules();
 
         return array_merge($childRules, $pivotRules);
