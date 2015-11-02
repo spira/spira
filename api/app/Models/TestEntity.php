@@ -57,7 +57,7 @@ class TestEntity extends IndexedModel
         self::UPDATED_AT => 'datetime',
     ];
 
-    public static function getValidationRules()
+    public static function getValidationRules($entityId = null)
     {
         return [
             'entity_id' => 'required|uuid',
