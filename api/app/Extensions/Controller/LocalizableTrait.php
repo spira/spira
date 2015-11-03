@@ -78,6 +78,38 @@ trait LocalizableTrait
             ->createdItem($model);
     }
 
+    public function putOneChildLocalization(Request $request, $id, $childId, $region)
+    {
+        $localizations = $request->json()->all();
+
+        $parent = $this->findParentEntity($id);
+        $childModel = $this->findOrFailChildEntity($childId, $parent);
+
+        // Check to see if parameters exist in model
+        foreach ($localizations as $parameter => $localization) {
+            if (! $childModel->isFillable($parameter)) {
+                throw new ValidationException(
+                    new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
+                );
+            }
+        }
+
+        // Validate the region
+        $regionCode = ['region_code' => $region];
+        $this->validateRequest($regionCode, Localization::getValidationRules($id));
+
+        // Localizations are partial updates so only validate the fields which were sent with the request
+        $this->validateRequest($localizations, $childModel->getValidationRules($id), null, true);
+
+        $childModel->localizations()->updateOrCreate($regionCode, array_merge(
+            $regionCode, ['localizations' => json_encode($localizations)]
+        ))->save();
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->createdItem($childModel);
+    }
+
     /**
      * Check headers to see if we should localize the content, if so, create a new response and get it to do the
      * localization.
