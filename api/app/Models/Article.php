@@ -10,15 +10,16 @@
 
 namespace App\Models;
 
-use App\Models\Traits\TagTrait;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Model\Collection\Collection;
+use Illuminate\Support\Str;
+use App\Models\Traits\TagTrait;
 use Spira\Model\Model\IndexedModel;
+use Spira\Model\Collection\Collection;
 use Spira\Model\Model\LocalizableModelTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
+use Spira\Model\Model\LocalizableModelInterface;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * @property ArticlePermalink[]|Collection $permalinks
@@ -26,7 +27,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  *
  * Class Article
  */
-class Article extends IndexedModel
+class Article extends IndexedModel implements LocalizableModelInterface
 {
     use RevisionableTrait, LocalizableModelTrait, TagTrait;
 
@@ -263,6 +264,9 @@ class Article extends IndexedModel
         return $this->hasOne(User::class, 'user_id', 'author_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
     public function sections()
     {
         return $this->morphMany(Section::class, 'sectionable');

@@ -16,15 +16,16 @@ class ArticleTransformer extends EloquentModelTransformer
 {
     /**
      * @param $collection
+     * @param array $options
      * @return mixed
      */
-    public function transformCollection($collection)
+    public function transformCollection($collection, array $options = [])
     {
         /** @var Article[] $collection */
         foreach ($collection as $item) {
             $item->addHidden('content');
         }
 
-        return parent::transformCollection($collection);
+        return parent::transformCollection($collection, $options);
     }
 }

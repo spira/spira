@@ -14,6 +14,9 @@ use App\Models\Localization;
 
 trait LocalizableModelTrait
 {
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
     public function localizations()
     {
         return $this->morphMany(Localization::class, 'localizable');

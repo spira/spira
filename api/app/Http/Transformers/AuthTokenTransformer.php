@@ -17,10 +17,11 @@ class AuthTokenTransformer extends EloquentModelTransformer
     /**
      * Transform the token string into an response array.
      *
-     * @param  string  $token
+     * @param  string $token
+     * @param array $options
      * @return array
      */
-    public function transformItem($token)
+    public function transformItem($token, array $options = [])
     {
         $result = ['token' => (string) $token];
 
@@ -34,11 +35,10 @@ class AuthTokenTransformer extends EloquentModelTransformer
     /**
      * Collections are not used for token transformations.
      *
-     * @param  mixed  $collection
-     * @throws NotImplementedException
-     * @return void
+     * @param  mixed $collection
+     * @param array $options
      */
-    public function transformCollection($collection)
+    public function transformCollection($collection, array $options = [])
     {
         throw new NotImplementedException('Collections are not used for tokens.');
     }
