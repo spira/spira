@@ -19,11 +19,16 @@ namespace common.mixins {
                 }
             }
 
-            sections = _.filter((sections), (section:common.models.Section<any>) => {
-                return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
-            });
+            let requestObject = _.chain(sections)
+                .filter((section:common.models.Section<any>) => {
+                    return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
+                })
+                .map((section:common.models.Section<any>) => {
+                    return section.getAttributes();
+                })
+                .value();
 
-            return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', _.clone(sections))
+            return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', requestObject)
                 .then(() => {
                     return entity._sections;
                 });

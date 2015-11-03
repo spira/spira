@@ -89,7 +89,7 @@ class Article extends IndexedModel
             'primaryImage' => 'string',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink,'.$entityId.',article_id',
-            'sections_display' => 'array',
+            'sections_display' => 'decoded_json',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
     }

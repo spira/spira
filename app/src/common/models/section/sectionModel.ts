@@ -17,6 +17,7 @@ namespace common.models {
 
         protected __nestedEntityMap:INestedEntityMap = {
             content: this.hydrateSection,
+            _localizations: Localization,
         };
 
         public sectionId:string;
@@ -25,6 +26,7 @@ namespace common.models {
         public createdAt:moment.Moment = undefined;
         public updatedAt:moment.Moment = undefined;
 
+        public _localizations:Localization<Section<T>>[] = [];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

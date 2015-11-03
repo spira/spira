@@ -8,6 +8,7 @@ namespace common.directives.localizableInput {
 
     export interface IInputElementAttributes extends ng.IAttributes{
         ngModel: string;
+        localizableInputPath: string;
     }
 
     interface ILocalizableInputScope extends ng.IScope{
@@ -37,13 +38,17 @@ namespace common.directives.localizableInput {
 
         /**
          * Get the attribute name by parsing the ng-model="path.to.attribute" attribute.
-         * @todo consider alternative method as this relies on the attribute being at the top level of the localisation
          * @param $element
          * @param $attrs
          */
         public setInputAttributes($element:ng.IAugmentedJQuery, $attrs:IInputElementAttributes):void {
-            this.attributeKey =  _.last($attrs.ngModel.split('.'));
             this.inputNodeName =  $element.prop('nodeName').toLowerCase();
+
+            if($attrs.localizableInputPath){
+                this.attributeKey = $attrs.localizableInputPath;
+            }else{
+                this.attributeKey = _.last($attrs.ngModel.split('.'));
+            }
         }
 
         /**
