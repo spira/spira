@@ -63,26 +63,18 @@
 </div>
 
 <h2>Tags</h2>
+
 <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
 
     <grouped-tags
-            ng-model="ContentController.article._tags"
-            group-tags="ContentController.groupTags">
+        ng-model="ContentController.article._tags"
+        group-tags="ContentController.groupTags"
+        name="tags"
+    >
     </grouped-tags>
-
-    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-
-        <grouped-tags
-            ng-model="ContentController.article._tags"
-            group-tags="ContentController.groupTags"
-            name="tags"
-        >
-        </grouped-tags>
-        <ng-messages for="articleForm.tags.$error">
-            <ng-message when="groupedtags">One or more tag groups is invalid</ng-message>
-        </ng-messages>
-
-    </md-whiteframe>
+    <ng-messages for="articleForm.tags.$error">
+        <ng-message when="groupedtags">One or more tag groups is invalid</ng-message>
+    </ng-messages>
 
 </md-whiteframe>
 

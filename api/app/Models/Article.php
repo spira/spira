@@ -217,20 +217,6 @@ class Article extends IndexedModel
     }
 
     /**
-     * Parse the json string.
-     * @param $content
-     * @return mixed
-     */
-    public function getSectionsDisplayAttribute($content)
-    {
-        if (is_string($content)) {
-            return json_decode($content);
-        }
-
-        return $content;
-    }
-
-    /**
      * If there is no defined excerpt for the text, create it from the content.
      * @param $excerpt
      * @return string

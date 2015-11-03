@@ -11,6 +11,7 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
+use App\Models\Localization;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spira\Model\Collection\Collection;
