@@ -10,14 +10,18 @@
 
 namespace App\Models;
 
-use App\Models\Sections\BlockquoteContent;
+use Spira\Model\Model\BaseModel;
 use App\Models\Sections\ImageContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
-use Spira\Model\Model\BaseModel;
+use App\Models\Sections\BlockquoteContent;
+use Spira\Model\Model\LocalizableModelTrait;
 
 class Section extends BaseModel
 {
+
+    use LocalizableModelTrait;
+
     public $table = 'sections';
 
     protected $primaryKey = 'section_id';

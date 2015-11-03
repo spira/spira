@@ -16,10 +16,13 @@ use App\Models\Sections\ImageContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
+use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Transformers\EloquentModelTransformer;
 
 class ArticleSectionController extends ChildEntityController
 {
+    use LocalizableTrait;
+
     protected $relationName = 'sections';
 
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)

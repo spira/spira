@@ -8,6 +8,7 @@ namespace common.services.article {
         //SectionableApiService
         public saveEntitySections: (entity:mixins.SectionableModel) => ng.IPromise<common.models.Section<any>[]|boolean>;
         public deleteSection: (entity:mixins.SectionableModel, section:common.models.Section<any>) => ng.IPromise<boolean>;
+        public saveEntitySectionLocalizations: (entity:mixins.SectionableModel) => ng.IPromise<any>;
 
         //TaggbleApiService
         public saveEntityTags: (entity:mixins.TaggableModel) => ng.IPromise<common.models.Tag[]|boolean>;

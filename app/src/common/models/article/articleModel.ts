@@ -17,6 +17,8 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
+        protected __primaryKey = 'articleId';
+
         public articleId:string = undefined;
         public title:string = undefined;
         public shortTitle:string = undefined;

@@ -86,7 +86,7 @@ namespace common.directives.localizableInput.dialog {
                 }
 
                 let newLocalization = new common.models.Localization<any>({
-                    localizableId: this.ngRestAdapter.uuid(),
+                    localizableId: null, //this is set on save as it depends on the parent model
                     localizableType: null, //this is determined by the api
                     localizations: {},
                     regionCode: regionCode,

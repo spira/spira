@@ -76,6 +76,7 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->put('{id}/sections', 'App\Http\Controllers\ArticleSectionController@putManyAdd');
     $app->delete('{id}/sections', 'App\Http\Controllers\ArticleSectionController@deleteMany');
     $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
+    $app->put('{id}/sections/{childId}/localizations/{region}', 'App\Http\Controllers\ArticleSectionController@putOneChildLocalization');
 
     $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
     $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putManyAdd');

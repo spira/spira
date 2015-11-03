@@ -29,6 +29,7 @@ namespace common.mixins {
                 .value();
 
             return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', requestObject)
+                .then(() => this.saveEntitySectionLocalizations(entity))
                 .then(() => {
                     return entity._sections;
                 });
@@ -42,6 +43,33 @@ namespace common.mixins {
                 });
         }
 
-    }
+        public saveEntitySectionLocalizations(entity:SectionableModel):ng.IPromise<any> {
+
+            let sectionLocalizationPromises = _.map(entity._sections, (section:common.models.Section<any>) => {
+
+                if (!section._localizations){
+                    return this.$q.when(true);
+                }
+
+                let localizationRegionPromises = _.map(section._localizations, (localizationModel:common.models.Localization<common.models.Section<any>>) => {
+
+                    localizationModel.localizations.type = section.type; //add type so validator can find the correct validation to apply
+
+                    return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/sections/${section.sectionId}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
+                        .then(() => {
+                            localizationModel.localizableId = entity.getKey();
+                            localizationModel.setExists(true);
+                            return localizationModel;
+                        });
+                });
+
+                return this.$q.all(localizationRegionPromises);
+
+            });
+
+            return this.$q.all(sectionLocalizationPromises);
+
+        }
+}
 
 }
