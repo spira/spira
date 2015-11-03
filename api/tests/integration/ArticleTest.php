@@ -350,8 +350,6 @@ class ArticleTest extends TestCase
 
     public function testPatchOneExistingPermalinkDifferentEntity()
     {
-        $this->markTestSkipped('This test does not pass despite the assertion working in browser. @todo resolve reason');
-
         $factory = $this->getFactory(Article::class);
 
         $existingPermalink = 'existing-permalink';
@@ -370,7 +368,7 @@ class ArticleTest extends TestCase
         $this->patchJson('/articles/'.$article->article_id, $data);
         $this->shouldReturnJson();
 
-        $this->assertException('There was an issue with the validation of provided entity', 422, 'UnprocessableEntityException');
+        $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
 
         $this->cleanupDiscussions([$article]);
     }
