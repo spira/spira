@@ -21,6 +21,7 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
      * @var TransformerService
      */
     private $service;
+    protected $options = [];
 
     public function __construct(TransformerService $service)
     {
@@ -43,10 +44,13 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
 
     /**
      * @param $collection
+     * @param array $options
      * @return mixed
      */
-    public function transformCollection($collection)
+    public function transformCollection($collection, array $options = [])
     {
+        $this->options = $options;
+
         if ($collection instanceof Collection) {
             $collection = $collection->all(); //remove the items marked as deleted
         }
@@ -56,13 +60,16 @@ abstract class BaseTransformer extends TransformerAbstract  implements Transform
 
     /**
      * @param $item
+     * @param array $options
      * @return mixed
      */
-    public function transformItem($item)
+    public function transformItem($item, array $options = [])
     {
         if (is_null($item)) {
             return $item;
         }
+
+        $this->options = $options;
 
         return $this->getService()->item($item, $this);
     }
