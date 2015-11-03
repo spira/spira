@@ -13,6 +13,7 @@ namespace App\Extensions\Controller;
 use App\Models\Localization;
 use Illuminate\Http\Request;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\LocalizableModelTrait;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Responder\Response\ApiResponse;
@@ -54,29 +55,11 @@ trait LocalizableTrait
 
         $model = $this->findOrFailEntity($id);
 
-        // Check to see if parameters exist in model
-        foreach ($localizations as $parameter => $localization) {
-            if (! $model->isFillable($parameter)) {
-                throw new ValidationException(
-                    new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
-                );
-            }
-        }
-
-        // Validate the region
-        $regionCode = ['region_code' => $region];
-        $this->validateRequest($regionCode, Localization::getValidationRules($id));
-
-        // Localizations are partial updates so only validate the fields which were sent with the request
-        $this->validateRequest($localizations, $model->getValidationRules($id), null, true);
-
-        $model->localizations()->updateOrCreate($regionCode, array_merge(
-            $regionCode, ['localizations' => json_encode($localizations)]
-        ))->save();
+        $createdLocalization = $this->validateAndSaveLocalizations($model, $localizations, $region);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($model);
+            ->createdItem($createdLocalization);
     }
 
     public function putOneChildLocalization(Request $request, $id, $childId, $region)
@@ -137,8 +120,7 @@ trait LocalizableTrait
             ->localizations()
             ->updateOrCreate($regionCode, array_merge($regionCode, [
                 'localizations' => $localizations
-            ]))
-            ->save();
+            ]));
     }
 
 }
