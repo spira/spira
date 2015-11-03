@@ -23,10 +23,11 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->app->extend('validator', function(Factory $validator){
+        $this->app->extend('validator', function (Factory $validator) {
             $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
                 return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
             });
+
             return $validator;
         });
     }
