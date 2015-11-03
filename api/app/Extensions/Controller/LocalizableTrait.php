@@ -12,6 +12,7 @@ namespace App\Extensions\Controller;
 
 use App\Models\Localization;
 use Illuminate\Http\Request;
+use Spira\Model\Model\BaseModel;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Responder\Response\ApiResponse;
@@ -85,30 +86,11 @@ trait LocalizableTrait
         $parent = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        // Check to see if parameters exist in model
-        foreach ($localizations as $parameter => $localization) {
-            if (! $childModel->isFillable($parameter)) {
-                throw new ValidationException(
-                    new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
-                );
-            }
-        }
-
-        // Validate the region
-        $regionCode = ['region_code' => $region];
-
-        parent::validateRequest($regionCode, Localization::getValidationRules($id));
-
-        // Localizations are partial updates so only validate the fields which were sent with the request
-        $this->validateRequest($localizations, $this->getValidationRules($id), null, true);
-
-        $childModel->localizations()->updateOrCreate($regionCode, array_merge(
-            $regionCode, ['localizations' => json_encode($localizations)]
-        ))->save();
+        $createdLocalization = $this->validateAndSaveLocalizations($childModel, $localizations, $region);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($childModel);
+            ->createdItem($createdLocalization);
     }
 
     /**
@@ -127,4 +109,36 @@ trait LocalizableTrait
 
         return $apiResponse;
     }
+
+    /**
+     * @param BaseModel $model
+     * @param $localizations
+     * @param $region
+     */
+    protected function validateAndSaveLocalizations(BaseModel $model, $localizations, $region)
+    {
+        // Check to see if parameters exist in model
+        foreach ($localizations as $parameter => $localization) {
+            if (!$model->isFillable($parameter)) {
+                throw new ValidationException(
+                    new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
+                );
+            }
+        }
+
+        // Validate the region
+        $regionCode = ['region_code' => $region];
+        parent::validateRequest($regionCode, Localization::getValidationRules(null));
+
+        // Localizations are partial updates so only validate the fields which were sent with the request
+        $this->validateRequest($localizations, $this->getValidationRules($model->getKey()), null, true);
+
+        return $model
+            ->localizations()
+            ->updateOrCreate($regionCode, array_merge($regionCode, [
+                'localizations' => $localizations
+            ]))
+            ->save();
+    }
+
 }
