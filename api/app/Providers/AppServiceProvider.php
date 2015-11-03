@@ -12,6 +12,7 @@ namespace App\Providers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\SpiraValidator;
+use Illuminate\Validation\Factory;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\ServiceProvider;
 use Spira\Responder\Contract\TransformerInterface;
@@ -22,8 +23,11 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->app->make('validator')->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
-            return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
+        $this->app->extend('validator', function(Factory $validator){
+            $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
+                return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
+            });
+            return $validator;
         });
     }
 
