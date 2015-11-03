@@ -7,7 +7,7 @@ namespace common.mixins {
          * @returns {any}
          * @param entity
          */
-        public saveEntityLocalizations(entity:LocalizableModel):ng.IPromise<common.models.Section<any>[]|boolean> {
+        public saveEntityLocalizations(entity:LocalizableModel):ng.IPromise<common.models.Localization<any>[]|boolean> {
 
             let localizations = entity._localizations;
 
@@ -19,15 +19,20 @@ namespace common.mixins {
                 }
             }
 
-            let localizationRegionPromises = _.map(entity._localizations, (localizationModel:common.models.Localization<common.models.Section<any>>) => {
+            let localizationRegionPromises = _.chain(entity._localizations)
+                .filter((localizationModel:common.models.Localization<any>) => {
+                    return !localizationModel.exists() || _.size((<common.decorators.IChangeAwareDecorator>localizationModel).getChanged()) > 0;
+                })
+                .map((localizationModel:common.models.Localization<any>) => {
 
-                return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
-                    .then(() => {
-                        localizationModel.localizableId = entity.getKey();
-                        localizationModel.setExists(true);
-                        return localizationModel;
-                    });
-            });
+                    return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
+                        .then(() => {
+                            localizationModel.localizableId = entity.getKey();
+                            localizationModel.setExists(true);
+                            return localizationModel;
+                        });
+                })
+                .value();
 
             return this.$q.all(localizationRegionPromises);
         }

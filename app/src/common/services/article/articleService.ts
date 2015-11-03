@@ -13,6 +13,9 @@ namespace common.services.article {
         //TaggbleApiService
         public saveEntityTags: (entity:mixins.TaggableModel) => ng.IPromise<common.models.Tag[]|boolean>;
 
+        //LocalizableApiService
+        public saveEntityLocalizations: (entity:mixins.LocalizableModel) => ng.IPromise<common.models.Localization<any>[]|boolean>;
+
         static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state'];
 
         constructor(ngRestAdapter:NgRestAdapter.INgRestAdapterService,
@@ -115,6 +118,7 @@ namespace common.services.article {
             return this.$q.all([ //save all related entities
                 this.saveEntitySections(article),
                 this.saveEntityTags(article),
+                this.saveEntityLocalizations(article),
                 this.saveArticleMetas(article),
             ]);
 

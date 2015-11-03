@@ -51,17 +51,22 @@ namespace common.mixins {
                     return this.$q.when(true);
                 }
 
-                let localizationRegionPromises = _.map(section._localizations, (localizationModel:common.models.Localization<common.models.Section<any>>) => {
+                let localizationRegionPromises = _.chain(section._localizations)
+                    .filter((localizationModel:common.models.Localization<any>) => {
+                        return !localizationModel.exists() || _.size((<common.decorators.IChangeAwareDecorator>localizationModel).getChanged()) > 0;
+                    })
+                    .map((localizationModel:common.models.Localization<any>) => {
 
-                    localizationModel.localizations.type = section.type; //add type so validator can find the correct validation to apply
+                        localizationModel.localizations.type = section.type; //add type so validator can find the correct validation to apply
 
-                    return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/sections/${section.sectionId}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
-                        .then(() => {
-                            localizationModel.localizableId = entity.getKey();
-                            localizationModel.setExists(true);
-                            return localizationModel;
-                        });
-                });
+                        return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/sections/${section.sectionId}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
+                            .then(() => {
+                                localizationModel.localizableId = entity.getKey();
+                                localizationModel.setExists(true);
+                                return localizationModel;
+                            });
+                    })
+                    .value();
 
                 return this.$q.all(localizationRegionPromises);
 
@@ -70,6 +75,6 @@ namespace common.mixins {
             return this.$q.all(sectionLocalizationPromises);
 
         }
-}
+    }
 
 }

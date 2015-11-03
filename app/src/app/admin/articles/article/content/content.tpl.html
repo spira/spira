@@ -1,27 +1,19 @@
 <h2>Title and links</h2>
 <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
 
-    <div layout="row">
-        <div flex="80">
-            <md-input-container>
-                <label>Title</label>
+    <md-input-container>
+        <label>Title</label>
 
-                <input ng-model="ContentController.article.title"
-                       name="title"
-                       type="text"
-                       localizable-input="ArticleController.article._localizations"
-                       required>
-                <ng-messages for="articleForm.title.$error">
-                    <ng-message when="required">This is required.</ng-message>
-                </ng-messages>
-            </md-input-container>
-        </div>
-        <div flex>
-            <md-button class="md-fab md-mini" aria-label="Internationalization">
-                <md-icon>public</md-icon>
-            </md-button>
-        </div>
-    </div>
+        <input ng-model="ContentController.article.title"
+               name="title"
+               type="text"
+               localizable-input="ContentController.article._localizations"
+               required>
+        <ng-messages for="articleForm.title.$error">
+            <ng-message when="required">This is required.</ng-message>
+        </ng-messages>
+
+    </md-input-container>
 
     <md-input-container>
         <label>Short Title</label>
@@ -46,7 +38,7 @@
         ng-model="ContentController.article.excerpt"
         columns="1"
         md-maxlength="140"
-        localizable-input="ArticleController.article._localizations"
+        localizable-input="ContentController.article._localizations"
     ></textarea>
     <ng-messages for="articleForm.excerpt.$error">
         <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
