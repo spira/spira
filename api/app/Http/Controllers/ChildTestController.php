@@ -10,11 +10,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\TestEntity;
+use App\Extensions\Controller\LocalizableTrait;
+use App\Http\Transformers\EloquentModelTransformer;
 
 class ChildTestController extends ChildEntityController
 {
+    use LocalizableTrait;
+
     protected $relationName = 'testMany';
     protected $validateParentIdRule = 'uuid';
     protected $validateChildIdRule = 'uuid';
