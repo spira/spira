@@ -476,7 +476,7 @@ abstract class ChildEntityController extends ApiController
      * @param BaseModel $parentModel
      * @return bool
      */
-    private function childIdCanFallbackToParent($childId, BaseModel $parentModel)
+    protected function childIdCanFallbackToParent($childId, BaseModel $parentModel)
     {
         $fk = $this->getRelation($parentModel)->getForeignKey();
         $parentKey = $parentModel->getKeyName();
