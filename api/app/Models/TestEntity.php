@@ -54,9 +54,9 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
     protected $casts = [
         'decimal'    => 'float',
         'date'       => 'date',
+        'json'       => 'json',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
-        'json' => 'json',
     ];
 
     public static function getValidationRules($entityId = null)
