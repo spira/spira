@@ -132,6 +132,8 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@patchMany');
     $app->delete('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@deleteOne');
     $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
+
+    $app->put('/entities/{id}/child/{childId}/localizations/{region}', 'App\Http\Controllers\ChildTestController@putOneChildLocalization');
 });
 
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
