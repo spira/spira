@@ -11,9 +11,8 @@
 namespace App\Http\Transformers;
 
 use App\Services\TransformerService;
-use Spira\Rbac\Item\Item;
 
-class PermissionsTransformer extends BaseTransformer
+class PermissionsTransformer extends EloquentModelTransformer
 {
     private $routes;
 
@@ -41,29 +40,19 @@ class PermissionsTransformer extends BaseTransformer
      */
     public function transform($object)
     {
-        if ($object instanceof Item) {
-            $viewObj = new \StdClass();
-            $viewObj->key = $object->name;
-
-            if (isset($this->routes[$object->name])) {
-                $matchingRoutes = [];
-                foreach ($this->routes[$object->name] as $route) {
-                    $matchingRouteObject = new \StdClass();
-                    $matchingRouteObject->method = $route['method'];
-                    $matchingRouteObject->uri = $route['uri'];
-                    $matchingRoutes[] = $matchingRouteObject;
-                }
-
-                $viewObj->matchingRoutes = $matchingRoutes;
+        $object = parent::transform($object);
+        if (isset($this->routes[$object['key']])) {
+            $matchingRoutes = [];
+            foreach ($this->routes[$object['key']] as $route) {
+                $matchingRoute = [];
+                $matchingRoute['method'] = $route['method'];
+                $matchingRoute['uri'] = $route['uri'];
+                $matchingRoutes[] = $matchingRoute;
             }
 
-            $viewObj->type = $object->type;
-            $viewObj->description = $object->description;
-            if (isset($object->_permissions)) {
-                $viewObj->_permissions = $this->transformCollection($object->_permissions);
-            }
-
-            return $viewObj;
+            $object['matchingRoutes'] = $matchingRoutes;
         }
+
+        return $object;
     }
 }

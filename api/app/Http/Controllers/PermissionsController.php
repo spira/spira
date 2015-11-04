@@ -10,11 +10,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\PermissionsTransformer;
-use Illuminate\Http\Request;
-use Spira\Rbac\Item\Item;
+use App\Http\Transformers\RoleTransformer;
+use App\Models\User;
 
-class PermissionsController extends ApiController
+class PermissionsController extends ChildEntityController
 {
     /**
      * Enable permissions checks.
@@ -23,53 +22,10 @@ class PermissionsController extends ApiController
 
     protected $defaultRole = false;
 
-    public function __construct(PermissionsTransformer $transformer)
+    protected $relationName = 'roles';
+
+    public function __construct(User $parentModel, RoleTransformer $transformer)
     {
-        parent::__construct($transformer);
-    }
-
-    public function getUserRoles(Request $request, $id)
-    {
-        $this->authorize(static::class.'@getUserRoles', ['model' => (object) ['user_id' => $id]]);
-
-        $storage = $this->getGate()->getStorage();
-        $defaultRolesKeys = $this->getGate()->getDefaultRoles();
-        $customRolesKeys = array_keys($storage->getAssignments($id));
-        $rolesKeys = array_unique(array_merge($defaultRolesKeys, $customRolesKeys));
-
-        $roles = [];
-        foreach ($rolesKeys as $roleKey) {
-            $roles[$roleKey] = $storage->getItem($roleKey);
-        }
-
-        $roles = $this->getItemsRecursively(Item::TYPE_ROLE, $roles);
-
-        $nested = $request->headers->get('With-Nested');
-        if ($nested) {
-            $requestedRelations = explode(', ', $nested);
-            if (array_search('permissions', $requestedRelations) !== false) {
-                foreach ($roles as $roleName => $role) {
-                    $role->_permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($roleName));
-                }
-            }
-        }
-
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->collection($roles);
-    }
-
-    protected function getItemsRecursively($type = Item::TYPE_ROLE, array $traversing = [], array &$items = [])
-    {
-        $storage = $this->getGate()->getStorage();
-        /** @var Item[] $traversing */
-        foreach ($traversing as $key => $item) {
-            if (! isset($items[$key]) && $item->type === $type) {
-                $items[$key] = $item;
-            }
-            $this->getItemsRecursively($type, $storage->getChildren($key), $items);
-        }
-
-        return $items;
+        parent::__construct($parentModel, $transformer);
     }
 }

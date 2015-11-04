@@ -35,7 +35,7 @@ class Gate implements GateContract
     /**
      * @var array
      */
-    private $defaultRoles;
+    private $defaultRoles = [];
 
     protected static $itemCache = [];
 

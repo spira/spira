@@ -33,7 +33,7 @@ return [
         'type' => 'permission',
         'description' => 'Delete user by id',
     ],
-    PermissionsController::class.'@getUserRoles' => [
+    PermissionsController::class.'@getAll' => [
         'type' => 'permission',
         'description' => 'Get all roles assigned to user',
     ],
@@ -66,7 +66,7 @@ return [
         'children' => [
             UserController::class.'@getOne',
             UserController::class.'@patchOne',
-            PermissionsController::class.'@getUserRoles',
+            PermissionsController::class.'@getAll',
         ],
     ],
 
@@ -87,7 +87,7 @@ return [
             UserController::class.'@getAllPaginated',
             UserController::class.'@patchOne',
             UserController::class.'@deleteOne',
-            PermissionsController::class.'@getUserRoles',
+            PermissionsController::class.'@getAll',
             'impersonateNonAdmin',
             Role::USER_ROLE,
         ],

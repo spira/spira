@@ -23,7 +23,6 @@ class PermissionsTest extends TestCase
         ]);
 
         $result = json_decode($this->response->getContent());
-
         $this->assertResponseOk();
         $this->shouldReturnJson();
         $this->assertJsonArray();
@@ -39,7 +38,8 @@ class PermissionsTest extends TestCase
         $structureCheck = false;
         foreach ($result['admin']->_permissions as $permission) {
             if (
-                $permission->key === 'App\Http\Controllers\PermissionsController@getUserRoles' &&
+                $permission->key === 'App\Http\Controllers\PermissionsController@getAll' &&
+                property_exists($permission,'matchingRoutes') &&
                 is_array($permission->matchingRoutes) &&
                 $permission->matchingRoutes[0]->method === 'GET' &&
                 $permission->matchingRoutes[0]->uri === '/users/{id}/roles'
