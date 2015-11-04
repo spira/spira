@@ -488,7 +488,6 @@ class ChildEntityTest extends TestCase
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
     }
-
     /**
      * @group localizations
      */
@@ -522,7 +521,7 @@ class ChildEntityTest extends TestCase
 
         $this->assertEquals($localization, $cachedLocalization);
     }
-
+    
 }
 
 class MockMissingRelationNameController extends ChildEntityController
