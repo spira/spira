@@ -12,8 +12,7 @@ namespace Spira\Model\Model;
 
 /**
  * Interface LocalizableModelInterface
- * A model should implement this interface if it uses LocalizableModelTrait to get correct typehinting
- * @package Spira\Model\Model
+ * A model should implement this interface if it uses LocalizableModelTrait to get correct typehinting.
  */
 interface LocalizableModelInterface
 {
