@@ -13,7 +13,6 @@ namespace App\Extensions\Controller;
 use App\Models\Localization;
 use Illuminate\Http\Request;
 use Spira\Model\Model\BaseModel;
-use Spira\Model\Model\LocalizableModelTrait;
 use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Spira\Responder\Response\ApiResponse;
@@ -102,7 +101,7 @@ trait LocalizableTrait
     {
         // Check to see if parameters exist in model
         foreach ($localizations as $parameter => $localization) {
-            if (!$model->isFillable($parameter)) {
+            if (! $model->isFillable($parameter)) {
                 throw new ValidationException(
                     new MessageBag([$parameter => 'Localization for this parameter is not allowed.'])
                 );
@@ -119,8 +118,7 @@ trait LocalizableTrait
         return $model
             ->localizations()
             ->updateOrCreate($regionCode, array_merge($regionCode, [
-                'localizations' => $localizations
+                'localizations' => $localizations,
             ]));
     }
-
 }

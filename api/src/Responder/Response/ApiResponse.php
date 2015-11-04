@@ -222,7 +222,7 @@ class ApiResponse extends Response
     }
 
     /**
-     * Get options for the transformer based on current request state
+     * Get options for the transformer based on current request state.
      * @return array
      */
     private function getTransformerOptions()
@@ -231,6 +231,7 @@ class ApiResponse extends Response
 
         if ($this->localizeToRegion) {
             $transformerOptions['region'] = $this->localizeToRegion;
+
             return $transformerOptions;
         }
 

@@ -18,10 +18,8 @@ namespace Spira\Model\Model;
  */
 interface LocalizableModelInterface
 {
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function localizations();
-
 }
