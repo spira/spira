@@ -143,6 +143,7 @@ namespace common.services.article {
 
             return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, requestObject)
                 .then(() => {
+                    _.invoke(article._articleMetas, 'setExists', true);
                     return article._articleMetas;
                 });
         }

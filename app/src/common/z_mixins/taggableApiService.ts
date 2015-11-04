@@ -13,6 +13,7 @@ namespace common.mixins {
 
             return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/tags', requestObject)
                 .then(() => {
+                    _.invoke(entity._tags, 'setExists', true);
                     return entity._tags;
                 });
 

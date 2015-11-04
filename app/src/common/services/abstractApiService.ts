@@ -148,12 +148,12 @@ namespace common.services {
                         return true;
                     }
                     //filter out the existing models with no changes
-                    return !(nestedModel.exists() && _.size((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged()) === 0);
+                    return !(nestedModel.exists() && _.size((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true)) === 0);
                 })
                 .map((nestedModel:common.models.AbstractModel) => {
                     if (getPartial && nestedModel.exists()){
                         //return the partial changes
-                        return (<common.decorators.IChangeAwareDecorator>nestedModel).getChanged();
+                        return (<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true);
                     }
                     //return all the attributes
                     return nestedModel.getAttributes(true);

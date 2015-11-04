@@ -237,6 +237,68 @@ namespace common.services.article {
 
             });
 
+            describe('Localization saving', () => {
+
+                it('should save any added localizations for the article', () => {
+
+                    let article = common.models.ArticleMock.entity();
+                    article.setExists(true);
+
+                    let localizationMock = common.models.LocalizationMock.entity({
+                        localizations: {
+                            title: "Localized title"
+                        }
+                    }, false);
+
+                    article._localizations.push(localizationMock);
+
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+
+                    let savePromise = articleService.save(article);
+
+                    expect(savePromise).eventually.to.be.fulfilled;
+                    expect(savePromise).eventually.to.deep.equal(article);
+
+                    $httpBackend.flush();
+
+                });
+
+                it('should save localizations for nested sections', () => {
+
+                    let sectionId = 'abc-123';
+                    let localizationMock = common.models.LocalizationMock.entity({
+                        localizations: {
+                            content: {
+                                body: "Localized text"
+                            },
+                        }
+                    }, false);
+
+                    let sectionMock = common.models.SectionMock.entity({
+                        sectionId: sectionId,
+                        type:common.models.sections.RichText.contentType,
+                    });
+
+                    let article = common.models.ArticleMock.entity({
+                        _sections: [sectionMock]
+                    }, true);
+
+                    article._sections[0]._localizations.push(localizationMock);
+
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections').respond(201);
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections/'+sectionId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+
+                    let savePromise = articleService.save(article);
+
+                    expect(savePromise).eventually.to.be.fulfilled;
+                    expect(savePromise).eventually.to.deep.equal(article);
+
+                    $httpBackend.flush();
+
+                });
+
+            });
+
             describe('queued save functions', () => {
 
                 it('should be able to queue a function (delete section) to be run when save is called', () => {

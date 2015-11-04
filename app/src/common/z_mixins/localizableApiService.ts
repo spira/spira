@@ -9,32 +9,20 @@ namespace common.mixins {
          */
         public saveEntityLocalizations(entity:LocalizableModel):ng.IPromise<common.models.Localization<any>[]|boolean> {
 
-            let localizations = entity._localizations;
+            let localizationRequestCollection = this.getNestedCollectionRequestObject(entity, '_localizations', false, true);
 
-            if (entity.exists()) {
-
-                let changes:any = (<common.decorators.IChangeAwareDecorator>entity).getChanged(true);
-                if (!_.has(changes, '_localizations')) {
-                    return this.$q.when(false);
-                }
+            if (!localizationRequestCollection){
+                return this.$q.when(false);
             }
 
-            let localizationRegionPromises = _.chain(entity._localizations)
-                .filter((localizationModel:common.models.Localization<any>) => {
-                    return !localizationModel.exists() || _.size((<common.decorators.IChangeAwareDecorator>localizationModel).getChanged()) > 0;
-                })
-                .map((localizationModel:common.models.Localization<any>) => {
+            let localizationRegionPromises = _.map(localizationRequestCollection, (localizationModel:common.models.Localization<any>) => {
+                return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/localizations/${localizationModel.regionCode}`, localizationModel.localizations);
+            });
 
-                    return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/localizations/${localizationModel.regionCode}`, localizationModel.localizations)
-                        .then(() => {
-                            localizationModel.localizableId = entity.getKey();
-                            localizationModel.setExists(true);
-                            return localizationModel;
-                        });
-                })
-                .value();
-
-            return this.$q.all(localizationRegionPromises);
+            return this.$q.all(localizationRegionPromises).then(() => {
+                _.invoke(entity._localizations, 'setExists', true);
+                return entity._localizations;
+            });
         }
 
     }

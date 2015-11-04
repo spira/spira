@@ -8,31 +8,6 @@ namespace common.mixins {
          * @param entity
          */
         public saveEntitySections(entity:SectionableModel):ng.IPromise<common.models.Section<any>[]|boolean> {
-/*
-            let sections = entity._sections;
-
-            if (!sections || _.isEmpty(sections)){
-                return this.$q.when(false);
-            }
-            console.log('sections', sections);
-
-            if (entity.exists()) {
-
-                let changes:any = (<common.decorators.IChangeAwareDecorator>entity).getChanged(true);
-                if (!_.has(changes, '_sections')) {
-                    return this.$q.when(false);
-                }
-            }
-
-            let requestObject = _.chain(sections)
-                .filter((section:common.models.Section<any>) => {
-                    return !section.exists() || _.size((<common.decorators.IChangeAwareDecorator>section).getChanged()) > 0;
-                })
-                .map((section:common.models.Section<any>) => {
-                    return section.getAttributes();
-                })
-                .value();
-*/
 
             let requestObject = this.getNestedCollectionRequestObject(entity, '_sections', true);
 
@@ -43,6 +18,7 @@ namespace common.mixins {
             return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', requestObject)
                 .then(() => this.saveEntitySectionLocalizations(entity))
                 .then(() => {
+                    _.invoke(entity._sections, 'setExists', true);
                     return entity._sections;
                 });
         }
@@ -59,7 +35,7 @@ namespace common.mixins {
 
             let sectionLocalizationPromises = _.map(entity._sections, (section:common.models.Section<any>) => {
 
-                if (!section._localizations){
+                if (!section._localizations || _.isEmpty(section._localizations)){
                     return this.$q.when(true);
                 }
 
