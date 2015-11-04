@@ -13,13 +13,14 @@ namespace App\Models;
 use Spira\Model\Model\IndexedModel;
 use Illuminate\Database\Eloquent\Collection;
 use Spira\Model\Model\LocalizableModelTrait;
+use Spira\Model\Model\LocalizableModelInterface;
 
 /**
  * Class TestEntity.
  *
  * @property Collection $testMany
  */
-class TestEntity extends IndexedModel
+class TestEntity extends IndexedModel implements LocalizableModelInterface
 {
     use LocalizableModelTrait;
 
@@ -34,7 +35,7 @@ class TestEntity extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['entity_id', 'varchar', 'hash', 'integer', 'decimal', 'boolean', 'nullable', 'text', 'date', 'multi_word_column_title', 'hidden'];
+    protected $fillable = ['entity_id', 'varchar', 'hash', 'integer', 'decimal', 'boolean', 'nullable', 'text', 'date', 'multi_word_column_title', 'hidden', 'json'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -53,6 +54,7 @@ class TestEntity extends IndexedModel
     protected $casts = [
         'decimal'    => 'float',
         'date'       => 'date',
+        'json'       => 'json',
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
     ];
@@ -70,6 +72,7 @@ class TestEntity extends IndexedModel
             'date'    => 'required|date',
             'multi_word_column_title' => 'required|boolean',
             'hidden'  => 'required|boolean',
+            'json'  => 'required|decoded_json',
         ];
     }
 

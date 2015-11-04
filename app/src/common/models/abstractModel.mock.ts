@@ -13,12 +13,12 @@ namespace common.models {
 
     export abstract class AbstractMock{
 
-        public abstract getMockData():Object;
+        public abstract getMockData(overrides?:Object):Object;
         public abstract getModelClass():IModelClass;
 
         public buildEntity(overrides:Object = {}, exists:boolean = true):IModel {
 
-            let data:any = this.getMockData();
+            let data:any = this.getMockData(overrides);
             let modelClass = this.getModelClass();
 
             return new modelClass(_.merge(data, overrides), exists);

@@ -21,6 +21,10 @@ $factory->define(App\Models\TestEntity::class, function (\Faker\Generator $faker
         'date' => $faker->date(),
         'multi_word_column_title' => true,
         'hidden' => $faker->boolean(),
+        'json' => [
+            'varchar' => $faker->word,
+            'integer' => $faker->numberBetween(0, 500),
+        ],
     ];
 });
 

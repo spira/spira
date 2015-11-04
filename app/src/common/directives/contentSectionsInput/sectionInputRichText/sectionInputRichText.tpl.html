@@ -2,7 +2,12 @@
 
     <md-input-container flex>
 
-        <markdown-editor ng-model="SectionInputRichTextController.section.content.body" spell-checker="true"></markdown-editor>
+        <markdown-editor
+            ng-model="SectionInputRichTextController.section.content.body"
+            spell-checker="true"
+            localizable-input="SectionInputRichTextController.section._localizations"
+            localizable-input-path="content.body"
+        ></markdown-editor>.
 
     </md-input-container>
 

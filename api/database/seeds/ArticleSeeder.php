@@ -63,10 +63,10 @@ class ArticleSeeder extends BaseSeeder
 
                 $article->localizations()->create([
                     'region_code' => $region,
-                    'localizations' => json_encode([
+                    'localizations' => [
                         'title' => $faker->sentence,
                         'excerpt' => $faker->paragraph(),
-                    ]),
+                    ],
                 ])->save();
 
                 $article->save();

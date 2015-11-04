@@ -11,10 +11,12 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
+use App\Models\Localization;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
+use Spira\Model\Model\LocalizableModelInterface;
 use Spira\Responder\Contract\TransformerInterface;
 
 class EloquentModelTransformer extends BaseTransformer
@@ -35,6 +37,10 @@ class EloquentModelTransformer extends BaseTransformer
     {
         if (is_null($object)) {
             return;
+        }
+
+        if (($object instanceof BaseModel)) {
+            $this->applyLocalizations($object);
         }
 
         $array = null;
@@ -193,7 +199,7 @@ class EloquentModelTransformer extends BaseTransformer
      * @param $array
      * @return mixed
      */
-    private function nestRelations($object, $array)
+    private function nestRelations(BaseModel $object, $array)
     {
         /** @var BaseModel $object */
         if (count($object['relations']) > 0) {
@@ -201,12 +207,13 @@ class EloquentModelTransformer extends BaseTransformer
                 if (in_array($relation, $object->getHidden())) {
                     continue;
                 }
+                /** @var TransformerInterface $transformer */
                 $transformer = $this->getTransformerForNested($relation);
                 $childTransformed = null;
                 if ($childModelOrCollection instanceof Collection) {
-                    $childTransformed = $transformer->transformCollection($childModelOrCollection);
+                    $childTransformed = $transformer->transformCollection($childModelOrCollection, $this->options);
                 } else {
-                    $childTransformed = $transformer->transformItem($childModelOrCollection);
+                    $childTransformed = $transformer->transformItem($childModelOrCollection, $this->options);
                 }
 
                 $array = $array + ['_'.$relation => $childTransformed];
@@ -231,5 +238,47 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         return new $className($this->getService());
+    }
+
+    /**
+     * Attempt to find localizations in cache and replace the attributes with the items.
+     * @param $object
+     */
+    protected function applyLocalizations(BaseModel $object)
+    {
+        if (! isset($this->options['region']) || ! $object instanceof LocalizableModelInterface) {
+            return;
+        }
+
+        if ($localizations = Localization::getFromCache($object->getKey(), $this->options['region'])) {
+            foreach ($localizations as $attribute => $localization) {
+                if (is_array($localization) && is_array($object->$attribute)) {
+                    $object->$attribute = $this->mergeRecursive($object->$attribute, $localization);
+                } else {
+                    $object->$attribute = $localization;
+                }
+            }
+        }
+    }
+
+    /**
+     * Recursively replace primary array items with replacements, ignores nulls in replacements,  so array_replace_recursive cannot be used.
+     * @param array $primaryArray
+     * @param array $replacements
+     * @return array
+     */
+    private function mergeRecursive(array $primaryArray, array $replacements)
+    {
+        foreach ($primaryArray as $key => &$value) {
+            if (isset($replacements[$key])) {
+                if (is_array($value)) {
+                    $value = $this->mergeRecursive($value, $replacements[$key]);
+                } else {
+                    $value = $replacements[$key];
+                }
+            }
+        }
+
+        return $primaryArray;
     }
 }

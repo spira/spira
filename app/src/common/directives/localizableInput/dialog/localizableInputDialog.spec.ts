@@ -131,7 +131,7 @@ namespace common.directives.localizableInput.dialog {
             expect((<any>LocalizableInputDialogController).$mdDialog.hide).to.have.been.calledWith([
                 {
                     localizableId: sinon.match.string,
-                    localizableType: sinon.match.falsy,
+                    localizableType: null,
                     localizations: {
                         body: "This is the body",
                         title: "Aussie title"
@@ -140,7 +140,7 @@ namespace common.directives.localizableInput.dialog {
                 },
                 {
                     localizableId: sinon.match.string,
-                    localizableType: sinon.match.falsy,
+                    localizableType: null,
                     localizations: {
                         title: "This is a title"
                     },
@@ -148,14 +148,15 @@ namespace common.directives.localizableInput.dialog {
                 },
                 {
                     localizableId: sinon.match.string,
-                    localizableType: sinon.match.falsy,
+                    localizableType: null,
                     localizations: {
+                        title: undefined
                     },
                     regionCode: 'nz'
                 },
                 {
-                    localizableId: sinon.match.string,
-                    localizableType: sinon.match.falsy,
+                    localizableId: null,
+                    localizableType: null,
                     localizations: {
                         title: "Murican title"
                     },

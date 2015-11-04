@@ -14,13 +14,15 @@ interface TransformerInterface
 {
     /**
      * @param $item
+     * @param array $options
      * @return mixed
      */
-    public function transformItem($item);
+    public function transformItem($item, array $options);
 
     /**
      * @param $collection
+     * @param array $options
      * @return mixed
      */
-    public function transformCollection($collection);
+    public function transformCollection($collection, array $options);
 }

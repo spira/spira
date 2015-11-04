@@ -44,6 +44,7 @@ namespace common.models {
         protected __nestedEntityMap:INestedEntityMap;
         protected __attributeCastMap:IAttributeCastMap;
         private __exists:boolean;
+        protected __primaryKey:string;
 
         constructor(data?:any, exists:boolean = false) {
             this.hydrate(data, exists);
@@ -201,6 +202,23 @@ namespace common.models {
          */
         public static generateUUID():string {
             return lil.uuid();
+        }
+
+        /**
+         * Get the model primary key name
+         * @returns {string}
+         */
+        public getKeyName():string {
+            return this.__primaryKey;
+        }
+
+        /**
+         * Get the model primary key value
+         * @returns {string}
+         */
+        public getKey():string {
+
+            return this[this.getKeyName()];
         }
 
     }

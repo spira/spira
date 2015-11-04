@@ -8,13 +8,14 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Rhumsaa\Uuid\Uuid;
+use App\Models\TestEntity;
+use App\Models\Localization;
+use App\Models\SecondTestEntity;
+use App\Services\TransformerService;
+use Spira\Model\Collection\Collection;
 use App\Http\Controllers\ChildEntityController;
 use App\Http\Transformers\EloquentModelTransformer;
-use App\Models\SecondTestEntity;
-use App\Models\TestEntity;
-use App\Services\TransformerService;
-use Rhumsaa\Uuid\Uuid;
-use Spira\Model\Collection\Collection;
 
 /**
  * Class ChildEntityTest.
@@ -486,6 +487,40 @@ class ChildEntityTest extends TestCase
         $this->assertObjectHasAttribute('entityId', $object->invalid[4]);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid[0]->entityId[0]->message);
         $this->assertEquals($childCount, TestEntity::find($entity->entity_id)->testMany->count());
+    }
+
+    /**
+     * @group localizations
+     */
+    public function testPutOneChildLocalization()
+    {
+        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->addRelatedEntities($entity);
+        $childEntity = $entity->testMany->first();
+
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
+
+        $localization = [
+            'value' => 'foobar',
+        ];
+
+        // Give entity a localization
+        $this->putJson('/test/entities/'.$entity->entity_id.'/child/'.$childEntity->entity_id.'/localizations/'.$region, $localization);
+        $this->assertResponseStatus(201);
+
+        // Get the saved localization
+        $localizationModel = $childEntity->localizations->where('region_code', $region)->first();
+
+        $savedLocalization = $localizationModel->localizations;
+
+        // Ensure localization was saved correctly
+        $this->assertEquals($localization['value'], $savedLocalization['value']);
+
+        // Assert the cache
+        $cachedLocalization = Localization::getFromCache($localizationModel->localizable_id, $localizationModel->region_code);
+
+        $this->assertEquals($localization, $cachedLocalization);
     }
 }
 

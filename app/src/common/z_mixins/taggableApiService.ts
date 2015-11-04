@@ -5,18 +5,15 @@ namespace common.mixins {
 
         public saveEntityTags(entity:TaggableModel):ng.IPromise<common.models.LinkingTag[]|boolean> {
 
-            let tagData = _.clone(entity._tags);
+            let requestObject = this.getNestedCollectionRequestObject(entity, '_tags', false, false);
 
-            if (entity.exists()) {
-
-                let changes:any = (<common.decorators.IChangeAwareDecorator>entity).getChanged(true);
-                if (!_.has(changes, '_tags')) {
-                    return this.$q.when(false);
-                }
+            if (!requestObject){
+                return this.$q.when(false);
             }
 
-            return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/tags', tagData)
+            return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/tags', requestObject)
                 .then(() => {
+                    _.invoke(entity._tags, 'setExists', true);
                     return entity._tags;
                 });
 

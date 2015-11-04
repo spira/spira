@@ -102,4 +102,16 @@ class SpiraValidator extends Validator
     {
         return in_array($value, Section::getContentTypes());
     }
+
+    /**
+     * Validate whether the attribute is decoded json (object or array).
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @return bool
+     */
+    protected function validateDecodedJson($attribute, $value, $parameters)
+    {
+        return is_object($value) || is_array($value);
+    }
 }

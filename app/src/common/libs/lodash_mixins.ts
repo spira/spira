@@ -1,6 +1,6 @@
 declare module _ {
     interface LoDashStatic {
-        compactObject<T>(object:T, removeFunctions?:boolean):T;
+        compactObject<T>(object:T,  recursive?:boolean, removeFunctions?:boolean):Object;
     }
 }
 
@@ -18,16 +18,24 @@ namespace common.libs {
          * Get an object with all falsy values removed
          * @returns {Object}
          * @param object
-         * @param removeFunctions
+         * @param recursive
+         *  @param removeFunctions
          */
-        compactObject : (object:Object, removeFunctions:boolean = false):Object => {
-            var clone = _.clone(object);
-            _.each(clone, function(value, key) {
+        compactObject : <T>(object:_.Dictionary<T>, recursive:boolean = false, removeFunctions:boolean = false):Object => {
+
+            return _.transform(object, (result:Object, value:any, key:string) => {
                 if(!value || removeFunctions && _.isFunction(value)) {
-                    delete clone[key];
+                    return result;
                 }
-            });
-            return clone;
+                result[key] = value;
+
+                if(recursive && _.isObject(value)){
+                    result[key] = _.compactObject(value, recursive, removeFunctions);
+                }
+
+                return result;
+            }, {});
+
         }
 
 
