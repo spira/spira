@@ -117,6 +117,57 @@ namespace common.services {
 
         }
 
+    /**
+     * Get the nested attributes ready for save. Returns null if there is nothing to save
+     * @param entity
+     * @param nestedKey
+     * @param getPartial
+     * @returns {any}
+     * @param filterExisting
+     */
+        public getNestedCollectionRequestObject(entity:common.models.AbstractModel, nestedKey:string, getPartial:boolean = true, filterExisting:boolean = true):Object[]{
+
+            let nestedCollection:common.models.AbstractModel[] = _.get(entity, nestedKey, null);
+
+            //if there is no nested attributes or it is an empty array, return
+            if (!nestedCollection || _.isEmpty(nestedCollection)){
+                return null;
+            }
+
+            if(entity.exists()){
+                let changes:any = (<common.decorators.IChangeAwareDecorator>entity).getChanged(true);
+                //if the entity does not have any changes registered for the attribute, exit
+                if (!_.has(changes, nestedKey)) {
+                    return null;
+                }
+            }
+
+            let nestedResponseObjects = _.chain(<common.models.AbstractModel[]>nestedCollection)
+                .filter((nestedModel:common.models.AbstractModel) => {
+                    if (!filterExisting){
+                        return true;
+                    }
+                    //filter out the existing models with no changes
+                    return !(nestedModel.exists() && _.size((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged()) === 0);
+                })
+                .map((nestedModel:common.models.AbstractModel) => {
+                    if (getPartial && nestedModel.exists()){
+                        //return the partial changes
+                        return (<common.decorators.IChangeAwareDecorator>nestedModel).getChanged();
+                    }
+                    //return all the attributes
+                    return nestedModel.getAttributes(true);
+                })
+                .value();
+
+            //if after filtering there is no changes, exit.
+            if (_.isEmpty(nestedResponseObjects)){
+                return null;
+            }
+            return nestedResponseObjects;
+
+        }
+
         /**
          * Run all queued save functions, returning promise of success
          * @returns {IPromise<TResult>}

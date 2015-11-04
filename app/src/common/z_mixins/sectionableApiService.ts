@@ -8,8 +8,13 @@ namespace common.mixins {
          * @param entity
          */
         public saveEntitySections(entity:SectionableModel):ng.IPromise<common.models.Section<any>[]|boolean> {
-
+/*
             let sections = entity._sections;
+
+            if (!sections || _.isEmpty(sections)){
+                return this.$q.when(false);
+            }
+            console.log('sections', sections);
 
             if (entity.exists()) {
 
@@ -27,6 +32,13 @@ namespace common.mixins {
                     return section.getAttributes();
                 })
                 .value();
+*/
+
+            let requestObject = this.getNestedCollectionRequestObject(entity, '_sections', true);
+
+            if (!requestObject){
+                return this.$q.when(false);
+            }
 
             return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', requestObject)
                 .then(() => this.saveEntitySectionLocalizations(entity))

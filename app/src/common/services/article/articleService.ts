@@ -130,21 +130,18 @@ namespace common.services.article {
          * @returns {any}
          */
         private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
-            if (article.exists()) {
 
-                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+            let requestObject = this.getNestedCollectionRequestObject(article, '_articleMetas', false);
 
-                if (!_.has(changes, '_articleMetas')) {
-                    return this.$q.when(false);
-                }
-            }
-
-            // Remove the meta tags which have not been used
-            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMetas, (metaTag) => {
+            requestObject = _.filter(<Array<any>>requestObject, (metaTag) => {
                 return !_.isEmpty(metaTag.metaContent);
             });
 
-            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
+            if (!requestObject || _.isEmpty(requestObject)){
+                return this.$q.when(false);
+            }
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, requestObject)
                 .then(() => {
                     return article._articleMetas;
                 });
