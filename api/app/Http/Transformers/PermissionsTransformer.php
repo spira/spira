@@ -11,6 +11,7 @@
 namespace App\Http\Transformers;
 
 use App\Services\TransformerService;
+use Spira\Rbac\Item\Item;
 
 class PermissionsTransformer extends EloquentModelTransformer
 {
@@ -41,6 +42,7 @@ class PermissionsTransformer extends EloquentModelTransformer
     public function transform($object)
     {
         $object = parent::transform($object);
+        $object['type'] = Item::TYPE_PERMISSION;
         if (isset($this->routes[$object['key']])) {
             $matchingRoutes = [];
             foreach ($this->routes[$object['key']] as $route) {

@@ -27,7 +27,7 @@ class ImpersonateNonAdmin extends Rule
      */
     public function execute(UserProxy $userProxy, $targetUser)
     {
-        $roles = $targetUser->roles()->get()->pluck('role_key')->toArray();
+        $roles = $targetUser->roles()->get()->pluck('key')->toArray();
 
         if (! in_array(Role::ADMIN_ROLE, $roles)) {
             return true;

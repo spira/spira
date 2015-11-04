@@ -9,6 +9,8 @@
  */
 
 use App\Extensions\Rbac\UserAssignmentStorage;
+use App\Models\User;
+use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Permission;
 use Spira\Rbac\Item\Role;
@@ -24,6 +26,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
             new ItemStorage(__DIR__.'/Rbac/item.php'),
             new UserAssignmentStorage()
         );
+        $this->app->instance([Gate::GATE_NAME], new Gate($this->auth, function () { return $this->app['auth']->user(); }));
     }
 
     protected function clean()

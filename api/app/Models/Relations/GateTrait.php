@@ -12,7 +12,7 @@ trait GateTrait
         $storage = $this->getGate()->getStorage();
         /** @var Item[] $traversing */
         foreach ($traversing as $key => $item) {
-            if (! isset($items[$key]) && $item->type === $type) {
+            if ($item && (! isset($items[$key])) && $item->type === $type) {
                 $items[$key] = $item;
             }
             $this->getItemsRecursively($type, $storage->getChildren($key), $items);
