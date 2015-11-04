@@ -104,7 +104,7 @@ class SpiraValidator extends Validator
     }
 
     /**
-     * Validate whether the attribute is decoded json (object or array)
+     * Validate whether the attribute is decoded json (object or array).
      * @param $attribute
      * @param $value
      * @param $parameters
@@ -114,5 +114,4 @@ class SpiraValidator extends Validator
     {
         return is_object($value) || is_array($value);
     }
-
 }

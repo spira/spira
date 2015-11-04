@@ -12,10 +12,8 @@ namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
 use App\Models\Localization;
-use App\Models\Section;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
-use phpseclib\Crypt\Base;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;
 use Spira\Model\Model\LocalizableModelInterface;
@@ -243,53 +241,44 @@ class EloquentModelTransformer extends BaseTransformer
     }
 
     /**
-     * Attempt to find localizations in cache and replace the attributes with the items
+     * Attempt to find localizations in cache and replace the attributes with the items.
      * @param $object
      */
     protected function applyLocalizations(BaseModel $object)
     {
-        if (!isset($this->options['region']) || !$object instanceof LocalizableModelInterface){
+        if (! isset($this->options['region']) || ! $object instanceof LocalizableModelInterface) {
             return;
         }
 
-        if ( $localizations = Localization::getFromCache($object->getKey(), $this->options['region'])) {
-
+        if ($localizations = Localization::getFromCache($object->getKey(), $this->options['region'])) {
             foreach ($localizations as $attribute => $localization) {
-
-                if(is_array($localization) && is_array($object->$attribute)){
-
+                if (is_array($localization) && is_array($object->$attribute)) {
                     $object->$attribute = $this->mergeRecursive($object->$attribute, $localization);
-                }else{
-
+                } else {
                     $object->$attribute = $localization;
                 }
             }
         }
     }
 
-
     /**
-     * Recursively replace primary array items with replacements, ignores nulls in replacements,  so array_replace_recursive cannot be used
+     * Recursively replace primary array items with replacements, ignores nulls in replacements,  so array_replace_recursive cannot be used.
      * @param array $primaryArray
      * @param array $replacements
      * @return array
      */
     private function mergeRecursive(array $primaryArray, array $replacements)
     {
-        foreach($primaryArray as $key => &$value){
-
-            if (isset($replacements[$key])){
-
-                if (is_array($value)){
+        foreach ($primaryArray as $key => &$value) {
+            if (isset($replacements[$key])) {
+                if (is_array($value)) {
                     $value = $this->mergeRecursive($value, $replacements[$key]);
-                }else{
+                } else {
                     $value = $replacements[$key];
                 }
-
             }
         }
 
         return $primaryArray;
     }
-
 }
