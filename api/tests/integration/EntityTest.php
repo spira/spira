@@ -945,7 +945,57 @@ class EntityTest extends TestCase
 
         $localizedEntity = json_decode($this->response->getContent(), true);
 
-        $this->assertEquals($localizedEntity['varchar'], $localization['varchar']);
-        $this->assertEquals($localizedEntity['decimal'], $localization['decimal']);
+        $this->assertEquals($localization['varchar'], $localizedEntity['varchar']);
+        $this->assertEquals($localization['decimal'], $localizedEntity['decimal']);
+    }
+
+    /**
+     * @group localizations
+     */
+    public function testShouldGetDeepLocalizedContent()
+    {
+        // Create an entity
+        $entity = factory(TestEntity::class)->create();
+
+        $entity->json = [
+            'some' => 'original value',
+            'another' => [
+                [
+                    'deeper' => 'original value',
+                ],
+            ],
+        ];
+
+        $entity->save();
+
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
+
+        $localization = [
+            'json' => [
+                'some' => 'localization',
+                'another' => [
+                    [
+                        'deeper' => 'localization',
+                    ],
+                ],
+            ],
+        ];
+
+        // Give it localizations
+        $entity->localizations()->create([
+            'region_code' => $region,
+            'localizations' => $localization,
+        ]);
+
+        // Retrieve the entity asking for localized content
+        $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $region]);
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $localizedEntity = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals('localization', $localizedEntity['json']['some']);
+        $this->assertEquals('localization', $localizedEntity['json']['another'][0]['deeper']);
     }
 }
