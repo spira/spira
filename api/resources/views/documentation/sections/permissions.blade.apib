@@ -15,24 +15,21 @@ Both roles and permissions can be organized in a hierarchy. In particular, a rol
 
 ## Roles [/roles]
 List of all roles defined in the system.
-+ Parameters
 
 ### Get all roles [GET]
 #### Restrictions
 * Allowed - [all]
 
-+ Request
-
 + Response 200 (application/json)
 
     + Body
 
-                        {!!
-                            $factory->get(\App\Models\Role::class)
-                                ->setTransformer(App\Http\Transformers\RoleTransformer::class)
-                                ->count(5)
-                                ->json()
-                        !!}
+            {!!
+                $factory->get(\App\Models\Role::class)
+                    ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                    ->count(5)
+                    ->json()
+            !!}
 
 ## User roles [/users/{userId}/roles]
 Roles array assigned to user
@@ -55,12 +52,12 @@ Roles array assigned to user
 
     + Body
 
-                           {!!
-                               $factory->get(\App\Models\Role::class)
-                                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
-                                   ->count(3)
-                                   ->json()
-                           !!}
+            {!!
+               $factory->get(\App\Models\Role::class)
+                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                   ->count(3)
+                   ->json()
+            !!}
 
 ### Reassign user roles [PUT]
 Mind that admin can assign/detach only non-admin roles
@@ -74,19 +71,17 @@ Only super admin can assign/detach admin roles.
 + Request
     + Body
 
-                           {!!
-                               $factory->get(\App\Models\Role::class)
-                                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
-                                   ->count(2)
-                                   ->json()
-                           !!}
+            {!!
+               $factory->get(\App\Models\Role::class)
+                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                   ->count(2)
+                   ->json()
+            !!}
 
     + Headers
 
             Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
 
-+ Response 201 (application/json)
-
-
++ Response 201
 
 
