@@ -1,7 +1,40 @@
 # Group Permissions
-Role based access control system.
+Role-Based Access Control (RBAC) provides a simple yet powerful centralized access control. Please refer to the [Wikipedia](https://en.wikipedia.org/wiki/Role-based_access_control) for details about comparing RBAC with other more traditional access control schemes.
 
-## User roles [/permissions/users/{userId}]
+# Thanks to Yii/Yii2
+Most of the concepts and code inspiration was taken from yii2 Rbac.
+Thank you guys!
+
+# Basic Concepts
+A role represents a collection of *permissions* (e.g. creating posts, updating posts). A role may be assigned to one or multiple users. To check if a user has a specified permission, we may check if the user is assigned with a role that contains that permission.
+
+Associated with each role or permission, there may be a rule. A rule represents a piece of code that will be executed during access check to determine if the corresponding role or permission applies to the current user. For example, the "update post" permission may have a rule that checks if the current user is the post creator. During access checking, if the user is NOT the post creator, he/she will be considered not having the "update post" permission.
+
+Both roles and permissions can be organized in a hierarchy. In particular, a role may consist of other roles or permissions; and a permission may consist of other permissions. Spira implements a partial order hierarchy which includes the more special tree hierarchy. While a role can contain a permission, it is not true vice versa.
+
+
+## Roles [/roles]
+List of all roles defined in the system.
++ Parameters
+
+### Get all roles [GET]
+#### Restrictions
+* Allowed - [all]
+
++ Request
+
++ Response 200 (application/json)
+
+    + Body
+
+                        {!!
+                            $factory->get(\App\Models\Role::class)
+                                ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                                ->count(5)
+                                ->json()
+                        !!}
+
+## User roles [/users/{userId}/roles]
 Roles array assigned to user
 
 + Parameters
@@ -22,6 +55,38 @@ Roles array assigned to user
 
     + Body
 
-            {!! json_encode(['user','admin','testuser']) !!}
+                           {!!
+                               $factory->get(\App\Models\Role::class)
+                                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                                   ->count(3)
+                                   ->json()
+                           !!}
+
+### Reassign user roles [PUT]
+Mind that admin can assign/detach only non-admin roles
+
+Only super admin can assign/detach admin roles.
+
+#### Restrictions
+* Denied - [all]
+* Allowed - [admin, superAdmin]
+
++ Request
+    + Body
+
+                           {!!
+                               $factory->get(\App\Models\Role::class)
+                                   ->setTransformer(App\Http\Transformers\RoleTransformer::class)
+                                   ->count(2)
+                                   ->json()
+                           !!}
+
+    + Headers
+
+            Authorization: Bearer {!! $factory->make(\App\Models\AuthToken::class)->token !!}
+
++ Response 201 (application/json)
+
+
 
 
