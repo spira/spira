@@ -44,6 +44,18 @@ class DbRbacStorageTest extends TestCase
         $this->assertInstanceOf(Role::class, $this->auth->getItem('some role'));
     }
 
+    public function testGetAll()
+    {
+        $this->assertCount(0, $this->auth->getItems(Role::TYPE_ROLE));
+        $role = new Role('some role');
+        $this->auth->addItem($role);
+
+        $role = new Role('some role 2');
+        $this->auth->addItem($role);
+
+        $this->assertCount(2, $this->auth->getItems(Role::TYPE_ROLE));
+    }
+
     public function testAdd()
     {
         $role = new Role('admin Z');

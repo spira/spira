@@ -10,12 +10,13 @@
 
 namespace App\Models;
 
+use App\Models\Relations\RolePermissionRelation;
 use Spira\Model\Model\BaseModel;
 
 /**
  * Class Role.
  *
- * @property string role_key name of the current role
+ * @property string $key name of the current role
  */
 class Role extends BaseModel
 {
@@ -29,16 +30,33 @@ class Role extends BaseModel
         self::USER_ROLE,
     ];
 
-    public $table = 'roles';
+    public $exists = true;
 
-    protected $primaryKey = 'role_key';
-
-    public $timestamps = false;
+    protected $primaryKey = 'key';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_id','role_key'];
+    protected $fillable = ['key','description', 'is_default'];
+
+    protected static $validationRules = [
+        'key' => 'required|rbac_role_exists',
+    ];
+
+    public function permissions()
+    {
+        return new RolePermissionRelation($this->key);
+    }
+
+    public static function findOrNew($id, $columns = ['*'])
+    {
+        return new static(['key' => $id]);
+    }
+
+    public function isDirty($attributes = null)
+    {
+        return false;
+    }
 }

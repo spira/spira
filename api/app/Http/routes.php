@@ -20,16 +20,15 @@ $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
 $app->get('timezones', 'TimezoneController@getAll');
 $app->get('countries', 'CountriesController@getAll');
 
-$app->group(['prefix' => 'permissions', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('/user/{id}', 'PermissionsController@getUserRoles');
-});
-
 $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('/', ['uses' => 'UserController@getAllPaginated', 'as' => App\Models\User::class]);
+    $app->get('/', ['uses' => 'UserController@getAllPaginated']);
     $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
     $app->put('{id}', ['uses' => 'UserController@putOne']);
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+
+    $app->get('/{id}/roles', 'PermissionsController@getAll');
+    $app->put('/{id}/roles', 'PermissionsController@putManyReplace');
 
     $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
     $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);
@@ -43,6 +42,10 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->delete('{email}/password', ['uses' => 'UserController@resetPassword']);
 
     $app->delete('{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
+});
+
+$app->group(['prefix' => 'roles', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
+    $app->get('/', ['uses' => 'RoleController@getAll']);
 });
 
 $app->group(['prefix' => 'articles'], function (Application $app) {

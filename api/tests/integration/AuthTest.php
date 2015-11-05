@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Role;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Spira\Auth\Driver\Guard;
@@ -577,9 +576,7 @@ class AuthTest extends TestCase
     public function testImpersonationLogin()
     {
         $originalUser = $this->createUser();
-        $originalUser->roles()->saveMany([
-            new Role(['role_key' => Role::ADMIN_ROLE]),
-        ]);
+        $this->assignAdmin($originalUser);
 
         $impersonateUser = $this->createUser();
 
@@ -641,14 +638,10 @@ class AuthTest extends TestCase
     public function testImpersonationLoginDeniedForAdmin()
     {
         $originalUser = $this->createUser();
-        $originalUser->roles()->saveMany([
-            new Role(['role_key' => Role::ADMIN_ROLE]),
-        ]);
+        $this->assignAdmin($originalUser);
 
         $impersonateUser = $this->createUser();
-        $impersonateUser->roles()->saveMany([
-            new Role(['role_key' => Role::ADMIN_ROLE]),
-        ]);
+        $this->assignAdmin($impersonateUser);
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
@@ -665,14 +658,10 @@ class AuthTest extends TestCase
     public function testImpersonationLoginAllowedForSuperAdmin()
     {
         $originalUser = $this->createUser();
-        $originalUser->roles()->saveMany([
-            new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
-        ]);
+        $this->assignSuperAdmin($originalUser);
 
         $impersonateUser = $this->createUser();
-        $impersonateUser->roles()->saveMany([
-            new Role(['role_key' => Role::ADMIN_ROLE]),
-        ]);
+        $this->assignAdmin($impersonateUser);
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 

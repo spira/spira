@@ -10,23 +10,20 @@
 
 namespace App\Http\Auth;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Spira\Rbac\Item\Rule;
+use Spira\Rbac\User\UserProxy;
 
 class ManipulateWithOwn extends Rule
 {
     /**
      * Executes the rule.
      *
-     * @param callable $userResolver
+     * @param UserProxy $userProxy
      * @param array $params parameters passed to check.
      * @return bool a value indicating whether the rule permits the auth item it is associated with.
      */
-    public function execute(callable $userResolver, $params)
+    public function execute(UserProxy $userProxy, $params)
     {
-        /** @var Authenticatable $user */
-        $user = $userResolver();
-
-        return isset($params['model']) ? $params['model']->user_id == $user->getAuthIdentifier() : false;
+        return isset($params['model']) ? $params['model']->user_id == $userProxy->resolveUser()->getAuthIdentifier() : false;
     }
 }

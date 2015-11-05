@@ -14,7 +14,6 @@ use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
@@ -67,6 +66,7 @@ abstract class ChildEntityController extends ApiController
         $model = $this->findParentEntity($id);
         $childEntities = $this->findAllChildren($model);
         $childEntities = $this->getWithNested($childEntities, $request);
+        $this->checkPermission(static::class.'@getAll', ['model' => $model, 'children' => $childEntities]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -93,6 +93,8 @@ abstract class ChildEntityController extends ApiController
         $childModel = $this->findOrFailChildEntity($childId, $parent);
         $childModel = $this->getWithNested($childModel, $request);
 
+        $this->checkPermission(static::class.'@getOne', ['model' => $parent, 'children' => $childModel]);
+
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($childModel);
@@ -115,6 +117,9 @@ abstract class ChildEntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
 
         $childModel->fill($request->json()->all());
+
+        $this->checkPermission(static::class.'@postOne', ['model' => $parent, 'children' => $childModel]);
+
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
@@ -147,6 +152,9 @@ abstract class ChildEntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules($childId));
 
         $childModel->fill($request->json()->all());
+
+        $this->checkPermission(static::class.'@putOne', ['model' => $parent, 'children' => $childModel]);
+
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()
@@ -173,6 +181,8 @@ abstract class ChildEntityController extends ApiController
 
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels);
+
+        $this->checkPermission(static::class.'@putManyAdd', ['model' => $parent, 'children' => $childModels]);
 
         $this->getRelation($parent)->saveMany($childModels);
 
@@ -209,6 +219,8 @@ abstract class ChildEntityController extends ApiController
                 }
             });
 
+        $this->checkPermission(static::class.'@putManyReplace', ['model' => $parent, 'children' => $childModels]);
+
         $this->getRelation($parent)->sync($this->prepareSyncList($childModels, $requestCollection));
 
         return $this->getResponse()
@@ -240,6 +252,9 @@ abstract class ChildEntityController extends ApiController
         $this->validateRequest($request->json()->all(), $this->getValidationRules($id), $childModel);
 
         $childModel->fill($request->json()->all());
+
+        $this->checkPermission(static::class.'@patchOne', ['model' => $parent, 'children' => $childModel]);
+
         $this->getRelation($parent)->save($childModel);
 
         return $this->getResponse()->noContent();
@@ -264,6 +279,8 @@ abstract class ChildEntityController extends ApiController
         $childModels = $this->getChildModel()
             ->hydrateRequestCollection($requestCollection, $existingChildModels);
 
+        $this->checkPermission(static::class.'@patchMany', ['model' => $parent, 'children' => $childModels]);
+
         $this->getRelation($parent)->saveMany($childModels);
 
         return $this->getResponse()->noContent();
@@ -287,6 +304,8 @@ abstract class ChildEntityController extends ApiController
 
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
+        $this->checkPermission(static::class.'@deleteOne', ['model' => $parent, 'children' => $childModel]);
+
         $childModel->delete();
         $parent->fireRevisionableEvent('deleteChild', [$childModel, $this->relationName]);
 
@@ -305,7 +324,11 @@ abstract class ChildEntityController extends ApiController
         $requestCollection = $request->json()->all();
         $model = $this->findParentEntity($id);
 
-        $this->findOrFailChildrenCollection($requestCollection, $model)->each(function (BaseModel $model) {
+        $childModels = $this->findOrFailChildrenCollection($requestCollection, $model);
+
+        $this->checkPermission(static::class.'@deleteMany', ['model' => $model, 'children' => $childModels]);
+
+        $childModels->each(function (BaseModel $model) {
             $model->delete();
         });
 

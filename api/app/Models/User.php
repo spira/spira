@@ -10,6 +10,7 @@
 
 namespace App\Models;
 
+use App\Models\Relations\UserRoleRelation;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -178,11 +179,11 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     /**
      * Get the user role objects.
      *
-     * @return HasMany|\Illuminate\Database\Eloquent\Builder
+     * @return UserRoleRelation|\Illuminate\Database\Eloquent\Builder
      */
     public function roles()
     {
-        return $this->hasMany(Role::class, 'user_id', 'user_id');
+        return new UserRoleRelation((new Role())->newQuery(), $this, 'roles', 'user_id', 'role_key', 'roles');
     }
 
     /**

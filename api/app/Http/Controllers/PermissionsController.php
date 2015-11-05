@@ -10,10 +10,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\PermissionsTransformer;
-use Spira\Rbac\Item\Assignment;
+use App\Http\Transformers\RoleTransformer;
+use App\Models\User;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Model\BaseModel;
 
-class PermissionsController extends ApiController
+class PermissionsController extends ChildEntityController
 {
     /**
      * Enable permissions checks.
@@ -22,28 +24,20 @@ class PermissionsController extends ApiController
 
     protected $defaultRole = false;
 
-    public function __construct(PermissionsTransformer $transformer)
+    protected $relationName = 'roles';
+
+    public function __construct(User $parentModel, RoleTransformer $transformer)
     {
-        parent::__construct($transformer);
+        parent::__construct($parentModel, $transformer);
     }
 
-    public function getUserRoles($id)
+    /**
+     * @param $requestCollection
+     * @param BaseModel $parent
+     * @return Collection
+     */
+    protected function findChildrenCollection($requestCollection, BaseModel $parent)
     {
-        $assignments = $this->getGate()->getStorage()->getAssignments($id);
-
-        foreach ($this->getGate()->getDefaultRoles() as $role) {
-            if (! isset($assignments[$role])) {
-                $defaultAssignment = new Assignment();
-                $defaultAssignment->roleName = $role;
-                $defaultAssignment->userId = $id;
-                $assignments[$role] = $defaultAssignment;
-            }
-        }
-
-        $this->authorize(static::class.'@getUserRoles', ['model' => (object) ['user_id' => $id]]);
-
-        return $this->getResponse()
-            ->transformer($this->getTransformer())
-            ->collection($assignments);
+        return $parent->roles;
     }
 }

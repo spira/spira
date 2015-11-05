@@ -22,6 +22,13 @@ interface ItemStorageInterface
     public function getItem($itemName);
 
     /**
+     * Returns all the items of the same type.
+     * @param string $type the auth item type (role/permission).
+     * @return Item[]
+     */
+    public function getItems($type);
+
+    /**
      * Get names of the item's parents.
      *
      * @param string $itemName

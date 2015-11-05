@@ -70,6 +70,14 @@ class Storage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getItems($type)
+    {
+        return $this->itemStorage->getItems($type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParentNames($itemName)
     {
         return $this->itemStorage->getParentNames($itemName);

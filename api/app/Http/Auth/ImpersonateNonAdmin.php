@@ -13,20 +13,21 @@ namespace App\Http\Auth;
 use App\Models\Role;
 use App\Models\User;
 use Spira\Rbac\Item\Rule;
+use Spira\Rbac\User\UserProxy;
 
 class ImpersonateNonAdmin extends Rule
 {
     /**
      * Executes the rule.
      *
-     * @param callable $userResolver
+     * @param UserProxy $userProxy
      * @param User $targetUser
      * @return bool a value indicating whether the rule permits the auth item it is associated with.
      * @internal param array $params parameters passed to check.
      */
-    public function execute(callable $userResolver, $targetUser)
+    public function execute(UserProxy $userProxy, $targetUser)
     {
-        $roles = $targetUser->roles()->get()->pluck('role_key')->toArray();
+        $roles = $targetUser->roles()->get()->pluck('key')->toArray();
 
         if (! in_array(Role::ADMIN_ROLE, $roles)) {
             return true;

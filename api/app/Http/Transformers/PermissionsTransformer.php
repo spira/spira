@@ -10,18 +10,51 @@
 
 namespace App\Http\Transformers;
 
-use Spira\Rbac\Item\Assignment;
+use App\Services\TransformerService;
+use Spira\Rbac\Item\Item;
 
-class PermissionsTransformer extends BaseTransformer
+class PermissionsTransformer extends EloquentModelTransformer
 {
+    private $routes;
+
+    public function __construct(TransformerService $service)
+    {
+        $this->prepareRoutes(app()->getRoutes());
+        parent::__construct($service);
+    }
+
+    protected function prepareRoutes($routes)
+    {
+        foreach ($routes as $uri => $route) {
+            if (isset($route['action']['uses']) && isset($route['uri'])) {
+                $this->routes[$route['action']['uses']][] = [
+                    'uri' => $route['uri'],
+                    'method' => isset($route['method']) ? $route['method'] : null,
+                ];
+            }
+        }
+    }
+
     /**
      * @param $object
      * @return mixed
      */
     public function transform($object)
     {
-        if ($object instanceof Assignment) {
-            return $object->roleName;
+        $object = parent::transform($object);
+        $object['type'] = Item::TYPE_PERMISSION;
+        if (isset($this->routes[$object['key']])) {
+            $matchingRoutes = [];
+            foreach ($this->routes[$object['key']] as $route) {
+                $matchingRoute = [];
+                $matchingRoute['method'] = $route['method'];
+                $matchingRoute['uri'] = $route['uri'];
+                $matchingRoutes[] = $matchingRoute;
+            }
+
+            $object['matchingRoutes'] = $matchingRoutes;
         }
+
+        return $object;
     }
 }

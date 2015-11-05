@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Auth\ImpersonateNonAdmin;
 use App\Http\Auth\ManipulateWithOwn;
+use App\Http\Auth\ReAssignNonAdmin;
 use App\Models\Role;
 
 return [
@@ -33,11 +34,29 @@ return [
         'type' => 'permission',
         'description' => 'Delete user by id',
     ],
-    PermissionsController::class.'@getUserRoles' => [
+    PermissionsController::class.'@getAll' => [
         'type' => 'permission',
         'description' => 'Get all roles assigned to user',
     ],
-
+    PermissionsController::class.'@putManyReplace' => [
+        'type' => 'permission',
+        'description' => 'Reassign user roles',
+    ],
+    'ReAssignAllRoles' =>  [
+        'type' => 'permission',
+        'description' => 'Permission to allow a user to assign and detach any role',
+        'children' => [
+            PermissionsController::class.'@putManyReplace',
+        ],
+    ],
+    'ReAssignNonAdmin' =>  [
+        'type' => 'permission',
+        'description' => 'Permission to allow a user to assign and detach non-admin roles only',
+        'ruleName' => ReAssignNonAdmin::class,
+        'children' => [
+            PermissionsController::class.'@putManyReplace',
+        ],
+    ],
     'impersonateUser' =>  [
         'type' => 'permission',
         'description' => 'Permission to allow a user to log in as another user',
@@ -66,7 +85,7 @@ return [
         'children' => [
             UserController::class.'@getOne',
             UserController::class.'@patchOne',
-            PermissionsController::class.'@getUserRoles',
+            PermissionsController::class.'@getAll',
         ],
     ],
 
@@ -77,6 +96,7 @@ return [
         'children' => [
             Role::ADMIN_ROLE,
             'impersonateAllUsers',
+            'ReAssignAllRoles',
         ],
     ],
     Role::ADMIN_ROLE => [
@@ -87,8 +107,9 @@ return [
             UserController::class.'@getAllPaginated',
             UserController::class.'@patchOne',
             UserController::class.'@deleteOne',
-            PermissionsController::class.'@getUserRoles',
+            PermissionsController::class.'@getAll',
             'impersonateNonAdmin',
+            'ReAssignNonAdmin',
             Role::USER_ROLE,
         ],
     ],
