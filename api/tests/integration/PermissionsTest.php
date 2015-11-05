@@ -134,6 +134,256 @@ class PermissionsTest extends TestCase
         $this->assertTrue(isset($result['testrole']), 'check if user has assigned test role');
     }
 
+    public function testAdminAssignNonExistingRoles()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->customize(['key' => 'non-existing-role'])
+            ->transformed();
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles,[
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertCount(2, $object->invalid);
+        $this->assertObjectHasAttribute('key', $object->invalid[0]);
+        $this->assertObjectHasAttribute('key', $object->invalid[1]);
+        $this->assertEquals('The key must be an existing Rbac role', $object->invalid[0]->key[0]->message);
+        $this->assertEquals('The key must be an existing Rbac role', $object->invalid[1]->key[0]->message);
+    }
+
+    public function testAdminAssignSimpleRoles()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseStatus(201);
+    }
+
+    public function testAdminAssignAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = \App\Models\Role::ADMIN_ROLE;
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testAdminAssignSuperAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = \App\Models\Role::SUPER_ADMIN_ROLE;
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testAdminDetachAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+        $this->assignAdmin($someUser);
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testAdminDetachSuperAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+        $this->assignSuperAdmin($someUser);
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testGuestUserAssignSimpleRoles()
+    {
+        $nonAdminUser = $this->createUser();
+        $token = $this->tokenFromUser($nonAdminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testSuperAdminAssignAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = \App\Models\Role::ADMIN_ROLE;
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseStatus(201);
+    }
+
+    public function testSuperAdminAssignSuperAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = \App\Models\Role::SUPER_ADMIN_ROLE;
+
+        $someUser = $this->createUser();
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseStatus(201);
+    }
+
+    public function testSuperAdminDetachAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+        $this->assignAdmin($someUser);
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseStatus(201);
+    }
+
+    public function testSuperAdminDetachSuperAdminRole()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $token = $this->tokenFromUser($adminUser);
+
+        $roles = $this->getFactory(\App\Models\Role::class)
+            ->count(2)
+            ->transformed();
+
+        $roles[0]['key'] = 'testrole';
+        $roles[1]['key'] = 'user';
+
+        $someUser = $this->createUser();
+        $this->assignSuperAdmin($someUser);
+
+        $this->putJson('/users/' . $someUser->user_id . '/roles', $roles, [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseStatus(201);
+    }
+
+
     protected function prepareArray($roles)
     {
         $newArray = [];

@@ -38,6 +38,21 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getItems($type)
+    {
+        $items = [];
+        foreach ($this->items as $item) {
+            if ($item->type === $type){
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParentNames($itemName)
     {
         $parentNames = [];

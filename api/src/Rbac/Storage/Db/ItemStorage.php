@@ -41,6 +41,24 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getItems($type)
+    {
+        $rows = $this->getConnection()
+            ->table('auth_item')
+            ->where('type', '=', $type)
+            ->get();
+
+        $items = [];
+        foreach ($rows as $row) {
+            $items[] = $this->populateItem($row);
+        }
+
+        return $items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getParentNames($itemName)
     {
         $rows = $this->getConnection()

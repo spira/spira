@@ -11,7 +11,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\RoleTransformer;
+use App\Models\Role;
 use App\Models\User;
+use Spira\Model\Collection\Collection;
+use Spira\Model\Model\BaseModel;
 
 class PermissionsController extends ChildEntityController
 {
@@ -27,5 +30,15 @@ class PermissionsController extends ChildEntityController
     public function __construct(User $parentModel, RoleTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
+    }
+
+    /**
+     * @param $requestCollection
+     * @param BaseModel $parent
+     * @return Collection
+     */
+    protected function findChildrenCollection($requestCollection, BaseModel $parent)
+    {
+        return $parent->roles;
     }
 }

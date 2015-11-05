@@ -12,6 +12,7 @@ namespace App\Models;
 
 use App\Models\Relations\RolePermissionRelation;
 use Spira\Model\Model\BaseModel;
+use Spira\Rbac\Access\Gate;
 
 /**
  * Class Role.
@@ -30,6 +31,8 @@ class Role extends BaseModel
         self::USER_ROLE,
     ];
 
+    public $exists = true;
+
     protected $primaryKey = 'key';
 
     /**
@@ -47,4 +50,15 @@ class Role extends BaseModel
     {
         return new RolePermissionRelation($this->key);
     }
+
+    public static function findOrNew($id, $columns = ['*'])
+    {
+        return new static(['key'=>$id]);
+    }
+
+    public function isDirty($attributes = null)
+    {
+        return false;
+    }
+
 }

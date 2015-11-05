@@ -183,7 +183,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
      */
     public function roles()
     {
-        return new UserRoleRelation($this->newQuery(),$this, 'roles', 'user_id', 'role_key', 'roles');
+        return new UserRoleRelation((new Role())->newQuery(),$this, 'roles', 'user_id', 'role_key', 'roles');
     }
 
 

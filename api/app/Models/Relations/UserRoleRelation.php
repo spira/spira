@@ -21,6 +21,22 @@ class UserRoleRelation extends BelongsToMany
         }
     }
 
+    public function getRelated()
+    {
+        return new Role();
+    }
+
+    public function sync($ids, $detaching = true)
+    {
+        foreach ($this->getGate()->getDefaultRoles() as $defaultRole) {
+            if (isset($ids[$defaultRole])){
+                unset($ids[$defaultRole]);
+            }
+        }
+
+        return parent::sync($ids, $detaching);
+    }
+
     public function get($columns = ['*'])
     {
         $storage = $this->getGate()->getStorage();
