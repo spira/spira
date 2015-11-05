@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Http\Controllers;
-
 
 use App\Http\Transformers\RoleTransformer;
 use App\Models\Role;
@@ -11,7 +17,6 @@ use Spira\Rbac\Item\Item;
 
 class RoleController extends EntityController
 {
-
     public function __construct(Role $model, RoleTransformer $transformer)
     {
         parent::__construct($model, $transformer);
@@ -42,11 +47,10 @@ class RoleController extends EntityController
             $roleModels[] = new Role([
                 'key' => $role->name,
                 'description' => $role->description,
-                'is_default' => in_array($role->name, $defaultRolesKeys)
+                'is_default' => in_array($role->name, $defaultRolesKeys),
             ]);
         }
 
         return $roleModels;
     }
-
 }

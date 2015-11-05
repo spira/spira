@@ -35,7 +35,7 @@ class SpiraValidator extends Validator
 
     public function validateRbacRoleExists($attribute, $value, $parameters)
     {
-        return (bool)$this->getGate()->getStorage()->getItem($value);
+        return (bool) $this->getGate()->getStorage()->getItem($value);
     }
 
     public function validateNotRequiredIf($attribute, $value, $parameters)

@@ -76,6 +76,7 @@ class UserAssignmentStorage implements AssignmentStorageInterface
 
         /** @var User $user */
         $user = User::findOrFail($userId);
+
         return $user->roles()->detach($role->name);
     }
 

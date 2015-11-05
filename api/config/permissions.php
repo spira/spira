@@ -96,7 +96,7 @@ return [
         'children' => [
             Role::ADMIN_ROLE,
             'impersonateAllUsers',
-            'ReAssignAllRoles'
+            'ReAssignAllRoles',
         ],
     ],
     Role::ADMIN_ROLE => [

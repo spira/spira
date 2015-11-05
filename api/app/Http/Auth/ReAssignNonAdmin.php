@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Http\Auth;
 
 use App\Models\Role;
@@ -25,7 +33,7 @@ class ReAssignNonAdmin extends Rule
         $user = $params['model'];
         $userRoles = $user->roles->lists('key')->toArray();
         $newRoles = [];
-        if (!empty($params['children']) && $params['children'] instanceof Collection){
+        if (! empty($params['children']) && $params['children'] instanceof Collection) {
             /** @var Collection $newRolesCollection */
             $newRolesCollection = $params['children'];
             $newRoles = $newRolesCollection->lists('key')->toArray();
@@ -36,7 +44,7 @@ class ReAssignNonAdmin extends Rule
         if (
             count(array_intersect($detachedRoles, $this->adminRoles)) > 0 ||
             count(array_intersect($attachedRoles, $this->adminRoles)) > 0
-        ){
+        ) {
             return false;
         }
 

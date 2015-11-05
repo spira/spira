@@ -14,7 +14,6 @@ use App\Extensions\Controller\RequestValidationTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Http\Request;
 use Spira\Model\Collection\Collection;
@@ -122,7 +121,6 @@ abstract class ChildEntityController extends ApiController
         $this->checkPermission(static::class.'@postOne', ['model' => $parent, 'children' => $childModel]);
 
         $this->getRelation($parent)->save($childModel);
-
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Models\Relations;
 
 use App\Models\Role;
@@ -9,7 +17,6 @@ use Spira\Rbac\Item\Item;
 
 class UserRoleRelation extends BelongsToMany
 {
-
     use GateTrait;
 
     public function addConstraints()
@@ -29,7 +36,7 @@ class UserRoleRelation extends BelongsToMany
     public function sync($ids, $detaching = true)
     {
         foreach ($this->getGate()->getDefaultRoles() as $defaultRole) {
-            if (isset($ids[$defaultRole])){
+            if (isset($ids[$defaultRole])) {
                 unset($ids[$defaultRole]);
             }
         }
@@ -41,7 +48,7 @@ class UserRoleRelation extends BelongsToMany
     {
         $storage = $this->getGate()->getStorage();
         $defaultRolesKeys = $this->getGate()->getDefaultRoles();
-        $customRolesKeys =$this->query->getQuery()->lists($this->otherKey);
+        $customRolesKeys = $this->query->getQuery()->lists($this->otherKey);
         $rolesKeys = array_unique(array_merge($defaultRolesKeys, $customRolesKeys));
 
         $roles = [];
@@ -66,11 +73,10 @@ class UserRoleRelation extends BelongsToMany
             $roleModels[] = new Role([
                 'key' => $role->name,
                 'description' => $role->description,
-                'is_default' => in_array($role->name, $defaultRolesKeys)
+                'is_default' => in_array($role->name, $defaultRolesKeys),
             ]);
         }
 
         return $roleModels;
     }
-
 }

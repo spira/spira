@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Models\Relations;
 
 use App\Models\Permission;
@@ -30,6 +38,7 @@ class RolePermissionRelation extends HasMany
         $storage = $this->getGate()->getStorage();
 
         $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($this->roleKey));
+
         return new Collection($this->hydratePermissions($permissions));
     }
 
@@ -43,7 +52,7 @@ class RolePermissionRelation extends HasMany
         foreach ($permissions as $permission) {
             $permissionModels[] = new Permission([
                 'key' => $permission->name,
-                'description' => $permission->description
+                'description' => $permission->description,
             ]);
         }
 

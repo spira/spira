@@ -22,7 +22,7 @@ interface ItemStorageInterface
     public function getItem($itemName);
 
     /**
-     * Returns all the items of the same type
+     * Returns all the items of the same type.
      * @param string $type the auth item type (role/permission).
      * @return Item[]
      */

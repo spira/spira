@@ -67,7 +67,6 @@ $factory->define(App\Models\Role::class, function (\Faker\Generator $faker) {
     return [
         'key' => $faker->word,
         'description' => $faker->sentence(),
-        'is_default' => $faker->boolean()
+        'is_default' => $faker->boolean(),
     ];
 });
-

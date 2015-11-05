@@ -11,7 +11,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Transformers\RoleTransformer;
-use App\Models\Role;
 use App\Models\User;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\BaseModel;

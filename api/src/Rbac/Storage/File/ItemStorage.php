@@ -42,7 +42,7 @@ class ItemStorage extends AbstractStorage implements ItemStorageInterface
     {
         $items = [];
         foreach ($this->items as $item) {
-            if ($item->type === $type){
+            if ($item->type === $type) {
                 $items[] = $item;
             }
         }

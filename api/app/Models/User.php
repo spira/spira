@@ -183,9 +183,8 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
      */
     public function roles()
     {
-        return new UserRoleRelation((new Role())->newQuery(),$this, 'roles', 'user_id', 'role_key', 'roles');
+        return new UserRoleRelation((new Role())->newQuery(), $this, 'roles', 'user_id', 'role_key', 'roles');
     }
-
 
     /**
      * Get the user's uploaded avatar image if they have one.
