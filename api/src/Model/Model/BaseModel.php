@@ -201,6 +201,11 @@ abstract class BaseModel extends Model
      */
     protected function castAttribute($key, $value)
     {
+        //if cast type is json and the object already is decoded, don't try to re-decode
+        if (in_array($this->getCastType($key), ['array', 'json', 'object']) && (is_array($value) || is_object($value))) {
+            return $value;
+        }
+
         // Run the parent cast rules in the parent method
         $value = parent::castAttribute($key, $value);
 
