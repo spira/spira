@@ -78,7 +78,7 @@ namespace app.admin.articles.article {
                         }
 
                         return articleService.getModel($stateParams.id, [
-                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections', 'localizations'
+                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections.localizations', 'localizations'
                         ]);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {

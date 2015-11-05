@@ -24,6 +24,7 @@ namespace common.models {
                 _tags: [],
                 _comments: [],
                 _sections: [],
+                _localizations: [],
             };
 
         }

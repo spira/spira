@@ -57,7 +57,7 @@ class Localization extends BaseModel
      */
     public function save(array $options = [])
     {
-        Cache::forever(self::getCacheKey($this->localizable_id, $this->region_code), $this->localizations);
+        Cache::forever(self::getCacheKey($this->localizable_id, $this->region_code), json_encode($this->localizations));
 
         parent::save($options);
     }

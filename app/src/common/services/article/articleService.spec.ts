@@ -136,21 +136,65 @@ namespace common.services.article {
 
         describe('Save Article', () => {
 
-            it('should save a new article and all related entities', () => {
+            it('should save an articles related sections', () => {
 
                 let article = common.models.ArticleMock.entity();
-                article.setExists(false);
-                article._tags.push(common.models.LinkingTagMock.entity());
-                article._tags.push(common.models.LinkingTagMock.entity());
-                article._articleMetas = article._articleMetas.concat(common.models.ArticleMetaMock.collection(2, {articleId:article.articleId}));
+                article.setExists(true);
                 article._sections = common.models.SectionMock.collection(2, {}, false);
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections', _.clone(article._sections, true)).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections', _.map(article._sections, (section:common.models.Section<any>) => section.getAttributes(true))).respond(201);
+
+                let savePromise = articleService.save(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
+            it('should save an articles related metas', () => {
+
+                let article = common.models.ArticleMock.entity();
+                article.setExists(true);
+                article._articleMetas = article._articleMetas.concat(common.models.ArticleMetaMock.collection(2, {articleId:article.articleId}, false));
+
                 $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
                     return !_.isEmpty(item.metaContent)
                 })).respond(201);
+
+                let savePromise = articleService.save(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+
+            });
+
+            it('should save articles related tags', () => {
+
+                let article = common.models.ArticleMock.entity();
+                article.setExists(true);
+                article._tags.push(common.models.LinkingTagMock.entity());
+                article._tags.push(common.models.LinkingTagMock.entity());
+
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+
+                let savePromise = articleService.save(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
+                expect(savePromise).eventually.to.deep.equal(article);
+
+                $httpBackend.flush();
+            });
+
+            it('should save a new article without related entities', () => {
+
+                let article = common.models.ArticleMock.entity();
+                article.setExists(false);
+
+                $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -190,6 +234,68 @@ namespace common.services.article {
                 let savePromise = articleService.save(article);
 
                 expect(savePromise).eventually.to.equal(article);
+
+            });
+
+            describe('Localization saving', () => {
+
+                it('should save any added localizations for the article', () => {
+
+                    let article = common.models.ArticleMock.entity();
+                    article.setExists(true);
+
+                    let localizationMock = common.models.LocalizationMock.entity({
+                        localizations: {
+                            title: "Localized title"
+                        }
+                    }, false);
+
+                    article._localizations.push(localizationMock);
+
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+
+                    let savePromise = articleService.save(article);
+
+                    expect(savePromise).eventually.to.be.fulfilled;
+                    expect(savePromise).eventually.to.deep.equal(article);
+
+                    $httpBackend.flush();
+
+                });
+
+                it('should save localizations for nested sections', () => {
+
+                    let sectionId = 'abc-123';
+                    let localizationMock = common.models.LocalizationMock.entity({
+                        localizations: {
+                            content: {
+                                body: "Localized text"
+                            },
+                        }
+                    }, false);
+
+                    let sectionMock = common.models.SectionMock.entity({
+                        sectionId: sectionId,
+                        type:common.models.sections.RichText.contentType,
+                    });
+
+                    let article = common.models.ArticleMock.entity({
+                        _sections: [sectionMock]
+                    }, true);
+
+                    article._sections[0]._localizations.push(localizationMock);
+
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections').respond(201);
+                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections/'+sectionId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+
+                    let savePromise = articleService.save(article);
+
+                    expect(savePromise).eventually.to.be.fulfilled;
+                    expect(savePromise).eventually.to.deep.equal(article);
+
+                    $httpBackend.flush();
+
+                });
 
             });
 

@@ -1,7 +1,7 @@
 namespace common.models {
 
     @common.decorators.changeAware
-    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel {
+    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel, mixins.LocalizableModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
             _sections: this.hydrateSections,
@@ -16,6 +16,8 @@ namespace common.models {
             createdAt: this.castMoment,
             updatedAt: this.castMoment,
         };
+
+        protected __primaryKey = 'articleId';
 
         public articleId:string = undefined;
         public title:string = undefined;

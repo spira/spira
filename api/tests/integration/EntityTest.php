@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Rhumsaa\Uuid\Uuid;
+use App\Models\TestEntity;
 use App\Models\Localization;
 use App\Models\SecondTestEntity;
-use App\Models\TestEntity;
-use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class EntityTest.
@@ -29,8 +29,8 @@ class EntityTest extends TestCase
         //
         // Laravel/Lumen currently doesn't fire repeated model events during
         // unit testing, see: https://github.com/laravel/framework/issues/1181
-        App\Models\TestEntity::flushEventListeners();
-        App\Models\TestEntity::boot();
+        TestEntity::flushEventListeners();
+        TestEntity::boot();
     }
 
     /**
@@ -580,7 +580,7 @@ class EntityTest extends TestCase
 
     public function testPatchOne()
     {
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $this->patchJson('/test/entities/'.$entity->entity_id, ['varchar' => 'foobar']);
 
@@ -601,7 +601,7 @@ class EntityTest extends TestCase
 
     public function testPatchMany()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = factory(TestEntity::class, 5)->create();
 
         $data = array_map(function ($entity) {
             return [
@@ -621,7 +621,7 @@ class EntityTest extends TestCase
 
     public function testPatchManyInvalidId()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = factory(TestEntity::class, 5)->create();
 
         $data = array_map(function ($entity) {
             return [
@@ -639,7 +639,7 @@ class EntityTest extends TestCase
 
     public function testPatchManyInvalid()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = factory(TestEntity::class, 5)->create();
 
         $data = array_map(function ($entity) {
             return [
@@ -657,7 +657,7 @@ class EntityTest extends TestCase
 
     public function testDeleteOne()
     {
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
         $rowCount = TestEntity::count();
 
         $this->deleteJson('/test/entities/'.$entity->entity_id);
@@ -669,7 +669,7 @@ class EntityTest extends TestCase
 
     public function testDeleteOneInvalidId()
     {
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
         $rowCount = TestEntity::count();
 
         $this->deleteJson('/test/entities/'.'c4b3c8d3-fa8b-4cf6-828a-072bcf7dc371');
@@ -683,7 +683,7 @@ class EntityTest extends TestCase
 
     public function testDeleteMany()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create()->all();
+        $entities = factory(TestEntity::class, 5)->create()->all();
         $rowCount = TestEntity::count();
 
         $this->deleteJson('/test/entities', $entities);
@@ -695,7 +695,7 @@ class EntityTest extends TestCase
 
     public function testDeleteManyInvalidId()
     {
-        $entities = factory(App\Models\TestEntity::class, 5)->create();
+        $entities = factory(TestEntity::class, 5)->create();
         $rowCount = TestEntity::count();
         $entities->first()->entity_id = (string) Uuid::uuid4();
         $entities->last()->entity_id = (string) Uuid::uuid4();
@@ -727,7 +727,7 @@ class EntityTest extends TestCase
     {
         TestEntity::removeAllFromIndex();
 
-        $searchEntity = factory(App\Models\TestEntity::class)->create([
+        $searchEntity = factory(TestEntity::class)->create([
             'varchar' => 'searchforthisstring',
         ]);
 
@@ -754,10 +754,13 @@ class EntityTest extends TestCase
         $this->assertJsonArray();
     }
 
+    /**
+     * @group localizations
+     */
     public function testPutOneLocalization()
     {
         // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $supportedRegions = array_pluck(config('regions.supported'), 'code');
         $region = array_pop($supportedRegions);
@@ -774,7 +777,7 @@ class EntityTest extends TestCase
         // Get the saved localization
         $localizationModel = $entity->localizations->where('region_code', $region)->first();
 
-        $savedLocalization = json_decode($localizationModel->localizations, true);
+        $savedLocalization = $localizationModel->localizations;
 
         // Ensure localization was saved correctly
         $this->assertEquals($localization, $savedLocalization);
@@ -785,9 +788,12 @@ class EntityTest extends TestCase
         $this->assertEquals($localization, $cachedLocalization);
     }
 
+    /**
+     * @group localizations
+     */
     public function testPutOneLocalizationInvalidParameter()
     {
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $localization = [
             'foobar' => 'foobar',
@@ -798,10 +804,13 @@ class EntityTest extends TestCase
         $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
     }
 
+    /**
+     * @group localizations
+     */
     public function testGetOneLocalizationNotFound()
     {
         // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $localization = [
             'varchar' => 'barfoo',
@@ -811,18 +820,22 @@ class EntityTest extends TestCase
         // Give it a localization
         $entity->localizations()->create([
             'region_code' => 'au',
-            'localizations' => json_encode($localization),
-        ])->save();
+            'localizations' => $localization,
+        ]);
 
         $this->getJson('/test/entities/'.$entity->entity_id.'/localizations/zz');
 
         $this->assertResponseStatus(404);
     }
 
+    /**
+     * @group localizations
+     */
     public function testGetOneLocalization()
     {
         // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        /** @var TestEntity $entity */
+        $entity = factory(TestEntity::class)->create();
 
         $supportedRegions = array_pluck(config('regions.supported'), 'code');
         $region = array_pop($supportedRegions);
@@ -835,8 +848,8 @@ class EntityTest extends TestCase
         // Give it a localization
         $entity->localizations()->create([
             'region_code' => $region,
-            'localizations' => json_encode($localization),
-        ])->save();
+            'localizations' => $localization,
+        ]);
 
         // Retrieve the localization
         $this->getJson('/test/entities/'.$entity->entity_id.'/localizations/'.$region);
@@ -846,19 +859,26 @@ class EntityTest extends TestCase
         $response = json_decode($this->response->getContent(), true);
 
         $this->assertEquals($response['regionCode'], $region);
-        $this->assertEquals(json_decode($response['localizations'], true), $localization);
+        $this->assertEquals($response['localizations'], $localization);
     }
 
+    /**
+     * @group localizations
+     */
     public function testGetAllLocalizationsNotFound()
     {
-        $this->getJson('/test/entities/1c6f512f-b6a5-37aa-8e4a-509745762e82/localizations');
+        $randomId = (string) \Rhumsaa\Uuid\Uuid::uuid4();
+        $this->getJson("/test/entities/$randomId/localizations");
         $this->assertResponseStatus(404);
     }
 
+    /**
+     * @group localizations
+     */
     public function testGetAllLocalizations()
     {
         // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $supportedRegions = array_pluck(config('regions.supported'), 'code');
 
@@ -878,13 +898,13 @@ class EntityTest extends TestCase
         // Give it localizations
         $entity->localizations()->create([
             'region_code' => $regionOne,
-            'localizations' => json_encode($localizationOne),
-        ])->save();
+            'localizations' => $localizationOne,
+        ]);
 
         $entity->localizations()->create([
             'region_code' => $regionTwo,
-            'localizations' => json_encode($localizationTwo),
-        ])->save();
+            'localizations' => $localizationTwo,
+        ]);
 
         // Retrieve the localizations
         $this->getJson('/test/entities/'.$entity->entity_id.'/localizations');
@@ -896,10 +916,13 @@ class EntityTest extends TestCase
         $this->assertEquals(count($response), 2);
     }
 
+    /**
+     * @group localizations
+     */
     public function testShouldGetLocalizedContent()
     {
         // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $entity = factory(TestEntity::class)->create();
 
         $supportedRegions = array_pluck(config('regions.supported'), 'code');
         $region = array_pop($supportedRegions);
@@ -912,8 +935,8 @@ class EntityTest extends TestCase
         // Give it localizations
         $entity->localizations()->create([
             'region_code' => $region,
-            'localizations' => json_encode($localization),
-        ])->save();
+            'localizations' => $localization,
+        ]);
 
         // Retrieve the entity asking for localized content
         $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $region]);
@@ -922,7 +945,57 @@ class EntityTest extends TestCase
 
         $localizedEntity = json_decode($this->response->getContent(), true);
 
-        $this->assertEquals($localizedEntity['varchar'], $localization['varchar']);
-        $this->assertEquals($localizedEntity['decimal'], $localization['decimal']);
+        $this->assertEquals($localization['varchar'], $localizedEntity['varchar']);
+        $this->assertEquals($localization['decimal'], $localizedEntity['decimal']);
+    }
+
+    /**
+     * @group localizations
+     */
+    public function testShouldGetDeepLocalizedContent()
+    {
+        // Create an entity
+        $entity = factory(TestEntity::class)->create();
+
+        $entity->json = [
+            'some' => 'original value',
+            'another' => [
+                [
+                    'deeper' => 'original value',
+                ],
+            ],
+        ];
+
+        $entity->save();
+
+        $supportedRegions = array_pluck(config('regions.supported'), 'code');
+        $region = array_pop($supportedRegions);
+
+        $localization = [
+            'json' => [
+                'some' => 'localization',
+                'another' => [
+                    [
+                        'deeper' => 'localization',
+                    ],
+                ],
+            ],
+        ];
+
+        // Give it localizations
+        $entity->localizations()->create([
+            'region_code' => $region,
+            'localizations' => $localization,
+        ]);
+
+        // Retrieve the entity asking for localized content
+        $this->getJson('/test/entities/'.$entity->entity_id, ['accept-region' => $region]);
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
+
+        $localizedEntity = json_decode($this->response->getContent(), true);
+
+        $this->assertEquals('localization', $localizedEntity['json']['some']);
+        $this->assertEquals('localization', $localizedEntity['json']['another'][0]['deeper']);
     }
 }

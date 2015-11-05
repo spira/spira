@@ -6,16 +6,17 @@ namespace common.models {
             return common.models.Section;
         }
 
-        public getMockData():Object {
+        public getMockData(overrides:Object = {}):Object {
 
             let seededChance = new Chance();
 
-            let type = seededChance.pick(_.keys(Section.getContentTypeMap()));
+            let type = (<any>overrides).type || seededChance.pick(_.keys(Section.getContentTypeMap()));
 
             return {
                 sectionId: seededChance.guid(),
                 type: type,
                 content: SectionMock.getContentTypeMap()[type].entity(),
+                _localizations: [],
             };
 
         }

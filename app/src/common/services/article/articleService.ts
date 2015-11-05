@@ -8,9 +8,13 @@ namespace common.services.article {
         //SectionableApiService
         public saveEntitySections: (entity:mixins.SectionableModel) => ng.IPromise<common.models.Section<any>[]|boolean>;
         public deleteSection: (entity:mixins.SectionableModel, section:common.models.Section<any>) => ng.IPromise<boolean>;
+        public saveEntitySectionLocalizations: (entity:mixins.SectionableModel) => ng.IPromise<any>;
 
         //TaggbleApiService
         public saveEntityTags: (entity:mixins.TaggableModel) => ng.IPromise<common.models.Tag[]|boolean>;
+
+        //LocalizableApiService
+        public saveEntityLocalizations: (entity:mixins.LocalizableModel) => ng.IPromise<common.models.Localization<any>[]|boolean>;
 
         static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state'];
 
@@ -114,6 +118,7 @@ namespace common.services.article {
             return this.$q.all([ //save all related entities
                 this.saveEntitySections(article),
                 this.saveEntityTags(article),
+                this.saveEntityLocalizations(article),
                 this.saveArticleMetas(article),
             ]);
 
@@ -125,22 +130,20 @@ namespace common.services.article {
          * @returns {any}
          */
         private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
-            if (article.exists()) {
 
-                let changes:any = (<common.decorators.IChangeAwareDecorator>article).getChanged(true);
+            let requestObject = this.getNestedCollectionRequestObject(article, '_articleMetas', false);
 
-                if (!_.has(changes, '_articleMetas')) {
-                    return this.$q.when(false);
-                }
-            }
-
-            // Remove the meta tags which have not been used
-            let metaTags:common.models.ArticleMeta[] = _.filter(article._articleMetas, (metaTag) => {
+            requestObject = _.filter(<Array<any>>requestObject, (metaTag) => {
                 return !_.isEmpty(metaTag.metaContent);
             });
 
-            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, metaTags)
+            if (!requestObject || _.isEmpty(requestObject)){
+                return this.$q.when(false);
+            }
+
+            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, requestObject)
                 .then(() => {
+                    _.invoke(article._articleMetas, 'setExists', true);
                     return article._articleMetas;
                 });
         }

@@ -196,7 +196,7 @@ class SectionTest extends TestCase
 
         $this->assertCount(5, $updatedArticle->sections);
         $this->assertNotNull($updatedArticle->sections_display);
-        $this->assertNotNull($updatedArticle->sections_display->sort_order);
-        $this->assertCount(5, $updatedArticle->sections_display->sort_order);
+        $this->assertNotNull($updatedArticle->sections_display['sort_order']);
+        $this->assertCount(5, $updatedArticle->sections_display['sort_order']);
     }
 }

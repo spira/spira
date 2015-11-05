@@ -62,7 +62,7 @@ namespace common.directives.localizableInput.dialog {
                 return undefined;
             }
 
-            return localization.localizations[this.attributeKey];
+            return _.get<string>(localization.localizations, this.attributeKey);
         }
 
         public saveLocalizations(){
@@ -73,9 +73,9 @@ namespace common.directives.localizableInput.dialog {
 
                 if(existing){
                     if(!translation){
-                        delete existing.localizations[this.attributeKey];
+                        (<any>_).set(existing.localizations, this.attributeKey, undefined);
                     }else{
-                        existing.localizations[this.attributeKey] = translation;
+                        (<any>_).set(existing.localizations, this.attributeKey, translation);
                     }
                     updatedLocalizations.push(existing);
                     return updatedLocalizations;
@@ -85,14 +85,16 @@ namespace common.directives.localizableInput.dialog {
                     return updatedLocalizations;
                 }
 
-                updatedLocalizations.push(new common.models.Localization<any>({
-                    localizableId: this.ngRestAdapter.uuid(),
+                let newLocalization = new common.models.Localization<any>({
+                    localizableId: null, //this is set on save as it depends on the parent model
                     localizableType: null, //this is determined by the api
-                    localizations: {
-                        [this.attributeKey]: translation
-                    },
+                    localizations: {},
                     regionCode: regionCode,
-                }));
+                });
+
+                (<any>_).set(newLocalization.localizations, this.attributeKey, translation);
+
+                updatedLocalizations.push(newLocalization);
 
                 return updatedLocalizations;
 

@@ -79,6 +79,7 @@ $app->group(['prefix' => 'articles'], function (Application $app) {
     $app->put('{id}/sections', 'App\Http\Controllers\ArticleSectionController@putManyAdd');
     $app->delete('{id}/sections', 'App\Http\Controllers\ArticleSectionController@deleteMany');
     $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
+    $app->put('{id}/sections/{childId}/localizations/{region}', 'App\Http\Controllers\ArticleSectionController@putOneChildLocalization');
 
     $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
     $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putManyAdd');
@@ -134,6 +135,8 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->patch('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@patchMany');
     $app->delete('/entities/{id}/child/{childId}', 'App\Http\Controllers\ChildTestController@deleteOne');
     $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
+
+    $app->put('/entities/{id}/child/{childId}/localizations/{region}', 'App\Http\Controllers\ChildTestController@putOneChildLocalization');
 });
 
 $app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {

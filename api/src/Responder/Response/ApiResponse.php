@@ -72,13 +72,8 @@ class ApiResponse extends Response
      */
     public function item($item, $statusCode = self::HTTP_OK)
     {
-        // Localize the item if required
-        if ($this->localizeToRegion) {
-            $item = $this->applyLocalizations($item);
-        }
-
         if ($this->transformer) {
-            $item = $this->transformer->transformItem($item);
+            $item = $this->transformer->transformItem($item, $this->getTransformerOptions());
         }
 
         return $this
@@ -107,7 +102,7 @@ class ApiResponse extends Response
     public function collection($items, $statusCode = Response::HTTP_OK)
     {
         if ($this->transformer) {
-            $items = $this->transformer->transformCollection($items);
+            $items = $this->transformer->transformCollection($items, $this->getTransformerOptions());
         }
 
         return $this
@@ -227,19 +222,19 @@ class ApiResponse extends Response
     }
 
     /**
-     * Localize the entity to a region if a localization exists.
-     *
-     * @param $item
-     * @return mixed
+     * Get options for the transformer based on current request state.
+     * @return array
      */
-    private function applyLocalizations($item)
+    private function getTransformerOptions()
     {
-        if ($localizations = Localization::getFromCache($item->getKey(), $this->localizeToRegion)) {
-            foreach ($localizations as $parameter => $localization) {
-                $item->$parameter = $localization;
-            }
+        $transformerOptions = [];
+
+        if ($this->localizeToRegion) {
+            $transformerOptions['region'] = $this->localizeToRegion;
+
+            return $transformerOptions;
         }
 
-        return $item;
+        return $transformerOptions;
     }
 }

@@ -10,15 +10,14 @@
 
 namespace Spira\Model\Model;
 
-use App\Models\Localization;
-
-trait LocalizableModelTrait
+/**
+ * Interface LocalizableModelInterface
+ * A model should implement this interface if it uses LocalizableModelTrait to get correct typehinting.
+ */
+interface LocalizableModelInterface
 {
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function localizations()
-    {
-        return $this->morphMany(Localization::class, 'localizable');
-    }
+    public function localizations();
 }

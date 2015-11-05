@@ -18,7 +18,13 @@
                     <md-input-container flex>
                         <label>Caption</label>
 
-                        <input ng-model="imageContent.caption" name="caption" required>
+                        <input
+                            ng-model="imageContent.caption"
+                            name="caption"
+                            localizable-input="SectionInputImageController.section._localizations"
+                            localizable-input-path="content.images[{{$index}}].caption"
+                            required
+                        >
                         <ng-messages for="imageForm.caption.$error">
                             <ng-message when="required">Caption is required</ng-message>
                             <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
