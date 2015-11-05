@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 use Rhumsaa\Uuid\Uuid;
 use App\Models\Section;
 use Spira\Model\Validation\Validator;
+use Spira\Rbac\Access\Gate;
 
 class SpiraValidator extends Validator
 {
@@ -30,6 +31,11 @@ class SpiraValidator extends Validator
     public function validateNotFound()
     {
         return false;
+    }
+
+    public function validateRbacRoleExists($attribute, $value, $parameters)
+    {
+        return (bool) $this->getGate()->getStorage()->getItem($value);
     }
 
     public function validateNotRequiredIf($attribute, $value, $parameters)
@@ -101,6 +107,14 @@ class SpiraValidator extends Validator
     protected function validateSectionType($attribute, $value, $parameters)
     {
         return in_array($value, Section::getContentTypes());
+    }
+
+    /**
+     * @return Gate
+     */
+    public function getGate()
+    {
+        return app(Gate::GATE_NAME);
     }
 
     /**
