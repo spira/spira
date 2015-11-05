@@ -90,6 +90,7 @@ return [
     'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
     'supported_region'     => 'The :attribute must be a supported region. Supported region codes are ('.implode(', ', array_pluck(config('regions.supported'), 'code')).')',
     'section_type'         => 'The :attribute must be a supported section type. Supported section types are ('.implode(', ', \App\Models\Section::getContentTypes()).')',
+    'rbac_role_exists'     => 'The :attribute must be an existing Rbac role',
 
     /*
     |--------------------------------------------------------------------------
