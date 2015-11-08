@@ -27,8 +27,8 @@ $app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], functi
     $app->patch('{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
 
-    $app->get('/{id}/roles', 'PermissionsController@getAll');
-    $app->put('/{id}/roles', 'PermissionsController@putManyReplace');
+    $app->get('/{id}/roles', ['uses' => 'PermissionsController@getAll', 'middleware' => 'auth']);
+    $app->put('/{id}/roles', ['uses' => 'PermissionsController@putManyReplace', 'middleware' => 'auth']);
 
     $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
     $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);
