@@ -11,8 +11,6 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\RouteHelper;
-use App\Http\Transformers\Chain\EloquentChain;
-use App\Http\Transformers\Chain\SelfChain;
 use App\Models\Localization;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
@@ -42,7 +40,7 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
-            if ($this->isCreated()){
+            if ($this->isCreated()) {
                 $this->applyCreated($object);
             }
             $this->applyLocalizations($object);

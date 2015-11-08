@@ -76,11 +76,11 @@ class ApiResponse extends Response
             $item = $this->transformer->transformItem($item, $this->getTransformerOptions());
         }
 
-        if (is_null($statusCode)){
+        if (is_null($statusCode)) {
             $statusCode = $this->getStatusCode();
         }
 
-        if (is_null($statusCode)){
+        if (is_null($statusCode)) {
             $statusCode = self::HTTP_OK;
         }
 
@@ -101,11 +101,11 @@ class ApiResponse extends Response
             $items = $this->transformer->transformCollection($items, $this->getTransformerOptions());
         }
 
-        if (is_null($statusCode)){
+        if (is_null($statusCode)) {
             $statusCode = $this->getStatusCode();
         }
 
-        if (is_null($statusCode)){
+        if (is_null($statusCode)) {
             $statusCode = self::HTTP_OK;
         }
 
