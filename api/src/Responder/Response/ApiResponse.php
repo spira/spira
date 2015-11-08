@@ -70,10 +70,18 @@ class ApiResponse extends Response
      * @param int $statusCode
      * @return ApiResponse
      */
-    public function item($item, $statusCode = self::HTTP_OK)
+    public function item($item, $statusCode = null)
     {
         if ($this->transformer) {
             $item = $this->transformer->transformItem($item, $this->getTransformerOptions());
+        }
+
+        if (is_null($statusCode)){
+            $statusCode = $this->getStatusCode();
+        }
+
+        if (is_null($statusCode)){
+            $statusCode = self::HTTP_OK;
         }
 
         return $this
@@ -83,46 +91,28 @@ class ApiResponse extends Response
     }
 
     /**
-     * Respond with a created response.
-     * @param $item
-     * @return ApiResponse
-     */
-    public function createdItem($item)
-    {
-        $item->setVisible(['']);
-
-        return $this->item($item, self::HTTP_CREATED);
-    }
-
-    /**
      * @param $items
      * @param int $statusCode
      * @return ApiResponse
      */
-    public function collection($items, $statusCode = Response::HTTP_OK)
+    public function collection($items, $statusCode = null)
     {
         if ($this->transformer) {
             $items = $this->transformer->transformCollection($items, $this->getTransformerOptions());
+        }
+
+        if (is_null($statusCode)){
+            $statusCode = $this->getStatusCode();
+        }
+
+        if (is_null($statusCode)){
+            $statusCode = self::HTTP_OK;
         }
 
         return $this
             ->header('Content-Type', 'application/json')
             ->setContent($this->encode($items))
             ->setStatusCode($statusCode);
-    }
-
-    /**
-     * Respond with a created response and hide all the items (except self).
-     * @param $items
-     * @return ApiResponse
-     */
-    public function createdCollection($items)
-    {
-        foreach ($items as $item) {
-            $item->setVisible(['']);
-        }
-
-        return $this->collection($items, self::HTTP_CREATED);
     }
 
     /**
@@ -228,6 +218,8 @@ class ApiResponse extends Response
     private function getTransformerOptions()
     {
         $transformerOptions = [];
+
+        $transformerOptions['created'] = $this->getStatusCode() === self::HTTP_CREATED;
 
         if ($this->localizeToRegion) {
             $transformerOptions['region'] = $this->localizeToRegion;

@@ -124,15 +124,16 @@ abstract class ChildEntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($childModel);
+            ->created()
+            ->item($childModel);
     }
 
     /**
      * Put an entity.
      *
-     * @param  string $id
-     * @param string $childId
      * @param  Request $request
+     * @param  string $id
+     * @param bool|string $childId
      * @return ApiResponse
      */
     public function putOne(Request $request, $id, $childId = false)
@@ -159,7 +160,8 @@ abstract class ChildEntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($childModel);
+            ->created()
+            ->item($childModel);
     }
 
     /**
@@ -191,7 +193,8 @@ abstract class ChildEntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdCollection($childModels);
+            ->created()
+            ->collection($childModels);
     }
 
     /**
@@ -225,7 +228,8 @@ abstract class ChildEntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdCollection($childModels);
+            ->created()
+            ->collection($childModels);
     }
 
     /**
@@ -290,8 +294,9 @@ abstract class ChildEntityController extends ApiController
      * Delete an entity.
      *
      * @param  string $id
-     * @param string $childId
+     * @param bool|string $childId
      * @return ApiResponse
+     * @throws \Exception
      */
     public function deleteOne($id, $childId = false)
     {
@@ -452,6 +457,7 @@ abstract class ChildEntityController extends ApiController
     }
 
     /**
+     * @param null $entityId
      * @return array
      */
     protected function getValidationRules($entityId = null)

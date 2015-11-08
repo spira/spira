@@ -58,7 +58,8 @@ trait LocalizableTrait
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($createdLocalization);
+            ->created()
+            ->item($createdLocalization);
     }
 
     public function putOneChildLocalization(Request $request, $id, $childId, $region)
@@ -72,7 +73,8 @@ trait LocalizableTrait
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($createdLocalization);
+            ->created()
+            ->item($createdLocalization);
     }
 
     /**
