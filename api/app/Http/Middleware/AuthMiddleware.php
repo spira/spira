@@ -1,8 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Http\Middleware;
-
 
 use Closure;
 use Illuminate\Http\Request;
@@ -19,7 +25,7 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if (!$user){
+        if (! $user) {
             throw new UnauthorizedException();
         }
 
