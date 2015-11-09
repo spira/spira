@@ -13,77 +13,74 @@ use Laravel\Lumen\Application;
 //use Illuminate\Support\Facades\Event;
 //Event::listen('illuminate.query', function($sql, $params) { echo($sql); var_dump($params); });
 
-$app->get('/', 'ApiaryController@index');
+$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuthorization'], function (Application $app) {
 
-$app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
+    $app->get('auth/jwt/user/{userId}', 'AuthController@loginAsUser');
 
-$app->get('timezones', 'TimezoneController@getAll');
-$app->get('countries', 'CountriesController@getAll');
+    $app->get('users/', ['uses' => 'UserController@getAllPaginated']);
+    $app->get('users/{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
+    $app->put('users/{id}', ['uses' => 'UserController@putOne']);
+    $app->patch('users/{id}', ['uses' => 'UserController@patchOne']);
+    $app->delete('users/{id}', ['uses' => 'UserController@deleteOne']);
+    $app->get('users/{id}/roles', ['uses' => 'PermissionsController@getAll', ]);
+    $app->put('users/{id}/roles', ['uses' => 'PermissionsController@putManyReplace']);
+    $app->get('users/{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
+    $app->put('users/{id}/profile', ['uses' => 'UserProfileController@putOne']);
+    $app->patch('users/{id}/profile', ['uses' => 'UserProfileController@patchOne']);
+    $app->get('users/{id}/credentials', ['uses' => 'UserCredentialController@getOne', 'as' => App\Models\UserCredential::class]);
+    $app->put('users/{id}/credentials', ['uses' => 'UserCredentialController@putOne']);
+    $app->patch('users/{id}/credentials', ['uses' => 'UserCredentialController@patchOne']);
+    $app->delete('users/{id}/credentials', ['uses' => 'UserCredentialController@deleteOne']);
+    $app->delete('users/{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
 
-$app->group(['prefix' => 'users', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('/', ['uses' => 'UserController@getAllPaginated']);
-    $app->get('{id}', ['uses' => 'UserController@getOne', 'as' => App\Models\User::class]);
-    $app->put('{id}', ['uses' => 'UserController@putOne']);
-    $app->patch('{id}', ['uses' => 'UserController@patchOne']);
-    $app->delete('{id}', ['uses' => 'UserController@deleteOne']);
+    $app->get('roles/', ['uses' => 'RoleController@getAll']);
 
-    $app->get('/{id}/roles', ['uses' => 'PermissionsController@getAll', 'middleware' => 'auth']);
-    $app->put('/{id}/roles', ['uses' => 'PermissionsController@putManyReplace', 'middleware' => 'auth']);
+    $app->post('articles/', 'ArticleController@postOne');
+    $app->put('articles/{id}', 'ArticleController@putOne');
+    $app->patch('articles/{id}', 'ArticleController@patchOne');
+    $app->delete('articles/{id}', 'ArticleController@deleteOne');
+    $app->put('articles/{id}/localizations/{region}', 'ArticleController@putOneLocalization');
+    $app->put('articles/{id}/meta', 'ArticleMetaController@putManyAdd');
+    $app->delete('articles/{id}/meta/{childId}', 'ArticleMetaController@deleteOne');
+    $app->post('articles/{id}/comments', 'ArticleCommentController@postOne');
+    $app->put('articles/{id}/tags', 'ArticleTagController@putManyReplace');
+    $app->put('articles/{id}/sections', 'ArticleSectionController@putManyAdd');
+    $app->delete('articles/{id}/sections', 'ArticleSectionController@deleteMany');
+    $app->delete('articles/{id}/sections/{childId}', 'ArticleSectionController@deleteOne');
+    $app->put('articles/{id}/sections/{childId}/localizations/{region}', 'ArticleSectionController@putOneChildLocalization');
+    $app->put('articles/{id}/article-images', 'ArticleImageController@putManyAdd');
+    $app->delete('articles/{id}/article-images', 'ArticleImageController@deleteMany');
 
-    $app->get('{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
-    $app->put('{id}/profile', ['uses' => 'UserProfileController@putOne']);
-    $app->patch('{id}/profile', ['uses' => 'UserProfileController@patchOne']);
-
-    $app->get('{id}/credentials', ['uses' => 'UserCredentialController@getOne', 'as' => App\Models\UserCredential::class]);
-    $app->put('{id}/credentials', ['uses' => 'UserCredentialController@putOne']);
-    $app->patch('{id}/credentials', ['uses' => 'UserCredentialController@patchOne']);
-    $app->delete('{id}/credentials', ['uses' => 'UserCredentialController@deleteOne']);
-
-    $app->delete('{email}/password', ['uses' => 'UserController@resetPassword']);
-
-    $app->delete('{id}/socialLogin/{provider}', ['uses' => 'UserController@unlinkSocialLogin']);
 });
 
-$app->group(['prefix' => 'roles', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('/', ['uses' => 'RoleController@getAll']);
-});
+$app->group(['namespace' => 'App\Http\Controllers'], function (Application $app) {
 
-$app->group(['prefix' => 'articles'], function (Application $app) {
+    $app->get('/', 'ApiaryController@index');
+    $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
+    $app->get('timezones', 'TimezoneController@getAll');
+    $app->get('countries', 'CountriesController@getAll');
 
-    $app->get('/tag-categories', 'App\Http\Controllers\ArticleController@getAllTagCategories');
+    $app->get('auth/jwt/login', 'AuthController@login');
+    $app->get('auth/jwt/refresh', 'AuthController@refresh');
+    $app->get('auth/jwt/token', 'AuthController@token');
+    $app->get('auth/social/{provider}', 'AuthController@redirectToProvider');
+    $app->get('auth/social/{provider}/callback', 'AuthController@handleProviderCallback');
+    $app->get('auth/sso/{requester}', 'AuthController@singleSignOn');
 
-    $app->get('/', 'App\Http\Controllers\ArticleController@getAllPaginated');
-    $app->get('{id}', ['as' => \App\Models\Article::class, 'uses' => 'App\Http\Controllers\ArticleController@getOne']);
-    $app->post('/', 'App\Http\Controllers\ArticleController@postOne');
-    $app->put('{id}', 'App\Http\Controllers\ArticleController@putOne');
-    $app->patch('{id}', 'App\Http\Controllers\ArticleController@patchOne');
-    $app->delete('{id}', 'App\Http\Controllers\ArticleController@deleteOne');
+    $app->delete('users/{email}/password', ['uses' => 'UserController@resetPassword']);
 
-    $app->get('{id}/localizations', 'App\Http\Controllers\ArticleController@getAllLocalizations');
-    $app->get('{id}/localizations/{region}', 'App\Http\Controllers\ArticleController@getOneLocalization');
-    $app->put('{id}/localizations/{region}', 'App\Http\Controllers\ArticleController@putOneLocalization');
+    $app->get('articles/tag-categories', 'ArticleController@getAllTagCategories');
+    $app->get('articles/', 'ArticleController@getAllPaginated');
+    $app->get('articles/{id}', ['as' => \App\Models\Article::class, 'uses' => 'ArticleController@getOne']);
+    $app->get('articles/{id}/localizations', 'ArticleController@getAllLocalizations');
+    $app->get('articles/{id}/localizations/{region}', 'ArticleController@getOneLocalization');
+    $app->get('articles/{id}/permalinks', 'ArticlePermalinkController@getAll');
+    $app->get('articles/{id}/meta', 'ArticleMetaController@getAll');
+    $app->get('articles/{id}/comments', 'ArticleCommentController@getAll');
+    $app->get('articles/{id}/tags', 'ArticleTagController@getAll');
+    $app->get('articles/{id}/sections', 'ArticleSectionController@getAll');
+    $app->get('articles/{id}/article-images', 'ArticleImageController@getAll');
 
-    $app->get('{id}/permalinks', 'App\Http\Controllers\ArticlePermalinkController@getAll');
-
-    $app->get('{id}/meta', 'App\Http\Controllers\ArticleMetaController@getAll');
-    $app->put('{id}/meta', 'App\Http\Controllers\ArticleMetaController@putManyAdd');
-    $app->delete('{id}/meta/{childId}', 'App\Http\Controllers\ArticleMetaController@deleteOne');
-
-    $app->get('{id}/comments', 'App\Http\Controllers\ArticleCommentController@getAll');
-    $app->post('{id}/comments', 'App\Http\Controllers\ArticleCommentController@postOne');
-
-    $app->get('{id}/tags', 'App\Http\Controllers\ArticleTagController@getAll');
-    $app->put('{id}/tags', 'App\Http\Controllers\ArticleTagController@putManyReplace');
-
-    $app->get('{id}/sections', 'App\Http\Controllers\ArticleSectionController@getAll');
-    $app->put('{id}/sections', 'App\Http\Controllers\ArticleSectionController@putManyAdd');
-    $app->delete('{id}/sections', 'App\Http\Controllers\ArticleSectionController@deleteMany');
-    $app->delete('{id}/sections/{childId}', 'App\Http\Controllers\ArticleSectionController@deleteOne');
-    $app->put('{id}/sections/{childId}/localizations/{region}', 'App\Http\Controllers\ArticleSectionController@putOneChildLocalization');
-
-    $app->get('{id}/article-images', 'App\Http\Controllers\ArticleImageController@getAll');
-    $app->put('{id}/article-images', 'App\Http\Controllers\ArticleImageController@putManyAdd');
-    $app->delete('{id}/article-images', 'App\Http\Controllers\ArticleImageController@deleteMany');
 });
 
 $app->group(['prefix' => 'tags'], function (Application $app) {
@@ -137,18 +134,6 @@ $app->group(['prefix' => 'test'], function (Application $app) {
     $app->delete('/entities/{id}/children', 'App\Http\Controllers\ChildTestController@deleteMany');
 
     $app->put('/entities/{id}/child/{childId}/localizations/{region}', 'App\Http\Controllers\ChildTestController@putOneChildLocalization');
-});
-
-$app->group(['prefix' => 'auth', 'namespace' => 'App\Http\Controllers'], function (Application $app) {
-    $app->get('jwt/login', 'AuthController@login');
-    $app->get('jwt/refresh', 'AuthController@refresh');
-    $app->get('jwt/token', 'AuthController@token');
-    $app->get('jwt/user/{userId}', 'AuthController@loginAsUser');
-
-    $app->get('social/{provider}', 'AuthController@redirectToProvider');
-    $app->get('social/{provider}/callback', 'AuthController@handleProviderCallback');
-
-    $app->get('sso/{requester}', 'AuthController@singleSignOn');
 });
 
 $app->group(['prefix' => 'cloudinary', 'namespace' => 'App\Http\Controllers'], function (Application $app) {

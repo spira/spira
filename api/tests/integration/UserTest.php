@@ -50,7 +50,7 @@ class UserTest extends TestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
-        $this->assertException('Denied', 403, 'ForbiddenException');
+        $this->assertException('Unauthorized', 401, 'UnauthorizedException');
     }
 
     public function testGetAllPaginatedByAdminUser()
@@ -128,12 +128,42 @@ class UserTest extends TestCase
         $this->assertJsonArray();
     }
 
+    public function testGetProfileByAdmin()
+    {
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+        $userToGet = $this->createUser();
+        $userToGet->userProfile()->save($this->getFactory(UserProfile::class)->make());
+        $token = $this->tokenFromUser($user);
+
+        $this->getJson('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+    }
+
+    public function testGetProfileBySelf()
+    {
+        $user = $this->createUser();
+        $userToGet = $user;
+        $userToGet->userProfile()->save($this->getFactory(UserProfile::class)->make());
+        $token = $this->tokenFromUser($user);
+
+        $this->getJson('/users/'.$userToGet->user_id.'/profile', [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        ]);
+
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+    }
+
     public function testGetProfileByGuestUser()
     {
-        $this->markTestSkipped('Permissions have not been implemented yet.');
-
         $user = $this->createUser();
         $userToGet = $this->createUser();
+        $userToGet->userProfile()->save($this->getFactory(UserProfile::class)->make());
         $token = $this->tokenFromUser($user);
 
         $this->getJson('/users/'.$userToGet->user_id.'/profile', [

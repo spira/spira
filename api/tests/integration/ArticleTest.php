@@ -663,7 +663,7 @@ class ArticleTest extends TestCase
         $body = 'A comment';
         $article = factory(Article::class)->create();
 
-        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body]);
+        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body], ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(401);
     }

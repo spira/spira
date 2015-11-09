@@ -34,6 +34,18 @@ return [
         'type' => 'permission',
         'description' => 'Delete user by id',
     ],
+    UserProfileController::class.'@getOne' => [
+        'type' => 'permission',
+        'description' => 'Get user profile record by id',
+    ],
+    UserProfileController::class.'@putOne' => [
+        'type' => 'permission',
+        'description' => 'Update/Add user profile record by id',
+    ],
+    UserProfileController::class.'@patchOne' => [
+        'type' => 'permission',
+        'description' => 'Update user profile record by id',
+    ],
     PermissionsController::class.'@getAll' => [
         'type' => 'permission',
         'description' => 'Get all roles assigned to user',
@@ -85,6 +97,9 @@ return [
         'children' => [
             UserController::class.'@getOne',
             UserController::class.'@patchOne',
+            UserProfileController::class.'@getOne',
+            UserProfileController::class.'@patchOne',
+            UserProfileController::class.'@putOne',
             PermissionsController::class.'@getAll',
         ],
     ],
@@ -107,6 +122,7 @@ return [
             UserController::class.'@getAllPaginated',
             UserController::class.'@patchOne',
             UserController::class.'@deleteOne',
+            UserProfileController::class.'@getOne',
             PermissionsController::class.'@getAll',
             'impersonateNonAdmin',
             'ReAssignNonAdmin',

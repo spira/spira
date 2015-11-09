@@ -14,7 +14,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Spira\Contract\Exception\UnauthorizedException;
 
-class AuthMiddleware
+class AuthorizationMiddleware
 {
     /**
      * @param Request $request

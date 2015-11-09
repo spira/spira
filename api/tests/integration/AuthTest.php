@@ -34,6 +34,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -59,6 +60,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'foobar',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -75,6 +77,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -89,6 +92,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -108,6 +112,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => 'password',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -138,6 +143,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => '',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -157,6 +163,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
+            'HTTP_AUTHORIZATION' => false
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -254,7 +261,7 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingToken()
     {
-        $this->getJson('/auth/jwt/refresh');
+        $this->getJson('/auth/jwt/refresh', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertException('The token can not be parsed from the Request', 400, 'TokenIsMissingException');
     }
@@ -276,7 +283,7 @@ class AuthTest extends TestCase
 
     public function testMissingToken()
     {
-        $this->getJson('/auth/jwt/token');
+        $this->getJson('/auth/jwt/token', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertException('Single use token not provided.', 400, 'TokenIsMissingException');
     }
@@ -337,14 +344,14 @@ class AuthTest extends TestCase
 
     public function testInvalidProvider()
     {
-        $this->getJson('/auth/social/foobar');
+        $this->getJson('/auth/social/foobar', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertException('Provider', 501, 'NotImplementedException');
     }
 
     public function testProviderRedirect()
     {
-        $this->getJson('/auth/social/facebook');
+        $this->getJson('/auth/social/facebook', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(302);
     }
@@ -367,7 +374,7 @@ class AuthTest extends TestCase
                 ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
         }
 
-        $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
+        $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl), ['HTTP_AUTHORIZATION' => false]);
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -383,7 +390,7 @@ class AuthTest extends TestCase
     {
         $returnUrl = 'http://www.foo.bar/';
 
-        $this->getJson('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
+        $this->getJson('/auth/social/facebook?returnUrl='.urlencode($returnUrl), ['HTTP_AUTHORIZATION' => false]);
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -406,7 +413,7 @@ class AuthTest extends TestCase
                 'token' => 'foobar',
             ]);
 
-        $this->getJson('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertException('no email', 422, 'UnprocessableEntityException');
     }
@@ -430,7 +437,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->getJson('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(302);
 
@@ -472,7 +479,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->getJson('/auth/social/facebook/callback');
+        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(302);
 
@@ -499,7 +506,7 @@ class AuthTest extends TestCase
 
     public function testSingleSignOnVanillaNoParameters()
     {
-        $this->getJson('/auth/sso/vanilla');
+        $this->getJson('/auth/sso/vanilla', ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(200);
         $this->assertContains('parameter is missing', $this->response->getContent());
@@ -606,11 +613,9 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginUnauthorized()
     {
-        $this->markTestIncomplete('Authorization required routes have not yet been implemented');
-
         $impersonateUser = $this->createUser();
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), ['HTTP_AUTHORIZATION' => false]);
 
         $this->assertResponseStatus(401);
     }

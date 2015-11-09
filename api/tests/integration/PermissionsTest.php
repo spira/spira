@@ -10,13 +10,13 @@
 
 class PermissionsTest extends TestCase
 {
-    public function testNotAuthManhRoles()
+    public function testNotAuthManyRoles()
     {
         $adminUser = $this->createUser();
         $this->assignSuperAdmin($adminUser);
         $this->assignTest($adminUser);
 
-        $this->getJson('/users/'.$adminUser->user_id.'/roles');
+        $this->getJson('/users/'.$adminUser->user_id.'/roles', ['HTTP_AUTHORIZATION' => false]);
         $this->assertException('Unauthorized', 401, 'UnauthorizedException');
     }
 
