@@ -15,6 +15,12 @@ use App\Models\User;
 
 class UserProfileController extends ChildEntityController
 {
+    /**
+     * Enable permissions checks.
+     */
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     protected $relationName = 'userProfile';
 
     public function __construct(User $parentModel, EloquentModelTransformer $transformer)
