@@ -97,6 +97,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         $content = json_encode($data);
 
         $headers = $this->addJsonHeaders($headers, $content);
+        $headers = $this->addTokenHeaders($headers);
         $server = $this->transformHeadersToServerVars($headers);
 
         $this->call($method, $uri, [], [], [], $server, $content);
@@ -117,6 +118,23 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
             $headers['Accept'] = 'application/json';
 
             return $headers;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param array $headers
+     * @return array
+     */
+    protected function addTokenHeaders(array $headers)
+    {
+        if (!isset($headers['HTTP_AUTHORIZATION'])){
+            $user = $this->createUser();
+            $token = $this->tokenFromUser($user);
+            $headers['HTTP_AUTHORIZATION'] = 'Bearer '.$token;
+        }elseif (!$headers['HTTP_AUTHORIZATION']){
+            unset($headers['HTTP_AUTHORIZATION']);
         }
 
         return $headers;
