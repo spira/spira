@@ -10,6 +10,7 @@
 
 namespace App\Http\Transformers;
 
+use Spira\Model\Model\BaseModel;
 use Spira\Rbac\Item\Item;
 
 class RoleTransformer extends EloquentModelTransformer
@@ -30,5 +31,10 @@ class RoleTransformer extends EloquentModelTransformer
         $object['type'] = Item::TYPE_ROLE;
 
         return $object;
+    }
+
+    protected function applyCreated(BaseModel $object)
+    {
+        $object->setVisible(['key']);
     }
 }

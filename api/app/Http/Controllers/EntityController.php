@@ -109,7 +109,8 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($model);
+            ->created()
+            ->item($model);
     }
 
     /**
@@ -132,7 +133,8 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($model);
+            ->created()
+            ->item($model);
     }
 
     /**
@@ -159,7 +161,8 @@ abstract class EntityController extends ApiController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdCollection($modelCollection);
+            ->created()
+            ->collection($modelCollection);
     }
 
     /**
