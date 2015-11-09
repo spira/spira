@@ -22,7 +22,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->put('users/{id}', ['uses' => 'UserController@putOne']);
     $app->patch('users/{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('users/{id}', ['uses' => 'UserController@deleteOne']);
-    $app->get('users/{id}/roles', ['uses' => 'PermissionsController@getAll', ]);
+    $app->get('users/{id}/roles', ['uses' => 'PermissionsController@getAll']);
     $app->put('users/{id}/roles', ['uses' => 'PermissionsController@putManyReplace']);
     $app->get('users/{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
     $app->put('users/{id}/profile', ['uses' => 'UserProfileController@putOne']);

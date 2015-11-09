@@ -34,7 +34,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -60,7 +60,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'foobar',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -77,7 +77,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -92,7 +92,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -112,7 +112,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -143,7 +143,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -163,7 +163,7 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false
+            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);

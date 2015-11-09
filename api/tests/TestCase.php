@@ -129,11 +129,11 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     protected function addTokenHeaders(array $headers)
     {
-        if (!isset($headers['HTTP_AUTHORIZATION'])){
+        if (! isset($headers['HTTP_AUTHORIZATION'])) {
             $user = $this->createUser();
             $token = $this->tokenFromUser($user);
             $headers['HTTP_AUTHORIZATION'] = 'Bearer '.$token;
-        }elseif (!$headers['HTTP_AUTHORIZATION']){
+        } elseif (! $headers['HTTP_AUTHORIZATION']) {
             unset($headers['HTTP_AUTHORIZATION']);
         }
 
