@@ -36,10 +36,11 @@ class UserProfileTest extends TestCase
     public function testGetOne()
     {
         $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
 
         $user->userProfile()->save($this->getFactory(UserProfile::class)->make());
 
-        $this->getJson('/users/'.$user->user_id.'/profile');
+        $this->getJson('/users/'.$user->user_id.'/profile', ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
 
         $this->assertResponseStatus(200);
 
@@ -52,6 +53,7 @@ class UserProfileTest extends TestCase
     public function testPutOne()
     {
         $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
 
         $userProfile = $this->getFactory(UserProfile::class)->make([
             'website' => 'http://some-website.com',
@@ -60,7 +62,7 @@ class UserProfileTest extends TestCase
 
         $profileTransformed = $this->getFactory(UserProfile::class)->setModel($userProfile)->transformed();
 
-        $this->putJson('/users/'.$user->user_id.'/profile', $profileTransformed);
+        $this->putJson('/users/'.$user->user_id.'/profile', $profileTransformed, ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
 
         $this->assertResponseStatus(201);
 
@@ -76,6 +78,7 @@ class UserProfileTest extends TestCase
     public function testPatchOne()
     {
         $user = $this->createUser();
+        $token = $this->tokenFromUser($user);
 
         $user->userProfile()->save($this->getFactory(UserProfile::class)->make());
 
@@ -83,7 +86,7 @@ class UserProfileTest extends TestCase
 
         $profileTransformed = $this->getFactory(UserProfile::class)->setModel($user->userProfile)->transformed();
 
-        $this->patchJson('/users/'.$user->user_id.'/profile', $profileTransformed);
+        $this->patchJson('/users/'.$user->user_id.'/profile', $profileTransformed, ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
 
         $this->assertResponseStatus(204);
 
