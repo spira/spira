@@ -40,6 +40,9 @@ class EloquentModelTransformer extends BaseTransformer
         }
 
         if (($object instanceof BaseModel)) {
+            if ($this->isCreated()) {
+                $this->applyCreated($object);
+            }
             $this->applyLocalizations($object);
         }
 
@@ -259,6 +262,23 @@ class EloquentModelTransformer extends BaseTransformer
                 }
             }
         }
+    }
+
+    /**
+     * Attempt to find localizations in cache and replace the attributes with the items.
+     * @param $object
+     */
+    protected function applyCreated(BaseModel $object)
+    {
+        $object->setVisible(['']);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCreated()
+    {
+        return isset($this->options['created']) && $this->options['created'];
     }
 
     /**
