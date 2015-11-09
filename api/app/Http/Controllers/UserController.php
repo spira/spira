@@ -79,7 +79,8 @@ class UserController extends EntityController
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
-            ->createdItem($model);
+            ->created()
+            ->item($model);
     }
 
     /**

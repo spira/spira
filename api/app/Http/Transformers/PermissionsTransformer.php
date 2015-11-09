@@ -15,6 +15,8 @@ use Spira\Rbac\Item\Item;
 
 class PermissionsTransformer extends EloquentModelTransformer
 {
+    public $addSelfKey = false;
+
     private $routes;
 
     public function __construct(TransformerService $service)
