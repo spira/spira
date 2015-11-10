@@ -95,7 +95,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     public function withAuthorization($header = null)
     {
-        if (is_null($header)){
+        if (is_null($header)) {
             $user = (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
             $header = 'Bearer '.$this->tokenFromUser($user);
         }
@@ -150,8 +150,8 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
      */
     protected function addTokenHeaders(array $headers)
     {
-        if ($this->authHeader && !isset($headers['HTTP_AUTHORIZATION'])) {
-            $headers['HTTP_AUTHORIZATION'] = $this->authHeader ;
+        if ($this->authHeader && ! isset($headers['HTTP_AUTHORIZATION'])) {
+            $headers['HTTP_AUTHORIZATION'] = $this->authHeader;
         }
 
         return $headers;
