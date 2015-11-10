@@ -47,7 +47,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->put('articles/{id}/sections/{childId}/localizations/{region}', 'ArticleSectionController@putOneChildLocalization');
     $app->put('articles/{id}/article-images', 'ArticleImageController@putManyAdd');
     $app->delete('articles/{id}/article-images', 'ArticleImageController@deleteMany');
-    
+
     $app->post('tags/', 'TagController@postOne');
     $app->patch('tags/{id}', 'TagController@patchOne');
     $app->delete('tags/{id}', 'TagController@deleteOne');
@@ -130,5 +130,3 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('test/entities/{id}/child/{childId}', 'ChildTestController@getOne');
 
 });
-
-
