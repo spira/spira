@@ -16,7 +16,7 @@ class PermissionsTest extends TestCase
         $this->assignSuperAdmin($adminUser);
         $this->assignTest($adminUser);
 
-        $this->getJson('/users/'.$adminUser->user_id.'/roles', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/users/'.$adminUser->user_id.'/roles');
         $this->assertException('Unauthorized', 401, 'UnauthorizedException');
     }
 
@@ -27,8 +27,7 @@ class PermissionsTest extends TestCase
         $this->assignTest($adminUser);
 
         $token = $this->tokenFromUser($adminUser);
-        $this->getJson('/users/'.$adminUser->user_id.'/roles', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$adminUser->user_id.'/roles', [
             'With-Nested' => 'permissions',
         ]);
 
@@ -71,9 +70,7 @@ class PermissionsTest extends TestCase
 
         $token = $this->tokenFromUser($adminUser);
 
-        $this->getJson('/users/'.$someUser->user_id.'/roles', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$someUser->user_id.'/roles');
 
         $result = json_decode($this->response->getContent());
 
@@ -93,9 +90,7 @@ class PermissionsTest extends TestCase
 
         $token = $this->tokenFromUser($adminUser);
 
-        $this->getJson('/users/'.$adminUser->user_id.'/roles', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$adminUser->user_id.'/roles');
 
         $result = json_decode($this->response->getContent());
 
@@ -116,9 +111,7 @@ class PermissionsTest extends TestCase
 
         $token = $this->tokenFromUser($notAdminUser);
 
-        $this->getJson('/users/'.$someUser->user_id.'/roles', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$someUser->user_id.'/roles');
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -130,9 +123,7 @@ class PermissionsTest extends TestCase
 
         $token = $this->tokenFromUser($notAdminUser);
 
-        $this->getJson('/users/'.$notAdminUser->user_id.'/roles', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$notAdminUser->user_id.'/roles');
 
         $result = json_decode($this->response->getContent());
 
@@ -157,9 +148,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $object = json_decode($this->response->getContent());
 
@@ -185,9 +174,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertResponseStatus(201);
     }
@@ -207,9 +194,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -229,9 +214,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -252,9 +235,7 @@ class PermissionsTest extends TestCase
         $someUser = $this->createUser();
         $this->assignAdmin($someUser);
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -275,9 +256,7 @@ class PermissionsTest extends TestCase
         $someUser = $this->createUser();
         $this->assignSuperAdmin($someUser);
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -296,9 +275,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -318,9 +295,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertResponseStatus(201);
     }
@@ -340,9 +315,7 @@ class PermissionsTest extends TestCase
 
         $someUser = $this->createUser();
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertResponseStatus(201);
     }
@@ -363,9 +336,7 @@ class PermissionsTest extends TestCase
         $someUser = $this->createUser();
         $this->assignAdmin($someUser);
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertResponseStatus(201);
     }
@@ -386,9 +357,7 @@ class PermissionsTest extends TestCase
         $someUser = $this->createUser();
         $this->assignSuperAdmin($someUser);
 
-        $this->putJson('/users/'.$someUser->user_id.'/roles', $roles, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$someUser->user_id.'/roles', $roles);
 
         $this->assertResponseStatus(201);
     }

@@ -89,7 +89,7 @@ class ArticleImageTest extends TestCase
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
-        $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $object = json_decode($this->response->getContent());
 
@@ -114,7 +114,7 @@ class ArticleImageTest extends TestCase
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
-        $this->putJson('/articles/'.$article->article_id.'/article-images', $images);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
@@ -136,7 +136,7 @@ class ArticleImageTest extends TestCase
 
         $childCount = Article::find($article->article_id)->articleImages->count();
 
-        $this->deleteJson('/articles/'.$article->article_id.'/article-images', $images);
+        $this->withAuthorization()->deleteJson('/articles/'.$article->article_id.'/article-images', $images);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();

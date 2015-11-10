@@ -34,7 +34,7 @@ class UserStorySeeder extends BaseSeeder
         $user = $this->createUser([
             'first_name' => 'John',
             'last_name' => 'Smith',
-            'email' => 'john.smith@example.com',
+            'email' => TestCase::TEST_ADMIN_USER_EMAIL,
             'avatar_img_url' => $this->faker->imageUrl(100, 100, 'people'),
             'avatar_img_id' => $images->random()->image_id,
         ]);
@@ -42,6 +42,14 @@ class UserStorySeeder extends BaseSeeder
         $user->roles()->saveMany([
             new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
             new Role(['role_key' => Role::ADMIN_ROLE]),
+        ]);
+
+        $nonAdmin = $this->createUser([
+            'first_name' => 'Nick',
+            'last_name' => 'Jackson',
+            'email' => TestCase::TEST_USER_EMAIL,
+            'avatar_img_url' => $this->faker->imageUrl(100, 100, 'people'),
+            'avatar_img_id' => $images->random()->image_id,
         ]);
 
         for ($i = 0; $i < 99; $i++) {

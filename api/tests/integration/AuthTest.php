@@ -20,9 +20,7 @@ class AuthTest extends TestCase
 {
     protected function callRefreshToken($token)
     {
-        $this->getJson('/auth/jwt/refresh', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/auth/jwt/refresh');
     }
 
     public function testLogin()
@@ -34,7 +32,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -60,7 +57,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'foobar',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -77,7 +73,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -92,7 +87,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -112,7 +106,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -143,7 +136,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => 'foo@bar.net',
             'PHP_AUTH_PW'   => '',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $body = json_decode($this->response->getContent());
@@ -163,7 +155,6 @@ class AuthTest extends TestCase
         $this->getJson('/auth/jwt/login', [
             'PHP_AUTH_USER' => $user->email,
             'PHP_AUTH_PW'   => 'password',
-            'HTTP_AUTHORIZATION' => false,
         ]);
 
         $array = json_decode($this->response->getContent(), true);
@@ -261,7 +252,7 @@ class AuthTest extends TestCase
 
     public function testRefreshMissingToken()
     {
-        $this->getJson('/auth/jwt/refresh', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/jwt/refresh');
 
         $this->assertException('The token can not be parsed from the Request', 400, 'TokenIsMissingException');
     }
@@ -272,9 +263,7 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $array = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
@@ -283,7 +272,7 @@ class AuthTest extends TestCase
 
     public function testMissingToken()
     {
-        $this->getJson('/auth/jwt/token', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/jwt/token');
 
         $this->assertException('Single use token not provided.', 400, 'TokenIsMissingException');
     }
@@ -291,9 +280,7 @@ class AuthTest extends TestCase
     public function testInvalidToken()
     {
         $token = 'invalid';
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertResponseStatus(422);
     }
@@ -304,15 +291,11 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertResponseOk();
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertException('Invalid single use token', 422, 'TokenInvalidException');
     }
@@ -344,14 +327,14 @@ class AuthTest extends TestCase
 
     public function testInvalidProvider()
     {
-        $this->getJson('/auth/social/foobar', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/foobar');
 
         $this->assertException('Provider', 501, 'NotImplementedException');
     }
 
     public function testProviderRedirect()
     {
-        $this->getJson('/auth/social/facebook', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/facebook');
 
         $this->assertResponseStatus(302);
     }
@@ -374,7 +357,7 @@ class AuthTest extends TestCase
                 ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
         }
 
-        $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl), ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -390,7 +373,7 @@ class AuthTest extends TestCase
     {
         $returnUrl = 'http://www.foo.bar/';
 
-        $this->getJson('/auth/social/facebook?returnUrl='.urlencode($returnUrl), ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/facebook?returnUrl='.urlencode($returnUrl));
 
         // Parse the oauth token from the response and get the cached value
         $this->assertTrue($this->response->headers->has('location'));
@@ -413,7 +396,7 @@ class AuthTest extends TestCase
                 'token' => 'foobar',
             ]);
 
-        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertException('no email', 422, 'UnprocessableEntityException');
     }
@@ -437,7 +420,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(302);
 
@@ -479,7 +462,7 @@ class AuthTest extends TestCase
             ->once()
             ->andReturn('http://foo.bar');
 
-        $this->getJson('/auth/social/facebook/callback', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/social/facebook/callback');
 
         $this->assertResponseStatus(302);
 
@@ -506,7 +489,7 @@ class AuthTest extends TestCase
 
     public function testSingleSignOnVanillaNoParameters()
     {
-        $this->getJson('/auth/sso/vanilla', ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/sso/vanilla');
 
         $this->assertResponseStatus(200);
         $this->assertContains('parameter is missing', $this->response->getContent());
@@ -589,9 +572,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $response = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
@@ -615,7 +596,7 @@ class AuthTest extends TestCase
     {
         $impersonateUser = $this->createUser();
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), ['HTTP_AUTHORIZATION' => false]);
+        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(401);
     }
@@ -630,9 +611,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(403);
     }
@@ -650,9 +629,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(403);
     }
@@ -670,9 +647,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(200);
     }

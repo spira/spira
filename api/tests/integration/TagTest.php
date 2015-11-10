@@ -98,7 +98,7 @@ class TagTest extends TestCase
     {
         $tag = $this->getFactory(Tag::class)->transformed();
 
-        $this->postJson('/tags', $tag);
+        $this->withAuthorization()->postJson('/tags', $tag);
 
         $this->shouldReturnJson();
 
@@ -115,7 +115,7 @@ class TagTest extends TestCase
             ->customize(['tag' => 'This tag is longer than 30 characters'])
             ->transformed();
 
-        $this->postJson('/tags', $tag);
+        $this->withAuthorization()->postJson('/tags', $tag);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
@@ -133,7 +133,7 @@ class TagTest extends TestCase
             ->customize(['tag' => 'foo'])
             ->transformed();
 
-        $this->patchJson('/tags/'.$tag['tagId'], $tag);
+        $this->withAuthorization()->patchJson('/tags/'.$tag['tagId'], $tag);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
@@ -149,7 +149,7 @@ class TagTest extends TestCase
             ->customize(['tag' => 'This tag is longer than 30 characters'])
             ->transformed();
 
-        $this->patchJson('/tags/'.$tag['tagId'], $tag);
+        $this->withAuthorization()->patchJson('/tags/'.$tag['tagId'], $tag);
         $this->shouldReturnJson();
         $this->assertResponseStatus(422);
         $object = json_decode($this->response->getContent());
@@ -186,7 +186,7 @@ class TagTest extends TestCase
 
         array_push($newTags, $existingTagWillStay);
 
-        $this->putJson('/tags/'.$entity->tag_id.'/child-tags', $newTags);
+        $this->withAuthorization()->putJson('/tags/'.$entity->tag_id.'/child-tags', $newTags);
 
         $this->assertResponseStatus(201);
 

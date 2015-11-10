@@ -82,7 +82,7 @@ class SectionTest extends TestCase
         $article->sections()->saveMany($sections);
 
         $newSections = $this->getFactory(Section::class)->count(2)->transformed();
-        $this->putJson('/articles/'.$article->article_id.'/sections', $newSections);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', $newSections);
 
         $this->assertResponseStatus(201);
 
@@ -101,7 +101,7 @@ class SectionTest extends TestCase
 
         $deleteSection = $sections->first();
 
-        $this->deleteJson('/articles/'.$article->article_id.'/sections/'.$deleteSection->section_id);
+        $this->withAuthorization()->deleteJson('/articles/'.$article->article_id.'/sections/'.$deleteSection->section_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -119,7 +119,7 @@ class SectionTest extends TestCase
             ->customize(['content' => 10])
             ->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/sections', [$section]);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
@@ -134,7 +134,7 @@ class SectionTest extends TestCase
             ->customize(['type' => 'not_a_type'])
             ->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/sections', [$section]);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
@@ -168,7 +168,7 @@ class SectionTest extends TestCase
             ]])
             ->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection, $promoSection]);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection, $promoSection]);
 
         $this->assertResponseStatus(422);
     }
@@ -186,7 +186,7 @@ class SectionTest extends TestCase
             'sort_order' => array_pluck($newSections, 'sectionId'),
         ])->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/sections', $newSections);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', $newSections);
         $this->assertResponseStatus(201);
 
         $this->patchJson('/articles/'.$article->article_id, ['sectionsDisplay' => $sectionsDisplay]);
