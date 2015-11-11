@@ -27,7 +27,7 @@ trait HelpersTrait
      */
     protected function getFakerWithUniqueUserData()
     {
-        if (is_null(self::$userFaker)){
+        if (is_null(self::$userFaker)) {
             // Prepare an array with user data already used
             $users = User::all();
 
