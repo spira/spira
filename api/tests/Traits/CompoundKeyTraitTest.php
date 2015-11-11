@@ -37,7 +37,7 @@ class CompoundKeyTraitTest extends TestCase
         // Create an entity
         $entity = factory(App\Models\TestEntity::class)->create();
 
-        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
             'varchar' => 'foo',
             'decimal' => 0.234,
         ]);

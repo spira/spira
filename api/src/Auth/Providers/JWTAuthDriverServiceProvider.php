@@ -124,7 +124,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
 
         // due to lumen custom request alias rebinding
         // we are forced to duplicate user resolver callback to the request
-        $this->app->rebinding(Request::class, function ($app, $request) {
+        $this->app->rebinding(Request::class, function ($app, Request $request) {
             $request->setUserResolver(function () use ($app) {
                 return $app['auth']->user();
             });

@@ -124,7 +124,7 @@ class ArticleTagTest extends TestCase
 
         array_push($newTags, $existingTagWillStay);
 
-        $this->putJson('/articles/'.$entity->article_id.'/tags', $newTags);
+        $this->withAuthorization()->putJson('/articles/'.$entity->article_id.'/tags', $newTags);
 
         $this->assertResponseStatus(201);
 
@@ -157,11 +157,11 @@ class ArticleTagTest extends TestCase
             $newTag['_pivot']['tagGroupParentId'] = $this->articleGroupTagId;
         }
 
-        $this->putJson('/articles/'.$entity->article_id.'/tags', $tags);
+        $this->withAuthorization()->putJson('/articles/'.$entity->article_id.'/tags', $tags);
 
         $this->assertResponseStatus(201);
 
-        $this->putJson('/articles/'.$entity2->article_id.'/tags', $tags);
+        $this->withAuthorization()->putJson('/articles/'.$entity2->article_id.'/tags', $tags);
 
         $this->assertResponseStatus(201);
     }
@@ -191,7 +191,7 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(5, Article::find($entity->article_id)->tags->count());
         $tag = Article::find($entity->article_id)->tags->first();
 
-        $this->deleteJson('/tags/'.$tag->tag_id);
+        $this->withAuthorization()->deleteJson('/tags/'.$tag->tag_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -212,7 +212,7 @@ class ArticleTagTest extends TestCase
             ])
             ->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/tags', $tags);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/tags', $tags);
         $this->assertResponseStatus(201);
 
         $article = Article::find($article->article_id);

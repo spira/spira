@@ -12,7 +12,7 @@ class RoleTest extends TestCase
 {
     public function testGetAll()
     {
-        $this->getJson('/roles');
+        $this->withAuthorization()->getJson('/roles');
 
         $this->assertResponseOk();
         $this->shouldReturnJson();

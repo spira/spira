@@ -237,7 +237,7 @@ class AuthController extends ApiController
      */
     public function singleSignOn($requester, Request $request)
     {
-        $user = $this->auth->user();
+        $user = $request->user();
         $requester = SingleSignOnFactory::create($requester, $request, $user);
 
         return $requester->getResponse();

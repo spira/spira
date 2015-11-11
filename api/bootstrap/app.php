@@ -79,6 +79,7 @@ $app->middleware([
 
 $app->routeMiddleware([
     'transaction' => App\Http\Middleware\TransactionMiddleware::class,
+    'requireAuthorization' => App\Http\Middleware\AuthorizationMiddleware::class,
 ]);
 
 /*

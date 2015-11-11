@@ -400,7 +400,7 @@ class EntityTest extends TestCase
             ->makeVisible(['hidden'])
             ->transformed();
 
-        $this->postJson('/test/entities', $entity);
+        $this->withAuthorization()->postJson('/test/entities', $entity);
 
         $this->shouldReturnJson();
 
@@ -417,7 +417,7 @@ class EntityTest extends TestCase
             ->hide(['text'])
             ->transformed();
 
-        $this->postJson('/test/entities', $entity);
+        $this->withAuthorization()->postJson('/test/entities', $entity);
 
         $object = json_decode($this->response->getContent());
 
@@ -433,7 +433,7 @@ class EntityTest extends TestCase
         $entity = $this->getFactory(TestEntity::class)->makeVisible(['hidden'])->transformed();
         $rowCount = TestEntity::count();
 
-        $this->putJson('/test/entities/'.$entity['entityId'], $entity);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity['entityId'], $entity);
 
         $object = json_decode($this->response->getContent());
 
@@ -453,7 +453,7 @@ class EntityTest extends TestCase
             ->customize(['entityId' => (string) Uuid::uuid4()])
             ->transformed();
 
-        $this->putJson('/test/entities/'.$id, $data);
+        $this->withAuthorization()->putJson('/test/entities/'.$id, $data);
 
         $object = json_decode($this->response->getContent());
 
@@ -470,7 +470,7 @@ class EntityTest extends TestCase
             ->customize(['entityId' => 'foobar'])
             ->transformed();
 
-        $this->putJson('/test/entities/'.$entity['entityId'], $entity);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity['entityId'], $entity);
 
         $this->shouldReturnJson();
         $this->assertResponseStatus(500);
@@ -483,7 +483,7 @@ class EntityTest extends TestCase
             ->count(5)
             ->transformed();
 
-        $this->putJson('/test/entities', $entities);
+        $this->withAuthorization()->putJson('/test/entities', $entities);
         $this->assertResponseStatus(422);
     }
 
@@ -497,7 +497,7 @@ class EntityTest extends TestCase
             ->count(5)
             ->transformed();
 
-        $this->patchJson('/test/entities', $entities);
+        $this->withAuthorization()->patchJson('/test/entities', $entities);
         $this->assertResponseStatus(422);
     }
 
@@ -507,7 +507,7 @@ class EntityTest extends TestCase
 
         $rowCount = TestEntity::count();
 
-        $this->putJson('/test/entities', $entities);
+        $this->withAuthorization()->putJson('/test/entities', $entities);
 
         $object = json_decode($this->response->getContent());
 
@@ -528,7 +528,7 @@ class EntityTest extends TestCase
         $entities[1]['entityId'] = (string) Uuid::uuid4();
         $rowCount = TestEntity::count();
 
-        $this->putJson('/test/entities', $entities);
+        $this->withAuthorization()->putJson('/test/entities', $entities);
 
         $object = json_decode($this->response->getContent());
 
@@ -548,7 +548,7 @@ class EntityTest extends TestCase
 
         $rowCount = TestEntity::count();
 
-        $this->putJson('/test/entities', $entities);
+        $this->withAuthorization()->putJson('/test/entities', $entities);
 
         $object = json_decode($this->response->getContent());
 
@@ -567,7 +567,7 @@ class EntityTest extends TestCase
 
         $rowCount = TestEntity::count();
 
-        $this->putJson('/test/entities', $entities);
+        $this->withAuthorization()->putJson('/test/entities', $entities);
 
         $object = json_decode($this->response->getContent());
 
@@ -582,7 +582,7 @@ class EntityTest extends TestCase
     {
         $entity = factory(TestEntity::class)->create();
 
-        $this->patchJson('/test/entities/'.$entity->entity_id, ['varchar' => 'foobar']);
+        $this->withAuthorization()->patchJson('/test/entities/'.$entity->entity_id, ['varchar' => 'foobar']);
 
         $entity = TestEntity::find($entity->entity_id);
 
@@ -593,7 +593,7 @@ class EntityTest extends TestCase
 
     public function testPatchOneInvalidId()
     {
-        $this->patchJson('/test/entities/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
+        $this->withAuthorization()->patchJson('/test/entities/'.(string) Uuid::uuid4(), ['varchar' => 'foobar']);
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('entityId', $object->invalid);
         $this->assertEquals('The selected entity id is invalid.', $object->invalid->entityId[0]->message);
@@ -610,7 +610,7 @@ class EntityTest extends TestCase
             ];
         }, $entities->all());
 
-        $this->patchJson('/test/entities', $data);
+        $this->withAuthorization()->patchJson('/test/entities', $data);
 
         $entity = TestEntity::find($entities->random()->entity_id);
 
@@ -630,7 +630,7 @@ class EntityTest extends TestCase
             ];
         }, $entities->all());
 
-        $this->patchJson('/test/entities', $data);
+        $this->withAuthorization()->patchJson('/test/entities', $data);
         $object = json_decode($this->response->getContent());
 
         $this->assertObjectHasAttribute('entityId', $object->invalid[0]);
@@ -648,7 +648,7 @@ class EntityTest extends TestCase
             ];
         }, $entities->all());
 
-        $this->patchJson('/test/entities', $data);
+        $this->withAuthorization()->patchJson('/test/entities', $data);
         $object = json_decode($this->response->getContent());
 
         $this->assertObjectHasAttribute('multiWordColumnTitle', $object->invalid[0]);
@@ -660,7 +660,7 @@ class EntityTest extends TestCase
         $entity = factory(TestEntity::class)->create();
         $rowCount = TestEntity::count();
 
-        $this->deleteJson('/test/entities/'.$entity->entity_id);
+        $this->withAuthorization()->deleteJson('/test/entities/'.$entity->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -672,7 +672,7 @@ class EntityTest extends TestCase
         $entity = factory(TestEntity::class)->create();
         $rowCount = TestEntity::count();
 
-        $this->deleteJson('/test/entities/'.'c4b3c8d3-fa8b-4cf6-828a-072bcf7dc371');
+        $this->withAuthorization()->deleteJson('/test/entities/'.'c4b3c8d3-fa8b-4cf6-828a-072bcf7dc371');
 
         $object = json_decode($this->response->getContent());
 
@@ -686,7 +686,7 @@ class EntityTest extends TestCase
         $entities = factory(TestEntity::class, 5)->create()->all();
         $rowCount = TestEntity::count();
 
-        $this->deleteJson('/test/entities', $entities);
+        $this->withAuthorization()->deleteJson('/test/entities', $entities);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -700,7 +700,7 @@ class EntityTest extends TestCase
         $entities->first()->entity_id = (string) Uuid::uuid4();
         $entities->last()->entity_id = (string) Uuid::uuid4();
 
-        $this->deleteJson('/test/entities', $entities->all());
+        $this->withAuthorization()->deleteJson('/test/entities', $entities->all());
 
         $object = json_decode($this->response->getContent());
 
@@ -771,7 +771,7 @@ class EntityTest extends TestCase
         ];
 
         // Give entity a localization
-        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/'.$region, $localization);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/'.$region, $localization);
         $this->assertResponseStatus(201);
 
         // Get the saved localization
@@ -800,7 +800,7 @@ class EntityTest extends TestCase
             'decimal' => 0.17,
         ];
 
-        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', $localization);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', $localization);
         $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
     }
 

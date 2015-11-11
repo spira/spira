@@ -20,9 +20,7 @@ class AuthTest extends TestCase
 {
     protected function callRefreshToken($token)
     {
-        $this->getJson('/auth/jwt/refresh', [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/auth/jwt/refresh');
     }
 
     public function testLogin()
@@ -265,9 +263,7 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $array = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
@@ -284,9 +280,7 @@ class AuthTest extends TestCase
     public function testInvalidToken()
     {
         $token = 'invalid';
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertResponseStatus(422);
     }
@@ -297,15 +291,11 @@ class AuthTest extends TestCase
         $user = $this->createUser();
         Cache::put('login_token_'.$token, $user->user_id, 1);
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertResponseOk();
 
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertException('Invalid single use token', 422, 'TokenInvalidException');
     }
@@ -582,9 +572,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $response = json_decode($this->response->getContent(), true);
         $this->assertResponseOk();
@@ -606,8 +594,6 @@ class AuthTest extends TestCase
      */
     public function testImpersonationLoginUnauthorized()
     {
-        $this->markTestIncomplete('Authorization required routes have not yet been implemented');
-
         $impersonateUser = $this->createUser();
 
         $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
@@ -625,9 +611,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(403);
     }
@@ -645,9 +629,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(403);
     }
@@ -665,9 +647,7 @@ class AuthTest extends TestCase
 
         $originalUserToken = $this->tokenFromUser($originalUser);
 
-        $this->getJson('/auth/jwt/user/'.$impersonateUser->getKey(), [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$originalUserToken,
-        ]);
+        $this->withAuthorization('Bearer '.$originalUserToken)->getJson('/auth/jwt/user/'.$impersonateUser->getKey());
 
         $this->assertResponseStatus(200);
     }

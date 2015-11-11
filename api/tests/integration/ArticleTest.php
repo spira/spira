@@ -218,7 +218,7 @@ class ArticleTest extends TestCase
             ->setTransformer(ArticleTransformer::class)
             ->transformed();
 
-        $this->postJson('/articles', $entity);
+        $this->withAuthorization()->postJson('/articles', $entity);
 
         $this->shouldReturnJson();
 
@@ -239,7 +239,7 @@ class ArticleTest extends TestCase
 
         $rowCount = Article::count();
 
-        $this->putJson('/articles/'.$entity['articleId'], $entity);
+        $this->withAuthorization()->putJson('/articles/'.$entity['articleId'], $entity);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -257,7 +257,7 @@ class ArticleTest extends TestCase
             ->customize(['author_id' => (string) \Rhumsaa\Uuid\Uuid::uuid4()])
             ->transformed();
 
-        $this->putJson('/articles/'.$entity['articleId'], $entity);
+        $this->withAuthorization()->putJson('/articles/'.$entity['articleId'], $entity);
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -277,7 +277,7 @@ class ArticleTest extends TestCase
             ->customize(['title' => 'foo'])
             ->transformed();
 
-        $this->putJson('/articles/'.$entity->article_id, $data);
+        $this->withAuthorization()->putJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
 
         $this->assertResponseStatus(400);
@@ -292,7 +292,7 @@ class ArticleTest extends TestCase
             ->customize(['title' => 'foo'])
             ->transformed();
 
-        $this->patchJson('/articles/'.$entity->article_id, $data);
+        $this->withAuthorization()->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($entity->article_id);
@@ -313,7 +313,7 @@ class ArticleTest extends TestCase
 
         $linksCount = $entity->articlePermalinks->count();
 
-        $this->patchJson('/articles/'.$entity->article_id, $data);
+        $this->withAuthorization()->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
@@ -337,7 +337,7 @@ class ArticleTest extends TestCase
 
         $linksCount = $entity->articlePermalinks->count();
 
-        $this->patchJson('/articles/'.$entity->article_id, $data);
+        $this->withAuthorization()->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
 
@@ -365,7 +365,7 @@ class ArticleTest extends TestCase
             ->showOnly(['permalink'])
             ->transformed();
 
-        $this->patchJson('/articles/'.$article->article_id, $data);
+        $this->withAuthorization()->patchJson('/articles/'.$article->article_id, $data);
         $this->shouldReturnJson();
 
         $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
@@ -385,7 +385,7 @@ class ArticleTest extends TestCase
             ->customize(['permalink' => ''])
             ->transformed();
 
-        $this->patchJson('/articles/'.$entity->article_id, $data);
+        $this->withAuthorization()->patchJson('/articles/'.$entity->article_id, $data);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Article::find($entity->article_id);
@@ -408,7 +408,7 @@ class ArticleTest extends TestCase
         $rowCount = Article::count();
 
         $permalinksTotalCount = ArticlePermalink::all()->count();
-        $this->deleteJson('/articles/'.$entity->article_id);
+        $this->withAuthorization()->deleteJson('/articles/'.$entity->article_id);
         $permalinksTotalCountAfterDelete = ArticlePermalink::all()->count();
 
         $this->assertResponseStatus(204);
@@ -486,7 +486,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/meta', $entities);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
@@ -522,7 +522,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->putJson('/articles/'.$article->article_id.'/meta', $data);
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/meta', $data);
 
         $this->assertResponseStatus(500);
     }
@@ -534,7 +534,7 @@ class ArticleTest extends TestCase
 
         $metaEntity = $article->articleMetas->first();
         $metaCount = ArticleMeta::where('article_id', '=', $article->article_id)->count();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
+        $this->withAuthorization()->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->name);
         $updatedArticle = Article::find($article->article_id);
         $this->assertEquals($metaCount - 1, $updatedArticle->articleMetas->count());
 
@@ -626,7 +626,7 @@ class ArticleTest extends TestCase
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body], [
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/comments', ['body' => $body], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
         $array = json_decode($this->response->getContent(), true);
@@ -648,7 +648,7 @@ class ArticleTest extends TestCase
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->postJson('/articles/'.$article->article_id.'/comments', ['body' => ''], [
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/comments', ['body' => ''], [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
@@ -679,7 +679,7 @@ class ArticleTest extends TestCase
         $meta = $this->getFactory(ArticleMeta::class)->make();
         $entities = [$meta];
 
-        $this->putJson('/articles/'.$article->article_id.'/meta', $entities, [
+        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/meta', $entities, [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
@@ -708,7 +708,7 @@ class ArticleTest extends TestCase
 
         $metaEntity = $article->articleMetas->first();
         $metaCount = $article->articleMetas->count();
-        $this->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
+        $this->withAuthorization()->deleteJson('/articles/'.$article->article_id.'/meta/'.$metaEntity->meta_id);
 
         $article = Article::find($article->article_id);
 
