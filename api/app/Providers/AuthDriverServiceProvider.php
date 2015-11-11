@@ -10,11 +10,11 @@
 
 namespace App\Providers;
 
+use App\Http\Transformers\UserTokenTransformer;
 use Illuminate\Http\Request;
 use Spira\Auth\User\UserProvider;
 use Spira\Auth\User\SocialiteAuthenticatable;
 use Illuminate\Contracts\Auth\Authenticatable;
-use App\Http\Transformers\EloquentModelTransformer;
 use Spira\Auth\Providers\JWTAuthDriverServiceProvider;
 
 class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
@@ -32,9 +32,8 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
             parent::getPayloadGenerators(),
             [
                 '_user' => function (Authenticatable $user) {
-                    $user->roles;
-                    /** @var EloquentModelTransformer $transformer */
-                    $transformer = $this->app->make(EloquentModelTransformer::class);
+                    /** @var UserTokenTransformer $transformer */
+                    $transformer = $this->app->make(UserTokenTransformer::class);
 
                     return $transformer->transformItem($user);
                 },
