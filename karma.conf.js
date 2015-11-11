@@ -4,7 +4,7 @@ module.exports = function(config) {
         frameworks: ['chai-as-promised', 'mocha', 'sinon', 'sinon-chai'],
 
         preprocessors: {
-            'app/build/**/*.js': ['coverage']
+            'app/build/**/!(*vendor)/*.js': ['coverage']
         },
 
         reporters: ['mocha', 'coverage'],
