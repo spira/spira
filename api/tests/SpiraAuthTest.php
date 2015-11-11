@@ -9,9 +9,26 @@
  */
 
 use Illuminate\Http\Request;
+use Spira\Auth\Driver\Guard;
 
 class SpiraAuthTest extends TestCase
 {
+    public function testRolesInToken()
+    {
+        $user = $this->createUser();
+        $this->assignAdmin($user);
+
+        $token = $this->tokenFromUser($user);
+
+        /** @var Guard $auth */
+        $auth = $this->app->make('auth');
+        $payload = $auth->getTokenizer()->decode($token);
+        $this->assertArrayHasKey('_user', $payload);
+        $this->assertArrayNotHasKey('_roles', $payload['_user']);
+        $this->assertArrayHasKey('roles', $payload['_user']);
+        $this->assertCount(2, $payload['_user']['roles'], 'User has 2 roles - default and admin');
+    }
+
     public function testRequestUserResolver()
     {
         $user = $this->createUser();
