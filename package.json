@@ -47,6 +47,7 @@
     "gulp-notify": "^2.2.0",
     "gulp-phpunit": "^0.8.1",
     "gulp-replace": "^0.5.3",
+    "gulp-sort": "^1.1.1",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-template": "^3.0.0",
     "gulp-tsc": "^0.10.1",

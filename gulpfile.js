@@ -138,6 +138,8 @@ gulp.task('scripts:app', 'processes javascript & typescript files', [], function
 
         tsResult.js
             .pipe(tsFilter.restore())
+            .pipe(plugins.sort())
+            .pipe(plugins.concat(packageJson.name + '.js'))
             .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
             .pipe(gulp.dest(paths.dest.scripts))
     ]);
@@ -165,6 +167,8 @@ gulp.task('scripts:test', 'processes javascript & typescript tests', [], functio
     ;
 
     return tsResult.js
+        .pipe(plugins.sort())
+        .pipe(plugins.concat(packageJson.name + '.spec.js'))
         .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/src/'}))
         .pipe(gulp.dest(paths.dest.tests))
     ;
@@ -227,6 +231,9 @@ gulp.task('bower:build', 'compiles frontend vendor files', [], function(cb) {
         //javascript
         .pipe(jsFilter)
         .on('error', onError)
+        .pipe(plugins.sourcemaps.init())
+        .pipe(plugins.concat(packageJson.name + '.vendor.js'))
+        .pipe(plugins.sourcemaps.write('./', {includeContent: false, sourceRoot: __dirname+'/app/bower_components/'}))
         .pipe(gulp.dest(paths.dest.vendor+'/js'))
         .pipe(jsFilter.restore())
         //css
@@ -270,8 +277,8 @@ var getIndexFiles = function(conf){
             app: plugins.globby.sync(paths.dest.scripts+'/**/*.js').map(function(path){
                 return path.replace('app/build/', '');
             }),
-            vendor: vendorFiles.filter(plugins.minimatch.filter("*.js", {matchBase: true})).map(function(path){
-                return 'vendor/js/'+path;
+            vendor: plugins.globby.sync(paths.dest.vendor+'/**/*.js').map(function(path){
+                return path.replace('app/build/', '');
             })
         },
         styles: {
@@ -355,8 +362,6 @@ gulp.task('test:karma',  'unit test the frontend', [], function(done){
         })
         .concat(plugins.globby.sync(paths.dest.tests+'/**/*.js'))
     ;
-
-    testFiles.push('app/build/js/templates.js');
 
     var karmaConfig = {
         configFile: __dirname + '/karma.conf.js',
