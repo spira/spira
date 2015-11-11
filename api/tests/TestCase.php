@@ -14,6 +14,12 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
 {
     use AssertionsTrait, HelpersTrait, ModelFactoryTrait;
 
+    const TEST_ADMIN_USER_EMAIL = 'john.smith@example.com';
+
+    const TEST_USER_EMAIL = 'nick.jackson@example.com';
+
+    protected $authHeader;
+
     /**
      * Setup the test environment.
      *
@@ -84,6 +90,21 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
     /**
+     * @param null $header
+     * @return $this
+     */
+    public function withAuthorization($header = null)
+    {
+        if (is_null($header)) {
+            $user = (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
+            $header = 'Bearer '.$this->tokenFromUser($user);
+        }
+        $this->authHeader = $header;
+
+        return $this;
+    }
+
+    /**
      * Visit the given URI with a [$method] request with content type of application/json.
      *
      * @param $method
@@ -97,6 +118,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         $content = json_encode($data);
 
         $headers = $this->addJsonHeaders($headers, $content);
+        $headers = $this->addTokenHeaders($headers);
         $server = $this->transformHeadersToServerVars($headers);
 
         $this->call($method, $uri, [], [], [], $server, $content);
@@ -117,6 +139,19 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
             $headers['Accept'] = 'application/json';
 
             return $headers;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param array $headers
+     * @return array
+     */
+    protected function addTokenHeaders(array $headers)
+    {
+        if ($this->authHeader && ! isset($headers['HTTP_AUTHORIZATION'])) {
+            $headers['HTTP_AUTHORIZATION'] = $this->authHeader;
         }
 
         return $headers;

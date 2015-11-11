@@ -107,7 +107,7 @@ class ImageTest extends TestCase
 
         $rowCount = Image::count();
 
-        $this->putJson('/images/'.$id, $this->prepareEntity($entity));
+        $this->withAuthorization()->putJson('/images/'.$id, $this->prepareEntity($entity));
         $this->shouldReturnJson();
         $object = json_decode($this->response->getContent());
 
@@ -123,7 +123,7 @@ class ImageTest extends TestCase
         $id = $entity->image_id;
         $entity->alt = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
-        $this->patchJson('/images/'.$id, $preparedEntity);
+        $this->withAuthorization()->patchJson('/images/'.$id, $preparedEntity);
         $this->shouldReturnJson();
         $this->assertResponseStatus(204);
         $checkEntity = Image::find($id);
@@ -137,7 +137,7 @@ class ImageTest extends TestCase
         $entity = $entities[0];
         $id = $entity->image_id;
         $rowCount = Image::count();
-        $this->deleteJson('/images/'.$id);
+        $this->withAuthorization()->deleteJson('/images/'.$id);
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
         $this->assertEquals($rowCount - 1, Image::count());
