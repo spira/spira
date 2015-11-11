@@ -34,6 +34,7 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
                 '_user' => function (Authenticatable $user) {
                     /** @var UserTokenTransformer $transformer */
                     $transformer = $this->app->make(UserTokenTransformer::class);
+
                     return $transformer->transformItem($user);
                 },
                 'method' => function (SocialiteAuthenticatable $user) { return $user->getCurrentAuthMethod() ?: 'password';},
