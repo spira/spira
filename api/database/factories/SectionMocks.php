@@ -70,7 +70,7 @@ $factory->define(MediaContent::class, function (Generator $faker) {
 
         return $mediaItem;
 
-    }, array_fill(0, $faker->numberBetween(0, 5), null));
+    }, array_fill(0, $faker->numberBetween(1, 5), null));
 
     return [
         'media' => $media,

@@ -1,8 +1,8 @@
-namespace common.directives.contentSectionsInput.sectionInputImage {
+namespace common.directives.contentSectionsInput.sectionInputMedia {
 
     interface TestScope extends ng.IRootScopeService {
         section: any;
-        SectionInputImageController: SectionInputImageController;
+        SectionInputMediaController: SectionInputMediaController;
     }
 
     describe('Section input image directive', () => {
@@ -11,7 +11,7 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
             $rootScope:ng.IRootScopeService,
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
-            directiveController: SectionInputImageController,
+            directiveController: SectionInputMediaController,
             $q:ng.IQService
         ;
 
@@ -31,20 +31,20 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
                 directiveScope = <TestScope>$rootScope.$new();
 
                 directiveScope.section = common.models.SectionMock.entity({
-                    type: common.models.sections.Image.contentType,
-                    content: common.models.sections.ImageMock.entity(),
+                    type: common.models.sections.Media.contentType,
+                    content: common.models.sections.MediaMock.entity(),
                 });
 
 
                 compiledElement = $compile(`
-                    <section-input-image
+                    <section-input-media
                         section="section"
-                    ></section-input-image>
+                    ></section-input-media>
                 `)(directiveScope);
 
                 $rootScope.$digest();
 
-                directiveController = (<TestScope>compiledElement.isolateScope()).SectionInputImageController;
+                directiveController = (<TestScope>compiledElement.isolateScope()).SectionInputMediaController;
 
                 let stubbedShow = sinon.stub();
                 stubbedShow.onCall(0).returns($q.when(true));
@@ -56,29 +56,29 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
 
         it('should initialise the directive', () => {
 
-            expect($(compiledElement).hasClass('section-input-image')).to.be.true;
+            expect($(compiledElement).hasClass('section-input-media')).to.be.true;
         });
 
-        it('should be able to add an image section', () => {
+        it('should be able to add a media section', () => {
 
-            let currentImageCount = directiveController.section.content.images.length;
+            let currentImageCount = directiveController.section.content.media.length;
 
-            directiveController.addImage();
+            directiveController.addMedia();
 
-            expect(directiveController.section.content.images).to.have.length(currentImageCount + 1);
+            expect(directiveController.section.content.media).to.have.length(currentImageCount + 1);
         });
 
-        it('should be able to remove an image with prompt', (done) => {
+        it('should be able to remove a media section with prompt', (done) => {
 
-            let currentImageCount = directiveController.section.content.images.length;
+            let currentImageCount = directiveController.section.content.media.length;
 
-            let removePromise = directiveController.removeImage(_.last(directiveController.section.content.images));
+            let removePromise = directiveController.removeMedia(_.last(directiveController.section.content.media));
 
             $rootScope.$digest();
 
             expect(removePromise).eventually.to.be.fulfilled;
             removePromise.then(() => {
-                expect(directiveController.section.content.images).to.have.length(currentImageCount - 1);
+                expect(directiveController.section.content.media).to.have.length(currentImageCount - 1);
                 done();
             });
 
@@ -86,8 +86,8 @@ namespace common.directives.contentSectionsInput.sectionInputImage {
 
         it('should default an image content caption to the images alt tag when image is changed and no caption is set', () => {
 
-            let tabCount = directiveController.addImage();
-            let newImageTab = directiveController.section.content.images[tabCount - 1];
+            let tabCount = directiveController.addMedia();
+            let newImageTab = <common.models.sections.IImageContent>directiveController.section.content.media[tabCount - 1];
 
             expect(newImageTab.caption).to.be.null;
 

@@ -33,7 +33,7 @@ namespace common.directives.contentSectionsInput {
 
                 directiveScope.testSectionsModel = [
                     common.models.sections.BlockquoteMock.entity(),
-                    common.models.sections.ImageMock.entity(),
+                    common.models.sections.MediaMock.entity(),
                     common.models.sections.RichTextMock.entity(),
                     common.models.sections.PromoMock.entity(),
                 ];

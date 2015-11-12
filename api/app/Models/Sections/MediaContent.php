@@ -31,7 +31,7 @@ class MediaContent extends VirtualModel
     ];
 
     public static $sizeOptions = [
-        'small', 'halfPage', 'fullWidth', 'oversize',
+        'small', 'half', 'full', 'oversize',
     ];
 
     public static $alignmentOptions = [

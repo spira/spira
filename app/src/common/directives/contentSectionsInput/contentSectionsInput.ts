@@ -41,8 +41,8 @@ namespace common.directives.contentSectionsInput {
                     name: "Blockquote",
                     icon: 'format_quote',
                 },
-                [common.models.sections.Image.contentType] : {
-                    name: "Image",
+                [common.models.sections.Media.contentType] : {
+                    name: "Media",
                     icon: 'image',
                 },
                 [common.models.sections.Promo.contentType] : {
@@ -144,7 +144,7 @@ namespace common.directives.contentSectionsInput {
     }
 
     angular.module(namespace, [
-        namespace + '.sectionInputImage',
+        namespace + '.sectionInputMedia',
         namespace + '.sectionInputPromo',
         namespace + '.sectionInputRichText',
         namespace + '.sectionInputBlockquote',
