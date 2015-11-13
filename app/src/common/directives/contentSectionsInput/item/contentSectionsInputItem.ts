@@ -14,6 +14,7 @@ namespace common.directives.contentSectionsInput.item {
         public section:common.models.Section<any>;
         private childControllerSettings:ISettingsControllerBindings = null;
         public $element:ng.IAugmentedJQuery|JQuery;
+        public parentSetController:set.ContentSectionsInputSetController;
 
         static $inject = ['ngRestAdapter', '$mdDialog', '$mdBottomSheet', '$q'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
@@ -115,10 +116,12 @@ namespace common.directives.contentSectionsInput.item {
         constructor() {
         }
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ContentSectionsInputItemController, contentSectionsInput.set.ContentSectionsInputSetController]) => {
+        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ContentSectionsInputItemController, set.ContentSectionsInputSetController]) => {
 
             let thisController = $controllers[0];
-            let $ngModelController = $controllers[1];
+            let parentSetController = $controllers[1];
+
+            thisController.parentSetController = parentSetController;
 
             thisController.$element = $element;
 

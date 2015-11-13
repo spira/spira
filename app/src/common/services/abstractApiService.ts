@@ -124,8 +124,9 @@ namespace common.services {
      * @param getPartial
      * @returns {any}
      * @param filterExisting
+     * @param alwayIncludeProperties
      */
-        public getNestedCollectionRequestObject(entity:common.models.AbstractModel, nestedKey:string, getPartial:boolean = true, filterExisting:boolean = true):Object[]{
+        public getNestedCollectionRequestObject(entity:common.models.AbstractModel, nestedKey:string, getPartial:boolean = true, filterExisting:boolean = true, alwayIncludeProperties:string[] = null):Object[]{
 
             let nestedCollection:common.models.AbstractModel[] = _.get(entity, nestedKey, null);
 
@@ -153,7 +154,7 @@ namespace common.services {
                 .map((nestedModel:common.models.AbstractModel) => {
                     if (getPartial && nestedModel.exists()){
                         //return the partial changes
-                        return (<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true);
+                        return _.merge((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true), _.pick(nestedModel, alwayIncludeProperties));
                     }
                     //return all the attributes
                     return nestedModel.getAttributes(true);

@@ -10,29 +10,31 @@
 
     <md-toolbar class="settings-toolbar" ng-class="{'toolbar-hidden':!ContentSectionsInputItemController.toolbarOpen}">
         <div class="md-toolbar-tools">
-            <md-icon>{{ContentSectionsInputSetController.sectionTypes[section.type].icon}}</md-icon>
+            <md-icon ng-class="{'md-primary':!ContentSectionsInputItemController.toolbarOpen}">
+                {{ContentSectionsInputItemController.parentSetController.sectionTypes[ContentSectionsInputItemController.section.type].icon}}
+            </md-icon>
 
+            <span flex></span>
             <span ng-show="ContentSectionsInputItemController.toolbarOpen">
 
-                <span flex></span>
                 <md-button
                         ng-disabled="$first"
                         aria-label="Move Section Up"
                         class="md-icon-button"
-                        ng-click="ContentSectionsInputItemController.moveSection(section, true)">
+                        ng-click="ContentSectionsInputItemController.parentSetController.moveSection(ContentSectionsInputItemController.section, true)">
                     <md-icon>keyboard_arrow_up</md-icon>
                 </md-button>
                 <md-button
                         ng-disabled="$last"
                         aria-label="Move Section Down"
                         class="md-icon-button"
-                        ng-click="ContentSectionsInputItemController.moveSection(section, false)">
+                        ng-click="ContentSectionsInputItemController.parentSetController.moveSection(ContentSectionsInputItemController.section, false)">
                     <md-icon>keyboard_arrow_down</md-icon>
                 </md-button>
                 <md-button
                         aria-label="Remove Section"
                         class="md-icon-button"
-                        ng-click="ContentSectionsInputItemController.removeSection(section)">
+                        ng-click="ContentSectionsInputItemController.parentSetController.removeSection(ContentSectionsInputItemController.section)">
                     <md-icon>delete</md-icon>
                 </md-button>
             </span>
