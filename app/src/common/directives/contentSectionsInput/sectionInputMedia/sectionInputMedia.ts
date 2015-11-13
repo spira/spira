@@ -10,13 +10,17 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         public alignmentOptions:common.models.sections.IAlignmentOption[];
         public sizeOptions:common.models.sections.ISizeOption[];
         public videoProviders:common.models.sections.IVideoProvider[];
+        public videoProviderMap:{[providerKey:string]:common.models.sections.IVideoProvider};
 
-        static $inject = ['$mdDialog'];
-        constructor(private $mdDialog){
+        static $inject = ['$mdDialog', '$mdBottomSheet'];
+        constructor(private $mdDialog:ng.material.IDialogService,
+                    private $mdBottomSheet:ng.material.IBottomSheetService
+        ){
 
             this.alignmentOptions = common.models.sections.Media.alignmentOptions;
             this.sizeOptions = common.models.sections.Media.sizeOptions;
             this.videoProviders = common.models.sections.Media.videoProviders;
+            this.videoProviderMap = _.indexBy(this.videoProviders, 'providerKey');
         }
 
         /**
@@ -80,6 +84,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
     class SectionInputMediaDirective implements ng.IDirective {
 
         public restrict = 'E';
+        public require = ['sectionInputMedia', '^contentSectionsInput'];
         public templateUrl = 'templates/common/directives/contentSectionsInput/sectionInputMedia/sectionInputMedia.tpl.html';
         public replace = true;
         public scope = {
@@ -89,6 +94,20 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         public controllerAs = 'SectionInputMediaController';
         public controller = SectionInputMediaController;
         public bindToController = true;
+
+        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [SectionInputMediaController, ContentSectionsInputController]) => {
+
+            let mediaController = $controllers[0];
+            let parentSectionController = $controllers[1];
+
+            parentSectionController.registerSettingsBindings({
+                controller: mediaController,
+                controllerAs: this.controllerAs,
+                element: $element.parent(),
+                templateUrl: 'templates/common/directives/contentSectionsInput/sectionInputMedia/sectionInputMediaSettingsMenu.tpl.html',
+            });
+
+        };
 
         static factory(): ng.IDirectiveFactory {
             return () => new SectionInputMediaDirective();

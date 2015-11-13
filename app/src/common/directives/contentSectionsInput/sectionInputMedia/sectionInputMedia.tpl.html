@@ -36,8 +36,8 @@
                 <ng-form name="videoForm" ng-if="mediaContent.type =='video'">
 
                     <md-input-container flex>
-                        <md-select ng-model="mediaContent._provider" name="provider" aria-label="Provider" placeholder="Select video provider" required>
-                            <md-option ng-value="videoProvider" ng-repeat="videoProvider in SectionInputMediaController.videoProviders" ng-bind-html="videoProvider.providerKey"></md-option>
+                        <md-select ng-model="mediaContent.provider" name="provider" aria-label="Provider" placeholder="Select video provider" required>
+                            <md-option ng-value="videoProvider.providerKey" ng-repeat="videoProvider in SectionInputMediaController.videoProviders" ng-bind-html="videoProvider.providerKey"></md-option>
                         </md-select>
                         <ng-messages for="videoForm._provider.$error">
                             <ng-message when="required">Video provider is required</ng-message>
@@ -50,16 +50,16 @@
                         <input
                             ng-model="mediaContent.videoId"
                             name="videoId"
-                            ng-maxlength="mediaContent._provider.idLength"
-                            ng-minlength="mediaContent._provider.idLength"
-                            ng-pattern="mediaContent._provider.validationRegex"
+                            ng-maxlength="SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength"
+                            ng-minlength="SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength"
+                            ng-pattern="SectionInputMediaController.videoProviderMap[mediaContent.provider].validationRegex"
                             required
                         >
                         <ng-messages for="videoForm.videoId.$error">
                             <ng-message when="required">Video identifier is required</ng-message>
-                            <ng-message when="maxlength">Length must be {{mediaContent._provider.idLength}} chars</ng-message>
-                            <ng-message when="minlength">Length must be {{mediaContent._provider.idLength}} chars</ng-message>
-                            <ng-message when="pattern">ID validation does not match requirements for {{mediaContent._provider.providerKey}}</ng-message>
+                            <ng-message when="maxlength">Length must be {{SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength}} chars</ng-message>
+                            <ng-message when="minlength">Length must be {{SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength}} chars</ng-message>
+                            <ng-message when="pattern">ID validation does not match requirements for {{SectionInputMediaController.videoProviderMap[mediaContent.provider].providerKey}}</ng-message>
                         </ng-messages>
                     </md-input-container>
 
@@ -90,25 +90,10 @@
             </md-tab>
         </md-tabs>
 
-        <md-input-container>
-            <label>Alignment</label>
-            <md-select ng-model="SectionInputMediaController.section.content.alignment" name="alignment" aria-label="Alignment" placeholder="Select media alignment" required="true">
-                <md-option ng-value="alignmentOption.key" ng-repeat="alignmentOption in SectionInputMediaController.alignmentOptions" ng-bind-html="alignmentOption.name"></md-option>
-            </md-select>
-            <ng-messages for="mediaForm.alignment.$error">
-                <ng-message when="required">Alignment is required</ng-message>
-            </ng-messages>
-        </md-input-container>
+        <md-button ng-click="SectionInputMediaController.promptBottomsheet($event)">Bottomsheet test</md-button>
 
-        <md-input-container>
-            <label>Size</label>
-            <md-select ng-model="SectionInputMediaController.section.content.size" name="size" aria-label="Size" placeholder="Select media size" required="true">
-                <md-option ng-value="sizeOption.key" ng-repeat="sizeOption in SectionInputMediaController.sizeOptions" ng-bind-html="sizeOption.name"></md-option>
-            </md-select>
-            <ng-messages for="mediaForm.size.$error">
-                <ng-message when="required">Alignment is required</ng-message>
-            </ng-messages>
-        </md-input-container>
+        <pre highlight="">{{SectionInputMediaController.section|json}}</pre>
 
     </ng-form>
+
 </div>

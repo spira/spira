@@ -17,6 +17,13 @@
                     <md-icon>{{ContentSectionsInputController.sectionTypes[section.type].icon}}</md-icon>
                     <span flex></span>
                     <md-button
+                            aria-label="Settings"
+                            class="md-icon-button"
+                            ng-click="ContentSectionsInputController.promptSettings($event)"
+                            >
+                        <md-icon>face</md-icon>
+                    </md-button>
+                    <md-button
                             ng-disabled="$first"
                             aria-label="Move Section Up"
                             class="md-icon-button"

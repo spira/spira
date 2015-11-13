@@ -24,14 +24,25 @@ namespace common.directives.contentSectionsInput {
         (paramObject: ISectionUpdateParams):void;
     }
 
+    export interface ISettingsControllerBindings{
+        templateUrl: string;
+        controller: Object;
+        controllerAs: string;
+        element: ng.IAugmentedJQuery|JQuery;
+    }
+
     export class ContentSectionsInputController {
 
         private sectionTypes: ISectionTypeMap;
         public sections:common.models.Section<any>[];
         private onSectionUpdate:ISectionUpdateCallback;
+        private childControllerSettings:ISettingsControllerBindings = null;
 
-        static $inject = ['ngRestAdapter', '$mdDialog'];
-        constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService, private $mdDialog:ng.material.IDialogService){
+        static $inject = ['ngRestAdapter', '$mdDialog', '$mdBottomSheet'];
+        constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+                    private $mdDialog:ng.material.IDialogService,
+                    private $mdBottomSheet:ng.material.IBottomSheetService
+        ){
             this.sectionTypes = {
                 [common.models.sections.RichText.contentType] : {
                     name: "Rich Text",
@@ -112,12 +123,58 @@ namespace common.directives.contentSectionsInput {
             });
         }
 
+        public registerSettingsBindings(bindingSettings:ISettingsControllerBindings){
+
+            this.childControllerSettings = bindingSettings;
+        }
+
+
+        public promptSettings($event:MouseEvent):ng.IPromise<any>{
+
+            return this.$mdBottomSheet.show({
+                templateUrl: this.childControllerSettings.templateUrl,
+                controller: SettingsSheetController,
+                controllerAs: this.childControllerSettings.controllerAs,
+                parent: this.childControllerSettings.element,
+                targetEvent: $event,
+                disableParentScroll: false,
+                locals: {
+                    controllerBinding: this.childControllerSettings.controller,
+                }
+            })
+        }
+
+    }
+
+
+
+    class SettingsSheetController {
+
+
+        static $inject = ['controllerBinding'];
+        constructor(controllerBinding) {
+            this.bindController(controllerBinding);
+        }
+
+        /**
+         * Iterate through the properties of the injected controller, binding to this controller.
+         * This feels hacky and there is probably a better way to do this
+         * @param controllerBinding
+         */
+        private bindController(controllerBinding) {
+            _.transform(controllerBinding, (thisController, value, key) => {
+
+                thisController[key] = value;
+
+            }, this);
+        }
+
     }
 
     class ContentSectionsInputDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public require =  'ngModel';
+        public require = ['contentSectionsInput','ngModel'];
         public templateUrl = 'templates/common/directives/contentSectionsInput/contentSectionsInput.tpl.html';
         public replace = true;
         public scope = {
@@ -133,8 +190,10 @@ namespace common.directives.contentSectionsInput {
         constructor() {
         }
 
-        public link = ($scope: IContentSectionsInputScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $ngModelController: ng.INgModelController) => {
+        public link = ($scope: IContentSectionsInputScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ContentSectionsInputController, ng.INgModelController]) => {
 
+            let thisController = $controllers[0];
+            let $ngModelController = $controllers[1];
 
         };
 
