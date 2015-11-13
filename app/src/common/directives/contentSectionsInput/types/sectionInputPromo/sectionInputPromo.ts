@@ -17,7 +17,7 @@ namespace common.directives.contentSectionsInput.sectionInputPromo {
     class SectionInputPromoDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public templateUrl = 'templates/common/directives/contentSectionsInput/sectionInputPromo/sectionInputPromo.tpl.html';
+        public templateUrl = 'templates/common/directives/contentSectionsInput/types/sectionInputPromo/sectionInputPromo.tpl.html';
         public replace = true;
         public scope = {
             section: '=',

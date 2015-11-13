@@ -1,0 +1,51 @@
+<md-card class="content-sections-input-item animate-repeat md-whiteframe-z3">
+
+    <md-card-content class="section-input" ng-switch="ContentSectionsInputItemController.section.type">
+        <section-input-rich-text ng-switch-when="rich_text" section="ContentSectionsInputItemController.section"></section-input-rich-text>
+        <section-input-blockquote ng-switch-when="blockquote" section="ContentSectionsInputItemController.section"></section-input-blockquote>
+        <section-input-media ng-switch-when="media" section="ContentSectionsInputItemController.section"></section-input-media>
+        <section-input-promo ng-switch-when="promo" section="ContentSectionsInputItemController.section"></section-input-promo>
+    </md-card-content>
+
+
+    <md-toolbar class="settings-toolbar" ng-class="{'toolbar-hidden':!ContentSectionsInputItemController.toolbarOpen}">
+        <div class="md-toolbar-tools">
+            <md-icon>{{ContentSectionsInputSetController.sectionTypes[section.type].icon}}</md-icon>
+
+            <span ng-show="ContentSectionsInputItemController.toolbarOpen">
+
+                <span flex></span>
+                <md-button
+                        ng-disabled="$first"
+                        aria-label="Move Section Up"
+                        class="md-icon-button"
+                        ng-click="ContentSectionsInputItemController.moveSection(section, true)">
+                    <md-icon>keyboard_arrow_up</md-icon>
+                </md-button>
+                <md-button
+                        ng-disabled="$last"
+                        aria-label="Move Section Down"
+                        class="md-icon-button"
+                        ng-click="ContentSectionsInputItemController.moveSection(section, false)">
+                    <md-icon>keyboard_arrow_down</md-icon>
+                </md-button>
+                <md-button
+                        aria-label="Remove Section"
+                        class="md-icon-button"
+                        ng-click="ContentSectionsInputItemController.removeSection(section)">
+                    <md-icon>delete</md-icon>
+                </md-button>
+            </span>
+
+            <md-button aria-label="Open Settings"
+                       class="md-icon-button md-mini"
+                       ng-class="{'md-fab md-primary':!ContentSectionsInputItemController.toolbarOpen}"
+                       ng-click="ContentSectionsInputItemController.toggleSettings($event)">
+                <md-icon ng-if="!ContentSectionsInputItemController.toolbarOpen">more_vert</md-icon>
+                <md-icon ng-if="ContentSectionsInputItemController.toolbarOpen">close</md-icon>
+            </md-button>
+
+        </div>
+    </md-toolbar>
+
+</md-card>

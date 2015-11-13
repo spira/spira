@@ -1,10 +1,23 @@
 @import (reference) "../../../styles/global.less";
 
-.content-sections-input {
+.content-sections-input-set {
 
-    .section-input {
-        position: relative;
-        overflow: hidden;
+    .content-sections-input-item {
+
+        md-bottom-sheet.dummy{
+            display:none;
+        }
+
+        .settings-toolbar {
+            &.toolbar-hidden{
+                background-color: transparent;
+            }
+        }
+
+        .section-input {
+            position: relative;
+            overflow: hidden;
+        }
     }
 
 }

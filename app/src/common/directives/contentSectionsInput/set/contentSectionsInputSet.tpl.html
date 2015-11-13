@@ -1,0 +1,33 @@
+<div class="content-sections-input-set">
+
+    <div layout="column">
+
+        <content-sections-input-item
+            section="section"
+            ng-repeat="section in ContentSectionsInputSetController.sections"
+            class="animate-repeat md-whiteframe-z3"
+        ></content-sections-input-item>
+
+    </div>
+
+    <md-fab-toolbar md-direction="left">
+        <md-fab-trigger class="align-with-text">
+            <md-button aria-label="menu" class="md-fab md-primary">
+                <md-icon>add_circle</md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-toolbar>
+            <md-fab-actions class="md-toolbar-tools">
+                <md-button
+                        aria-label="{{sectionType.name}}"
+                        class="md-icon-button"
+                        ng-repeat="(sectionKey, sectionType) in ContentSectionsInputSetController.sectionTypes"
+                        ng-click="ContentSectionsInputSetController.addSectionType(sectionKey)"
+                        >
+                    <md-icon>{{sectionType.icon}}</md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-toolbar>
+    </md-fab-toolbar>
+
+</div>

@@ -84,8 +84,8 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
     class SectionInputMediaDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public require = ['sectionInputMedia', '^contentSectionsInput'];
-        public templateUrl = 'templates/common/directives/contentSectionsInput/sectionInputMedia/sectionInputMedia.tpl.html';
+        public require = ['sectionInputMedia', '^contentSectionsInputItem'];
+        public templateUrl = 'templates/common/directives/contentSectionsInput/types/sectionInputMedia/sectionInputMedia.tpl.html';
         public replace = true;
         public scope = {
             section: '=',
@@ -95,7 +95,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         public controller = SectionInputMediaController;
         public bindToController = true;
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [SectionInputMediaController, ContentSectionsInputController]) => {
+        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [SectionInputMediaController, item.ContentSectionsInputItemController]) => {
 
             let mediaController = $controllers[0];
             let parentSectionController = $controllers[1];
@@ -103,8 +103,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
             parentSectionController.registerSettingsBindings({
                 controller: mediaController,
                 controllerAs: this.controllerAs,
-                element: $element.parent(),
-                templateUrl: 'templates/common/directives/contentSectionsInput/sectionInputMedia/sectionInputMediaSettingsMenu.tpl.html',
+                templateUrl: 'templates/common/directives/contentSectionsInput/types/sectionInputMedia/sectionInputMediaSettingsMenu.tpl.html',
             });
 
         };

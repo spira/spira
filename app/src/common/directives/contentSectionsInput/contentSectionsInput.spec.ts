@@ -3,7 +3,7 @@ namespace common.directives.contentSectionsInput {
     interface TestScope extends ng.IRootScopeService {
         testSectionsModel: any;
         testSectionUpdated(event, section):void;
-        ContentSectionsInputController: ContentSectionsInputController;
+        ContentSectionsInputSetController: set.ContentSectionsInputSetController;
     }
 
     describe('Content sections directive', () => {
@@ -12,7 +12,7 @@ namespace common.directives.contentSectionsInput {
             $rootScope:ng.IRootScopeService,
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
-            directiveController: common.directives.contentSectionsInput.ContentSectionsInputController,
+            directiveController: set.ContentSectionsInputSetController,
             $q:ng.IQService
         ;
 
@@ -41,15 +41,15 @@ namespace common.directives.contentSectionsInput {
                 directiveScope.testSectionUpdated = sinon.spy();
 
                 compiledElement = $compile(`
-                    <content-sections-input
+                    <content-sections-input-set
                         ng-model="testSectionsModel"
                         on-section-update="testSectionUpdated(event, section)"
-                    ></content-sections-input>
+                    ></content-sections-input-set>
                 `)(directiveScope);
 
                 $rootScope.$digest();
 
-                directiveController = (<TestScope>compiledElement.isolateScope()).ContentSectionsInputController;
+                directiveController = (<TestScope>compiledElement.isolateScope()).ContentSectionsInputSetController;
 
                 let stubbedShow = sinon.stub();
                 stubbedShow.onCall(0).returns($q.when(true));
@@ -125,15 +125,15 @@ namespace common.directives.contentSectionsInput {
             let scope:TestScope = <TestScope>$rootScope.$new();
 
             let compiled = $compile(`
-                    <content-sections-input
+                    <content-sections-input-set
                         ng-model="testSectionsModel"
                         on-section-update="testSectionUpdated(event, section)"
-                    ></content-sections-input>
+                    ></content-sections-input-set>
                 `)(scope);
 
             $rootScope.$digest();
 
-            directiveController = (<TestScope>compiled.isolateScope()).ContentSectionsInputController;
+            directiveController = (<TestScope>compiled.isolateScope()).ContentSectionsInputSetController;
 
             expect(directiveController.sections).to.be.instanceOf(Array);
             expect(directiveController.sections).to.be.empty;
