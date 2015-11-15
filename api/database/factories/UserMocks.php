@@ -70,3 +70,9 @@ $factory->define(App\Models\Role::class, function (\Faker\Generator $faker) {
         'is_default' => $faker->boolean(),
     ];
 });
+
+$factory->define(\Spira\Rate\Model\Rating::class, function (\Faker\Generator $faker) {
+    return [
+        'rating_value' => $faker->numberBetween(1,10),
+    ];
+});

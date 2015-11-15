@@ -13,9 +13,11 @@ namespace App\Models;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\Traits\TagTrait;
+use Spira\Bookmark\Model\BookmarkableTrait;
 use Spira\Model\Model\IndexedModel;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\LocalizableModelTrait;
+use Spira\Rate\Model\RateableTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
 use Spira\Model\Model\LocalizableModelInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,7 +31,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  */
 class Article extends IndexedModel implements LocalizableModelInterface
 {
-    use RevisionableTrait, LocalizableModelTrait, TagTrait;
+    use RevisionableTrait, LocalizableModelTrait, TagTrait, RateableTrait, BookmarkableTrait;
 
     const defaultExcerptWordCount = 30;
 

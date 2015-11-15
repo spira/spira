@@ -14,7 +14,7 @@ use Spira\Model\Model\BaseModel;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\User\UserProxy;
 
-class ManipulateWithOwn extends Rule
+class ManipulateWithOwnChild extends Rule
 {
     /**
      * Executes the rule.
@@ -26,7 +26,7 @@ class ManipulateWithOwn extends Rule
     public function execute(UserProxy $userProxy, $params)
     {
         /** @var BaseModel $model */
-        $model = isset($params['model'])?$params['model']:null;
+        $model = isset($params['children'])?$params['children']:null;
 
         if (!$model){
             return false;

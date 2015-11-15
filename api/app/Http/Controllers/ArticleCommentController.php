@@ -13,7 +13,6 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Models\ArticleDiscussion;
-use App\Exceptions\UnauthorizedException;
 use Spira\Responder\Response\ApiResponse;
 use App\Http\Transformers\EloquentModelTransformer;
 
@@ -47,19 +46,12 @@ class ArticleCommentController extends ChildEntityController
      */
     public function postOne(Request $request, $id)
     {
-        // Add the current user to the request
-        if ($user = $request->user()) {
-            $request->merge(['user_id' => $user->user_id]);
-        } else {
-            throw new UnauthorizedException('Not logged in.');
-        }
-
         $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
 
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);
         /** @var ArticleDiscussion $childModel */
-        $childModel = $childModel->save($request->json()->all(), $user);
+        $childModel = $childModel->save($request->json()->all(), $request->user());
 
         // If we respond with createdItem() it would be an empty response, so
         // we respond with item() instead to provide the data from the new

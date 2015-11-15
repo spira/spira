@@ -95,6 +95,9 @@ class ArticleSeeder extends BaseSeeder
                         }
                     });
 
+                $article->bookmark()->save(new \Spira\Bookmark\Model\Bookmark(['user_id' => $users->random()->user_id]));
+                $article->rate()->save(factory(\Spira\Rate\Model\Rating::class)->make(['user_id' => $users->random()->user_id]));
+
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {
                     factory(ArticleImage::class)->create([

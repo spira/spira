@@ -39,7 +39,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->put('articles/{id}/localizations/{region}', 'ArticleController@putOneLocalization');
     $app->put('articles/{id}/meta', 'ArticleMetaController@putManyAdd');
     $app->delete('articles/{id}/meta/{childId}', 'ArticleMetaController@deleteOne');
-    $app->post('articles/{id}/comments', 'ArticleCommentController@postOne');
+    $app->post('articles/{id}/comments', ['uses' => 'ArticleCommentController@postOne', 'middleware' => 'attachUserToEntity']);
     $app->put('articles/{id}/tags', 'ArticleTagController@putManyReplace');
     $app->put('articles/{id}/sections', 'ArticleSectionController@putManyAdd');
     $app->delete('articles/{id}/sections', 'ArticleSectionController@deleteMany');
@@ -47,6 +47,10 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->put('articles/{id}/sections/{childId}/localizations/{region}', 'ArticleSectionController@putOneChildLocalization');
     $app->put('articles/{id}/article-images', 'ArticleImageController@putManyAdd');
     $app->delete('articles/{id}/article-images', 'ArticleImageController@deleteMany');
+    $app->put('articles/{id}/bookmark/{id}', 'ArticleBookmarkController@putOne');
+    $app->put('articles/{id}/rate/{id}', 'ArticleRateController@putOne');
+    $app->delete('articles/{id}/bookmark/{id}', 'ArticleBookmarkController@putOne');
+    $app->delete('articles/{id}/rate/{id}', 'ArticleRateController@putOne');
 
     $app->post('tags/', 'TagController@postOne');
     $app->patch('tags/{id}', 'TagController@patchOne');

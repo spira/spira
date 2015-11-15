@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Auth\ImpersonateNonAdmin;
 use App\Http\Auth\ManipulateWithOwn;
+use App\Http\Auth\ManipulateWithOwnChild;
 use App\Http\Auth\ReAssignNonAdmin;
 use App\Models\Role;
 
@@ -53,6 +54,22 @@ return [
     PermissionsController::class.'@putManyReplace' => [
         'type' => 'permission',
         'description' => 'Reassign user roles',
+    ],
+    ArticleRateController::class.'@putOne' => [
+        'type' => 'permission',
+        'description' => 'Rate article or change rating value',
+    ],
+    ArticleBookmarkController::class.'@putOne' => [
+        'type' => 'permission',
+        'description' => 'Add to bookmarks',
+    ],
+    ArticleRateController::class.'@deleteOne' => [
+        'type' => 'permission',
+        'description' => 'Remove article rating',
+    ],
+    ArticleBookmarkController::class.'@deleteOne' => [
+        'type' => 'permission',
+        'description' => 'Remove from bookmarks',
     ],
     'ReAssignAllRoles' =>  [
         'type' => 'permission',
@@ -101,6 +118,17 @@ return [
             UserProfileController::class.'@patchOne',
             UserProfileController::class.'@putOne',
             PermissionsController::class.'@getAll',
+        ],
+    ],
+    'ManipulateWithOwnChild' => [
+        'type' => 'permission',
+        'description' => 'General permission to update record which belongs to the user',
+        'ruleName' => ManipulateWithOwnChild::class,
+        'children' => [
+            ArticleRateController::class.'@putOne',
+            ArticleBookmarkController::class.'@putOne',
+            ArticleRateController::class.'@deleteOne',
+            ArticleBookmarkController::class.'@deleteOne'
         ],
     ],
 
