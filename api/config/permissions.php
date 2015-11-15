@@ -128,7 +128,7 @@ return [
             ArticleRateController::class.'@putOne',
             ArticleBookmarkController::class.'@putOne',
             ArticleRateController::class.'@deleteOne',
-            ArticleBookmarkController::class.'@deleteOne'
+            ArticleBookmarkController::class.'@deleteOne',
         ],
     ],
 

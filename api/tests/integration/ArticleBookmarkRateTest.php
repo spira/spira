@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 use App\Models\Article;
 
@@ -71,7 +78,7 @@ class ArticleBookmarkRateTest extends TestCase
         $rating = $this->getFactory(\Spira\Rate\Model\Rating::class)->make(
             [
                 'user_id' => $user->user_id,
-                'rating_value' => 5
+                'rating_value' => 5,
             ]);
 
         $article->rate()->save($rating);
@@ -82,7 +89,7 @@ class ArticleBookmarkRateTest extends TestCase
         $token = $this->tokenFromUser($user);
         $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/rate/'.$rating->rating_id, [
                 'ratingId' => $rating->rating_id,
-                'ratingValue' => 2
+                'ratingValue' => 2,
         ]);
 
         $article = Article::find($article->article_id);

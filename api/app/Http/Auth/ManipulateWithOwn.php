@@ -26,13 +26,13 @@ class ManipulateWithOwn extends Rule
     public function execute(UserProxy $userProxy, $params)
     {
         /** @var BaseModel $model */
-        $model = isset($params['model'])?$params['model']:null;
+        $model = isset($params['model']) ? $params['model'] : null;
 
-        if (!$model){
+        if (! $model) {
             return false;
         }
 
-        $userId = $model->exists?$model->getOriginal('user_id'):$model->user_id;
+        $userId = $model->exists ? $model->getOriginal('user_id') : $model->user_id;
 
         return $userId == $userProxy->resolveUser()->getAuthIdentifier();
     }
