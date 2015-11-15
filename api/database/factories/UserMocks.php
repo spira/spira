@@ -73,6 +73,13 @@ $factory->define(App\Models\Role::class, function (\Faker\Generator $faker) {
 
 $factory->define(\Spira\Rate\Model\Rating::class, function (\Faker\Generator $faker) {
     return [
+        'rating_id' => $faker->uuid(),
         'rating_value' => $faker->numberBetween(1,10),
+    ];
+});
+
+$factory->define(\Spira\Bookmark\Model\Bookmark::class, function (\Faker\Generator $faker) {
+    return [
+        'bookmark_id' => $faker->uuid(),
     ];
 });
