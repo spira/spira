@@ -71,8 +71,8 @@ namespace common.models.sections {
         public static videoProviders:IVideoProvider[] = [
             {
                 providerKey: Media.videoProviderVimeo,
-                validationRegex: /^[0-9]{8}$/,
-                idLength: 8
+                validationRegex: /^[0-9]{9}$/,
+                idLength: 9
             },
             {
                 providerKey: Media.videoProviderYoutube,

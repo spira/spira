@@ -4,6 +4,7 @@ namespace common.directives {
 
     angular.module(namespace, [
         namespace + '.avatar',
+        namespace + '.videoEmbed',
         namespace + '.menuToggle',
         namespace + '.uploadImage',
         namespace + '.groupedTags',

@@ -46,6 +46,12 @@
                             <span flex="none">Enter video details to see preview</span>
                         </div>
 
+                        <video-embed ng-if="SectionInputMediaController.videoForm.$valid"
+                                     provider="{{mediaContent.provider}}"
+                                     video-id="{{mediaContent.videoId}}"
+                                     flex="grow">
+                        </video-embed>
+
                     </div>
 
                     <ng-form name="SectionInputMediaController.videoForm" ng-if="mediaContent.type =='video'" flex>
