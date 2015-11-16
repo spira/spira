@@ -80,7 +80,7 @@ $app->middleware([
 $app->routeMiddleware([
     'transaction' => App\Http\Middleware\TransactionMiddleware::class,
     'requireAuthorization' => App\Http\Middleware\AuthorizationMiddleware::class,
-    'attachUserToEntity' => App\Http\Middleware\AttachUserToEntityMiddleware::class,
+    'attachUserToEntity' => App\Http\Middleware\AppendUserIdToRequestBodyMiddleware::class,
 ]);
 
 /*
