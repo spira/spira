@@ -168,6 +168,4 @@ class ArticleBookmarkRateTest extends TestCase
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
-
-
 }

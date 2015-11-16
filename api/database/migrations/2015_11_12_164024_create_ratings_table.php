@@ -13,7 +13,6 @@ use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-
 class CreateRatingsTable extends Migration
 {
     /**

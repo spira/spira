@@ -161,7 +161,7 @@ return [
         'type' => 'role',
         'children' => [
             'ManipulateWithOwn',
-            'ManipulateWithOwnChild'
+            'ManipulateWithOwnChild',
         ],
     ],
     'testrole' => [

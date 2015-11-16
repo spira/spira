@@ -17,7 +17,7 @@ trait RateableTrait
 {
     public function userRatings()
     {
-        /** @var BaseModel $this */
+        /* @var BaseModel $this */
         return $this->morphMany(Rating::class, 'rateable');
     }
 }

@@ -21,7 +21,7 @@ class Rating extends BaseModel
     public $timestamps = false;
 
     public static $rateables = [
-        Article::class
+        Article::class,
     ];
 
     /**

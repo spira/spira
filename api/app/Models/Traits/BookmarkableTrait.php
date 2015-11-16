@@ -17,7 +17,7 @@ trait BookmarkableTrait
 {
     public function bookmarks()
     {
-        /** @var BaseModel $this */
+        /* @var BaseModel $this */
         return $this->morphMany(Bookmark::class, 'bookmarkable');
     }
 }

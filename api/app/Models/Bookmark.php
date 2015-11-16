@@ -21,7 +21,7 @@ class Bookmark extends BaseModel
     public $timestamps = false;
 
     public static $bookmarkables = [
-        Article::class
+        Article::class,
     ];
 
     /**

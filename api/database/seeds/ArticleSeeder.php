@@ -99,7 +99,7 @@ class ArticleSeeder extends BaseSeeder
                 $userCount = rand(2, $users->count());
                 /** @var Collection $users */
                 $users = $users->random($userCount);
-                for ($i=0; $i < $userCount; $i++){
+                for ($i = 0; $i < $userCount; $i++) {
                     $user = $users->pop();
                     $article->bookmarks()->save(factory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]));
                     $article->userRatings()->save(factory(App\Models\Rating::class)->make(['user_id' => $user->user_id]));
