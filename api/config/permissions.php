@@ -12,12 +12,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Auth\ImpersonateNonAdmin;
 use App\Http\Auth\ManipulateWithOwn;
+use App\Http\Auth\ManipulateWithOwnChild;
 use App\Http\Auth\ReAssignNonAdmin;
 use App\Models\Role;
 
 return [
 
-    //basic permissions
+    //basic route based permissions
     UserController::class.'@getOne' => [
         'type' => 'permission',
         'description' => 'Get single user record by id',
@@ -54,6 +55,28 @@ return [
         'type' => 'permission',
         'description' => 'Reassign user roles',
     ],
+    ArticleUserRatingsController::class.'@putOne' => [
+        'type' => 'permission',
+        'description' => 'Rate article or change rating value',
+    ],
+    ArticleBookmarksController::class.'@putOne' => [
+        'type' => 'permission',
+        'description' => 'Add to bookmarks',
+    ],
+    ArticleUserRatingsController::class.'@deleteOne' => [
+        'type' => 'permission',
+        'description' => 'Remove article rating',
+    ],
+    ArticleBookmarksController::class.'@deleteOne' => [
+        'type' => 'permission',
+        'description' => 'Remove from bookmarks',
+    ],
+    AuthController::class.'@loginAsUser' =>  [
+        'type' => 'permission',
+        'description' => 'Permission to allow a user to log in as another user',
+    ],
+
+    //special permissions (hierarchy or rules)
     'ReAssignAllRoles' =>  [
         'type' => 'permission',
         'description' => 'Permission to allow a user to assign and detach any role',
@@ -69,28 +92,22 @@ return [
             PermissionsController::class.'@putManyReplace',
         ],
     ],
-    'impersonateUser' =>  [
-        'type' => 'permission',
-        'description' => 'Permission to allow a user to log in as another user',
-    ],
-    'impersonateAllUsers' =>  [
+    'ImpersonateAllUsers' =>  [
         'type' => 'permission',
         'description' => 'Permission to allow a user to log in as any other user',
         'children' => [
-            'impersonateUser',
+            AuthController::class.'@loginAsUser',
         ],
     ],
-    'impersonateNonAdmin' =>  [
+    'ImpersonateNonAdmin' =>  [
         'type' => 'permission',
         'description' => 'Permission to allow a user to log in as non-admin users',
         'ruleName' => ImpersonateNonAdmin::class,
         'children' => [
-            'impersonateUser',
+            AuthController::class.'@loginAsUser',
         ],
     ],
-
-    //special permissions
-    'manipulateWithOwn' => [
+    'ManipulateWithOwn' => [
         'type' => 'permission',
         'description' => 'General permission to update record which belongs to the user',
         'ruleName' => ManipulateWithOwn::class,
@@ -103,6 +120,17 @@ return [
             PermissionsController::class.'@getAll',
         ],
     ],
+    'ManipulateWithOwnChild' => [
+        'type' => 'permission',
+        'description' => 'General permission to update record which belongs to the user',
+        'ruleName' => ManipulateWithOwnChild::class,
+        'children' => [
+            ArticleUserRatingsController::class.'@putOne',
+            ArticleBookmarksController::class.'@putOne',
+            ArticleUserRatingsController::class.'@deleteOne',
+            ArticleBookmarksController::class.'@deleteOne',
+        ],
+    ],
 
     //roles
     Role::SUPER_ADMIN_ROLE => [
@@ -110,7 +138,7 @@ return [
         'description' => 'Super Admin role, can do all actions',
         'children' => [
             Role::ADMIN_ROLE,
-            'impersonateAllUsers',
+            'ImpersonateAllUsers',
             'ReAssignAllRoles',
         ],
     ],
@@ -124,7 +152,7 @@ return [
             UserController::class.'@deleteOne',
             UserProfileController::class.'@getOne',
             PermissionsController::class.'@getAll',
-            'impersonateNonAdmin',
+            'ImpersonateNonAdmin',
             'ReAssignNonAdmin',
             Role::USER_ROLE,
         ],
@@ -132,7 +160,8 @@ return [
     Role::USER_ROLE => [
         'type' => 'role',
         'children' => [
-            'manipulateWithOwn',
+            'ManipulateWithOwn',
+            'ManipulateWithOwnChild',
         ],
     ],
     'testrole' => [

@@ -10,12 +10,11 @@
 
 namespace App\Http\Auth;
 
-use App\Models\Role;
-use App\Models\User;
+use Spira\Model\Model\BaseModel;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\User\UserProxy;
 
-class ImpersonateNonAdmin extends Rule
+class ManipulateWithOwnChild extends Rule
 {
     /**
      * Executes the rule.
@@ -23,23 +22,18 @@ class ImpersonateNonAdmin extends Rule
      * @param UserProxy $userProxy
      * @param array $params parameters passed to check.
      * @return bool a value indicating whether the rule permits the auth item it is associated with.
-     * @internal param array $params parameters passed to check.
      */
     public function execute(UserProxy $userProxy, $params)
     {
-        /** @var User $model */
-        $model = isset($params['model']) ? $params['model'] : null;
+        /** @var BaseModel $model */
+        $model = isset($params['children']) ? $params['children'] : null;
 
         if (! $model) {
             return false;
         }
 
-        $roles = $model->roles()->get()->pluck('key')->toArray();
+        $userId = $model->exists ? $model->getOriginal('user_id') : $model->user_id;
 
-        if (! in_array(Role::ADMIN_ROLE, $roles)) {
-            return true;
-        }
-
-        return false;
+        return $userId == $userProxy->resolveUser()->getAuthIdentifier();
     }
 }

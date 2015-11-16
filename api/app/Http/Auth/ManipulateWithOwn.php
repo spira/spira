@@ -10,6 +10,7 @@
 
 namespace App\Http\Auth;
 
+use Spira\Model\Model\BaseModel;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\User\UserProxy;
 
@@ -24,6 +25,15 @@ class ManipulateWithOwn extends Rule
      */
     public function execute(UserProxy $userProxy, $params)
     {
-        return isset($params['model']) ? $params['model']->user_id == $userProxy->resolveUser()->getAuthIdentifier() : false;
+        /** @var BaseModel $model */
+        $model = isset($params['model']) ? $params['model'] : null;
+
+        if (! $model) {
+            return false;
+        }
+
+        $userId = $model->exists ? $model->getOriginal('user_id') : $model->user_id;
+
+        return $userId == $userProxy->resolveUser()->getAuthIdentifier();
     }
 }

@@ -70,3 +70,20 @@ $factory->define(App\Models\Role::class, function (\Faker\Generator $faker) {
         'is_default' => $faker->boolean(),
     ];
 });
+
+$factory->define(App\Models\Rating::class, function (\Faker\Generator $faker) {
+    return [
+        'rating_id' => $faker->uuid(),
+        'rateable_id' => $faker->uuid(),
+        'rateable_type' => $faker->randomElement(App\Models\Rating::$rateables),
+        'rating_value' => $faker->numberBetween(1, 5),
+    ];
+});
+
+$factory->define(App\Models\Bookmark::class, function (\Faker\Generator $faker) {
+    return [
+        'bookmark_id' => $faker->uuid(),
+        'bookmarkable_id' => $faker->uuid(),
+        'bookmarkable_type' => $faker->randomElement(App\Models\Bookmark::$bookmarkables),
+    ];
+});

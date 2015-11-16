@@ -10,6 +10,8 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BookmarkableTrait;
+use App\Models\Traits\RateableTrait;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\Traits\TagTrait;
@@ -29,7 +31,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  */
 class Article extends IndexedModel implements LocalizableModelInterface
 {
-    use RevisionableTrait, LocalizableModelTrait, TagTrait;
+    use RevisionableTrait, LocalizableModelTrait, TagTrait, RateableTrait, BookmarkableTrait;
 
     const defaultExcerptWordCount = 30;
 

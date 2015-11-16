@@ -18,6 +18,7 @@ use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
 use App\Models\ArticleSectionsDisplay;
+use Spira\Model\Collection\Collection;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Faker\Factory as Faker;
 
@@ -94,6 +95,15 @@ class ArticleSeeder extends BaseSeeder
                             echo 'Comment: '.json_encode($comment->toArray())."\n\n";
                         }
                     });
+
+                $userCount = rand(2, $users->count());
+                /** @var Collection $users */
+                $users = $users->random($userCount);
+                for ($i = 0; $i < $userCount; $i++) {
+                    $user = $users->pop();
+                    $article->bookmarks()->save(factory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]));
+                    $article->userRatings()->save(factory(App\Models\Rating::class)->make(['user_id' => $user->user_id]));
+                }
 
                 $this->randomElements($images)
                     ->each(function (Image $image) use ($article) {

@@ -148,7 +148,7 @@ class AuthController extends ApiController
         /** @var User $user */
         $user = $userModel->findByIdentifier($userId);
 
-        $this->checkPermission('impersonateUser', $user);
+        $this->checkPermission(static::class.'@loginAsUser', ['model' => $user]);
 
         $user->setCurrentAuthMethod('impersonation');
 
