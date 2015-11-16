@@ -7,6 +7,8 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         public selectedIndex:number = 0;
         public section:common.models.Section<common.models.sections.Media>;
         public mediaForm:ng.IFormController;
+        public imageForm:ng.IFormController;
+        public videoForm:ng.IFormController;
         public alignmentOptions:common.models.sections.IAlignmentOption[];
         public sizeOptions:common.models.sections.ISizeOption[];
         public videoProviders:common.models.sections.IVideoProvider[];
