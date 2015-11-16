@@ -8,17 +8,16 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace Spira\Bookmark\Model;
+namespace App\Models\Traits;
 
+use App\Models\Rating;
 use Spira\Model\Model\BaseModel;
 
-trait BookmarkableTrait
+trait RateableTrait
 {
-    public function bookmark()
+    public function userRatings()
     {
-        /** @var BaseModel $model */
-        $model = $this;
-
-        return $model->morphMany(Bookmark::class, 'bookmarkable');
+        /** @var BaseModel $this */
+        return $this->morphMany(Rating::class, 'rateable');
     }
 }

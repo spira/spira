@@ -21,13 +21,20 @@ class ImpersonateNonAdmin extends Rule
      * Executes the rule.
      *
      * @param UserProxy $userProxy
-     * @param User $targetUser
+     * @param array $params parameters passed to check.
      * @return bool a value indicating whether the rule permits the auth item it is associated with.
      * @internal param array $params parameters passed to check.
      */
-    public function execute(UserProxy $userProxy, $targetUser)
+    public function execute(UserProxy $userProxy, $params)
     {
-        $roles = $targetUser->roles()->get()->pluck('key')->toArray();
+        /** @var User $model */
+        $model = isset($params['model']) ? $params['model'] : null;
+
+        if (! $model) {
+            return false;
+        }
+
+        $roles = $model->roles()->get()->pluck('key')->toArray();
 
         if (! in_array(Role::ADMIN_ROLE, $roles)) {
             return true;

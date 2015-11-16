@@ -8,31 +8,34 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace Spira\Rate\Model;
+namespace App\Models;
 
 use Spira\Model\Model\BaseModel;
 
-class Rating extends BaseModel
+class Bookmark extends BaseModel
 {
-    public $table = 'ratings';
+    public $table = 'bookmarks';
 
-    protected $primaryKey = 'rating_id';
+    protected $primaryKey = 'bookmark_id';
 
     public $timestamps = false;
+
+    public static $bookmarkables = [
+        Article::class
+    ];
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['rating_value', 'user_id'];
+    protected $fillable = ['user_id'];
 
     protected static $validationRules = [
-        'rating_value' => 'required|integer',
         'user_id' => 'required|uuid|exists:users,user_id',
     ];
 
-    public function rateable()
+    public function bookmarkable()
     {
         return $this->morphTo();
     }

@@ -193,7 +193,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
 
     public function ratedArticles()
     {
-        return $this->morphedByMany(Article::class, 'rateable', 'ratings');
+        return $this->morphedByMany(Article::class, 'rateable', 'ratings')->withPivot(['rating_value']);
     }
 
     /**

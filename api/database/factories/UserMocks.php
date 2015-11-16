@@ -71,15 +71,19 @@ $factory->define(App\Models\Role::class, function (\Faker\Generator $faker) {
     ];
 });
 
-$factory->define(\Spira\Rate\Model\Rating::class, function (\Faker\Generator $faker) {
+$factory->define(App\Models\Rating::class, function (\Faker\Generator $faker) {
     return [
         'rating_id' => $faker->uuid(),
-        'rating_value' => $faker->numberBetween(1, 10),
+        'rateable_id' => $faker->uuid(),
+        'rateable_type' => $faker->randomElement(App\Models\Rating::$rateables),
+        'rating_value' => $faker->numberBetween(1, 5),
     ];
 });
 
-$factory->define(\Spira\Bookmark\Model\Bookmark::class, function (\Faker\Generator $faker) {
+$factory->define(App\Models\Bookmark::class, function (\Faker\Generator $faker) {
     return [
         'bookmark_id' => $faker->uuid(),
+        'bookmarkable_id' => $faker->uuid(),
+        'bookmarkable_type' => $faker->randomElement(App\Models\Bookmark::$bookmarkables),
     ];
 });

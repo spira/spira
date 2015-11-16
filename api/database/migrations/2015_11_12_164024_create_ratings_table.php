@@ -8,10 +8,11 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Spira\Rate\Model\Rating;
+
 
 class CreateRatingsTable extends Migration
 {
@@ -25,8 +26,8 @@ class CreateRatingsTable extends Migration
         Schema::create(Rating::getTableName(), function (Blueprint $table) {
             $table->uuid('rating_id')->primary();
             $table->uuid('rateable_id');
-            $table->string('rateable_type');
-            $table->tinyInteger('rating_value');
+            $table->enum('rateable_type', Rating::$rateables);
+            $table->tinyInteger('rating_value', false, true);
             $table->uuid('user_id')->index();
 
             $table->unique(['rateable_id', 'rateable_type', 'user_id']);

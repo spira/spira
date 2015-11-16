@@ -13,9 +13,15 @@ namespace App\Http\Controllers;
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
 
-class ArticleRateController extends ChildEntityController
+class ArticleBookmarksController extends ChildEntityController
 {
-    protected $relationName = 'rate';
+    /**
+     * Enable permissions checks.
+     */
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
+    protected $relationName = 'bookmarks';
 
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {

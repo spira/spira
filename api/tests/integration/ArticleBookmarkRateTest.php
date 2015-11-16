@@ -16,24 +16,38 @@ class ArticleBookmarkRateTest extends TestCase
     {
         $user = $this->createUser();
         $article = $this->getFactory(Article::class)->create();
-        $rateData = $this->getFactory(\Spira\Rate\Model\Rating::class)->transformed();
+        $rateData = $this->getFactory(App\Models\Rating::class)->transformed();
 
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/rate/'.$rateData['ratingId'], $rateData);
+        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/ratings/'.$rateData['ratingId'], $rateData);
 
         $this->assertResponseStatus(201);
 
         $this->assertEquals($user->ratedArticles->first()->article_id, $article->article_id);
+        $rating = $user->ratedArticles->first()->pivot->rating_value;
+        $this->assertTrue($rating > 0 && $rating < 6);
+    }
+
+    public function testInvalidRate()
+    {
+        $user = $this->createUser();
+        $article = $this->getFactory(Article::class)->create();
+        $rateData = $this->getFactory(App\Models\Rating::class)->customize(['rating_value' => 6])->transformed();
+
+        $token = $this->tokenFromUser($user);
+        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/ratings/'.$rateData['ratingId'], $rateData);
+
+        $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
     }
 
     public function testSimpleBookmark()
     {
         $user = $this->createUser();
         $article = $this->getFactory(Article::class)->create();
-        $bookmarkData = $this->getFactory(\Spira\Bookmark\Model\Bookmark::class)->transformed();
+        $bookmarkData = $this->getFactory(App\Models\Bookmark::class)->transformed();
 
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/bookmark/'.$bookmarkData['bookmarkId'], $bookmarkData);
+        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/bookmarks/'.$bookmarkData['bookmarkId'], $bookmarkData);
 
         $this->assertResponseStatus(201);
 
@@ -45,11 +59,11 @@ class ArticleBookmarkRateTest extends TestCase
         $user = $this->createUser();
         /** @var Article $article */
         $article = $this->getFactory(Article::class)->create();
-        $rating = $this->getFactory(\Spira\Rate\Model\Rating::class)->make(['user_id' => $user->user_id]);
-        $article->rate()->save($rating);
+        $rating = $this->getFactory(App\Models\Rating::class)->make(['user_id' => $user->user_id]);
+        $article->userRatings()->save($rating);
 
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/rate/'.$rating->rating_id);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/ratings/'.$rating->rating_id);
 
         $this->assertResponseStatus(204);
         $this->assertEquals(0, $user->ratedArticles->count());
@@ -60,11 +74,11 @@ class ArticleBookmarkRateTest extends TestCase
         $user = $this->createUser();
         /** @var Article $article */
         $article = $this->getFactory(Article::class)->create();
-        $bookmark = $this->getFactory(\Spira\Bookmark\Model\Bookmark::class)->make(['user_id' => $user->user_id]);
-        $article->bookmark()->save($bookmark);
+        $bookmark = $this->getFactory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]);
+        $article->bookmarks()->save($bookmark);
 
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/bookmark/'.$bookmark->bookmark_id);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/bookmarks/'.$bookmark->bookmark_id);
 
         $this->assertResponseStatus(204);
         $this->assertEquals(0, $user->bookmarkedArticles->count());
@@ -75,19 +89,19 @@ class ArticleBookmarkRateTest extends TestCase
         $user = $this->createUser();
         /** @var Article $article */
         $article = $this->getFactory(Article::class)->create();
-        $rating = $this->getFactory(\Spira\Rate\Model\Rating::class)->make(
+        $rating = $this->getFactory(App\Models\Rating::class)->make(
             [
                 'user_id' => $user->user_id,
                 'rating_value' => 5,
             ]);
 
-        $article->rate()->save($rating);
+        $article->userRatings()->save($rating);
 
-        $this->assertEquals(5, $article->rate->first()->rating_value);
-        $this->assertEquals(1, $article->rate->count());
+        $this->assertEquals(5, $article->userRatings->first()->rating_value);
+        $this->assertEquals(1, $article->userRatings->count());
 
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/rate/'.$rating->rating_id, [
+        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/ratings/'.$rating->rating_id, [
                 'ratingId' => $rating->rating_id,
                 'ratingValue' => 2,
         ]);
@@ -95,7 +109,65 @@ class ArticleBookmarkRateTest extends TestCase
         $article = Article::find($article->article_id);
 
         $this->assertResponseStatus(201);
-        $this->assertEquals(1, $article->rate->count());
-        $this->assertEquals(2, $article->rate->first()->rating_value);
+        $this->assertEquals(1, $article->userRatings->count());
+        $this->assertEquals(2, $article->userRatings->first()->rating_value);
     }
+
+    public function testRemoveRateSpoof()
+    {
+        $user = $this->createUser();
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)->create();
+        $rating = $this->getFactory(App\Models\Rating::class)->make(['user_id' => $user->user_id]);
+        $article->userRatings()->save($rating);
+
+        $spoofer = $this->createUser();
+        $token = $this->tokenFromUser($spoofer);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/ratings/'.$rating->rating_id);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testRemoveBookmarkSpoof()
+    {
+        $user = $this->createUser();
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)->create();
+        $bookmark = $this->getFactory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]);
+        $article->bookmarks()->save($bookmark);
+
+        $spoofer = $this->createUser();
+        $token = $this->tokenFromUser($spoofer);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('articles/'.$article->article_id.'/bookmarks/'.$bookmark->bookmark_id);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    public function testUpdateRateSpoof()
+    {
+        $user = $this->createUser();
+        /** @var Article $article */
+        $article = $this->getFactory(Article::class)->create();
+        $rating = $this->getFactory(App\Models\Rating::class)->make(
+            [
+                'user_id' => $user->user_id,
+                'rating_value' => 5,
+            ]);
+
+        $article->userRatings()->save($rating);
+
+        $this->assertEquals(5, $article->userRatings->first()->rating_value);
+        $this->assertEquals(1, $article->userRatings->count());
+
+        $spoofer = $this->createUser();
+        $token = $this->tokenFromUser($spoofer);
+        $this->withAuthorization('Bearer '.$token)->putJson('articles/'.$article->article_id.'/ratings/'.$rating->rating_id, [
+            'ratingId' => $rating->rating_id,
+            'ratingValue' => 2,
+        ]);
+
+        $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+
 }
