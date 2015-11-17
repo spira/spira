@@ -253,7 +253,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
         return (new ArticleDiscussion)->setArticle($this);
     }
 
-    public function thumbnail()
+    public function thumbnailImage()
     {
         return $this->hasOne(Image::class, 'image_id', 'thumbnail_image_id');
     }

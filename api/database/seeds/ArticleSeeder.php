@@ -14,7 +14,6 @@ use App\Models\User;
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleMeta;
-use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
 use App\Models\ArticleSectionsDisplay;

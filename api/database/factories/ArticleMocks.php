@@ -56,13 +56,3 @@ $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $f
         'created_at' => $faker->dateTime,
     ];
 });
-
-$factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $faker) {
-    return [
-        'article_image_id' => $faker->uuid,
-        'image_type' => $imageType = $faker->optional()->randomElement(['primary','thumbnail','carousel']),
-        'position' => ($imageType == 'carousel') ? $faker->numberBetween(1, 10) : null,
-        'alt' => $faker->optional()->sentence,
-        'title' => $faker->optional()->sentence,
-    ];
-});
