@@ -66,7 +66,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
         'show_author_promo',
         'first_published',
         'sections_display',
-        'primaryImage',
+        'thumbnail_image_id',
         'status',
     ];
 
@@ -89,7 +89,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
             'article_id' => 'required|uuid',
             'title' => 'required|string',
             'excerpt' => 'string',
-            'primaryImage' => 'string',
+            'thumbnail_image_id' => 'uuid',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink,'.$entityId.',article_id',
             'sections_display' => 'decoded_json',
@@ -103,7 +103,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
             'type' => 'string',
             'index' => 'no', // also sets 'include_in_all' = false
         ],
-        'primary_image' => [
+        'thumbnail_image_id' => [
             'type' => 'string',
             'index' => 'no',
         ],
@@ -253,12 +253,9 @@ class Article extends IndexedModel implements LocalizableModelInterface
         return (new ArticleDiscussion)->setArticle($this);
     }
 
-    /**
-     * @return HasMany
-     */
-    public function articleImages()
+    public function thumbnail()
     {
-        return $this->hasMany(ArticleImage::class);
+        return $this->hasOne(Image::class, 'image_id', 'thumbnail_image_id');
     }
 
     public function author()

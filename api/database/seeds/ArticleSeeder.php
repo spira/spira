@@ -44,7 +44,9 @@ class ArticleSeeder extends BaseSeeder
         $groupedTagPivots = Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
 
         factory(Article::class, 50)
-            ->create()
+            ->create([
+                'thumbnail_image_id' => $images->random(1)->getKey(),
+            ])
             ->each(function (Article $article) use ($images, $users, $tags, $groupedTagPivots, $faker, $supportedRegions) {
 
                 //add sections
@@ -104,14 +106,6 @@ class ArticleSeeder extends BaseSeeder
                     $article->bookmarks()->save(factory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]));
                     $article->userRatings()->save(factory(App\Models\Rating::class)->make(['user_id' => $user->user_id]));
                 }
-
-                $this->randomElements($images)
-                    ->each(function (Image $image) use ($article) {
-                    factory(ArticleImage::class)->create([
-                        'article_id' => $article->article_id,
-                        'image_id' => $image->image_id,
-                    ]);
-                });
 
                 $article->touch(); // Update search index
 
