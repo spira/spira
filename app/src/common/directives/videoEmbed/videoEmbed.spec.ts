@@ -4,7 +4,7 @@ namespace common.directives.videoEmbed {
         testModel: any;
     }
 
-    describe.only('Video embed directive', () => {
+    describe('Video embed directive', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:TestScope,
