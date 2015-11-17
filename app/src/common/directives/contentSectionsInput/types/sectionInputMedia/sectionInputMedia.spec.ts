@@ -12,7 +12,10 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
             directiveController: SectionInputMediaController,
-            $q:ng.IQService
+            $q:ng.IQService,
+            parentControllerStub = {
+                registerSettingsBindings: sinon.stub(),
+            }
         ;
 
         beforeEach(()=> {
@@ -35,12 +38,16 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
                     content: common.models.sections.MediaMock.entity(),
                 });
 
-
-                compiledElement = $compile(`
+                let element = angular.element(`
                     <section-input-media
                         section="section"
                     ></section-input-media>
-                `)(directiveScope);
+                `);
+
+                element.data('$contentSectionsInputItemController', parentControllerStub);
+                element.data('$contentSectionsInputSetController', sinon.stub());
+
+                compiledElement = $compile(element)(directiveScope);
 
                 $rootScope.$digest();
 
@@ -57,6 +64,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         it('should initialise the directive', () => {
 
             expect($(compiledElement).hasClass('section-input-media')).to.be.true;
+            expect(parentControllerStub.registerSettingsBindings).to.have.been.called;
         });
 
         it('should be able to add a media section', () => {
@@ -97,6 +105,31 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
             expect(newImageTab.caption).to.equal(newImageTab._image.alt);
         });
 
+
+
+        it('should be able to move a media item left', () => {
+
+            let mediaItem = _.first(directiveController.section.content.media);
+
+            directiveController.moveMedia(mediaItem, false);
+
+            $rootScope.$digest();
+
+            expect(directiveController.section.content.media[1]).to.deep.equal(mediaItem);
+
+        });
+
+        it('should be able to move a media item right', () => {
+
+            let mediaItem = _.last(directiveController.section.content.media);
+
+            directiveController.moveMedia(mediaItem);
+
+            $rootScope.$digest();
+
+            expect(directiveController.section.content.media[directiveController.section.content.media.length - 2]).to.deep.equal(mediaItem);
+
+        });
 
     });
 

@@ -60,7 +60,7 @@ namespace common.directives.selectMediaImage {
 
             expect(directiveScope.testImage).to.be.null;
 
-            directiveController.promptSelectImage();
+            directiveController.promptSelectImageDialog('upload');
 
             directiveScope.$apply();
 

@@ -51,12 +51,6 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
 
         }
 
-        public mediaTypeChanged(media:(common.models.sections.IImageContent|common.models.sections.IVideoContent)):void{
-
-
-
-        }
-
         public moveMedia(media:(common.models.sections.IImageContent|common.models.sections.IVideoContent), moveLeft:boolean = true):void{
 
             let mediaIndex:number = _.findIndex(this.section.content.media, media);

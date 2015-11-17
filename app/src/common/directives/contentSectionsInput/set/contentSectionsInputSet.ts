@@ -125,31 +125,6 @@ namespace common.directives.contentSectionsInput.set {
 
     }
 
-
-
-    class SettingsSheetController {
-
-
-        static $inject = ['controllerBinding'];
-        constructor(controllerBinding) {
-            this.bindController(controllerBinding);
-        }
-
-        /**
-         * Iterate through the properties of the injected controller, binding to this controller.
-         * This feels hacky and there is probably a better way to do this
-         * @param controllerBinding
-         */
-        private bindController(controllerBinding) {
-            _.transform(controllerBinding, (thisController, value, key) => {
-
-                thisController[key] = value;
-
-            }, this);
-        }
-
-    }
-
     class ContentSectionsInputSetDirective implements ng.IDirective {
 
         public restrict = 'E';

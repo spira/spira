@@ -1,18 +1,18 @@
-namespace common.directives.contentSectionsInput {
+namespace common.directives.contentSectionsInput.set {
 
     interface TestScope extends ng.IRootScopeService {
         testSectionsModel: any;
         testSectionUpdated(event, section):void;
-        ContentSectionsInputSetController: set.ContentSectionsInputSetController;
+        ContentSectionsInputSetController: ContentSectionsInputSetController;
     }
 
-    describe('Content sections directive', () => {
+    describe('Content sections directive set', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:ng.IRootScopeService,
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
-            directiveController: set.ContentSectionsInputSetController,
+            directiveController: ContentSectionsInputSetController,
             $q:ng.IQService
         ;
 
@@ -61,7 +61,7 @@ namespace common.directives.contentSectionsInput {
 
         it('should initialise the directive', () => {
 
-            expect($(compiledElement).hasClass('content-sections-input')).to.be.true;
+            expect($(compiledElement).hasClass('content-sections-input-set')).to.be.true;
         });
 
         it('should be able to add a new section type', () => {

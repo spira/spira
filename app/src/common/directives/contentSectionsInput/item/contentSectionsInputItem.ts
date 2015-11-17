@@ -16,16 +16,15 @@ namespace common.directives.contentSectionsInput.item {
         public $element:ng.IAugmentedJQuery|JQuery;
         public parentSetController:set.ContentSectionsInputSetController;
 
-        static $inject = ['ngRestAdapter', '$mdDialog', '$mdBottomSheet', '$q'];
+        static $inject = ['ngRestAdapter', '$mdBottomSheet', '$q'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
-                    private $mdDialog:ng.material.IDialogService,
                     private $mdBottomSheet:ng.material.IBottomSheetService,
                     private $q:ng.IQService
         ){
 
         }
 
-        public registerSettingsBindings(bindingSettings:ISettingsControllerBindings){
+        public registerSettingsBindings(bindingSettings:ISettingsControllerBindings):void {
 
             this.childControllerSettings = bindingSettings;
         }
@@ -65,9 +64,9 @@ namespace common.directives.contentSectionsInput.item {
 
                 return this.$mdBottomSheet.show(bottomSheetConfig).finally(() => {
                     this.toolbarOpen = false;
-                })
+                });
             } else {
-                this.$mdBottomSheet.cancel();
+                this.$mdBottomSheet.cancel(false);
             }
 
         }
@@ -75,7 +74,7 @@ namespace common.directives.contentSectionsInput.item {
     }
 
 
-    class SettingsSheetController {
+    export class SettingsSheetController {
 
 
         static $inject = ['controllerBinding'];

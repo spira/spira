@@ -114,7 +114,11 @@
 
                     <div class="video-image-toggle" layout="row">
                         <label ng-class="{active:mediaContent.type=='video'}">Video</label>
-                        <md-switch ng-model="mediaContent.type" ng-true-value="'image'" ng-false-value="'video'" aria-label="Toggle Media Type" ng-change="SectionInputMediaController.mediaTypeChanged(mediaContent)" class="md-block">
+                        <md-switch ng-model="mediaContent.type"
+                                   ng-true-value="'image'"
+                                   ng-false-value="'video'"
+                                   aria-label="Toggle Media Type"
+                                   class="md-block">
                         </md-switch>
                         <label ng-class="{active:mediaContent.type=='image'}">Image</label>
                     </div>
