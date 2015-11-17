@@ -6,6 +6,10 @@ namespace common.directives.selectMediaImage {
         (image:common.models.Image):void;
     }
 
+    export interface ISelectMediaScope extends ng.IScope {
+        currentImage: common.models.Image;
+    }
+
     export class SelectMediaImageController {
 
         private changeHandler:IImageChangeHandler;
@@ -19,14 +23,16 @@ namespace common.directives.selectMediaImage {
             this.changeHandler = handler;
         }
 
-        public promptSelectImage():ng.IPromise<common.models.Image> {
+        public promptSelectImageDialog(targetTab:string):ng.IPromise<common.models.Image> {
 
             let dialogConfig:ng.material.IDialogOptions = {
                 templateUrl: 'templates/common/directives/selectMediaImage/dialog/selectMediaImageDialog.tpl.html',
                 controller: namespace+'.dialog.controller',
                 controllerAs: 'SelectMediaImageDialogController',
                 clickOutsideToClose: true,
-                locals: {}
+                locals: {
+                    targetTab: targetTab
+                }
             };
 
             return this.$mdDialog.show(dialogConfig)
@@ -60,7 +66,7 @@ namespace common.directives.selectMediaImage {
         constructor() {
         }
 
-        public link = ($scope: ng.IScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ng.INgModelController, SelectMediaImageController]) => {
+        public link = ($scope: ISelectMediaScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [ng.INgModelController, SelectMediaImageController]) => {
 
             let $ngModelController = $controllers[0];
             let directiveController = $controllers[1];
@@ -69,6 +75,7 @@ namespace common.directives.selectMediaImage {
                 $ngModelController.$setViewValue(image);
 
                 $ngModelController.$setDirty();
+                $scope.currentImage = image;
             });
 
             $ngModelController.$render = () => {
