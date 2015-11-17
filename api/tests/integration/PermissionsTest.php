@@ -20,7 +20,7 @@ class PermissionsTest extends TestCase
         $this->assertException('Unauthorized', 401, 'UnauthorizedException');
     }
 
-    public function testManyRoles()
+    public function testStructureFromPermissionsRequest()
     {
         $adminUser = $this->createUser();
         $this->assignSuperAdmin($adminUser);
@@ -58,6 +58,69 @@ class PermissionsTest extends TestCase
         }
 
         $this->assertTrue($structureCheck);
+    }
+
+    public function testStructureFromUserRequest()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $this->assignTest($adminUser);
+
+        $token = $this->tokenFromUser($adminUser);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$adminUser->user_id, [
+            'With-Nested' => 'roles.permissions',
+        ]);
+
+        $result = json_decode($this->response->getContent());
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+
+        $result = $this->prepareArray($result->_roles);
+        $this->assertTrue(isset($result['user']), 'check if user has default role');
+        $this->assertTrue(isset($result['testrole']), 'check if user has assigned test role');
+        $this->assertTrue(isset($result['admin']), 'check if user has inherited admin role');
+        $this->assertTrue(isset($result['superAdmin']), 'check if user has assigned superAdmin role');
+
+        $this->assertObjectHasAttribute('_permissions', $result['admin']);
+
+        $structureCheck = false;
+        foreach ($result['admin']->_permissions as $permission) {
+            if (
+                $permission->key === 'App\Http\Controllers\PermissionsController@getAll' &&
+                property_exists($permission, 'matchingRoutes') &&
+                is_array($permission->matchingRoutes) &&
+                $permission->matchingRoutes[0]->method === 'GET' &&
+                $permission->matchingRoutes[0]->uri === '/users/{id}/roles'
+            ) {
+                $structureCheck = true;
+            }
+        }
+
+        $this->assertTrue($structureCheck);
+    }
+
+    public function testManyRoles()
+    {
+        $adminUser = $this->createUser();
+        $this->assignSuperAdmin($adminUser);
+        $this->assignTest($adminUser);
+
+        $token = $this->tokenFromUser($adminUser);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$adminUser->user_id.'/roles', [
+            'With-Nested' => 'permissions',
+        ]);
+
+        $result = json_decode($this->response->getContent());
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+        $this->assertJsonArray();
+
+        $result = $this->prepareArray($result);
+        $this->assertTrue(isset($result['user']), 'check if user has default role');
+        $this->assertTrue(isset($result['testrole']), 'check if user has assigned test role');
+        $this->assertTrue(isset($result['admin']), 'check if user has inherited admin role');
+        $this->assertTrue(isset($result['superAdmin']), 'check if user has assigned superAdmin role');
     }
 
     public function testAdminGetRoles()

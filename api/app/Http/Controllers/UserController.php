@@ -10,6 +10,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Transformers\UserTransformer;
 use App\Models\User;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
@@ -21,7 +22,6 @@ use Laravel\Lumen\Routing\DispatchesJobs;
 use Spira\Auth\Driver\Guard as SpiraGuard;
 use Symfony\Component\HttpFoundation\Response;
 use Spira\Model\Validation\ValidationException;
-use App\Http\Transformers\EloquentModelTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -43,14 +43,12 @@ class UserController extends EntityController
      *
      * @param  User $model
      * @param  Guard $auth
-     * @param  Request $request
-     * @param  EloquentModelTransformer $transformer
+     * @param  UserTransformer $transformer
      */
     public function __construct(
         User $model,
         Guard $auth,
-        Request $request,
-        EloquentModelTransformer $transformer
+        UserTransformer $transformer
     ) {
         parent::__construct($model, $transformer);
         $this->auth = $auth;

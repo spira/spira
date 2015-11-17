@@ -12,6 +12,7 @@ namespace App\Models\Relations;
 
 use App\Models\Role;
 use App\Models\RoleCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spira\Rbac\Item\Item;
 
@@ -46,10 +47,39 @@ class UserRoleRelation extends BelongsToMany
 
     public function get($columns = ['*'])
     {
+        $roleKeys = $this->query->getQuery()->lists($this->otherKey);
+        return $this->hydrateRolesByKeys($roleKeys);
+    }
+
+    public function getEager()
+    {
+        return new Collection($this->query->getQuery()->get());
+    }
+
+    public function buildDictionary(Collection $results)
+    {
+        $dictionary = [];
+        foreach ($results as $result) {
+            $dictionary[$result->user_id][] = $result->role_key;
+        }
+
+        foreach ($dictionary as &$item)
+        {
+            $item = $this->hydrateRolesByKeys($item)->all();
+        }
+
+        return $dictionary;
+    }
+
+    /**
+     * @param array $roleKeys
+     * @return Collection
+     */
+    protected function hydrateRolesByKeys(array $roleKeys)
+    {
         $storage = $this->getGate()->getStorage();
         $defaultRolesKeys = $this->getGate()->getDefaultRoles();
-        $customRolesKeys = $this->query->getQuery()->lists($this->otherKey);
-        $rolesKeys = array_unique(array_merge($defaultRolesKeys, $customRolesKeys));
+        $rolesKeys = array_unique(array_merge($defaultRolesKeys, $roleKeys));
 
         $roles = [];
         foreach ($rolesKeys as $roleKey) {
@@ -58,16 +88,6 @@ class UserRoleRelation extends BelongsToMany
 
         $roles = $this->getItemsRecursively(Item::TYPE_ROLE, $roles);
 
-        return new RoleCollection($this->hydrateRoles($roles, $defaultRolesKeys));
-    }
-
-    /**
-     * @param Item[] $roles
-     * @param array $defaultRolesKeys
-     * @return array
-     */
-    protected function hydrateRoles($roles, array $defaultRolesKeys)
-    {
         $roleModels = [];
         foreach ($roles as $role) {
             $roleModels[] = new Role([
@@ -77,6 +97,8 @@ class UserRoleRelation extends BelongsToMany
             ]);
         }
 
-        return $roleModels;
+        $collection = new RoleCollection($roleModels);
+        $collection->load(array_keys($this->query->getEagerLoads()));
+        return $collection;
     }
 }
