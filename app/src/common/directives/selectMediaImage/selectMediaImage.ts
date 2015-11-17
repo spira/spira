@@ -75,12 +75,13 @@ namespace common.directives.selectMediaImage {
                 $ngModelController.$setViewValue(image);
 
                 $ngModelController.$setDirty();
-                $scope.currentImage = image;
+                $ngModelController.$render();
             });
 
             $ngModelController.$render = () => {
 
                 directiveController.currentImage = $ngModelController.$modelValue;
+                $scope.currentImage = directiveController.currentImage;
             };
 
         };

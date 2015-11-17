@@ -23,6 +23,9 @@
                         class="md-icon-button"
                         ng-click="ContentSectionsInputItemController.parentSetController.moveSection(ContentSectionsInputItemController.section, true)">
                     <md-icon>keyboard_arrow_up</md-icon>
+                    <md-tooltip md-direction="top">
+                        Move section up
+                    </md-tooltip>
                 </md-button>
                 <md-button
                         ng-disabled="$last"
@@ -30,12 +33,18 @@
                         class="md-icon-button"
                         ng-click="ContentSectionsInputItemController.parentSetController.moveSection(ContentSectionsInputItemController.section, false)">
                     <md-icon>keyboard_arrow_down</md-icon>
+                    <md-tooltip md-direction="top">
+                        Move section down
+                    </md-tooltip>
                 </md-button>
                 <md-button
                         aria-label="Remove Section"
-                        class="md-icon-button"
+                        class="md-icon-button md-warn"
                         ng-click="ContentSectionsInputItemController.parentSetController.removeSection(ContentSectionsInputItemController.section)">
                     <md-icon>delete</md-icon>
+                    <md-tooltip md-direction="top">
+                        Remove section
+                    </md-tooltip>
                 </md-button>
             </span>
 
@@ -45,6 +54,9 @@
                        ng-click="ContentSectionsInputItemController.toggleSettings($event)">
                 <md-icon ng-if="!ContentSectionsInputItemController.toolbarOpen">more_vert</md-icon>
                 <md-icon ng-if="ContentSectionsInputItemController.toolbarOpen">close</md-icon>
+                <md-tooltip md-direction="top">
+                    Settings Menu
+                </md-tooltip>
             </md-button>
 
         </div>

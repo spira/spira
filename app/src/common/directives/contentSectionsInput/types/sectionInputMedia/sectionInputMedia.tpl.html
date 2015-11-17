@@ -17,14 +17,6 @@
                     </div>
 
                     <div flex>
-                        <div flex ng-show="false">
-                            <cl-image ng-if="mediaContent.type =='image' && !!mediaContent._image" width="100%" public-id="{{mediaContent._image.imageId}}" format="{{mediaContent._image.format}}">
-                                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
-                            </cl-image>
-
-                            <select-media-image ng-model="mediaContent._image" ng-change="SectionInputMediaController.imageChanged(mediaContent)"></select-media-image>
-
-                        </div>
 
                         <md-input-container flex>
                             <label>Caption</label>
@@ -103,7 +95,7 @@
                     </ng-form>
                 </div>
 
-                <div layout="row">
+                <div layout="row" layout-padding>
 
                     <div class="video-image-toggle" layout="row">
                         <label ng-class="{active:mediaContent.type=='video'}">Video</label>
@@ -114,8 +106,36 @@
 
                     <span flex></span>
 
-                    <md-button class="md-warn" ng-click="SectionInputMediaController.removeMedia(mediaContent)">
-                        <span>Remove media <md-icon>delete</md-icon></span>
+                    <md-button
+                            ng-disabled="$first"
+                            aria-label="Move {{mediaContent.type}} left"
+                            class="md-icon-button"
+                            ng-click="SectionInputMediaController.moveMedia(mediaContent, true)">
+                        <md-icon>arrow_back</md-icon>
+                        <md-tooltip md-direction="top">
+                            Move {{mediaContent.type}} left
+                        </md-tooltip>
+                    </md-button>
+
+                    <md-button
+                            ng-disabled="$last"
+                            aria-label="Move {{mediaContent.type}} down"
+                            class="md-icon-button"
+                            ng-click="SectionInputMediaController.moveMedia(mediaContent, false)">
+                        <md-icon>arrow_forward</md-icon>
+                        <md-tooltip md-direction="top">
+                            Move {{mediaContent.type}} right
+                        </md-tooltip>
+                    </md-button>
+
+                    <md-button
+                            aria-label="Remove {{mediaContent.type}}"
+                            class="md-icon-button md-warn"
+                            ng-click="SectionInputMediaController.removeMedia(mediaContent)">
+                        <md-icon>delete</md-icon>
+                        <md-tooltip md-direction="top">
+                            Remove {{mediaContent.type}}
+                        </md-tooltip>
                     </md-button>
 
                 </div>

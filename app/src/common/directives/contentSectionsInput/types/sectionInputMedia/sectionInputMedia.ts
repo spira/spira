@@ -57,6 +57,21 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
 
         }
 
+        public moveMedia(media:(common.models.sections.IImageContent|common.models.sections.IVideoContent), moveLeft:boolean = true):void{
+
+            let mediaIndex:number = _.findIndex(this.section.content.media, media);
+            let swapIndex:number = mediaIndex;
+
+            if(moveLeft){
+                swapIndex --;
+            }else{
+                swapIndex++;
+            }
+
+            this.section.content.media[mediaIndex] = this.section.content.media[swapIndex];
+            this.section.content.media[swapIndex] = media;
+        }
+
         /**
          * Delete an image with prompt
          * @param media
