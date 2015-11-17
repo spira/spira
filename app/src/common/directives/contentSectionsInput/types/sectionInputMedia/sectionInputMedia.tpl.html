@@ -5,31 +5,44 @@
         <md-tabs md-selected="SectionInputMediaController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
             <md-tab ng-repeat="mediaContent in SectionInputMediaController.section.content.media" label="Media {{$index + 1}}">
 
-                <ng-form name="SectionInputMediaController.imageForm" ng-if="mediaContent.type =='image'" layout-gt-md="row">
-                    <div flex>
-                        <cl-image ng-if="mediaContent.type =='image' && !!mediaContent._image" width="100%" public-id="{{mediaContent._image.imageId}}" format="{{mediaContent._image.format}}">
-                            <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
-                        </cl-image>
+                <ng-form name="SectionInputMediaController.imageForm" layout-gt-md="row" ng-if="mediaContent.type =='image'" >
 
-                        <select-media-image ng-model="mediaContent._image" ng-change="SectionInputMediaController.imageChanged(mediaContent)"></select-media-image>
+                    <div flex layout="column" layout-padding>
+
+                        <select-media-image
+                                ng-model="mediaContent._image"
+                                ng-change="SectionInputMediaController.imageChanged(mediaContent)">
+                        </select-media-image>
 
                     </div>
 
-                    <md-input-container flex>
-                        <label>Caption</label>
+                    <div flex>
+                        <div flex ng-show="false">
+                            <cl-image ng-if="mediaContent.type =='image' && !!mediaContent._image" width="100%" public-id="{{mediaContent._image.imageId}}" format="{{mediaContent._image.format}}">
+                                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+                            </cl-image>
 
-                        <input
-                            ng-model="mediaContent.caption"
-                            name="caption"
-                            localizable-input="SectionInputMediaController.section._localizations"
-                            localizable-input-path="content.media[{{$index}}].caption"
-                            required
-                        >
-                        <ng-messages for="SectionInputMediaController.imageForm.caption.$error">
-                            <ng-message when="required">Caption is required</ng-message>
-                            <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
-                        </ng-messages>
-                    </md-input-container>
+                            <select-media-image ng-model="mediaContent._image" ng-change="SectionInputMediaController.imageChanged(mediaContent)"></select-media-image>
+
+                        </div>
+
+                        <md-input-container flex>
+                            <label>Caption</label>
+
+                            <input
+                                    ng-model="mediaContent.caption"
+                                    name="caption"
+                                    localizable-input="SectionInputMediaController.section._localizations"
+                                    localizable-input-path="content.media[{{$index}}].caption"
+                                    required
+                                    >
+                            <ng-messages for="SectionInputMediaController.imageForm.caption.$error">
+                                <ng-message when="required">Caption is required</ng-message>
+                                <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
+                    </div>
 
                 </ng-form>
 
