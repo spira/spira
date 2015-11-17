@@ -92,6 +92,21 @@
                             </ng-messages>
                         </md-input-container>
 
+
+                        <md-input-container flex>
+                            <label>Caption</label>
+
+                            <input
+                                ng-model="mediaContent.caption"
+                                name="caption"
+                                localizable-input="SectionInputMediaController.section._localizations"
+                                localizable-input-path="content.media[{{$index}}].caption"
+                            >
+                            <ng-messages for="SectionInputMediaController.videoForm.caption.$error">
+                                <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
                     </ng-form>
                 </div>
 

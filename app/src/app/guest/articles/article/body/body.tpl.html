@@ -12,28 +12,40 @@
         <h3>Promo Section</h3>
     </div>
 
-    <div ng-switch-when="image">
+    <div ng-switch-when="media">
 
-        <ul rn-carousel class="image" rn-carousel-index="section.carouselIndex">
-            <li ng-repeat="image in section.content.images">
-                <div class="layer">
-                    <cl-image
-                        width="100%"
-                        public-id="{{image._image.imageId}}"
-                        format="{{image._image.format}}"
-                    ></cl-image>
+        <ul rn-carousel class="media" rn-carousel-index="section.carouselIndex">
+            <li ng-repeat="media in section.content.media">
+                <div class="layer" ng-switch="media.type">
+
+                    <div ng-switch-when="image">
+                        <cl-image
+                            width="100%"
+                            public-id="{{media._image.imageId}}"
+                            format="{{media._image.format}}"
+                        ></cl-image>
+                    </div>
+
+                    <div ng-switch-when="video">
+                        <video-embed provider="{{media.provider}}"
+                                     video-id="{{media.videoId}}">
+                        </video-embed>
+                    </div>
+
+
                 </div>
-                <div>
-                    <span>Caption: {{image.caption}}</span>
+                <div ng-if="!!media.caption">
+                    <span>Caption: {{media.caption}}</span>
                 </div>
             </li>
         </ul>
         <div rn-carousel-indicators
-             ng-if="section.content.images.length > 1"
-             slides="section.content.images"
+             ng-if="section.content.media.length > 1"
+             slides="section.content.media"
              rn-carousel-index="section.carouselIndex"
              style="position: relative;top: -35px;left: 2px;">
         </div>
+
     </div>
 
 </section>

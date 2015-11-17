@@ -12,6 +12,7 @@ namespace common.models.sections {
     export interface IVideoContent extends IMediaContent {
         videoId:string;
         provider:string;
+        caption:string;
     }
 
     export interface IVideoProvider{

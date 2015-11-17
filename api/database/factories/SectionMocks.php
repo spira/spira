@@ -56,7 +56,7 @@ $factory->define(MediaContent::class, function (Generator $faker) {
             case MediaContent::MEDIA_TYPE_IMAGE:
                 $mediaItem = array_merge($mediaItem, [
                     '_image' => $images->random(1)->toArray(),
-                    'caption' => $faker->optional()->sentence(),
+                    'caption' => $faker->sentence(),
                     'transformations' => null,
                 ]);
                 break;
@@ -64,6 +64,7 @@ $factory->define(MediaContent::class, function (Generator $faker) {
                 $mediaItem = array_merge($mediaItem, [
                     'provider' => $provider = $faker->randomElement(MediaContent::$videoProviders),
                     'video_id' => $provider == MediaContent::VIDEO_PROVIDER_VIMEO ? $faker->numerify('########') : substr($faker->shuffle('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'), 0, 11),
+                    'caption' => $faker->optional()->sentence(),
                 ]);
                 break;
         }
