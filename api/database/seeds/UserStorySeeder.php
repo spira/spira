@@ -39,10 +39,7 @@ class UserStorySeeder extends BaseSeeder
             'avatar_img_id' => $images->random()->image_id,
         ]);
 
-        $user->roles()->saveMany([
-            new Role(['role_key' => Role::SUPER_ADMIN_ROLE]),
-            new Role(['role_key' => Role::ADMIN_ROLE]),
-        ]);
+        $user->roles()->sync([Role::SUPER_ADMIN_ROLE, Role::ADMIN_ROLE]);
 
         $nonAdmin = $this->createUser([
             'first_name' => 'Nick',
@@ -81,6 +78,6 @@ class UserStorySeeder extends BaseSeeder
 
     protected function assignRandomRole(User $user)
     {
-        $user->roles()->save(new Role(['role_key' => $this->faker->randomElement(Role::$roles)]));
+        $user->roles()->sync([$this->faker->randomElement(Role::$roles)]);
     }
 }

@@ -23,11 +23,13 @@ class Role extends BaseModel
     const SUPER_ADMIN_ROLE = 'superAdmin';
     const ADMIN_ROLE = 'admin';
     const USER_ROLE = 'user';
+    const TEST_ROLE = 'testrole';
 
     public static $roles = [
         self::ADMIN_ROLE,
         self::SUPER_ADMIN_ROLE,
         self::USER_ROLE,
+        self::TEST_ROLE,
     ];
 
     public $exists = true;
@@ -39,7 +41,7 @@ class Role extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['key','description', 'is_default'];
+    protected $fillable = ['key', 'description', 'is_default'];
 
     protected static $validationRules = [
         'key' => 'required|rbac_role_exists',
@@ -58,5 +60,10 @@ class Role extends BaseModel
     public function isDirty($attributes = null)
     {
         return false;
+    }
+
+    public function newCollection(array $models = [])
+    {
+        return new RoleCollection($models);
     }
 }
