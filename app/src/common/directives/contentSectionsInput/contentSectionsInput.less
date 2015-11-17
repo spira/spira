@@ -39,9 +39,25 @@
     }
 
     .no-video-preview {
-        margin: 10px;
         border: 1px dashed #ddd;
         color: #ddd;
+        position: relative;
+
+        &:before{
+            content: "";
+            display: block;
+            width: 100%;		//desired width
+            padding-top: 56.25%; 	//ratio of 16:9
+        }
+
+        > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
     }
 
 }

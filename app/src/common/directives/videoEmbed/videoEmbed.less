@@ -1,0 +1,28 @@
+@import (reference) "../../../styles/global.less";
+
+.video-embed {
+
+    position: relative;
+
+    &:before{
+        content: "";
+        display: block;
+        width: 100%;		//desired width
+        padding-top: 56.25%; 	//ratio of 16:9
+    }
+
+    > .frame-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        > iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+    }
+
+}

@@ -6,6 +6,7 @@ namespace common.directives.videoEmbed {
         provider: string;
         videoId: string;
         url: string;
+        iframeToggle: boolean;
     }
 
     class VideoEmbedDirective implements ng.IDirective {
@@ -25,18 +26,31 @@ namespace common.directives.videoEmbed {
 
             //@todo detect when scope property changes and force redraw of the iframe
 
+            $scope.$watchCollection(() => [$scope.videoId, $scope.provider], () => {
+
+                this.reloadIframes($scope);
+
+            });
+
+        };
+
+        private reloadIframes($scope: IVideoEmbedScope):void {
+
+            $scope.iframeToggle = false;
+
             switch($scope.provider){
                 case 'youtube':
                     $scope.url = this.$sce.trustAsResourceUrl(`https://www.youtube.com/embed/${$scope.videoId}?modestbranding=1`);
-                break;
+                    break;
 
                 case 'vimeo':
                     $scope.url = this.$sce.trustAsResourceUrl(`https://player.vimeo.com/video/${$scope.videoId}`);
-                break;
+                    break;
 
             }
 
-        };
+            $scope.iframeToggle = true;
+        }
 
         static factory(): ng.IDirectiveFactory {
             const directive =  ($sce) => new VideoEmbedDirective($sce);

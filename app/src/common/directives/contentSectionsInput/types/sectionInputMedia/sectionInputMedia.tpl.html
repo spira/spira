@@ -34,17 +34,9 @@
                 </ng-form>
 
 
-                <div layout-gt-md="row">
+                <div layout-gt-md="row" ng-if="mediaContent.type =='video'">
 
-                    <div flex layout="column" >
-
-                        <div class="no-video-preview"
-                             ng-if="SectionInputMediaController.videoForm.$invalid"
-                             flex="grow"
-                             layout="row"
-                             layout-align="center center">
-                            <span flex="none">Enter video details to see preview</span>
-                        </div>
+                    <div flex layout="column" layout-padding>
 
                         <video-embed ng-if="SectionInputMediaController.videoForm.$valid"
                                      provider="{{mediaContent.provider}}"
@@ -52,9 +44,18 @@
                                      flex="grow">
                         </video-embed>
 
+                        <div class="no-video-preview"
+                             ng-if="!SectionInputMediaController.videoForm.$valid"
+                             flex="grow">
+                            <span layout="row"
+                                  layout-align="center center">
+                                <span flex="none">Enter video details to see preview</span>
+                            </span>
+                        </div>
+
                     </div>
 
-                    <ng-form name="SectionInputMediaController.videoForm" ng-if="mediaContent.type =='video'" flex>
+                    <ng-form name="SectionInputMediaController.videoForm" flex>
 
                         <md-input-container flex>
                             <label>Video Provider</label>
