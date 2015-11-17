@@ -29,7 +29,7 @@ class Role extends BaseModel
         self::ADMIN_ROLE,
         self::SUPER_ADMIN_ROLE,
         self::USER_ROLE,
-        self::TEST_ROLE
+        self::TEST_ROLE,
     ];
 
     public $exists = true;

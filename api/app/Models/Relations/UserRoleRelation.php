@@ -48,6 +48,7 @@ class UserRoleRelation extends BelongsToMany
     public function get($columns = ['*'])
     {
         $roleKeys = $this->query->getQuery()->lists($this->otherKey);
+
         return $this->hydrateRolesByKeys($roleKeys);
     }
 
@@ -63,8 +64,7 @@ class UserRoleRelation extends BelongsToMany
             $dictionary[$result->user_id][] = $result->role_key;
         }
 
-        foreach ($dictionary as &$item)
-        {
+        foreach ($dictionary as &$item) {
             $item = $this->hydrateRolesByKeys($item)->all();
         }
 
@@ -99,6 +99,7 @@ class UserRoleRelation extends BelongsToMany
 
         $collection = new RoleCollection($roleModels);
         $collection->load(array_keys($this->query->getEagerLoads()));
+
         return $collection;
     }
 }
