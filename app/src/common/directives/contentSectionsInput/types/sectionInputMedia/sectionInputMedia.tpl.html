@@ -1,0 +1,173 @@
+<div class="section-input-media">
+
+    <ng-form name="SectionInputMediaController.mediaForm">
+
+        <md-tabs md-selected="SectionInputMediaController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
+            <md-tab ng-repeat="mediaContent in SectionInputMediaController.section.content.media" label="Media {{$index + 1}}">
+
+                <ng-form name="SectionInputMediaController.imageForm" layout-gt-md="row" ng-if="mediaContent.type =='image'" >
+
+                    <div flex layout="column" layout-padding>
+
+                        <select-media-image
+                                ng-model="mediaContent._image"
+                                ng-change="SectionInputMediaController.imageChanged(mediaContent)">
+                        </select-media-image>
+
+                    </div>
+
+                    <div flex>
+
+                        <md-input-container flex>
+                            <label>Caption</label>
+
+                            <input
+                                    ng-model="mediaContent.caption"
+                                    name="caption"
+                                    localizable-input="SectionInputMediaController.section._localizations"
+                                    localizable-input-path="content.media[{{$index}}].caption"
+                                    required
+                                    >
+                            <ng-messages for="SectionInputMediaController.imageForm.caption.$error">
+                                <ng-message when="required">Caption is required</ng-message>
+                                <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
+                    </div>
+
+                </ng-form>
+
+
+                <div layout-gt-md="row" ng-if="mediaContent.type =='video'">
+
+                    <div flex layout="column" layout-padding>
+
+                        <video-embed ng-if="SectionInputMediaController.videoForm.$valid"
+                                     provider="{{mediaContent.provider}}"
+                                     video-id="{{mediaContent.videoId}}"
+                                     flex="grow">
+                        </video-embed>
+
+                        <div class="no-video-preview"
+                             ng-if="!SectionInputMediaController.videoForm.$valid"
+                             flex="grow">
+                            <span layout="row"
+                                  layout-align="center center">
+                                <span flex="none">Enter video details to see preview</span>
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <ng-form name="SectionInputMediaController.videoForm" flex>
+
+                        <md-input-container flex>
+                            <label>Video Provider</label>
+
+                            <md-select ng-model="mediaContent.provider" name="provider" aria-label="Provider" placeholder="Select video provider" required>
+                                <md-option ng-value="videoProvider.providerKey" ng-repeat="videoProvider in SectionInputMediaController.videoProviders" ng-bind-html="videoProvider.providerKey"></md-option>
+                            </md-select>
+                            <ng-messages for="SectionInputMediaController.videoForm._provider.$error">
+                                <ng-message when="required">Video provider is required</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Video Identifier</label>
+
+                            <input
+                                    ng-model="mediaContent.videoId"
+                                    name="videoId"
+                                    ng-maxlength="SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength"
+                                    ng-minlength="SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength"
+                                    ng-pattern="SectionInputMediaController.videoProviderMap[mediaContent.provider].validationRegex"
+                                    required
+                                    >
+                            <ng-messages for="SectionInputMediaController.videoForm.videoId.$error">
+                                <ng-message when="required">Video identifier is required</ng-message>
+                                <ng-message when="maxlength">Length must be {{SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength}} chars</ng-message>
+                                <ng-message when="minlength">Length must be {{SectionInputMediaController.videoProviderMap[mediaContent.provider].idLength}} chars</ng-message>
+                                <ng-message when="pattern">ID validation does not match requirements for {{SectionInputMediaController.videoProviderMap[mediaContent.provider].providerKey}}</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
+
+                        <md-input-container flex>
+                            <label>Caption</label>
+
+                            <input
+                                ng-model="mediaContent.caption"
+                                name="caption"
+                                localizable-input="SectionInputMediaController.section._localizations"
+                                localizable-input-path="content.media[{{$index}}].caption"
+                            >
+                            <ng-messages for="SectionInputMediaController.videoForm.caption.$error">
+                                <ng-message when="md-maxlength">Maximum length is 140 chars</ng-message>
+                            </ng-messages>
+                        </md-input-container>
+
+                    </ng-form>
+                </div>
+
+                <div layout="row" layout-padding>
+
+                    <div class="video-image-toggle" layout="row">
+                        <label ng-class="{active:mediaContent.type=='video'}">Video</label>
+                        <md-switch ng-model="mediaContent.type"
+                                   ng-true-value="'image'"
+                                   ng-false-value="'video'"
+                                   aria-label="Toggle Media Type"
+                                   class="md-block">
+                        </md-switch>
+                        <label ng-class="{active:mediaContent.type=='image'}">Image</label>
+                    </div>
+
+                    <span flex></span>
+
+                    <md-button
+                            ng-disabled="$first"
+                            aria-label="Move {{mediaContent.type}} left"
+                            class="md-icon-button"
+                            ng-click="SectionInputMediaController.moveMedia(mediaContent, true)">
+                        <md-icon>arrow_back</md-icon>
+                        <md-tooltip md-direction="top">
+                            Move {{mediaContent.type}} left
+                        </md-tooltip>
+                    </md-button>
+
+                    <md-button
+                            ng-disabled="$last"
+                            aria-label="Move {{mediaContent.type}} down"
+                            class="md-icon-button"
+                            ng-click="SectionInputMediaController.moveMedia(mediaContent, false)">
+                        <md-icon>arrow_forward</md-icon>
+                        <md-tooltip md-direction="top">
+                            Move {{mediaContent.type}} right
+                        </md-tooltip>
+                    </md-button>
+
+                    <md-button
+                            aria-label="Remove {{mediaContent.type}}"
+                            class="md-icon-button md-warn"
+                            ng-click="SectionInputMediaController.removeMedia(mediaContent)">
+                        <md-icon>delete</md-icon>
+                        <md-tooltip md-direction="top">
+                            Remove {{mediaContent.type}}
+                        </md-tooltip>
+                    </md-button>
+
+                </div>
+
+
+            </md-tab>
+            <md-tab md-on-select="SectionInputMediaController.addMedia()">
+                <md-label>
+                    <span>Add Media <md-icon>add_to_photos</md-icon></span>
+                </md-label>
+            </md-tab>
+        </md-tabs>
+
+    </ng-form>
+
+</div>

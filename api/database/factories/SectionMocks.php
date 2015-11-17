@@ -12,10 +12,9 @@ use Faker\Generator;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Section;
-use App\Models\Sections\ImageContent;
+use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\ArticleSectionsDisplay;
-use Spira\Model\Collection\Collection;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 
@@ -41,22 +40,42 @@ $factory->define(BlockquoteContent::class, function (Generator $faker) {
 
 });
 
-$factory->define(ImageContent::class, function (Generator $faker) {
+$factory->define(MediaContent::class, function (Generator $faker) {
 
-    if ($faker->boolean()) {
-        $images = new Collection([Image::all()->random()]);
-    } else {
-        $images = Image::all()->random(rand(2, 5));
-    }
+    $images = Image::all();
+
+    $media = array_map(function () use ($faker, $images) {
+        $type = $faker->randomElement(MediaContent::$mediaTypes);
+
+        $mediaItem = [
+            'type' => $type,
+        ];
+
+        switch ($type) {
+            case MediaContent::MEDIA_TYPE_IMAGE:
+                $mediaItem = array_merge($mediaItem, [
+                    '_image' => $images->random(1)->toArray(),
+                    'caption' => $faker->sentence(),
+                    'transformations' => null,
+                ]);
+                break;
+            case MediaContent::MEDIA_TYPE_VIDEO:
+                $mediaItem = array_merge($mediaItem, [
+                    'provider' => $provider = $faker->randomElement(MediaContent::$videoProviders),
+                    'video_id' => $provider == MediaContent::VIDEO_PROVIDER_VIMEO ? $faker->numerify('########') : substr($faker->shuffle('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'), 0, 11),
+                    'caption' => $faker->optional()->sentence(),
+                ]);
+                break;
+        }
+
+        return $mediaItem;
+
+    }, array_fill(0, $faker->numberBetween(1, 5), null));
 
     return [
-        'images' => array_map(function (Image $image) use ($faker) {
-            return [
-                '_image' => $image->toArray(),
-                'caption' => $faker->optional()->sentence(),
-                'transformations' => null,
-            ];
-        }, array_values($images->all())),
+        'media' => $media,
+        'size' => $faker->randomElement(MediaContent::$sizeOptions),
+        'alignment' => $faker->randomElement(MediaContent::$alignmentOptions),
     ];
 
 });
@@ -86,12 +105,12 @@ $factory->defineAs(Section::class, BlockquoteContent::CONTENT_TYPE, function (Ge
 
 });
 
-$factory->defineAs(Section::class, ImageContent::CONTENT_TYPE, function (Generator $faker) {
+$factory->defineAs(Section::class, MediaContent::CONTENT_TYPE, function (Generator $faker) {
 
     return [
         'section_id' => $faker->uuid,
-        'type' => ImageContent::CONTENT_TYPE,
-        'content' => factory(ImageContent::class)->make(),
+        'type' => MediaContent::CONTENT_TYPE,
+        'content' => factory(MediaContent::class)->make(),
     ];
 
 });
@@ -123,8 +142,8 @@ $factory->define(Section::class, function (Generator $faker) use ($factory) {
         case BlockquoteContent::CONTENT_TYPE:
             return $factory->rawOf(Section::class, BlockquoteContent::CONTENT_TYPE);
             break;
-        case ImageContent::CONTENT_TYPE:
-            return $factory->rawOf(Section::class, ImageContent::CONTENT_TYPE);
+        case MediaContent::CONTENT_TYPE:
+            return $factory->rawOf(Section::class, MediaContent::CONTENT_TYPE);
             break;
         case PromoContent::CONTENT_TYPE:
             return $factory->rawOf(Section::class, PromoContent::CONTENT_TYPE);

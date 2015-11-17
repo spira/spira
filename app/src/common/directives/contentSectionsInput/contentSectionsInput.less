@@ -1,6 +1,69 @@
 @import (reference) "../../../styles/global.less";
 
-.content-sections-input {
+.content-sections-input-set {
 
+    .content-sections-input-item {
+
+        md-bottom-sheet.dummy{
+            display:none;
+        }
+
+        .settings-toolbar {
+            &.toolbar-hidden{
+                background-color: transparent;
+
+                md-icon {
+                    color: @adminPrimary;
+                }
+
+            }
+        }
+
+        .section-input {
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+    }
+
+}
+
+.section-input-media {
+
+    md-tab-content {
+        background: #f5f5f5;
+    }
+
+    .video-image-toggle {
+        label {
+            margin-top: 15px;
+            &.active {
+                font-weight: bold;
+            }
+        }
+    }
+
+    .no-video-preview {
+        border: 1px dashed #ccc;
+        color: #ccc;
+        position: relative;
+
+        &:before{
+            content: "";
+            display: block;
+            width: 100%;		//desired width
+            //padding-top: 56.25%; 	//ratio of 16:9
+            padding-top: 50%; 	//ratio of 2:1
+        }
+
+        > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+    }
 
 }

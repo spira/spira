@@ -30,6 +30,7 @@ namespace common.models {
         public _userProfile:common.models.UserProfile = undefined;
         public _socialLogins:common.models.UserSocialLogin[] = undefined;
         public _roles:common.models.RoleAssignment[] = undefined;
+        public roles:string[] = []; //list of role keys, supplied in token
         public _uploadedAvatar:common.models.Image = undefined;
 
         constructor(data:any, exists:boolean = false) {
@@ -51,7 +52,7 @@ namespace common.models {
          */
         public isAdmin():boolean {
 
-            return _.any(this._roles, {roleKey: common.models.RoleAssignment.adminRoleKey});
+            return _.contains(this.roles, common.models.RoleAssignment.adminRoleKey);
         }
 
         /**
@@ -69,8 +70,8 @@ namespace common.models {
          */
         public rolesDisplay():string {
 
-            return _.map(this._roles, (role: common.models.RoleAssignment) => {
-                return _.capitalize(_.words(role.roleKey).join(' '));
+            return _.map(this.roles, (role:string) => {
+                return _.capitalize(_.words(role).join(' '));
             }).join(', ');
 
         }

@@ -1,0 +1,27 @@
+<md-bottom-sheet layout="column" ng-cloak>
+    <h3>Media Settings</h3>
+    <ng-form name="settingsForm" layout="row">
+
+        <md-input-container flex>
+            <label>Alignment</label>
+            <md-select ng-model="SectionInputMediaController.section.content.alignment" name="alignment" aria-label="Alignment" placeholder="Select media alignment" required="true">
+                <md-option ng-value="alignmentOption.key" ng-repeat="alignmentOption in SectionInputMediaController.alignmentOptions" ng-bind-html="alignmentOption.name"></md-option>
+            </md-select>
+            <ng-messages for="settingsForm.alignment.$error">
+                <ng-message when="required">Alignment is required</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container flex>
+            <label>Size</label>
+            <md-select ng-model="SectionInputMediaController.section.content.size" name="size" aria-label="Size" placeholder="Select media size" required="true">
+                <md-option ng-value="sizeOption.key" ng-repeat="sizeOption in SectionInputMediaController.sizeOptions" ng-bind-html="sizeOption.name"></md-option>
+            </md-select>
+            <ng-messages for="settingsForm.size.$error">
+                <ng-message when="required">Size is required</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+    </ng-form>
+
+</md-bottom-sheet>

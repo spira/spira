@@ -31,12 +31,11 @@ namespace common.directives.selectMediaImage.dialog {
                         cancel: sinon.stub(),
                         hide: sinon.stub()
                     },
-                    imageService: imageService
+                    imageService: imageService,
+                    targetTab: 'upload',
                 });
 
-
                 $rootScope.$apply();
-
             });
 
         });

@@ -1,7 +1,24 @@
-<div class="select-media-image">
+<div class="select-media-image" ng-class="{'no-image':!currentImage}">
 
-    <md-button class="md-primary" ng-click="SelectMediaImageController.promptSelectImage()">
-        <span>Select image <md-icon>add_circle_outline</md-icon></span>
-    </md-button>
+    <div class="image-wrapper" layout="column" layout-align="center center">
+
+        <cl-image
+                ng-if="!!currentImage"
+                public-id="{{currentImage.imageId}}"
+                format="{{currentImage.format}}">
+            <cl-transformation height="300" width="600" crop="fill" gravity="north"/>
+        </cl-image>
+
+        <span layout="row" class="button-group">
+            <md-button flex class="md-icon-button md-primary md-whiteframe-z1" ng-click="SelectMediaImageController.promptSelectImageDialog('upload')">
+                <md-icon>photo_camera</md-icon>
+            </md-button>
+
+            <md-button flex class="md-icon-button md-primary md-whiteframe-z1" ng-click="SelectMediaImageController.promptSelectImageDialog('select')">
+                <md-icon>cloud_download</md-icon>
+            </md-button>
+        </span>
+
+    </div>
 
 </div>
