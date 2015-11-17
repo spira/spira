@@ -1,13 +1,15 @@
-namespace common.directives.markdownEditor {
+namespace common.directives.videoEmbed {
 
     interface TestScope extends ng.IRootScopeService {
         testModel: any;
     }
 
-    describe('Markdown editor directive', () => {
+    describe.only('Video embed directive', () => {
 
         let $compile:ng.ICompileService,
-            $rootScope:TestScope
+            $rootScope:TestScope,
+            directiveScope:TestScope,
+            compiledElement: ng.IAugmentedJQuery
         ;
 
         beforeEach(()=> {
@@ -19,23 +21,23 @@ namespace common.directives.markdownEditor {
                 $rootScope = _$rootScope_;
             });
 
+
+                directiveScope = <TestScope>$rootScope.$new();
+
+                compiledElement = $compile(`
+                    <video-embed
+                        provider="youtube"
+                        video-id="dQw4w9WgXcQ"
+                    ></video-embed>
+                `)(directiveScope);
+
+                $rootScope.$digest();
         });
 
-        it('should initialise the directive and change the model', () => {
+        it('should initialise the directive, with an embedded iframe', () => {
 
-            let testText = "Some **markdown** text";
-
-            $rootScope.testModel = testText;
-
-            let element = $compile(`<markdown-editor ng-model="testModel" spell-checker="false"></markdown-editor>`)($rootScope);
-
-            $rootScope.$digest();
-
-            $(element).find('.editor-toolbar > a').first().click();
-
-            $rootScope.$digest();
-
-            expect($rootScope.testModel).not.to.equal(testText);
+            expect($(compiledElement).hasClass('ng-scope')).to.be.true;
+            expect($(compiledElement).find('iframe').attr('src')).to.equal('https://www.youtube.com/embed/dQw4w9WgXcQ?modestbranding=1');
         });
 
 
