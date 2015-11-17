@@ -15,7 +15,6 @@ use App\Models\Section;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\ArticleSectionsDisplay;
-use Spira\Model\Collection\Collection;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 
@@ -45,14 +44,14 @@ $factory->define(MediaContent::class, function (Generator $faker) {
 
     $images = Image::all();
 
-    $media = array_map(function() use ($faker, $images) {
+    $media = array_map(function () use ($faker, $images) {
         $type = $faker->randomElement(MediaContent::$mediaTypes);
 
         $mediaItem = [
             'type' => $type,
         ];
 
-        switch ($type){
+        switch ($type) {
             case MediaContent::MEDIA_TYPE_IMAGE:
                 $mediaItem = array_merge($mediaItem, [
                     '_image' => $images->random(1)->toArray(),
