@@ -5,7 +5,7 @@ namespace common.directives.selectMediaImage.dialog {
 
     export class SelectMediaImageDialogController {
 
-        public selectedIndex:number;
+        public selectedTabIndex:number;
         public selectedImage:common.models.Image;
         public library:common.models.Image[];
         private imagesPaginator:common.services.pagination.Paginator;
@@ -14,15 +14,21 @@ namespace common.directives.selectMediaImage.dialog {
         public currentPage:number = 1;
         private currentPageIndex:number;
 
-        static $inject = ['$mdDialog', 'imageService'];
+        private tabIndex = ['upload', 'select'];
+
+        static $inject = ['$mdDialog', 'imageService', 'targetTab'];
 
         constructor(private $mdDialog:ng.material.IDialogService,
-                    private imageService:common.services.image.ImageService) {
+                    private imageService:common.services.image.ImageService,
+                    private targetTab:string) {
 
             this.init();
         }
 
         private init() {
+
+            this.selectedTabIndex = _.indexOf(this.tabIndex, this.targetTab);
+
             this.imagesPaginator = this.imageService.getPaginator().setCount(this.perPage);
 
             this.imagesPaginator.getPage(this.currentPage)

@@ -6,7 +6,7 @@ namespace common.models {
         public __contentTypeMap = {
             [sections.RichText.contentType]: sections.RichText,
             [sections.Blockquote.contentType]: sections.Blockquote,
-            [sections.Image.contentType]: sections.Image,
+            [sections.Media.contentType]: sections.Media,
             [sections.Promo.contentType]: sections.Promo,
         };
 
@@ -37,13 +37,13 @@ namespace common.models {
             return {
                 [sections.RichText.contentType]: sections.RichText,
                 [sections.Blockquote.contentType]: sections.Blockquote,
-                [sections.Image.contentType]: sections.Image,
+                [sections.Media.contentType]: sections.Media,
                 [sections.Promo.contentType]: sections.Promo,
             };
         }
 
 
-        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Image|sections.Promo {
+        private hydrateSection(data:any, exists:boolean):sections.RichText|sections.Blockquote|sections.Media|sections.Promo {
 
             let SectionClass = Section.getContentTypeMap()[data.type];
 

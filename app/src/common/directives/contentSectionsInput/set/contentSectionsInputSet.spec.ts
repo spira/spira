@@ -1,18 +1,18 @@
-namespace common.directives.contentSectionsInput {
+namespace common.directives.contentSectionsInput.set {
 
     interface TestScope extends ng.IRootScopeService {
         testSectionsModel: any;
         testSectionUpdated(event, section):void;
-        ContentSectionsInputController: ContentSectionsInputController;
+        ContentSectionsInputSetController: ContentSectionsInputSetController;
     }
 
-    describe('Content sections directive', () => {
+    describe('Content sections directive set', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:ng.IRootScopeService,
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
-            directiveController: common.directives.contentSectionsInput.ContentSectionsInputController,
+            directiveController: ContentSectionsInputSetController,
             $q:ng.IQService
         ;
 
@@ -33,7 +33,7 @@ namespace common.directives.contentSectionsInput {
 
                 directiveScope.testSectionsModel = [
                     common.models.sections.BlockquoteMock.entity(),
-                    common.models.sections.ImageMock.entity(),
+                    common.models.sections.MediaMock.entity(),
                     common.models.sections.RichTextMock.entity(),
                     common.models.sections.PromoMock.entity(),
                 ];
@@ -41,15 +41,15 @@ namespace common.directives.contentSectionsInput {
                 directiveScope.testSectionUpdated = sinon.spy();
 
                 compiledElement = $compile(`
-                    <content-sections-input
+                    <content-sections-input-set
                         ng-model="testSectionsModel"
                         on-section-update="testSectionUpdated(event, section)"
-                    ></content-sections-input>
+                    ></content-sections-input-set>
                 `)(directiveScope);
 
                 $rootScope.$digest();
 
-                directiveController = (<TestScope>compiledElement.isolateScope()).ContentSectionsInputController;
+                directiveController = (<TestScope>compiledElement.isolateScope()).ContentSectionsInputSetController;
 
                 let stubbedShow = sinon.stub();
                 stubbedShow.onCall(0).returns($q.when(true));
@@ -61,7 +61,7 @@ namespace common.directives.contentSectionsInput {
 
         it('should initialise the directive', () => {
 
-            expect($(compiledElement).hasClass('content-sections-input')).to.be.true;
+            expect($(compiledElement).hasClass('content-sections-input-set')).to.be.true;
         });
 
         it('should be able to add a new section type', () => {
@@ -125,15 +125,15 @@ namespace common.directives.contentSectionsInput {
             let scope:TestScope = <TestScope>$rootScope.$new();
 
             let compiled = $compile(`
-                    <content-sections-input
+                    <content-sections-input-set
                         ng-model="testSectionsModel"
                         on-section-update="testSectionUpdated(event, section)"
-                    ></content-sections-input>
+                    ></content-sections-input-set>
                 `)(scope);
 
             $rootScope.$digest();
 
-            directiveController = (<TestScope>compiled.isolateScope()).ContentSectionsInputController;
+            directiveController = (<TestScope>compiled.isolateScope()).ContentSectionsInputSetController;
 
             expect(directiveController.sections).to.be.instanceOf(Array);
             expect(directiveController.sections).to.be.empty;

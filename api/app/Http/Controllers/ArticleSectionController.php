@@ -12,7 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Spira\Model\Model\BaseModel;
-use App\Models\Sections\ImageContent;
+use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
@@ -50,9 +50,9 @@ class ArticleSectionController extends ChildEntityController
 
                 $contentRules = with(new BlockquoteContent)->getValidationRules();
                 break;
-            case ImageContent::CONTENT_TYPE:
+            case MediaContent::CONTENT_TYPE:
 
-                $contentRules = with(new ImageContent)->getValidationRules();
+                $contentRules = with(new MediaContent)->getValidationRules();
                 break;
             case PromoContent::CONTENT_TYPE:
 

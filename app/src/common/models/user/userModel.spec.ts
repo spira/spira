@@ -44,11 +44,7 @@ namespace common.models {
         it('should be able to check if the user is an administrator', () => {
 
             let adminUser = UserMock.entity({
-                _roles: [
-                    RoleAssignmentMock.entity({
-                        roleKey: RoleAssignment.adminRoleKey,
-                    }),
-                ],
+                roles: [RoleAssignment.adminRoleKey],
             });
 
             expect(adminUser.isAdmin()).to.be.true;
@@ -98,14 +94,7 @@ namespace common.models {
         it('should be able to display a set of roles in a human readable form', () => {
 
             let user = UserMock.entity({
-                _roles: [
-                    RoleAssignmentMock.entity({
-                        roleKey: "roleName1",
-                    }),
-                    RoleAssignmentMock.entity({
-                        roleKey: "roleName2",
-                    }),
-                ],
+                roles: ["roleName1", "roleName2"],
             });
 
             expect(user.rolesDisplay()).to.equal("Role Name 1, Role Name 2");

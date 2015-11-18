@@ -9,7 +9,7 @@ namespace common.mixins {
          */
         public saveEntitySections(entity:SectionableModel):ng.IPromise<common.models.Section<any>[]|boolean> {
 
-            let requestObject = this.getNestedCollectionRequestObject(entity, '_sections', true);
+            let requestObject = this.getNestedCollectionRequestObject(entity, '_sections', true, true, ['sectionId', 'type']);
 
             if (!requestObject){
                 return this.$q.when(false);

@@ -17,7 +17,7 @@ namespace common.directives.contentSectionsInput.sectionInputBlockquote {
     class SectionInputBlockquoteDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public templateUrl = 'templates/common/directives/contentSectionsInput/sectionInputBlockquote/sectionInputBlockquote.tpl.html';
+        public templateUrl = 'templates/common/directives/contentSectionsInput/types/sectionInputBlockquote/sectionInputBlockquote.tpl.html';
         public replace = true;
         public scope = {
             section: '=',

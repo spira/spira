@@ -17,7 +17,7 @@ namespace common.directives.contentSectionsInput.sectionInputRichText {
     class SectionInputRichTextDirective implements ng.IDirective {
 
         public restrict = 'E';
-        public templateUrl = 'templates/common/directives/contentSectionsInput/sectionInputRichText/sectionInputRichText.tpl.html';
+        public templateUrl = 'templates/common/directives/contentSectionsInput/types/sectionInputRichText/sectionInputRichText.tpl.html';
         public replace = true;
         public scope = {
             section: '=',

@@ -1,0 +1,20 @@
+<div class="video-embed" ng-switch="provider" ng-if="iframeToggle">
+
+    <div class="frame-wrapper">
+        <iframe
+                ng-switch-when="youtube"
+                src="{{url}}"
+                frameborder="0"
+                allowfullscreen
+                ></iframe>
+
+        <iframe
+                ng-switch-when="vimeo"
+                src="{{url}}"
+                frameborder="0"
+                allowfullscreen>
+        </iframe>
+    </div>
+
+
+</div>

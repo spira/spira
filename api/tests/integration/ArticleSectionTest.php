@@ -12,7 +12,7 @@ use App\Models\Article;
 use App\Models\ArticleSectionsDisplay;
 use App\Models\Section;
 use App\Models\Sections\BlockquoteContent;
-use App\Models\Sections\ImageContent;
+use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 
@@ -157,9 +157,9 @@ class SectionTest extends TestCase
             ]])
             ->transformed();
 
-        $imageSection = $this->getFactory(Section::class, ImageContent::CONTENT_TYPE)
+        $imageSection = $this->getFactory(Section::class, MediaContent::CONTENT_TYPE)
             ->customize(['content' => [
-                'image' => 'not-an-array', //should validate array
+                'media' => 'not-an-array', //should validate array
             ]])
             ->transformed();
 

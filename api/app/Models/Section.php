@@ -11,7 +11,7 @@
 namespace App\Models;
 
 use Spira\Model\Model\BaseModel;
-use App\Models\Sections\ImageContent;
+use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
@@ -41,7 +41,7 @@ class Section extends BaseModel implements LocalizableModelInterface
 
     protected static $validationRules = [
         'section_id' => 'required|uuid',
-        'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.ImageContent::CONTENT_TYPE,
+        'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,
         'type' => 'required|section_type',
     ];
 
@@ -56,7 +56,7 @@ class Section extends BaseModel implements LocalizableModelInterface
         return [
             RichTextContent::CONTENT_TYPE,
             BlockquoteContent::CONTENT_TYPE,
-            ImageContent::CONTENT_TYPE,
+            MediaContent::CONTENT_TYPE,
             PromoContent::CONTENT_TYPE,
         ];
     }
