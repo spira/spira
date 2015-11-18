@@ -89,7 +89,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
             'article_id' => 'required|uuid',
             'title' => 'required|string',
             'excerpt' => 'string',
-            'thumbnail_image_id' => 'uuid',
+            'thumbnail_image_id' => 'uuid|exists:images,image_id',
             'status' => 'in:'.implode(',', static::$statuses),
             'permalink' => 'string|unique:article_permalinks,permalink,'.$entityId.',article_id',
             'sections_display' => 'decoded_json',

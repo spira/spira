@@ -25,7 +25,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'title' => $faker->sentence,
         'status' => $faker->randomElement(App\Models\Article::$statuses),
         'excerpt' => Str::words($faker->realText(100), 30, ''),
-        'thumbnail_image_id' => $faker->uuid,
+        'thumbnail_image_id' => null,
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'author_id' => $users->random(1)->user_id,
         'author_display' => $faker->boolean(50),
