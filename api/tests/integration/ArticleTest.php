@@ -158,7 +158,6 @@ class ArticleTest extends TestCase
 
     public function testGetOneWithNestedThumbnail()
     {
-
         $image = $this->getFactory(Image::class)->create();
         $entity = $this->getFactory(Article::class)->create([
             'thumbnail_image_id' => $image->getKey(),
