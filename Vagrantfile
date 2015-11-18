@@ -22,7 +22,7 @@ Vagrant.configure(2) do |config|
 # cache
   config.vm.network "forwarded_port", guest: 6379, host: 6379
 # vm static ip binding
-  config.vm.network "private_network", ip: "192.168.3.3"
+  config.vm.network "private_network", ip: "192.168.2.2"
 
 # mount spira fs
   config.vm.synced_folder "./", "/data", type: "nfs"
