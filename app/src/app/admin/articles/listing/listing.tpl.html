@@ -1,4 +1,4 @@
-<div layout-padding>
+<div layout-padding id="article-listing">
 
     <md-toolbar>
         <div class="md-toolbar-tools">
@@ -100,7 +100,9 @@
                 <h3>{{article.status | uppercase}}</h3>
             </md-grid-tile-header>
 
-            <img width="100%" ng-src="{{article.primaryImage}}" alt="{{article.title}}">
+            <cl-image width="100%" public-id="{{article._thumbnailImage.imageId}}" format="{{article._thumbnailImage.format}}">
+                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
+            </cl-image>
 
             <md-grid-tile-footer>
                 <h3>{{article.title}}</h3>

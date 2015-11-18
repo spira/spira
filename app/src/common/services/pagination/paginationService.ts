@@ -19,6 +19,7 @@ namespace common.services.pagination {
         private currentIndex:number = 0;
         private modelFactory:common.models.IModelFactory;
         private queryString:string = '';
+        private withNested:string = null;
 
         public entityCountTotal:number;
 
@@ -28,6 +29,20 @@ namespace common.services.pagination {
                     private $window:ng.IWindowService) {
 
             this.modelFactory = (data:any, exists:boolean) => data; //set a default factory that just returns the data
+
+        }
+
+        /**
+         * Set child entities to retrieve with entity.
+         * @param nestedEntities
+         * @returns {common.services.pagination.Paginator}
+         */
+        public setNested(nestedEntities:string[]):Paginator {
+
+            if(!_.isNull(nestedEntities)) {
+                this.withNested = nestedEntities.join(', ');
+            }
+            return this;
 
         }
 
@@ -77,11 +92,17 @@ namespace common.services.pagination {
                 url += '?q=' + btoa(this.queryString);
             }
 
+            let header = {
+                Range: Paginator.getRangeHeader(index, last)
+            };
+
+            if(!_.isNull(this.withNested)) {
+                header['With-Nested'] = this.withNested;
+            }
+
             return this.ngRestAdapter
                 .skipInterceptor(Paginator.conditionalSkipInterceptor)
-                .get(url, {
-                    Range: Paginator.getRangeHeader(index, last)
-                }).then((response:ng.IHttpPromiseCallbackArg<any>) => {
+                .get(url, header).then((response:ng.IHttpPromiseCallbackArg<any>) => {
                     this.processContentRangeHeader(response.headers);
                     return _.map(response.data, (modelData) => this.modelFactory(modelData, true));
                 }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {

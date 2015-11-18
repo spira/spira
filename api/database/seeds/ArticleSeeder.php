@@ -43,9 +43,7 @@ class ArticleSeeder extends BaseSeeder
         $groupedTagPivots = Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
 
         factory(Article::class, 50)
-            ->create([
-                'thumbnail_image_id' => $images->random(1)->getKey(),
-            ])
+            ->create()
             ->each(function (Article $article) use ($images, $users, $tags, $groupedTagPivots, $faker, $supportedRegions) {
 
                 //add sections
@@ -80,6 +78,9 @@ class ArticleSeeder extends BaseSeeder
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
                 $article->articlePermalinks()->saveMany($permalinks);
 
+                //add thumbnail
+                $article->thumbnail_image_id = $images->random(1)->getKey();
+
                 //add tags
                 $article->tags()->sync($groupedTagPivots->random(rand(2, 5))->toArray());
 
@@ -106,8 +107,7 @@ class ArticleSeeder extends BaseSeeder
                     $article->userRatings()->save(factory(App\Models\Rating::class)->make(['user_id' => $user->user_id]));
                 }
 
-                $article->touch(); // Update search index
-
+                $article->save();
             });
     }
 }

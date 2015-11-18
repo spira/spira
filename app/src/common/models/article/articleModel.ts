@@ -10,6 +10,7 @@ namespace common.models {
             _tags: Tag,
             _comments: ArticleComment,
             _localizations: Localization,
+            _thumbnailImage: Image,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -24,9 +25,9 @@ namespace common.models {
         public shortTitle:string = undefined;
         public permalink:string = undefined;
         public content:string = undefined;
-        public primaryImage:string = undefined;
         public status:string = undefined;
         public authorId:string = undefined;
+        public thumbnailImageId:string = undefined;
 
         public authorDisplay:boolean = undefined;
         public showAuthorPromo:boolean = undefined;
