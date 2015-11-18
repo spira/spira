@@ -12,6 +12,7 @@ use App\Http\Transformers\ArticleTransformer;
 use App\Models\Article;
 use App\Models\ArticleMeta;
 use App\Models\ArticlePermalink;
+use App\Models\Image;
 use App\Models\Tag;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 
@@ -153,6 +154,22 @@ class ArticleTest extends TestCase
 
         $object = json_decode($this->response->getContent());
         $this->assertObjectHasAttribute('_author', $object);
+    }
+
+    public function testGetOneWithNestedThumbnail()
+    {
+        $image = $this->getFactory(Image::class)->create();
+        $entity = $this->getFactory(Article::class)->create([
+            'thumbnail_image_id' => $image->getKey(),
+        ]);
+
+        $this->getJson('/articles/'.$entity->article_id, ['with-nested' => 'thumbnailImage']);
+        $this->assertResponseOk();
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('_thumbnailImage', $object);
+        $this->assertEquals($image->getKey(), $object->_thumbnailImage->imageId);
     }
 
     public function testGetOneByFirstPermalink()

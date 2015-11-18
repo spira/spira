@@ -1,73 +1,111 @@
-<h2>Title and links</h2>
-<md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+<md-card>
+    <md-toolbar>
+        <h2 class="md-toolbar-tools">
+            <span>Title and links</span>
+        </h2>
+    </md-toolbar>
+    <md-card-content>
 
-    <md-input-container>
-        <label>Title</label>
+        <md-input-container>
+            <label>Title</label>
 
-        <input ng-model="ContentController.article.title"
-               name="title"
-               type="text"
-               localizable-input="ContentController.article._localizations"
-               required>
-        <ng-messages for="articleForm.title.$error">
-            <ng-message when="required">This is required.</ng-message>
+            <input ng-model="ContentController.article.title"
+                   name="title"
+                   type="text"
+                   localizable-input="ContentController.article._localizations"
+                   required>
+            <ng-messages for="articleForm.title.$error">
+                <ng-message when="required">This is required.</ng-message>
+            </ng-messages>
+
+        </md-input-container>
+
+        <md-input-container>
+            <label>Short Title</label>
+
+            <input ng-model="ContentController.article.shortTitle" name="shortTitle" type="text">
+        </md-input-container>
+
+        <md-input-container>
+            <label>Permalink</label>
+
+            <input ng-model="ContentController.article.permalink" name="permalink" type="text" ng-change="ContentController.updatePublicUrl()">
+        </md-input-container>
+        <small>{{ContentController.publicUrl}}</small>
+
+    </md-card-content>
+</md-card>
+
+<md-card>
+    <md-toolbar>
+        <h2 class="md-toolbar-tools">
+            <span>Body</span>
+        </h2>
+    </md-toolbar>
+    <md-card-content>
+
+        <content-sections-input-set
+            id="articleFormContent"
+            ng-model="ContentController.article._sections"
+            ng-required="true"
+            on-section-update="ContentController.sectionUpdated(event, section)"
+        ></content-sections-input-set>
+
+    </md-card-content>
+</md-card>
+
+<md-card>
+    <md-toolbar>
+        <h2 class="md-toolbar-tools">
+            <span>Listings</span>
+        </h2>
+    </md-toolbar>
+    <md-card-content>
+
+        <md-input-container flex>
+            <label>Short Description for listings and search engines</label>
+
+            <textarea
+                name="excerpt"
+                ng-model="ContentController.article.excerpt"
+                columns="1"
+                md-maxlength="140"
+                localizable-input="ContentController.article._localizations"
+            ></textarea>
+            <ng-messages for="articleForm.excerpt.$error">
+                <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
+            </ng-messages>
+        </md-input-container>
+
+        <md-input-container flex>
+            <label>Thumbnail</label>
+            <select-media-image
+                    ng-model="ContentController.article._thumbnailImage"
+                    ng-change="ContentController.article.thumbnailImageId = ContentController.article._thumbnailImage.imageId">
+            </select-media-image>
+        </md-input-container>
+
+    </md-card-content>
+</md-card>
+
+
+<md-card>
+    <md-toolbar>
+        <h2 class="md-toolbar-tools">
+            <span>Tags</span>
+        </h2>
+    </md-toolbar>
+    <md-card-content>
+
+        <grouped-tags
+                ng-model="ContentController.article._tags"
+                group-tags="ContentController.groupTags"
+                name="tags"
+                >
+        </grouped-tags>
+        <ng-messages for="articleForm.tags.$error">
+            <ng-message when="groupedtags">One or more tag groups is invalid</ng-message>
         </ng-messages>
 
-    </md-input-container>
-
-    <md-input-container>
-        <label>Short Title</label>
-
-        <input ng-model="ContentController.article.shortTitle" name="shortTitle" type="text">
-    </md-input-container>
-
-    <md-input-container>
-        <label>Permalink</label>
-
-        <input ng-model="ContentController.article.permalink" name="permalink" type="text" ng-change="ContentController.updatePublicUrl()">
-    </md-input-container>
-    <small>{{ContentController.publicUrl}}</small>
-
-</md-whiteframe>
-
-<md-input-container flex>
-    <label>Excerpt</label>
-
-    <textarea
-        name="excerpt"
-        ng-model="ContentController.article.excerpt"
-        columns="1"
-        md-maxlength="140"
-        localizable-input="ContentController.article._localizations"
-    ></textarea>
-    <ng-messages for="articleForm.excerpt.$error">
-        <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
-    </ng-messages>
-</md-input-container>
-
-<div flex>
-    <content-sections-input-set
-        id="articleFormContent"
-        ng-model="ContentController.article._sections"
-        ng-required="true"
-        on-section-update="ContentController.sectionUpdated(event, section)"
-    ></content-sections-input-set>
-</div>
-
-<h2>Tags</h2>
-
-<md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-
-    <grouped-tags
-        ng-model="ContentController.article._tags"
-        group-tags="ContentController.groupTags"
-        name="tags"
-    >
-    </grouped-tags>
-    <ng-messages for="articleForm.tags.$error">
-        <ng-message when="groupedtags">One or more tag groups is invalid</ng-message>
-    </ng-messages>
-
-</md-whiteframe>
-
-
+    </md-card-content>
+</md-card>

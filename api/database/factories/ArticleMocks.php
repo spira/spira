@@ -25,7 +25,7 @@ $factory->define(App\Models\Article::class, function (\Faker\Generator $faker) {
         'title' => $faker->sentence,
         'status' => $faker->randomElement(App\Models\Article::$statuses),
         'excerpt' => Str::words($faker->realText(100), 30, ''),
-        'primary_image' => $faker->imageUrl(500, 500, 'food'),
+        'thumbnail_image_id' => null,
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'author_id' => $users->random(1)->user_id,
         'author_display' => $faker->boolean(50),
@@ -54,15 +54,5 @@ $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $f
         'article_comment_id' => $faker->unique()->randomNumber,
         'body' => $faker->paragraph,
         'created_at' => $faker->dateTime,
-    ];
-});
-
-$factory->define(App\Models\ArticleImage::class, function (\Faker\Generator $faker) {
-    return [
-        'article_image_id' => $faker->uuid,
-        'image_type' => $imageType = $faker->optional()->randomElement(['primary','thumbnail','carousel']),
-        'position' => ($imageType == 'carousel') ? $faker->numberBetween(1, 10) : null,
-        'alt' => $faker->optional()->sentence,
-        'title' => $faker->optional()->sentence,
     ];
 });

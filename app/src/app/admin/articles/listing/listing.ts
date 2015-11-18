@@ -22,7 +22,10 @@ namespace app.admin.articles.listing {
                 },
                 resolve: /*@ngInject*/{
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
-                        return articleService.getPaginator().setCount(12);
+                        return articleService
+                            .getPaginator()
+                            .setNested(['thumbnailImage'])
+                            .setCount(12);
                     },
                     initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:app.admin.ICommonListingStateParams) => {
                         return articlesPaginator.getPage($stateParams.page);

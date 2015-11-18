@@ -45,8 +45,6 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->delete('articles/{id}/sections', 'ArticleSectionController@deleteMany');
     $app->delete('articles/{id}/sections/{childId}', 'ArticleSectionController@deleteOne');
     $app->put('articles/{id}/sections/{childId}/localizations/{region}', 'ArticleSectionController@putOneChildLocalization');
-    $app->put('articles/{id}/article-images', 'ArticleImageController@putManyAdd');
-    $app->delete('articles/{id}/article-images', 'ArticleImageController@deleteMany');
     $app->put('articles/{id}/bookmarks/{childId}', ['uses' => 'ArticleBookmarksController@putOne', 'middleware' => 'attachUserToEntity']);
     $app->put('articles/{id}/ratings/{childId}', ['uses' => 'ArticleUserRatingsController@putOne', 'middleware' => 'attachUserToEntity']);
     $app->delete('articles/{id}/bookmarks/{childId}', ['uses' => 'ArticleBookmarksController@deleteOne']);
@@ -110,7 +108,6 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('articles/{id}/comments', 'ArticleCommentController@getAll');
     $app->get('articles/{id}/tags', 'ArticleTagController@getAll');
     $app->get('articles/{id}/sections', 'ArticleSectionController@getAll');
-    $app->get('articles/{id}/article-images', 'ArticleImageController@getAll');
 
     $app->get('tags/', ['uses' => 'TagController@getAllPaginated', 'as' => \App\Models\Tag::class]);
     $app->get('tags/group/{group}', ['as' => \App\Models\Tag::class, 'uses' => 'TagController@getGroupTags']);

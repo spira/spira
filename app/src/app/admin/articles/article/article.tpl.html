@@ -25,12 +25,7 @@
 
         <md-tabs flex md-dynamic-height md-border-bottom>
             <md-tab label="Content">
-                <h2 ng-if="ArticleController.$stateParams.newEntity">Create</h2>
-                <h2 ng-if="!ArticleController.$stateParams.newEntity">Edit</h2>
                 <md-content class="md-padding" ui-view="content"></md-content>
-            </md-tab>
-            <md-tab label="Media">
-                <md-content class="md-padding" ui-view="media"></md-content>
             </md-tab>
             <md-tab label="Meta">
                 <md-content class="md-padding" ui-view="meta"></md-content>
@@ -43,9 +38,14 @@
             </md-tab>
         </md-tabs>
 
-        <md-content flex ui-view="preview" ng-if="ArticleController.showPreview" ng-class="md-whiteframe-z2">
-
-        </md-content>
+        <md-card flex ng-if="ArticleController.showPreview" class="md-whiteframe-z3">
+            <md-toolbar>
+                <h2 class="md-toolbar-tools">
+                    <span>Preview</span>
+                </h2>
+            </md-toolbar>
+            <md-card-content ui-view="preview" ></md-card-content>
+        </md-card>
 
     </div>
 

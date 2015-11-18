@@ -26,11 +26,6 @@ namespace app.admin.articles.article {
                         controllerAs: 'ContentController',
                         templateUrl: 'templates/app/admin/articles/article/content/content.tpl.html'
                     },
-                    ['media@'+namespace] : {
-                        controller: namespace+'.media.controller',
-                        controllerAs: 'MediaController',
-                        templateUrl: 'templates/app/admin/articles/article/media/media.tpl.html'
-                    },
                     ['meta@'+namespace] : {
                         controller: namespace+'.meta.controller',
                         controllerAs: 'MetaController',
@@ -78,7 +73,7 @@ namespace app.admin.articles.article {
                         }
 
                         return articleService.getModel($stateParams.id, [
-                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections.localizations', 'localizations'
+                            'articlePermalinks', 'articleMetas', 'tags', 'author', 'sections.localizations', 'localizations', 'thumbnailImage'
                         ]);
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
@@ -120,7 +115,6 @@ namespace app.admin.articles.article {
 
     angular.module(namespace, [
         namespace+'.content',
-        namespace+'.media',
         namespace+'.meta',
         namespace+'.stats',
         namespace+'.history',

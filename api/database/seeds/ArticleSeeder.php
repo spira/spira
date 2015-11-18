@@ -14,7 +14,6 @@ use App\Models\User;
 use App\Models\Image;
 use App\Models\Article;
 use App\Models\ArticleMeta;
-use App\Models\ArticleImage;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
 use App\Models\ArticleSectionsDisplay;
@@ -79,6 +78,9 @@ class ArticleSeeder extends BaseSeeder
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();
                 $article->articlePermalinks()->saveMany($permalinks);
 
+                //add thumbnail
+                $article->thumbnail_image_id = $images->random(1)->getKey();
+
                 //add tags
                 $article->tags()->sync($groupedTagPivots->random(rand(2, 5))->toArray());
 
@@ -105,16 +107,7 @@ class ArticleSeeder extends BaseSeeder
                     $article->userRatings()->save(factory(App\Models\Rating::class)->make(['user_id' => $user->user_id]));
                 }
 
-                $this->randomElements($images)
-                    ->each(function (Image $image) use ($article) {
-                    factory(ArticleImage::class)->create([
-                        'article_id' => $article->article_id,
-                        'image_id' => $image->image_id,
-                    ]);
-                });
-
-                $article->touch(); // Update search index
-
+                $article->save();
             });
     }
 }

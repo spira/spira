@@ -67,7 +67,8 @@ namespace common.services.pagination {
 
             it('should be an injectable service', () => {
 
-                return expect(paginationService).to.be.an('object');
+                expect(paginationService).to.be.an('object');
+
             });
 
         });
@@ -104,7 +105,7 @@ namespace common.services.pagination {
                 $httpBackend.expectGET('/api/collection', (headers) => {
                     return headers.Range == 'entities=0-9'
                 })
-                .respond(206, _.take(collection, 10));
+                    .respond(206, _.take(collection, 10));
 
                 paginator.getNext();
 
@@ -114,7 +115,7 @@ namespace common.services.pagination {
                 $httpBackend.expectGET('/api/collection', (headers) => { //second request
                     return headers.Range == 'entities=10-19'
                 })
-                .respond(206, collection.slice(10, 20));
+                    .respond(206, collection.slice(10, 20));
 
                 let results = paginator.getNext();
 
@@ -135,7 +136,7 @@ namespace common.services.pagination {
                 $httpBackend.expectGET('/api/collection', (headers) => {
                     return headers.Range == 'entities=0-9'
                 })
-                .respond(206, _.take(collection, 10));
+                    .respond(206, _.take(collection, 10));
 
                 let results1 = paginator.getNext();
 
@@ -195,7 +196,7 @@ namespace common.services.pagination {
                 $httpBackend.expectGET('/api/collection', (headers) => { //second request
                     return headers.Range == 'entities=5-24'
                 })
-                .respond(206, collection.slice(5, 25));
+                    .respond(206, collection.slice(5, 25));
 
                 let results = paginator.getRange(5, 24);
 
@@ -305,9 +306,9 @@ namespace common.services.pagination {
                     $httpBackend.expectGET('/api/collection', (headers) => { //second request
                         return headers.Range == requestRangeHeader
                     })
-                    .respond(206, response, {
-                        'Content-Range' : responseRangeHeader
-                    });
+                        .respond(206, response, {
+                            'Content-Range' : responseRangeHeader
+                        });
 
                     paginator.getNext().then((res) => {
                         retrievedResponses = retrievedResponses.concat(res)
@@ -377,6 +378,23 @@ namespace common.services.pagination {
 
             });
 
+            it('should be able set nested entities', () => {
+
+                $httpBackend.expectGET('/api/collection', (headers) => {
+                    return headers.Range == 'entities=0-9' && headers['With-Nested'] == 'foo, bar';
+                })
+                    .respond(206, _.take(collection, 10), {
+                        'With-Nested' : 'foo, bar'
+                    });
+
+                let paginator = paginationService.getPaginatorInstance('/collection').setNested(['foo', 'bar']);
+
+                let results = paginator.getNext();
+
+                $httpBackend.flush();
+
+            });
+
             describe('Query', () => {
 
                 it('should be able to query the results to filter them', () => {
@@ -442,7 +460,7 @@ namespace common.services.pagination {
                     $httpBackend.expectGET('/api/collection?q=' + btoa('findnothing'), (headers) => {
                         return headers.Range == 'entities=0-2'
                     })
-                    .respond(404);
+                        .respond(404);
 
                     let results = paginator.query('findnothing');
 
