@@ -39,6 +39,10 @@ class Section extends BaseModel implements LocalizableModelInterface
         'type',
     ];
 
+    public static $metaableModels = [
+        Article::class,
+    ];
+
     protected static $validationRules = [
         'section_id' => 'required|uuid',
         'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,

@@ -34,7 +34,7 @@ $factory->defineAs(Venturecraft\Revisionable\Revision::class, 'article', functio
         $tags = factory(App\Models\Tag::class, $faker->numberBetween(2, 4))->make();
         $article['tags'] = $tags->lists('tag')->toArray();
 
-        $meta = $factory->raw(App\Models\ArticleMeta::class);
+        $meta = $factory->raw(App\Models\Meta::class);
         $article['metas'] = $meta;
     }
 
