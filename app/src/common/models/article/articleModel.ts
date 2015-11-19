@@ -5,7 +5,7 @@ namespace common.models {
 
         protected __nestedEntityMap:INestedEntityMap = {
             _sections: this.hydrateSections,
-            _articleMetas: this.hydrateMetaCollectionFromTemplate,
+            _metas: this.hydrateMetaCollectionFromTemplate,
             _author: User,
             _tags: Tag,
             _comments: ArticleComment,
@@ -34,7 +34,7 @@ namespace common.models {
         public sectionsDisplay:mixins.ISectionsDisplay = undefined;
 
         public _sections:Section<any>[] = [];
-        public _articleMetas:ArticleMeta[] = [];
+        public _metas:Meta[] = [];
         public _author:User = undefined;
         public _tags:LinkingTag[] = [];
         public _comments:ArticleComment[] = [];
@@ -88,19 +88,19 @@ namespace common.models {
             return (<any>_).chain(common.models.Article.articleMetaTemplate)
                 .map((metaTagName) => {
 
-                    let existingTag = _.find((<common.models.Article>data)._articleMetas, {metaName:metaTagName});
+                    let existingTag = _.find((<common.models.Article>data)._metas, {metaName:metaTagName});
                     if(_.isEmpty(existingTag)) {
-                        return new common.models.ArticleMeta({
+                        return new common.models.Meta({
                             metaName:metaTagName,
                             metaContent:'',
-                            articleId:(<common.models.Article>data).articleId,
+                            metaableId:(<common.models.Article>data).articleId,
                             metaId:common.models.Article.generateUUID()
                         });
                     }
                     return existingTag;
                 })
                 .thru((templateMeta) => {
-                    let leftovers = _.filter((<common.models.Article>data)._articleMetas, (metaTag) => {
+                    let leftovers = _.filter((<common.models.Article>data)._metas, (metaTag) => {
                         return !_.contains(templateMeta, metaTag);
                     });
 

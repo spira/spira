@@ -2,12 +2,9 @@ namespace app.admin.articles.article {
 
     describe('Article (Admin)', () => {
 
-        let article:common.models.Article = common.models.ArticleMock.entity({
-                _articleMetas:[common.models.ArticleMetaMock.entity()]
-            }),
+        let article:common.models.Article = common.models.ArticleMock.entity(),
             newArticle:common.models.Article = common.models.ArticleMock.entity({
-                title:'new article',
-                _articleMetas:[common.models.ArticleMetaMock.entity()]
+                title:'new article'
             }),
             notificationService:common.services.notification.NotificationService,
             $q:ng.IQService,
@@ -22,6 +19,14 @@ namespace app.admin.articles.article {
             loggedInUser:common.models.User = common.models.UserMock.entity(),
             userService:common.services.user.UserService,
             groupTags:common.models.Tag[] = common.models.TagMock.collection(2);
+
+        article._metas = [common.models.MetaMock.entity({
+            metaableId: article.articleId
+        })];
+
+        newArticle._metas = [common.models.MetaMock.entity({
+            metaableId: newArticle.articleId
+        })];
 
         beforeEach(() => {
 

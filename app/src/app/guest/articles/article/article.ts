@@ -40,7 +40,7 @@ namespace app.guest.articles.article {
                 },
                 resolve: /*@ngInject*/{
                     article: (articleService:common.services.article.ArticleService, $stateParams:IArticleStateParams):common.models.Article | ng.IPromise<common.models.Article> => {
-                        return articleService.getModel($stateParams.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author', 'comments', 'sections']);
+                        return articleService.getModel($stateParams.permalink, ['articlePermalinks', 'metas', 'tags', 'author', 'comments', 'sections']);
                     },
                     user: (ngJwtAuthService:NgJwtAuth.NgJwtAuthService):common.models.User => {
                         return <common.models.User>ngJwtAuthService.getUser()
@@ -65,7 +65,7 @@ namespace app.guest.articles.article {
             public article:common.models.Article,
             public $state:ng.ui.IStateService
         ) {
-            $state.current.data.meta = article._articleMetas;
+            $state.current.data.meta = article._metas;
         }
 
     }

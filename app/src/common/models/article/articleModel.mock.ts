@@ -20,7 +20,7 @@ namespace common.models {
                 thumbnailImageId: seededChance.guid(),
                 authorDisplay: seededChance.bool(),
                 showAuthorPromo: seededChance.bool(),
-                _articleMetas: [],
+                _metas: [],
                 _tags: [],
                 _comments: [],
                 _sections: [],

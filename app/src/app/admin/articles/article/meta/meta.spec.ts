@@ -7,21 +7,7 @@ namespace app.admin.articles.article.meta {
             article:common.models.Article = new common.models.Article({
                 title: 'foo',
                 body: seededChance.paragraph(),
-                permalink: 'foo',
-                _articleMetas: [
-                    new common.models.ArticleMeta({
-                        metaName: 'name',
-                        metaContent: 'foo'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'description',
-                        metaContent: 'bar'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'keyword',
-                        metaContent: 'foo, bar'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'canonical',
-                        metaContent: 'https://foo.bar.com'})
-                ]
+                permalink: 'foo'
             }),
             $q:ng.IQService,
             $rootScope:global.IRootScope,
@@ -30,6 +16,29 @@ namespace app.admin.articles.article.meta {
             usersPaginator = {
                 query: sinon.stub()
             };
+
+        article._metas = [
+            new common.models.Meta({
+                metaName: 'name',
+                metaContent: 'foo',
+                metaableId: article.articleId
+            }),
+            new common.models.Meta({
+                metaName: 'description',
+                metaContent: 'bar',
+                metaableId: article.articleId
+            }),
+            new common.models.Meta({
+                metaName: 'keyword',
+                metaContent: 'foo, bar',
+                metaableId: article.articleId
+            }),
+            new common.models.Meta({
+                metaName: 'canonical',
+                metaContent: 'https://foo.bar.com',
+                metaableId: article.articleId
+            })
+        ];
 
         beforeEach(() => {
 
