@@ -67,6 +67,7 @@ trait RequestValidationTrait
     protected function notFoundManyException($ids, $models, $keyName = '')
     {
         $errors = [];
+        $models->keyBy($keyName);
         foreach ($ids as $id) {
             if ($models->get($id)) {
                 $errors[] = null;
