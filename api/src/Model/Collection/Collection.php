@@ -76,7 +76,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         }
     }
 
-
     /**
      * @return string Name of the Model collection consist of
      */

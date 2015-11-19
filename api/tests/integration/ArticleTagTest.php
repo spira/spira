@@ -132,7 +132,7 @@ class ArticleTagTest extends TestCase
         $updatedTags = $updatedArticle->tags->toArray();
 
         $existingTagId = $existingTagWillStay['tagId'];
-        $this->assertCount(1, array_filter($updatedTags, function($piece) use ($existingTagId){
+        $this->assertCount(1, array_filter($updatedTags, function ($piece) use ($existingTagId) {
             return $piece['tag_id'] == $existingTagId;
         }));
 
@@ -142,7 +142,7 @@ class ArticleTagTest extends TestCase
             }
 
             $removedTagId = $removedTag->tag_id;
-            $this->assertCount(0, array_filter($updatedTags, function($piece) use ($removedTagId){
+            $this->assertCount(0, array_filter($updatedTags, function ($piece) use ($removedTagId) {
                 return $piece['tag_id'] == $removedTagId;
             }));
         }
