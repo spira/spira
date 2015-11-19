@@ -10,8 +10,6 @@
 
 namespace Spira\Model\Collection;
 
-use Spira\Model\Model\BaseModel;
-
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {
     /**
@@ -27,10 +25,7 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
      */
     public function __construct($items = [], $className = null)
     {
-        $items = is_array($items) ? $items : $this->getArrayableItems($items);
-        foreach ($items as $item) {
-            $this->add($item);
-        }
+        parent::__construct($items);
         $this->className = $className;
     }
 
@@ -64,13 +59,8 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     public function add($item)
     {
         $this->checkItem($item);
-        if ($item instanceof BaseModel) {
-            $this->items[$this->getItemKey($item)] = $item;
-        } else {
-            $this->items[] = $item;
-        }
 
-        return $this;
+        return parent::add($item);
     }
 
     /**
@@ -83,32 +73,6 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
         if (! is_null($className) && ! ($item instanceof $className)) {
             throw new ItemTypeException('Item must be instance of '.$className);
         }
-    }
-
-    /**
-     * @param BaseModel $model
-     * @return string
-     */
-    protected function getItemHash(BaseModel $model)
-    {
-        return spl_object_hash($model);
-    }
-
-    /**
-     * @param BaseModel $model
-     * @return mixed|string
-     */
-    protected function getItemKey(BaseModel $model)
-    {
-        if ($model->exists) {
-            // In the case of a composite key, the primary key is an array of values. In this case just use
-            // the item hash instead.
-            if (! is_array($model->getKeyName())) {
-                return $model->getKey();
-            }
-        }
-
-        return $this->getItemHash($model);
     }
 
     /**
