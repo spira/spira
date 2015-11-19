@@ -59,9 +59,8 @@ class Collection extends \Illuminate\Database\Eloquent\Collection
     public function add($item)
     {
         $this->checkItem($item);
-        parent::add($item);
 
-        return $this;
+        return parent::add($item);
     }
 
     /**
