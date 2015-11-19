@@ -17,29 +17,6 @@ namespace app.admin.articles.article.meta {
                 query: sinon.stub()
             };
 
-        article._metas = [
-            new common.models.Meta({
-                metaName: 'name',
-                metaContent: 'foo',
-                metaableId: article.articleId
-            }),
-            new common.models.Meta({
-                metaName: 'description',
-                metaContent: 'bar',
-                metaableId: article.articleId
-            }),
-            new common.models.Meta({
-                metaName: 'keyword',
-                metaContent: 'foo, bar',
-                metaableId: article.articleId
-            }),
-            new common.models.Meta({
-                metaName: 'canonical',
-                metaContent: 'https://foo.bar.com',
-                metaableId: article.articleId
-            })
-        ];
-
         beforeEach(() => {
 
             module('app');

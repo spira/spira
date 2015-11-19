@@ -14,7 +14,7 @@ use Spira\Model\Model\BaseModel;
 
 class Meta extends BaseModel
 {
-    public $table = 'meta';
+    public $table = 'metas';
 
     protected $primaryKey = 'meta_id';
 
