@@ -131,12 +131,20 @@ class ArticleTagTest extends TestCase
         $updatedArticle = Article::find($entity->article_id);
         $updatedTags = $updatedArticle->tags->toArray();
 
-        $this->assertArrayHasKey($existingTagWillStay['tagId'], $updatedTags);
+        $existingTagId = $existingTagWillStay['tagId'];
+        $this->assertCount(1, array_filter($updatedTags, function($piece) use ($existingTagId){
+            return $piece['tag_id'] == $existingTagId;
+        }));
+
         foreach ($previousTagsWillBeRemoved as $removedTag) {
             if ($removedTag->tag_id == $existingTagWillStay['tagId']) {
                 continue;
             }
-            $this->assertArrayNotHasKey($removedTag->tag_id, $updatedTags);
+
+            $removedTagId = $removedTag->tag_id;
+            $this->assertCount(0, array_filter($updatedTags, function($piece) use ($removedTagId){
+                return $piece['tag_id'] == $removedTagId;
+            }));
         }
 
         $this->assertEquals(5, count($updatedTags));
