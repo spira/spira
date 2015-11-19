@@ -30,6 +30,8 @@ class DocumentationTest extends TestCase
 
     public function testDocumentationApib()
     {
+        // If this test fails, test entity tests will fail after it.
+
         $this->getJson('/documentation.apib');
 
         $this->assertResponseOk();

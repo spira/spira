@@ -10,7 +10,6 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
 use Spira\Model\Model\BaseModel;
 
 class Meta extends BaseModel
@@ -34,5 +33,10 @@ class Meta extends BaseModel
         'meta_name' => 'required|string',
         'meta_content' => 'string',
     ];
+
+    public function metaableModel()
+    {
+        return $this->morphTo();
+    }
 
 }
