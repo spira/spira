@@ -39,7 +39,7 @@ class Section extends BaseModel implements LocalizableModelInterface
         'type',
     ];
 
-    public static $metaableModels = [
+    public static $sectionableModels = [
         Article::class,
     ];
 
