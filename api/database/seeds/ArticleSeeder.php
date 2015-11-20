@@ -10,10 +10,10 @@
 
 use App\Models\Section;
 use App\Models\Tag;
+use App\Models\Meta;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Article;
-use App\Models\ArticleMeta;
 use App\Models\ArticleComment;
 use App\Models\ArticlePermalink;
 use App\Models\ArticleSectionsDisplay;
@@ -72,7 +72,7 @@ class ArticleSeeder extends BaseSeeder
                 $article->save();
 
                 //add a meta tag
-                $article->articleMetas()->save(factory(ArticleMeta::class)->make());
+                $article->metas()->save(factory(Meta::class)->make());
 
                 //add permalinks
                 $permalinks = factory(ArticlePermalink::class, 2)->make()->all();

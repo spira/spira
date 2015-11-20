@@ -7,21 +7,7 @@ namespace app.admin.articles.article.meta {
             article:common.models.Article = new common.models.Article({
                 title: 'foo',
                 body: seededChance.paragraph(),
-                permalink: 'foo',
-                _articleMetas: [
-                    new common.models.ArticleMeta({
-                        metaName: 'name',
-                        metaContent: 'foo'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'description',
-                        metaContent: 'bar'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'keyword',
-                        metaContent: 'foo, bar'}),
-                    new common.models.ArticleMeta({
-                        metaName: 'canonical',
-                        metaContent: 'https://foo.bar.com'})
-                ]
+                permalink: 'foo'
             }),
             $q:ng.IQService,
             $rootScope:global.IRootScope,

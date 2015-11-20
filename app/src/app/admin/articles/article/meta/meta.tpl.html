@@ -57,7 +57,7 @@
 
     <h2>Search Engines</h2>
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-        <md-input-container ng-repeat="metaTag in MetaController.article._articleMetas">
+        <md-input-container ng-repeat="metaTag in MetaController.article._metas">
             <label for="metaTagMetaContent">{{ metaTag.metaName }}</label>
             <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" ng-required="false">
         </md-input-container>

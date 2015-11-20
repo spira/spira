@@ -33,9 +33,6 @@ $factory->defineAs(Venturecraft\Revisionable\Revision::class, 'article', functio
     foreach ($articles as &$article) {
         $tags = factory(App\Models\Tag::class, $faker->numberBetween(2, 4))->make();
         $article['tags'] = $tags->lists('tag')->toArray();
-
-        $meta = $factory->raw(App\Models\ArticleMeta::class);
-        $article['metas'] = $meta;
     }
 
     // Pick a key to update

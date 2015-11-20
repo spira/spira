@@ -80,10 +80,10 @@ namespace common.services.article {
             it('should be able to retrieve an article by permalink', () => {
 
                 $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
-                    return headers['With-Nested'] == 'articlePermalinks, articleMetas, tags, author'
+                    return headers['With-Nested'] == 'articlePermalinks, metas, tags, author'
                 }).respond(mockArticle);
 
-                let article = articleService.getModel(mockArticle.permalink, ['articlePermalinks', 'articleMetas', 'tags', 'author']);
+                let article = articleService.getModel(mockArticle.permalink, ['articlePermalinks', 'metas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
@@ -157,9 +157,9 @@ namespace common.services.article {
 
                 let article = common.models.ArticleMock.entity();
                 article.setExists(true);
-                article._articleMetas = article._articleMetas.concat(common.models.ArticleMetaMock.collection(2, {articleId:article.articleId}, false));
+                article._metas = article._metas.concat(common.models.MetaMock.collection(2, {metaableId:article.articleId}, false));
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._articleMetas, true), (item) => {
+                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._metas, true), (item) => {
                     return !_.isEmpty(item.metaContent)
                 })).respond(201);
 

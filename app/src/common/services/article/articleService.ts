@@ -129,9 +129,9 @@ namespace common.services.article {
          * @param article
          * @returns {any}
          */
-        private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.ArticleMeta[]|boolean> {
+        private saveArticleMetas(article:common.models.Article):ng.IPromise<common.models.Meta[]|boolean> {
 
-            let requestObject = this.getNestedCollectionRequestObject(article, '_articleMetas', false);
+            let requestObject = this.getNestedCollectionRequestObject(article, '_metas', false);
 
             requestObject = _.filter(<Array<any>>requestObject, (metaTag) => {
                 return !_.isEmpty(metaTag.metaContent);
@@ -143,8 +143,8 @@ namespace common.services.article {
 
             return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, requestObject)
                 .then(() => {
-                    _.invoke(article._articleMetas, 'setExists', true);
-                    return article._articleMetas;
+                    _.invoke(article._metas, 'setExists', true);
+                    return article._metas;
                 });
         }
 

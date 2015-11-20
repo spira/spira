@@ -81,7 +81,7 @@ class Article extends IndexedModel implements LocalizableModelInterface
         'sections_display' => 'json',
     ];
 
-    protected $indexRelations = ['tags', 'articlePermalinks', 'author', 'articleMetas'];
+    protected $indexRelations = ['tags', 'articlePermalinks', 'author', 'metas'];
 
     public static function getValidationRules($entityId = null)
     {
@@ -238,9 +238,9 @@ class Article extends IndexedModel implements LocalizableModelInterface
         return $this->hasMany(ArticlePermalink::class, 'article_id', 'article_id');
     }
 
-    public function articleMetas()
+    public function metas()
     {
-        return $this->hasManyRevisionable(ArticleMeta::class, 'article_id', 'article_id', 'articleMetas');
+        return $this->morphMany(Meta::class, 'metaable');
     }
 
     /**

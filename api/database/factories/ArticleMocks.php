@@ -41,14 +41,6 @@ $factory->define(App\Models\ArticlePermalink::class, function (\Faker\Generator 
     ];
 });
 
-$factory->define(App\Models\ArticleMeta::class, function (\Faker\Generator $faker) {
-    return [
-        'meta_id' => $faker->uuid,
-        'meta_name' => $faker->boolean(50) ? $faker->randomElement(['name','description','keyword','canonical']) : $faker->word,
-        'meta_content' => $faker->slug,
-    ];
-});
-
 $factory->define(App\Models\ArticleComment::class, function (\Faker\Generator $faker) {
     return [
         'article_comment_id' => $faker->unique()->randomNumber,

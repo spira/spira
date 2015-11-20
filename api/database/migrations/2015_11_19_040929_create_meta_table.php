@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Article;
-use App\Models\ArticleMeta;
-use Illuminate\Support\Facades\Schema;
+use App\Models\Meta;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
-class CreateArticleMetaTable extends Migration
+class CreateMetaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,22 +22,20 @@ class CreateArticleMetaTable extends Migration
      */
     public function up()
     {
-        Schema::create(ArticleMeta::getTableName(), function (Blueprint $table) {
-            $table->uuid('meta_id');
-            $table->uuid('article_id');
+        Schema::create(Meta::getTableName(), function (Blueprint $table) {
+
+            $table->uuid(Meta::getPrimaryKey())->primary();
+
+            $table->uuid('metaable_id');
+            $table->enum('metaable_type', Meta::$metaableModels);
+
             $table->string('meta_name', 255);
             $table->string('meta_content', 255)->nullable();
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 
-            $table->primary('meta_id');
-
-            $table->unique(['article_id', 'meta_name']);
-
-            $table->foreign('article_id')
-                ->references('article_id')->on(Article::getTableName())
-                ->onDelete('cascade');
-            });
+            $table->unique(['metaable_id', 'meta_name']);
+        });
     }
 
     /**
@@ -48,6 +45,6 @@ class CreateArticleMetaTable extends Migration
      */
     public function down()
     {
-        DB::statement(sprintf('DROP TABLE %s CASCADE', ArticleMeta::getTableName()));
+        Schema::drop(Meta::getTableName());
     }
 }
