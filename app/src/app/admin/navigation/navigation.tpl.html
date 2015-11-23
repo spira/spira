@@ -25,7 +25,7 @@
 
     <md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
 
-        <md-list-item ng-if="!!stateGroup.name && !AdminNavigationController.collapsed">
+        <md-list-item class="group-title" ng-if="!!stateGroup.name && !AdminNavigationController.collapsed">
             <p><small>{{ stateGroup.name | uppercase}}</small></p>
         </md-list-item>
 

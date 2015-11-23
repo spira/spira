@@ -1,7 +1,7 @@
 
 <form novalidate name="articleForm" >
 
-    <div style="background-color: lightgrey">
+    <md-card layout-padding>
         <h1>{{ArticleController.entity.status | uppercase}}</h1>
         <div layout="row">
             <div flex>
@@ -19,9 +19,9 @@
                 </md-button>
             </div>
         </div>
-    </div>
+    </md-card>
 
-    <div layout="row">
+    <md-card>
 
         <md-tabs flex md-dynamic-height md-border-bottom>
             <md-tab label="Content">
@@ -47,7 +47,7 @@
             <md-card-content ui-view="preview" ></md-card-content>
         </md-card>
 
-    </div>
+    </md-card>
 
 
     <md-button class="md-primary md-raised" ng-disabled="articleForm.$invalid" ng-click="ArticleController.save()">Save</md-button>

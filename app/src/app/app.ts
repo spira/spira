@@ -4,9 +4,9 @@ namespace app {
 
     class AppConfig {
 
-        static $inject = ['ngHttpProgressProvider', '$provide'];
+        static $inject = ['ngHttpProgressProvider', '$provide', '$MD_THEME_CSS'];
 
-        constructor(ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider, $provide:ng.auto.IProvideService) {
+        constructor(ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider, $provide:ng.auto.IProvideService, $MD_THEME_CSS) {
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
                 color: 'white',
@@ -15,7 +15,11 @@ namespace app {
 
             ngHttpProgressProvider.configure(httpProgressConfig);
 
-            //$provide.constant('$MD_THEME_CSS', '/**/'); //disable all angular material style injections
+            console.log($MD_THEME_CSS);
+
+            //debugger;
+
+            $provide.constant('$MD_THEME_CSS', '/**/'); //disable all angular material style injections
         }
 
     }

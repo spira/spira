@@ -53,6 +53,9 @@ var paths = {
         get styles(){
             return this.base + '/**/*.less'
         },
+        get materialThemeFiles(){
+            return 'app/bower_components/angular-material/modules/js/**/*-theme.css'
+        },
         get assets(){
             return this.base + '/assets/images/**/*'
         },
@@ -198,6 +201,44 @@ gulp.task('styles', 'compiles stylesheets', [], function(){
         //    browserSync.reload();
         //})
     ;
+});
+
+gulp.task('theme', 'compiles angular material theme', [], function(){
+
+    //var hueRegex = new RegExp('(\'|")?{{\\s*(' + colorType + ')-(color|contrast)-?(\\d\\.?\\d*)?\\s*}}(\"|\')?','g');
+    var simpleVariableRegex = /'?"?\{\{\s*([a-zA-Z]+)-(A?\d+|hue\-[0-3]|shadow)-?(\d\.?\d*)?(contrast)?\s*\}\}'?"?/g;
+    var variableRegex = /'?"?\{\{\s*([a-zA-Z0-9\.-]+)*\s*\}\}'?"?/g;
+
+    var variablesFound = [];
+
+    return gulp.src(paths.src.materialThemeFiles)
+        .pipe(plugins.concat('admin-material-theme.less'))
+        .pipe(plugins.replace('.md-THEME_NAME-theme', ''))
+        .pipe(plugins.replace(variableRegex, function(match){
+
+            var variable = '@' + match.replace(/[ {}']/g, '');
+            var replacement = variable;
+
+            if ((variable.match(/-/g) || []).length > 1){
+                var alpha = variable.substr(_.lastIndexOf(variable, "-")+1);
+                variable = variable.substr(0, _.lastIndexOf(variable, "-"));
+                replacement = 'fade('+ variable + ',' + alpha + ')';
+            }
+
+            if (variablesFound.indexOf(variable) < 0){
+
+                variablesFound.push(variable);
+                console.log(variable);
+            }
+
+            return replacement;
+        }))
+        .pipe(plugins.insert.prepend('#admin-theme {\n'))
+        .pipe(plugins.insert.append('}\n'))
+        .pipe(plugins.insert.prepend('@import (reference) "admin-variables.less";\n'))
+        .pipe(gulp.dest(paths.src.base + '/styles'))
+    ;
+
 });
 
 

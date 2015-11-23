@@ -1,17 +1,29 @@
-@import (reference) "../../../styles/global.less";
+@import (reference) "../../../styles/admin-variables.less";
 
 
 div#admin-sidenav {
+
+    background-color: @background-900;
+    color: @primary-200;
+
     &.collapsed {
         width: 75px;
     }
 
-    md-list-item.selected > button {
-        background: fade(@adminPrimary, 35%);
+    md-list-item > button {
+        background-color: inherit !important;
     }
 
-    md-list-item.child-selected > button {
-        background: fade(@adminPrimary, 15%);
+    md-list-item.group-title {
+        color: @accent-600;
     }
+
+    //md-list-item.selected > button {
+    //    background: @background-900;
+    //}
+    //
+    //md-list-item.child-selected > button {
+    //    background: @background-900;
+    //}
 
 }

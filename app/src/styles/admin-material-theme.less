@@ -1,0 +1,880 @@
+@import (reference) "admin-variables.less";
+#admin-theme {
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-autocomplete {
+  background: @background-50; }
+  md-autocomplete[disabled] {
+    background: @background-100; }
+  md-autocomplete button md-icon path {
+    fill: @background-600; }
+  md-autocomplete button:after {
+    background: fade(@background-600,0.3); }
+
+.md-autocomplete-suggestions-container {
+  background: @background-50; }
+  .md-autocomplete-suggestions-container li {
+    color: @background-900; }
+    .md-autocomplete-suggestions-container li .highlight {
+      color: @background-600; }
+    .md-autocomplete-suggestions-container li:hover, .md-autocomplete-suggestions-container li.selected {
+      background: @background-200; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-backdrop {
+  background-color: fade(@background-900,0.0); }
+  md-backdrop.md-opaque {
+    background-color: fade(@background-900,1.0); }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-bottom-sheet {
+  background-color: @background-50;
+  border-top-color: @background-300; }
+  md-bottom-sheet.md-list md-list-item {
+    color: @foreground-1; }
+  md-bottom-sheet .md-subheader {
+    background-color: @background-50; }
+  md-bottom-sheet .md-subheader {
+    color: @foreground-1; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+a.md-button:not([disabled]):hover, .md-button:not([disabled]):hover {
+  background-color: fade(@background-500,0.2); }
+a.md-button:not([disabled]).md-focused, .md-button:not([disabled]).md-focused {
+  background-color: fade(@background-500,0.2); }
+a.md-button:not([disabled]).md-icon-button:hover, .md-button:not([disabled]).md-icon-button:hover {
+  background-color: transparent; }
+a.md-button.md-fab, .md-button.md-fab {
+  background-color: @accent-color;
+  color: @accent-contrast; }
+  a.md-button.md-fab md-icon, .md-button.md-fab md-icon {
+    color: @accent-contrast; }
+  a.md-button.md-fab:not([disabled]):hover, .md-button.md-fab:not([disabled]):hover {
+    background-color: @accent-color; }
+  a.md-button.md-fab:not([disabled]).md-focused, .md-button.md-fab:not([disabled]).md-focused {
+    background-color: @accent-A700; }
+a.md-button.md-primary, .md-button.md-primary {
+  color: @primary-color; }
+  a.md-button.md-primary.md-raised, a.md-button.md-primary.md-fab, .md-button.md-primary.md-raised, .md-button.md-primary.md-fab {
+    color: @primary-contrast;
+    background-color: @primary-color; }
+    a.md-button.md-primary.md-raised:not([disabled]) md-icon, a.md-button.md-primary.md-fab:not([disabled]) md-icon, .md-button.md-primary.md-raised:not([disabled]) md-icon, .md-button.md-primary.md-fab:not([disabled]) md-icon {
+      color: @primary-contrast; }
+    a.md-button.md-primary.md-raised:not([disabled]):hover, a.md-button.md-primary.md-fab:not([disabled]):hover, .md-button.md-primary.md-raised:not([disabled]):hover, .md-button.md-primary.md-fab:not([disabled]):hover {
+      background-color: @primary-color; }
+    a.md-button.md-primary.md-raised:not([disabled]).md-focused, a.md-button.md-primary.md-fab:not([disabled]).md-focused, .md-button.md-primary.md-raised:not([disabled]).md-focused, .md-button.md-primary.md-fab:not([disabled]).md-focused {
+      background-color: @primary-600; }
+  a.md-button.md-primary:not([disabled]) md-icon, .md-button.md-primary:not([disabled]) md-icon {
+    color: @primary-color; }
+a.md-button.md-fab, .md-button.md-fab {
+  background-color: @accent-color;
+  color: @accent-contrast; }
+  a.md-button.md-fab:not([disabled]) .md-icon, .md-button.md-fab:not([disabled]) .md-icon {
+    color: @accent-contrast; }
+  a.md-button.md-fab:not([disabled]):hover, .md-button.md-fab:not([disabled]):hover {
+    background-color: @accent-color; }
+  a.md-button.md-fab:not([disabled]).md-focused, .md-button.md-fab:not([disabled]).md-focused {
+    background-color: @accent-A700; }
+a.md-button.md-raised, .md-button.md-raised {
+  color: @background-contrast;
+  background-color: @background-50; }
+  a.md-button.md-raised:not([disabled]) .md-icon, .md-button.md-raised:not([disabled]) .md-icon {
+    color: @background-contrast; }
+  a.md-button.md-raised:not([disabled]):hover, .md-button.md-raised:not([disabled]):hover {
+    background-color: @background-50; }
+  a.md-button.md-raised:not([disabled]).md-focused, .md-button.md-raised:not([disabled]).md-focused {
+    background-color: @background-200; }
+a.md-button.md-warn, .md-button.md-warn {
+  color: @warn-color; }
+  a.md-button.md-warn.md-raised, a.md-button.md-warn.md-fab, .md-button.md-warn.md-raised, .md-button.md-warn.md-fab {
+    color: @warn-contrast;
+    background-color: @warn-color; }
+    a.md-button.md-warn.md-raised:not([disabled]) md-icon, a.md-button.md-warn.md-fab:not([disabled]) md-icon, .md-button.md-warn.md-raised:not([disabled]) md-icon, .md-button.md-warn.md-fab:not([disabled]) md-icon {
+      color: @warn-contrast; }
+    a.md-button.md-warn.md-raised:not([disabled]):hover, a.md-button.md-warn.md-fab:not([disabled]):hover, .md-button.md-warn.md-raised:not([disabled]):hover, .md-button.md-warn.md-fab:not([disabled]):hover {
+      background-color: @warn-color; }
+    a.md-button.md-warn.md-raised:not([disabled]).md-focused, a.md-button.md-warn.md-fab:not([disabled]).md-focused, .md-button.md-warn.md-raised:not([disabled]).md-focused, .md-button.md-warn.md-fab:not([disabled]).md-focused {
+      background-color: @warn-700; }
+  a.md-button.md-warn:not([disabled]) md-icon, .md-button.md-warn:not([disabled]) md-icon {
+    color: @warn-color; }
+a.md-button.md-accent, .md-button.md-accent {
+  color: @accent-color; }
+  a.md-button.md-accent.md-raised, a.md-button.md-accent.md-fab, .md-button.md-accent.md-raised, .md-button.md-accent.md-fab {
+    color: @accent-contrast;
+    background-color: @accent-color; }
+    a.md-button.md-accent.md-raised:not([disabled]) md-icon, a.md-button.md-accent.md-fab:not([disabled]) md-icon, .md-button.md-accent.md-raised:not([disabled]) md-icon, .md-button.md-accent.md-fab:not([disabled]) md-icon {
+      color: @accent-contrast; }
+    a.md-button.md-accent.md-raised:not([disabled]):hover, a.md-button.md-accent.md-fab:not([disabled]):hover, .md-button.md-accent.md-raised:not([disabled]):hover, .md-button.md-accent.md-fab:not([disabled]):hover {
+      background-color: @accent-color; }
+    a.md-button.md-accent.md-raised:not([disabled]).md-focused, a.md-button.md-accent.md-fab:not([disabled]).md-focused, .md-button.md-accent.md-raised:not([disabled]).md-focused, .md-button.md-accent.md-fab:not([disabled]).md-focused {
+      background-color: @accent-700; }
+  a.md-button.md-accent:not([disabled]) md-icon, .md-button.md-accent:not([disabled]) md-icon {
+    color: @accent-color; }
+a.md-button[disabled], a.md-button.md-raised[disabled], a.md-button.md-fab[disabled], a.md-button.md-accent[disabled], a.md-button.md-warn[disabled], .md-button[disabled], .md-button.md-raised[disabled], .md-button.md-fab[disabled], .md-button.md-accent[disabled], .md-button.md-warn[disabled] {
+  color: @foreground-3;
+  cursor: not-allowed; }
+  a.md-button[disabled] md-icon, a.md-button.md-raised[disabled] md-icon, a.md-button.md-fab[disabled] md-icon, a.md-button.md-accent[disabled] md-icon, a.md-button.md-warn[disabled] md-icon, .md-button[disabled] md-icon, .md-button.md-raised[disabled] md-icon, .md-button.md-fab[disabled] md-icon, .md-button.md-accent[disabled] md-icon, .md-button.md-warn[disabled] md-icon {
+    color: @foreground-3; }
+a.md-button.md-raised[disabled], a.md-button.md-fab[disabled], .md-button.md-raised[disabled], .md-button.md-fab[disabled] {
+  background-color: @foreground-4; }
+a.md-button[disabled], .md-button[disabled] {
+  background-color: transparent; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-card {
+  background-color: @background-color;
+  border-radius: 2px; }
+  md-card .md-card-image {
+    border-radius: 2px 2px 0 0; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-checkbox .md-ripple {
+  color: @accent-600; }
+md-checkbox.md-checked .md-ripple {
+  color: @background-600; }
+md-checkbox.md-checked.md-focused .md-container:before {
+  background-color: fade(@accent-color,0.26); }
+md-checkbox .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox.md-checked .md-ink-ripple {
+  color: fade(@accent-color,0.87); }
+md-checkbox .md-icon {
+  border-color: @foreground-2; }
+md-checkbox.md-checked .md-icon {
+  background-color: fade(@accent-color,0.87); }
+md-checkbox.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox:not([disabled]).md-primary .md-ripple {
+  color: @primary-600; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-ripple {
+  color: @background-600; }
+md-checkbox:not([disabled]).md-primary .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-ink-ripple {
+  color: fade(@primary-color,0.87); }
+md-checkbox:not([disabled]).md-primary .md-icon {
+  border-color: @foreground-2; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-icon {
+  background-color: fade(@primary-color,0.87); }
+md-checkbox:not([disabled]).md-primary.md-checked.md-focused .md-container:before {
+  background-color: fade(@primary-color,0.26); }
+md-checkbox:not([disabled]).md-primary.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox:not([disabled]).md-warn .md-ripple {
+  color: @warn-600; }
+md-checkbox:not([disabled]).md-warn .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox:not([disabled]).md-warn.md-checked .md-ink-ripple {
+  color: fade(@warn-color,0.87); }
+md-checkbox:not([disabled]).md-warn .md-icon {
+  border-color: @foreground-2; }
+md-checkbox:not([disabled]).md-warn.md-checked .md-icon {
+  background-color: fade(@warn-color,0.87); }
+md-checkbox:not([disabled]).md-warn.md-checked.md-focused:not([disabled]) .md-container:before {
+  background-color: fade(@warn-color,0.26); }
+md-checkbox:not([disabled]).md-warn.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox[disabled] .md-icon {
+  border-color: @foreground-3; }
+md-checkbox[disabled].md-checked .md-icon {
+  background-color: @foreground-3; }
+md-checkbox[disabled] .md-label {
+  color: @foreground-3; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-chips .md-chips {
+  box-shadow: 0 1px @background-300; }
+  md-chips .md-chips.md-focused {
+    box-shadow: 0 2px @primary-color; }
+md-chips .md-chip {
+  background: @background-300;
+  color: @background-800; }
+  md-chips .md-chip.md-focused {
+    background: @primary-color;
+    color: @primary-contrast; }
+    md-chips .md-chip.md-focused md-icon {
+      color: @primary-contrast; }
+md-chips md-chip-remove .md-button md-icon path {
+  fill: @background-500; }
+
+.md-contact-suggestion span.md-contact-email {
+  color: @background-400; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-content {
+  color: @foreground-1;
+  background-color: @background-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+/** Theme styles for mdDatepicker. */
+md-datepicker {
+  background: @background-color; }
+
+ .md-datepicker-input {
+  color: @background-contrast;
+  background: @background-color; }
+   .md-datepicker-input::-webkit-input-placeholder,  .md-datepicker-input::-moz-placeholder,  .md-datepicker-input:-moz-placeholder,  .md-datepicker-input:-ms-input-placeholder {
+    color: @foreground-3; }
+ .md-datepicker-input-container {
+  border-bottom-color: @background-300; }
+   .md-datepicker-input-container.md-datepicker-focused {
+    border-bottom-color: @primary-500; }
+   .md-datepicker-input-container.md-datepicker-invalid {
+    border-bottom-color: @warn-500; }
+ .md-datepicker-calendar-pane {
+  border-color: @background-300; }
+ .md-datepicker-triangle-button .md-datepicker-expand-triangle {
+  border-top-color: @foreground-3; }
+ .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
+  border-top-color: @foreground-2; }
+ .md-datepicker-open .md-datepicker-calendar-icon {
+  fill: @primary-500; }
+ .md-datepicker-calendar,  .md-datepicker-input-mask-opaque {
+  background: @background-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-dialog {
+  border-radius: 4px;
+  background-color: @background-color; }
+  md-dialog.md-content-overflow .md-actions {
+    border-top-color: @foreground-4; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-divider {
+  border-top-color: @foreground-4; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-icon {
+  color: @foreground-2; }
+  md-icon.md-primary {
+    color: @primary-color; }
+  md-icon.md-accent {
+    color: @accent-color; }
+  md-icon.md-warn {
+    color: @warn-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-input-container .md-input {
+  color: @foreground-1;
+  border-color: @foreground-4;
+  text-shadow: @foreground-shadow; }
+  md-input-container .md-input::-webkit-input-placeholder, md-input-container .md-input::-moz-placeholder, md-input-container .md-input:-moz-placeholder, md-input-container .md-input:-ms-input-placeholder {
+    color: @foreground-3; }
+md-input-container > md-icon {
+  color: @foreground-1; }
+md-input-container label, md-input-container .md-placeholder {
+  text-shadow: @foreground-shadow;
+  color: @foreground-3; }
+md-input-container ng-messages :not(.md-char-counter), md-input-container [ng-messages] :not(.md-char-counter), md-input-container ng-message :not(.md-char-counter), md-input-container data-ng-message :not(.md-char-counter), md-input-container x-ng-message :not(.md-char-counter), md-input-container [ng-message] :not(.md-char-counter), md-input-container [data-ng-message] :not(.md-char-counter), md-input-container [x-ng-message] :not(.md-char-counter), md-input-container [ng-message-exp] :not(.md-char-counter), md-input-container [data-ng-message-exp] :not(.md-char-counter), md-input-container [x-ng-message-exp] :not(.md-char-counter) {
+  color: @warn-500; }
+md-input-container:not(.md-input-invalid).md-input-has-value label {
+  color: @foreground-2; }
+md-input-container:not(.md-input-invalid).md-input-focused .md-input {
+  border-color: @primary-500; }
+md-input-container:not(.md-input-invalid).md-input-focused label {
+  color: @primary-500; }
+md-input-container:not(.md-input-invalid).md-input-focused md-icon {
+  color: @primary-500; }
+md-input-container:not(.md-input-invalid).md-input-focused.md-accent .md-input {
+  border-color: @accent-500; }
+md-input-container:not(.md-input-invalid).md-input-focused.md-accent label {
+  color: @accent-500; }
+md-input-container:not(.md-input-invalid).md-input-focused.md-warn .md-input {
+  border-color: @warn-500; }
+md-input-container:not(.md-input-invalid).md-input-focused.md-warn label {
+  color: @warn-500; }
+md-input-container.md-input-invalid .md-input {
+  border-color: @warn-500; }
+md-input-container.md-input-invalid.md-input-focused label {
+  color: @warn-500; }
+md-input-container.md-input-invalid ng-message, md-input-container.md-input-invalid data-ng-message, md-input-container.md-input-invalid x-ng-message, md-input-container.md-input-invalid [ng-message], md-input-container.md-input-invalid [data-ng-message], md-input-container.md-input-invalid [x-ng-message], md-input-container.md-input-invalid [ng-message-exp], md-input-container.md-input-invalid [data-ng-message-exp], md-input-container.md-input-invalid [x-ng-message-exp], md-input-container.md-input-invalid .md-char-counter {
+  color: @warn-500; }
+md-input-container .md-input[disabled], md-input-container .md-input [disabled] {
+  border-bottom-color: transparent;
+  color: @foreground-3;
+  background-image: linear-gradient(to right, @foreground-3 0%, @foreground-3 33%, transparent 0%); }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-list md-list-item.md-2-line .md-list-item-text h3, md-list md-list-item.md-2-line .md-list-item-text h4, md-list md-list-item.md-3-line .md-list-item-text h3, md-list md-list-item.md-3-line .md-list-item-text h4 {
+  color: @foreground-1; }
+md-list md-list-item.md-2-line .md-list-item-text p, md-list md-list-item.md-3-line .md-list-item-text p {
+  color: @foreground-2; }
+md-list .md-proxy-focus.md-focused div.md-no-style {
+  background-color: @background-100; }
+md-list md-list-item > .md-avatar-icon {
+  background-color: @foreground-3;
+  color: @background-color; }
+md-list md-list-item > md-icon {
+  color: @foreground-2; }
+  md-list md-list-item > md-icon.md-highlight {
+    color: @primary-color; }
+    md-list md-list-item > md-icon.md-highlight.md-accent {
+      color: @accent-color; }
+md-list md-list-item button {
+  background-color: @background-color; }
+  md-list md-list-item button.md-button:not([disabled]):hover {
+    background-color: @background-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-menu-content {
+  background-color: @background-color; }
+  md-menu-content md-menu-divider {
+    background-color: @foreground-4; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-menu-bar > button.md-button {
+  color: @foreground-2;
+  border-radius: 2px; }
+md-menu-bar md-menu.md-open > button, md-menu-bar md-menu > button:focus {
+  outline: none;
+  background: @background-200; }
+md-menu-bar.md-open:not(.md-keyboard-mode) md-menu:hover > button {
+  background-color: fade(@background-500,0.2); }
+md-menu-bar:not(.md-keyboard-mode):not(.md-open) md-menu button:hover, md-menu-bar:not(.md-keyboard-mode):not(.md-open) md-menu button:focus {
+  background: transparent; }
+
+md-menu-content .md-menu > .md-button:after {
+  color: @foreground-2; }
+md-menu-content .md-menu.md-open > .md-button {
+  background-color: fade(@background-500,0.2); }
+
+md-toolbar.md-menu-toolbar {
+  background-color: @background-color;
+  color: @foreground-1; }
+  md-toolbar.md-menu-toolbar md-toolbar-filler {
+    background-color: @primary-color;
+    color: @primary-contrast; }
+    md-toolbar.md-menu-toolbar md-toolbar-filler md-icon {
+      color: @primary-contrast; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-progress-circular {
+  background-color: transparent; }
+  md-progress-circular .md-inner .md-gap {
+    border-top-color: @primary-color;
+    border-bottom-color: @primary-color; }
+  md-progress-circular .md-inner .md-left .md-half-circle, md-progress-circular .md-inner .md-right .md-half-circle {
+    border-top-color: @primary-color; }
+  md-progress-circular .md-inner .md-right .md-half-circle {
+    border-right-color: @primary-color; }
+  md-progress-circular .md-inner .md-left .md-half-circle {
+    border-left-color: @primary-color; }
+  md-progress-circular.md-warn .md-inner .md-gap {
+    border-top-color: @warn-color;
+    border-bottom-color: @warn-color; }
+  md-progress-circular.md-warn .md-inner .md-left .md-half-circle, md-progress-circular.md-warn .md-inner .md-right .md-half-circle {
+    border-top-color: @warn-color; }
+  md-progress-circular.md-warn .md-inner .md-right .md-half-circle {
+    border-right-color: @warn-color; }
+  md-progress-circular.md-warn .md-inner .md-left .md-half-circle {
+    border-left-color: @warn-color; }
+  md-progress-circular.md-accent .md-inner .md-gap {
+    border-top-color: @accent-color;
+    border-bottom-color: @accent-color; }
+  md-progress-circular.md-accent .md-inner .md-left .md-half-circle, md-progress-circular.md-accent .md-inner .md-right .md-half-circle {
+    border-top-color: @accent-color; }
+  md-progress-circular.md-accent .md-inner .md-right .md-half-circle {
+    border-right-color: @accent-color; }
+  md-progress-circular.md-accent .md-inner .md-left .md-half-circle {
+    border-left-color: @accent-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-progress-linear .md-container {
+  background-color: @primary-100; }
+md-progress-linear .md-bar {
+  background-color: @primary-color; }
+md-progress-linear.md-warn .md-container {
+  background-color: @warn-100; }
+md-progress-linear.md-warn .md-bar {
+  background-color: @warn-color; }
+md-progress-linear.md-accent .md-container {
+  background-color: @accent-100; }
+md-progress-linear.md-accent .md-bar {
+  background-color: @accent-color; }
+md-progress-linear[md-mode=buffer].md-warn .md-bar1 {
+  background-color: @warn-100; }
+md-progress-linear[md-mode=buffer].md-warn .md-dashed:before {
+  background: radial-gradient(@warn-100 0%, @warn-100 16%, transparent 42%); }
+md-progress-linear[md-mode=buffer].md-accent .md-bar1 {
+  background-color: @accent-100; }
+md-progress-linear[md-mode=buffer].md-accent .md-dashed:before {
+  background: radial-gradient(@accent-100 0%, @accent-100 16%, transparent 42%); }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-radio-button .md-off {
+  border-color: @foreground-2; }
+md-radio-button .md-on {
+  background-color: fade(@accent-color,0.87); }
+md-radio-button.md-checked .md-off {
+  border-color: fade(@accent-color,0.87); }
+md-radio-button.md-checked .md-ink-ripple {
+  color: fade(@accent-color,0.87); }
+md-radio-button .md-container .md-ripple {
+  color: @accent-600; }
+
+md-radio-group:not([disabled]) .md-primary .md-on, md-radio-group:not([disabled]).md-primary .md-on, md-radio-button:not([disabled]) .md-primary .md-on, md-radio-button:not([disabled]).md-primary .md-on {
+  background-color: fade(@primary-color,0.87); }
+md-radio-group:not([disabled]) .md-primary .md-checked .md-off, md-radio-group:not([disabled]) .md-primary.md-checked .md-off, md-radio-group:not([disabled]).md-primary .md-checked .md-off, md-radio-group:not([disabled]).md-primary.md-checked .md-off, md-radio-button:not([disabled]) .md-primary .md-checked .md-off, md-radio-button:not([disabled]) .md-primary.md-checked .md-off, md-radio-button:not([disabled]).md-primary .md-checked .md-off, md-radio-button:not([disabled]).md-primary.md-checked .md-off {
+  border-color: fade(@primary-color,0.87); }
+md-radio-group:not([disabled]) .md-primary .md-checked .md-ink-ripple, md-radio-group:not([disabled]) .md-primary.md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-primary .md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-primary.md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-primary .md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-primary.md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-primary .md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-primary.md-checked .md-ink-ripple {
+  color: fade(@primary-color,0.87); }
+md-radio-group:not([disabled]) .md-primary .md-container .md-ripple, md-radio-group:not([disabled]).md-primary .md-container .md-ripple, md-radio-button:not([disabled]) .md-primary .md-container .md-ripple, md-radio-button:not([disabled]).md-primary .md-container .md-ripple {
+  color: @primary-600; }
+md-radio-group:not([disabled]) .md-warn .md-on, md-radio-group:not([disabled]).md-warn .md-on, md-radio-button:not([disabled]) .md-warn .md-on, md-radio-button:not([disabled]).md-warn .md-on {
+  background-color: fade(@warn-color,0.87); }
+md-radio-group:not([disabled]) .md-warn .md-checked .md-off, md-radio-group:not([disabled]) .md-warn.md-checked .md-off, md-radio-group:not([disabled]).md-warn .md-checked .md-off, md-radio-group:not([disabled]).md-warn.md-checked .md-off, md-radio-button:not([disabled]) .md-warn .md-checked .md-off, md-radio-button:not([disabled]) .md-warn.md-checked .md-off, md-radio-button:not([disabled]).md-warn .md-checked .md-off, md-radio-button:not([disabled]).md-warn.md-checked .md-off {
+  border-color: fade(@warn-color,0.87); }
+md-radio-group:not([disabled]) .md-warn .md-checked .md-ink-ripple, md-radio-group:not([disabled]) .md-warn.md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-warn .md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-warn.md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-warn .md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-warn.md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-warn .md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-warn.md-checked .md-ink-ripple {
+  color: fade(@warn-color,0.87); }
+md-radio-group:not([disabled]) .md-warn .md-container .md-ripple, md-radio-group:not([disabled]).md-warn .md-container .md-ripple, md-radio-button:not([disabled]) .md-warn .md-container .md-ripple, md-radio-button:not([disabled]).md-warn .md-container .md-ripple {
+  color: @warn-600; }
+md-radio-group[disabled], md-radio-button[disabled] {
+  color: @foreground-3; }
+  md-radio-group[disabled] .md-container .md-off, md-radio-button[disabled] .md-container .md-off {
+    border-color: @foreground-3; }
+  md-radio-group[disabled] .md-container .md-on, md-radio-button[disabled] .md-container .md-on {
+    border-color: @foreground-3; }
+
+md-radio-group .md-checked .md-ink-ripple {
+  color: fade(@accent-color,0.26); }
+md-radio-group.md-primary .md-checked:not([disabled]) .md-ink-ripple, md-radio-group .md-checked:not([disabled]).md-primary .md-ink-ripple {
+  color: fade(@primary-color,0.26); }
+md-radio-group .md-checked.md-primary .md-ink-ripple {
+  color: fade(@warn-color,0.26); }
+
+md-radio-group.md-focused:not(:empty) .md-checked .md-container:before {
+  background-color: fade(@accent-color,0.26); }
+md-radio-group.md-focused:not(:empty) .md-checked:not([disabled]).md-primary .md-container:before {
+  background-color: fade(@primary-color,0.26); }
+md-radio-group.md-focused:not(:empty) .md-checked.md-primary .md-container:before {
+  background-color: fade(@warn-color,0.26); }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-select[disabled] .md-select-value {
+  border-bottom-color: transparent;
+  background-image: linear-gradient(to right, @foreground-3 0%, @foreground-3 33%, transparent 0%); }
+md-select .md-select-value {
+  border-bottom-color: @foreground-4; }
+  md-select .md-select-value.md-select-placeholder {
+    color: @foreground-3; }
+md-select.ng-invalid.ng-dirty .md-select-value {
+  color: @warn-500 !important;
+  border-bottom-color: @warn-500 !important; }
+md-select:not([disabled]):focus .md-select-value {
+  border-bottom-color: @primary-color;
+  color: @foreground-1; }
+  md-select:not([disabled]):focus .md-select-value.md-select-placeholder {
+    color: @foreground-1; }
+md-select:not([disabled]):focus.md-accent .md-select-value {
+  border-bottom-color: @accent-color; }
+md-select:not([disabled]):focus.md-warn .md-select-value {
+  border-bottom-color: @warn-color; }
+md-select[disabled] .md-select-value {
+  color: @foreground-3; }
+  md-select[disabled] .md-select-value.md-select-placeholder {
+    color: @foreground-3; }
+
+md-select-menu md-option[disabled] {
+  color: @foreground-3; }
+md-select-menu md-optgroup {
+  color: @foreground-2; }
+  md-select-menu md-optgroup md-option {
+    color: @foreground-1; }
+md-select-menu md-option[selected] {
+  color: @primary-500; }
+  md-select-menu md-option[selected]:focus {
+    color: @primary-600; }
+  md-select-menu md-option[selected].md-accent {
+    color: @accent-500; }
+    md-select-menu md-option[selected].md-accent:focus {
+      color: @accent-600; }
+md-select-menu md-option:focus:not([selected]) {
+  background: @background-200; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-sidenav {
+  background-color: @background-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-slider .md-track {
+  background-color: @foreground-3; }
+md-slider .md-track-ticks {
+  background-color: @foreground-4; }
+md-slider .md-focus-thumb {
+  background-color: @foreground-2; }
+md-slider .md-focus-ring {
+  background-color: @accent-color; }
+md-slider .md-disabled-thumb {
+  border-color: @background-color; }
+md-slider.md-min .md-thumb:after {
+  background-color: @background-color; }
+md-slider .md-track.md-track-fill {
+  background-color: @accent-color; }
+md-slider .md-thumb:after {
+  border-color: @accent-color;
+  background-color: @accent-color; }
+md-slider .md-sign {
+  background-color: @accent-color; }
+  md-slider .md-sign:after {
+    border-top-color: @accent-color; }
+md-slider .md-thumb-text {
+  color: @accent-contrast; }
+md-slider.md-warn .md-focus-ring {
+  background-color: @warn-color; }
+md-slider.md-warn .md-track.md-track-fill {
+  background-color: @warn-color; }
+md-slider.md-warn .md-thumb:after {
+  border-color: @warn-color;
+  background-color: @warn-color; }
+md-slider.md-warn .md-sign {
+  background-color: @warn-color; }
+  md-slider.md-warn .md-sign:after {
+    border-top-color: @warn-color; }
+md-slider.md-warn .md-thumb-text {
+  color: @warn-contrast; }
+md-slider.md-primary .md-focus-ring {
+  background-color: @primary-color; }
+md-slider.md-primary .md-track.md-track-fill {
+  background-color: @primary-color; }
+md-slider.md-primary .md-thumb:after {
+  border-color: @primary-color;
+  background-color: @primary-color; }
+md-slider.md-primary .md-sign {
+  background-color: @primary-color; }
+  md-slider.md-primary .md-sign:after {
+    border-top-color: @primary-color; }
+md-slider.md-primary .md-thumb-text {
+  color: @primary-contrast; }
+md-slider[disabled] .md-thumb:after {
+  border-color: @foreground-3; }
+md-slider[disabled]:not(.md-min) .md-thumb:after {
+  background-color: @foreground-3; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+.md-subheader {
+  color: fade(@foreground-2,0.23);
+  background-color: @background-color; }
+  .md-subheader.md-primary {
+    color: @primary-color; }
+  .md-subheader.md-accent {
+    color: @accent-color; }
+  .md-subheader.md-warn {
+    color: @warn-color; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-switch .md-ink-ripple {
+  color: @background-500; }
+md-switch .md-thumb {
+  background-color: @background-50; }
+md-switch .md-bar {
+  background-color: @background-500; }
+md-switch.md-checked .md-ink-ripple {
+  color: @accent-color; }
+md-switch.md-checked .md-thumb {
+  background-color: @accent-color; }
+md-switch.md-checked .md-bar {
+  background-color: fade(@accent-color,0.5); }
+md-switch.md-checked.md-focused .md-thumb:before {
+  background-color: fade(@accent-color,0.26); }
+md-switch.md-checked.md-primary .md-ink-ripple {
+  color: @primary-color; }
+md-switch.md-checked.md-primary .md-thumb {
+  background-color: @primary-color; }
+md-switch.md-checked.md-primary .md-bar {
+  background-color: fade(@primary-color,0.5); }
+md-switch.md-checked.md-primary.md-focused .md-thumb:before {
+  background-color: fade(@primary-color,0.26); }
+md-switch.md-checked.md-warn .md-ink-ripple {
+  color: @warn-color; }
+md-switch.md-checked.md-warn .md-thumb {
+  background-color: @warn-color; }
+md-switch.md-checked.md-warn .md-bar {
+  background-color: fade(@warn-color,0.5); }
+md-switch.md-checked.md-warn.md-focused .md-thumb:before {
+  background-color: fade(@warn-color,0.26); }
+md-switch[disabled] .md-thumb {
+  background-color: @background-400; }
+md-switch[disabled] .md-bar {
+  background-color: @foreground-4; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-tabs md-tabs-wrapper {
+  background-color: transparent;
+  border-color: @foreground-4; }
+md-tabs .md-paginator md-icon {
+  color: @primary-color; }
+md-tabs md-ink-bar {
+  color: @accent-color;
+  background: @accent-color; }
+md-tabs .md-tab {
+  color: @foreground-2; }
+  md-tabs .md-tab[disabled], md-tabs .md-tab[disabled] md-icon {
+    color: @foreground-3; }
+  md-tabs .md-tab.md-active, md-tabs .md-tab.md-active md-icon, md-tabs .md-tab.md-focused, md-tabs .md-tab.md-focused md-icon {
+    color: @primary-color; }
+  md-tabs .md-tab.md-focused {
+    background: fade(@primary-color,0.1); }
+  md-tabs .md-tab .md-ripple-container {
+    color: @accent-100; }
+md-tabs.md-accent > md-tabs-wrapper {
+  background-color: @accent-color; }
+  md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @accent-100; }
+    md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @accent-contrast; }
+    md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@accent-contrast,0.1); }
+  md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {
+    color: fade(@primary-600,1);
+    background: fade(@primary-600,1); }
+md-tabs.md-primary > md-tabs-wrapper {
+  background-color: @primary-color; }
+  md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @primary-100; }
+    md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @primary-contrast; }
+    md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@primary-contrast,0.1); }
+md-tabs.md-warn > md-tabs-wrapper {
+  background-color: @warn-color; }
+  md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @warn-100; }
+    md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @warn-contrast; }
+    md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@warn-contrast,0.1); }
+
+md-toolbar > md-tabs > md-tabs-wrapper {
+  background-color: @primary-color; }
+  md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @primary-100; }
+    md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @primary-contrast; }
+    md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@primary-contrast,0.1); }
+
+md-toolbar.md-accent > md-tabs > md-tabs-wrapper {
+  background-color: @accent-color; }
+  md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @accent-100; }
+    md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @accent-contrast; }
+    md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@accent-contrast,0.1); }
+  md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {
+    color: fade(@primary-600,1);
+    background: fade(@primary-600,1); }
+
+md-toolbar.md-warn > md-tabs > md-tabs-wrapper {
+  background-color: @warn-color; }
+  md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+    color: @warn-100; }
+    md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      color: @warn-contrast; }
+    md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+      background: fade(@warn-contrast,0.1); }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.9.0-rc1-master-3c0ce9b
+ */
+/* mixin definition ; sets LTR and RTL within the same style call */
+md-input-group input, md-input-group textarea {
+  text-shadow: @foreground-shadow; }
+  md-input-group input::-webkit-input-placeholder, md-input-group input::-moz-placeholder, md-input-group input:-moz-placeholder, md-input-group input:-ms-input-placeholder, md-input-group textarea::-webkit-input-placeholder, md-input-group textarea::-moz-placeholder, md-input-group textarea:-moz-placeholder, md-input-group textarea:-ms-input-placeholder {
+    color: @foreground-3; }
+md-input-group label {
+  text-shadow: @foreground-shadow;
+  color: @foreground-3; }
+md-input-group input, md-input-group textarea {
+  color: @foreground-1;
+  border-color: @foreground-4; }
+md-input-group.md-input-focused input, md-input-group.md-input-focused textarea {
+  border-color: @primary-500; }
+md-input-group.md-input-focused label {
+  color: @primary-500; }
+md-input-group.md-input-focused.md-accent input, md-input-group.md-input-focused.md-accent textarea {
+  border-color: @accent-500; }
+md-input-group.md-input-focused.md-accent label {
+  color: @accent-500; }
+md-input-group.md-input-has-value:not(.md-input-focused) label {
+  color: @foreground-2; }
+md-input-group .md-input[disabled] {
+  border-bottom-color: @foreground-4;
+  color: @foreground-3; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-toast {
+  background-color: #323232;
+  color: @background-50; }
+  md-toast .md-button {
+    color: @background-50; }
+    md-toast .md-button.md-highlight {
+      color: @primary-A200; }
+      md-toast .md-button.md-highlight.md-accent {
+        color: @accent-A200; }
+      md-toast .md-button.md-highlight.md-warn {
+        color: @warn-A200; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-toolbar:not(.md-menu-toolbar) {
+  background-color: @primary-color;
+  color: @primary-contrast; }
+  md-toolbar:not(.md-menu-toolbar) md-icon {
+    color: @primary-contrast; }
+  md-toolbar:not(.md-menu-toolbar) .md-button {
+    color: @primary-contrast; }
+  md-toolbar:not(.md-menu-toolbar).md-accent {
+    background-color: @accent-color;
+    color: @accent-contrast; }
+  md-toolbar:not(.md-menu-toolbar).md-warn {
+    background-color: @warn-color;
+    color: @warn-contrast; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
+md-tooltip {
+  color: @background-A100; }
+  md-tooltip .md-background {
+    background-color: @foreground-2; }
+}
