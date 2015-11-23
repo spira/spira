@@ -85,6 +85,7 @@ namespace common.directives.contentSectionsInput.set {
         public removeSection(section:common.models.Section<any>):ng.IPromise<string>{
 
             var confirm = this.$mdDialog.confirm()
+                .parent('#admin-theme')
                 .title("Are you sure you want to delete this section?")
                 .content('This action <strong>cannot</strong> be undone')
                 .ariaLabel("Confirm delete")

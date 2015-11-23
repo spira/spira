@@ -1,18 +1,15 @@
-<div id="admin-sidenav" ng-class="{collapsed:AdminNavigationController.collapsed}">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2 ng-if="!AdminNavigationController.collapsed">Administration</h2>
-            <span flex ng-if="!AdminNavigationController.collapsed"></span>
-            <md-button aria-label="collapse-menu" class="md-icon-button" ng-click="AdminNavigationController.collapsed = !AdminNavigationController.collapsed">
-                <md-icon ng-if="!AdminNavigationController.collapsed">chevron_left</md-icon>
-                <md-icon ng-if="AdminNavigationController.collapsed">chevron_right</md-icon>
-            </md-button>
-        </div>
-    </md-toolbar>
+<div ng-class="{collapsed:AdminNavigationController.collapsed}">
 
     <md-list>
+
+        <span flex ng-if="!AdminNavigationController.collapsed"></span>
+        <md-button aria-label="collapse-menu" class="md-icon-button" ng-click="AdminNavigationController.collapsed = !AdminNavigationController.collapsed">
+            <md-icon ng-if="!AdminNavigationController.collapsed">chevron_left</md-icon>
+            <md-icon ng-if="AdminNavigationController.collapsed">chevron_right</md-icon>
+        </md-button>
+
         <md-list-item aria-label="Go to your profile" class="md-2-line" ng-click="AppController.goToUserProfile($event)">
-            <avatar user="AdminNavigationController.ngJwtAuthService.user" width="70" height="70"></avatar>
+            <avatar class="md-avatar" user="AdminNavigationController.ngJwtAuthService.user" width="70" height="70"></avatar>
             <div class="md-list-item-text" ng-if="!AdminNavigationController.collapsed">
                 <h3>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</h3>
                 <p>{{ AdminNavigationController.ngJwtAuthService.user.rolesDisplay() }}</p>
@@ -26,13 +23,16 @@
     <md-list ng-repeat="stateGroup in AdminNavigationController.groupedNavigableStates">
 
         <md-list-item class="group-title" ng-if="!!stateGroup.name && !AdminNavigationController.collapsed">
-            <p><small>{{ stateGroup.name | uppercase}}</small></p>
+            <p>
+                <md-icon>{{stateGroup.icon}}</md-icon>
+                <small> {{ stateGroup.name | uppercase}}</small>
+            </p>
         </md-list-item>
 
         <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref="{{state.name}}" ui-sref-active="selected">
             <md-icon>{{state.data.icon}}</md-icon>
-            <p ng-if="!AdminNavigationController.collapsed">{{state.data.title | uppercase}}</p>
-            <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">{{state.data.title | uppercase}}</md-tooltip>
+            <p ng-if="!AdminNavigationController.collapsed">{{state.data.title}}</p>
+            <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">{{state.data.title}}</md-tooltip>
         </md-list-item>
 
         <menu-toggle

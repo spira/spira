@@ -1,9 +1,12 @@
 @import (reference) "../../../styles/admin-variables.less";
 
+footer {
+    display: none; //@todo decide whether a footer is wanted
+}
 
-div#admin-sidenav {
+#admin-sidenav {
 
-    background-color: @background-900;
+    background-color: @background-900 !important;
     color: @primary-200;
 
     &.collapsed {
@@ -14,8 +17,12 @@ div#admin-sidenav {
         background-color: inherit !important;
     }
 
-    md-list-item.group-title {
-        color: @accent-600;
+    md-list-item.group-title, md-list-item.group-title md-icon {
+        color: @accent-600 !important;
+    }
+
+    md-icon {
+        color: rgba(255, 255, 255, 0.15) !important;
     }
 
     //md-list-item.selected > button {
@@ -26,4 +33,8 @@ div#admin-sidenav {
     //    background: @background-900;
     //}
 
+}
+
+#admin-nav-header {
+    background-color: @accent-600 !important;
 }

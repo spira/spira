@@ -30,6 +30,7 @@ namespace common.directives.selectMediaImage {
                 controller: namespace+'.dialog.controller',
                 controllerAs: 'SelectMediaImageDialogController',
                 clickOutsideToClose: true,
+                parent: '#admin-theme',
                 locals: {
                     targetTab: targetTab
                 }

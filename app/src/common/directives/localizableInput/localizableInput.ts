@@ -64,6 +64,7 @@ namespace common.directives.localizableInput {
                 controller: namespace+'.dialog.controller',
                 controllerAs: 'LocalizableInputDialogController',
                 clickOutsideToClose: true,
+                parent: '#admin-theme',
                 locals: {
                     localizations: this.localizableInput,
                     attributeKey: this.attributeKey,

@@ -3,7 +3,8 @@
     <div layout="row">
 
         <md-sidenav
-                class="navigation site-sidenav md-sidenav-left md-whiteframe-z2"
+                id="admin-sidenav"
+                class="navigation site-sidenav md-sidenav-left"
                 md-component-id="navigation"
                 md-is-locked-open="$mdMedia('gt-sm')"
                 ui-view="navigation">
@@ -15,7 +16,7 @@
              layout-fill
         >
 
-            <md-toolbar layout="row" class="md-whiteframe-z1" layout-padding>
+            <md-toolbar layout="row" id="admin-nav-header" class="md-whiteframe-z1" layout-padding>
                 <md-button id="mobile-menu-toggle" class="menu" hide-gt-sm
                            ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
                     <md-icon>menu</md-icon>

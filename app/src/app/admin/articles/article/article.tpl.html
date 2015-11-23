@@ -1,27 +1,31 @@
+<section layout="row" id="post-section" layout-align="space-around start">
 
-<form novalidate name="articleForm" >
+    <md-card ng-form flex novalidate name="articleForm" style="max-width: 1000px" class="md-whiteframe-z2">
+        <div id="scheduling">
+            <h1>{{ArticleController.entity.status | uppercase}}</h1>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <span flex>{{ArticleController.entity.createdAt.format('dddd, MMMM Do YYYY')}}</span>
+                    <span flex>{{ArticleController.entity.createdAt.format('h:mm a')}} ({{ArticleController.entity.createdAt.fromNow()}})</span>
+                    <span flex></span>
 
-    <md-card layout-padding>
-        <h1>{{ArticleController.entity.status | uppercase}}</h1>
-        <div layout="row">
-            <div flex>
-                {{ArticleController.entity.createdAt.format('dddd, MMMM Do YYYY')}}
-            </div>
-            <div flex>
-                {{ArticleController.entity.createdAt.format('h:mm:ss a')}}
-            </div>
-            <div flex>
-                {{ArticleController.entity.createdAt.fromNow()}}
-            </div>
-            <div flex>
-                <md-button class="md-fab md-mini" aria-label="Schedule">
-                    <md-icon>access_time</md-icon>
-                </md-button>
-            </div>
+                    <md-button class="md-icon-button" aria-label="Schedule">
+                        <md-icon>access_time</md-icon>
+                        <md-tooltip md-direction="top">
+                            Schedule
+                        </md-tooltip>
+                    </md-button>
+
+                    <md-button class="md-icon-button" aria-label="Preview" ng-click="ArticleController.togglePreview()">
+                        <md-icon>remove_red_eye</md-icon>
+                        <md-tooltip md-direction="top">
+                            Toggle Preview
+                        </md-tooltip>
+                    </md-button>
+
+                </div>
+            </md-toolbar>
         </div>
-    </md-card>
-
-    <md-card>
 
         <md-tabs flex md-dynamic-height md-border-bottom>
             <md-tab label="Content">
@@ -38,21 +42,26 @@
             </md-tab>
         </md-tabs>
 
-        <md-card flex ng-if="ArticleController.showPreview" class="md-whiteframe-z3">
-            <md-toolbar>
-                <h2 class="md-toolbar-tools">
-                    <span>Preview</span>
-                </h2>
-            </md-toolbar>
-            <md-card-content ui-view="preview" ></md-card-content>
-        </md-card>
+        <md-button class="md-primary md-raised" ng-disabled="articleForm.$invalid" ng-click="ArticleController.save()">Save</md-button>
 
     </md-card>
 
+    <md-card flex ng-if="ArticleController.showPreview" class="md-whiteframe-z3">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Preview</h2>
+                <span flex></span>
+                <md-button aria-label="Close Preview"
+                           class="md-icon-button md-mini"
+                           ng-click="ArticleController.togglePreview($event)">
+                    <md-icon>close</md-icon>
+                    <md-tooltip md-direction="top">
+                        Close Preview
+                    </md-tooltip>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-card-content ui-view="preview" ></md-card-content>
+    </md-card>
 
-    <md-button class="md-primary md-raised" ng-disabled="articleForm.$invalid" ng-click="ArticleController.save()">Save</md-button>
-    <md-button class="md-raised" ng-click="ArticleController.togglePreview()">
-        <md-icon>remove_red_eye</md-icon>
-    </md-button>
-
-</form>
+</section>
