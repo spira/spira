@@ -13,17 +13,47 @@ md-sidenav#admin-sidenav {
         width: 75px;
     }
 
-    md-list-item > button {
-        background-color: inherit;
+    md-list-item {
+
+        color: @background-300;
+
+        md-icon {
+            margin-left: 10px;
+        }
+        
+        &.selected {
+            color: @background-color;
+            background-color: fade(@background-50, 8);
+        }
+
+        &.child-selected {
+            color: @background-color;
+            background-color: fade(@background-50, 2);
+        }
+
+        &> button {
+            background-color: inherit;
+        }
     }
 
     md-list-item.group-title, md-list-item.group-title md-icon {
         color: @accent-600;
+        margin-left: 0;
     }
 
     md-icon {
-        color: rgba(255, 255, 255, 0.15);
+        color: fade(@background-50, 25);
     }
+
+    .navigation-user {
+        .md-list-item-text * {
+            color: @background-color;
+        }
+        img {
+            border-radius: 50%;
+        }
+    }
+
 }
 
 #admin-nav-header {
