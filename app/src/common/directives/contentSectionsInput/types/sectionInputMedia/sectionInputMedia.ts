@@ -74,7 +74,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
         public removeMedia(media:(common.models.sections.IImageContent|common.models.sections.IVideoContent)):ng.IPromise<number> {
 
             var confirm = this.$mdDialog.confirm()
-                .parent('#admin-theme')
+                .parent('#admin-container')
                 .title(`Are you sure you want to delete this ${media.type}?`)
                 .content('This action <strong>cannot</strong> be undone')
                 .ariaLabel("Confirm delete")
