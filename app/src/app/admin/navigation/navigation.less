@@ -1,12 +1,12 @@
-@import (reference) "../../../styles/admin-variables.less";
+@import (reference) "../../../styles/theme/reference/admin-variables";
 
 footer {
     display: none; //@todo decide whether a footer is wanted
 }
 
-#admin-sidenav {
+md-sidenav#admin-sidenav {
 
-    background-color: @background-900 !important;
+    background-color: @background-900;
     color: @primary-200;
 
     &.collapsed {
@@ -14,27 +14,18 @@ footer {
     }
 
     md-list-item > button {
-        background-color: inherit !important;
+        background-color: inherit;
     }
 
     md-list-item.group-title, md-list-item.group-title md-icon {
-        color: @accent-600 !important;
+        color: @accent-600;
     }
 
     md-icon {
-        color: rgba(255, 255, 255, 0.15) !important;
+        color: rgba(255, 255, 255, 0.15);
     }
-
-    //md-list-item.selected > button {
-    //    background: @background-900;
-    //}
-    //
-    //md-list-item.child-selected > button {
-    //    background: @background-900;
-    //}
-
 }
 
 #admin-nav-header {
-    background-color: @accent-600 !important;
+    background-color: @accent-600;
 }

@@ -4,9 +4,12 @@ namespace app {
 
     class AppConfig {
 
-        static $inject = ['ngHttpProgressProvider', '$provide', '$MD_THEME_CSS'];
+        static $inject = ['ngHttpProgressProvider', '$mdIconProvider', '$provide'];
 
-        constructor(ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider, $provide:ng.auto.IProvideService, $MD_THEME_CSS) {
+        constructor(ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider,
+                    $mdIconProvider:ng.material.IIconProvider,
+                    $provide:ng.auto.IProvideService
+                    ) {
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
                 color: 'white',
@@ -15,11 +18,9 @@ namespace app {
 
             ngHttpProgressProvider.configure(httpProgressConfig);
 
-            console.log($MD_THEME_CSS);
-
-            //debugger;
-
             $provide.constant('$MD_THEME_CSS', '/**/'); //disable all angular material style injections
+
+            //(<any>$mdIconProvider).fontSet('fa', 'fontawesome');
         }
 
     }

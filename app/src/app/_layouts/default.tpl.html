@@ -7,24 +7,24 @@
 
         <md-fab-speed-dial md-open="false" md-direction="left" id="profileMenu" ng-if="AppController.ngJwtAuthService.loggedIn">
             <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab" layout="row" layout-align="center">
+                <md-button aria-label="menu" class="md-fab md-accent" layout="row" layout-align="center">
                     <avatar user="AppController.ngJwtAuthService.user"></avatar>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="logout" class="md-fab md-raised md-mini" ng-click="AppController.logout()">
+                <md-button aria-label="logout" class="md-fab md-raised md-mini md-accent" ng-click="AppController.logout()">
                     <md-icon>exit_to_app</md-icon>
                 </md-button>
-                <md-button ui-sref="app.user.profile" class="md-fab md-raised md-mini">
+                <md-button ui-sref="app.user.profile" class="md-fab md-raised md-mini md-accent">
                     <md-icon>face</md-icon>
                 </md-button>
-                <md-button ng-if="AppController.ngJwtAuthService.user.isAdmin()" ui-sref="app.admin.dashboard" class="md-fab md-raised md-mini md-fab-action-item">
+                <md-button ng-if="AppController.ngJwtAuthService.user.isAdmin()" ui-sref="app.admin.dashboard" class=" md-accent md-fab md-raised md-mini md-fab-action-item">
                     <md-icon>dashboard</md-icon>
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
 
-        <md-button class="md-fab md-raised md-mini" ng-if="!AppController.ngJwtAuthService.loggedIn" ng-click="AppController.promptLogin()">
+        <md-button class="md-accent md-fab md-raised md-mini" ng-if="!AppController.ngJwtAuthService.loggedIn" ng-click="AppController.promptLogin()">
             <md-icon>person</md-icon>
         </md-button>
 

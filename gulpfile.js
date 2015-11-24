@@ -51,7 +51,7 @@ var paths = {
             return this.base + '/**/*.tpl.html'
         },
         get styles(){
-            return this.base + '/**/*.less'
+            return [this.base + '/**/*.less','!**/styles/theme/reference/**']
         },
         get materialThemeFiles(){
             return 'app/bower_components/angular-material/modules/js/**/*-theme.css'
@@ -190,29 +190,50 @@ gulp.task('templates', 'builds template files', [], function(){
 });
 
 gulp.task('styles', 'compiles stylesheets', [], function(){
+
+    var sortPaths = ['/src/styles/theme/global-theme', '/src/styles/', '/src/common/', '/src/app/'];
+
+    var findSortIndex = function(path) {
+        var index = _.findIndex(sortPaths, function(sortPath){
+            return _.contains(path, sortPath);
+        });
+
+        if (index === -1){
+            index = sortPaths.length;
+        }
+
+        return index;
+    };
+
     return gulp.src(paths.src.styles)
-        //.pipe(watch(paths.src.styles))
         .pipe(plugins.sourcemaps.init())
         .pipe(plugins.less())
-        //.pipe(concatCss('app.css'))
+        .pipe(plugins.sort(
+            {
+            comparator: function(file1, file2) {
+                var f1Index = findSortIndex(file1.path);
+                var f2Index = findSortIndex(file2.path);
+
+                if (f1Index == f2Index){
+                    return 0;
+                }
+
+                return f1Index > f2Index ? 1 : -1;
+            }
+        }
+        ))
+        .pipe(plugins.concat('spira.css'))
         .pipe(plugins.sourcemaps.write('./maps'))
         .pipe(gulp.dest(paths.dest.css))
-        //.on('end', function(){
-        //    browserSync.reload();
-        //})
     ;
 });
 
 gulp.task('theme', 'compiles angular material theme', [], function(){
 
-    //var hueRegex = new RegExp('(\'|")?{{\\s*(' + colorType + ')-(color|contrast)-?(\\d\\.?\\d*)?\\s*}}(\"|\')?','g');
-    var simpleVariableRegex = /'?"?\{\{\s*([a-zA-Z]+)-(A?\d+|hue\-[0-3]|shadow)-?(\d\.?\d*)?(contrast)?\s*\}\}'?"?/g;
     var variableRegex = /'?"?\{\{\s*([a-zA-Z0-9\.-]+)*\s*\}\}'?"?/g;
-
     var variablesFound = [];
 
     return gulp.src(paths.src.materialThemeFiles)
-        .pipe(plugins.concat('admin-material-theme.less'))
         .pipe(plugins.replace('.md-THEME_NAME-theme', ''))
         .pipe(plugins.replace(variableRegex, function(match){
 
@@ -226,17 +247,13 @@ gulp.task('theme', 'compiles angular material theme', [], function(){
             }
 
             if (variablesFound.indexOf(variable) < 0){
-
                 variablesFound.push(variable);
-                console.log(variable);
             }
 
             return replacement;
         }))
-        .pipe(plugins.insert.prepend('#admin-theme {\n'))
-        .pipe(plugins.insert.append('}\n'))
-        .pipe(plugins.insert.prepend('@import (reference) "admin-variables.less";\n'))
-        .pipe(gulp.dest(paths.src.base + '/styles'))
+        .pipe(plugins.concat('angular-material-theme.less'))
+        .pipe(gulp.dest(paths.src.base + '/styles/theme/reference'))
     ;
 
 });
