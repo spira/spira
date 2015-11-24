@@ -8,7 +8,7 @@
             >
 
         <md-icon>{{navigationState.data.icon}}</md-icon>
-        <p ng-if="!collapsed">{{navigationState.data.title | uppercase}}</p>
+        <p ng-if="!collapsed" class="md-subhead">{{navigationState.data.title}}</p>
         <md-tooltip md-direction="right" ng-if="collapsed">{{navigationState.data.title | uppercase}}</md-tooltip>
 
         <span aria-hidden="true" class="md-toggle-icon"
@@ -27,8 +27,8 @@
         <md-list-item ng-click="gotoState(state.name)" ui-sref-active="selected" ui-sref="{{state.name}}">
 
             <md-icon>{{state.data.icon}}</md-icon>
-            <p ng-if="!collapsed">{{state.data.title | uppercase}}</p>
-            <md-tooltip md-direction="right" ng-if="collapsed">{{state.data.title | uppercase}}</md-tooltip>
+            <p ng-if="!collapsed" class="md-body-2">{{state.data.title}}</p>
+            <md-tooltip md-direction="right" ng-if="collapsed">{{state.data.title}}</md-tooltip>
         </md-list-item>
 
         <md-divider ng-repeat-end ng-if="!$last"></md-divider>

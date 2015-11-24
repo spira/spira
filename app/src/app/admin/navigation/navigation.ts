@@ -13,12 +13,14 @@ namespace app.admin.navigation {
             {
                 key: 'cms',
                 name: "Content Management",
-                states: null
+                states: null,
+                icon: 'folder',
             },
             {
                 key: 'admin',
                 name: "Administration",
-                states: null
+                states: null,
+                icon: 'settings',
             }
         ];
 

@@ -1,4 +1,4 @@
-<div flex ng-click="!AvatarController.canEdit || AvatarController.openAvatarDialog()" class="avatar-directive">
+<div ng-click="!AvatarController.canEdit || AvatarController.openAvatarDialog()" class="avatar-directive">
     <!-- ng-disabled doesn't work on divs -->
     <cl-image ng-if="AvatarController.user.avatarImgId" width="100%" public-id="{{AvatarController.user.avatarImgId}}">
         <cl-transformation height="{{ AvatarController.height }}" width="{{ AvatarController.width }}" crop="fill" gravity="north"/>

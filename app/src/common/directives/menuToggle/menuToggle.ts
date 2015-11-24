@@ -48,20 +48,15 @@ namespace common.directives.menuToggle {
                 return targetHeight;
             };
 
-            $scope.$watch(
-                () => {
-                    return open;
-                },
-                (open) => {
+            $scope.$watch(() => open, (open) => {
 
-                    let targetHeight = open ? getTargetHeight(list) : 0;
+                let targetHeight = open ? getTargetHeight(list) : 0;
 
-                    this.$timeout(function () {
-                        list.css({ height: targetHeight + 'px' });
-                    }, 0, false);
+                this.$timeout(function () {
+                    list.css({ height: targetHeight + 'px' });
+                }, 0, false);
 
-                }
-            );
+            });
 
         };
 

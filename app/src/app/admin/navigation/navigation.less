@@ -1,17 +1,61 @@
-@import (reference) "../../../styles/global.less";
+@import (reference) "../../../styles/theme/reference/admin-variables";
 
+footer {
+    display: none; //@todo decide whether a footer is wanted
+}
 
-div#admin-sidenav {
+md-sidenav#admin-sidenav {
+
+    background-color: @background-900;
+    color: @primary-200;
+
     &.collapsed {
         width: 75px;
     }
 
-    md-list-item.selected > button {
-        background: fade(@adminPrimary, 35%);
+    md-list-item {
+
+        color: @background-300;
+
+        md-icon {
+            margin-left: 10px;
+        }
+        
+        &.selected {
+            color: @background-color;
+            background-color: fade(@background-50, 8);
+        }
+
+        &.child-selected {
+            color: @background-color;
+            background-color: fade(@background-50, 2);
+        }
+
+        &> button {
+            background-color: inherit;
+        }
     }
 
-    md-list-item.child-selected > button {
-        background: fade(@adminPrimary, 15%);
+    md-list-item.group-title, md-list-item.group-title md-icon {
+        color: @accent-600;
+        margin-left: 0;
     }
 
+    md-icon {
+        color: fade(@background-50, 25);
+    }
+
+    .navigation-user {
+        .md-list-item-text * {
+            color: @background-color;
+        }
+        img {
+            border-radius: 50%;
+        }
+    }
+
+}
+
+#admin-nav-header {
+    background-color: @accent-600;
 }

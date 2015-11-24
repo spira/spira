@@ -87,7 +87,7 @@ namespace app.admin.articles.article {
                     articleService.dumpQueueSaveFunctions();
                 }],
                 data: {
-                    title: "Compose Article",
+                    title: "Article",
                     icon: 'library_books',
                     navigation: false,
                 }

@@ -11,15 +11,15 @@
     <md-dialog-content>
 
         <md-button class="md-fab" aria-label="Login with Facebook" ng-click="LoginController.socialLogin('facebook')">
-            <md-icon md-font-icon="fa fa-2x fa-facebook"></md-icon>
+            <md-icon md-font-set="fa" md-font-icon="fa-2x fa-facebook"></md-icon>
         </md-button>
 
         <md-button class="md-fab" aria-label="Login with Twitter" ng-click="LoginController.socialLogin('twitter')">
-            <md-icon md-font-icon="fa fa-2x fa-twitter"></md-icon>
+            <md-icon md-font-set="fa" md-font-icon="fa-2x fa-twitter"></md-icon>
         </md-button>
 
         <md-button class="md-fab" aria-label="Login with Google" ng-click="LoginController.socialLogin('google')">
-            <md-icon md-font-icon="fa fa-2x fa-google"></md-icon>
+            <md-icon md-font-set="fa" md-font-icon="fa-2x fa-google"></md-icon>
         </md-button>
 
         <form novalidate name="loginForm" ui-keypress="{13:'loginForm.$valid && LoginController.login(user.email, user.password)'}">

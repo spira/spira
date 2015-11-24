@@ -87,6 +87,7 @@ namespace app.admin.users.listing {
         public promptImpersonateDialog($event:MouseEvent, user:common.models.User) {
 
             var confirm = this.$mdDialog.confirm()
+                .parent("#admin-container")
                 .targetEvent($event)
                 .title("Are you sure you want to impersonate this user?")
                 .content(`

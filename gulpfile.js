@@ -51,7 +51,10 @@ var paths = {
             return this.base + '/**/*.tpl.html'
         },
         get styles(){
-            return this.base + '/**/*.less'
+            return [this.base + '/**/*.less','!**/styles/theme/reference/**']
+        },
+        get materialThemeFiles(){
+            return 'app/bower_components/angular-material/modules/js/**/*-theme.css'
         },
         get assets(){
             return this.base + '/assets/images/**/*'
@@ -187,17 +190,72 @@ gulp.task('templates', 'builds template files', [], function(){
 });
 
 gulp.task('styles', 'compiles stylesheets', [], function(){
+
+    var sortPaths = ['/src/styles/theme/global-theme', '/src/styles/', '/src/common/', '/src/app/'];
+
+    var findSortIndex = function(path) {
+        var index = _.findIndex(sortPaths, function(sortPath){
+            return _.contains(path, sortPath);
+        });
+
+        if (index === -1){
+            index = sortPaths.length;
+        }
+
+        return index;
+    };
+
     return gulp.src(paths.src.styles)
-        //.pipe(watch(paths.src.styles))
         .pipe(plugins.sourcemaps.init())
         .pipe(plugins.less())
-        //.pipe(concatCss('app.css'))
+        .pipe(plugins.sort(
+            {
+            comparator: function(file1, file2) {
+                var f1Index = findSortIndex(file1.path);
+                var f2Index = findSortIndex(file2.path);
+
+                if (f1Index == f2Index){
+                    return 0;
+                }
+
+                return f1Index > f2Index ? 1 : -1;
+            }
+        }
+        ))
+        .pipe(plugins.concat('spira.css'))
         .pipe(plugins.sourcemaps.write('./maps'))
         .pipe(gulp.dest(paths.dest.css))
-        //.on('end', function(){
-        //    browserSync.reload();
-        //})
     ;
+});
+
+gulp.task('theme', 'compiles angular material theme', [], function(){
+
+    var variableRegex = /'?"?\{\{\s*([a-zA-Z0-9\.-]+)*\s*\}\}'?"?/g;
+    var variablesFound = [];
+
+    return gulp.src(paths.src.materialThemeFiles)
+        .pipe(plugins.replace('.md-THEME_NAME-theme', ''))
+        .pipe(plugins.replace(variableRegex, function(match){
+
+            var variable = '@' + match.replace(/[ {}']/g, '');
+            var replacement = variable;
+
+            if ((variable.match(/-/g) || []).length > 1){
+                var alpha = variable.substr(_.lastIndexOf(variable, "-")+1);
+                variable = variable.substr(0, _.lastIndexOf(variable, "-"));
+                replacement = 'fade('+ variable + ',' + alpha + ')';
+            }
+
+            if (variablesFound.indexOf(variable) < 0){
+                variablesFound.push(variable);
+            }
+
+            return replacement;
+        }))
+        .pipe(plugins.concat('angular-material-theme.less'))
+        .pipe(gulp.dest(paths.src.base + '/styles/theme/reference'))
+    ;
+
 });
 
 
