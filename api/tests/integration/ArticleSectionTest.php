@@ -25,7 +25,7 @@ class ArticleSectionTest extends TestCase
 {
     protected $baseRoute = '/articles';
     protected $factoryClass = Article::class;
-    
+
     public function setUp()
     {
         parent::setUp();

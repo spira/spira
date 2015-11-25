@@ -15,10 +15,10 @@ class ArticleBookmarkRateTest extends TestCase
 {
     protected $baseRoute = '/articles';
     protected $factoryClass = Article::class;
-    
+
     protected $ratedName = 'ratedArticles';
     protected $bookmarkedName = 'bookmarkedArticles';
-    
+
     public function testSimpleRate()
     {
         $user = $this->createUser();
