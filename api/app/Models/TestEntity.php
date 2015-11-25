@@ -76,6 +76,11 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
         ];
     }
 
+    public function secondTestEntities()
+    {
+        return $this->belongsToMany(SecondTestEntity::class, 'test_many_many', 'test_id', 'test_second_id');
+    }
+
     public function testOne()
     {
         return $this->hasOne(SecondTestEntity::class, 'check_entity_id', 'entity_id');
