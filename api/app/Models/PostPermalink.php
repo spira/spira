@@ -16,11 +16,11 @@ use Spira\Model\Model\BaseModel;
  * @property string $permalink
  * @property Article article
  *
- * Class ArticlePermalink
+ * Class PostPermalink
  */
-class ArticlePermalink extends BaseModel
+class PostPermalink extends BaseModel
 {
-    public $table = 'article_permalinks';
+    public $table = 'permalink_post';
 
     protected $primaryKey = 'permalink';
 
@@ -36,6 +36,7 @@ class ArticlePermalink extends BaseModel
 
     public function article()
     {
-        return $this->belongsTo(Article::class, 'article_id', 'article_id');
+        return $this->belongsTo(Article::class, 'post_id', 'post_id');
     }
+
 }

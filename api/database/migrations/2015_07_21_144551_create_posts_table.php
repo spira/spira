@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\AbstractPost;
 use App\Models\Image;
 use App\Models\User;
-use App\Models\Article;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticlesTable extends Migration
+class CreatePostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -24,10 +24,10 @@ class CreateArticlesTable extends Migration
      */
     public function up()
     {
-        Schema::create(Article::getTableName(), function (Blueprint $table) {
-            $table->uuid('article_id')->primary();
+        Schema::create(AbstractPost::getTableName(), function (Blueprint $table) {
+            $table->uuid('post_id')->primary();
             $table->string('title', 255);
-            $table->enum('status', Article::$statuses)->default(Article::STATUS_DRAFT);
+            $table->enum('status', AbstractPost::$statuses)->default(AbstractPost::STATUS_DRAFT);
             $table->text('excerpt')->nullable();
             $table->uuid('thumbnail_image_id')->nullable();
             $table->string('permalink')->index()->nullable();
@@ -36,6 +36,7 @@ class CreateArticlesTable extends Migration
             $table->boolean('show_author_promo')->default(false);
             $table->dateTime('first_published')->nullable();
             $table->json('sections_display')->nullable();
+            $table->enum('post_type', AbstractPost::$postTypes)->index();
 
             $table->timestamps();
 
@@ -48,7 +49,7 @@ class CreateArticlesTable extends Migration
                 ->onDelete('set null');
         });
 
-        Article::putMapping();
+        AbstractPost::putMapping();
     }
 
     /**
@@ -58,6 +59,6 @@ class CreateArticlesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Article::getTableName());
+        Schema::drop(AbstractPost::getTableName());
     }
 }

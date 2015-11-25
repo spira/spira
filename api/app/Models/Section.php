@@ -55,13 +55,16 @@ class Section extends BaseModel implements LocalizableModelInterface
         'content' => 'json',
     ];
 
+
+    public static $contentTypeMap = [
+        RichTextContent::CONTENT_TYPE => RichTextContent::class,
+        BlockquoteContent::CONTENT_TYPE => BlockquoteContent::class,
+        MediaContent::CONTENT_TYPE => MediaContent::class,
+        PromoContent::CONTENT_TYPE => PromoContent::class,
+    ];
+
     public static function getContentTypes()
     {
-        return [
-            RichTextContent::CONTENT_TYPE,
-            BlockquoteContent::CONTENT_TYPE,
-            MediaContent::CONTENT_TYPE,
-            PromoContent::CONTENT_TYPE,
-        ];
+        return array_keys(self::$contentTypeMap);
     }
 }

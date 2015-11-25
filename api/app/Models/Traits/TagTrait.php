@@ -16,6 +16,16 @@ trait TagTrait
 {
     public function tags()
     {
-        return $this->belongsToManyRevisionable(Tag::class, null, null, null, 'tags')->withPivot('tag_group_id', 'tag_group_parent_id');
+        $tagTable = null;
+        $tagFk = null;
+        if (property_exists($this,'tagTable')){
+            $tagTable = $this->tagTable;
+        }
+
+        if (property_exists($this,'tagFk')){
+            $tagFk = $this->tagFk;
+        }
+
+        return $this->belongsToManyRevisionable(Tag::class, $tagTable, $tagFk, null, 'tags')->withPivot('tag_group_id', 'tag_group_parent_id');
     }
 }

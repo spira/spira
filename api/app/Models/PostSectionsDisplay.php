@@ -12,7 +12,7 @@ namespace App\Models;
 
 use Spira\Model\Model\VirtualModel;
 
-class ArticleSectionsDisplay extends VirtualModel
+class PostSectionsDisplay extends VirtualModel
 {
     /**
      * The attributes that are mass assignable.
