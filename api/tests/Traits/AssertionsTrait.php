@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 use Laravel\Lumen\Testing\AssertionsTrait as BaseAssertionsTrait;
+use Rhumsaa\Uuid\Uuid;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
@@ -70,6 +71,19 @@ trait AssertionsTrait
     public function assertValidIso8601Date($date)
     {
         $this->assertTrue($this->checkValidIso8601Date($date), 'Valid ISO8601 date');
+
+        return $this;
+    }
+
+    /**
+     * Assert string is a valid UUID
+     *
+     * @param $uuid
+     * @return bool
+     */
+    public function assertUuid($uuid)
+    {
+        $this->assertTrue(Uuid::isValid($uuid), 'Valid UUID');
 
         return $this;
     }
