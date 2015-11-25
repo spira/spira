@@ -130,4 +130,9 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('test/entities/{id}/children', 'ChildTestController@getAll');
     $app->get('test/entities/{id}/child/{childId}', 'ChildTestController@getOne');
 
+    $app->get('test/many/{id}/children', 'LinkedEntityTestController@getAll');
+    $app->put('test/many/{id}/children', 'LinkedEntityTestController@syncMany');
+    $app->post('test/many/{id}/children', 'LinkedEntityTestController@attachMany');
+    $app->put('test/many/{id}/children/{childId}', 'LinkedEntityTestController@attachOne');
+    $app->delete('test/many/{id}/children/{childId}', 'LinkedEntityTestController@detachOne');
 });
