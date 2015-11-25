@@ -102,7 +102,7 @@ namespace common.services.article {
 
                 let article = articleService.newArticle(author);
 
-                expect(article.articleId).to.be.ok;
+                expect(article.postId).to.be.ok;
 
                 expect(article.authorId).to.equal(author.userId);
 
@@ -120,7 +120,7 @@ namespace common.services.article {
 
                 let comment = common.models.ArticleCommentMock.entity();
 
-                $httpBackend.expectPOST('/api/articles/' + article.articleId + '/comments').respond(201);
+                $httpBackend.expectPOST('/api/articles/' + article.postId + '/comments').respond(201);
 
                 let savePromise = articleService.saveComment(article, comment);
 
@@ -142,7 +142,7 @@ namespace common.services.article {
                 article.setExists(true);
                 article._sections = common.models.SectionMock.collection(2, {}, false);
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections', _.map(article._sections, (section:common.models.Section<any>) => section.getAttributes(true))).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections', _.map(article._sections, (section:common.models.Section<any>) => section.getAttributes(true))).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -157,9 +157,9 @@ namespace common.services.article {
 
                 let article = common.models.ArticleMock.entity();
                 article.setExists(true);
-                article._metas = article._metas.concat(common.models.MetaMock.collection(2, {metaableId:article.articleId}, false));
+                article._metas = article._metas.concat(common.models.MetaMock.collection(2, {metaableId:article.postId}, false));
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/meta', _.filter(_.clone(article._metas, true), (item) => {
+                $httpBackend.expectPUT('/api/articles/'+article.postId+'/meta', _.filter(_.clone(article._metas, true), (item) => {
                     return !_.isEmpty(item.metaContent)
                 })).respond(201);
 
@@ -179,7 +179,7 @@ namespace common.services.article {
                 article._tags.push(common.models.LinkingTagMock.entity());
                 article._tags.push(common.models.LinkingTagMock.entity());
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.postId+'/tags', _.clone(article._tags, true)).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -194,7 +194,7 @@ namespace common.services.article {
                 let article = common.models.ArticleMock.entity();
                 article.setExists(false);
 
-                $httpBackend.expectPUT('/api/articles/'+article.articleId, article.getAttributes()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.postId, article.getAttributes()).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -214,8 +214,8 @@ namespace common.services.article {
 
                 article._tags = [common.models.LinkingTagMock.entity()];
 
-                $httpBackend.expectPATCH('/api/articles/'+article.articleId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
-                $httpBackend.expectPUT('/api/articles/'+article.articleId+'/tags', _.clone(article._tags, true)).respond(201);
+                $httpBackend.expectPATCH('/api/articles/'+article.postId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
+                $httpBackend.expectPUT('/api/articles/'+article.postId+'/tags', _.clone(article._tags, true)).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -252,7 +252,7 @@ namespace common.services.article {
 
                     article._localizations.push(localizationMock);
 
-                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+                    $httpBackend.expectPUT('/api/articles/'+article.postId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
 
                     let savePromise = articleService.save(article);
 
@@ -285,8 +285,8 @@ namespace common.services.article {
 
                     article._sections[0]._localizations.push(localizationMock);
 
-                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections').respond(201);
-                    $httpBackend.expectPUT('/api/articles/'+article.articleId+'/sections/'+sectionId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
+                    $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections').respond(201);
+                    $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections/'+sectionId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
 
                     let savePromise = articleService.save(article);
 
@@ -313,7 +313,7 @@ namespace common.services.article {
 
                     articleService.addQueuedSaveProcessFunction(queuedSaveFunction);
 
-                    $httpBackend.expectDELETE('/api/articles/'+article.articleId+'/sections/'+article._sections[0].sectionId).respond(201);
+                    $httpBackend.expectDELETE('/api/articles/'+article.postId+'/sections/'+article._sections[0].sectionId).respond(201);
 
                     let savePromise = articleService.save(article);
 
