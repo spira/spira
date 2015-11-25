@@ -55,7 +55,6 @@ class Section extends BaseModel implements LocalizableModelInterface
         'content' => 'json',
     ];
 
-
     public static $contentTypeMap = [
         RichTextContent::CONTENT_TYPE => RichTextContent::class,
         BlockquoteContent::CONTENT_TYPE => BlockquoteContent::class,

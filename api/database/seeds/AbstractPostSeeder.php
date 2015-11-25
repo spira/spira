@@ -48,7 +48,6 @@ abstract class AbstractPostSeeder extends BaseSeeder
 
         $groupedTagPivots = $this->getGroupTagPivots($tags);
 
-
         $className = $this->class;
         factory($className, 50)
             ->create()

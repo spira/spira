@@ -38,5 +38,4 @@ class PostPermalink extends BaseModel
     {
         return $this->belongsTo(Article::class, 'post_id', 'post_id');
     }
-
 }

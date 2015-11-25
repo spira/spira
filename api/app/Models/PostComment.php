@@ -13,12 +13,11 @@ namespace App\Models;
 use Spira\Model\Model\BaseModel;
 
 /**
- * model of PostComment
+ * model of PostComment.
  *
  * @property string $post_comment_id
  * @property string $body
  * @property \DateTime $created_at
- *
  */
 class PostComment extends BaseModel
 {

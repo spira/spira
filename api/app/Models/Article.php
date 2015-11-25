@@ -13,12 +13,12 @@ namespace App\Models;
 use App\Models\Scopes\ArticleScope;
 
 /**
- * Class Article
+ * Class Article.
  */
 class Article extends AbstractPost
 {
     protected $attributes = [
-        'post_type' => Article::class
+        'post_type' => self::class,
     ];
 
     protected static function bootScope()

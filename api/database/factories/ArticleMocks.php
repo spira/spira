@@ -11,7 +11,7 @@
 use Illuminate\Support\Str;
 use Spira\Model\Collection\Collection;
 
-$postAttributes =  function (\Faker\Generator $faker) {
+$postAttributes = function (\Faker\Generator $faker) {
 
     /** @var Collection $users */
     static $users = null;

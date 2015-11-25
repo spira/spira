@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Models;
 
@@ -15,7 +22,7 @@ use Spira\Model\Model\LocalizableModelInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
- * model for AbstractPost
+ * model for AbstractPost.
  *
  * attributes
  *
@@ -42,7 +49,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @property Tag[] $tags
  * @property Rating[] $userRatings
  * @property Bookmark[] $bookmarks
- *
  */
 class AbstractPost extends IndexedModel implements LocalizableModelInterface
 {
@@ -63,7 +69,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
     public static $statuses = [self::STATUS_DRAFT, self::STATUS_SCHEDULED, self::STATUS_PUBLISHED];
 
     public static $postTypes = [
-        Article::class
+        Article::class,
     ];
 
     /**
@@ -112,8 +118,8 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
             'title' => 'required|string',
             'excerpt' => 'string',
             'thumbnail_image_id' => 'uuid|exists:images,image_id',
-            'status' => 'in:' . implode(',', static::$statuses),
-            'permalink' => 'string|unique:permalink_post,permalink,' . $entityId . ',post_id',
+            'status' => 'in:'.implode(',', static::$statuses),
+            'permalink' => 'string|unique:permalink_post,permalink,'.$entityId.',post_id',
             'sections_display' => 'decoded_json',
             'author_id' => 'required|uuid|exists:users,user_id',
         ];
@@ -179,7 +185,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         parent::boot();
         static::bootScope();
         static::saving(function (AbstractPost $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $permalink = new PostPermalink(['permalink' => $model->permalink]);
                 $permalink->save();
             }
@@ -188,7 +194,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         });
 
         static::saved(function (AbstractPost $model) {
-            if ($model->getOriginal('permalink') !== $model->permalink && !is_null($model->permalink)) {
+            if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
                 $permalink = PostPermalink::findOrFail($model->permalink);
                 $model->permalinks()->save($permalink);
             }
@@ -236,6 +242,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
             return static::where('permalink', '=', $id)->firstOrFail();
         } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
             $name = class_basename($this);
+
             return PostPermalink::findOrFail($id)->{$name};
         }
     }

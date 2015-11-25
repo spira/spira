@@ -18,11 +18,11 @@ trait TagTrait
     {
         $tagTable = null;
         $tagFk = null;
-        if (property_exists($this,'tagTable')){
+        if (property_exists($this, 'tagTable')) {
             $tagTable = $this->tagTable;
         }
 
-        if (property_exists($this,'tagFk')){
+        if (property_exists($this, 'tagFk')) {
             $tagFk = $this->tagFk;
         }
 
