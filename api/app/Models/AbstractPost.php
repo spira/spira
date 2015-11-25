@@ -10,6 +10,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\Traits\TagTrait;
@@ -41,14 +42,14 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  *
  * relations
  *
- * @property PostPermalink[] $permalinks
- * @property Meta[] $metas
+ * @property PostPermalink[]|Collection $permalinks
+ * @property Meta[]|Collection $metas
  * @property Image $thumbnailImage
  * @property User $author
- * @property Section[] $sections
- * @property Tag[] $tags
- * @property Rating[] $userRatings
- * @property Bookmark[] $bookmarks
+ * @property Section[]|Collection $sections
+ * @property Tag[]|Collection $tags
+ * @property Rating[]|Collection $userRatings
+ * @property Bookmark[]|Collection $bookmarks
  */
 class AbstractPost extends IndexedModel implements LocalizableModelInterface
 {

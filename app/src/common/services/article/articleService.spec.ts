@@ -80,10 +80,10 @@ namespace common.services.article {
             it('should be able to retrieve an article by permalink', () => {
 
                 $httpBackend.expectGET('/api/articles/'+mockArticle.permalink, (headers) => {
-                    return headers['With-Nested'] == 'articlePermalinks, metas, tags, author'
+                    return headers['With-Nested'] == 'permalinks, metas, tags, author'
                 }).respond(mockArticle);
 
-                let article = articleService.getModel(mockArticle.permalink, ['articlePermalinks', 'metas', 'tags', 'author']);
+                let article = articleService.getModel(mockArticle.permalink, ['permalinks', 'metas', 'tags', 'author']);
 
                 expect(article).eventually.to.be.fulfilled;
                 expect(article).eventually.to.deep.equal(mockArticle);
