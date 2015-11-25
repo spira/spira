@@ -96,6 +96,38 @@ trait HelpersTrait
         return $this->app->make(StorageInterface::class);
     }
 
+    /**
+     * Validates Response is a JSON and returns it as an object
+     *
+     * @return stdClass
+     */
+    protected function getJsonResponseObject()
+    {
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        return $object;
+    }
+
+    /**
+     * Validates Response is a JSON and returns it as an array
+     *
+     * @return array
+     */
+    protected function getJsonResponseArray()
+    {
+        $this->shouldReturnJson();
+
+        $array = json_decode($this->response->getContent(), true);
+
+        $this->assertTrue(is_array($array), 'Response is an array');
+
+        return $array;
+    }
+
     protected function assignSuperAdmin($user)
     {
         $this->assignRole($user, 'superAdmin');
