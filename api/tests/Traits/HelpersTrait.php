@@ -97,7 +97,7 @@ trait HelpersTrait
     }
 
     /**
-     * Validates Response is a JSON and returns it as an object
+     * Validates Response is a JSON and returns it as an object.
      *
      * @return stdClass
      */
@@ -113,7 +113,7 @@ trait HelpersTrait
     }
 
     /**
-     * Validates Response is a JSON and returns it as an array
+     * Validates Response is a JSON and returns it as an array.
      *
      * @return array
      */

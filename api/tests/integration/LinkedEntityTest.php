@@ -20,9 +20,9 @@ class LinkedEntityTest extends TestCase
     public function testGetAll()
     {
         $entity = $this->makeEntity();
-        $ids    = $entity->secondTestEntities()->get()->pluck('entity_id')->toArray();
+        $ids = $entity->secondTestEntities()->get()->pluck('entity_id')->toArray();
 
-        $this->getJson('test/many/' . $entity->entity_id . '/children');
+        $this->getJson('test/many/'.$entity->entity_id.'/children');
 
         $response = $this->getJsonResponseArray();
 
@@ -32,11 +32,11 @@ class LinkedEntityTest extends TestCase
     public function testAttachOne()
     {
         /** @var $entity TestEntity */
-        $entity  = $this->getFactory(TestEntity::class)->create();
+        $entity = $this->getFactory(TestEntity::class)->create();
         $factory = $this->getFactory(SecondTestEntity::class);
-        $second  = $factory->create();
+        $second = $factory->create();
 
-        $this->putJson('test/many/' . $entity->entity_id . '/children/' . $second->entity_id, $factory->transformed());
+        $this->putJson('test/many/'.$entity->entity_id.'/children/'.$second->entity_id, $factory->transformed());
 
         $this->assertResponseStatus(201);
         $this->assertResponseHasNoContent();
@@ -46,8 +46,8 @@ class LinkedEntityTest extends TestCase
 
     public function testAttachMany()
     {
-        $entity      = $this->makeEntity();
-        $factory     = $this->getFactory(SecondTestEntity::class);
+        $entity = $this->makeEntity();
+        $factory = $this->getFactory(SecondTestEntity::class);
         $newEntities = $factory->count(3)->create();
 
         $ids = array_merge(
@@ -55,7 +55,7 @@ class LinkedEntityTest extends TestCase
             $newEntities->pluck('entity_id')->toArray()
         );
 
-        $this->postJson('test/many/' . $entity->entity_id . '/children', $factory->transformed());
+        $this->postJson('test/many/'.$entity->entity_id.'/children', $factory->transformed());
 
         $this->assertResponseStatus(201);
         $this->assertEmpty(array_diff($entity->secondTestEntities()->get()->pluck('entity_id')->toArray(), $ids));
@@ -63,16 +63,16 @@ class LinkedEntityTest extends TestCase
 
     public function testSyncMany()
     {
-        $entity  = $this->makeEntity();
+        $entity = $this->makeEntity();
         $factory = $this->getFactory(SecondTestEntity::class);
         $factory->count(3)->create();
 
-        $transformed   = $factory->transformed();
+        $transformed = $factory->transformed();
         $transformed[] = $this->getFactory(SecondTestEntity::class)
             ->setModel($entity->secondTestEntities()->first())
             ->transformed();
 
-        $this->putJson('test/many/' . $entity->entity_id . '/children', $transformed);
+        $this->putJson('test/many/'.$entity->entity_id.'/children', $transformed);
 
         $this->assertResponseStatus(201);
 
@@ -91,7 +91,7 @@ class LinkedEntityTest extends TestCase
         $entity = $this->makeEntity();
         $second = $entity->secondTestEntities()->first();
 
-        $this->deleteJson('test/many/' . $entity->entity_id . '/children/' . $second->entity_id);
+        $this->deleteJson('test/many/'.$entity->entity_id.'/children/'.$second->entity_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -106,7 +106,7 @@ class LinkedEntityTest extends TestCase
     {
         $entity = $this->makeEntity();
 
-        $this->deleteJson('test/many/' . $entity->entity_id . '/children');
+        $this->deleteJson('test/many/'.$entity->entity_id.'/children');
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -116,16 +116,16 @@ class LinkedEntityTest extends TestCase
 
     /**
      * Generates TestEntity with 3 SecondEntites.
-     * First of SecondEntites has 3 TestEntities, others has 1
+     * First of SecondEntites has 3 TestEntities, others has 1.
      *
      * @return TestEntity
      */
     protected function makeEntity()
     {
-        $firstEntities  = $this->getFactory(TestEntity::class)->count(5)->create();
+        $firstEntities = $this->getFactory(TestEntity::class)->count(5)->create();
         $secondEntities = $this->getFactory(SecondTestEntity::class)->count(5)->create();
 
-        $firstIds  = $firstEntities->take(3)->pluck('entity_id')->toArray();
+        $firstIds = $firstEntities->take(3)->pluck('entity_id')->toArray();
         $secondIds = $secondEntities->take(3)->pluck('entity_id')->toArray();
 
         $first = $firstEntities->first();

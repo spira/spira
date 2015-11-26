@@ -25,7 +25,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     protected $relationName = null;
 
     /**
-     * Override this property to provide default pivot values
+     * Override this property to provide default pivot values.
      */
     protected $defaultPivotValues = [];
 
@@ -43,14 +43,14 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $this->parentModel = $parentModel;
 
-        if (!$this->relationName) {
-            throw new \InvalidArgumentException('You must specify relationName in ' . static::class);
+        if (! $this->relationName) {
+            throw new \InvalidArgumentException('You must specify relationName in '.static::class);
         }
 
-        if (!method_exists($parentModel, $this->relationName)) {
+        if (! method_exists($parentModel, $this->relationName)) {
             throw new \InvalidArgumentException(
-                'Relation ' . $this->relationName . ', required by ' .
-                static::class . ', does not exist in ' . get_class($parentModel)
+                'Relation '.$this->relationName.', required by '.
+                static::class.', does not exist in '.get_class($parentModel)
             );
         }
 
@@ -58,7 +58,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     }
 
     /**
-     * Override this method to provide custom validation rules
+     * Override this method to provide custom validation rules.
      *
      * @param null $entityId
      * @return array
@@ -154,7 +154,7 @@ abstract class AbstractRelatedEntityController extends ApiController
      */
     protected function findChildrenCollection($requestCollection, BaseModel $parent)
     {
-        $ids    = $this->getIds($requestCollection, $this->getChildModel()->getKeyName());
+        $ids = $this->getIds($requestCollection, $this->getChildModel()->getKeyName());
         $models = $this->getRelation($parent)->findMany($ids);
 
         return $models;
@@ -192,7 +192,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $childPk = $this->getChildModel()->getPrimaryKey();
 
-        if (!($requestCollection instanceof Collection)) {
+        if (! ($requestCollection instanceof Collection)) {
             $requestCollection = new Collection($requestCollection);
         }
 
@@ -201,10 +201,10 @@ abstract class AbstractRelatedEntityController extends ApiController
 
         $relations = [];
         foreach ($childModels as $model) {
-            $key    = $model->{$childPk};
+            $key = $model->{$childPk};
             $values = $this->getPivotValues($requestCollection[$key]);
 
-            if (!empty($values)) {
+            if (! empty($values)) {
                 $relations[$key] = $values;
             } else {
                 $relations[] = $key;
@@ -215,7 +215,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     }
 
     /**
-     * Override this method to provide custom pivot values
+     * Override this method to provide custom pivot values.
      *
      * @param array $requestEntity
      * @return array
@@ -224,7 +224,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $values = $this->defaultPivotValues;
 
-        if (!empty($requestEntity['_pivot'])) {
+        if (! empty($requestEntity['_pivot'])) {
             $values = array_merge($values, $requestEntity['_pivot']);
         }
 
@@ -239,7 +239,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         return $collection->each(
             function (BaseModel $model) {
-                if (!$model->exists || $model->isDirty()) {
+                if (! $model->exists || $model->isDirty()) {
                     $model->save();
                 }
             }
