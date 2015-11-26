@@ -485,7 +485,7 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
-    public function testPutMetas()
+    public function testAddMetas()
     {
         $article = $this->getFactory(Article::class)->create();
         $this->addMetasToArticles([$article]);
@@ -503,7 +503,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/meta', $entities);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $updatedArticle = Article::find($article->article_id);
@@ -520,7 +520,7 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$article]);
     }
 
-    public function testPutDuplicateMetaNames()
+    public function testAddDuplicateMetaNames()
     {
         /** @var Article $article */
         $article = $this->getFactory(Article::class)->create();
@@ -539,7 +539,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/meta', $data);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/meta', $data);
 
         $this->assertResponseStatus(500);
     }

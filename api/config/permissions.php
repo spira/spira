@@ -51,7 +51,7 @@ return [
         'type' => 'permission',
         'description' => 'Get all roles assigned to user',
     ],
-    PermissionsController::class.'@putManyReplace' => [
+    PermissionsController::class.'@putMany' => [
         'type' => 'permission',
         'description' => 'Reassign user roles',
     ],
@@ -81,7 +81,7 @@ return [
         'type' => 'permission',
         'description' => 'Permission to allow a user to assign and detach any role',
         'children' => [
-            PermissionsController::class.'@putManyReplace',
+            PermissionsController::class.'@putMany',
         ],
     ],
     'ReAssignNonAdmin' =>  [
@@ -89,7 +89,7 @@ return [
         'description' => 'Permission to allow a user to assign and detach non-admin roles only',
         'ruleName' => ReAssignNonAdmin::class,
         'children' => [
-            PermissionsController::class.'@putManyReplace',
+            PermissionsController::class.'@putMany',
         ],
     ],
     'ImpersonateAllUsers' =>  [

@@ -20,7 +20,7 @@ use App\Models\Sections\RichTextContent;
  * Class SectionTest.
  * @group integration
  */
-class SectionTest extends TestCase
+class ArticleSectionTest extends TestCase
 {
     public function setUp()
     {
@@ -82,7 +82,7 @@ class SectionTest extends TestCase
         $article->sections()->saveMany($sections);
 
         $newSections = $this->getFactory(Section::class)->count(2)->transformed();
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', $newSections);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/sections', $newSections);
 
         $this->assertResponseStatus(201);
 
@@ -109,7 +109,7 @@ class SectionTest extends TestCase
         $this->assertCount(4, Article::find($article->article_id)->sections);
     }
 
-    public function testPutInvalidSectionContent()
+    public function testAddInvalidSectionContent()
     {
         /** @var Article $article */
         $article = $this->getFactory(Article::class)
@@ -119,12 +119,12 @@ class SectionTest extends TestCase
             ->customize(['content' => 10])
             ->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$section]);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
 
-    public function testPutInvalidSectionType()
+    public function testAddInvalidSectionType()
     {
         /** @var Article $article */
         $article = $this->getFactory(Article::class)
@@ -134,12 +134,12 @@ class SectionTest extends TestCase
             ->customize(['type' => 'not_a_type'])
             ->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$section]);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
 
-    public function testPutInvalidSections()
+    public function testAddInvalidSections()
     {
         /** @var Article $article */
         $article = $this->getFactory(Article::class)
@@ -164,18 +164,19 @@ class SectionTest extends TestCase
             ->transformed();
 
         $promoSection = $this->getFactory(Section::class, PromoContent::CONTENT_TYPE)
-            ->customize(['content' => [
-            ]])
+            ->customize(['content' => []])
             ->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection, $promoSection]);
+        $this->withAuthorization()->postJson(
+            '/articles/'.$article->article_id.'/sections',
+            [$richTextSection, $blockquoteSection, $imageSection, $promoSection]
+        );
 
         $this->assertResponseStatus(422);
     }
 
-    public function testPutSortedSections()
+    public function testAddSortedSections()
     {
-
         /** @var Article $article */
         $article = $this->getFactory(Article::class)
             ->create();
@@ -186,7 +187,7 @@ class SectionTest extends TestCase
             'sort_order' => array_pluck($newSections, 'sectionId'),
         ])->transformed();
 
-        $this->withAuthorization()->putJson('/articles/'.$article->article_id.'/sections', $newSections);
+        $this->withAuthorization()->postJson('/articles/'.$article->article_id.'/sections', $newSections);
         $this->assertResponseStatus(201);
 
         $this->patchJson('/articles/'.$article->article_id, ['sectionsDisplay' => $sectionsDisplay]);
