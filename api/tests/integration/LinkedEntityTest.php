@@ -24,7 +24,7 @@ class LinkedEntityTest extends TestCase
 
         $this->getJson('test/many/'.$entity->entity_id.'/children');
 
-        $response = $this->getJsonResponseArray();
+        $response = $this->getJsonResponseAsArray();
 
         $this->assertEmpty(array_diff(array_pluck($response, 'entityId'), $ids));
     }
