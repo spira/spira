@@ -91,7 +91,7 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
 
         $transformed = $this->getTransformer()->transformCollection($this->findAllChildren($parent), ['_self']);
 
-        $responseCollection = collect($transformed)->map(function($entity){
+        $responseCollection = collect($transformed)->map(function ($entity) {
             return ['_self' => $entity['_self']];
         })->toArray();
 
