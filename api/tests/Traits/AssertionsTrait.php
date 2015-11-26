@@ -76,7 +76,7 @@ trait AssertionsTrait
     }
 
     /**
-     * Assert string is a valid UUID
+     * Assert string is a valid UUID.
      *
      * @param $uuid
      * @return bool
