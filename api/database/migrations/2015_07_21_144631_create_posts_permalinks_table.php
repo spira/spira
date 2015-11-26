@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Article;
-use App\Models\ArticlePermalink;
+use App\Models\AbstractPost;
+use App\Models\PostPermalink;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArticlesPermalinksTable extends Migration
+class CreatePostsPermalinksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,15 +23,15 @@ class CreateArticlesPermalinksTable extends Migration
      */
     public function up()
     {
-        Schema::create(ArticlePermalink::getTableName(), function (Blueprint $table) {
+        Schema::create(PostPermalink::getTableName(), function (Blueprint $table) {
             $table->string('permalink', 255)->primary();
-            $table->uuid('article_id')->index()->nullable();
+            $table->uuid('post_id')->index()->nullable();
 
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
 
-            $table->foreign('article_id')
-                ->references('article_id')->on(Article::getTableName())
+            $table->foreign('post_id')
+                ->references('post_id')->on(AbstractPost::getTableName())
                 ->onDelete('cascade');
         });
     }
@@ -43,6 +43,6 @@ class CreateArticlesPermalinksTable extends Migration
      */
     public function down()
     {
-        DB::statement(sprintf('DROP TABLE %s CASCADE', ArticlePermalink::getTableName()));
+        DB::statement(sprintf('DROP TABLE %s CASCADE', PostPermalink::getTableName()));
     }
 }

@@ -17,14 +17,14 @@ use Spira\Model\Model\VirtualRelationInterface;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
+class PostDiscussion extends BaseModel implements VirtualRelationInterface
 {
     /**
-     * Article discussion belongs to.
+     * Post discussion belongs to.
      *
-     * @var Article
+     * @var AbstractPost
      */
-    protected $article;
+    protected $post;
 
     /**
      * Vanilla API client.
@@ -47,45 +47,45 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      */
     public static function getValidationRules($entityId = null)
     {
-        return ArticleComment::getValidationRules($entityId);
+        return PostComment::getValidationRules($entityId);
     }
 
     /**
-     * Create a discussion thread for the article.
+     * Create a discussion thread for the post.
      *
      * @return void
      */
     public function createDiscussion()
     {
         $this->getClient()->api('discussions')->create(
-            $this->article->title,
-            $this->article->excerpt,
+            $this->post->title,
+            $this->post->excerpt,
             1,
-            ['ForeignID' => $this->article->article_id]
+            ['ForeignID' => $this->post->post_id]
         );
     }
 
     /**
-     * Delete the discussion thread for the article.
+     * Delete the discussion thread for the post.
      *
      * @return void
      */
     public function deleteDiscussion()
     {
         $this->getClient()->api('discussions')->removeByForeignId(
-            $this->article->article_id
+            $this->post->post_id
         );
     }
 
     /**
-     * Get the discussion thread id for the article.
+     * Get the discussion thread id for the post.
      *
      * @return int
      */
     protected function getDiscussionId()
     {
         $discussion = $this->getClient()->api('discussions')->findByForeignId(
-            $this->article->article_id
+            $this->post->post_id
         );
 
         return $discussion['Discussion']['DiscussionID'];
@@ -97,12 +97,13 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
      * @param  array     $options
      * @param  User|null $user
      *
-     * @return ArticleComment
+     * @return PostComment
      */
     public function save(array $options = [], User $user = null)
     {
         // Get a model for the comment
-        $articleComment = (new ArticleComment)
+        /** @var PostComment $postComment */
+        $postComment = (new PostComment())
             ->fill($options)
             ->setAuthor($user);
 
@@ -121,19 +122,19 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
         $id = $this->getDiscussionId();
         $comment = $this->getClient()->api('comments')->create(
             $id,
-            $articleComment->body
+            $postComment->body
         );
 
         // Get ID from vanilla into model
-        $articleComment->article_comment_id = $comment['Comment']['CommentID'];
+        $postComment->post_comment_id = $comment['Comment']['CommentID'];
 
-        return $articleComment;
+        return $postComment;
     }
 
     /**
      * Allow a parent model to get this model via relation.
      *
-     * @return ArticleComment
+     * @return PostComment
      */
     public function getRelated()
     {
@@ -150,15 +151,15 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     public function getResults()
     {
         // First a minimal call to the discussion for the total comment count
-        $discussion = $this->getDiscussion($this->article->article_id, 1);
+        $discussion = $this->getDiscussion($this->post->post_id, 1);
         $count = $discussion['Discussion']['CountComments'];
 
         // Now get the entire batch of comments
-        $discussion = $this->getDiscussion($this->article->article_id, $count);
+        $discussion = $this->getDiscussion($this->post->post_id, $count);
 
         // And turn them into a collection of models
         $comments = $this->prepareCommentsForHydrate($discussion['Comments']);
-        $comments = (new ArticleComment)->hydrateRequestCollection($comments, new Collection);
+        $comments = (new PostComment)->hydrateRequestCollection($comments, new Collection);
         $comments = $this->setCommentAuthors($comments, $discussion['Comments']);
 
         return $comments;
@@ -190,7 +191,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     protected function prepareCommentsForHydrate(array $comments = [])
     {
         $map = [
-            'CommentID' => 'article_comment_id',
+            'CommentID' => 'post_comment_id',
             'Body' => 'body',
             'DateInserted' => 'created_at',
         ];
@@ -219,7 +220,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     protected function setCommentAuthors(Collection $commentModels, array $comments)
     {
         foreach ($commentModels as $model) {
-            $id = $model->article_comment_id;
+            $id = $model->post_comment_id;
 
             $comment = array_where($comments, function ($key, $value) use ($id) {
                 return $value['CommentID'] == $id;
@@ -285,7 +286,7 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
 
         foreach ($this->eagerConstraints as $model) {
             $comments = new self;
-            $comments->setArticle($model);
+            $comments->setPost($model);
             $results->offsetSet($model->getKey(), $comments->getResults());
         }
 
@@ -318,15 +319,15 @@ class ArticleDiscussion extends BaseModel implements VirtualRelationInterface
     }
 
     /**
-     * Sets the article the discussion belongs to.
+     * Sets the post the discussion belongs to.
      *
-     * @param  Article $article
+     * @param  AbstractPost $post
      *
      * @return $this
      */
-    public function setArticle(Article $article)
+    public function setPost(AbstractPost $post)
     {
-        $this->article = $article;
+        $this->post = $post;
 
         return $this;
     }

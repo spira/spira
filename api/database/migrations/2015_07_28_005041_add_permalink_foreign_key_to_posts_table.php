@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Article;
-use App\Models\ArticlePermalink;
+use App\Models\AbstractPost;
+use App\Models\PostPermalink;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddPermalinkForeignKeyToArticlesTable extends Migration
+class AddPermalinkForeignKeyToPostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,9 +23,9 @@ class AddPermalinkForeignKeyToArticlesTable extends Migration
      */
     public function up()
     {
-        Schema::table(Article::getTableName(), function (Blueprint $table) {
-            $table->foreign('permalink')
-                ->references('permalink')->on(ArticlePermalink::getTableName());
+        Schema::table(AbstractPost::getTableName(), function (Blueprint $table) {
+            $table->foreign('permalink', 'post_permalink_foreign')
+                ->references('permalink')->on(PostPermalink::getTableName());
         });
     }
 
@@ -36,8 +36,8 @@ class AddPermalinkForeignKeyToArticlesTable extends Migration
      */
     public function down()
     {
-        Schema::table(Article::getTableName(), function (Blueprint $table) {
-            $table->dropForeign('articles_permalink_foreign');
+        Schema::table(AbstractPost::getTableName(), function (Blueprint $table) {
+            $table->dropForeign('post_permalink_foreign');
         });
     }
 }

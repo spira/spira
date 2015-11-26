@@ -5,9 +5,9 @@ namespace common.models {
     describe('Article Model', () => {
 
         let title = seededChance.sentence(),
-            articleId = seededChance.guid(),
+            postId = seededChance.guid(),
             articleData = {
-                articleId: articleId,
+                postId: postId,
                 title: title,
                 permalink: title.toLowerCase().replace(' ', '-'),
                 content:seededChance.paragraph({sentences: 10}),
@@ -16,19 +16,19 @@ namespace common.models {
                         metaName: 'keyword',
                         metaContent: 'foo',
                         metaId: seededChance.guid(),
-                        metaableId: articleId
+                        metaableId: postId
                     },
                     {
                         metaName: 'description',
                         metaContent: 'bar',
                         metaId: seededChance.guid(),
-                        metaableId: articleId
+                        metaableId: postId
                     },
                     {
                         metaName: 'foobar',
                         metaContent: 'foobar',
                         metaId: seededChance.guid(),
-                        metaableId: articleId
+                        metaableId: postId
                     }
                 ]
             };
@@ -45,7 +45,7 @@ namespace common.models {
 
             let uuid = seededChance.guid();
 
-            let article = new common.models.Article({articleId:uuid});
+            let article = new common.models.Article({postId:uuid});
 
             expect(article.getIdentifier()).to.be.equal(uuid);
 
@@ -56,7 +56,7 @@ namespace common.models {
             let uuid = seededChance.guid();
             let permalink = seededChance.string();
 
-            let article = new common.models.Article({articleId:uuid, permalink:permalink});
+            let article = new common.models.Article({postId:uuid, permalink:permalink});
 
             expect(article.getIdentifier()).to.be.equal(permalink);
 
@@ -67,7 +67,7 @@ namespace common.models {
             let article = new common.models.Article(articleData);
 
             // The first article meta is 'name' which is added via template
-            expect(article._metas[0].metaableId).to.equal(article.articleId);
+            expect(article._metas[0].metaableId).to.equal(article.postId);
             expect(_.isEmpty(article._metas[0].metaId)).to.be.false;
 
             let testableMetaTags = _.cloneDeep(article._metas);

@@ -43,7 +43,7 @@ namespace common.services.article {
          */
         public apiEndpoint(article?:common.models.Article):string {
             if(article){
-                return '/articles/' + article.articleId;
+                return '/articles/' + article.postId;
             }
             return '/articles';
         }
@@ -55,7 +55,7 @@ namespace common.services.article {
         public newArticle(author:common.models.User):common.models.Article {
 
             return new common.models.Article({
-                articleId: this.ngRestAdapter.uuid(),
+                postId: this.ngRestAdapter.uuid(),
                 authorId: author.userId,
                 _author: author
             });
@@ -80,7 +80,7 @@ namespace common.services.article {
          */
         public save(article:common.models.Article):ng.IPromise<common.models.Article> {
 
-            return this.saveModel(article, this.apiEndpoint() + '/' + article.articleId)
+            return this.saveModel(article, this.apiEndpoint() + '/' + article.postId)
                 .then(() => this.$q.when([
                     this.saveRelatedEntities(article),
                     this.runQueuedSaveFunctions(),
@@ -102,7 +102,7 @@ namespace common.services.article {
         public saveComment(article:common.models.Article, comment:common.models.ArticleComment):ng.IPromise<common.models.ArticleComment> {
             comment.createdAt = moment();
 
-            return this.ngRestAdapter.post('/articles/' + article.articleId + '/comments', comment)
+            return this.ngRestAdapter.post('/articles/' + article.postId + '/comments', comment)
                 .then(() => {
                     return comment;
                 });
@@ -141,7 +141,7 @@ namespace common.services.article {
                 return this.$q.when(false);
             }
 
-            return this.ngRestAdapter.put(`/articles/${article.articleId}/meta`, requestObject)
+            return this.ngRestAdapter.put(`/articles/${article.postId}/meta`, requestObject)
                 .then(() => {
                     _.invoke(article._metas, 'setExists', true);
                     return article._metas;

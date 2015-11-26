@@ -18,9 +18,9 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
-        protected __primaryKey = 'articleId';
+        protected __primaryKey = 'postId';
 
-        public articleId:string = undefined;
+        public postId:string = undefined;
         public title:string = undefined;
         public shortTitle:string = undefined;
         public permalink:string = undefined;
@@ -63,7 +63,7 @@ namespace common.models {
          */
         public getIdentifier():string {
 
-            return this.permalink || this.articleId;
+            return this.permalink || this.postId;
 
         }
 
@@ -93,7 +93,7 @@ namespace common.models {
                         return new common.models.Meta({
                             metaName:metaTagName,
                             metaContent:'',
-                            metaableId:(<common.models.Article>data).articleId,
+                            metaableId:(<common.models.Article>data).postId,
                             metaId:common.models.Article.generateUUID()
                         });
                     }

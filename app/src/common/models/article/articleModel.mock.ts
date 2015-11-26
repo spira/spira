@@ -11,7 +11,7 @@ namespace common.models {
             let seededChance = new Chance();
 
             return {
-                articleId: seededChance.guid(),
+                postId: seededChance.guid(),
                 title: seededChance.string(),
                 shortTitle: seededChance.word(),
                 permalink: seededChance.url(),

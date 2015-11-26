@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\PostSectionsDisplay;
 use Faker\Generator;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Section;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
-use App\Models\ArticleSectionsDisplay;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 
@@ -125,7 +125,7 @@ $factory->defineAs(Section::class, PromoContent::CONTENT_TYPE, function (Generat
 
 });
 
-$factory->define(ArticleSectionsDisplay::class, function (Generator $faker) {
+$factory->define(PostSectionsDisplay::class, function (Generator $faker) {
     return [
         'sort_order' => [],
     ];

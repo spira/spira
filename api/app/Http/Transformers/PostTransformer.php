@@ -10,9 +10,9 @@
 
 namespace App\Http\Transformers;
 
-use App\Models\Article;
+use App\Models\AbstractPost;
 
-class ArticleTransformer extends EloquentModelTransformer
+class PostTransformer extends EloquentModelTransformer
 {
     /**
      * @param $collection
@@ -21,7 +21,7 @@ class ArticleTransformer extends EloquentModelTransformer
      */
     public function transformCollection($collection, array $options = [])
     {
-        /** @var Article[] $collection */
+        /** @var AbstractPost[] $collection */
         foreach ($collection as $item) {
             $item->addHidden('content');
         }

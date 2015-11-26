@@ -11,7 +11,7 @@
     + Body
 
             {!!
-                $factory->get(\App\Models\ArticleComment::class)
+                $factory->get(\App\Models\PostComment::class)
                     ->append('_author',
                         $factory->get(\App\Models\User::class)
                             ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])
@@ -34,7 +34,7 @@
     + Body
 
             {!!
-                $factory->get(\App\Models\ArticleComment::class)
+                $factory->get(\App\Models\PostComment::class)
                     ->showOnly(['body'])
                     ->json();
             !!}
@@ -44,7 +44,7 @@
     + Body
 
             {!!
-                $factory->get(\App\Models\ArticleComment::class)
+                $factory->get(\App\Models\PostComment::class)
                     ->append('_author',
                         $factory->get(\App\Models\User::class)
                             ->showOnly(['user_id', 'username', 'first_name', 'last_name', 'avatar_img_url'])

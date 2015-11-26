@@ -12,7 +12,14 @@ namespace App\Models;
 
 use Spira\Model\Model\BaseModel;
 
-class ArticleComment extends BaseModel
+/**
+ * model of PostComment.
+ *
+ * @property string $post_comment_id
+ * @property string $body
+ * @property \DateTime $created_at
+ */
+class PostComment extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
@@ -20,7 +27,7 @@ class ArticleComment extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'article_comment_id',
+        'post_comment_id',
         'body',
         'created_at',
     ];
@@ -64,7 +71,7 @@ class ArticleComment extends BaseModel
     }
 
     /**
-     * Article comments finding shouldn't be attempted by the hydrator on create as they can't be found from the database.
+     * Post comments finding shouldn't be attempted by the hydrator on create as they can't be found from the database.
      * @param $id
      * @param array $columns
      * @return BaseModel|void

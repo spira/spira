@@ -21,11 +21,11 @@ namespace app.admin.articles.article {
             groupTags:common.models.Tag[] = common.models.TagMock.collection(2);
 
         article._metas = [common.models.MetaMock.entity({
-            metaableId: article.articleId
+            metaableId: article.postId
         })];
 
         newArticle._metas = [common.models.MetaMock.entity({
-            metaableId: newArticle.articleId
+            metaableId: newArticle.postId
         })];
 
         beforeEach(() => {
