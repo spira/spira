@@ -58,9 +58,6 @@ class LinkedEntityTest extends TestCase
         $this->postJson('test/many/' . $entity->entity_id . '/children', $factory->transformed());
 
         $this->assertResponseStatus(201);
-        $response = $this->getJsonResponseArray();
-
-        $this->assertEmpty(array_diff(array_pluck($response, 'entityId'), $ids));
         $this->assertEmpty(array_diff($entity->secondTestEntities()->get()->pluck('entity_id')->toArray(), $ids));
     }
 
@@ -78,11 +75,15 @@ class LinkedEntityTest extends TestCase
         $this->putJson('test/many/' . $entity->entity_id . '/children', $transformed);
 
         $this->assertResponseStatus(201);
-        $response = $this->getJsonResponseArray();
 
-        $ids = array_pluck($transformed, 'entityId');
-        $this->assertEmpty(array_diff(array_pluck($response, 'entityId'), $ids));
-        $this->assertEmpty(array_diff($entity->secondTestEntities()->get()->pluck('entity_id')->toArray(), $ids));
+        $this->assertCount(4, array_pluck($this->getJsonResponseArray(), '_self'));
+
+        $this->assertEmpty(
+            array_diff(
+                $entity->secondTestEntities()->get()->pluck('entity_id')->toArray(),
+                array_pluck($transformed, 'entityId')
+            )
+        );
     }
 
     public function testDetachOne()
@@ -99,6 +100,18 @@ class LinkedEntityTest extends TestCase
             $second->entity_id,
             $entity->secondTestEntities()->get()->pluck('entity_id')->toArray()
         );
+    }
+
+    public function testDetachMany()
+    {
+        $entity = $this->makeEntity();
+
+        $this->deleteJson('test/many/' . $entity->entity_id . '/children');
+
+        $this->assertResponseStatus(204);
+        $this->assertResponseHasNoContent();
+
+        $this->assertTrue($entity->secondTestEntities()->get()->isEmpty());
     }
 
     /**
