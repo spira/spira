@@ -99,17 +99,11 @@ trait HelpersTrait
     /**
      * Validates Response is a JSON and returns it as an object.
      *
-     * @return stdClass
+     * @return stdClass|array
      */
-    protected function getJsonResponseObject()
+    protected function getJsonResponseAsObject()
     {
-        $this->shouldReturnJson();
-
-        $object = json_decode($this->response->getContent());
-
-        $this->assertTrue(is_object($object), 'Response is an object');
-
-        return $object;
+        return $this->getJsonResponse(false);
     }
 
     /**
@@ -117,15 +111,22 @@ trait HelpersTrait
      *
      * @return array
      */
-    protected function getJsonResponseArray()
+    protected function getJsonResponseAsArray()
+    {
+        return $this->getJsonResponse(true);
+    }
+
+    /**
+     * Validates Response is a JSON and returns it as an array or object.
+     *
+     * @param bool $asArray
+     * @return array
+     */
+    protected function getJsonResponse($asArray = false)
     {
         $this->shouldReturnJson();
 
-        $array = json_decode($this->response->getContent(), true);
-
-        $this->assertTrue(is_array($array), 'Response is an array');
-
-        return $array;
+        return json_decode($this->response->getContent(), $asArray);
     }
 
     protected function assignSuperAdmin($user)
