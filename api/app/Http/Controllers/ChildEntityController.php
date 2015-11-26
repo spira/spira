@@ -309,7 +309,7 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
     }
 
     /**
-     * Override this method to provide custom validation rules
+     * Override this method to provide custom validation rules.
      *
      * @return array
      */

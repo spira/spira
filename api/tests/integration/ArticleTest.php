@@ -505,7 +505,7 @@ class ArticleTest extends TestCase
                 'meta_content' => 'barfoobarfoo',
             ]
         )->transformed();
-        
+
         $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);

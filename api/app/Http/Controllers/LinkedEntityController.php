@@ -22,7 +22,7 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $childEntities = $this->findAllChildren($model);
         $childEntities = $this->getWithNested($childEntities, $request);
 
-        $this->checkPermission(static::class . '@getAll', ['model' => $model, 'children' => $childEntities]);
+        $this->checkPermission(static::class.'@getAll', ['model' => $model, 'children' => $childEntities]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -31,12 +31,12 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
 
     public function attachOne(Request $request, $id, $childId)
     {
-        $parent     = $this->findParentEntity($id);
+        $parent = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
         $this->validateRequest($request->json()->all(), $this->getValidationRules($childId));
         $childModel->fill($request->json()->all());
-        $this->checkPermission(static::class . '@attachOne', ['model' => $parent, 'children' => $childModel]);
+        $this->checkPermission(static::class.'@attachOne', ['model' => $parent, 'children' => $childModel]);
 
         $this->getRelation($parent)->attach($childModel, $this->getPivotValues($childModel));
 
@@ -55,10 +55,10 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
 
     public function detachOne($id, $childId)
     {
-        $parent     = $this->findParentEntity($id);
+        $parent = $this->findParentEntity($id);
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $this->checkPermission(static::class . '@detachOne', ['model' => $parent, 'children' => $childModel]);
+        $this->checkPermission(static::class.'@detachOne', ['model' => $parent, 'children' => $childModel]);
         $this->getRelation($parent)->detach($childModel);
 
         return $this->getResponse()->noContent();
@@ -68,7 +68,7 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
     {
         $parent = $this->findParentEntity($id);
 
-        $this->checkPermission(static::class . '@detachAll', ['model' => $parent]);
+        $this->checkPermission(static::class.'@detachAll', ['model' => $parent]);
         $this->getRelation($parent)->detach();
 
         return $this->getResponse()->noContent();
@@ -82,9 +82,9 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $this->validateRequestCollection($requestCollection, $this->getChildModel());
 
         $existingChildren = $this->findChildrenCollection($requestCollection, $parent);
-        $childModels      = $this->getChildModel()->hydrateRequestCollection($requestCollection, $existingChildren);
+        $childModels = $this->getChildModel()->hydrateRequestCollection($requestCollection, $existingChildren);
 
-        $this->checkPermission(static::class . '@' . $method . 'Many', ['model' => $parent, 'children' => $childModels]);
+        $this->checkPermission(static::class.'@'.$method.'Many', ['model' => $parent, 'children' => $childModels]);
         $this->saveNewItemsInCollection($childModels);
 
         $this->getRelation($parent)->{$method}($this->makeSyncList($childModels, $requestCollection));
