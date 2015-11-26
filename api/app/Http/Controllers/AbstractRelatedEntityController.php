@@ -58,12 +58,25 @@ abstract class AbstractRelatedEntityController extends ApiController
     }
 
     /**
-     * Override this method to provide custom validation rules.
+     * Override this method to provide custom pivot validation rules.
      *
      * @param null $entityId
      * @return array
      */
     protected function getValidationRules($entityId = null)
+    {
+        $childRules = $this->getChildModel()->getValidationRules($entityId);
+        $pivotRules = $this->getPivotValidationRules();
+
+        return array_merge($childRules, $pivotRules);
+    }
+
+    /**
+     * Override this method to provide custom validation rules.
+     *
+     * @return array
+     */
+    protected function getPivotValidationRules()
     {
         return [];
     }

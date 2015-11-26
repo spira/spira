@@ -76,7 +76,7 @@ class LinkedEntityTest extends TestCase
 
         $this->assertResponseStatus(201);
 
-        $this->assertCount(4, array_pluck($this->getJsonResponseArray(), '_self'));
+        $this->assertCount(4, array_pluck($this->getJsonResponseAsArray(), '_self'));
 
         $this->assertEmpty(
             array_diff(

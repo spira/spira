@@ -59,7 +59,7 @@ class EntityTest extends TestCase
         $this->addRelatedEntities($entity);
 
         $this->getJson('/test/entities', ['with-nested' => 'testMany']);
-        $objects = json_decode($this->response->getContent());
+        $objects = $this->getJsonResponse();
 
         $this->assertResponseOk();
         $this->shouldReturnJson();
@@ -75,8 +75,7 @@ class EntityTest extends TestCase
                     $this->assertObjectHasAttribute('_self', $nestedObject);
                     $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
                     $this->assertObjectHasAttribute('entityId', $nestedObject);
-                    $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-                    $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+                    $this->assertUuid($nestedObject->entityId);
                 }
             }
         }

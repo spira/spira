@@ -34,7 +34,7 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $parent = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($childId));
+        $this->validateRequest($request->json()->all(), $this->getValidationRules($childId), $childModel, true);
         $childModel->fill($request->json()->all());
         $this->checkPermission(static::class.'@attachOne', ['model' => $parent, 'children' => $childModel]);
 
@@ -79,7 +79,7 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $parent = $this->findParentEntity($id);
 
         $requestCollection = $request->json()->all();
-        $this->validateRequestCollection($requestCollection, $this->getChildModel());
+        $this->validateRequestCollection($requestCollection, $this->getChildModel(), true);
 
         $existingChildren = $this->findChildrenCollection($requestCollection, $parent);
         $childModels = $this->getChildModel()->hydrateRequestCollection($requestCollection, $existingChildren);
@@ -90,19 +90,11 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $this->getRelation($parent)->{$method}($this->makeSyncList($childModels, $requestCollection));
 
         $transformed = $this->getTransformer()->transformCollection($this->findAllChildren($parent), ['_self']);
-        $transformed = array_map(
-            function ($item) {
-                return array_filter(
-                    $item,
-                    function ($key) {
-                        return $key == '_self';
-                    },
-                    ARRAY_FILTER_USE_KEY
-                );
-            },
-            $transformed
-        );
 
-        return $this->getResponse()->collection($transformed, ApiResponse::HTTP_CREATED);
+        $responseCollection = collect($transformed)->map(function($entity){
+            return ['_self' => $entity['_self']];
+        })->toArray();
+
+        return $this->getResponse()->collection($responseCollection, ApiResponse::HTTP_CREATED);
     }
 }
