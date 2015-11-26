@@ -10,8 +10,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Transformers\PostTransformer;
 use App\Models\Article;
-use App\Http\Transformers\ArticleTransformer;
 use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Controllers\Traits\TagCategoryTrait;
 
@@ -25,9 +25,9 @@ class ArticleController extends EntityController
     /**
      * Assign dependencies.
      * @param Article $model
-     * @param ArticleTransformer $transformer
+     * @param PostTransformer $transformer
      */
-    public function __construct(Article $model, ArticleTransformer $transformer)
+    public function __construct(Article $model, PostTransformer $transformer)
     {
         parent::__construct($model, $transformer);
     }

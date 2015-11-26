@@ -50,7 +50,7 @@ namespace app.guest.articles.article {
 
             let article = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams);
 
-            expect(articleService.getModel).to.have.been.calledWith('foobar', ['articlePermalinks', 'metas', 'tags', 'author', 'comments', 'sections']);
+            expect(articleService.getModel).to.have.been.calledWith('foobar', ['permalinks', 'metas', 'tags', 'author', 'comments', 'sections']);
 
             expect(article).to.deep.equal(article);
 

@@ -26,7 +26,7 @@ Note that this route returns paginated results as defined in the `Content-Range`
 
             {!!
                 $factory->get(\App\Models\Article::class)
-                    ->setTransformer(App\Http\Transformers\ArticleTransformer::class)
+                    ->setTransformer(App\Http\Transformers\PostTransformer::class)
                     ->count(10)
                     ->json()
             !!}

@@ -12,7 +12,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Tag;
-use Illuminate\Http\Request;
+use Spira\Responder\Response\ApiResponse;
 
 class TagController extends EntityController
 {
@@ -24,12 +24,12 @@ class TagController extends EntityController
     /**
      * Get tags of a particular type.
      *
-     * @param Request $request
-     * @param  string $id
+     * @param  string $group
      * @return ApiResponse
      */
-    public function getGroupTags(Request $request, $group)
+    public function getGroupTags($group)
     {
+        /** @var Tag $tagGroupTag */
         $tagGroupTag = Tag::where('tag', '=', urldecode($group))->firstOrFail();
 
         $groupTags = $tagGroupTag->childTags()->get();
