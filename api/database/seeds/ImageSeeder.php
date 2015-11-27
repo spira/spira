@@ -35,7 +35,7 @@ class ImageSeeder extends BaseSeeder
 
         try {
             $this->seedFromCloudinary();
-        } catch (Cloudinary\Api\Error $e) {
+        } catch (\Cloudinary\Api\Error $e) {
             $this->command->error('Cloudinary Error: '.$e->getMessage());
             $this->command->comment('Unable to seed images from cloudinary, falling back to mock images');
             //create & link images

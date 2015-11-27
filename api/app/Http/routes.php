@@ -20,7 +20,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->patch('users/{id}', ['uses' => 'UserController@patchOne']);
     $app->delete('users/{id}', ['uses' => 'UserController@deleteOne']);
     $app->get('users/{id}/roles', ['uses' => 'PermissionsController@getAll']);
-    $app->put('users/{id}/roles', ['uses' => 'PermissionsController@putManyReplace']);
+    $app->put('users/{id}/roles', ['uses' => 'PermissionsController@putMany']);
     $app->get('users/{id}/profile', ['uses' => 'UserProfileController@getOne', 'as' => App\Models\UserProfile::class]);
     $app->put('users/{id}/profile', ['uses' => 'UserProfileController@putOne']);
     $app->patch('users/{id}/profile', ['uses' => 'UserProfileController@patchOne']);
@@ -37,11 +37,11 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->patch('articles/{id}', 'ArticleController@patchOne');
     $app->delete('articles/{id}', 'ArticleController@deleteOne');
     $app->put('articles/{id}/localizations/{region}', 'ArticleController@putOneLocalization');
-    $app->put('articles/{id}/meta', 'ArticleMetaController@putManyAdd');
+    $app->post('articles/{id}/meta', 'ArticleMetaController@postMany');
     $app->delete('articles/{id}/meta/{childId}', 'ArticleMetaController@deleteOne');
     $app->post('articles/{id}/comments', ['uses' => 'ArticleCommentController@postOne', 'middleware' => 'attachUserToEntity']);
-    $app->put('articles/{id}/tags', 'ArticleTagController@putManyReplace');
-    $app->put('articles/{id}/sections', 'ArticleSectionController@putManyAdd');
+    $app->put('articles/{id}/tags', 'ArticleTagController@putMany');
+    $app->post('articles/{id}/sections', 'ArticleSectionController@postMany');
     $app->delete('articles/{id}/sections', 'ArticleSectionController@deleteMany');
     $app->delete('articles/{id}/sections/{childId}', 'ArticleSectionController@deleteOne');
     $app->put('articles/{id}/sections/{childId}/localizations/{region}', 'ArticleSectionController@putOneChildLocalization');
@@ -53,7 +53,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->post('tags/', 'TagController@postOne');
     $app->patch('tags/{id}', 'TagController@patchOne');
     $app->delete('tags/{id}', 'TagController@deleteOne');
-    $app->put('tags/{id}/child-tags', 'ChildTagController@putManyReplace');
+    $app->put('tags/{id}/child-tags', 'ChildTagController@putMany');
 
     $app->put('images/{id}', 'ImageController@putOne');
     $app->patch('images/{id}', 'ImageController@patchOne');
@@ -71,7 +71,8 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
 
     $app->post('test/entities/{id}/child', 'ChildTestController@postOne');
     $app->put('test/entities/{id}/child/{childId}', 'ChildTestController@putOne');
-    $app->put('test/entities/{id}/children', 'ChildTestController@putManyAdd');
+    $app->put('test/entities/{id}/children', 'ChildTestController@putMany');
+    $app->post('test/entities/{id}/children', 'ChildTestController@postMany');
     $app->patch('test/entities/{id}/child/{childId}', 'ChildTestController@patchOne');
     $app->patch('test/entities/{id}/children', 'ChildTestController@patchMany');
     $app->delete('test/entities/{id}/child/{childId}', 'ChildTestController@deleteOne');
@@ -130,4 +131,10 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('test/entities/{id}/children', 'ChildTestController@getAll');
     $app->get('test/entities/{id}/child/{childId}', 'ChildTestController@getOne');
 
+    $app->get('test/many/{id}/children', 'LinkedEntityTestController@getAll');
+    $app->put('test/many/{id}/children', 'LinkedEntityTestController@syncMany');
+    $app->post('test/many/{id}/children', 'LinkedEntityTestController@attachMany');
+    $app->put('test/many/{id}/children/{childId}', 'LinkedEntityTestController@attachOne');
+    $app->delete('test/many/{id}/children/{childId}', 'LinkedEntityTestController@detachOne');
+    $app->delete('test/many/{id}/children', 'LinkedEntityTestController@detachAll');
 });

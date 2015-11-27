@@ -488,7 +488,7 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$entity]);
     }
 
-    public function testPutMetas()
+    public function testAddMetas()
     {
         $post = $this->getFactory($this->factoryClass)->create();
         $this->addMetasToPosts([$post]);
@@ -506,7 +506,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/meta', $entities);
+        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $class = $this->factoryClass;
@@ -524,7 +524,7 @@ class ArticleTest extends TestCase
         $this->cleanupDiscussions([$post]);
     }
 
-    public function testPutDuplicateMetaNames()
+    public function testAddDuplicateMetaNames()
     {
         /** @var AbstractPost $post */
         $post = $this->getFactory($this->factoryClass)->create();
@@ -543,7 +543,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/meta', $data);
+        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/meta', $data);
 
         $this->assertResponseStatus(500);
     }
