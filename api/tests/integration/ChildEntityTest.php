@@ -261,7 +261,7 @@ class ChildEntityTest extends TestCase
 
         $childCount = TestEntity::find($entity->entity_id)->testMany->count();
 
-        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
+        $this->withAuthorization()->postJson('/test/entities/'.$entity->entity_id.'/children', $childEntities);
 
         $object = json_decode($this->response->getContent());
 

@@ -36,4 +36,9 @@ class SecondTestEntity extends BaseModel implements LocalizableModelInterface
         'check_entity_id' => 'uuid',
         'value' => 'required|string',
     ];
+
+    public function testEntities()
+    {
+        return $this->belongsToMany(TestEntity::class, 'test_many_many', 'test_second_id', 'test_id');
+    }
 }
