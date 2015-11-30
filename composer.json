@@ -1,0 +1,41 @@
+{
+  "name": "spira/core",
+  "description": "Spira app core",
+  "keywords": [
+    "framework",
+    "laravel",
+    "lumen"
+  ],
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "laravel/lumen-framework": "5.1.*",
+    "vlucas/phpdotenv": "~1.0",
+    "bosnadev/database": "^0.11.0",
+    "league/fractal": "0.12.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "mockery/mockery": "^0.9.4",
+    "fzaninotto/faker": "^1.4",
+    "guzzlehttp/guzzle": "5.3.*",
+    "barryvdh/laravel-ide-helper": "dev-master"
+  },
+  "autoload": {
+    "psr-4": { "Spira\\Core\\": "" },
+    "exclude-from-classmap": [
+      "Tests/"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "Tests/"
+    ]
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "scripts": {
+
+  }
+}
