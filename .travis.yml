@@ -17,7 +17,7 @@ before_install:
   - sudo apt-get install -y libnotify-bin beanstalkd
 
 install:
-  - rm .env && cp .travis.env .env #replace the .env file with a custom travis one
+  - rm ./env/.env && cp ./env/.travis.env ./env/.env #replace the .env file with a custom travis one
 
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction
