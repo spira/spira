@@ -10,9 +10,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Datasets\Timezones;
-use Spira\Responder\Response\ApiResponse;
+use Spira\Core\Controllers\ApiController;
+use Spira\Core\Responder\Response\ApiResponse;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class TimezoneController extends ApiController
 {

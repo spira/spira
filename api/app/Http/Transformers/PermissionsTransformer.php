@@ -11,6 +11,7 @@
 namespace App\Http\Transformers;
 
 use App\Services\TransformerService;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 use Spira\Rbac\Item\Item;
 
 class PermissionsTransformer extends EloquentModelTransformer

@@ -12,9 +12,9 @@ namespace App\Services\Datasets;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use App\Exceptions\ServiceUnavailableException;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Spira\Core\Contract\Exception\ServiceUnavailableException;
 
 class Countries extends Dataset
 {

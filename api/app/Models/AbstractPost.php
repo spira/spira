@@ -14,12 +14,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Support\Str;
 use App\Models\Traits\TagTrait;
-use Spira\Model\Model\IndexedModel;
+use Spira\Core\Model\Model\IndexedModel;
 use App\Models\Traits\RateableTrait;
 use App\Models\Traits\BookmarkableTrait;
-use Spira\Model\Model\LocalizableModelTrait;
+use Spira\Core\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\LocalizableModelTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
-use Spira\Model\Model\LocalizableModelInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**

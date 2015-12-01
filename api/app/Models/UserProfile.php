@@ -10,7 +10,7 @@
 
 namespace App\Models;
 
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
 
 class UserProfile extends BaseModel
 {

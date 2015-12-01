@@ -10,8 +10,9 @@
 
 namespace App\Models;
 
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\BaseModel;
+
+use Spira\Core\Model\Collection\Collection;
+use Spira\Core\Model\Model\BaseModel;
 
 class RoleCollection extends Collection
 {

@@ -14,8 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Rhumsaa\Uuid\Uuid;
 use SeedTags;
-use Spira\Model\Model\BaseModel;
-use Spira\Model\Model\IndexedModel;
+use Spira\Core\Model\Model\IndexedModel;
 
 class Tag extends IndexedModel
 {

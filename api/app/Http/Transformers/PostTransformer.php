@@ -11,6 +11,7 @@
 namespace App\Http\Transformers;
 
 use App\Models\AbstractPost;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class PostTransformer extends EloquentModelTransformer
 {

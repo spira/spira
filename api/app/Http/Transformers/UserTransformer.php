@@ -10,6 +10,8 @@
 
 namespace App\Http\Transformers;
 
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
+
 class UserTransformer extends EloquentModelTransformer
 {
     public $nestedMap = [

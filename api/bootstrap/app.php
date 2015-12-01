@@ -49,7 +49,7 @@ $app->configure('jwt');
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
+    Spira\Core\Contract\Exception\Handler::class
 );
 
 $app->singleton(
@@ -94,7 +94,7 @@ $app->routeMiddleware([
 |
 */
 
-$app->register(App\Providers\AppServiceProvider::class);
+$app->register(Spira\Core\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);

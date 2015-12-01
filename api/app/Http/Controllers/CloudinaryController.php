@@ -10,9 +10,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Services\Cloudinary;
 use Illuminate\Http\Request;
+use Spira\Core\Controllers\ApiController;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class CloudinaryController extends ApiController
 {

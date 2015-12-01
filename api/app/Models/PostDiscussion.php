@@ -11,11 +11,11 @@
 namespace App\Models;
 
 use App;
-use Spira\Model\Model\BaseModel;
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\VirtualRelationInterface;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spira\Core\Model\Collection\Collection;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Model\Model\VirtualRelationInterface;
 
 class PostDiscussion extends BaseModel implements VirtualRelationInterface
 {

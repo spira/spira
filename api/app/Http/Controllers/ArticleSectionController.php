@@ -11,13 +11,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Spira\Model\Model\BaseModel;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
 use App\Extensions\Controller\LocalizableTrait;
-use App\Http\Transformers\EloquentModelTransformer;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleSectionController extends ChildEntityController
 {

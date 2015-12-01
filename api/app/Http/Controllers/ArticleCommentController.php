@@ -11,10 +11,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\PostDiscussion;
 use Illuminate\Http\Request;
-use App\Models\ArticleDiscussion;
-use Spira\Responder\Response\ApiResponse;
-use App\Http\Transformers\EloquentModelTransformer;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Responder\Response\ApiResponse;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleCommentController extends ChildEntityController
 {
@@ -50,7 +51,7 @@ class ArticleCommentController extends ChildEntityController
 
         $parent = $this->findParentEntity($id);
         $childModel = $this->getRelation($parent);
-        /** @var ArticleDiscussion $childModel */
+        /** @var PostDiscussion $childModel */
         $childModel = $childModel->save($request->json()->all(), $request->user());
 
         // If we respond with createdItem() it would be an empty response, so

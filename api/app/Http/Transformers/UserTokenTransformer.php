@@ -11,6 +11,7 @@
 namespace App\Http\Transformers;
 
 use App\Models\User;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class UserTokenTransformer extends EloquentModelTransformer
 {

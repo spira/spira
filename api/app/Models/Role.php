@@ -11,7 +11,7 @@
 namespace App\Models;
 
 use App\Models\Relations\RolePermissionRelation;
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
 
 /**
  * Class Role.

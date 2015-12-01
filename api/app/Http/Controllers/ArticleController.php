@@ -10,6 +10,7 @@
 
 namespace App\Http\Controllers;
 
+use Spira\Core\Controllers\EntityController;
 use App\Http\Transformers\PostTransformer;
 use App\Models\Article;
 use App\Extensions\Controller\LocalizableTrait;

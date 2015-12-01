@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 use Spira\Auth\User\SocialiteAuthenticatable;
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\IndexedModel;
+use Spira\Core\Model\Collection\Collection;
+use Spira\Core\Model\Model\IndexedModel;
 
 /**
  * Class User.

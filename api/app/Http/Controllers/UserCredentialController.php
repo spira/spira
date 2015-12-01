@@ -10,10 +10,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spira\Auth\Driver\Guard;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class UserCredentialController extends ChildEntityController
 {

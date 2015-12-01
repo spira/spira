@@ -10,13 +10,13 @@
 
 namespace App\Models;
 
-use Spira\Model\Model\BaseModel;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
-use Spira\Model\Model\LocalizableModelTrait;
-use Spira\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\LocalizableModelTrait;
 
 class Section extends BaseModel implements LocalizableModelInterface
 {

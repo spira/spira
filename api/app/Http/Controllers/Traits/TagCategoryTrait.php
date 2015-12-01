@@ -12,7 +12,9 @@ namespace App\Http\Controllers\Traits;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
-use App\Exceptions\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
+use Spira\Core\Model\Collection\Collection;
+
 
 trait TagCategoryTrait
 {
@@ -48,7 +50,7 @@ trait TagCategoryTrait
     /**
      * Get the child tags from the root tag name.
      * @param $rootTagName
-     * @return \Spira\Model\Collection\Collection
+     * @return Collection
      */
     public function getTagsFromRoot($rootTagName)
     {

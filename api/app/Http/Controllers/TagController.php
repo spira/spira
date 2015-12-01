@@ -10,9 +10,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Tag;
-use Spira\Responder\Response\ApiResponse;
+use Spira\Core\Controllers\EntityController;
+use Spira\Core\Responder\Response\ApiResponse;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class TagController extends EntityController
 {

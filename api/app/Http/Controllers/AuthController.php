@@ -16,20 +16,21 @@ use Illuminate\Contracts\Auth\Guard;
 use Spira\Auth\Driver\Guard as SpiraGuard;
 use Spira\Auth\Token\TokenInvalidException;
 use Spira\Auth\Token\TokenIsMissingException;
-use Spira\Responder\Response\ApiResponse;
 use App\Models\SocialLogin;
 use Illuminate\Http\Request;
-use App\Exceptions\BadRequestException;
-use App\Exceptions\UnauthorizedException;
-use App\Exceptions\NotImplementedException;
 use Illuminate\Contracts\Auth\Guard as Auth;
 use App\Http\Transformers\AuthTokenTransformer;
-use App\Exceptions\UnprocessableEntityException;
 use Illuminate\Contracts\Foundation\Application;
 use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spira\Core\Contract\Exception\BadRequestException;
+use Spira\Core\Contract\Exception\NotImplementedException;
+use Spira\Core\Contract\Exception\UnauthorizedException;
+use Spira\Core\Contract\Exception\UnprocessableEntityException;
+use Spira\Core\Controllers\ApiController;
+use Spira\Core\Responder\Response\ApiResponse;
 
 class AuthController extends ApiController
 {

@@ -10,8 +10,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TestEntity;
-use App\Http\Transformers\EloquentModelTransformer;
+
+use Spira\Core\Controllers\LinkedEntityController;
+use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class LinkedEntityTestController extends LinkedEntityController
 {

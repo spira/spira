@@ -11,8 +11,9 @@
 namespace App\Http\Controllers;
 
 use App\Extensions\Controller\LocalizableTrait;
-use App\Http\Transformers\EloquentModelTransformer;
-use App\Models\TestEntity;
+use Spira\Core\Controllers\EntityController;
+use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class TestController extends EntityController
 {

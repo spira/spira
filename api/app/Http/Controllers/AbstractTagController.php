@@ -10,14 +10,15 @@
 
 namespace App\Http\Controllers;
 
-use Spira\Model\Model\BaseModel;
-use Spira\Responder\Contract\TransformerInterface;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 abstract class AbstractTagController extends ChildEntityController
 {
     protected $relationName = 'tags';
 
-    public function __construct(BaseModel $parentModel, TransformerInterface $transformer)
+    public function __construct(BaseModel $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
     }
