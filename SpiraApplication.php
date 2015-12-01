@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace app;
+namespace Spira\Core;
 
 use Laravel\Lumen\Application;
 use Monolog\Handler\SyslogUdpHandler;

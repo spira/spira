@@ -10,7 +10,7 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-Dotenv::load(__DIR__.'/../');
+//Dotenv::load(__DIR__.'/../');
 
 /*
 |--------------------------------------------------------------------------
@@ -23,18 +23,18 @@ Dotenv::load(__DIR__.'/../');
 |
 */
 
-$app = new \App\SpiraApplication(
+$app = new \Spira\Core\SpiraApplication(
     realpath(__DIR__.'/../')
 );
 
 $app->withFacades();
 
-$app->withEloquent();
+//$app->withEloquent();
 
-$app->configure('hosts');
-$app->configure('elasticquent');
-$app->configure('regions');
-$app->configure('jwt');
+//$app->configure('hosts');
+//$app->configure('elasticquent');
+//$app->configure('regions');
+//$app->configure('jwt');
 
 /*
 |--------------------------------------------------------------------------
@@ -49,12 +49,12 @@ $app->configure('jwt');
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
+    Spira\Core\Contract\Exception\Handler::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
+    Spira\Core\Kernel::class
 );
 
 /*
@@ -69,7 +69,7 @@ $app->singleton(
 */
 
 $app->middleware([
-    App\Http\Middleware\TransformInputDataMiddleware::class,
+//    App\Http\Middleware\TransformInputDataMiddleware::class,
 //     // 'Illuminate\Cookie\Middleware\EncryptCookies',
 //     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 //     // 'Illuminate\Session\Middleware\StartSession',
@@ -77,11 +77,11 @@ $app->middleware([
 //     // 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
 ]);
 
-$app->routeMiddleware([
-    'transaction' => App\Http\Middleware\TransactionMiddleware::class,
-    'requireAuthorization' => App\Http\Middleware\AuthorizationMiddleware::class,
-    'attachUserToEntity' => App\Http\Middleware\AppendUserIdToRequestBodyMiddleware::class,
-]);
+//$app->routeMiddleware([
+//    'transaction' => App\Http\Middleware\TransactionMiddleware::class,
+//    'requireAuthorization' => App\Http\Middleware\AuthorizationMiddleware::class,
+//    'attachUserToEntity' => App\Http\Middleware\AppendUserIdToRequestBodyMiddleware::class,
+//]);
 
 /*
 |--------------------------------------------------------------------------
@@ -94,12 +94,12 @@ $app->routeMiddleware([
 |
 */
 
-$app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthDriverServiceProvider::class);
-$app->register(App\Providers\AccessServiceProvider::class);
-$app->register(Bosnadev\Database\DatabaseServiceProvider::class);
-$app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
-$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+//$app->register(App\Providers\AppServiceProvider::class);
+//$app->register(App\Providers\AuthDriverServiceProvider::class);
+//$app->register(App\Providers\AccessServiceProvider::class);
+//$app->register(Bosnadev\Database\DatabaseServiceProvider::class);
+//$app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
+//$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -112,8 +112,8 @@ $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 |
 */
 
-$app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
-    require __DIR__.'/../app/Http/routes.php';
-});
+//$app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
+//    require __DIR__.'/../app/Http/routes.php';
+//});
 
 return $app;

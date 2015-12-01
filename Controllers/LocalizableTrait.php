@@ -12,10 +12,10 @@ namespace Spira\Core\Controllers;
 
 use App\Models\Localization;
 use Illuminate\Http\Request;
-use Spira\Model\Model\BaseModel;
-use Spira\Model\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
-use Spira\Responder\Response\ApiResponse;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Responder\Response\ApiResponse;
+use Spira\Core\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Support\Facades\Request as RequestFacade;
 
@@ -98,6 +98,8 @@ trait LocalizableTrait
      * @param BaseModel $model
      * @param $localizations
      * @param $region
+     * @return
+     * @throws ValidationException
      */
     protected function validateAndSaveLocalizations(BaseModel $model, $localizations, $region)
     {

@@ -10,6 +10,7 @@
 
 namespace Spira\Core\Controllers;
 
+use Elasticquent\ElasticquentTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spira\Core\Model\Collection\Collection;
@@ -19,6 +20,7 @@ use Spira\Core\Responder\Contract\TransformerInterface;
 use Spira\Core\Responder\Paginator\RangeRequest;
 use Spira\Core\Responder\Response\ApiResponse;
 use Spira\Core\Validation\ValidationExceptionCollection;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
 {
@@ -293,116 +295,113 @@ abstract class EntityController extends ApiController
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
 
-    protected function searchAllEntities()
+
+    /**
+     * @param $query
+     * @param null $limit
+     * @param null $offset
+     * @param null $totalCount
+     * @return \Elasticquent\ElasticquentResultCollection
+     * @throws NotFoundHttpException
+     */
+    protected function searchAllEntities($query, $limit = null, $offset = null, &$totalCount = null)
     {
-        return false;
+        /* @var ElasticquentTrait $model */
+        $model = $this->getModel();
+
+        $queryArray = json_decode($query, true);
+
+        if (is_array($queryArray)) { // Complex query
+            $searchResults = $model->complexSearch([
+                'index' => $model->getIndexName(),
+                'type' => $model->getTypeName(),
+                'body' => $this->translateQuery($queryArray),
+            ]);
+        } else {
+            $searchResults = $model->searchByQuery([
+                'match_phrase_prefix' => [
+                    '_all' => $query,
+                ],
+            ], null, null, $limit, $offset);
+        }
+
+        if ($searchResults->totalHits() === 0) {
+            throw new NotFoundHttpException(sprintf('No results found for model `%s`', get_class($model)));
+        }
+
+        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
+            $totalCount = $searchResults->totalHits();
+        }
+
+        return $searchResults;
     }
 
-//    /**
-//     * @param $query
-//     * @param null $limit
-//     * @param null $offset
-//     * @param null $totalCount
-//     * @return \Elasticquent\ElasticquentResultCollection
-//     */
-//    protected function searchAllEntities($query, $limit = null, $offset = null, &$totalCount = null)
-//    {
-//        /* @var ElasticquentTrait $model */
-//        $model = $this->getModel();
-//
-//        $queryArray = json_decode($query, true);
-//
-//        if (is_array($queryArray)) { // Complex query
-//            $searchResults = $model->complexSearch([
-//                'index' => $model->getIndexName(),
-//                'type' => $model->getTypeName(),
-//                'body' => $this->translateQuery($queryArray),
-//            ]);
-//        } else {
-//            $searchResults = $model->searchByQuery([
-//                'match_phrase_prefix' => [
-//                    '_all' => $query,
-//                ],
-//            ], null, null, $limit, $offset);
-//        }
-//
-//        if ($searchResults->totalHits() === 0) {
-//            throw new NotFoundHttpException(sprintf('No results found for model `%s`', get_class($model)));
-//        }
-//
-//        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
-//            $totalCount = $searchResults->totalHits();
-//        }
-//
-//        return $searchResults;
-//    }
-//
-//    /**
-//     * Takes a query and translates it into a query that elastic search understands.
-//     *
-//     * Expect query to be in form, e.g.:
-//     * {
-//     *      _all: [ "stringA", "stringB" ],
-//     *      someField: [ "stringA" ],
-//     *      _nestedEntity: { key: [ "stringA", "stringB" ]
-//     * }
-//     *
-//     * Notes:
-//     * - Empty values will be removed from search completely.
-//     * - You must pass an array, even if it only contains 1 string.
-//     *
-//     * @param $query
-//     * @return mixed
-//     */
-//    private function translateQuery($query)
-//    {
-//        $processedQuery['query']['bool']['must'] = [];
-//
-//        foreach ($query as $key => $value) {
-//            if (Str::startsWith($key, '_') && $key != '_all') { // Nested entity
-//                reset($value);
-//                $fieldKey = key($value);
-//
-//                foreach ($value[$fieldKey] as $fieldValue) {
-//                    if (! empty($fieldValue)) {
-//                        $snakeKey = snake_case(substr($key, 1));
-//                        array_push($processedQuery['query']['bool']['must'],
-//                            [
-//                                'nested' => [
-//                                    'path' => $snakeKey,
-//                                    'query' => [
-//                                        'bool' => [
-//                                            'must' => [
-//                                                'match_phrase_prefix' => [
-//                                                    $snakeKey.'.'.snake_case($fieldKey) => $fieldValue,
-//                                                ],
-//                                            ],
-//                                        ],
-//                                    ],
-//                                ],
-//                            ]
-//                        );
-//                    }
-//                }
-//            } else {
-//                foreach ($value as $matchValue) {
-//                    if (! empty($matchValue)) {
-//                        array_push($processedQuery['query']['bool']['must'], [
-//                            'match_phrase_prefix' => [
-//                                snake_case($key) => $matchValue,
-//                            ],
-//                        ]);
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (empty($processedQuery['query']['bool']['must'])) { // No search params have been supplied, match all
-//            return ['query' => ['match_all' => []]];
-//        }
-//
-//        return $processedQuery;
-//    }
+    /**
+     * Takes a query and translates it into a query that elastic search understands.
+     *
+     * Expect query to be in form, e.g.:
+     * {
+     *      _all: [ "stringA", "stringB" ],
+     *      someField: [ "stringA" ],
+     *      _nestedEntity: { key: [ "stringA", "stringB" ]
+     * }
+     *
+     * Notes:
+     * - Empty values will be removed from search completely.
+     * - You must pass an array, even if it only contains 1 string.
+     *
+     * @param $query
+     * @return mixed
+     */
+    private function translateQuery($query)
+    {
+        $processedQuery['query']['bool']['must'] = [];
+
+        foreach ($query as $key => $value) {
+            if (Str::startsWith($key, '_') && $key != '_all') { // Nested entity
+                reset($value);
+                $fieldKey = key($value);
+
+                foreach ($value[$fieldKey] as $fieldValue) {
+                    if (! empty($fieldValue)) {
+                        $snakeKey = snake_case(substr($key, 1));
+                        array_push($processedQuery['query']['bool']['must'],
+                            [
+                                'nested' => [
+                                    'path' => $snakeKey,
+                                    'query' => [
+                                        'bool' => [
+                                            'must' => [
+                                                'match_phrase_prefix' => [
+                                                    $snakeKey.'.'.snake_case($fieldKey) => $fieldValue,
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ]
+                        );
+                    }
+                }
+            } else {
+                foreach ($value as $matchValue) {
+                    if (! empty($matchValue)) {
+                        array_push($processedQuery['query']['bool']['must'], [
+                            'match_phrase_prefix' => [
+                                snake_case($key) => $matchValue,
+                            ],
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if (empty($processedQuery['query']['bool']['must'])) { // No search params have been supplied, match all
+            return ['query' => ['match_all' => []]];
+        }
+
+        return $processedQuery;
+    }
 
     /**
      * @param $requestCollection
