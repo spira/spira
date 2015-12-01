@@ -10,7 +10,7 @@
 
 namespace Spira\Core\Controllers;
 
-use App\Models\Localization;
+use Spira\Core\Model\Model\Localization;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use Spira\Core\Model\Model\BaseModel;
