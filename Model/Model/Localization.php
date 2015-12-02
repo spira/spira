@@ -10,10 +10,6 @@
 
 namespace Spira\Core\Model\Model;
 
-use Illuminate\Support\Facades\Cache;
-use Spira\Core\Model\Model\BaseModel;
-use Spira\Core\Model\Model\CompoundKeyTrait;
-
 class Localization extends BaseModel
 {
     use CompoundKeyTrait;
@@ -57,7 +53,7 @@ class Localization extends BaseModel
      */
     public function save(array $options = [])
     {
-        Cache::forever(self::getCacheKey($this->localizable_id, $this->region_code), json_encode($this->localizations));
+        \Cache::forever(self::getCacheKey($this->localizable_id, $this->region_code), json_encode($this->localizations));
 
         parent::save($options);
     }
@@ -83,6 +79,6 @@ class Localization extends BaseModel
      */
     public static function getFromCache($entityId, $regionCode)
     {
-        return json_decode(Cache::get(self::getCacheKey($entityId, $regionCode)), true);
+        return json_decode(\Cache::get(self::getCacheKey($entityId, $regionCode)), true);
     }
 }

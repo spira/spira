@@ -15,6 +15,8 @@ use Illuminate\Contracts\Support\Arrayable;
 use Spira\Core\Helpers\RouteHelper;
 use Spira\Core\Model\Collection\Collection;
 use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\Localization;
 use Spira\Core\Responder\Contract\TransformerInterface;
 
 class EloquentModelTransformer extends BaseTransformer

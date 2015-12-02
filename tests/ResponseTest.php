@@ -7,8 +7,9 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+namespace Spira\Core\tests;
 
-use Spira\Responder\Response\ApiResponse;
+use Spira\Core\Responder\Response\ApiResponse;
 
 class ResponseTest extends TestCase
 {
@@ -35,7 +36,7 @@ class ResponseTest extends TestCase
     public function testRedirectNoUrl()
     {
         $this->setExpectedExceptionRegExp(
-            InvalidArgumentException::class,
+            \InvalidArgumentException::class,
             '/redirect.*/',
             0
         );
@@ -46,7 +47,7 @@ class ResponseTest extends TestCase
     public function testRedirectIncorrectStatusCode()
     {
         $this->setExpectedExceptionRegExp(
-            InvalidArgumentException::class,
+            \InvalidArgumentException::class,
             '/redirect.*/',
             0
         );

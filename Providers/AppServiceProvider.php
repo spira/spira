@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        $this->loadTranslationsFrom(__DIR__.'/../translations', 'spira-core');
         $this->app->extend('validator', function (Factory $validator) {
             $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
                 return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);

@@ -10,7 +10,7 @@
 
 namespace Spira\Core\Controllers;
 
-use App\Models\TestEntity;
+use Spira\Core\Model\Test\TestEntity;
 use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ChildTestController extends ChildEntityController

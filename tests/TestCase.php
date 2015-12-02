@@ -8,15 +8,16 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+namespace Spira\Core\tests;
+
 use Illuminate\Support\Facades\DB;
+use Laravel\Lumen\Testing\TestCase as LumenTestCase;
+use Spira\Core\tests\Extensions\AssertionsTrait;
+use Spira\Core\tests\Extensions\ModelFactoryTrait;
 
-class TestCase extends Laravel\Lumen\Testing\TestCase
+class TestCase extends LumenTestCase
 {
-    use AssertionsTrait, HelpersTrait, ModelFactoryTrait;
-
-    const TEST_ADMIN_USER_EMAIL = 'john.smith@example.com';
-
-    const TEST_USER_EMAIL = 'nick.jackson@example.com';
+    use AssertionsTrait, ModelFactoryTrait;
 
     protected $authHeader;
 
@@ -90,21 +91,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
     /**
-     * @param null $header
-     * @return $this
-     */
-    public function withAuthorization($header = null)
-    {
-        if (is_null($header)) {
-            $user = (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
-            $header = 'Bearer '.$this->tokenFromUser($user);
-        }
-        $this->authHeader = $header;
-
-        return $this;
-    }
-
-    /**
      * Visit the given URI with a [$method] request with content type of application/json.
      *
      * @param $method
@@ -160,9 +146,8 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     /**
      * Visit the given URI with a GET request with content type of application/json.
      *
-     * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
+     * @param  string $uri
+     * @param  array $headers
      * @return $this
      */
     public function getJson($uri, array $headers = [])

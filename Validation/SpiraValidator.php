@@ -13,6 +13,7 @@ namespace Spira\Core\Validation;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Arr;
 use Rhumsaa\Uuid\Uuid;
+use Spira\Core\Model\Datasets\Countries;
 
 class SpiraValidator extends Validator
 {
@@ -31,10 +32,10 @@ class SpiraValidator extends Validator
         return false;
     }
 
-    public function validateRbacRoleExists($attribute, $value, $parameters)
-    {
-        return (bool) $this->getGate()->getStorage()->getItem($value);
-    }
+//    public function validateRbacRoleExists($attribute, $value, $parameters)
+//    {
+//        return (bool) $this->getGate()->getStorage()->getItem($value);
+//    }
 
     public function validateNotRequiredIf($attribute, $value, $parameters)
     {
@@ -61,7 +62,7 @@ class SpiraValidator extends Validator
      */
     protected function validateCountry($attribute, $value, $parameters)
     {
-        $countries = \App::make('App\Services\Datasets\Countries')
+        $countries = \App::make(Countries::class)
             ->all()
             ->toArray();
 
@@ -95,13 +96,13 @@ class SpiraValidator extends Validator
         return in_array($value, $supportedRegionCodes);
     }
 
-    /**
-     * @return Gate
-     */
-    public function getGate()
-    {
-        return app(Gate::class);
-    }
+//    /**
+//     * @return Gate
+//     */
+//    public function getGate()
+//    {
+//        return app(Gate::class);
+//    }
 
     /**
      * Validate whether the attribute is decoded json (object or array).

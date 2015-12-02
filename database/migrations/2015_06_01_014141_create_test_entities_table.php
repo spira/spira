@@ -8,10 +8,9 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\TestEntity;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Spira\Core\Model\Test\TestEntity;
 
 class CreateTestEntitiesTable extends Migration
 {
@@ -22,6 +21,9 @@ class CreateTestEntitiesTable extends Migration
      */
     public function up()
     {
+        if (env('APP_ENV') !== 'testing'){
+            return true;
+        }
         Schema::create(TestEntity::getTableName(), function (Blueprint $table) {
                 $table->uuid('entity_id');
                 $table->string('varchar', 255);
@@ -51,6 +53,9 @@ class CreateTestEntitiesTable extends Migration
      */
     public function down()
     {
+        if (env('APP_ENV') !== 'testing'){
+            return true;
+        }
         Schema::drop(TestEntity::getTableName());
     }
 }

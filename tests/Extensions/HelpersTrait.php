@@ -13,6 +13,8 @@ use Faker\Factory as Faker;
 use Spira\Auth\Driver\Guard;
 use Spira\Rbac\Storage\StorageInterface;
 
+namespace Spira\Core\tests\Extensions;
+
 trait HelpersTrait
 {
     /**
@@ -160,5 +162,20 @@ trait HelpersTrait
         $payload = array_merge($payload, $customClaims);
 
         return $auth->getTokenizer()->encode($payload);
+    }
+
+    /**
+     * @param null $header
+     * @return $this
+     */
+    public function withAuthorization($header = null)
+    {
+        if (is_null($header)) {
+            $user = (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
+            $header = 'Bearer '.$this->tokenFromUser($user);
+        }
+        $this->authHeader = $header;
+
+        return $this;
     }
 }

@@ -19,11 +19,10 @@ class TokenInvalidException extends HttpException
     /**
      * Create a new Token Invalid exception instance.
      *
-     * @param string     $message
-     * @param int        $code
+     * @param string $message
+     * @param int $code
      * @param \Exception $previous
      *
-     * @return void
      */
     public function __construct($message = 'Invalid token.', $code = 0, Exception $previous = null)
     {

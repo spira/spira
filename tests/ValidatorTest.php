@@ -8,11 +8,19 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Services\SpiraValidator;
+namespace Spira\Core\tests;
+
+use Illuminate\Validation\Factory;
 use Rhumsaa\Uuid\Uuid;
+use Spira\Core\Validation\SpiraValidator;
 
 class ValidatorTest extends TestCase
 {
+    /**
+     * @var Factory
+     */
+    protected $validator;
+
     public function setUp()
     {
         parent::setUp();

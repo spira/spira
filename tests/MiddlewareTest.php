@@ -7,6 +7,10 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+namespace Spira\Core\tests;
+
+use Illuminate\Http\Request;
+use Spira\Core\Middleware\TransformInputDataMiddleware;
 
 class MiddlewareTest extends TestCase
 {
@@ -17,10 +21,10 @@ class MiddlewareTest extends TestCase
      */
     public function testTransformInputData()
     {
-        $mw = new App\Http\Middleware\TransformInputDataMiddleware();
+        $mw = new TransformInputDataMiddleware();
 
         // Create a request object to test
-        $request = new Illuminate\Http\Request();
+        $request = new Request();
         $request->offsetSet('firstName', 'foo');
         $request->offsetSet('lastname', 'bar');
 
@@ -38,10 +42,10 @@ class MiddlewareTest extends TestCase
 
     public function testTransformInputDataNested()
     {
-        $mw = new App\Http\Middleware\TransformInputDataMiddleware();
+        $mw = new TransformInputDataMiddleware();
 
         // Create a request object to test
-        $request = new Illuminate\Http\Request();
+        $request = new Request();
         $request->offsetSet('firstName', 'foo');
         $request->offsetSet('lastname', 'bar');
         $request->offsetSet('nestedArray', ['fooBar' => 'bar', 'foo' => 'bar', 'oneMore' => ['andThis' => true]]);

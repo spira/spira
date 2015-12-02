@@ -7,7 +7,12 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
-use App\Models\Localization;
+namespace Spira\Core\tests;
+
+use LogicException;
+use Spira\Core\Controllers\TestController;
+use Spira\Core\Model\Model\Localization;
+use Spira\Core\Model\Test\TestEntity;
 
 /**
  * Class CompoundKeyTraitTest.
@@ -34,10 +39,11 @@ class CompoundKeyTraitTest extends TestCase
 
     public function testSetKeysForSaveQuery()
     {
-        // Create an entity
-        $entity = factory(App\Models\TestEntity::class)->create();
+        $this->app->put('test/entities/{id}/localizations/{region}', TestController::class.'@putOneLocalization');
 
-        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+        // Create an entity
+        $entity = factory(TestEntity::class)->create();
+        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
             'varchar' => 'foo',
             'decimal' => 0.234,
         ]);

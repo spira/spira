@@ -8,10 +8,13 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+namespace Spira\Core\tests\integration;
+
+use Mockery;
 use Rhumsaa\Uuid\Uuid;
-use App\Models\TestEntity;
-use App\Models\Localization;
-use App\Models\SecondTestEntity;
+use Spira\Core\Model\Test\SecondTestEntity;
+use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\tests\TestCase;
 
 /**
  * Class EntityTest.

@@ -19,11 +19,10 @@ class ServiceUnavailableException extends HttpException
     /**
      * Create a new Service Unavailable exception instance.
      *
-     * @param string     $message
-     * @param int        $code
+     * @param string $message
+     * @param int $code
      * @param \Exception $previous
      *
-     * @return void
      */
     public function __construct($message = 'Service Unavailable.', $code = 0, Exception $previous = null)
     {

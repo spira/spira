@@ -1,9 +1,6 @@
 # Vagrant
 .vagrant
 
-# Logs
-logs/*
-
 # Runtime data
 pids
 *.pid
@@ -41,3 +38,9 @@ vendor
 
 # Private settings
 .secret.env
+
+# logs
+storage/*
+
+#helper
+_ide_helper.php

@@ -10,7 +10,7 @@
          stopOnFailure="false"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="Application Test Suite">
+        <testsuite name="Spira Core Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
@@ -22,8 +22,6 @@
     </filter>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="redis"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="CACHE_DRIVER" value="array"/>
     </php>
 </phpunit>

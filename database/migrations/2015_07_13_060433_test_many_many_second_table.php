@@ -8,10 +8,9 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\SecondTestEntity;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Spira\Core\Model\Test\SecondTestEntity;
 
 class TestManyManySecondTable extends Migration
 {
@@ -22,6 +21,9 @@ class TestManyManySecondTable extends Migration
      */
     public function up()
     {
+        if (env('APP_ENV') !== 'testing'){
+            return true;
+        }
         Schema::create(SecondTestEntity::getTableName(), function (Blueprint $table) {
             $table->uuid('entity_id');
             $table->uuid('check_entity_id');
@@ -37,6 +39,9 @@ class TestManyManySecondTable extends Migration
      */
     public function down()
     {
+        if (env('APP_ENV') !== 'testing'){
+            return true;
+        }
         Schema::drop(SecondTestEntity::getTableName());
     }
 }

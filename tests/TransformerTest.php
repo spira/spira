@@ -7,10 +7,13 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+namespace Spira\Core\tests;
 
-use App\Http\Transformers\EloquentModelTransformer;
-use App\Services\TransformerService;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery as m;
+use Spira\Core\Model\Test\SecondTestEntity;
+use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 /**
  * @property EloquentModelTransformer transformer
@@ -20,8 +23,9 @@ class TransformerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->transformer = $this->app->make('App\Http\Transformers\EloquentModelTransformer');
-        $this->service = $this->app->make(TransformerService::class);
+        $this->transformer = $this->app->make(EloquentModelTransformer::class);
+        $this->app->get('test_entity_one', ['as' => TestEntity::class, 'uses' => 'One@one']);
+        $this->app->get('test_entity_two', ['as' => SecondTestEntity::class, 'uses' => 'Two@two']);
     }
 
     /**
@@ -61,7 +65,7 @@ class TransformerTest extends TestCase
      */
     public function testCollection()
     {
-        $entities = factory(App\Models\TestEntity::class, 3)->make();
+        $entities = factory(TestEntity::class, 3)->make();
 
         $collection = $this->transformer->transformCollection($entities);
 
@@ -70,7 +74,7 @@ class TransformerTest extends TestCase
 
     public function testItem()
     {
-        $entity = factory(App\Models\TestEntity::class)->make();
+        $entity = factory(TestEntity::class)->make();
 
         $item = $this->transformer->transformItem($entity);
 
@@ -80,7 +84,7 @@ class TransformerTest extends TestCase
     public function testTransfomerService()
     {
         $checkArray = ['item' => 'foo'];
-        $transformed = $this->transformer->getService()->item(new \Illuminate\Database\Eloquent\Collection($checkArray));
+        $transformed = $this->transformer->getService()->item(new Collection($checkArray));
         $this->assertEquals($checkArray, $transformed);
     }
 
@@ -102,10 +106,10 @@ class TransformerTest extends TestCase
 
     public function testRelationSelf()
     {
-        /** @var App\Models\TestEntity $entity */
-        $entity = factory(App\Models\TestEntity::class)->create();
-        $hasOneEntity = factory(App\Models\SecondTestEntity::class)->make();
-        $hasManyEntity = factory(App\Models\SecondTestEntity::class, 2)->make()->all();
+        /** @var TestEntity $entity */
+        $entity = factory(TestEntity::class)->create();
+        $hasOneEntity = factory(SecondTestEntity::class)->make();
+        $hasManyEntity = factory(SecondTestEntity::class, 2)->make()->all();
 
         $entity->testOne()->save($hasOneEntity);
         $entity->testMany()->saveMany($hasManyEntity);
@@ -124,15 +128,4 @@ class TransformerTest extends TestCase
         }
     }
 
-    public function testAuthTokenTransformerCollection()
-    {
-        $this->setExpectedExceptionRegExp(
-            App\Exceptions\NotImplementedException::class,
-            '/tokens.*/',
-            0
-        );
-
-        $transformer = $this->app->make(App\Http\Transformers\AuthTokenTransformer::class);
-        $transformer->transformCollection([]);
-    }
 }

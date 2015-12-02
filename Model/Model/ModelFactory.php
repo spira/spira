@@ -12,7 +12,6 @@ namespace Spira\Core\Model\Model;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Container\Container;
-use Illuminate\Support\Facades\App;
 use Spira\Core\Responder\TransformerService;
 
 class ModelFactory
@@ -29,7 +28,7 @@ class ModelFactory
     public function __construct()
     {
         $this->factory = Container::getInstance()->make('Illuminate\Database\Eloquent\Factory');
-        $this->transformerService = App::make(TransformerService::class);
+        $this->transformerService = \App::make(TransformerService::class);
     }
 
     /**

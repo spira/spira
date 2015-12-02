@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TestManyManyTable extends Migration
+class CreateLocalizationsTable extends Migration
 {
-    const TABLE = 'test_many_many';
+    const TABLE_NAME = 'localizations';
 
     /**
      * Run the migrations.
@@ -23,9 +22,17 @@ class TestManyManyTable extends Migration
      */
     public function up()
     {
-        Schema::create(static::TABLE, function (Blueprint $table) {
-            $table->uuid('test_id');
-            $table->uuid('test_second_id');
+        Schema::create(static::TABLE_NAME, function (Blueprint $table) {
+
+            $table->uuid('localizable_id');
+            $table->string('localizable_type');
+
+            $table->char('region_code', 2);
+            $table->json('localizations');
+
+            $table->primary(['localizable_id', 'localizable_type', 'region_code']);
+
+            $table->index(['localizable_id', 'localizable_type']);
         });
     }
 
@@ -36,6 +43,6 @@ class TestManyManyTable extends Migration
      */
     public function down()
     {
-        Schema::drop(static::TABLE);
+        Schema::drop(static::TABLE_NAME);
     }
 }

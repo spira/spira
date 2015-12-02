@@ -7,6 +7,8 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+namespace Spira\Core\tests\Extensions;
+
 use Laravel\Lumen\Testing\AssertionsTrait as BaseAssertionsTrait;
 use Rhumsaa\Uuid\Uuid;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
