@@ -10,7 +10,6 @@
 
 namespace Spira\Core\Helpers;
 
-
 use Spira\Core\Model\Model\BaseModel;
 
 class RouteHelper

@@ -295,7 +295,6 @@ abstract class EntityController extends ApiController
         return $this->getModel()->take($limit)->skip($offset)->get();
     }
 
-
     /**
      * @param $query
      * @param null $limit

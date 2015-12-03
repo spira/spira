@@ -17,7 +17,6 @@ use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ChildTestController extends ChildEntityController
 {
-
     use LocalizableTrait;
 
     protected $relationName = 'testMany';
