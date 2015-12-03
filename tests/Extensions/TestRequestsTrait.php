@@ -44,5 +44,4 @@ trait TestRequestsTrait
 
         return json_decode($this->response->getContent(), $asArray);
     }
-
 }

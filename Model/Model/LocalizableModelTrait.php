@@ -10,7 +10,6 @@
 
 namespace Spira\Core\Model\Model;
 
-
 trait LocalizableModelTrait
 {
     /**

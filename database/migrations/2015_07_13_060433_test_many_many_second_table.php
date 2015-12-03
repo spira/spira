@@ -21,7 +21,7 @@ class TestManyManySecondTable extends Migration
      */
     public function up()
     {
-        if (env('APP_ENV') !== 'spira-core-testing'){
+        if (env('APP_ENV') !== 'spira-core-testing') {
             return true;
         }
         Schema::create(SecondTestEntity::getTableName(), function (Blueprint $table) {
@@ -39,7 +39,7 @@ class TestManyManySecondTable extends Migration
      */
     public function down()
     {
-        if (env('APP_ENV') !== 'spira-core-testing'){
+        if (env('APP_ENV') !== 'spira-core-testing') {
             return true;
         }
         Schema::drop(SecondTestEntity::getTableName());
