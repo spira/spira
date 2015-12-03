@@ -16,8 +16,6 @@ install:
   - rm ./env/.env && cp ./env/.travis.env ./env/.env #replace the .env file with a custom travis one
 
   - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --working-dir forum
-  - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
 
 before_script:
