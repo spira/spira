@@ -42,5 +42,8 @@ vendor
 # logs
 storage/*
 
+#coverage
+reports/*
+
 #helper
 _ide_helper.php

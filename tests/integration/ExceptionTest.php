@@ -64,31 +64,31 @@ class RestExceptionTest extends TestCase
         $this->assertTrue(is_string($object->message), 'message attribute is text');
     }
 
-//    /**
-//     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit.
-//     */
-//    public function testFatalError()
-//    {
-//        $webserverIp = getenv('WEBSERVER_HOST');
-//        $webserverPort = getenv('WEBSERVER_PORT');
-//
-//        $request = new Client([
-//            'base_url' => "http://$webserverIp:$webserverPort",
-//        ]);
-//
-//        try {
-//            $response = $request->get('/test/fatal-error');
-//            $statusCode = $response->getStatusCode();
-//            $this->fail('Expected exception GuzzleHttp\Exception\ServerException not thrown. Status code was '.$statusCode);
-//        } catch (ServerException $e) {
-//            $response = $e->getResponse();
-//
-//            $object = json_decode($response->getBody());
-//
-//            $this->assertTrue(is_object($object), 'Response is an object');
-//
-//            $this->assertObjectHasAttribute('message', $object);
-//            $this->assertTrue(is_string($object->message), 'message attribute is text');
-//        }
-//    }
+    /**
+     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit.
+     */
+    public function testFatalError()
+    {
+        $webserverIp = getenv('WEBSERVER_HOST');
+        $webserverPort = getenv('WEBSERVER_PORT');
+
+        $request = new Client([
+            'base_url' => "http://$webserverIp:$webserverPort",
+        ]);
+
+        try {
+            $response = $request->get('/test/fatal-error');
+            $statusCode = $response->getStatusCode();
+            $this->fail('Expected exception GuzzleHttp\Exception\ServerException not thrown. Status code was '.$statusCode);
+        } catch (ServerException $e) {
+            $response = $e->getResponse();
+
+            $object = json_decode($response->getBody());
+
+            $this->assertTrue(is_object($object), 'Response is an object');
+
+            $this->assertObjectHasAttribute('message', $object);
+            $this->assertTrue(is_string($object->message), 'message attribute is text');
+        }
+    }
 }

@@ -3,6 +3,5 @@ service_name: travis-ci
 # for php-coveralls
 src_dir: .
 coverage_clover:
-  - reports/coverage/api/clover.xml #api
-  - reports/coverage/app/clover.xml #app
+  - reports/coverage/clover.xml #api
 json_path: reports/coverage/coveralls-upload.json

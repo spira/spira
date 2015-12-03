@@ -23,6 +23,7 @@
     "elasticquent/elasticquent": "dev-master"
   },
   "require-dev": {
+    "satooshi/php-coveralls": "dev-master",
     "phpunit/phpunit": "~4.0",
     "mockery/mockery": "^0.9.4",
     "fzaninotto/faker": "^1.4",

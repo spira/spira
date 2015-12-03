@@ -6,37 +6,25 @@ addons:
   postgresql: "9.3"
 
 services:
-  - redis-server
   - elasticsearch
 
-env:
-  global:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libnotify-bin beanstalkd
 
 install:
-  - rm ./env/.env && cp ./env/.travis.env ./env/.env #replace the .env file with a custom travis one
+  - rm ./api/.env && cp ./api/.travis.env ./api/.env #replace the .env file with a custom travis one
 
   - travis_retry composer self-update
+  - travis_retry composer install --no-interaction --working-dir forum
+  - travis_retry composer install --prefer-source --no-interaction --working-dir api
   - travis_retry composer install --prefer-source --no-interaction
-  - travis_retry gem install mailcatcher
 
 before_script:
-  # Additional PHP config
-  - phpenv config-add travis.php.ini
   # rest of the stuff
   - psql -c 'create database spira;' -U postgres
-  - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
-  - mailcatcher # start mailcatcher server
-  - beanstalkd -d -l 127.0.0.1 -p 11300 # start queue listener
-  - sleep 5 # give server some time to boot
-
-script:
-  - gulp test
-  - ./node_modules/.bin/cucumber.js --tags ~@ignore #skip @ignored features
+  - php artisan migrate
+  - php artisan serve --port 8008 --host 127.0.0.1 --quiet 2>&1 >/dev/null &
 
 after_script:
   - php ./vendor/bin/coveralls -v

@@ -22,7 +22,7 @@ class TestManyManyTable extends Migration
      */
     public function up()
     {
-        if (env('APP_ENV') !== 'testing'){
+        if (env('APP_ENV') !== 'spira-core-testing'){
             return true;
         }
         Schema::create(static::TABLE, function (Blueprint $table) {
@@ -38,7 +38,7 @@ class TestManyManyTable extends Migration
      */
     public function down()
     {
-        if (env('APP_ENV') !== 'testing'){
+        if (env('APP_ENV') !== 'spira-core-testing'){
             return true;
         }
         Schema::drop(static::TABLE);
