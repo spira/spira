@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Spira\Core;
 
 use Illuminate\Console\Scheduling\Schedule;

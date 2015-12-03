@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             'supported_region'     => 'The :attribute must be a supported region. Supported region codes are ('.implode(', ', array_pluck(config('regions.supported'), 'code')).')',
         ];
 
-        $this->app->extend('validator', function (Factory $validator)  use ($spiraMessages){
+        $this->app->extend('validator', function (Factory $validator) use ($spiraMessages) {
             $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) use ($spiraMessages) {
                 return new SpiraValidator($translator, $data, $rules, array_merge($messages, $spiraMessages), $customAttributes);
             });

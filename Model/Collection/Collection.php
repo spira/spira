@@ -10,7 +10,6 @@
 
 namespace Spira\Core\Model\Collection;
 
-
 class Collection extends \Illuminate\Database\Eloquent\Collection
 {
     /**

@@ -21,7 +21,7 @@ class CreateTestEntitiesTable extends Migration
      */
     public function up()
     {
-        if (env('APP_ENV') !== 'spira-core-testing'){
+        if (env('APP_ENV') !== 'spira-core-testing') {
             return true;
         }
         Schema::create(TestEntity::getTableName(), function (Blueprint $table) {
@@ -53,7 +53,7 @@ class CreateTestEntitiesTable extends Migration
      */
     public function down()
     {
-        if (env('APP_ENV') !== 'spira-core-testing'){
+        if (env('APP_ENV') !== 'spira-core-testing') {
             return true;
         }
         Schema::drop(TestEntity::getTableName());

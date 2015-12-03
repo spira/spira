@@ -7,6 +7,7 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
+
 namespace Spira\Core\tests\integration;
 
 use GuzzleHttp\Client;
@@ -17,7 +18,7 @@ use Spira\Core\tests\TestCase;
  * Class RestExceptionTest.
  * @group integration
  */
-class RestExceptionTest extends TestCase
+class ExceptionTest extends TestCase
 {
     public function setUp()
     {

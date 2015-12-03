@@ -23,7 +23,6 @@ use Spira\Core\Responder\TransformerService;
 use Spira\Core\tests\Extensions\WithAuthorizationMockTrait;
 use Spira\Core\tests\TestCase;
 
-
 /**
  * Class ChildEntityTest.
  * @group integration
@@ -31,7 +30,7 @@ use Spira\Core\tests\TestCase;
 class ChildEntityTest extends TestCase
 {
     use  WithAuthorizationMockTrait;
-    
+
     public function setUp()
     {
         parent::setUp();

@@ -22,7 +22,6 @@ class TokenInvalidException extends HttpException
      * @param string $message
      * @param int $code
      * @param \Exception $previous
-     *
      */
     public function __construct($message = 'Invalid token.', $code = 0, Exception $previous = null)
     {

@@ -13,7 +13,6 @@ namespace Spira\Core\Controllers;
 use Illuminate\Http\Request;
 use Spira\Core\Responder\Response\ApiResponse;
 
-
 abstract class LinkedEntityController extends AbstractRelatedEntityController
 {
     public function getAll(Request $request, $id)
