@@ -19,42 +19,51 @@ use Spira\Core\tests\TestCase;
  */
 class RestExceptionTest extends TestCase
 {
-//    /**
-//     * Invalid route test.
-//     */
-//    public function testInvalidRoute()
-//    {
-//        $this->getJson('/this-url-does-not-exist');
-//
-//        $this->assertResponseStatus(404);
-//        $this->shouldReturnJson();
-//
-//        $object = json_decode($this->response->getContent());
-//
-//        $this->assertTrue(is_object($object), 'Response is an object');
-//
-//        $this->assertObjectHasAttribute('message', $object);
-//        $this->assertTrue(is_string($object->message), 'message attribute is text');
-//    }
-//
-//    /**
-//     * Internal exception test.
-//     */
-//    public function testInternalException()
-//    {
-//        $this->getJson('/test/internal-exception');
-//
-//        $this->assertResponseStatus(500);
-//        $this->shouldReturnJson();
-//
-//        $object = json_decode($this->response->getContent());
-//
-//        $this->assertTrue(is_object($object), 'Response is an object');
-//
-//        $this->assertObjectHasAttribute('message', $object);
-//        $this->assertTrue(is_string($object->message), 'message attribute is text');
-//    }
-//
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->app->group([], function ($app) {
+            require __DIR__.'/test_routes.php';
+        });
+    }
+
+    /**
+     * Invalid route test.
+     */
+    public function testInvalidRoute()
+    {
+        $this->getJson('/this-url-does-not-exist');
+
+        $this->assertResponseStatus(404);
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('message', $object);
+        $this->assertTrue(is_string($object->message), 'message attribute is text');
+    }
+
+    /**
+     * Internal exception test.
+     */
+    public function testInternalException()
+    {
+        $this->getJson('/test/internal-exception');
+
+        $this->assertResponseStatus(500);
+        $this->shouldReturnJson();
+
+        $object = json_decode($this->response->getContent());
+
+        $this->assertTrue(is_object($object), 'Response is an object');
+
+        $this->assertObjectHasAttribute('message', $object);
+        $this->assertTrue(is_string($object->message), 'message attribute is text');
+    }
+
 //    /**
 //     * Fatal exception tests. Uses guzzle to avoid the fatal exception halting phpunit.
 //     */

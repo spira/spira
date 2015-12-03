@@ -12,8 +12,10 @@ namespace Spira\Core\tests\integration;
 
 use Mockery;
 use Rhumsaa\Uuid\Uuid;
+use Spira\Core\Model\Model\Localization;
 use Spira\Core\Model\Test\SecondTestEntity;
 use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\tests\Extensions\WithAuthorizationMockTrait;
 use Spira\Core\tests\TestCase;
 
 /**
@@ -22,6 +24,8 @@ use Spira\Core\tests\TestCase;
  */
 class EntityTest extends TestCase
 {
+    use WithAuthorizationMockTrait;
+
     public function setUp()
     {
         parent::setUp();
@@ -34,6 +38,10 @@ class EntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         TestEntity::flushEventListeners();
         TestEntity::boot();
+
+        $this->app->group([], function ($app) {
+            require __DIR__.'/test_routes.php';
+        });
     }
 
     /**
@@ -48,6 +56,7 @@ class EntityTest extends TestCase
 
     public function testGetAll()
     {
+        $entity = $this->getFactory(TestEntity::class)->count(10)->create();
         $this->getJson('/test/entities');
 
         $this->assertResponseOk();
@@ -58,6 +67,7 @@ class EntityTest extends TestCase
 
     public function testGetAllWithNested()
     {
+        $entity = $this->getFactory(TestEntity::class)->count(10)->create();
         $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
@@ -1000,4 +1010,6 @@ class EntityTest extends TestCase
         $this->assertEquals('localization', $localizedEntity['json']['some']);
         $this->assertEquals('localization', $localizedEntity['json']['another'][0]['deeper']);
     }
+
+
 }

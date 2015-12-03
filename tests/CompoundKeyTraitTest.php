@@ -10,15 +10,26 @@
 namespace Spira\Core\tests;
 
 use LogicException;
-use Spira\Core\Controllers\TestController;
 use Spira\Core\Model\Model\Localization;
 use Spira\Core\Model\Test\TestEntity;
+use Spira\Core\tests\Extensions\WithAuthorizationMockTrait;
 
 /**
  * Class CompoundKeyTraitTest.
  */
 class CompoundKeyTraitTest extends TestCase
 {
+    use WithAuthorizationMockTrait;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->app->group([], function ($app) {
+            require __DIR__.'/integration/test_routes.php';
+        });
+    }
+
     /**
      * @expectedException     LogicException
      * @expectedExceptionCode 0
@@ -26,6 +37,7 @@ class CompoundKeyTraitTest extends TestCase
     public function testBootCompoundKeyTrait()
     {
         MockSinglePK::bootCompoundKeyTrait();
+
     }
 
     public function testGetQualifiedColumnName()
@@ -39,18 +51,17 @@ class CompoundKeyTraitTest extends TestCase
 
     public function testSetKeysForSaveQuery()
     {
-        $this->app->put('test/entities/{id}/localizations/{region}', TestController::class.'@putOneLocalization');
-
         // Create an entity
         $entity = factory(TestEntity::class)->create();
-        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+
+        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
             'varchar' => 'foo',
             'decimal' => 0.234,
         ]);
 
         // For some reason the only way to access the function setKeysForSaveQuery is to put a
         // localization where one already exists. Can not access method directly.
-        $this->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
+        $this->withAuthorization()->putJson('/test/entities/'.$entity->entity_id.'/localizations/au', [
             'varchar' => 'foobar',
         ]);
         $this->assertResponseStatus(201);

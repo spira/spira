@@ -11,9 +11,13 @@
 namespace Spira\Core\Model\Test;
 
 use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\LocalizableModelTrait;
 
-class SecondTestEntity extends BaseModel
+class SecondTestEntity extends BaseModel implements LocalizableModelInterface
 {
+    use LocalizableModelTrait;
+
     public $table = 'second_test_entities';
 
     protected $primaryKey = 'entity_id';

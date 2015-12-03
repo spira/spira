@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Testing\TestCase as LumenTestCase;
 use Spira\Core\tests\Extensions\AssertionsTrait;
 use Spira\Core\tests\Extensions\ModelFactoryTrait;
+use Spira\Core\tests\Extensions\TestRequestsTrait;
 
 class TestCase extends LumenTestCase
 {
-    use AssertionsTrait, ModelFactoryTrait;
+    use AssertionsTrait, ModelFactoryTrait, TestRequestsTrait;
 
     protected $authHeader;
 
@@ -50,8 +51,8 @@ class TestCase extends LumenTestCase
     protected function bootTraits()
     {
         foreach (get_declared_traits() as $trait) {
-            if (method_exists($this, 'boot'.$trait)) {
-                $this->{'boot'.$trait}();
+            if (method_exists($this, 'boot'.class_basename($trait))) {
+                $this->{'boot'.class_basename($trait)}();
             }
         }
     }

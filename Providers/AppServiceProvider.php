@@ -23,10 +23,21 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->loadTranslationsFrom(__DIR__.'/../translations', 'spira-core');
-        $this->app->extend('validator', function (Factory $validator) {
-            $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
-                return new SpiraValidator($translator, $data, $rules, $messages, $customAttributes);
+        $spiraMessages = [
+            'uuid'                 => 'The :attribute must be an UUID string.',
+            'not_required_if'      => 'The :attribute must be null',
+            'decimal'              => 'The :attribute must be a decimal.',
+            'not_found'            => 'The selected :attribute is invalid.',
+            'country'              => 'The :attribute must be a valid country code.',
+            'string'               => 'The :attribute must be text',
+            'decoded_json'         => 'The :attribute must be an object or an array',
+            'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
+            'supported_region'     => 'The :attribute must be a supported region. Supported region codes are ('.implode(', ', array_pluck(config('regions.supported'), 'code')).')',
+        ];
+
+        $this->app->extend('validator', function (Factory $validator)  use ($spiraMessages){
+            $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) use ($spiraMessages) {
+                return new SpiraValidator($translator, $data, $rules, array_merge($messages, $spiraMessages), $customAttributes);
             });
 
             return $validator;
