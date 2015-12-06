@@ -7,5 +7,5 @@ Feature: Home page
   Scenario: Visiting home page
     Given I am an anonymous user
     When I go to the home page
-    Then I should see "Spira - Home" as the page title
+    Then I should see "Spira" as the page title
     And I should see "Spira" as the main heading
