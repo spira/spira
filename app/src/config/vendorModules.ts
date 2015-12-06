@@ -4,10 +4,15 @@ namespace config.vendorModules {
 
     class CloudinaryConfig {
 
-        constructor() {
 
-            //for some dumb reason cloudinary angular is dependent on jquery. Hopefully they support native angular at some point
-            (<any>$).cloudinary.config().cloud_name = 'spira';
+        static $inject = ['cloudinaryProvider'];
+
+        constructor(cloudinaryProvider:any) {
+
+            cloudinaryProvider.config({
+                upload_endpoint: 'https://api.cloudinary.com/v1_1/', // default
+                cloud_name: 'spira', // required
+            });
         }
     }
 
@@ -100,7 +105,8 @@ namespace config.vendorModules {
         'infinite-scroll', //infinite scrolling - https://github.com/sroze/ngInfiniteScroll
         'ui.validate', // Field validator - https://github.com/angular-ui/ui-validate
         'ngFileUpload', // File uploader - https://github.com/danialfarid/ng-file-upload
-        'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
+        //'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
+        'angular-cloudinary', //https://github.com/thenikso/angular-cloudinary
         'hc.marked', //markdown parser - https://github.com/Hypercubed/angular-marked
         'angular-carousel', //content carousel - https://github.com/revolunet/angular-carousel
         'md.data.table', //https://github.com/daniel-nagy/md-data-table
