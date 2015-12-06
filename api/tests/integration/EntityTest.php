@@ -212,7 +212,7 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(404);
     }
-    
+
     public function testGetAllPaginatedComplexSearchMatchAll()
     {
         $results = $this->getFactory(TestEntity::class)->count(5)->make();
@@ -227,8 +227,7 @@ class EntityTest extends TestCase
             ->andReturn(5)
             ->shouldReceive('getIterator')
             ->once()
-            ->andReturn($results->getIterator())
-        ;
+            ->andReturn($results->getIterator());
 
         $mockModel = Mockery::mock(TestEntity::class);
         $mockModel
