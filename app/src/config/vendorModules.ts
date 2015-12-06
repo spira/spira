@@ -40,6 +40,49 @@ namespace config.vendorModules {
 
     }
 
+    class MarkedInit {
+
+        static $inject = ['marked', '$state'];
+
+        constructor(private marked, private $state:ng.ui.IStateService) {
+
+            let newRenderer = {
+                link: (href, title, text) => {
+
+                    let $state:ng.ui.IStateService;
+
+                    let shortcodeMatcher = /(recipe|article):(.*)/;
+                    let matches = href.match(shortcodeMatcher);
+                    if (matches){
+                        let state = '.';
+                        switch(matches[1]){
+                            case 'article':
+                                state = 'app.guest.articles.article';
+                            break;
+                            case 'recipe':
+                                state = 'app.guest.recipes.article';
+                            break;
+                        }
+
+                        href = this.$state.href(state, {permalink:matches[2]});
+                    }
+
+                    return `<a href="${href}" target='_blank'>${text}</a>`;
+                }
+            };
+
+            /**
+             * Note the following implementation is a hack to allow renderer to be configured after bootstrap.
+             * Ideally this would be implemented with `markedProvider.setRenderer`, however that only work in
+             * config phase due to it being a provider. If https://github.com/Hypercubed/angular-marked/issues/37
+             * is resolved, edit this feature
+             */
+            this.marked.defaults.renderer = _.merge(this.marked.defaults.renderer, newRenderer);
+
+        }
+
+    }
+
     angular.module(namespace, [
         'ngMessages', //nice validation messages
         'ngMaterial', //angular material
@@ -60,8 +103,11 @@ namespace config.vendorModules {
         'cloudinary', //directives for displaying cloudinary images (official) - https://github.com/cloudinary/cloudinary_angular
         'hc.marked', //markdown parser - https://github.com/Hypercubed/angular-marked
         'angular-carousel', //content carousel - https://github.com/revolunet/angular-carousel
+        'md.data.table', //https://github.com/daniel-nagy/md-data-table
     ])
     .config(AuthConfig)
     .config(CloudinaryConfig)
+    //.config(MarkedConfig)
+    .run(MarkedInit)
 
 }

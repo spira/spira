@@ -40,7 +40,7 @@ class UserProfileTest extends TestCase
 
         $user->userProfile()->save($this->getFactory(UserProfile::class)->make());
 
-        $this->getJson('/users/'.$user->user_id.'/profile', ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
+        $this->withAuthorization('Bearer '.$token)->getJson('/users/'.$user->user_id.'/profile');
 
         $this->assertResponseStatus(200);
 
@@ -62,7 +62,7 @@ class UserProfileTest extends TestCase
 
         $profileTransformed = $this->getFactory(UserProfile::class)->setModel($userProfile)->transformed();
 
-        $this->putJson('/users/'.$user->user_id.'/profile', $profileTransformed, ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
+        $this->withAuthorization('Bearer '.$token)->putJson('/users/'.$user->user_id.'/profile', $profileTransformed);
 
         $this->assertResponseStatus(201);
 
@@ -86,7 +86,7 @@ class UserProfileTest extends TestCase
 
         $profileTransformed = $this->getFactory(UserProfile::class)->setModel($user->userProfile)->transformed();
 
-        $this->patchJson('/users/'.$user->user_id.'/profile', $profileTransformed, ['HTTP_AUTHORIZATION' => 'Bearer '.$token]);
+        $this->withAuthorization('Bearer '.$token)->patchJson('/users/'.$user->user_id.'/profile', $profileTransformed);
 
         $this->assertResponseStatus(204);
 

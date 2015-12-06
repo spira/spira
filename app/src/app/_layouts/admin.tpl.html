@@ -12,7 +12,6 @@
 
         <div flex layout="column"
              tabIndex="-1"
-             class="md-whiteframe-z2"
              layout-fill
         >
 
@@ -21,7 +20,7 @@
                            ng-click="AppController.toggleNavigationSidenav()" aria-label="Show Menu">
                     <md-icon>menu</md-icon>
                 </md-button>
-                <h2 ng-bind="AppController.$state.current.data.title"></h2>
+                <h2 ng-bind="AppController.$state.current.data.title" class="md-title"></h2>
             </md-toolbar>
 
             <div layout="column"

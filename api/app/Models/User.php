@@ -13,9 +13,11 @@ namespace App\Models;
 use App\Models\Relations\UserRoleRelation;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Rhumsaa\Uuid\Uuid;
 use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Model\Collection\Collection;
 use Spira\Model\Model\IndexedModel;
@@ -102,48 +104,48 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     protected $mappingProperties = [
         'user_id' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'email_confirmed' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'timezone_identifier' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'avatar_img_url' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'created_at' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'updated_at' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'username' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard',
+            'search_analyzer' => 'standard'
         ],
         'email' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard',
+            'search_analyzer' => 'standard'
         ],
         'first_name' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard',
+            'search_analyzer' => 'standard'
         ],
         'last_name' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard',
-        ],
+            'search_analyzer' => 'standard'
+        ]
     ];
 
     /**
@@ -278,6 +280,21 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         }
 
         return $this->userCredential->password;
+    }
+
+    /**
+     * @param string $id user_id or email
+     * @return AbstractPost
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return static::findOrFail($id);
+        }
+
+        return $this->findByEmail($id);
     }
 
     /**

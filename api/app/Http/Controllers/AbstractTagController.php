@@ -29,4 +29,5 @@ abstract class AbstractTagController extends ChildEntityController
             '_pivot.tag_group_parent_id' => 'required|uuid',
         ];
     }
+    
 }

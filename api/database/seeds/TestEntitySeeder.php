@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Symfony\Component\Console\Helper\ProgressBar;
+
 class TestEntitySeeder extends BaseSeeder
 {
     /**
@@ -17,6 +19,15 @@ class TestEntitySeeder extends BaseSeeder
      */
     public function run()
     {
+        $this->command->comment('Seeding Test Entities');
+
+        /** @var ProgressBar $progressBar */
+        $progressBar = $this->command->getOutput()->createProgressBar(20);
+
         factory(App\Models\TestEntity::class, 20)->create();
+
+        $progressBar->finish();
+        $this->command->line('');
+
     }
 }

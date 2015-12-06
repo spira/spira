@@ -9,16 +9,21 @@
  */
 
 use App\Models\Tag;
+use App\Models\Article;
 
 class ArticleSeeder extends AbstractPostSeeder
 {
+
+    protected $addComments = true;
+
     protected function getClass()
     {
-        return \App\Models\Article::class;
+        return Article::class;
     }
 
     protected function getGroupTagPivots($tags)
     {
         return Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
     }
+
 }

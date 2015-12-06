@@ -9,6 +9,7 @@ namespace common.services {
         namespace+'.error',
         namespace+'.image',
         namespace+'.region',
+        namespace+'.utility',
         namespace+'.article',
         namespace+'.countries',
         namespace+'.timezones',

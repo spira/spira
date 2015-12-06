@@ -161,7 +161,7 @@ class ArticleSectionTest extends TestCase
             ]])
             ->transformed();
 
-        $imageSection = $this->getFactory(Section::class, MediaContent::CONTENT_TYPE)
+        $mediaSection = $this->getFactory(Section::class, MediaContent::CONTENT_TYPE)
             ->customize(['content' => [
                 'media' => 'not-an-array', //should validate array
             ]])
@@ -171,7 +171,7 @@ class ArticleSectionTest extends TestCase
             ->customize(['content' => []])
             ->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$richTextSection, $blockquoteSection, $imageSection, $promoSection]);
+        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$richTextSection, $blockquoteSection, $mediaSection, $promoSection]);
 
         $this->assertResponseStatus(422);
     }

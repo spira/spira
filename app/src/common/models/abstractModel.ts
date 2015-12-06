@@ -39,6 +39,26 @@ namespace common.models {
         getTagGroups?():string[];
     }
 
+    export interface IMetaableModel extends AbstractModel {
+        _metas:common.models.Meta[];
+    }
+
+    export interface IPermalinkableModel extends AbstractModel {
+        permalink:string;
+    }
+
+    export interface IAuthoredModel extends AbstractModel {
+        authorId:string;
+        _author:common.models.User;
+        authorOverride:string;
+        authorWebsite:string;
+    }
+
+    export interface IShortlinkableModelStatic {
+        new(data?:any, exists?:boolean):AbstractModel;
+        __shortcode:string;
+    }
+
     export abstract class AbstractModel implements IModel {
 
         protected __nestedEntityMap:INestedEntityMap;
@@ -98,6 +118,24 @@ namespace common.models {
          */
         protected castMoment(value:string):moment.Moment {
             return moment(value);
+        }
+
+        /**
+         * Converts a time string to a moment duration object
+         * @param value
+         * @returns {moment.Duration}
+         */
+        protected castTime(value:string):moment.Duration {
+            return moment.duration(value);
+        }
+
+        /**
+         * Converts to a number
+         * @param value
+         * @returns {Number}
+         */
+        protected castNumber(value:any):Number {
+            return Number(value);
         }
 
         /**

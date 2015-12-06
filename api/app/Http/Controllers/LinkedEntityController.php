@@ -85,9 +85,13 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $childModels = $this->getChildModel()->hydrateRequestCollection($requestCollection, $existingChildren);
 
         $this->checkPermission(static::class.'@'.$method.'Many', ['model' => $parent, 'children' => $childModels]);
-        $this->saveNewItemsInCollection($childModels);
 
+        $this->preSync($parent, $childModels);
+
+        $this->saveNewItemsInCollection($childModels);
         $this->getRelation($parent)->{$method}($this->makeSyncList($childModels, $requestCollection));
+
+        $this->postSync($parent, $childModels);
 
         $transformed = $this->getTransformer()->transformCollection($this->findAllChildren($parent), ['_self']);
 

@@ -651,4 +651,5 @@ class AuthTest extends TestCase
 
         $this->assertResponseStatus(200);
     }
+
 }

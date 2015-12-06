@@ -118,8 +118,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 
@@ -336,8 +335,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('entityId', $object);
-        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->entityId);
-        $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
+        $this->assertTrue(Uuid::isValid($object->entityId));
 
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
@@ -376,8 +374,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 

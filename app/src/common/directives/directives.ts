@@ -8,6 +8,7 @@ namespace common.directives {
         namespace + '.menuToggle',
         namespace + '.uploadImage',
         namespace + '.groupedTags',
+        namespace + '.entitySearch',
         namespace + '.markdownEditor',
         namespace + '.localizableInput',
         namespace + '.selectMediaImage',

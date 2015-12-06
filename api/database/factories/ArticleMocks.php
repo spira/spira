@@ -20,6 +20,8 @@ $postAttributes = function (\Faker\Generator $faker) {
         $users = \App\Models\User::all();
     }
 
+    $authorOverride = $faker->boolean();
+
     return [
         'post_id' => $faker->uuid,
         'title' => $faker->sentence,
@@ -28,10 +30,13 @@ $postAttributes = function (\Faker\Generator $faker) {
         'thumbnail_image_id' => null,
         'permalink' => $faker->boolean(90) ? $faker->unique()->slug : null,
         'author_id' => $users->random(1)->user_id,
-        'author_display' => $faker->boolean(50),
+        'author_override' => $authorOverride ? $faker->name : null,
+        'author_website' => $authorOverride ? $faker->optional()->url : null,
         'show_author_promo' => $faker->boolean(50),
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
         'sections_display' => null,
+        'users_can_comment' => false,
+        'public_access' => false
     ];
 };
 

@@ -11,6 +11,7 @@
 use App\Models\Image;
 use Illuminate\Support\Facades\App;
 use App\Services\Cloudinary;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class ImageSeeder extends BaseSeeder
 {
@@ -22,6 +23,7 @@ class ImageSeeder extends BaseSeeder
     public function run()
     {
 
+        $this->command->comment('Seeding Images');
         /*
          * if we're in the travis ci environment, don't use the cloudinary remote images as the tests are the
          * same, and it uses up connection quota unnecessarily
@@ -58,6 +60,10 @@ class ImageSeeder extends BaseSeeder
 
         $this->command->comment(count($images).' images retrieved from Cloudinary');
 
+
+        /** @var ProgressBar $progressBar */
+        $progressBar = $this->command->getOutput()->createProgressBar(count($images));
+
         foreach ($images as $image) {
             $imageId = $image['public_id'];
             if (! \Rhumsaa\Uuid\Uuid::isValid($imageId)) {
@@ -71,6 +77,11 @@ class ImageSeeder extends BaseSeeder
                     'format' => $image['format'],
                 ]
             );
+
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $this->command->line('');
     }
 }

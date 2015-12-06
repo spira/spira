@@ -42,6 +42,7 @@ namespace common.models {
                 linkedTagsMustExist: false,
                 linkedTagsMustBeChildren: false,
                 linkedTagsLimit: null,
+                readOnly: false
             };
 
             return tag;

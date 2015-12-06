@@ -1,8 +1,9 @@
 namespace common.mixins {
 
-    applyMixins(common.models.Article, [SectionableModel]);
+    applyMixins(common.models.Article, [SectionableModel, LocalizableModel]);
+
     applyMixins(app.admin.articles.article.content.ContentController, [SectionableController]);
-    applyMixins(common.models.Article, [SectionableModel, TaggableModel, LocalizableModel]);
-    applyMixins(common.services.article.ArticleService, [SectionableApiService, TaggableApiService, LocalizableApiService]);
+
+    applyMixins(common.services.article.ArticleService, [SectionableApiService, TaggableApiService, LocalizableApiService, MetaableApiService]);
 
 }
