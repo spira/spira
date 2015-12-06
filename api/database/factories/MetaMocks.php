@@ -11,7 +11,7 @@
 $factory->define(App\Models\Meta::class, function (\Faker\Generator $faker) {
     return [
         'meta_id' => $faker->uuid,
-        'meta_name' => $faker->boolean(50) ? $faker->randomElement(['name','description','keyword','canonical']) : $faker->word,
+        'meta_name' => $faker->boolean(50) ? $faker->randomElement(['name', 'description', 'keyword', 'canonical']) : $faker->word,
         'meta_content' => $faker->slug,
     ];
 });

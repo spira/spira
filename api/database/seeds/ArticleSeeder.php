@@ -13,7 +13,6 @@ use App\Models\Article;
 
 class ArticleSeeder extends AbstractPostSeeder
 {
-
     protected $addComments = true;
 
     protected function getClass()
@@ -25,5 +24,4 @@ class ArticleSeeder extends AbstractPostSeeder
     {
         return Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
     }
-
 }

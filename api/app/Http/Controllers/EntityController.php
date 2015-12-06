@@ -94,7 +94,7 @@ abstract class EntityController extends ApiController
     }
 
     /**
-     * Get one, matching on all the route parameters
+     * Get one, matching on all the route parameters.
      * @param Request $request
      * @return ApiResponse
      */
@@ -110,7 +110,7 @@ abstract class EntityController extends ApiController
     }
 
     /**
-     * Get all, matching on all the route parameters
+     * Get all, matching on all the route parameters.
      * @param Request $request
      * @return ApiResponse
      */
@@ -374,9 +374,9 @@ abstract class EntityController extends ApiController
             ], null, null, $limit, $offset);
         }
 
-        if ($searchResults instanceof ElasticquentResultCollection){
+        if ($searchResults instanceof ElasticquentResultCollection) {
             $totalHits = $searchResults->totalHits();
-        }else{
+        } else {
             $totalHits = $searchResults->count();
         }
 
@@ -407,6 +407,7 @@ abstract class EntityController extends ApiController
                 'body' => $this->translateQuery($queryArray),
             ]
         );
+
         return $searchResults;
     }
 

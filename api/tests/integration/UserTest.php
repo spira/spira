@@ -256,7 +256,6 @@ class UserTest extends TestCase
         $this->assertTrue(Hash::check('foobarfoobar', $updatedCredentials->password));
     }
 
-
     public function testPatchOneBySelfUserPassword()
     {
         $user = $this->createUser();

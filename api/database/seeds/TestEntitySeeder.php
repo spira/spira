@@ -28,6 +28,5 @@ class TestEntitySeeder extends BaseSeeder
 
         $progressBar->finish();
         $this->command->line('');
-
     }
 }

@@ -104,7 +104,7 @@ class EntityTest extends TestCase
             $this->addRelatedEntities($entity);
         });
 
-        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10','with-nested' => 'testMany']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10', 'with-nested' => 'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(206);
@@ -194,7 +194,7 @@ class EntityTest extends TestCase
             ->with([
                 'index' => 'defaultIndex',
                 'type' => 'someTypeName',
-                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']],['match_phrase_prefix' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
+                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']], ['match_phrase_prefix' => ['author_id' => 'some UUID']], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
             ])
             ->andReturn($resultsMock);
 
@@ -315,7 +315,7 @@ class EntityTest extends TestCase
             $last = $firstAndLast[1];
         }
 
-        return [$first,$last,$total];
+        return [$first, $last, $total];
     }
 
     public function testGetOne()
@@ -489,7 +489,7 @@ class EntityTest extends TestCase
         $factory->count(5)->create();
 
         $entities = $factory
-            ->hide(['entity_id','_self'])
+            ->hide(['entity_id', '_self'])
             ->count(5)
             ->transformed();
 
