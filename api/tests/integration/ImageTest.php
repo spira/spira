@@ -50,7 +50,7 @@ class ImageTest extends TestCase
 
     public function testSignRequest()
     {
-        $this->getJson('/cloudinary/signature?foo=bar&baz=quux');
+        $this->withAuthorization()->getJson('/cloudinary/signature?foo=bar&baz=quux');
 
         $this->assertResponseStatus(200);
         $this->shouldReturnJson();
