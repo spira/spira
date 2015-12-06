@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace App\Providers;
 
@@ -13,7 +20,7 @@ class ApplicationProvider extends AppServiceProvider
     {
         parent::boot();
         $spiraMessages = [
-            'rbac_role_exists'     => 'The :attribute must be an existing Rbac role'
+            'rbac_role_exists'     => 'The :attribute must be an existing Rbac role',
         ];
 
         $this->app->extend('validator', function (Factory $validator) use ($spiraMessages) {

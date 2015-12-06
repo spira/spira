@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-
 class TestCase extends \Spira\Core\tests\TestCase
 {
     const TEST_ADMIN_USER_EMAIL = 'john.smith@example.com';
@@ -26,7 +25,6 @@ class TestCase extends \Spira\Core\tests\TestCase
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
-
 
     /**
      * @param null $header

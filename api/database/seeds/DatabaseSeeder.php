@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call('ImageSeeder');
         $this->call('UserStorySeeder');
 
-        if (env('APP_ENV') === 'demo'){
+        if (env('APP_ENV') === 'demo') {
             $this->call('TestEntitySeeder');
             $this->call('ArticleSeeder');
         }

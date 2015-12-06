@@ -29,7 +29,7 @@ class Tag extends IndexedModel
      *
      * @var array
      */
-    protected $fillable = ['tag_id','tag', 'searchable'];
+    protected $fillable = ['tag_id', 'tag', 'searchable'];
 
     protected $touches = ['articles'];
 

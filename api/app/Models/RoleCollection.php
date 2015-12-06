@@ -10,7 +10,6 @@
 
 namespace App\Models;
 
-
 use Spira\Core\Model\Collection\Collection;
 use Spira\Core\Model\Model\BaseModel;
 

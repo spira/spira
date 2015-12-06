@@ -20,7 +20,7 @@ class PayloadFactoryTest extends TestCase
             'first' => function () { return 'first'; },
             'second' => function () { return 'second'; },
         ];
-        $array = ['first' => 'first','second' => 'second'];
+        $array = ['first' => 'first', 'second' => 'second'];
 
         $factory = new PayloadFactory($closures);
         $user = m::mock(Authenticatable::class);

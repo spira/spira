@@ -32,7 +32,7 @@ class CreateTagTagTable extends Migration
             $table->boolean('linked_tags_must_be_children')->default(false);
             $table->tinyInteger('linked_tags_limit')->nullable()->default(null);
 
-            $table->primary(['tag_id','parent_tag_id']);
+            $table->primary(['tag_id', 'parent_tag_id']);
 
             $table->foreign('tag_id')
                 ->references('tag_id')->on(Tag::getTableName())

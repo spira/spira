@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Spira\Core\Contract\Exception\NotImplementedException;
 use Spira\Core\Model\Collection\Collection;
 
-
 trait TagCategoryTrait
 {
     /**

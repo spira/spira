@@ -66,11 +66,12 @@ class SpiraApplication extends Application
     /**
      * Lumen has so much magic in DI container
      * The only way to override default drivers, Guard and so on
-     * Is disable it with this method
+     * Is disable it with this method.
      */
     protected function registerAuthBindings()
     {
         $this->configure('auth');
+
         return;
     }
 }

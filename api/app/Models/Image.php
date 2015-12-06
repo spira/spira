@@ -25,7 +25,7 @@ class Image extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['image_id','version', 'format', 'folder', 'alt', 'title'];
+    protected $fillable = ['image_id', 'version', 'format', 'folder', 'alt', 'title'];
 
     protected static $validationRules = [
         'image_id' => 'required|uuid',

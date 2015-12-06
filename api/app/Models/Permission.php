@@ -21,5 +21,5 @@ class Permission extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['key','description'];
+    protected $fillable = ['key', 'description'];
 }

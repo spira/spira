@@ -40,7 +40,6 @@ class GenerateKeysCommand extends Command
      * Create a new command instance.
      *
      * @param Filesystem $file
-     *
      */
     public function __construct(Filesystem $file)
     {

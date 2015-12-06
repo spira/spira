@@ -337,7 +337,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function validConditionSigned()
     {
-        return ($this->request->has('timestamp') || $this->request->has('signature'));
+        return $this->request->has('timestamp') || $this->request->has('signature');
     }
 
     /**
