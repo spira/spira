@@ -66,5 +66,4 @@ class Section extends BaseModel implements LocalizableModelInterface
     {
         return array_keys(self::$contentTypeMap);
     }
-
 }

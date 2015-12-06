@@ -30,7 +30,7 @@ class CreateSectionsTable extends Migration
             $table->uuid('sectionable_id');
             $table->enum('sectionable_type', Section::$sectionableModels);
 
-            $table->primary([$pk,'sectionable_id', 'sectionable_type']);
+            $table->primary([$pk, 'sectionable_id', 'sectionable_type']);
 
             $table->json('content');
             $table->enum('type', Section::getContentTypes());

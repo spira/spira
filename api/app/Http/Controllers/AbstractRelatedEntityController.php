@@ -43,20 +43,19 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $this->parentModel = $parentModel;
 
-        if (!$this->relationName) {
-            throw new \InvalidArgumentException('You must specify relationName in ' . static::class);
+        if (! $this->relationName) {
+            throw new \InvalidArgumentException('You must specify relationName in '.static::class);
         }
 
-        if (!method_exists($parentModel, $this->relationName)) {
+        if (! method_exists($parentModel, $this->relationName)) {
             throw new \InvalidArgumentException(
-                'Relation ' . $this->relationName . ', required by ' .
-                static::class . ', does not exist in ' . get_class($parentModel)
+                'Relation '.$this->relationName.', required by '.
+                static::class.', does not exist in '.get_class($parentModel)
             );
         }
 
         parent::__construct($transformer);
     }
-
 
     /**
      * Function called before child models are synced with parent.
@@ -77,7 +76,6 @@ abstract class AbstractRelatedEntityController extends ApiController
     protected function postSync(BaseModel $parent, Collection $children)
     {
     }
-
 
     /**
      * Override this method to provide custom pivot validation rules.
@@ -227,7 +225,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $childPk = $this->getChildModel()->getPrimaryKey();
 
-        if (!($requestCollection instanceof Collection)) {
+        if (! ($requestCollection instanceof Collection)) {
             $requestCollection = new Collection($requestCollection);
         }
 
@@ -239,7 +237,7 @@ abstract class AbstractRelatedEntityController extends ApiController
             $key = $model->{$childPk};
             $values = $this->getPivotValues($requestCollection[$key]);
 
-            if (!empty($values)) {
+            if (! empty($values)) {
                 $relations[$key] = $values;
             } else {
                 $relations[] = $key;
@@ -259,7 +257,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         $values = $this->defaultPivotValues;
 
-        if (!empty($requestEntity['_pivot'])) {
+        if (! empty($requestEntity['_pivot'])) {
             $values = array_merge($values, $requestEntity['_pivot']);
         }
 
@@ -274,7 +272,7 @@ abstract class AbstractRelatedEntityController extends ApiController
     {
         return $collection->each(
             function (BaseModel $model) {
-                if (!$model->exists || $model->isDirty()) {
+                if (! $model->exists || $model->isDirty()) {
                     $model->save();
                 }
             }

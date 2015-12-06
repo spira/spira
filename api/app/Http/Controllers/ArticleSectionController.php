@@ -24,5 +24,4 @@ class ArticleSectionController extends AbstractSectionController
     {
         parent::__construct($parentModel, $transformer);
     }
-
 }

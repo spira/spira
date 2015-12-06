@@ -14,7 +14,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class SeedTags extends Migration
 {
-
     /** @var \Faker\Generator */
     private $faker;
 
@@ -33,7 +32,7 @@ class SeedTags extends Migration
             'linked_tags_must_exist' => true,
             'linked_tags_must_be_children' => false,
             'linked_tags_limit' => null,
-            'read_only' => false
+            'read_only' => false,
         ],
     ];
 
@@ -144,7 +143,6 @@ class SeedTags extends Migration
         DB::table(CreateTagTagTable::TABLE_NAME)->insert($tagInserts['tag_relationship_inserts']);
 
         Tag::reindex();
-
     }
 
     /**
@@ -154,7 +152,7 @@ class SeedTags extends Migration
      */
     public function down()
     {
-        if(!Schema::hasTable(Tag::getTableName())){
+        if (! Schema::hasTable(Tag::getTableName())) {
             return;
         }
 

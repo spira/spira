@@ -138,4 +138,3 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->delete('test/many/{id}/children/{childId}', 'LinkedEntityTestController@detachOne');
     $app->delete('test/many/{id}/children', 'LinkedEntityTestController@detachAll');
 });
-

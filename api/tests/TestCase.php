@@ -111,6 +111,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         $user = (new App\Models\User())->findByEmail(static::TEST_ADMIN_USER_EMAIL);
         $header = 'Bearer '.$this->tokenFromUser($user);
+
         return $this->withAuthorization($header);
     }
 
