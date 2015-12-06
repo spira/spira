@@ -95,7 +95,6 @@ namespace common.directives.markdownEditor {
 
             let tools = {
                 article: this.shortcodeTool(common.models.Article),
-                recipe: this.shortcodeTool(common.models.Recipe),
             };
 
             $ngModelController.$render = () => {
