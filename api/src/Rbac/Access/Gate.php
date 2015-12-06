@@ -12,7 +12,7 @@ namespace Spira\Rbac\Access;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Spira\Contract\Exception\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
 use Spira\Rbac\Item\Item;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\Storage\StorageInterface;
@@ -20,8 +20,6 @@ use Spira\Rbac\User\UserProxy;
 
 class Gate implements GateContract
 {
-    const GATE_NAME = 'spira.rbac';
-
     /**
      * @var StorageInterface
      */

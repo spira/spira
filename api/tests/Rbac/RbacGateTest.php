@@ -17,6 +17,7 @@ use Spira\Rbac\Storage\Db\AssignmentStorage;
 use Spira\Rbac\Storage\Db\ItemStorage;
 use Spira\Rbac\Storage\Storage;
 use Spira\Rbac\Storage\StorageInterface;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class RbacGateTest extends TestCase
 {
@@ -38,7 +39,7 @@ class RbacGateTest extends TestCase
            return new Storage($app->make(ItemStorage::class), $app->make(AssignmentStorage::class));
         });
 
-        $this->gate = $this->app->make(Gate::GATE_NAME);
+        $this->gate = $this->app->make(GateContract::class);
         $this->auth = $this->gate->getStorage();
     }
 

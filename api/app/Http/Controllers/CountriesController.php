@@ -10,8 +10,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Datasets\Countries;
 use Spira\Core\Controllers\ApiController;
+use Spira\Core\Model\Datasets\Countries;
 use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 use Symfony\Component\HttpFoundation\Response;
 

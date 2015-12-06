@@ -12,7 +12,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use phpseclib\Crypt\RSA;
 
 class GenerateKeysCommand extends Command
 {
@@ -40,9 +39,8 @@ class GenerateKeysCommand extends Command
     /**
      * Create a new command instance.
      *
-     * @param Illuminate\Filesystem\Filesystem $file
+     * @param Filesystem $file
      *
-     * @return void
      */
     public function __construct(Filesystem $file)
     {
@@ -58,7 +56,7 @@ class GenerateKeysCommand extends Command
      */
     public function handle()
     {
-        $rsa = new RSA();
+        $rsa = new \Crypt_RSA();
         $keys = $rsa->createKey();
 
         if (! $this->file->exists(storage_path('app/keys'))) {

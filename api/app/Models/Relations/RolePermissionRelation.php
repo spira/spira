@@ -12,7 +12,7 @@ namespace App\Models\Relations;
 
 use App\Models\Permission;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spira\Model\Collection\Collection;
+use Spira\Core\Model\Collection\Collection;
 use Spira\Rbac\Item\Item;
 
 class RolePermissionRelation extends HasMany

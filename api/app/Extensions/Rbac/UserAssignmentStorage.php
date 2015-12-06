@@ -11,7 +11,7 @@
 namespace App\Extensions\Rbac;
 
 use App\Models\User;
-use Spira\Contract\Exception\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Role;
 use Spira\Rbac\Storage\AssignmentStorageInterface;

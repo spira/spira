@@ -9,7 +9,7 @@
  */
 
 use Illuminate\Support\Str;
-use Spira\Model\Collection\Collection;
+use Spira\Core\Model\Collection\Collection;
 
 $postAttributes = function (\Faker\Generator $faker) {
 

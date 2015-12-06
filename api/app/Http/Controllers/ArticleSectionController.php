@@ -15,8 +15,8 @@ use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
-use App\Extensions\Controller\LocalizableTrait;
 use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Controllers\LocalizableTrait;
 use Spira\Core\Model\Model\BaseModel;
 use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 

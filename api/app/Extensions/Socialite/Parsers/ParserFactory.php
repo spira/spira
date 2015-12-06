@@ -11,7 +11,7 @@
 namespace App\Extensions\Socialite\Parsers;
 
 use Laravel\Socialite\Contracts\User;
-use App\Exceptions\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class ParserFactory
 {

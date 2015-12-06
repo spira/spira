@@ -23,14 +23,9 @@
         }
     ],
     "require": {
-        "laravel/lumen-framework": "5.1.*",
-        "vlucas/phpdotenv": "~1.0",
-        "bosnadev/database": "^0.11.0",
-        "illuminate/mail": "^5.0",
         "jeremeamia/superclosure": "^2.1",
         "pda/pheanstalk": "^3.0",
         "predis/predis": "^1.0",
-        "league/fractal": "0.12.*",
         "illuminate/redis": "5.1.*",
         "guzzlehttp/guzzle": "5.3.*",
         "league/flysystem": "^1.0",

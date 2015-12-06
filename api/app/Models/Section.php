@@ -62,6 +62,15 @@ class Section extends BaseModel implements LocalizableModelInterface
         PromoContent::CONTENT_TYPE => PromoContent::class,
     ];
 
+    public static function getValidationRules($entityId = null)
+    {
+        return [
+            'section_id' => 'required|uuid',
+            'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,
+            'type' => 'required|in:'.implode(',', static::getContentTypes())
+        ];
+    }
+
     public static function getContentTypes()
     {
         return array_keys(self::$contentTypeMap);

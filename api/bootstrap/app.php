@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 Dotenv::load(__DIR__.'/../');
@@ -69,18 +70,13 @@ $app->singleton(
 */
 
 $app->middleware([
-    App\Http\Middleware\TransformInputDataMiddleware::class,
-//     // 'Illuminate\Cookie\Middleware\EncryptCookies',
-//     // 'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
-//     // 'Illuminate\Session\Middleware\StartSession',
-//     // 'Illuminate\View\Middleware\ShareErrorsFromSession',
-//     // 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
+    \Spira\Core\Middleware\TransformInputDataMiddleware::class,
 ]);
 
 $app->routeMiddleware([
-    'transaction' => App\Http\Middleware\TransactionMiddleware::class,
-    'requireAuthorization' => App\Http\Middleware\AuthorizationMiddleware::class,
-    'attachUserToEntity' => App\Http\Middleware\AppendUserIdToRequestBodyMiddleware::class,
+    'transaction' => \Spira\Core\Middleware\TransactionMiddleware::class,
+    'requireAuthorization' => \Spira\Core\Middleware\AuthorizationMiddleware::class,
+    'attachUserToEntity' => \Spira\Core\Middleware\AppendUserIdToRequestBodyMiddleware::class,
 ]);
 
 /*
@@ -94,7 +90,8 @@ $app->routeMiddleware([
 |
 */
 
-$app->register(Spira\Core\Providers\AppServiceProvider::class);
+$app->register(App\Providers\ApplicationProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);

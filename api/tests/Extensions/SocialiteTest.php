@@ -10,13 +10,13 @@
 
 use Illuminate\Support\Str;
 use Laravel\Socialite\Two\User;
-use App\Exceptions\NotImplementedException;
 use App\Extensions\Socialite\SocialiteManager;
 use App\Extensions\Socialite\One\AbstractProvider;
 use App\Extensions\Socialite\Two\FacebookProvider;
 use App\Extensions\Socialite\Parsers\ParserFactory;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\TemporaryCredentials;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 /**
  * Class SocialiteTest.

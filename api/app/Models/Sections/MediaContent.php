@@ -10,7 +10,7 @@
 
 namespace App\Models\Sections;
 
-use Spira\Model\Model\VirtualModel;
+use Spira\Core\Model\Model\VirtualModel;
 
 class MediaContent extends VirtualModel
 {

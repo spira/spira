@@ -17,6 +17,7 @@ use App\Services\SingleSignOn\Exceptions\VanillaAccessDeniedException;
 use App\Services\SingleSignOn\Exceptions\VanillaInvalidClientException;
 use App\Services\SingleSignOn\Exceptions\VanillaInvalidRequestException;
 use Spira\Rbac\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnContract
 {
@@ -182,7 +183,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function getGate()
     {
-        return \App::make(Gate::GATE_NAME);
+        return \App::make(GateContract::class);
     }
 
     /**

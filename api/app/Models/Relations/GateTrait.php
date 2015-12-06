@@ -12,6 +12,7 @@ namespace App\Models\Relations;
 
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Item;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 trait GateTrait
 {
@@ -34,6 +35,6 @@ trait GateTrait
      */
     public function getGate()
     {
-        return app(Gate::GATE_NAME);
+        return app(GateContract::class);
     }
 }

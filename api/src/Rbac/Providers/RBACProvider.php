@@ -12,6 +12,7 @@ namespace Spira\Rbac\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Storage\AssignmentStorageInterface;
 use Spira\Rbac\Storage\Db\AssignmentStorage;
@@ -47,7 +48,7 @@ class RBACProvider extends ServiceProvider
      */
     protected function registerAccessGate()
     {
-        $this->app->singleton(Gate::GATE_NAME, function (Application $app) {
+        $this->app->singleton(GateContract::class, function (Application $app) {
             return new Gate(
                     $app->make(StorageInterface::class),
                     function () use ($app) { return $app['auth']->user(); },

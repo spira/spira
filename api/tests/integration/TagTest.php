@@ -9,7 +9,7 @@
  */
 
 use App\Models\Tag;
-use Spira\Model\Collection\Collection;
+use Spira\Core\Model\Collection\Collection;
 
 class TagTest extends TestCase
 {

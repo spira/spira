@@ -11,7 +11,7 @@
 namespace App\Services;
 
 use Cloudinary\Api;
-use App\Exceptions\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class Cloudinary
 {

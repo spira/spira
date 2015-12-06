@@ -9,7 +9,8 @@
  */
 
 use App\Extensions\Rbac\UserAssignmentStorage;
-use App\Models\User;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Spira\Core\Contract\Exception\NotImplementedException;
 use Spira\Rbac\Access\Gate;
 use Spira\Rbac\Item\Assignment;
 use Spira\Rbac\Item\Permission;
@@ -26,7 +27,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
             new ItemStorage(__DIR__.'/Rbac/item.php'),
             new UserAssignmentStorage()
         );
-        $this->app->instance([Gate::GATE_NAME], new Gate($this->auth, function () { return $this->app['auth']->user(); }));
+        $this->app->instance([GateContract::class], new Gate($this->auth, function () { return $this->app['auth']->user(); }));
     }
 
     protected function clean()
@@ -38,7 +39,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
 
     public function testUpdate()
     {
-        $this->setExpectedException('Spira\Contract\Exception\NotImplementedException', 'Massive update via Storage is disabled');
+        $this->setExpectedException(NotImplementedException::class, 'Massive update via Storage is disabled');
         $role = new Role('some role');
         $this->auth->addItem($role);
 
@@ -53,7 +54,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
 
     public function testRemoveAllAssignments()
     {
-        $this->setExpectedException('Spira\Contract\Exception\NotImplementedException', 'Massive removal via Storage is disabled');
+        $this->setExpectedException(NotImplementedException::class, 'Massive removal via Storage is disabled');
         $role = new Role('some role');
         $this->auth->addItem($role);
         $this->auth->removeAllAssignments($role);
@@ -74,7 +75,7 @@ class SpiraRbacStorageTest extends FileRbacStorageTest
 
     public function testRemove()
     {
-        $this->setExpectedException('Spira\Contract\Exception\NotImplementedException', 'Massive removal via Storage is disabled');
+        $this->setExpectedException(NotImplementedException::class, 'Massive removal via Storage is disabled');
         $role = new Role('some role');
         $permission = new Permission('some permission');
         $this->auth->addItem($role);

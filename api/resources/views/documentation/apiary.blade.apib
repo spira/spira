@@ -2,7 +2,7 @@ FORMAT: 1A
 HOST: {{ $apiUrl }}/
 
 {{-- Inject the model factory so entities be declared with factories --}}
-@inject('factory', 'App\Services\ModelFactory')
+@inject('factory', 'Spira\Core\Model\Model\ModelFactory')
 
 # Spira API
 
@@ -29,8 +29,6 @@ You're looking at it! This route provides this documentation, it is configured a
 You can use both `$factory` and `$faker`. Note that `$factory` is a custom model factory service which allows more
 flexibility than the base laravel `factory()` methods.
 
-@include('documentation.sections.testEntity')
-@include('documentation.sections.childTestEntity')
 @include('documentation.sections.permissions')
 @include('documentation.sections.auth')
 @include('documentation.sections.user')

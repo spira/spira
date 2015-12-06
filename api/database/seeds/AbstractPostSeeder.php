@@ -17,7 +17,7 @@ use App\Models\Tag;
 use App\Models\Meta;
 use App\Models\User;
 use App\Models\Image;
-use Spira\Model\Collection\Collection;
+use Spira\Core\Model\Collection\Collection;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Faker\Factory as Faker;
 

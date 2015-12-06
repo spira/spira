@@ -11,7 +11,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocalizationsTable extends Migration
+class CreateLocalizationsTableCopy extends Migration
 {
     const TABLE_NAME = 'localizations';
 

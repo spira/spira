@@ -11,7 +11,7 @@
 namespace App\Services\SingleSignOn;
 
 use Illuminate\Http\Request;
-use App\Exceptions\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class SingleSignOnFactory
 {

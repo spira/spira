@@ -18,8 +18,8 @@ use Spira\Auth\Token\JWTInterface;
 use Spira\Auth\Token\RequestParser;
 use Spira\Auth\Token\TokenIsMissingException;
 use Spira\Auth\User\UserProvider;
-use Spira\Contract\Exception\NotImplementedException;
 use Mockery as m;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class GuardTest extends TestCase
 {
@@ -259,6 +259,18 @@ class GuardTest extends TestCase
         $this->assertFalse($gate->check());
         $this->assertNull($gate->user());
         $this->assertNull($gate->token());
+    }
+
+    public function testAuthTokenTransformerCollection()
+    {
+        $this->setExpectedExceptionRegExp(
+            NotImplementedException::class,
+            '/tokens.*/',
+            0
+        );
+
+        $transformer = $this->app->make(App\Http\Transformers\AuthTokenTransformer::class);
+        $transformer->transformCollection([]);
     }
 }
 

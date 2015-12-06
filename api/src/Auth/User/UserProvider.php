@@ -12,8 +12,8 @@ namespace Spira\Auth\User;
 
 use Illuminate\Support\Str;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Spira\Contract\Exception\NotImplementedException;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 {
