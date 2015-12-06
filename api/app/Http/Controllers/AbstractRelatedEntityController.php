@@ -58,6 +58,26 @@ abstract class AbstractRelatedEntityController extends ApiController
     }
 
     /**
+     * Function called before child models are synced with parent.
+     *
+     * @param $model
+     * @param $parent
+     */
+    protected function preSync(BaseModel $parent, Collection $children)
+    {
+    }
+
+    /**
+     * Function called before response is sent after the model has been updated via sync.
+     *
+     * @param $model
+     * @param $parent
+     */
+    protected function postSync(BaseModel $parent, Collection $children)
+    {
+    }
+
+    /**
      * Override this method to provide custom pivot validation rules.
      *
      * @param null $entityId

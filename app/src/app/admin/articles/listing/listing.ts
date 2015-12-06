@@ -24,7 +24,7 @@ namespace app.admin.articles.listing {
                     articlesPaginator: (articleService:common.services.article.ArticleService) => {
                         return articleService
                             .getPaginator()
-                            .setNested(['thumbnailImage'])
+                            .setNested(['thumbnailImage','author'])
                             .setCount(12);
                     },
                     initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:app.admin.ICommonListingStateParams) => {

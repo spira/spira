@@ -1,0 +1,26 @@
+<md-dialog flex="50" id="shortcodeDialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Insert Shortcode</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="ShortcodeDialogController.cancelDialog()">
+                <md-icon aria-label="Close dialog">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+
+        <md-subheader>Select {{ShortcodeDialogController.shortcodeType}}</md-subheader>
+        <entity-search
+            ng-model="ShortcodeDialogController.selectedEntity"
+            model-type="article"
+        >
+        </entity-search>
+
+    </md-dialog-content>
+
+    <div class="md-actions">
+        <md-button ng-disabled="!ShortcodeDialogController.selectedEntity" ng-click="ShortcodeDialogController.resolveShortcode()" class="md-primary">Add</md-button>
+        <md-button ng-click="ShortcodeDialogController.cancelDialog()" class="md-warn">Cancel</md-button>
+    </div>
+</md-dialog>

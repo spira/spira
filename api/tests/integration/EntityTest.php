@@ -12,6 +12,7 @@ use Rhumsaa\Uuid\Uuid;
 use App\Models\TestEntity;
 use App\Models\Localization;
 use App\Models\SecondTestEntity;
+use Elasticquent\ElasticquentResultCollection;
 
 /**
  * Class EntityTest.
@@ -104,7 +105,7 @@ class EntityTest extends TestCase
             $this->addRelatedEntities($entity);
         });
 
-        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10','with-nested' => 'testMany']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10', 'with-nested' => 'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(206);
@@ -118,8 +119,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 
@@ -154,7 +154,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedSimpleSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -179,7 +179,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedComplexSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -195,7 +195,7 @@ class EntityTest extends TestCase
             ->with([
                 'index' => 'defaultIndex',
                 'type' => 'someTypeName',
-                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']],['match_phrase_prefix' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
+                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']], ['match_phrase_prefix' => ['author_id' => 'some UUID']], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
             ])
             ->andReturn($resultsMock);
 
@@ -217,10 +217,17 @@ class EntityTest extends TestCase
     {
         $results = $this->getFactory(TestEntity::class)->count(5)->make();
 
-        $resultsMock = Mockery::mock($results);
-        $resultsMock->shouldReceive('totalHits')
-            ->times(3)
-            ->andReturn(5);
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
+        $resultsMock
+            ->shouldReceive('totalHits')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('getIterator')
+            ->once()
+            ->andReturn($results->getIterator());
 
         $mockModel = Mockery::mock(TestEntity::class);
         $mockModel
@@ -316,7 +323,7 @@ class EntityTest extends TestCase
             $last = $firstAndLast[1];
         }
 
-        return [$first,$last,$total];
+        return [$first, $last, $total];
     }
 
     public function testGetOne()
@@ -336,8 +343,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('entityId', $object);
-        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->entityId);
-        $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
+        $this->assertTrue(Uuid::isValid($object->entityId));
 
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
@@ -376,8 +382,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 
@@ -492,7 +497,7 @@ class EntityTest extends TestCase
         $factory->count(5)->create();
 
         $entities = $factory
-            ->hide(['entity_id','_self'])
+            ->hide(['entity_id', '_self'])
             ->count(5)
             ->transformed();
 

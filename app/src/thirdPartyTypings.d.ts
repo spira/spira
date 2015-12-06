@@ -32,13 +32,20 @@ declare module SimpleMDE {
         on(event:string, handler: () => any);
     }
 
+    interface MDEToolAction {
+        (editor:SimpleMDE.SimpleMDE):void;
+    }
+
     interface MDETool {
-        [key:string]: string;
+        name:  string;
+        action: MDEToolAction;
+        className:  string;
+        title: string;
     }
 
     interface SimpleMDEConfig {
         element: HTMLElement; // {DOM Element} [required]
-        toolbar?: boolean|string[]|MDETool[]; //https://github.com/NextStepWebs/simplemde-markdown-editor/#toolbar-icons
+        toolbar?: boolean|(string|MDETool)[]; //https://github.com/NextStepWebs/simplemde-markdown-editor/#toolbar-icons
         autofocus?: boolean;
         autosave?: {
             enabled?: boolean;
@@ -83,3 +90,40 @@ declare module SimpleMDE {
 
 declare var simpleMDE: SimpleMDE.SimpleMDE;
 declare var SimpleMDE: SimpleMDE.SimpleMDEStatic;
+
+/**
+ * https://github.com/domchristie/to-markdown
+ */
+declare module toMarkdown {
+
+    interface IReplacementFn {
+        (innerHTML:string, node?:Element):string;
+    }
+
+    interface IFilterFn {
+        (node:Element):boolean;
+    }
+
+    interface IConverter {
+        filter: string|string[]|IFilterFn,
+        replacement: IReplacementFn;
+    }
+
+    interface IToMarkdownOptions{
+        converters?:IConverter[];
+        gfm?:boolean;
+    }
+
+    interface toMarkdownStatic {
+
+        (input: string, options?:IToMarkdownOptions): string;
+
+        isBlock(node):boolean;
+        isVoid(node):boolean;
+        trim(string:string):string;
+        outer(node):any;
+    }
+
+}
+
+declare var toMarkdown: toMarkdown.toMarkdownStatic;

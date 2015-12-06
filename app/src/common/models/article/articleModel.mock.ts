@@ -10,15 +10,18 @@ namespace common.models {
 
             let seededChance = new Chance();
 
+            let authorOverride = seededChance.bool();
+
             return {
                 postId: seededChance.guid(),
                 title: seededChance.string(),
                 shortTitle: seededChance.word(),
-                permalink: seededChance.url(),
+                permalink: chance.word({syllables: 3}),
                 status: seededChance.pick(['draft', 'published', 'ready']),
                 authorId: seededChance.guid(),
                 thumbnailImageId: seededChance.guid(),
-                authorDisplay: seededChance.bool(),
+                authorOverride: authorOverride ? seededChance.name() : null,
+                authorWebsite: authorOverride ? seededChance.url() : null,
                 showAuthorPromo: seededChance.bool(),
                 _metas: [],
                 _tags: [],

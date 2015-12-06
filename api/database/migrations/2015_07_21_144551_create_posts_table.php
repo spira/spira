@@ -32,10 +32,13 @@ class CreatePostsTable extends Migration
             $table->uuid('thumbnail_image_id')->nullable();
             $table->string('permalink')->index()->nullable();
             $table->uuid('author_id')->index()->nullable();
-            $table->boolean('author_display')->default(true);
+            $table->string('author_override', 255)->nullable()->default(null);
+            $table->string('author_website')->nullable()->default(null);
             $table->boolean('show_author_promo')->default(false);
             $table->dateTime('first_published')->nullable();
             $table->json('sections_display')->nullable();
+            $table->boolean('users_can_comment')->default(false);
+            $table->boolean('public_access')->default(false);
             $table->enum('post_type', AbstractPost::$postTypes)->index();
 
             $table->timestamps();

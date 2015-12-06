@@ -1,13 +1,13 @@
-<div layout-padding id="article-listing">
+<div layout-padding id="article-listing" class="listing">
 
-    <md-toolbar>
+    <md-toolbar class="search">
         <div class="md-toolbar-tools">
-            <md-input-container ng-show="ArticlesListingController.searchButton">
+            <md-input-container md-no-float flex class="md-subhead">
                 <input ng-change="ArticlesListingController.search()"
-                        ng-model="ArticlesListingController.queryString"
-                        ng-model-options="{ debounce:500 }"
-                        placeholder="Search..."
-                        aria-label="Search...">
+                       ng-model="ArticlesListingController.queryString"
+                       ng-model-options="{ debounce:500 }"
+                       placeholder="Search..."
+                       aria-label="Search...">
             </md-input-container>
             <md-button aria-label="Search" class="md-icon-button" ng-click="ArticlesListingController.searchButton = !ArticlesListingController.searchButton">
                 <md-icon>search</md-icon>
@@ -17,15 +17,10 @@
                 <md-icon>filter_list</md-icon>
                 <md-tooltip>Filter Articles</md-tooltip>
             </md-button>
-            <span flex></span>
-            <md-button aria-label="Add Article" ui-sref="app.admin.articles.article()" class="md-icon-button">
-                <md-icon>add_circle</md-icon>
-                <md-tooltip>Add article</md-tooltip>
-            </md-button>
         </div>
     </md-toolbar>
 
-    <md-content ng-show="ArticlesListingController.filterButton" layout-padding>
+    <md-content class="filter md-body-1" ng-show="ArticlesListingController.filterButton" layout-padding>
         <label>Tags</label>
         <md-chips ng-model="ArticlesListingController.tagsToFilter"
                   ng-model-options="{ debounce: 500 }"
@@ -84,44 +79,63 @@
     <div ng-if="ArticlesListingController.entities.length < 1"><h3>No articles found!</h3></div>
 
     <md-grid-list
-            md-cols-sm="1"
-            md-cols-md="2"
-            md-cols-gt-md="4"
-            md-row-height="1:1"
-            md-gutter="12px"
-            md-gutter-gt-sm="8px">
+            md-cols-lt-lg="1"
+            md-cols-lg="3"
+            md-cols-gt-lg="5"
+            md-row-height="1:1.05"
+            md-gutter="20px">
 
         <md-grid-tile
-                ng-repeat="article in ArticlesListingController.entities"
-                ui-sref="app.admin.articles.article({id: article.getIdentifier()})"
-                md-ink-ripple style="cursor:pointer">
-
-            <md-grid-tile-header>
-                <h3>{{article.status | uppercase}}</h3>
-            </md-grid-tile-header>
-
-            <cl-image width="100%" public-id="{{article._thumbnailImage.imageId}}" format="{{article._thumbnailImage.format}}">
-                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
-            </cl-image>
-
-            <md-grid-tile-footer>
-                <h3>{{article.title}}</h3>
-            </md-grid-tile-footer>
+            ng-repeat="article in ArticlesListingController.entities"
+            ui-sref="app.admin.articles.article({id: article.getIdentifier()})"
+            md-ink-ripple
+            layout="column">
+            <md-card flex layout-fill layout="column">
+                <div class="card-image">
+                    <div class="image-wrapper">
+                        <cl-image public-id="{{article._thumbnailImage.imageId}}" format="{{article._thumbnailImage.format}}">
+                            <cl-transformation height="300" width="600" crop="fill" gravity="center"/>
+                        </cl-image>
+                    </div>
+                    <span class="status {{article.status}} md-caption">{{article.status | uppercase}}</span>
+                </div>
+                <md-card-content class="md-body-1 " flex>
+                    <!-- @TODO Create an overflow ellipsis filter -->
+                    {{article.title | limitTo: 30}}
+                </md-card-content>
+                <md-divider></md-divider>
+                <md-card-footer>
+                    <md-list>
+                        <md-list-item>
+                            <img ng-src="{{article._author.avatarImgUrl}}" alt="{{article._author.fullName()}}" class="md-avatar">
+                            <div class="md-list-item-text md-caption">
+                                {{article._author.firstName}}
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-card-footer>
+            </md-card>
         </md-grid-tile>
-
     </md-grid-list>
 
+    <md-toolbar class="pagination">
+        <div class="md-toolbar-tools" layout="row">
+            <div flex>
+                <md-tabs md-selected="ArticlesListingController.currentPageIndex">
+                    <md-tab ng-repeat="pageNumber in ArticlesListingController.pages" ui-sref="app.admin.articles.listing({page:pageNumber})">
+                        <md-tab-label>
+                            <span>{{pageNumber}}</span>
+                        </md-tab-label>
+                    </md-tab>
+                </md-tabs>
+            </div>
+            <div flex="none" layout-align="center right">
+                <md-button aria-label="Add Article" ui-sref="app.admin.articles.article()" class="md-fab add-article">
+                    <md-icon>add</md-icon>
+                    <md-tooltip>Add article</md-tooltip>
+                </md-button>
+            </div>
+        </div>
+    </md-toolbar>
 </div>
 
-
-<md-toolbar>
-    <md-tabs md-selected="ArticlesListingController.currentPageIndex">
-
-        <md-tab ng-repeat="pageNumber in ArticlesListingController.pages" ui-sref="app.admin.articles.listing({page:pageNumber})">
-            <md-tab-label>
-                <span>{{pageNumber}}</span>
-            </md-tab-label>
-        </md-tab>
-
-    </md-tabs>
-</md-toolbar>

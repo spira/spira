@@ -11,15 +11,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Spira\Model\Model\BaseModel;
-use App\Models\Sections\MediaContent;
-use App\Models\Sections\PromoContent;
-use App\Models\Sections\RichTextContent;
-use App\Models\Sections\BlockquoteContent;
 use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Transformers\EloquentModelTransformer;
 
-class ArticleSectionController extends ChildEntityController
+class ArticleSectionController extends AbstractSectionController
 {
     use LocalizableTrait;
 
@@ -28,42 +23,5 @@ class ArticleSectionController extends ChildEntityController
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);
-    }
-
-    /**
-     * @param $requestEntity
-     * @param array $validationRules
-     * @param BaseModel $existingModel
-     * @param bool $limitToKeysPresent
-     * @return bool
-     */
-    public function validateRequest($requestEntity, $validationRules, BaseModel $existingModel = null, $limitToKeysPresent = false)
-    {
-        $contentRules = [];
-        switch ($requestEntity['type']) {
-            case RichTextContent::CONTENT_TYPE:
-
-                $contentRules = with(new RichTextContent)->getValidationRules();
-
-                break;
-            case BlockquoteContent::CONTENT_TYPE:
-
-                $contentRules = with(new BlockquoteContent)->getValidationRules();
-                break;
-            case MediaContent::CONTENT_TYPE:
-
-                $contentRules = with(new MediaContent)->getValidationRules();
-                break;
-            case PromoContent::CONTENT_TYPE:
-
-                $contentRules = with(new PromoContent)->getValidationRules();
-                break;
-        }
-
-        foreach ($contentRules as $attribute => $rule) {
-            $validationRules['content.'.$attribute] = $rule;
-        }
-
-        return parent::validateRequest($requestEntity, $validationRules, $existingModel, $limitToKeysPresent);
     }
 }

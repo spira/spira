@@ -31,7 +31,7 @@ class CreatePostTagsTable extends Migration
             $table->uuid('tag_group_id');
             $table->uuid('tag_group_parent_id');
 
-            $table->primary(['tag_id','post_id']);
+            $table->primary(['tag_id', 'post_id']);
 
             $table->foreign('post_id')
                 ->references('post_id')->on(\App\Models\AbstractPost::getTableName())

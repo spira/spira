@@ -30,7 +30,7 @@ class CreateImageTable extends Migration
             $table->string('alt', 255);
             $table->string('title', 255)->nullable();
 
-            $table->unique(['image_id','version']);
+            $table->unique(['image_id', 'version']);
         });
     }
 

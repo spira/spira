@@ -363,9 +363,7 @@ class UserTest extends TestCase
         $userToDelete = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->deleteJson('/users/'.$userToDelete->user_id, [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('/users/'.$userToDelete->user_id, []);
 
         $user = User::find($userToDelete->user_id);
         $profile = UserProfile::find($userToDelete->user_id);
@@ -396,9 +394,7 @@ class UserTest extends TestCase
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        $this->deleteJson('/users/'.$user->email.'/password', [], [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->deleteJson('/users/'.$user->email.'/password', []);
 
         $mail = $this->getLastMessage();
 
@@ -418,9 +414,7 @@ class UserTest extends TestCase
         $token = str_replace('loginToken=', '', $parsed['query']);
 
         // Use it the first time
-        $this->getJson('/auth/jwt/token', [
-            'HTTP_AUTHORIZATION' => 'Token '.$token,
-        ]);
+        $this->withAuthorization('Token '.$token)->getJson('/auth/jwt/token');
 
         $this->assertResponseOk();
 
@@ -451,9 +445,7 @@ class UserTest extends TestCase
         $token = $this->tokenFromUser($user);
         // Make a request to change email
         $update = ['email' => 'foo@bar.com'];
-        $this->patchJson('/users/'.$user->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-        ]);
+        $this->withAuthorization('Bearer '.$token)->patchJson('/users/'.$user->user_id, $update);
         // Ensure that we get the right response
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -512,8 +504,7 @@ class UserTest extends TestCase
         $datetime = date('Y-m-d H:i:s');
         $update = ['emailConfirmed' => $datetime];
         $emailToken = 'foobar';
-        $this->patchJson('/users/'.$user->user_id, $update, [
-            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+        $this->withAuthorization('Bearer '.$token)->patchJson('/users/'.$user->user_id, $update, [
             'Email-Confirm-Token' => $emailToken,
         ]);
         $this->assertResponseStatus(422);

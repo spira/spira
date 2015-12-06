@@ -2,13 +2,8 @@ namespace app.admin.articles.article.meta {
 
     describe('Article Meta', () => {
 
-        let seededChance = new Chance(1),
-            notificationService:common.services.notification.NotificationService,
-            article:common.models.Article = new common.models.Article({
-                title: 'foo',
-                body: seededChance.paragraph(),
-                permalink: 'foo'
-            }),
+        let notificationService:common.services.notification.NotificationService,
+            article:common.models.Article = common.models.ArticleMock.entity(),
             $q:ng.IQService,
             $rootScope:global.IRootScope,
             $scope:ng.IScope,
@@ -38,7 +33,7 @@ namespace app.admin.articles.article.meta {
 
         it('should have an article injected into it', () => {
 
-            expect(MetaController.article).to.be.an.instanceOf(common.models.Article);
+            expect(MetaController.entity).to.be.an.instanceOf(common.models.Article);
 
         });
 
@@ -58,9 +53,22 @@ namespace app.admin.articles.article.meta {
 
             expect(MetaController.authors).to.deep.equal([newAuthor]);
 
-            expect(MetaController.article._author).to.deep.equal(newAuthor);
+            expect(MetaController.entity._author).to.deep.equal(newAuthor);
 
-            expect(MetaController.article.authorId).to.equal(newAuthor.userId);
+            expect(MetaController.entity.authorId).to.equal(newAuthor.userId);
+
+        });
+
+        it('should null author override and author website when display real author is selected', () => {
+
+            MetaController.entity.authorOverride = 'foobar';
+            MetaController.entity.authorWebsite = 'foobar.com';
+            MetaController.overrideAuthor = false;
+
+            MetaController.authorDisplay();
+
+            expect(MetaController.entity.authorOverride).to.equal(null);
+            expect(MetaController.entity.authorWebsite).to.equal(null);
 
         });
 

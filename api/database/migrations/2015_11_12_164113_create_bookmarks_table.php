@@ -28,7 +28,7 @@ class CreateBookmarksTable extends Migration
             $table->enum('bookmarkable_type', Bookmark::$bookmarkables);
             $table->uuid('user_id')->index();
 
-            $table->unique(['bookmarkable_id','bookmarkable_type', 'user_id']);
+            $table->unique(['bookmarkable_id', 'bookmarkable_type', 'user_id']);
 
             $table->foreign('user_id')
                 ->references('user_id')->on(User::getTableName())

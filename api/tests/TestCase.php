@@ -105,6 +105,17 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
     }
 
     /**
+     * @return TestCase
+     */
+    public function withAdminAuthorization()
+    {
+        $user = (new App\Models\User())->findByEmail(static::TEST_ADMIN_USER_EMAIL);
+        $header = 'Bearer '.$this->tokenFromUser($user);
+
+        return $this->withAuthorization($header);
+    }
+
+    /**
      * Visit the given URI with a [$method] request with content type of application/json.
      *
      * @param $method

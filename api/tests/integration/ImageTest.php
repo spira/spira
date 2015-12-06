@@ -9,6 +9,7 @@
  */
 
 use App\Models\Image;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class ImageTest.
@@ -49,7 +50,7 @@ class ImageTest extends TestCase
 
     public function testSignRequest()
     {
-        $this->getJson('/cloudinary/signature?foo=bar&baz=quux');
+        $this->withAuthorization()->getJson('/cloudinary/signature?foo=bar&baz=quux');
 
         $this->assertResponseStatus(200);
         $this->shouldReturnJson();
@@ -91,8 +92,7 @@ class ImageTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('imageId', $object);
-        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->imageId);
-        $this->assertTrue(strlen($object->imageId) === 36, 'UUID has 36 chars');
+        $this->assertTrue(Uuid::isValid($object->imageId));
 
         $this->assertTrue(is_string($object->format));
         $this->assertTrue(is_string($object->alt));

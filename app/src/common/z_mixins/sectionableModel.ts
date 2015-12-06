@@ -26,7 +26,7 @@ namespace common.mixins {
         }
 
         /**
-         * Hyrate the data:
+         * Hydrate the data:
          * - Pre-sort the sections based on the sectionsDisplay field
          * @param data
          * @param exists

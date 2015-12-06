@@ -40,17 +40,37 @@ abstract class IndexedModel extends BaseModel
 
     /**
      * Check if index exists.
+     * @param null $indexName
      * @return bool
      */
-    public static function indexExists()
+    public static function indexExists($indexName = null)
     {
         $instance = new static;
 
+        if (! $indexName) {
+            $indexName = $instance->getIndexName();
+        }
+
         $params = [
-            'index' => $instance->getIndexName(),
+            'index' => $indexName,
         ];
 
         return $instance->getElasticSearchClient()->indices()->exists($params);
+    }
+
+    public static function deleteIndex($indexName = null)
+    {
+        $instance = new static;
+
+        if (! $indexName) {
+            $indexName = $instance->getIndexName();
+        }
+
+        $index = [
+            'index' => $indexName,
+        ];
+
+        return $instance->getElasticSearchClient()->indices()->delete($index);
     }
 
     /**

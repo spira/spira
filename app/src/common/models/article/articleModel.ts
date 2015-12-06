@@ -1,7 +1,9 @@
 namespace common.models {
 
     @common.decorators.changeAware
-    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel, mixins.LocalizableModel {
+    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel, mixins.LocalizableModel, IMetaableModel, IPermalinkableModel {
+
+        static __shortcode:string = 'article';
 
         protected __nestedEntityMap:INestedEntityMap = {
             _sections: this.hydrateSections,
@@ -18,7 +20,7 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
-        protected __primaryKey = 'postId';
+        protected __primaryKey:string = 'postId';
 
         public postId:string = undefined;
         public title:string = undefined;
@@ -29,8 +31,13 @@ namespace common.models {
         public authorId:string = undefined;
         public thumbnailImageId:string = undefined;
 
-        public authorDisplay:boolean = undefined;
+        public authorOverride:string = undefined;
         public showAuthorPromo:boolean = undefined;
+        public authorWebsite:string = undefined;
+
+        public publicAccess:boolean = undefined;
+        public usersCanComment:boolean = undefined;
+
         public sectionsDisplay:mixins.ISectionsDisplay = undefined;
 
         public _sections:Section<any>[] = [];
@@ -78,12 +85,12 @@ namespace common.models {
         }
 
         /**
-         * Hydrates a meta template with meta which already exists
+         * Hydrates a meta template with meta which already exists.
          * @param data
          * @param exists
-         * @returns void
+         * @returns {Meta[]}
          */
-        private hydrateMetaCollectionFromTemplate(data:any, exists:boolean):void {
+        private hydrateMetaCollectionFromTemplate(data:any, exists:boolean):Meta[] {
 
             return (<any>_).chain(common.models.Article.articleMetaTemplate)
                 .map((metaTagName) => {

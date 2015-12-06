@@ -1,6 +1,3 @@
-
-///<reference path="../../../src/global.d.ts" />
-
 namespace app.admin {
 
     export const namespace = 'app.admin';
@@ -37,12 +34,12 @@ namespace app.admin {
 
     }
 
-    angular.module('app.admin', [
-        'app.admin.dashboard',
-        'app.admin.articles',
-        'app.admin.media',
-        'app.admin.users',
-        'app.admin.navigation',
+    angular.module(namespace, [
+        namespace + '.media',
+        namespace + '.users',
+        namespace + '.articles',
+        namespace + '.dashboard',
+        namespace + '.navigation',
     ])
     .config(AdminConfig);
 

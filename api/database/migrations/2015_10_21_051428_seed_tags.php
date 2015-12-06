@@ -32,6 +32,7 @@ class SeedTags extends Migration
             'linked_tags_must_exist' => true,
             'linked_tags_must_be_children' => false,
             'linked_tags_limit' => null,
+            'read_only' => false,
         ],
     ];
 

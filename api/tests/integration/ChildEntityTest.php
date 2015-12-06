@@ -124,8 +124,7 @@ class ChildEntityTest extends TestCase
         $this->assertTrue(is_object($object), 'Response is an object');
 
         $this->assertObjectHasAttribute('entityId', $object);
-        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->entityId);
-        $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
+        $this->assertTrue(Uuid::isValid($object->entityId));
         $this->assertTrue(is_string($object->value), 'Varchar column type is text');
 
         $this->assertEquals($childEntity->entity_id, $object->entityId);

@@ -296,7 +296,7 @@ class ArticleTest extends TestCase
         $factory = $this->getFactory($this->factoryClass);
         $entity = $factory->create();
         $data = $factory->setTransformer(PostTransformer::class)
-            ->hide(['permalink','post_id'])
+            ->hide(['permalink', 'post_id'])
             ->customize(['title' => 'foo'])
             ->transformed();
 
@@ -506,7 +506,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/meta', $entities);
+        $this->withAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/meta', $entities);
 
         $this->assertResponseStatus(201);
         $class = $this->factoryClass;
@@ -543,7 +543,7 @@ class ArticleTest extends TestCase
             ]
         )->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/meta', $data);
+        $this->withAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/meta', $data);
 
         $this->assertResponseStatus(500);
     }

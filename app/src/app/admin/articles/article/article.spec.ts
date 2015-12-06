@@ -18,7 +18,8 @@ namespace app.admin.articles.article {
             ArticleController:app.admin.articles.article.ArticleController,
             loggedInUser:common.models.User = common.models.UserMock.entity(),
             userService:common.services.user.UserService,
-            groupTags:common.models.Tag[] = common.models.TagMock.collection(2);
+            groupTags:common.models.Tag[] = common.models.TagMock.collection(2),
+            tagService:common.services.tag.TagService;
 
         article._metas = [common.models.MetaMock.entity({
             metaableId: article.postId
@@ -32,22 +33,25 @@ namespace app.admin.articles.article {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _notificationService_, _$q_, _articleService_, _userService_) => {
+            inject(($controller, _$rootScope_, _notificationService_, _$q_, _articleService_, _userService_, _tagService_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 notificationService = _notificationService_;
                 $q = _$q_;
                 articleService = _articleService_;
                 userService = _userService_;
+                tagService = _tagService_;
 
                 articleService.save = sinon.stub().returns($q.when(true));
-                articleService.getModel = sinon.stub().returns(article);
+                articleService.getModel = sinon.stub().returns($q.when(article));
                 articleService.newArticle = sinon.stub().returns(newArticle);
 
                 userService.getAuthUser = sinon.stub().returns(loggedInUser);
                 userService.getUsersPaginator = sinon.stub().returns({
                     setCount: sinon.stub()
                 });
+
+                tagService.getTagCategories = sinon.stub().returns(common.models.TagMock.collection(5));
 
                 ArticleController = $controller(app.admin.articles.article.namespace + '.controller', {
                     $stateParams: $stateParams,
@@ -96,13 +100,21 @@ namespace app.admin.articles.article {
 
         it('should be able to resolve article (existing)', () => {
 
+            sinon.spy(articleService, 'hydrateMetaCollection');
+
             $stateParams.id = 'foobar';
 
             let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
-            expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
+            $scope.$apply();
 
             expect(articleService.getModel).to.have.been.called;
+
+            expect(articleService.hydrateMetaCollection).to.have.been.calledWith(article);
+
+            expect(retrievedArticle).to.eventually.be.an.instanceOf(common.models.Article);
+
+            (<any>articleService.hydrateMetaCollection).restore();
 
         });
 
@@ -111,6 +123,28 @@ namespace app.admin.articles.article {
             (<any>ArticleConfig.state.resolve).usersPaginator(userService);
 
             expect(userService.getUsersPaginator).to.have.been.called;
+
+        });
+
+        it('should be able to resolve group tags', () => {
+
+            (<any>ArticleConfig.state.resolve).groupTags(tagService, articleService);
+
+            expect(tagService.getTagCategories).to.be.calledWith(articleService);
+
+        });
+
+        it('should be able to toggle preview', () => {
+
+            ArticleController.showPreview = false;
+
+            ArticleController.togglePreview();
+
+            expect(ArticleController.showPreview).to.be.true;
+
+            ArticleController.togglePreview();
+
+            expect(ArticleController.showPreview).to.be.false;
 
         });
 

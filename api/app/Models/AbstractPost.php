@@ -91,12 +91,15 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         'excerpt',
         'permalink',
         'author_id',
-        'author_display',
+        'author_override',
+        'author_website',
         'show_author_promo',
         'first_published',
         'sections_display',
         'thumbnail_image_id',
         'status',
+        'users_can_comment',
+        'public_access',
     ];
 
     protected $hidden = ['permalinks'];

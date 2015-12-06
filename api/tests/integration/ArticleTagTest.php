@@ -40,8 +40,12 @@ class ArticleTagTest extends TestCase
         $class::flushEventListeners();
         $class::boot();
 
-        $this->faker = Faker::create('au_AU');
+        $this->dataSetup();
+    }
 
+    protected function dataSetup()
+    {
+        $this->faker = Faker::create('au_AU');
         $this->categoryTagId = Tag::where('tag', '=', SeedTags::categoryTagName)->firstOrFail()->tag_id;
         $this->topicTagId = Tag::where('tag', '=', SeedTags::topicTagName)->firstOrFail()->tag_id;
         $this->groupTagId = Tag::where('tag', '=', SeedTags::articleGroupTagName)->value('tag_id');

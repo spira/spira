@@ -1,5 +1,3 @@
-///<reference path="../../../user/profile/profile.ts" />
-
 namespace app.admin.users.editUser {
 
     export const namespace = 'app.admin.users.editUser';

@@ -42,7 +42,7 @@ namespace common.services.error {
 
         }
 
-        public showError(title:string, message:string, extra?:any):ng.IPromise<boolean> {
+        public showError(title:string, message:string, extra?:any, $event:MouseEvent = null):ng.IPromise<boolean> {
 
             let dialogConfig:ng.material.IDialogOptions = {
                 templateUrl: 'templates/common/services/error/errorDialog.tpl.html',
@@ -53,7 +53,8 @@ namespace common.services.error {
                     title: title,
                     message: message,
                     extra: extra,
-                }
+                },
+                targetEvent: $event
             };
 
             return this.$timeout(_.noop) //first do an empty timeout to allow the controllers to init if login prompt is fired from within a .run() phase

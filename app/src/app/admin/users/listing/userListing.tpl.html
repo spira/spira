@@ -47,7 +47,7 @@
 <md-toolbar>
     <md-tabs md-selected="UsersController.currentPageIndex">
 
-        <md-tab ng-repeat="pageNumber in UsersListingController.pages" ui-sref="app.admin.users({page:pageNumber})">
+        <md-tab ng-repeat="pageNumber in UsersListingController.pages" ui-sref="app.admin.users.listing({page:pageNumber})">
             <md-tab-label>
                 <span>{{pageNumber}}</span>
             </md-tab-label>
