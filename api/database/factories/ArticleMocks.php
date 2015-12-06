@@ -36,7 +36,7 @@ $postAttributes = function (\Faker\Generator $faker) {
         'first_published' => $faker->boolean(90) ? $faker->dateTimeThisDecade()->format('Y-m-d H:i:s') : null,
         'sections_display' => null,
         'users_can_comment' => false,
-        'public_access' => false
+        'public_access' => false,
     ];
 };
 

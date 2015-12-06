@@ -96,7 +96,7 @@ abstract class AbstractPostSeeder extends BaseSeeder
                 //add tags
                 $post->tags()->sync($groupedTagPivots->random(rand(2, 5))->toArray());
 
-                if ($this->addComments){
+                if ($this->addComments) {
                     //add comments
                     $this->randomElements(factory(PostComment::class, 5)->make())
                         ->each(function (PostComment $comment) use ($post, $users) {

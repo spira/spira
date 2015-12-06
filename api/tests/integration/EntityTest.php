@@ -12,6 +12,7 @@ use Rhumsaa\Uuid\Uuid;
 use App\Models\TestEntity;
 use App\Models\Localization;
 use App\Models\SecondTestEntity;
+use Elasticquent\ElasticquentResultCollection;
 
 /**
  * Class EntityTest.
@@ -104,7 +105,7 @@ class EntityTest extends TestCase
             $this->addRelatedEntities($entity);
         });
 
-        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10','with-nested' => 'testMany']);
+        $this->getJson('/test/entities/pages', ['Range' => 'entities=-10', 'with-nested' => 'testMany']);
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(206);
@@ -153,7 +154,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedSimpleSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -178,7 +179,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedComplexSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -194,7 +195,7 @@ class EntityTest extends TestCase
             ->with([
                 'index' => 'defaultIndex',
                 'type' => 'someTypeName',
-                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']],['match_phrase_prefix' => ['author_id' => 'some UUID']],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]],['nested' => ['path' => 'tags','query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
+                'body' => ['query' => ['bool' => ['must' => [['match_phrase_prefix' => ['_all' => 'search term']], ['match_phrase_prefix' => ['author_id' => 'some UUID']], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 1']]]]]], ['nested' => ['path' => 'tags', 'query' => ['bool' => ['must' => ['match_phrase_prefix' => ['tags.tag_id' => 'tag ID 2']]]]]]]]]],
             ])
             ->andReturn($resultsMock);
 
@@ -211,15 +212,23 @@ class EntityTest extends TestCase
 
         $this->assertResponseStatus(404);
     }
-
+    
     public function testGetAllPaginatedComplexSearchMatchAll()
     {
         $results = $this->getFactory(TestEntity::class)->count(5)->make();
 
-        $resultsMock = Mockery::mock($results);
-        $resultsMock->shouldReceive('totalHits')
-            ->times(3)
-            ->andReturn(5);
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
+        $resultsMock
+            ->shouldReceive('totalHits')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('getIterator')
+            ->once()
+            ->andReturn($results->getIterator())
+        ;
 
         $mockModel = Mockery::mock(TestEntity::class);
         $mockModel
@@ -315,7 +324,7 @@ class EntityTest extends TestCase
             $last = $firstAndLast[1];
         }
 
-        return [$first,$last,$total];
+        return [$first, $last, $total];
     }
 
     public function testGetOne()
@@ -489,7 +498,7 @@ class EntityTest extends TestCase
         $factory->count(5)->create();
 
         $entities = $factory
-            ->hide(['entity_id','_self'])
+            ->hide(['entity_id', '_self'])
             ->count(5)
             ->transformed();
 

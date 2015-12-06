@@ -33,7 +33,7 @@ class CreateTagTagTable extends Migration
             $table->tinyInteger('linked_tags_limit')->nullable()->default(null);
             $table->boolean('read_only')->default(false);
 
-            $table->primary(['tag_id','parent_tag_id']);
+            $table->primary(['tag_id', 'parent_tag_id']);
 
             $table->foreign('tag_id')
                 ->references('tag_id')->on(Tag::getTableName())
@@ -43,7 +43,6 @@ class CreateTagTagTable extends Migration
                 ->references('tag_id')->on(Tag::getTableName())
                 ->onDelete('cascade');
         });
-
     }
 
     /**

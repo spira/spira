@@ -17,7 +17,6 @@ use Spira\Responder\Response\ApiResponse;
 
 abstract class ChildEntityController extends AbstractRelatedEntityController
 {
-
     /**
      * Get all entities.
      *
@@ -163,7 +162,7 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
     /**
      * Put many entities.
-     * Internally make use of Relation::sync()
+     * Internally make use of Relation::sync().
      *
      * @param  Request $request
      * @param string $id
@@ -184,10 +183,10 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
         $relation = $this->getRelation($parent);
 
-        if ($relation instanceof BelongsToMany){
+        if ($relation instanceof BelongsToMany) {
             $this->saveNewItemsInCollection($childModels);
             $relation->sync($this->makeSyncList($childModels, $requestCollection));
-        }else{
+        } else {
             $relation->saveMany($childModels);
         }
 
@@ -319,7 +318,7 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
     }
 
     /**
-     * Override this method to provide custom validation rules
+     * Override this method to provide custom validation rules.
      *
      * @return array
      */

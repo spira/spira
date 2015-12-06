@@ -155,7 +155,6 @@ class AuthController extends ApiController
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($this->auth->generateToken($user));
-
     }
 
     /**

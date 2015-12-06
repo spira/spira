@@ -99,7 +99,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         'thumbnail_image_id',
         'status',
         'users_can_comment',
-        'public_access'
+        'public_access',
     ];
 
     protected $hidden = ['permalinks'];

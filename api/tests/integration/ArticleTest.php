@@ -296,7 +296,7 @@ class ArticleTest extends TestCase
         $factory = $this->getFactory($this->factoryClass);
         $entity = $factory->create();
         $data = $factory->setTransformer(PostTransformer::class)
-            ->hide(['permalink','post_id'])
+            ->hide(['permalink', 'post_id'])
             ->customize(['title' => 'foo'])
             ->transformed();
 
