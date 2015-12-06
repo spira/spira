@@ -11,9 +11,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Illuminate\Http\Request;
-use App\Models\ArticleDiscussion;
-use Spira\Responder\Response\ApiResponse;
 use App\Http\Transformers\EloquentModelTransformer;
 
 class  ArticleCommentController extends PostCommentController
@@ -28,5 +25,4 @@ class  ArticleCommentController extends PostCommentController
     {
         parent::__construct($parentModel, $transformer);
     }
-
 }

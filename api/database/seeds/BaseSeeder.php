@@ -8,8 +8,6 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Models\Tag;
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 
@@ -38,5 +36,4 @@ class BaseSeeder extends Seeder
                 return $collection->random($count);
         }
     }
-
 }

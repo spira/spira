@@ -22,7 +22,6 @@ class ImageSeeder extends BaseSeeder
      */
     public function run()
     {
-
         $this->command->comment('Seeding Images');
         /*
          * if we're in the travis ci environment, don't use the cloudinary remote images as the tests are the
@@ -59,7 +58,6 @@ class ImageSeeder extends BaseSeeder
         $images = $remoteImageResponse->storage['resources'];
 
         $this->command->comment(count($images).' images retrieved from Cloudinary');
-
 
         /** @var ProgressBar $progressBar */
         $progressBar = $this->command->getOutput()->createProgressBar(count($images));

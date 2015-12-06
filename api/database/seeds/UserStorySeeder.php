@@ -18,7 +18,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class UserStorySeeder extends BaseSeeder
 {
-
     /** @var \Faker\Generator */
     private $faker;
 
@@ -53,7 +52,6 @@ class UserStorySeeder extends BaseSeeder
             'avatar_img_id' => $images->random()->image_id,
         ]);
 
-
         /** @var ProgressBar $progressBar */
         $progressBar = $this->command->getOutput()->createProgressBar(20);
 
@@ -65,7 +63,6 @@ class UserStorySeeder extends BaseSeeder
             $this->assignRandomRole($user);
             $progressBar->advance();
         }
-
 
         $progressBar->finish();
         $this->command->line('');

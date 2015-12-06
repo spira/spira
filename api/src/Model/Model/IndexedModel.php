@@ -47,7 +47,7 @@ abstract class IndexedModel extends BaseModel
     {
         $instance = new static;
 
-        if (!$indexName){
+        if (! $indexName) {
             $indexName = $instance->getIndexName();
         }
 
@@ -62,13 +62,13 @@ abstract class IndexedModel extends BaseModel
     {
         $instance = new static;
 
-        if (!$indexName) {
+        if (! $indexName) {
             $indexName = $instance->getIndexName();
         }
 
-        $index = array(
+        $index = [
             'index' => $indexName,
-        );
+        ];
 
         return $instance->getElasticSearchClient()->indices()->delete($index);
     }

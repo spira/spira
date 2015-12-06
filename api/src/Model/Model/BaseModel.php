@@ -147,7 +147,7 @@ abstract class BaseModel extends Model
      */
     public function scopeWhereAll(Builder $query, array $params)
     {
-        foreach ($params as $attribute => $value){
+        foreach ($params as $attribute => $value) {
             $query->where($attribute, $value);
         }
 
@@ -178,7 +178,7 @@ abstract class BaseModel extends Model
             }
 
             //if the model couldn't be found, find it in the database directly, or create a new one
-            if (!$model){
+            if (! $model) {
                 $model = $this->findOrNew($entityId);
             }
 
