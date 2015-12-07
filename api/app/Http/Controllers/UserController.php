@@ -20,8 +20,10 @@ use Illuminate\Contracts\Auth\Guard;
 use App\Jobs\SendEmailConfirmationEmail;
 use Laravel\Lumen\Routing\DispatchesJobs;
 use Spira\Auth\Driver\Guard as SpiraGuard;
+use Spira\Core\Controllers\EntityController;
+use Spira\Core\Responder\Response\ApiResponse;
+use Spira\Core\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Spira\Model\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -157,7 +159,7 @@ class UserController extends EntityController
      * @param Request $request
      * @param $id
      * @param $provider
-     * @return \Spira\Responder\Response\ApiResponse
+     * @return ApiResponse
      * @throws \Exception
      */
     public function unlinkSocialLogin(Request $request, $id, $provider)

@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use App\Exceptions\NotImplementedException;
 use App\Models\User;
 use App\Services\SingleSignOn\SingleSignOnFactory;
 use App\Services\SingleSignOn\VanillaSingleSignOn;
+use Spira\Core\Contract\Exception\NotImplementedException;
 
 class SingleSignOnTest extends TestCase
 {

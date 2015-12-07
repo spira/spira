@@ -10,7 +10,8 @@
 
 namespace Spira\Rbac\Access;
 
-use Spira\Contract\Exception\ForbiddenException;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Spira\Core\Contract\Exception\ForbiddenException;
 
 trait AuthorizesRequestsTrait
 {
@@ -35,7 +36,7 @@ trait AuthorizesRequestsTrait
      */
     public function getGate()
     {
-        return app(Gate::GATE_NAME);
+        return app(GateContract::class);
     }
 
     /**

@@ -10,7 +10,7 @@
 
 namespace App\Models;
 
-use Spira\Model\Model\VirtualModel;
+use Spira\Core\Model\Model\VirtualModel;
 
 class PostSectionsDisplay extends VirtualModel
 {

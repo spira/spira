@@ -9,7 +9,7 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use App\Models\TestEntity;
+use Spira\Core\Model\Test\TestEntity;
 
 class CreateElasticSearchIndex extends Migration
 {

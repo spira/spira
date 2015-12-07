@@ -10,8 +10,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Image;
+use Spira\Core\Controllers\EntityController;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ImageController extends EntityController
 {

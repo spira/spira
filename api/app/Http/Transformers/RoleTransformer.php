@@ -10,7 +10,8 @@
 
 namespace App\Http\Transformers;
 
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 use Spira\Rbac\Item\Item;
 
 class RoleTransformer extends EloquentModelTransformer

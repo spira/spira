@@ -61,26 +61,6 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->patch('images/{id}', 'ImageController@patchOne');
     $app->delete('images/{id}', 'ImageController@deleteOne');
 
-    $app->post('test/entities', 'TestController@postOne');
-    $app->put('test/entities/{id}', 'TestController@putOne');
-    $app->put('test/entities', 'TestController@putMany');
-    $app->patch('test/entities/{id}', 'TestController@patchOne');
-    $app->patch('test/entities', 'TestController@patchMany');
-    $app->delete('test/entities/{id}', 'TestController@deleteOne');
-    $app->delete('test/entities', 'TestController@deleteMany');
-
-    $app->put('test/entities/{id}/localizations/{region}', 'TestController@putOneLocalization');
-
-    $app->post('test/entities/{id}/child', 'ChildTestController@postOne');
-    $app->put('test/entities/{id}/child/{childId}', 'ChildTestController@putOne');
-    $app->put('test/entities/{id}/children', 'ChildTestController@putMany');
-    $app->post('test/entities/{id}/children', 'ChildTestController@postMany');
-    $app->patch('test/entities/{id}/child/{childId}', 'ChildTestController@patchOne');
-    $app->patch('test/entities/{id}/children', 'ChildTestController@patchMany');
-    $app->delete('test/entities/{id}/child/{childId}', 'ChildTestController@deleteOne');
-    $app->delete('test/entities/{id}/children', 'ChildTestController@deleteMany');
-
-    $app->put('test/entities/{id}/child/{childId}/localizations/{region}', 'ChildTestController@putOneChildLocalization');
 });
 
 $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app) {
@@ -117,24 +97,4 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('images/', 'ImageController@getAllPaginated');
     $app->get('images/{id}', ['as' => \App\Models\Image::class, 'uses' => 'ImageController@getOne']);
 
-    $app->get('test/internal-exception', 'TestController@internalException');
-    $app->get('test/fatal-error', 'TestController@fatalError');
-    $app->get('test/entities', 'TestController@getAll');
-    $app->get('test/entities/pages', 'TestController@getAllPaginated');
-    $app->get('test/entities_encoded/{id}', 'TestController@urlEncode');
-    $app->get('test/entities/{id}', ['as' => \App\Models\TestEntity::class, 'uses' => 'TestController@getOne']);
-    $app->get('test/entities-second/{id}', ['as' => \App\Models\SecondTestEntity::class, 'uses' => 'TestController@getOne']);
-
-    $app->get('test/entities/{id}/localizations', 'TestController@getAllLocalizations');
-    $app->get('test/entities/{id}/localizations/{region}', 'TestController@getOneLocalization');
-
-    $app->get('test/entities/{id}/children', 'ChildTestController@getAll');
-    $app->get('test/entities/{id}/child/{childId}', 'ChildTestController@getOne');
-
-    $app->get('test/many/{id}/children', 'LinkedEntityTestController@getAll');
-    $app->put('test/many/{id}/children', 'LinkedEntityTestController@syncMany');
-    $app->post('test/many/{id}/children', 'LinkedEntityTestController@attachMany');
-    $app->put('test/many/{id}/children/{childId}', 'LinkedEntityTestController@attachOne');
-    $app->delete('test/many/{id}/children/{childId}', 'LinkedEntityTestController@detachOne');
-    $app->delete('test/many/{id}/children', 'LinkedEntityTestController@detachAll');
 });

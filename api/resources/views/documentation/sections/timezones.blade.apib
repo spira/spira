@@ -15,7 +15,7 @@ have their emails dispatched.
 
             {!! 
                 $factory->get()
-                    ->setCollection(App::make('App\Services\Datasets\Timezones')->all())
+                    ->setCollection(App::make('Spira\Core\Model\Datasets\Timezones')->all())
                     ->count(5)
                     ->json() 
             !!}

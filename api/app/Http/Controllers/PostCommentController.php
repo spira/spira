@@ -12,7 +12,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PostDiscussion;
-use Spira\Responder\Response\ApiResponse;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Responder\Response\ApiResponse;
 
 abstract class PostCommentController extends ChildEntityController
 {

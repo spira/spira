@@ -10,13 +10,13 @@
 
 namespace App\Models;
 
-use Spira\Model\Model\BaseModel;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
 use App\Models\Sections\BlockquoteContent;
-use Spira\Model\Model\LocalizableModelTrait;
-use Spira\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\BaseModel;
+use Spira\Core\Model\Model\LocalizableModelInterface;
+use Spira\Core\Model\Model\LocalizableModelTrait;
 
 class Section extends BaseModel implements LocalizableModelInterface
 {
@@ -61,6 +61,15 @@ class Section extends BaseModel implements LocalizableModelInterface
         MediaContent::CONTENT_TYPE => MediaContent::class,
         PromoContent::CONTENT_TYPE => PromoContent::class,
     ];
+
+    public static function getValidationRules($entityId = null)
+    {
+        return [
+            'section_id' => 'required|uuid',
+            'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,
+            'type' => 'required|in:'.implode(',', static::getContentTypes()),
+        ];
+    }
 
     public static function getContentTypes()
     {

@@ -11,7 +11,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Http\Transformers\EloquentModelTransformer;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleTagController extends AbstractTagController
 {

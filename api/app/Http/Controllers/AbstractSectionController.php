@@ -11,7 +11,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Section;
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Model\Model\BaseModel;
 
 class AbstractSectionController extends ChildEntityController
 {

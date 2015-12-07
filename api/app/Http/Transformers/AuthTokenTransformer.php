@@ -10,7 +10,8 @@
 
 namespace App\Http\Transformers;
 
-use App\Exceptions\NotImplementedException;
+use Spira\Core\Contract\Exception\NotImplementedException;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class AuthTokenTransformer extends EloquentModelTransformer
 {
@@ -37,6 +38,7 @@ class AuthTokenTransformer extends EloquentModelTransformer
      *
      * @param  mixed $collection
      * @param array $options
+     * @return mixed|void
      */
     public function transformCollection($collection, array $options = [])
     {

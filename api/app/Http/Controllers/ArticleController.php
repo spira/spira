@@ -10,10 +10,11 @@
 
 namespace App\Http\Controllers;
 
+use Spira\Core\Controllers\EntityController;
 use App\Http\Transformers\PostTransformer;
 use App\Models\Article;
-use App\Extensions\Controller\LocalizableTrait;
 use App\Http\Controllers\Traits\TagCategoryTrait;
+use Spira\Core\Controllers\LocalizableTrait;
 
 class ArticleController extends EntityController
 {

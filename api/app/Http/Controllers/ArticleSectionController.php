@@ -11,8 +11,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Extensions\Controller\LocalizableTrait;
-use App\Http\Transformers\EloquentModelTransformer;
+use Spira\Core\Controllers\LocalizableTrait;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleSectionController extends AbstractSectionController
 {

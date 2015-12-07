@@ -15,18 +15,17 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/spira/api-core"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/spira/revisionable"
         }
     ],
     "require": {
-        "laravel/lumen-framework": "5.1.*",
-        "vlucas/phpdotenv": "~1.0",
-        "bosnadev/database": "^0.11.0",
-        "illuminate/mail": "^5.0",
         "jeremeamia/superclosure": "^2.1",
         "pda/pheanstalk": "^3.0",
         "predis/predis": "^1.0",
-        "league/fractal": "0.12.*",
         "illuminate/redis": "5.1.*",
         "guzzlehttp/guzzle": "5.3.*",
         "league/flysystem": "^1.0",
@@ -34,6 +33,7 @@
         "cloudinary/cloudinary_php": "^1.1",
         "elasticquent/elasticquent": "dev-master",
         "venturecraft/revisionable": "dev-master",
+        "spira/core": "dev-master",
         "namshi/jose": "^6.0"
     },
     "require-dev": {

@@ -12,8 +12,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\RoleTransformer;
 use App\Models\User;
-use Spira\Model\Collection\Collection;
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Model\Collection\Collection;
+use Spira\Core\Model\Model\BaseModel;
 
 class PermissionsController extends ChildEntityController
 {

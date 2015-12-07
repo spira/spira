@@ -12,7 +12,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Transformers\RoleTransformer;
 use App\Models\Role;
-use Spira\Model\Collection\Collection;
+use Spira\Core\Controllers\EntityController;
+use Spira\Core\Model\Collection\Collection;
 use Spira\Rbac\Item\Item;
 
 class RoleController extends EntityController

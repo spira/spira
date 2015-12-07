@@ -12,7 +12,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
 
 class SocialLogin extends BaseModel
 {

@@ -10,7 +10,7 @@
 
 namespace App\Http\Auth;
 
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
 use Spira\Rbac\Item\Rule;
 use Spira\Rbac\User\UserProxy;
 

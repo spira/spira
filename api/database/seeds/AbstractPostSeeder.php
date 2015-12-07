@@ -12,13 +12,13 @@ use App\Models\Tag;
 use App\Models\Meta;
 use App\Models\User;
 use App\Models\Image;
+use Spira\Core\Model\Collection\Collection;
 use App\Models\Section;
 use App\Models\PostComment;
 use Faker\Factory as Faker;
 use App\Models\AbstractPost;
 use App\Models\PostPermalink;
 use App\Models\PostSectionsDisplay;
-use Spira\Model\Collection\Collection;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 

@@ -10,8 +10,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Transformers\EloquentModelTransformer;
 use App\Models\Article;
+use Spira\Core\Controllers\ChildEntityController;
+use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleUserRatingsController extends ChildEntityController
 {
