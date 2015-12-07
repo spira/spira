@@ -10,7 +10,9 @@
 
 namespace Spira\Core\Controllers;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Spira\Core\Model\Collection\Collection;
 use Spira\Core\Model\Model\BaseModel;
 use Spira\Core\Responder\Response\ApiResponse;
 
@@ -163,8 +165,8 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
      * Put many entities.
      * Internally make use of Relation::sync().
      *
-     * @param string $id
      * @param  Request $request
+     * @param string $id
      * @return ApiResponse
      */
     public function putMany(Request $request, $id)
@@ -180,8 +182,16 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
         $this->checkPermission(static::class.'@putMany', ['model' => $parent, 'children' => $childModels]);
 
-        $this->saveNewItemsInCollection($childModels);
-        $this->getRelation($parent)->sync($this->makeSyncList($childModels, $requestCollection));
+        $relation = $this->getRelation($parent);
+
+        if ($relation instanceof BelongsToMany) {
+            $this->saveNewItemsInCollection($childModels);
+            $relation->sync($this->makeSyncList($childModels, $requestCollection));
+        } else {
+            $relation->saveMany($childModels);
+        }
+
+        $this->postSync($parent, $childModels);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())
@@ -294,5 +304,67 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
         });
 
         return $this->getResponse()->noContent();
+    }
+
+    /**
+     * @param null $entityId
+     * @return array
+     */
+    protected function getValidationRules($entityId = null)
+    {
+        $childRules = $this->getChildModel()->getValidationRules($entityId);
+        $pivotRules = $this->getPivotValidationRules();
+
+        return array_merge($childRules, $pivotRules);
+    }
+
+    /**
+     * Override this method to provide custom validation rules.
+     *
+     * @return array
+     */
+    protected function prepareSyncList(Collection $childModels, array $requestCollection)
+    {
+        $childPk = $this->getChildModel()->getPrimaryKey();
+
+        $childModels->keyBy($childPk);
+
+        $requestCollection = new Collection($requestCollection);
+        $requestCollection->keyBy($childPk);
+
+        $syncList = $childModels->reduce(function ($syncList, $childModel) use ($requestCollection, $childPk) {
+
+            $key = $childModel->{$childPk};
+            $requestItem = $requestCollection[$key];
+            if (isset($requestItem['_pivot'])) {
+                $syncList[$key] = $requestItem['_pivot'];
+
+                return $syncList;
+            }
+
+            $syncList[] = $key;
+
+            return $syncList;
+        }, []);
+
+        return $syncList;
+    }
+
+    /**
+     * @param $childId
+     * @param BaseModel $parentModel
+     * @return bool
+     */
+    protected function childIdCanFallbackToParent($childId, BaseModel $parentModel)
+    {
+        $fk = $this->getRelation($parentModel)->getForeignKey();
+        $parentKey = $parentModel->getKeyName();
+
+        return $childId === false && ends_with($fk, $parentKey);
+    }
+
+    protected function getPivotValidationRules()
+    {
+        return [];
     }
 }

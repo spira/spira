@@ -17,6 +17,7 @@ use Spira\Core\Model\Test\SecondTestEntity;
 use Spira\Core\Model\Test\TestEntity;
 use Spira\Core\tests\Extensions\WithAuthorizationMockTrait;
 use Spira\Core\tests\TestCase;
+use Elasticquent\ElasticquentResultCollection;
 
 /**
  * Class EntityTest.
@@ -67,7 +68,7 @@ class EntityTest extends TestCase
 
     public function testGetAllWithNested()
     {
-        $entity = $this->getFactory(TestEntity::class)->count(10)->create();
+        $this->getFactory(TestEntity::class)->count(10)->create();
         $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
@@ -131,8 +132,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 
@@ -167,7 +167,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedSimpleSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -192,7 +192,7 @@ class EntityTest extends TestCase
 
     public function testGetAllPaginatedComplexSearch()
     {
-        $resultsMock = Mockery::mock('Elasticquent\ElasticquentResultCollection');
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
         $resultsMock->shouldReceive('totalHits')
             ->andReturn(0); // Force not found, we don't have to mock a success, just that 'searchByQuery' is called with the right params.
 
@@ -230,10 +230,17 @@ class EntityTest extends TestCase
     {
         $results = $this->getFactory(TestEntity::class)->count(5)->make();
 
-        $resultsMock = Mockery::mock($results);
-        $resultsMock->shouldReceive('totalHits')
-            ->times(3)
-            ->andReturn(5);
+        $resultsMock = Mockery::mock(ElasticquentResultCollection::class);
+        $resultsMock
+            ->shouldReceive('totalHits')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn(5)
+            ->shouldReceive('getIterator')
+            ->once()
+            ->andReturn($results->getIterator());
 
         $mockModel = Mockery::mock(TestEntity::class);
         $mockModel
@@ -349,8 +356,7 @@ class EntityTest extends TestCase
         $this->assertTrue(is_string($object->_self), '_self is a string');
 
         $this->assertObjectHasAttribute('entityId', $object);
-        $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $object->entityId);
-        $this->assertTrue(strlen($object->entityId) === 36, 'UUID has 36 chars');
+        $this->assertTrue(Uuid::isValid($object->entityId));
 
         $this->assertTrue(is_string($object->varchar), 'Varchar column type is text');
         $this->assertTrue(is_string($object->hash), 'Hash column is a hash');
@@ -389,8 +395,7 @@ class EntityTest extends TestCase
             $this->assertObjectHasAttribute('_self', $nestedObject);
             $this->assertTrue(is_string($nestedObject->_self), '_self is a string');
             $this->assertObjectHasAttribute('entityId', $nestedObject);
-            $this->assertStringMatchesFormat('%x-%x-%x-%x-%x', $nestedObject->entityId);
-            $this->assertTrue(strlen($nestedObject->entityId) === 36, 'UUID has 36 chars');
+            $this->assertTrue(Uuid::isValid($nestedObject->entityId));
         }
     }
 

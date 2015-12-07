@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
  * @method static Collection findMany($ids)
  * @method static Builder where($value,$operator,$operand)
  * @method static Builder whereIn($column,$ids)
+ * @method static Builder whereNotNull($column)
+ * @method static Builder whereNull($column)
  * @method static BaseModel skip($offset)
  * @method static BaseModel take($limit)
  */
@@ -118,6 +120,29 @@ abstract class BaseModel extends Model
     public function newCollection(array $models = [])
     {
         return new Collection($models, static::class);
+    }
+
+    /**
+     * @param array $routeParams
+     * @return BaseModel
+     */
+    public function findByRouteParams(array $routeParams)
+    {
+        return $this->whereAll($routeParams)->firstOrFail();
+    }
+
+    /**
+     * @param Builder $query
+     * @param array $params
+     * @return Builder
+     */
+    public function scopeWhereAll(Builder $query, array $params)
+    {
+        foreach ($params as $attribute => $value) {
+            $query->where($attribute, $value);
+        }
+
+        return $query;
     }
 
     /**
