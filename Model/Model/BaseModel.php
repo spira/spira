@@ -144,6 +144,7 @@ abstract class BaseModel extends Model
 
         return $query;
     }
+
     /**
      * @param mixed $id
      * @return BaseModel
