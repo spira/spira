@@ -41,7 +41,7 @@ class EntityTest extends TestCase
         TestEntity::boot();
 
         $this->app->group([], function ($app) {
-            require __DIR__ . '/test_routes.php';
+            require __DIR__.'/test_routes.php';
         });
     }
 
