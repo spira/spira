@@ -49,8 +49,6 @@ class VanillaIntegrationTest extends TestCase
         $this->client->setUser('no_user');
 
         $discussion = $this->client->api('discussions')->create('Foo', 'Bar', 1);
-        //if no exception, show discussion
-        var_dump($discussion);
     }
 
     /**
