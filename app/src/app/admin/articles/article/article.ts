@@ -74,7 +74,11 @@ namespace app.admin.articles.article {
 
                         return articleService.getModel($stateParams.id, [
                             'permalinks', 'metas', 'tags', 'author', 'sections.localizations', 'localizations', 'thumbnailImage'
-                        ]);
+                        ])
+                            .then((article:common.models.Article) => {
+                                article._metas = articleService.hydrateMetaCollection(article);
+                                return article;
+                            });
                     },
                     usersPaginator: (userService:common.services.user.UserService) => {
                         return userService.getUsersPaginator().setCount(10);

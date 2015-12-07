@@ -27,6 +27,15 @@ namespace common.services.user {
             return new common.models.User(data, exists);
         }
 
+        public newUser(data:any = {}):common.models.User {
+
+            data = _.merge({
+                userId: this.ngRestAdapter.uuid()
+            }, data);
+
+            return this.modelFactory(data);
+        }
+
         /**
          * Get the api endpoint for the model
          * @returns {string}

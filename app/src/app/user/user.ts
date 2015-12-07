@@ -1,6 +1,3 @@
-
-///<reference path="../../../src/global.d.ts" />
-
 namespace app.user {
 
     export const namespace = 'app.user';

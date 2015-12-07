@@ -12,6 +12,7 @@ namespace common.models {
         linkedTagsMustExist: boolean;
         linkedTagsMustBeChildren: boolean;
         linkedTagsLimit: number;
+        readOnly: boolean;
     }
 
     @common.decorators.changeAware

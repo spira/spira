@@ -142,7 +142,7 @@ namespace common.services.article {
                 article.setExists(true);
                 article._sections = common.models.SectionMock.collection(2, {}, false);
 
-                $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections', _.map(article._sections, (section:common.models.Section<any>) => section.getAttributes(true))).respond(201);
+                $httpBackend.expectPOST('/api/articles/'+article.postId+'/sections', _.map(article._sections, (section:common.models.Section<any>) => section.getAttributes(true))).respond(201);
 
                 let savePromise = articleService.save(article);
 
@@ -285,7 +285,7 @@ namespace common.services.article {
 
                     article._sections[0]._localizations.push(localizationMock);
 
-                    $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections').respond(201);
+                    $httpBackend.expectPOST('/api/articles/'+article.postId+'/sections').respond(201);
                     $httpBackend.expectPUT('/api/articles/'+article.postId+'/sections/'+sectionId+'/localizations/'+localizationMock.regionCode, localizationMock.localizations).respond(201);
 
                     let savePromise = articleService.save(article);
@@ -358,7 +358,79 @@ namespace common.services.article {
 
             });
 
-        })
+        });
+
+        describe('Meta', () => {
+
+            it('should be able to hydrate meta with template', () => {
+
+                let seededChance = new Chance();
+
+                let postId = seededChance.guid();
+
+                let article = common.models.ArticleMock.entity({
+                    postId: postId,
+                    _metas: [
+                        {
+                            metaName: 'keyword',
+                            metaContent: 'foo',
+                            metaId: seededChance.guid(),
+                            metaableId: postId
+                        },
+                        {
+                            metaName: 'description',
+                            metaContent: 'bar',
+                            metaId: seededChance.guid(),
+                            metaableId: postId
+                        },
+                        {
+                            metaName: 'foobar',
+                            metaContent: 'foobar',
+                            metaId: seededChance.guid(),
+                            metaableId: postId
+                        }
+                    ]
+                });
+
+                article._metas = articleService.hydrateMetaCollection(article);
+
+                // The first article meta is 'name' which is added via template
+                expect(article._metas[0].metaableId).to.equal(article.postId);
+                expect(_.isEmpty(article._metas[0].metaId)).to.be.false;
+
+                let testableMetaTags = _.cloneDeep(article._metas);
+                _.forEach(testableMetaTags, (tag) => {
+                    delete(tag.metaId);
+                    delete(tag.metaableId);
+                    delete(tag.metaableType);
+                });
+
+                expect(testableMetaTags).to.deep.equal([
+                    {
+                        metaName: 'name',
+                        metaContent: '',
+                    },
+                    {
+                        metaName: 'description',
+                        metaContent: 'bar'
+                    },
+                    {
+                        metaName: 'keyword',
+                        metaContent: 'foo'
+                    },
+                    {
+                        metaName: 'canonical',
+                        metaContent: ''
+                    },
+                    {
+                        metaName: 'foobar',
+                        metaContent: 'foobar'
+                    }
+                ]);
+
+            });
+
+        });
 
     });
 

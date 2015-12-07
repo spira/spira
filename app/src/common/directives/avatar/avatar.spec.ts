@@ -10,7 +10,6 @@ namespace common.directives.avatar {
 
         let $compile:ng.ICompileService,
             $rootScope:global.IRootScope,
-            $scope:ng.IScope,
             AvatarController:AvatarController,
             directiveScope:TestScope,
             compiledElement:ng.IAugmentedJQuery,
@@ -20,11 +19,9 @@ namespace common.directives.avatar {
 
             module('app');
 
-            inject((_$compile_, $controller, _$rootScope_, _$mdDialog_, _$q_) => {
+            inject((_$compile_, _$rootScope_, _$q_) => {
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
-                $scope = $rootScope.$new();
-
                 $q = _$q_;
             });
 

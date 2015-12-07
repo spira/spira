@@ -14,6 +14,8 @@ namespace common.services {
         protected queuedSaveProcessFunctions:IQueuedSaveProcess[] = [];
         protected cachedPaginator:common.services.pagination.Paginator;
 
+        private interceptingNgRestAdapter:NgRestAdapter.INgRestAdapterService = null;
+
         constructor(protected ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     protected paginationService:common.services.pagination.PaginationService,
                     protected $q:ng.IQService,
@@ -27,15 +29,17 @@ namespace common.services {
 
         /**
          * Get the paginator
+         * @param nestedEntities string[]
          * @returns {Paginator}
          */
-        public getPaginator():common.services.pagination.Paginator {
+        public getPaginator(nestedEntities:string[] = null):common.services.pagination.Paginator {
 
             //cache the paginator so subsequent requests can be collection length-aware
             if (!this.cachedPaginator) {
                 this.cachedPaginator = this.paginationService
                     .getPaginatorInstance(this.apiEndpoint())
-                    .setModelFactory(this.modelFactory);
+                    .setModelFactory(this.modelFactory)
+                    .setNested(nestedEntities);
             }
 
             return this.cachedPaginator;
@@ -60,46 +64,57 @@ namespace common.services {
          * @param identifier
          * @param withNested
          * @returns {ng.IPromise<T>}
+         * @param endpointOverride
+         * @param skipInterceptor
          */
-        public getModel<T extends common.models.AbstractModel>(identifier:string, withNested:string[] = null):ng.IPromise<T> {
+        public getModel<T extends common.models.AbstractModel>(identifier:string, withNested:string[] = null, endpointOverride:string = null, skipInterceptor:boolean = false):ng.IPromise<T> {
 
-            return this.ngRestAdapter.get(this.apiEndpoint() + '/' + identifier, {
-                'With-Nested': () => {
-                    if (!withNested) {
-                        return null;
+            let endpoint = endpointOverride ? endpointOverride : this.apiEndpoint() + '/' + identifier;
+
+            return this.ngRestAdapter
+                .skipInterceptor(() => skipInterceptor)
+                .get(endpoint, {
+                    'With-Nested': () => {
+                        if (!withNested) {
+                            return null;
+                        }
+                        return withNested.join(', ');
                     }
-                    return withNested.join(', ');
-                }
-            }).then((res:ng.IHttpPromiseCallbackArg<T>) => this.modelFactory(res.data, true));
+                })
+                .then((res:ng.IHttpPromiseCallbackArg<T>) => this.modelFactory(res.data, true));
         }
 
-    /**
-     * Get all instances of a model
-     * Usually a paginator should be used, but sometimes the entire dataset is required
-     * @param withNested
-     * @returns {ng.IPromise<T[]>}
-     * @param endpoint
-     */
-        public getAllModels<T extends common.models.AbstractModel>(withNested:string[] = null, endpoint:string = this.apiEndpoint()):ng.IPromise<T[]> {
+        /**
+         * Get all instances of a model
+         * Usually a paginator should be used, but sometimes the entire dataset is required
+         * @param withNested
+         * @returns {ng.IPromise<T[]>}
+         * @param endpoint
+         * @param skipInterceptor
+         */
+        public getAllModels<T extends common.models.AbstractModel>(withNested:string[] = null, endpoint:string = this.apiEndpoint(), skipInterceptor:boolean = false):ng.IPromise<T[]> {
 
-            return this.ngRestAdapter.get(endpoint, {
-                'With-Nested': () => {
-                    if (!withNested) {
-                        return null;
+            return this.ngRestAdapter
+                .skipInterceptor(() => skipInterceptor)
+                .get(endpoint, {
+                    'With-Nested': () => {
+                        if (!withNested) {
+                            return null;
+                        }
+                        return withNested.join(', ');
                     }
-                    return withNested.join(', ');
-                }
-            }).then((res:ng.IHttpPromiseCallbackArg<T[]>) => _.map(res.data, (modelData) => this.modelFactory(modelData, true)));
+                })
+                .then((res:ng.IHttpPromiseCallbackArg<T[]>) => _.map(res.data, (modelData) => this.modelFactory(modelData, true)));
         }
 
         /**
          * Save model given the entity and endpoint
          * @todo swap params to follow common pattern of rest adapter
          * @param entity
-         * @param endPoint
          * @returns {any}
+         * @param endpoint
          */
-        public saveModel<T extends common.models.AbstractModel>(entity:T, endPoint:string):ng.IPromise<T|boolean> {
+        public saveModel<T extends common.models.AbstractModel>(entity:T, endpoint:string = this.apiEndpoint(entity)):ng.IPromise<T|boolean> {
             let method = entity.exists() ? 'patch' : 'put';
 
             let saveData = entity.getAttributes();
@@ -112,7 +127,7 @@ namespace common.services {
                 return this.$q.when(true);
             }
 
-            return this.ngRestAdapter[method](endPoint, saveData)
+            return this.ngRestAdapter[method](endpoint, saveData)
                 .then(() => entity);
 
         }
@@ -204,6 +219,22 @@ namespace common.services {
         public dumpQueueSaveFunctions():void {
             this.queuedSaveProcessFunctions = [];
         }
+
+        public suppressInterceptor(){
+
+            this.interceptingNgRestAdapter = this.ngRestAdapter;
+            this.ngRestAdapter = this.ngRestAdapter.skipInterceptor();
+
+            return this;
+        }
+
+        public restoreInterceptor(){
+            this.ngRestAdapter = this.interceptingNgRestAdapter;
+            this.interceptingNgRestAdapter = null;
+
+            return this;
+        }
+
     }
 
 }

@@ -5,7 +5,7 @@ namespace common.directives.menuToggle {
     interface IMenuToggleScope extends ng.IScope{
         isOpen():boolean;
         toggle():void;
-        gotoState(stateName:string):void;
+        gotoState(stateName:string, stateParams:any):void;
         navigationState: ng.ui.IState;
         collapsed?: boolean;
     }
@@ -26,7 +26,11 @@ namespace common.directives.menuToggle {
         public link = ($scope: IMenuToggleScope, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: any) => {
 
             let list = $element.find('md-list');
-            let open = this.$state.includes($scope.navigationState.name);
+            let open = false;
+
+            this.$timeout(() => {
+                open = this.$state.includes($scope.navigationState.name);
+            }, 200);
 
             $scope.isOpen = function() {
                 return open;
@@ -35,8 +39,8 @@ namespace common.directives.menuToggle {
                 open = !open;
             };
 
-            $scope.gotoState = (stateName:string) => {
-                this.$state.go(stateName);
+            $scope.gotoState = (stateName:string, stateParams:any) => {
+                this.$state.go(stateName, stateParams);
             };
 
             let getTargetHeight = (element:ng.IRootElementService) => {

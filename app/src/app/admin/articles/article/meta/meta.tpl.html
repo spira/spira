@@ -42,22 +42,38 @@
                 <input type="hidden" ng-model="MetaController.authors[0]" ng-required="true">
             </div>
             <div flex>
-                <md-checkbox ng-model="MetaController.article.showAuthorPromo" aria-label="Show author promotion footer">
+                <md-checkbox ng-model="MetaController.entity.showAuthorPromo" aria-label="Show author promotion footer">
                     Show author promotion footer
                 </md-checkbox>
             </div>
         </div>
 
-        <label>Author Display Options</label>
-        <md-radio-group ng-model="MetaController.article.authorDisplay">
-            <md-radio-button ng-value="true">Display real author on post</md-radio-button>
-            <md-radio-button ng-value="false">Override author display</md-radio-button>
-        </md-radio-group>
+        <div layout="row">
+            <div flex>
+                <label>Author Display Options</label>
+                <md-radio-group ng-model="MetaController.overrideAuthor" ng-change="MetaController.authorDisplay()">
+                    <md-radio-button ng-value="false">Display real author on post</md-radio-button>
+                    <md-radio-button ng-value="true">Override author display</md-radio-button>
+                </md-radio-group>
+            </div>
+            <div flex ng-if="MetaController.overrideAuthor">
+                <md-input-container ng-if="MetaController.overrideAuthor">
+                    <label>Author Override</label>
+                    <input ng-model="MetaController.entity.authorOverride" name="authorOverride" type="text" ng-required="false">
+                </md-input-container>
+
+                <md-input-container ng-if="MetaController.overrideAuthor">
+                    <label>Author Website</label>
+                    <input ng-model="MetaController.entity.authorWebsite" name="authorWebsite" type="text" ng-required="false">
+                </md-input-container>
+            </div>
+        </div>
+
     </md-whiteframe>
 
     <h2>Search Engines</h2>
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-        <md-input-container ng-repeat="metaTag in MetaController.article._metas">
+        <md-input-container ng-repeat="metaTag in MetaController.entity._metas">
             <label for="metaTagMetaContent">{{ metaTag.metaName }}</label>
             <input id="metaTagMetaContent" ng-model="metaTag.metaContent" name="metaContent" type="text" ng-required="false">
         </md-input-container>
@@ -83,5 +99,15 @@
             </div>
         </div>
         <!-- Implementation not complete as model has not been implemented yet -->
+    </md-whiteframe>
+
+    <h2>Permissions</h2>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
+        <md-switch ng-model="MetaController.entity.publicAccess" aria-label="Public">
+            Public (anonymous) users can access this item
+        </md-switch>
+        <md-switch ng-model="MetaController.entity.usersCanComment" aria-label="Users can comment">
+            Users can comment on this item
+        </md-switch>
     </md-whiteframe>
 </div>

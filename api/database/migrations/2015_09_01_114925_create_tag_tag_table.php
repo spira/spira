@@ -31,6 +31,7 @@ class CreateTagTagTable extends Migration
             $table->boolean('linked_tags_must_exist')->default(false);
             $table->boolean('linked_tags_must_be_children')->default(false);
             $table->tinyInteger('linked_tags_limit')->nullable()->default(null);
+            $table->boolean('read_only')->default(false);
 
             $table->primary(['tag_id', 'parent_tag_id']);
 

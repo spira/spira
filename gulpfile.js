@@ -376,6 +376,13 @@ gulp.task('build', 'runs build sequence for frontend', function (cb){
         cb);
 });
 
+gulp.task('frontend', 'frontend development tasks (no scripts)', function (cb){
+    plugins.runSequence(
+        ['templates', 'styles', 'assets'],
+        'index',
+        cb);
+});
+
 gulp.task('watch', 'starts up browsersync server and runs task watchers', [], function() {
 
     /**

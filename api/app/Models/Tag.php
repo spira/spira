@@ -50,6 +50,11 @@ class Tag extends IndexedModel
         ],
     ];
 
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class, 'post_tag', 'tag_id', 'post_id', 'articles')->withPivot('tag_group_id', 'tag_group_parent_id');
+    }
+
     /**
      * @param mixed $id
      * @return BaseModel
@@ -109,6 +114,7 @@ class Tag extends IndexedModel
                 'linked_tags_must_exist',
                 'linked_tags_must_be_children',
                 'linked_tags_limit',
+                'read_only',
             ]);
     }
 
@@ -120,11 +126,12 @@ class Tag extends IndexedModel
                 'linked_tags_must_exist',
                 'linked_tags_must_be_children',
                 'linked_tags_limit',
+                'read_only',
             ]);
     }
 
-    public function articles()
+    protected function getBelongsRelation($related, $relation)
     {
-        return $this->belongsToMany(Article::class, 'post_tag', 'tag_id', 'post_id', 'articles')->withPivot('tag_group_id', 'tag_group_parent_id');
+        return $this->belongsToMany($related, null, null, null, $relation)->withPivot('tag_group_id', 'tag_group_parent_id');
     }
 }

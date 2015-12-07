@@ -1,0 +1,61 @@
+<div class="entity-search">
+
+    <ng-form name="entitySearchForm">
+
+        <md-input-container>
+            <label>Search for a {{EntitySearchController.modelType}}</label>
+            <md-chips
+                    class="md-contact-chips"
+                    ng-model="EntitySearchController.selectedEntities"
+                    name="entities"
+                    ng-model-options="{ debounce: 500 }"
+                    md-autocomplete-snap
+                    md-require-match="true">
+
+                <md-autocomplete
+                        required flex
+                        md-input-name="searchField"
+                        md-no-cache="true"
+                        md-selected-item="selectedEntity"
+                        md-search-text="searchText"
+                        md-items="entity in EntitySearchController.entitySearch(searchText)"
+                        md-item-text="entity.title"
+                        md-selected-item-change="searchText = ''"
+                        ng-hide="EntitySearchController.selectedEntities.length > 0"
+                        >
+                    <md-item-template>
+                        <div layout="row">
+                            <cl-image ng-if="EntitySearchController.thumbnail" width="100%" public-id="{{entity._thumbnailImage.imageId}}"
+                                      format="{{entity._thumbnailImage.format}}">
+                                <cl-transformation height="50" width="50" crop="fill" gravity="north"/>
+                            </cl-image>
+                            <div>
+                                {{ entity[EntitySearchController.field] }}
+                            </div>
+                        </div>
+                    </md-item-template>
+                    <md-not-found>
+                        No matches found for {{EntitySearchController.modelType}} with search <em>{{searchText}}</em>.
+                    </md-not-found>
+                    <ng-messages for="entitySearchForm.searchField.$error">
+                        <ng-message when="required">You must enter a search term</ng-message>
+                    </ng-messages>
+
+                    <pre highlight="">{{entitySearchForm.searchField.$error|json}}</pre>
+
+                </md-autocomplete>
+
+                <md-chip-template>
+                    <div ng-if="EntitySearchController.thumbnail" class="md-contact-avatar">
+                        <cl-image width="100%" public-id="{{$chip._thumbnailImage.imageId}}">
+                            <cl-transformation height="50" width="50" crop="fill" gravity="north"/>
+                        </cl-image>
+                    </div>
+                    <div class="md-contact-name">{{ $chip[EntitySearchController.field] }}</div>
+                </md-chip-template>
+
+            </md-chips>
+        </md-input-container>
+    </ng-form>
+
+</div>

@@ -37,7 +37,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->patch('articles/{id}', 'ArticleController@patchOne');
     $app->delete('articles/{id}', 'ArticleController@deleteOne');
     $app->put('articles/{id}/localizations/{region}', 'ArticleController@putOneLocalization');
-    $app->post('articles/{id}/meta', 'ArticleMetaController@postMany');
+    $app->put('articles/{id}/meta', 'ArticleMetaController@putMany');
     $app->delete('articles/{id}/meta/{childId}', 'ArticleMetaController@deleteOne');
     $app->post('articles/{id}/comments', ['uses' => 'ArticleCommentController@postOne', 'middleware' => 'attachUserToEntity']);
     $app->put('articles/{id}/tags', 'ArticleTagController@putMany');
@@ -55,6 +55,8 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->delete('tags/{id}', 'TagController@deleteOne');
     $app->put('tags/{id}/child-tags', 'ChildTagController@putMany');
 
+    $app->get('cloudinary/signature', 'CloudinaryController@getSignature');
+
     $app->put('images/{id}', 'ImageController@putOne');
     $app->patch('images/{id}', 'ImageController@patchOne');
     $app->delete('images/{id}', 'ImageController@deleteOne');
@@ -67,8 +69,6 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('/documentation.apib', 'ApiaryController@getApiaryDocumentation');
     $app->get('timezones', 'TimezoneController@getAll');
     $app->get('countries', 'CountriesController@getAll');
-
-    $app->get('cloudinary/signature', 'CloudinaryController@getSignature');
 
     $app->get('auth/jwt/login', 'AuthController@login');
     $app->get('auth/jwt/refresh', 'AuthController@refresh');

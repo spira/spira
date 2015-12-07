@@ -15,7 +15,7 @@ namespace common.mixins {
                 return this.$q.when(false);
             }
 
-            return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/sections', requestObject)
+            return this.ngRestAdapter.post(this.apiEndpoint(entity) + '/sections', requestObject)
                 .then(() => this.saveEntitySectionLocalizations(entity))
                 .then(() => {
                     _.invoke(entity._sections, 'setExists', true);

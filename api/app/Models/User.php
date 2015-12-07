@@ -13,9 +13,11 @@ namespace App\Models;
 use App\Models\Relations\UserRoleRelation;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
+use Rhumsaa\Uuid\Uuid;
 use Spira\Auth\User\SocialiteAuthenticatable;
 use Spira\Core\Model\Collection\Collection;
 use Spira\Core\Model\Model\IndexedModel;
@@ -278,6 +280,21 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         }
 
         return $this->userCredential->password;
+    }
+
+    /**
+     * @param string $id user_id or email
+     * @return AbstractPost
+     * @throws ModelNotFoundException
+     */
+    public function findByIdentifier($id)
+    {
+        //if the id is a uuid, try that or fail.
+        if (Uuid::isValid($id)) {
+            return static::findOrFail($id);
+        }
+
+        return $this->findByEmail($id);
     }
 
     /**

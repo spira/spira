@@ -12,7 +12,7 @@
         <p ng-bind-html="LocalizableInputDialogController.originalValue"></p>
 
         <md-tabs md-selected="LocalizableInputDialogController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
-            <md-tab label="{{region.name}}"ng-repeat="region in LocalizableInputDialogController.regionService.supportedRegions">
+            <md-tab label="{{region.name}}" ng-repeat="region in LocalizableInputDialogController.regionService.supportedRegions">
 
                 <md-input-container flex ng-switch="LocalizableInputDialogController.inputNodeName">
                     <textarea aria-label="Add localisation for {{region.name}}" ng-switch-when="textarea" ng-model="LocalizableInputDialogController.localizationMap[region.code]"></textarea>

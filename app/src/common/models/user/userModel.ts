@@ -15,6 +15,8 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
+        protected __primaryKey = 'userId';
+
         public userId:string = undefined;
         public email:string = undefined;
         public username:string = undefined;

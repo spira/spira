@@ -14,6 +14,7 @@ use App\Models\Image;
 use Faker\Factory as Faker;
 use App\Models\UserProfile;
 use App\Models\UserCredential;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class UserStorySeeder extends BaseSeeder
 {
@@ -27,6 +28,8 @@ class UserStorySeeder extends BaseSeeder
      */
     public function run()
     {
+        $this->command->comment('Seeding Users');
+
         $this->faker = Faker::create('au_AU');
 
         $images = Image::all();
@@ -49,13 +52,20 @@ class UserStorySeeder extends BaseSeeder
             'avatar_img_id' => $images->random()->image_id,
         ]);
 
-        for ($i = 0; $i < 99; $i++) {
+        /** @var ProgressBar $progressBar */
+        $progressBar = $this->command->getOutput()->createProgressBar(20);
+
+        for ($i = 0; $i < 20; $i++) {
             $user = $this->createUser([
                 'avatar_img_id' => $this->faker->optional()->randomElement($images->pluck('image_id')->toArray()),
             ]);
 
             $this->assignRandomRole($user);
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $this->command->line('');
     }
 
     /**

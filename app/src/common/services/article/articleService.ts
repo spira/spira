@@ -2,7 +2,7 @@ namespace common.services.article {
 
     export const namespace = 'common.services.article';
 
-    export class ArticleService extends AbstractApiService implements common.services.IExtendedApiService, common.mixins.SectionableApiService, common.mixins.TaggableApiService {
+    export class ArticleService extends AbstractApiService implements common.services.IExtendedApiService, common.mixins.SectionableApiService, common.mixins.TaggableApiService, common.mixins.LocalizableApiService, common.mixins.MetaableApiService {
 
 
         //SectionableApiService
@@ -15,6 +15,9 @@ namespace common.services.article {
 
         //LocalizableApiService
         public saveEntityLocalizations: (entity:mixins.LocalizableModel) => ng.IPromise<common.models.Localization<any>[]|boolean>;
+
+        //MetaableApiService
+        public hydrateMetaCollection: (entity:models.IMetaableModel) => common.models.Meta[];
 
         static $inject:string[] = ['ngRestAdapter', 'paginationService', '$q', '$location', '$state'];
 
@@ -80,7 +83,7 @@ namespace common.services.article {
          */
         public save(article:common.models.Article):ng.IPromise<common.models.Article> {
 
-            return this.saveModel(article, this.apiEndpoint() + '/' + article.postId)
+            return this.saveModel(article)
                 .then(() => this.$q.when([
                     this.saveRelatedEntities(article),
                     this.runQueuedSaveFunctions(),

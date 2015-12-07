@@ -2,7 +2,7 @@ namespace common.services.pagination {
 
     export const namespace = 'common.services.pagination';
 
-    export class PaginatorException extends common.SpiraException {}
+    export class PaginatorException extends global.SpiraException {}
 
     export interface IRangeHeaderData{
         entityName:string;
