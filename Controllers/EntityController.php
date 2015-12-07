@@ -10,6 +10,7 @@
 
 namespace Spira\Core\Controllers;
 
+use Elasticquent\ElasticquentResultCollection;
 use Elasticquent\ElasticquentTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,7 +20,6 @@ use Spira\Core\Model\Model\BaseModel;
 use Spira\Core\Responder\Contract\TransformerInterface;
 use Spira\Core\Responder\Paginator\RangeRequest;
 use Spira\Core\Responder\Response\ApiResponse;
-use Spira\Core\Validation\ValidationExceptionCollection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class EntityController extends ApiController
@@ -90,6 +90,38 @@ abstract class EntityController extends ApiController
         return $this->getResponse()
             ->transformer($this->getTransformer())
             ->item($model);
+    }
+
+    /**
+     * Get one, matching on all the route parameters.
+     * @param Request $request
+     * @return ApiResponse
+     */
+    public function getOneMatchingRouteParams(Request $request)
+    {
+        $model = $this->findOrFailCompoundEntity($request->route()[2]);
+        $model = $this->getWithNested($model, $request);
+        $this->checkPermission(static::class.'@getOne', ['model' => $model]);
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->item($model);
+    }
+
+    /**
+     * Get all, matching on all the route parameters.
+     * @param Request $request
+     * @return ApiResponse
+     */
+    public function getAllMatchingRouteParams(Request $request)
+    {
+        $collection = $this->getAllMatchingEntities($request->route()[2]);
+        $collection = $this->getWithNested($collection, $request);
+        $this->checkPermission(static::class.'@getAll', ['model' => $collection]);
+
+        return $this->getResponse()
+            ->transformer($this->getTransformer())
+            ->collection($collection);
     }
 
     /**
@@ -207,8 +239,8 @@ abstract class EntityController extends ApiController
         $this->checkPermission(static::class.'@patchMany', ['model' => $existingModels]);
 
         $modelsCollection->each(function (BaseModel $model) {
-                return $model->save();
-            });
+            return $model->save();
+        });
 
         return $this->getResponse()->noContent();
     }
@@ -245,8 +277,8 @@ abstract class EntityController extends ApiController
         $this->checkPermission(static::class.'@deleteMany', ['model' => $modelsCollection]);
 
         $modelsCollection->each(function (BaseModel $model) {
-                $model->delete();
-            });
+            $model->delete();
+        });
 
         return $this->getResponse()->noContent();
     }
@@ -278,6 +310,29 @@ abstract class EntityController extends ApiController
     }
 
     /**
+     * @param array $routeParams
+     * @return BaseModel
+     */
+    protected function findOrFailCompoundEntity(array $routeParams)
+    {
+        try {
+            return $this->getModel()->findByRouteParams($routeParams);
+        } catch (ModelNotFoundException $e) {
+            throw $this->notFoundException($this->getModel()->getKeyName());
+        }
+    }
+
+    /**
+     * @param null $limit
+     * @param null $offset
+     * @return Collection
+     */
+    protected function getAllMatchingEntities(array $routeParams, $limit = null, $offset = null)
+    {
+        return $this->getModel()->whereAll($routeParams)->take($limit)->skip($offset)->get();
+    }
+
+    /**
      * @return int
      */
     protected function countEntities()
@@ -300,8 +355,7 @@ abstract class EntityController extends ApiController
      * @param null $limit
      * @param null $offset
      * @param null $totalCount
-     * @return \Elasticquent\ElasticquentResultCollection
-     * @throws NotFoundHttpException
+     * @return ElasticquentResultCollection
      */
     protected function searchAllEntities($query, $limit = null, $offset = null, &$totalCount = null)
     {
@@ -309,13 +363,8 @@ abstract class EntityController extends ApiController
         $model = $this->getModel();
 
         $queryArray = json_decode($query, true);
-
         if (is_array($queryArray)) { // Complex query
-            $searchResults = $model->complexSearch([
-                'index' => $model->getIndexName(),
-                'type' => $model->getTypeName(),
-                'body' => $this->translateQuery($queryArray),
-            ]);
+            $searchResults = $this->complexSearch($queryArray);
         } else {
             $searchResults = $model->searchByQuery([
                 'match_phrase_prefix' => [
@@ -324,13 +373,39 @@ abstract class EntityController extends ApiController
             ], null, null, $limit, $offset);
         }
 
-        if ($searchResults->totalHits() === 0) {
+        if ($searchResults instanceof ElasticquentResultCollection) {
+            $totalHits = $searchResults->totalHits();
+        } else {
+            $totalHits = $searchResults->count();
+        }
+
+        if ($totalHits === 0) {
             throw new NotFoundHttpException(sprintf('No results found for model `%s`', get_class($model)));
         }
 
-        if (isset($totalCount) && $searchResults->totalHits() < $totalCount) {
-            $totalCount = $searchResults->totalHits();
+        if (isset($totalCount) && $totalHits < $totalCount) {
+            $totalCount = $totalHits;
         }
+
+        return $searchResults;
+    }
+
+    /**
+     * @param $model
+     * @param $queryArray
+     * @return mixed
+     */
+    protected function complexSearch(array $queryArray)
+    {
+        /* @var ElasticquentTrait $model */
+        $model = $this->getModel();
+        $searchResults = $model->complexSearch(
+            [
+                'index' => $model->getIndexName(),
+                'type' => $model->getTypeName(),
+                'body' => $this->translateQuery($queryArray),
+            ]
+        );
 
         return $searchResults;
     }
@@ -405,7 +480,6 @@ abstract class EntityController extends ApiController
     /**
      * @param $requestCollection
      * @return Collection
-     * @throws ValidationExceptionCollection
      */
     protected function findOrFailCollection($requestCollection)
     {
