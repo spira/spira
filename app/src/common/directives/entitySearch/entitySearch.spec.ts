@@ -5,7 +5,7 @@ namespace common.directives.entitySearch {
         EntitySearchController: EntitySearchController;
     }
 
-    describe.only('Entity search directive', () => {
+    describe('Entity search directive', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:ng.IRootScopeService,
