@@ -39,6 +39,10 @@ class EntityTest extends TestCase
         // unit testing, see: https://github.com/laravel/framework/issues/1181
         TestEntity::flushEventListeners();
         TestEntity::boot();
+
+        $this->app->group([], function ($app) {
+            require __DIR__ . '/test_routes.php';
+        });
     }
 
     /**
