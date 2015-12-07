@@ -68,6 +68,7 @@ class EntityTest extends TestCase
 
     public function testGetAllWithNested()
     {
+        $this->getFactory(TestEntity::class)->count(10)->create();
         $entity = $this->getFactory(TestEntity::class)->create();
         $this->addRelatedEntities($entity);
 
