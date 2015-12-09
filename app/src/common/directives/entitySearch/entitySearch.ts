@@ -13,7 +13,7 @@ namespace common.directives.entitySearch {
 
     export class EntitySearchController {
 
-        static $inject = ['$mdDialog', '$scope', '$injector'];
+        static $inject = ['$mdDialog', '$scope', '$injector', '$timeout'];
 
         public modelType:string;//bound by directive
         public field:string;//bound by directive
@@ -31,11 +31,12 @@ namespace common.directives.entitySearch {
         constructor(
             private $mdDialog:ng.material.IDialogService,
             private $scope:ng.IScope,
-            private $injector:ng.auto.IInjectorService
+            private $injector:ng.auto.IInjectorService,
+            private $timeout:ng.ITimeoutService
         ) {
 
             this.entityService = this.$injector.get(this.modelType+'Service');
-            
+
             this.entitiesPaginator = this.entityService
                 .getPaginator()
                 .setCount(10);
@@ -46,12 +47,14 @@ namespace common.directives.entitySearch {
 
             this.$scope.$watchCollection(() => this.selectedEntities, (newValue, oldValue) => {
                 if (!_.isEqual(newValue, oldValue)) {
-                    if(!_.isEmpty(this.selectedEntities)) {
-                        this.entityChangedHandler(this.selectedEntities[0]);
-                    }
-                    else {
-                        this.entityChangedHandler(null);
-                    }
+                    this.$timeout(() => {
+                        if(!_.isEmpty(this.selectedEntities)) {
+                            this.entityChangedHandler(this.selectedEntities[0]);
+                        }
+                        else {
+                            this.entityChangedHandler(null);
+                        }
+                    });
                 }
             });
         }

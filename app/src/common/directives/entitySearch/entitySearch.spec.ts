@@ -9,6 +9,7 @@ namespace common.directives.entitySearch {
 
         let $compile:ng.ICompileService,
             $rootScope:ng.IRootScopeService,
+            $timeout:ng.ITimeoutService,
             directiveScope:TestScope,
             compiledElement:ng.IAugmentedJQuery,
             directiveController:common.directives.entitySearch.EntitySearchController,
@@ -19,10 +20,11 @@ namespace common.directives.entitySearch {
 
             module('app');
 
-            inject((_$compile_, _$rootScope_, _$q_) => {
+            inject((_$compile_, _$rootScope_, _$q_, _$timeout_) => {
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
                 $q = _$q_;
+                $timeout = _$timeout_;
             });
 
             // Only initialise the directive once to speed up the testing
@@ -92,6 +94,7 @@ namespace common.directives.entitySearch {
             directiveController.selectedEntities[0] = newArticle;
 
             (<any>directiveController).$scope.$apply();
+            (<any>directiveController).$timeout.flush();
 
             expect(spyHandler).to.have.been.calledWith(newArticle);
             spyHandler.restore();
@@ -104,12 +107,12 @@ namespace common.directives.entitySearch {
             directiveController.selectedEntities = [];
 
             (<any>directiveController).$scope.$apply();
+            (<any>directiveController).$timeout.flush();
 
             expect(stubHandler).to.have.been.calledWith(null);
             stubHandler.restore();
 
         });
-
 
 
     });
