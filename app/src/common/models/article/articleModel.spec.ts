@@ -66,15 +66,15 @@ namespace common.models {
 
             let article = new common.models.Article(articleData);
 
-            // The first article meta is 'name' which is added via template
-            expect(article._metas[0].metaableId).to.equal(article.postId);
-            expect(_.isEmpty(article._metas[0].metaId)).to.be.false;
+            let testableMetaTags = _.map(article._metas, (metaTag) => {
+                expect(metaTag).to.be.an.instanceOf(Meta);
+                expect(metaTag.metaableId).to.equal(article.postId);
+                expect(_.isEmpty(metaTag.metaId)).to.be.false;
 
-            let testableMetaTags = _.cloneDeep(article._metas);
-            _.forEach(testableMetaTags, (tag) => {
-                delete(tag.metaId);
-                delete(tag.metaableId);
-                delete(tag.metaableType);
+                return {
+                    metaName: metaTag.metaName,
+                    metaContent: metaTag.metaContent
+                };
             });
 
             expect(testableMetaTags).to.deep.equal([

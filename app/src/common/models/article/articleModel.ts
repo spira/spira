@@ -95,8 +95,8 @@ namespace common.models {
             return (<any>_).chain(common.models.Article.articleMetaTemplate)
                 .map((metaTagName) => {
 
-                    let existingTag = _.find((<common.models.Article>data)._metas, {metaName:metaTagName});
-                    if(_.isEmpty(existingTag)) {
+                    let existingTagData = _.find((<common.models.Article>data)._metas, {metaName:metaTagName});
+                    if(_.isEmpty(existingTagData)) {
                         return new common.models.Meta({
                             metaName:metaTagName,
                             metaContent:'',
@@ -104,12 +104,18 @@ namespace common.models {
                             metaId:common.models.Article.generateUUID()
                         });
                     }
-                    return existingTag;
+
+                    return new common.models.Meta(existingTagData);
                 })
                 .thru((templateMeta) => {
-                    let leftovers = _.filter((<common.models.Article>data)._metas, (metaTag) => {
-                        return !_.contains(templateMeta, metaTag);
-                    });
+
+                    let leftovers = _.reduce((<common.models.Article>data)._metas, (metaTags:common.models.Meta[], metaTagData) => {
+                        if(!_.find(templateMeta, {metaName:metaTagData.metaName})) {
+                            metaTags.push(new common.models.Meta(metaTagData));
+                        }
+
+                        return metaTags;
+                    }, []);
 
                     return templateMeta.concat(leftovers);
                 })
