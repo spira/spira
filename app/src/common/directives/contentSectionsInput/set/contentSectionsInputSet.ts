@@ -87,7 +87,7 @@ namespace common.directives.contentSectionsInput.set {
             var confirm = this.$mdDialog.confirm()
                 .parent('#admin-container')
                 .title("Are you sure you want to delete this section?")
-                .content('This action <strong>cannot</strong> be undone')
+                .htmlContent('This action <strong>cannot</strong> be undone')
                 .ariaLabel("Confirm delete")
                 .ok("Delete this section!")
                 .cancel("Nope! Don't delete it.");

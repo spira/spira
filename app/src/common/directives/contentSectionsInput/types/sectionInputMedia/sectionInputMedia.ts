@@ -76,7 +76,7 @@ namespace common.directives.contentSectionsInput.sectionInputMedia {
             var confirm = this.$mdDialog.confirm()
                 .parent('#admin-container')
                 .title(`Are you sure you want to delete this ${media.type}?`)
-                .content('This action <strong>cannot</strong> be undone')
+                .htmlContent('This action <strong>cannot</strong> be undone')
                 .ariaLabel("Confirm delete")
                 .ok(`Delete this ${media.type}!`)
                 .cancel("Nope! Don't delete it.");

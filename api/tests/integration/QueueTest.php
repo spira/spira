@@ -54,7 +54,7 @@ class QueueTest extends TestCase
     {
         Queue::push(function ($job) {
 
-            factory(App\Models\TestEntity::class)->create();
+            factory(Spira\Core\Model\Test\TestEntity::class)->create();
 
             $job->delete();
         });

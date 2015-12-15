@@ -46,7 +46,7 @@ namespace app.guest.login {
                         this.$mdDialog.show(this.$mdDialog.alert()
                             .clickOutsideToClose(false)
                             .title('Please confirm your email')
-                            .content('You have signed in using an unconfirmed email address. Please note that your email address will not be changed until you have confirmed your email.')
+                            .textContent('You have signed in using an unconfirmed email address. Please note that your email address will not be changed until you have confirmed your email.')
                             .ok('Continue')
                             .ariaLabel('Confirm Email')
                         );

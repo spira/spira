@@ -82,7 +82,7 @@ namespace common.directives.avatar {
 
             var confirm = this.$mdDialog.confirm()
                 .title("Are you sure you want to remove your avatar?")
-                .content("This action <strong>cannot</strong> be undone.")
+                .htmlContent("This action <strong>cannot</strong> be undone.")
                 .ariaLabel("Confirm remove")
                 .ok("Remove")
                 .cancel("Don't remove it");
