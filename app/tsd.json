@@ -18,7 +18,7 @@
       "commit": "6f04d25ad38982d372cc3cda62fa4c0eef9e24d7"
     },
     "jquery/jquery.d.ts": {
-      "commit": "6f04d25ad38982d372cc3cda62fa4c0eef9e24d7"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "angularjs/angular-mocks.d.ts": {
       "commit": "6f04d25ad38982d372cc3cda62fa4c0eef9e24d7"
@@ -51,7 +51,7 @@
       "commit": "ab3cc82066805007cbf0db233ddb5879f42be4d2"
     },
     "angular-material/angular-material.d.ts": {
-      "commit": "38c6ccfde0e67ff10d7408e0ee8b7720b3f21d3b"
+      "commit": "8ea42cd8bb11863ed6f242d67c502288ebc45a7b"
     },
     "moment-timezone/moment-timezone.d.ts": {
       "commit": "efc57a6eb7b4d0747894fc106b9dd87e45a8d183"

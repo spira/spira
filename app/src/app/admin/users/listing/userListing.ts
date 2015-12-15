@@ -90,7 +90,7 @@ namespace app.admin.users.listing {
                 .parent("#admin-container")
                 .targetEvent($event)
                 .title("Are you sure you want to impersonate this user?")
-                .content(`
+                .htmlContent(`
                     Any action you take as that user will appear to be done by that user.
                     <blockquote cite="Uncle Ben">With great power comes great responsibility <br><small>- Uncle Ben</small></blockquote>
                 `)
