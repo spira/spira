@@ -82,9 +82,9 @@ abstract class AbstractRelatedEntityController extends ApiController
      * @param null $entityId
      * @return array
      */
-    protected function getValidationRules($entityId = null)
+    protected function getValidationRules($entityId = null, array $requestEntity = [])
     {
-        $childRules = $this->getChildModel()->getValidationRules($entityId);
+        $childRules = $this->getChildModel()->getValidationRules($entityId, $requestEntity);
         $pivotRules = $this->getPivotValidationRules();
 
         return array_merge($childRules, $pivotRules);

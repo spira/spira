@@ -114,10 +114,10 @@ trait LocalizableTrait
 
         // Validate the region
         $regionCode = ['region_code' => $region];
-        parent::validateRequest($regionCode, Localization::getValidationRules(null));
+        parent::validateRequest($regionCode, Localization::getValidationRules(null, $regionCode));
 
         // Localizations are partial updates so only validate the fields which were sent with the request
-        $this->validateRequest($localizations, $this->getValidationRules($model->getKey()), null, true);
+        $this->validateRequest($localizations, $this->getValidationRules($model->getKey(), $localizations), null, true);
 
         return $model
             ->localizations()

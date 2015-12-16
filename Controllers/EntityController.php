@@ -134,7 +134,10 @@ abstract class EntityController extends ApiController
     {
         $model = $this->getModel()->newInstance();
         $requestEntity = $request->json()->all();
-        $this->validateRequest($requestEntity, $this->getValidationRules($this->getKeyFromRequestEntity($this->getModel(), $requestEntity)));
+        $this->validateRequest(
+            $requestEntity,
+            $this->getValidationRules($this->getKeyFromRequestEntity($this->getModel(), $requestEntity), $requestEntity)
+        );
         $model->fill($requestEntity);
         $this->checkPermission(static::class.'@postOne', ['model' => $model]);
         $model->save();
@@ -157,7 +160,8 @@ abstract class EntityController extends ApiController
         $this->checkEntityIdMatchesRoute($request, $id, $this->getModel());
         $model = $this->findOrNewEntity($id);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($id, $requestEntity));
 
         $model->fill($request->json()->all());
         $this->checkPermission(static::class.'@putOne', ['model' => $model]);
@@ -210,7 +214,8 @@ abstract class EntityController extends ApiController
 
         $model = $this->findOrFailEntity($id);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($id), $model);
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($id, $requestEntity), $model);
 
         $model->fill($request->json()->all());
         $this->checkPermission(static::class.'@patchOne', ['model' => $model]);
@@ -520,8 +525,8 @@ abstract class EntityController extends ApiController
     /**
      * @return array
      */
-    protected function getValidationRules($entityKey = null)
+    protected function getValidationRules($entityKey = null, array $requestEntity = [])
     {
-        return $this->getModel()->getValidationRules($entityKey);
+        return $this->getModel()->getValidationRules($entityKey, $requestEntity);
     }
 }
