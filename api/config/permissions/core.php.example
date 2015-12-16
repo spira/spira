@@ -1,0 +1,39 @@
+<?php
+
+use App\Models\Role;
+
+return [
+
+    //basic route based permissions
+
+    //special permissions (hierarchy or rules)
+
+    'ManipulateWithOwn' => [
+        'children' => [
+            //add children here
+        ],
+    ],
+    'ManipulateWithOwnChild' => [
+        'children' => [
+            //add children here
+        ],
+    ],
+
+    //roles
+
+    Role::SUPER_ADMIN_ROLE => [
+        'children' => [
+            //add children here
+        ],
+    ],
+    Role::ADMIN_ROLE => [
+        'children' => [
+            //add children here
+        ],
+    ],
+    Role::USER_ROLE => [
+        'children' => [
+            //add children here
+        ],
+    ],
+];

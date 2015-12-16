@@ -2334,16 +2334,16 @@
         },
         {
             "name": "namshi/jose",
-            "version": "6.0.3",
+            "version": "6.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/namshi/jose.git",
-                "reference": "e214c25ce0deed923ef6b299fbad87a822b51b2c"
+                "reference": "7176b9245040e44197ef34db3461b9abc24a6f47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/e214c25ce0deed923ef6b299fbad87a822b51b2c",
-                "reference": "e214c25ce0deed923ef6b299fbad87a822b51b2c",
+                "url": "https://api.github.com/repos/namshi/jose/zipball/7176b9245040e44197ef34db3461b9abc24a6f47",
+                "reference": "7176b9245040e44197ef34db3461b9abc24a6f47",
                 "shasum": ""
             },
             "require": {
@@ -2358,7 +2358,8 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.5",
-                "satooshi/php-coveralls": "dev-master"
+                "satooshi/php-coveralls": "dev-master",
+                "sllh/php-cs-fixer-styleci-bridge": "^1.4"
             },
             "type": "library",
             "autoload": {
@@ -2386,7 +2387,7 @@
                 "jwt",
                 "token"
             ],
-            "time": "2015-11-13 08:01:01"
+            "time": "2015-12-14 06:48:22"
         },
         {
             "name": "nesbot/carbon",
@@ -2531,16 +2532,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "1.1.1",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "a208865a5aeffc2dbbef2a5b3409887272d93f32"
+                "reference": "d762ee5b099a29044603cd4649851e81aa66cb47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/a208865a5aeffc2dbbef2a5b3409887272d93f32",
-                "reference": "a208865a5aeffc2dbbef2a5b3409887272d93f32",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/d762ee5b099a29044603cd4649851e81aa66cb47",
+                "reference": "d762ee5b099a29044603cd4649851e81aa66cb47",
                 "shasum": ""
             },
             "require": {
@@ -2575,7 +2576,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2015-12-01 02:52:15"
+            "time": "2015-12-10 14:48:13"
         },
         {
             "name": "pda/pheanstalk",
@@ -2971,12 +2972,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "7f096d50bca30c532b9cf8dad42ce6a77e02a36a"
+                "reference": "eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/7f096d50bca30c532b9cf8dad42ce6a77e02a36a",
-                "reference": "7f096d50bca30c532b9cf8dad42ce6a77e02a36a",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681",
+                "reference": "eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681",
                 "shasum": ""
             },
             "require": {
@@ -3019,7 +3020,7 @@
                 "source": "https://github.com/spira/api-core/tree/master",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2015-12-07 11:26:41"
+            "time": "2015-12-16 11:59:06"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3939,18 +3940,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "0c560cb3759bc9146a0ea5cbf796f5a60bc14e7a"
+                "reference": "5497e7d506229c09823903fe02313e67978b1057"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/0c560cb3759bc9146a0ea5cbf796f5a60bc14e7a",
-                "reference": "0c560cb3759bc9146a0ea5cbf796f5a60bc14e7a",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/5497e7d506229c09823903fe02313e67978b1057",
+                "reference": "5497e7d506229c09823903fe02313e67978b1057",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "5.0.x|5.1.x",
-                "illuminate/filesystem": "5.0.x|5.1.x",
-                "illuminate/support": "5.0.x|5.1.x",
+                "illuminate/console": "5.0.x|5.1.x|5.2.x",
+                "illuminate/filesystem": "5.0.x|5.1.x|5.2.x",
+                "illuminate/support": "5.0.x|5.1.x|5.2.x",
                 "php": ">=5.4.0",
                 "phpdocumentor/reflection-docblock": "2.0.4",
                 "symfony/class-loader": "~2.3"
@@ -3994,7 +3995,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2015-12-07 07:55:26"
+            "time": "2015-12-14 13:33:18"
         },
         {
             "name": "doctrine/instantiator",
@@ -4563,16 +4564,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.19",
+            "version": "4.8.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b2caaf8947aba5e002d42126723e9d69795f32b4"
+                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b2caaf8947aba5e002d42126723e9d69795f32b4",
-                "reference": "b2caaf8947aba5e002d42126723e9d69795f32b4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ea76b17bced0500a28098626b84eda12dbcf119c",
+                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c",
                 "shasum": ""
             },
             "require": {
@@ -4631,7 +4632,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-11-30 08:18:59"
+            "time": "2015-12-12 07:45:58"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -4755,23 +4756,23 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "2b0112e42c338afa9ad9dfeb94d66f6d84c2f828"
+                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/2b0112e42c338afa9ad9dfeb94d66f6d84c2f828",
-                "reference": "2b0112e42c338afa9ad9dfeb94d66f6d84c2f828",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/13edfd8706462032c2f52b4b862974dd46b71c9e",
+                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5"
+                "phpunit/phpunit": "~4.8"
             },
             "type": "library",
             "extra": {
@@ -4803,7 +4804,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-06 07:21:36"
+            "time": "2015-12-08 07:14:41"
         },
         {
             "name": "sebastian/environment",
