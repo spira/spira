@@ -26,7 +26,7 @@ class PayloadFactoryTest extends TestCase
         $user = m::mock(Authenticatable::class);
         $this->assertEquals($array, $factory->createFromUser($user));
 
-        $factory->addPayloadGenerator('user', function ($user) {return $user;});
+        $factory->addPayloadGenerator('user', function ($user) {return $user; });
 
         $array['user'] = $user;
 

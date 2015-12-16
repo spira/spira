@@ -118,7 +118,7 @@ class Gate implements GateContract
      */
     public function forUser(Authenticatable $user)
     {
-        return new static($this->getStorage(), function () use ($user) {return $user;}, $this->defaultRoles);
+        return new static($this->getStorage(), function () use ($user) {return $user; }, $this->defaultRoles);
     }
 
     /**

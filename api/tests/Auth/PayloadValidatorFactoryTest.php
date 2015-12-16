@@ -17,13 +17,13 @@ class PayloadValidatorFactoryTest extends TestCase
     {
         $payload = ['one' => true, 'two' => 'two'];
         $closure = [
-            'one' => function ($payload) {return $payload['one'];},
+            'one' => function ($payload) {return $payload['one']; },
         ];
 
         $factory = new PayloadValidationFactory($closure);
         $this->assertNull($factory->validatePayload($payload));
 
-        $factory->addValidationRule('two', function ($payload) {return $payload['two'] == 'two';});
+        $factory->addValidationRule('two', function ($payload) {return $payload['two'] == 'two'; });
         $this->assertNull($factory->validatePayload($payload));
     }
 
@@ -31,7 +31,7 @@ class PayloadValidatorFactoryTest extends TestCase
     {
         $payload = ['one' => true, 'two' => 'two'];
         $closure = [
-            'one' => function () {return false;},
+            'one' => function () {return false; },
         ];
 
         $factory = new PayloadValidationFactory($closure);
@@ -42,7 +42,7 @@ class PayloadValidatorFactoryTest extends TestCase
     public function testMissingRule()
     {
         $closure = [
-            'three' => function ($payload) {return true;},
+            'three' => function ($payload) {return true; },
         ];
 
         $factory = new PayloadValidationFactory($closure);
