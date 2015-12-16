@@ -61,7 +61,7 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
 
     public static function getValidationRules($entityId = null, array $requestEntity = [])
     {
-        $hash = !empty($requestEntity['hash']) ? $requestEntity['hash'] : '';
+        $hash = ! empty($requestEntity['hash']) ? $requestEntity['hash'] : '';
 
         return [
             'entity_id' => 'required|uuid',
@@ -75,7 +75,7 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
             'multi_word_column_title' => 'required|boolean',
             'hidden'  => 'required|boolean',
             'json'  => 'required|decoded_json',
-            'non_existant' => 'required_if:conditional,yes|in:' . $hash,
+            'non_existant' => 'required_if:conditional,yes|in:'.$hash,
         ];
     }
 

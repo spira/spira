@@ -494,7 +494,7 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Conditional validation expects "non_existant" field to be equal to hash value
+     * Conditional validation expects "non_existant" field to be equal to hash value.
      */
     public function testConditionalValidationUsingRequestValue()
     {
@@ -503,12 +503,12 @@ class EntityTest extends TestCase
             ->customize(['conditional' => 'yes', 'non_existant' => 'bad value'])
             ->transformed();
 
-        $this->withAuthorization()->putJson('/test/entities/' . $entity['entityId'], $entity);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity['entityId'], $entity);
         $this->assertResponseStatus(422);
 
         $entity['nonExistant'] = $entity['hash'];
 
-        $this->withAuthorization()->putJson('/test/entities/' . $entity['entityId'], $entity);
+        $this->withAuthorization()->putJson('/test/entities/'.$entity['entityId'], $entity);
         $this->assertResponseStatus(201);
     }
 
