@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Spira\Core\Helpers;
-
 
 class Arr extends \Illuminate\Support\Arr
 {
     /**
-     * Copypaste from yii2
+     * Copypaste from yii2.
      *
      * Merges two or more arrays into one recursively.
      * If each array has an element with the same string key value, the latter
@@ -25,7 +23,7 @@ class Arr extends \Illuminate\Support\Arr
     {
         $args = func_get_args();
         $res = array_shift($args);
-        while (!empty($args)) {
+        while (! empty($args)) {
             $next = array_shift($args);
             foreach ($next as $k => $v) {
                 if (is_int($k)) {
@@ -41,6 +39,7 @@ class Arr extends \Illuminate\Support\Arr
                 }
             }
         }
+
         return $res;
     }
 }
