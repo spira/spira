@@ -13,10 +13,10 @@ class ArrayHelperTest extends TestCase
             'firstInner' => [
                 'valueSubstitute' => 1,
                 'valueAdded' => [
-                    'one' => 'one'
-                ]
+                    'one' => 'one',
+                ],
             ],
-            'secondInner' => []
+            'secondInner' => [],
 
         ];
 
@@ -24,12 +24,12 @@ class ArrayHelperTest extends TestCase
             'firstInner' => [
                 'valueSubstitute' => 2,
                 'valueAdded' => [
-                    'two' => 'two'
-                ]
+                    'two' => 'two',
+                ],
             ],
             'secondInner' => [
-                'three'
-            ]
+                'three',
+            ],
         ];
 
         $expectedResult = [
@@ -37,15 +37,14 @@ class ArrayHelperTest extends TestCase
                 'valueSubstitute' => 2,
                 'valueAdded' => [
                     'one' => 'one',
-                    'two' => 'two'
-                ]
+                    'two' => 'two',
+                ],
             ],
             'secondInner' => [
-                'three'
-            ]
+                'three',
+            ],
         ];
 
         $this->assertEquals($expectedResult, Arr::merge($firstArray, $secondArray));
-
     }
 }
