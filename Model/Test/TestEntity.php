@@ -59,8 +59,10 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
         self::UPDATED_AT => 'datetime',
     ];
 
-    public static function getValidationRules($entityId = null)
+    public static function getValidationRules($entityId = null, array $requestEntity = [])
     {
+        $hash = ! empty($requestEntity['hash']) ? $requestEntity['hash'] : '';
+
         return [
             'entity_id' => 'required|uuid',
             'varchar' => 'required|string',
@@ -73,6 +75,7 @@ class TestEntity extends IndexedModel implements LocalizableModelInterface
             'multi_word_column_title' => 'required|boolean',
             'hidden'  => 'required|boolean',
             'json'  => 'required|decoded_json',
+            'non_existant' => 'required_if:conditional,yes|in:'.$hash,
         ];
     }
 

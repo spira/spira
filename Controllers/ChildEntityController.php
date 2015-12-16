@@ -78,7 +78,8 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
         $parent = $this->findParentEntity($id);
         $childModel = $this->getChildModel()->newInstance();
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($id));
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($id, $requestEntity));
 
         $childModel->fill($request->json()->all());
 
@@ -147,7 +148,8 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($childId));
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($childId, $requestEntity));
 
         $childModel->fill($request->json()->all());
 
@@ -220,7 +222,8 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
         $childModel = $this->findOrFailChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($id), $childModel);
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($id, $requestEntity), $childModel);
 
         $childModel->fill($request->json()->all());
 
@@ -310,9 +313,9 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
      * @param null $entityId
      * @return array
      */
-    protected function getValidationRules($entityId = null)
+    protected function getValidationRules($entityId = null, array $requestEntity = [])
     {
-        $childRules = $this->getChildModel()->getValidationRules($entityId);
+        $childRules = $this->getChildModel()->getValidationRules($entityId, $requestEntity);
         $pivotRules = $this->getPivotValidationRules();
 
         return array_merge($childRules, $pivotRules);

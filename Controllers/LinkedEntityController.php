@@ -34,8 +34,9 @@ abstract class LinkedEntityController extends AbstractRelatedEntityController
         $parent = $this->findParentEntity($id);
         $childModel = $this->findOrNewChildEntity($childId, $parent);
 
-        $this->validateRequest($request->json()->all(), $this->getValidationRules($childId), $childModel, true);
-        $childModel->fill($request->json()->all());
+        $requestEntity = $request->json()->all();
+        $this->validateRequest($requestEntity, $this->getValidationRules($childId, $requestEntity), $childModel, true);
+        $childModel->fill($requestEntity);
         $this->checkPermission(static::class.'@attachOne', ['model' => $parent, 'children' => $childModel]);
 
         $this->getRelation($parent)->attach($childModel, $this->getPivotValues($childModel));

@@ -124,7 +124,7 @@ trait RequestValidationTrait
         $errors = [];
 
         foreach ($requestCollection as $requestEntity) {
-            $validationRules = $this->getValidationRules($this->getKeyFromRequestEntity($model, $requestEntity));
+            $validationRules = $this->getValidationRules($this->getKeyFromRequestEntity($model, $requestEntity), $requestEntity);
             try {
                 $this->validateRequest($requestEntity, $validationRules, null, $limitToKeysPresent);
                 $errors[] = null;
