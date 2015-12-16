@@ -37,10 +37,10 @@ class AuthDriverServiceProvider extends JWTAuthDriverServiceProvider
 
                     return $transformer->transformItem($user);
                 },
-                'method' => function (SocialiteAuthenticatable $user) { return $user->getCurrentAuthMethod() ?: 'password';},
-                'iss' => function () use ($request) { return $request->getHttpHost();},
-                'aud' => function () use ($request) { return str_replace('api.', '', $request->getHttpHost());},
-                'sub' => function (Authenticatable $user) {return $user->getAuthIdentifier();},
+                'method' => function (SocialiteAuthenticatable $user) { return $user->getCurrentAuthMethod() ?: 'password'; },
+                'iss' => function () use ($request) { return $request->getHttpHost(); },
+                'aud' => function () use ($request) { return str_replace('api.', '', $request->getHttpHost()); },
+                'sub' => function (Authenticatable $user) {return $user->getAuthIdentifier(); },
             ]
         );
     }

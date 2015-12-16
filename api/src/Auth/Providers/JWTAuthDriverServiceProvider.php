@@ -261,11 +261,11 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
         $request = $this->app['request'];
 
         return [
-            'iss' => function () use ($request) { return $request->url();},
-            'iat' => function () { return Carbon::now()->format('U');},
-            'exp' => function () { return Carbon::now()->addMinutes($this->ttl)->format('U');},
-            'nbf' => function () { return Carbon::now()->format('U');},
-            'jti' => function () { return str_random(16);},
+            'iss' => function () use ($request) { return $request->url(); },
+            'iat' => function () { return Carbon::now()->format('U'); },
+            'exp' => function () { return Carbon::now()->addMinutes($this->ttl)->format('U'); },
+            'nbf' => function () { return Carbon::now()->format('U'); },
+            'jti' => function () { return str_random(16); },
         ];
     }
 
