@@ -31,9 +31,8 @@
         "league/flysystem": "^1.0",
         "laravel/socialite": "^2.0",
         "cloudinary/cloudinary_php": "^1.1",
-        "elasticquent/elasticquent": "dev-master",
-        "venturecraft/revisionable": "dev-master",
-        "spira/core": "dev-master",
+        "venturecraft/revisionable": "^2.0",
+        "spira/core": "1.0.*",
         "namshi/jose": "^6.0"
     },
     "require-dev": {

@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1b0acdefd709e386fb050a3bd14cbf53",
+    "hash": "9a213e274d9215b7525a6b4b5bd46817",
+    "content-hash": "a763d8df06327a17862761c27649b2a6",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -238,7 +239,7 @@
         },
         {
             "name": "elasticquent/elasticquent",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/Elasticquent.git",
@@ -2968,21 +2969,21 @@
         },
         {
             "name": "spira/core",
-            "version": "dev-master",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681"
+                "reference": "0ec288970980aaa2db0f2ba8ac378cfb095658bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681",
-                "reference": "eba5f6e76a3802d6a61b5d38c00bd1dc2cc85681",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/0ec288970980aaa2db0f2ba8ac378cfb095658bd",
+                "reference": "0ec288970980aaa2db0f2ba8ac378cfb095658bd",
                 "shasum": ""
             },
             "require": {
                 "bosnadev/database": "^0.11.0",
-                "elasticquent/elasticquent": "dev-master",
+                "elasticquent/elasticquent": "1.1.*",
                 "illuminate/mail": "^5.0",
                 "laravel/lumen-framework": "5.1.*",
                 "league/fractal": "0.12.*",
@@ -3017,10 +3018,10 @@
                 "lumen"
             ],
             "support": {
-                "source": "https://github.com/spira/api-core/tree/master",
+                "source": "https://github.com/spira/api-core/tree/1.0.1",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2015-12-16 11:59:06"
+            "time": "2015-12-17 11:33:38"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3837,7 +3838,7 @@
         },
         {
             "name": "venturecraft/revisionable",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/revisionable.git",
@@ -5166,9 +5167,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "elasticquent/elasticquent": 20,
-        "venturecraft/revisionable": 20,
-        "spira/core": 20,
         "barryvdh/laravel-ide-helper": 20
     },
     "prefer-stable": false,
