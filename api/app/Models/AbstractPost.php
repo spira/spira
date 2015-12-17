@@ -115,7 +115,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
 
     protected $indexRelations = ['tags', 'permalinks', 'author', 'metas'];
 
-    public static function getValidationRules($entityId = null)
+    public static function getValidationRules($entityId = null, array $requestEntity = [])
     {
         return [
             'post_id' => 'required|uuid',
