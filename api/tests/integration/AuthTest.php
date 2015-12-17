@@ -550,8 +550,8 @@ class AuthTest extends TestCase
     {
         /** @var Guard $guard */
         $guard = $this->app['auth'];
-        $guard->getPayloadFactory()->addPayloadGenerator('foo', function () {return 'foo';});
-        $guard->getValidationFactory()->addValidationRule('foo', function () { return false;});
+        $guard->getPayloadFactory()->addPayloadGenerator('foo', function () {return 'foo'; });
+        $guard->getValidationFactory()->addValidationRule('foo', function () { return false; });
 
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
