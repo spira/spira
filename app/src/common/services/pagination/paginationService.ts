@@ -11,6 +11,10 @@ namespace common.services.pagination {
         count:number|string;
     }
 
+    export interface ICachedRequest {
+        [key:string] : ng.IPromise<any>
+    }
+
     export class Paginator {
 
         private static defaultCount:number = 10;
@@ -20,10 +24,15 @@ namespace common.services.pagination {
         private modelFactory:common.models.IModelFactory;
         private queryString:string = '';
         private withNested:string = null;
+        private similarTo:string = '';
+        private doCache:boolean = false;
+        private rejectNoResults:boolean = true;
 
         public entityCountTotal:number;
 
+
         constructor(private url:string,
+                    private paginationServiceInstance:PaginationService,
                     private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     private $q:ng.IQService,
                     private $window:ng.IWindowService) {
@@ -44,6 +53,23 @@ namespace common.services.pagination {
             }
             return this;
 
+        }
+
+        /**
+         * Turn on (or off) request caching
+         * @param doCache
+         */
+        public cacheRequests(doCache:boolean = true):Paginator{
+            this.doCache = doCache;
+            return this;
+        }
+
+        /**
+         * Clear the cache
+         */
+        public bustCache(){
+            this.paginationServiceInstance.bustCache();
+            return this;
         }
 
         /**
@@ -91,6 +117,9 @@ namespace common.services.pagination {
             if(!_.isEmpty(this.queryString)) {
                 url += '?q=' + btoa(this.queryString);
             }
+            if(!_.isEmpty(this.similarTo)) {
+                url += '/' + this.similarTo + '/similar';
+            }
 
             let header = {
                 Range: Paginator.getRangeHeader(index, last)
@@ -100,19 +129,45 @@ namespace common.services.pagination {
                 header['With-Nested'] = this.withNested;
             }
 
-            return this.ngRestAdapter
-                .skipInterceptor(Paginator.conditionalSkipInterceptor)
-                .get(url, header).then((response:ng.IHttpPromiseCallbackArg<any>) => {
-                    this.processContentRangeHeader(response.headers);
-                    return _.map(response.data, (modelData) => this.modelFactory(modelData, true));
-                }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {
-                    if(response.status == 404){ //no content
-                        this.entityCountTotal = 0;
-                        return this.$q.reject(new PaginatorException("Search returned no results!"));
-                    }
-                    return this.$q.reject(new PaginatorException("No more results found!"));
-                });
+            return this.doRequest(url, header).then((response:ng.IHttpPromiseCallbackArg<any>) => {
+                this.processContentRangeHeader(response.headers);
+                return _.map(response.data, (modelData) => this.modelFactory(modelData, true));
+            }).catch((response:ng.IHttpPromiseCallbackArg<any>) => {
 
+                let errorMessage;
+                if(response.status == 404){ //no content
+                    this.entityCountTotal = 0;
+                    errorMessage = this.$q.reject(new PaginatorException("Search returned no results!"));
+                }else{
+                    errorMessage = "No more results found!";
+                }
+
+                if (!this.rejectNoResults){
+                    return [];
+                }
+
+                return this.$q.reject(new PaginatorException(errorMessage));
+            });
+
+        }
+
+        public doRequest(url, header):ng.IPromise<any> {
+
+            let requestHash = url + ':' + angular.toJson(header);
+
+            if (this.doCache && _.has(this.paginationServiceInstance.cachedRequests, requestHash)){
+                return this.paginationServiceInstance.cachedRequests[requestHash];
+            }
+
+            let request = this.ngRestAdapter
+                .skipInterceptor(Paginator.conditionalSkipInterceptor)
+                .get(url, header);
+
+            if (this.doCache){
+                this.paginationServiceInstance.cachedRequests[requestHash] = request;
+            }
+
+            return request;
         }
 
         /**
@@ -133,9 +188,11 @@ namespace common.services.pagination {
          */
         public query(query:string):ng.IPromise<any[]> {
 
+            this.reset();
+
             this.queryString = query;
 
-            return this.reset().getResponse(this.count);
+            return this.getResponse(this.count);
 
         }
 
@@ -147,9 +204,26 @@ namespace common.services.pagination {
          */
         public complexQuery(query:any):ng.IPromise<any[]> {
 
+            this.reset();
+
             this.queryString = angular.toJson(_.cloneDeep(query));
 
-            return this.reset().getResponse(this.count);
+            return this.getResponse(this.count);
+
+        }
+
+        /**
+         * Get a collection of similar entities to a given entity.
+         * @param identifier
+         * @returns {ng.IPromise<common.models.IModel[]>}
+         */
+        public getSimilar(identifier:string):ng.IPromise<any[]> {
+
+            this.reset();
+
+            this.similarTo = identifier;
+
+            return this.getResponse(this.count);
 
         }
 
@@ -206,6 +280,18 @@ namespace common.services.pagination {
          */
         public reset(index:number = 0):Paginator {
             this.currentIndex = index;
+            this.queryString = '';
+            this.similarTo = '';
+
+            return this;
+        }
+
+        /**
+         * Set no result promise resolution
+         * @param resolveNoResults
+         */
+        public resolveNoResults(resolveNoResults = true):Paginator{
+            this.rejectNoResults = !resolveNoResults;
             return this;
         }
 
@@ -270,8 +356,10 @@ namespace common.services.pagination {
 
     export class PaginationService {
 
-        static $inject:string[] = ['ngRestAdapter', '$q', '$window'];
 
+        public cachedRequests:ICachedRequest = {};
+
+        static $inject:string[] = ['ngRestAdapter', '$q', '$window'];
         constructor(private ngRestAdapter:NgRestAdapter.INgRestAdapterService,
                     private $q:ng.IQService,
                     private $window:ng.IWindowService) {
@@ -284,7 +372,16 @@ namespace common.services.pagination {
          * @returns {common.services.pagination.Paginator}
          */
         public getPaginatorInstance(url:string):Paginator {
-            return new Paginator(url, this.ngRestAdapter, this.$q, this.$window);
+            return new Paginator(url, this, this.ngRestAdapter, this.$q, this.$window);
+        }
+
+        /**
+         * Clear the cache
+         * @returns {common.services.pagination.PaginationService}
+         */
+        public bustCache(){
+            this.cachedRequests = {};
+            return this;
         }
 
     }
