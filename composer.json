@@ -20,7 +20,7 @@
     "bosnadev/database": "^0.11.0",
     "league/fractal": "0.12.*",
     "illuminate/mail": "^5.0",
-    "elasticquent/elasticquent": "dev-master"
+    "elasticquent/elasticquent": "1.1.*"
   },
   "require-dev": {
     "satooshi/php-coveralls": "dev-master",
