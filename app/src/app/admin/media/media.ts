@@ -29,7 +29,7 @@ namespace app.admin.media {
                 resolve: /*@ngInject*/{
                     perPage: () => 12,
                     imagesPaginator: (imageService:common.services.image.ImageService, perPage:number) => {
-                        return imageService.getPaginator().setCount(perPage);
+                        return imageService.getPaginator().setCount(perPage).noResultsResolve();
                     },
                     initialImages: (imagesPaginator:common.services.pagination.Paginator, $stateParams:IMediaStateParams):ng.IPromise<common.models.Image[]> => {
                         return imagesPaginator.getPage($stateParams.page);

@@ -25,7 +25,8 @@ namespace app.admin.articles.listing {
                         return articleService
                             .getPaginator()
                             .setNested(['thumbnailImage','author'])
-                            .setCount(12);
+                            .setCount(12)
+                            .noResultsResolve();
                     },
                     initArticles: (articlesPaginator:common.services.pagination.Paginator, $stateParams:app.admin.ICommonListingStateParams) => {
                         return articlesPaginator.getPage($stateParams.page);

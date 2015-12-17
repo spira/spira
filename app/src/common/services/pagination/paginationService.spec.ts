@@ -284,8 +284,25 @@ namespace common.services.pagination {
 
                 expect(mockShowError).not.to.have.been.called;
 
-                expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
+                return expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
 
+            });
+
+            it('should be able to configure pagination instance to not reject promise when no results are available', () => {
+
+                let paginator = paginationService.getPaginatorInstance('/no-more-results').noResultsResolve();
+
+                $httpBackend.expectGET('/api/no-more-results').respond(416);
+
+                let results = paginator.getNext();
+
+                $httpBackend.flush();
+                $rootScope.$apply();
+
+                expect(mockShowError).not.to.have.been.called;
+
+                expect(results).eventually.to.be.instanceOf(Array);
+                return expect(results).eventually.to.have.length(0);
             });
 
             it('should not attempt to retrieve from the api when the all items are retrieved', () => {
@@ -325,7 +342,8 @@ namespace common.services.pagination {
                 });
 
                 expect(retrievedResponses).to.be.instanceof(Array);
-                expect(retrievedResponses).to.have.length(31);
+
+                return expect(retrievedResponses).to.have.length(31);
 
             });
 
@@ -467,6 +485,104 @@ namespace common.services.pagination {
                     $httpBackend.flush();
 
                     expect(results).eventually.to.be.rejectedWith(common.services.pagination.PaginatorException);
+
+                });
+
+            });
+
+            describe('Similar Entities', () => {
+
+                it('should be able to get similar entities', () => {
+
+                    let entityId = seededChance.guid();
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3);
+
+                    $httpBackend.expectGET('/api/collection/' + entityId + '/similar', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.getSimilar(entityId);
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                });
+
+            });
+
+            describe('Caching', () => {
+
+                it('should be able to cache a paginator request', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3).cacheRequests();
+
+                    $httpBackend.expectGET('/api/collection', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.query('');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+
+                    let results2 = paginator.query('');
+                    expect(results2).eventually.to.be.fulfilled;
+
+                });
+
+                it('should be able to cache a paginator request with separate instances of paginator', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3).cacheRequests();
+
+                    $httpBackend.expectGET('/api/collection', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.query('');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                    let paginator2 = paginationService.getPaginatorInstance('/collection').setCount(3).cacheRequests();
+                    let results2 = paginator2.query('');
+                    expect(results2).eventually.to.be.fulfilled;
+
+                });
+
+                it('should be able to clear a cached paginator request', () => {
+
+                    let paginator = paginationService.getPaginatorInstance('/collection').setCount(3).cacheRequests();
+
+                    $httpBackend.expectGET('/api/collection', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+
+                    let results = paginator.query('');
+
+                    $httpBackend.flush();
+
+                    expect(results).eventually.to.be.fulfilled;
+
+                    paginator.bustCache();
+
+                    $httpBackend.expectGET('/api/collection', (headers) => {
+                        return headers.Range == 'entities=0-2'
+                    })
+                        .respond(206, _.take(collection, 3));
+                    let results2 = paginator.query('');
+
+                    $httpBackend.flush();
+
+                    expect(results2).eventually.to.be.fulfilled;
 
                 });
 
