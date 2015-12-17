@@ -34,12 +34,17 @@ namespace common.services {
          */
         public getPaginator(nestedEntities:string[] = null):common.services.pagination.Paginator {
 
-            //cache the paginator so subsequent requests can be collection length-aware
             if (!this.cachedPaginator) {
                 this.cachedPaginator = this.paginationService
                     .getPaginatorInstance(this.apiEndpoint())
                     .setModelFactory(this.modelFactory)
                     .setNested(nestedEntities);
+            }
+            else {
+                // We should reset the paginator each time we use it in case
+                // the last time it was used was for a query (the total entity
+                // count will be less than expected).
+                this.cachedPaginator.reset();
             }
 
             return this.cachedPaginator;

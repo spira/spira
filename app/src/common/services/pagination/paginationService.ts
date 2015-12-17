@@ -284,6 +284,7 @@ namespace common.services.pagination {
             this.currentIndex = index;
             this.queryString = '';
             this.similarTo = '';
+            this.entityCountTotal = null;
 
             return this;
         }
