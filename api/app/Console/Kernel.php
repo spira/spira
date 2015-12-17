@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\ApiaryValidateCommand',
         'App\Console\Commands\GenerateKeysCommand',
+        'App\Console\Commands\CreateUserCommand',
     ];
 
     /**
