@@ -45,9 +45,9 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
      *
      * @return array
      */
-    public static function getValidationRules($entityId = null)
+    public static function getValidationRules($entityId = null, array $requestEntity = [])
     {
-        return PostComment::getValidationRules($entityId);
+        return PostComment::getValidationRules($entityId, $requestEntity);
     }
 
     /**
