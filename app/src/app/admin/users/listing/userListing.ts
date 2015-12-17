@@ -27,7 +27,7 @@ namespace app.admin.users.listing {
                 },
                 resolve: /*@ngInject*/{
                     usersPaginator: (userService:common.services.user.UserService) => {
-                        return userService.getUsersPaginator().setCount(12);
+                        return userService.getUsersPaginator().setCount(12).noResultsResolve();
                     },
                     initUsers: (usersPaginator:common.services.pagination.Paginator, $stateParams:IUsersListingStateParams) => {
                         return usersPaginator.getPage($stateParams.page);

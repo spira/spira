@@ -26,7 +26,9 @@ namespace common.services.pagination {
         private withNested:string = null;
         private similarTo:string = '';
         private doCache:boolean = false;
-        private rejectNoResults:boolean = true;
+
+        private resolveNoResultsValue:any = [];
+        private resolveNoResults:boolean = false;
 
         public entityCountTotal:number;
 
@@ -142,8 +144,8 @@ namespace common.services.pagination {
                     errorMessage = "No more results found!";
                 }
 
-                if (!this.rejectNoResults){
-                    return [];
+                if (this.resolveNoResults){
+                    return this.resolveNoResultsValue;
                 }
 
                 return this.$q.reject(new PaginatorException(errorMessage));
@@ -289,9 +291,11 @@ namespace common.services.pagination {
         /**
          * Set no result promise resolution
          * @param resolveNoResults
+         * @param resolveNoResultsValue
          */
-        public resolveNoResults(resolveNoResults = true):Paginator{
-            this.rejectNoResults = !resolveNoResults;
+        public noResultsResolve(resolveNoResults = true, resolveNoResultsValue:any = []):Paginator{
+            this.resolveNoResults = resolveNoResults;
+            this.resolveNoResultsValue = resolveNoResultsValue;
             return this;
         }
 

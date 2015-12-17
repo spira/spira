@@ -26,7 +26,7 @@ namespace common.services.pagination {
 
     };
 
-    describe.only('PaginationService', () => {
+    describe('PaginationService', () => {
 
         let paginationService:common.services.pagination.PaginationService,
             $httpBackend:ng.IHttpBackendService,
@@ -290,7 +290,7 @@ namespace common.services.pagination {
 
             it('should be able to configure pagination instance to not reject promise when no results are available', () => {
 
-                let paginator = paginationService.getPaginatorInstance('/no-more-results').resolveNoResults();
+                let paginator = paginationService.getPaginatorInstance('/no-more-results').noResultsResolve();
 
                 $httpBackend.expectGET('/api/no-more-results').respond(416);
 
