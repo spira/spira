@@ -46,7 +46,7 @@ class PostComment extends BaseModel
      *
      * @return array
      */
-    public static function getValidationRules($entityId = null)
+    public static function getValidationRules($entityId = null, array $requestEntity = [])
     {
         return [
             'user_id' => 'required|uuid',
