@@ -66,7 +66,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     ];
 
     /**
-     * Model validation
+     * Model validation.
      * @param null $entityId
      * @return array
      */

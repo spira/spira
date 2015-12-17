@@ -45,7 +45,6 @@ class CommandTest extends TestCase
 
     public function testCreateUserCommand()
     {
-
         $email = 'john.command.example@example.com';
         $name = 'John';
         $username = 'john';
@@ -67,17 +66,15 @@ class CommandTest extends TestCase
         $this->assertEquals($name, $userCreated->first_name);
         $this->assertEquals($username, $userCreated->username);
 
-        $this->assertTrue($userCreated->roles->contains(function ($key, Role $roleModel) use ($role){
+        $this->assertTrue($userCreated->roles->contains(function ($key, Role $roleModel) use ($role) {
             return $roleModel->key == $role;
         }), 'Role is applied');
 
         $this->assertTrue(Auth::attempt(['email' => $email, 'password' => $password]), 'Credentials work.');
-
     }
 
     public function testCreateInvalidUserCommand()
     {
-
         $email = 'invalid-email';
         $name = 'John';
         $username = 'john';
@@ -101,7 +98,7 @@ class CommandTest extends TestCase
     private function mockUserCreateCommand($email, $name, $username, $password, $role)
     {
         /** @var CreateUserCommand $cmd */
-        $cmd = Mockery::mock(CreateUserCommand::class . "[ask, secret, choice, info, error]");
+        $cmd = Mockery::mock(CreateUserCommand::class.'[ask, secret, choice, info, error]');
 
         $cmd->shouldReceive('ask')
             ->with('Enter email')
@@ -127,8 +124,7 @@ class CommandTest extends TestCase
             ->with('What roles should be applied? (comma separate options)', ROLE::$roles, null, null, true)
             ->once()
             ->andReturn([$role]);
+
         return $cmd;
     }
-
-
 }

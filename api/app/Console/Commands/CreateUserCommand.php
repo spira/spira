@@ -60,7 +60,7 @@ class CreateUserCommand extends Command
         $validator = Validator::make($userData, $validationRules);
 
         if ($validator->fails()) {
-            $this->error("Validation failed:");
+            $this->error('Validation failed:');
             // @codeCoverageIgnoreStart
             if (env('APP_ENV') != 'testing') {
                 (new Dumper)->dump($validator->errors()->toArray());
@@ -76,7 +76,7 @@ class CreateUserCommand extends Command
 
         $user->setCredential(new UserCredential(['password' => $password]));
 
-        $this->info("Successfully created user:");
+        $this->info('Successfully created user:');
 
         // @codeCoverageIgnoreStart
         if (env('APP_ENV') != 'testing') {
