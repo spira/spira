@@ -66,22 +66,25 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     ];
 
     /**
-     * Model validation.
-     *
-     * @var array
+     * Model validation
+     * @param null $entityId
+     * @return array
      */
-    protected static $validationRules = [
-        'user_id' => 'required|uuid',
-        'username' => 'required|between:3,50|alpha_dash_space',
-        'email' => 'required|email',
-        'email_confirmed' => 'date',
-        'first_name' => 'string',
-        'last_name' => 'string',
-        'country' => 'country',
-        'region_code' => 'string|supported_region',
-        'timezone_identifier' => 'timezone',
-        'avatar_img_id' => 'uuid',
-    ];
+    public static function getValidationRules($entityId = null)
+    {
+        return [
+            'user_id' => 'required|uuid',
+            'username' => 'required|between:3,50|alpha_dash_space|unique:users,username,'.$entityId.',user_id',
+            'email' => 'required|email|unique:users,email,'.$entityId.',user_id',
+            'email_confirmed' => 'date',
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'country' => 'country',
+            'region_code' => 'string|supported_region',
+            'timezone_identifier' => 'timezone',
+            'avatar_img_id' => 'uuid',
+        ];
+    }
 
     /**
      * The attributes that should be mutated to datetimes.

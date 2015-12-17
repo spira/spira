@@ -16,6 +16,7 @@ use App\Models\UserCredential;
 use Illuminate\Console\Command;
 use Illuminate\Support\Debug\Dumper;
 use Illuminate\Support\Facades\Validator;
+use Rhumsaa\Uuid\Uuid;
 
 class CreateUserCommand extends Command
 {
@@ -48,18 +49,23 @@ class CreateUserCommand extends Command
         $roles = $this->choice('What roles should be applied? (comma separate options)', Role::$roles, null, null, true);
 
         $userData = [
+            'user_id' => Uuid::uuid4(),
             'email' => $email,
             'first_name' => $name,
             'username' => $username,
         ];
 
-        $validationRules = User::getValidationRules();
+        $validationRules = User::getValidationRules($userData['user_id']);
         unset($validationRules[User::getPrimaryKey()]);
         $validator = Validator::make($userData, $validationRules);
 
         if ($validator->fails()) {
             $this->error("Validation failed:");
-            (new Dumper)->dump($validator->errors()->toArray());
+            // @codeCoverageIgnoreStart
+            if (env('APP_ENV') != 'testing') {
+                (new Dumper)->dump($validator->errors()->toArray());
+            }
+            // @codeCoverageIgnoreEnd
             return 1;
         }
 
@@ -71,7 +77,12 @@ class CreateUserCommand extends Command
         $user->setCredential(new UserCredential(['password' => $password]));
 
         $this->info("Successfully created user:");
-        (new Dumper)->dump($user->fresh()->toArray());
+
+        // @codeCoverageIgnoreStart
+        if (env('APP_ENV') != 'testing') {
+            (new Dumper)->dump($user->fresh()->toArray());
+        }
+        // @codeCoverageIgnoreEnd
 
         return 0;
     }
