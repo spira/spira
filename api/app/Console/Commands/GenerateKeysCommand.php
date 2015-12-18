@@ -55,7 +55,6 @@ class GenerateKeysCommand extends Command
      */
     public function handle()
     {
-
         $res = openssl_pkey_new();
 
         // Get private key
@@ -63,7 +62,7 @@ class GenerateKeysCommand extends Command
 
         // Get public key
         $publicKey = openssl_pkey_get_details($res);
-        $publicKey = $publicKey["key"];
+        $publicKey = $publicKey['key'];
 
         if (! $this->file->exists(storage_path('app/keys'))) {
             $this->file->makeDirectory(storage_path('app/keys'));
