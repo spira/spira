@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
             'decoded_json'         => 'The :attribute must be an object or an array',
             'alpha_dash_space'     => 'The :attribute may only contain letters, numbers, dashes and spaces.',
             'supported_region'     => 'The :attribute must be a supported region. Supported region codes are ('.implode(', ', array_pluck(config('regions.supported'), 'code')).')',
+            'exists_morphed'       => 'The :attribute must exists in corresponding table'
         ];
 
         $this->app->extend('validator', function (Factory $validator) use ($spiraMessages) {
