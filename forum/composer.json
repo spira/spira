@@ -1,7 +1,7 @@
 {
     "type": "project",
     "require": {
-        "vanilla/vanilla": "2.2-b1",
+        "vanilla/vanilla": "2.2",
         "vanilla/addons": "1.4.5",
         "kasperisager/vanilla-api": "0.4.0"
     },
@@ -14,9 +14,9 @@
             "type": "package",
             "package": {
                 "name": "vanilla/vanilla",
-                "version": "2.2-b1",
+                "version": "2.2",
                 "dist": {
-                    "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2b1.zip",
+                    "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2.zip",
                     "type": "zip"
                 }
             }
