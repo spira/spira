@@ -16,7 +16,7 @@
                 "name": "vanilla/vanilla",
                 "version": "dev-master",
                 "dist": {
-                    "url": "https://github.com/vanilla/vanilla/archive/master.zip",
+                    "url": "https://github.com/vanilla/vanilla/archive/b8b3bc7a64850389bd57ee770a199d5874775686.zip",
                     "type": "zip"
                 }
             }
@@ -84,7 +84,11 @@
     },
     "scripts": {
         "build-forum": "Spira\\Build::buildForum",
-        "post-install-cmd": "Spira\\Build::postInstall",
+        "post-install-cmd": [
+            "Spira\\Build::postInstall",
+            "composer install --working-dir public",
+            "Spira\\Build::buildForum"
+        ],
         "post-update-cmd": ""
     }
 }

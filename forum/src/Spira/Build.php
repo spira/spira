@@ -72,8 +72,6 @@ class Build
 
         // Override general functions
         copy('bootstrap.before.php', 'public/conf/bootstrap.before.php');
-
-        $this->setupVanilla();
     }
 
     /**
