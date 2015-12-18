@@ -523,6 +523,8 @@ abstract class EntityController extends ApiController
     }
 
     /**
+     * @param null $entityId
+     * @param array $requestEntity
      * @return array
      */
     protected function getValidationRules($entityKey = null, array $requestEntity = [])

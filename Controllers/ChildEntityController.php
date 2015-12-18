@@ -311,6 +311,7 @@ abstract class ChildEntityController extends AbstractRelatedEntityController
 
     /**
      * @param null $entityId
+     * @param array $requestEntity
      * @return array
      */
     protected function getValidationRules($entityId = null, array $requestEntity = [])
