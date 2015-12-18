@@ -31,7 +31,8 @@
     "barryvdh/laravel-ide-helper": "dev-master"
   },
   "autoload": {
-    "psr-4": { "Spira\\Core\\": "" }
+    "psr-4": { "Spira\\Core\\": "" },
+    "classmap": ["database/"]
   },
   "config": {
     "preferred-install": "dist"
