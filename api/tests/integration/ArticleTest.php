@@ -526,7 +526,7 @@ class ArticleTest extends TestCase
 
     public function testAddDuplicateMetaNames()
     {
-        $this->markTestIncomplete("Duplicate meta validation has not been completed");
+        $this->markTestIncomplete('Duplicate meta validation has not been completed');
         /** @var AbstractPost $post */
         $post = $this->getFactory($this->factoryClass)->create();
         $factory = $this->getFactory(Meta::class)->customize(
