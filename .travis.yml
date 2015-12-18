@@ -64,7 +64,7 @@ before_script:
 
 script:
   - gulp test:app
-  - phpdbg -qrr ./api/vendor/bin/phpunit --colors --configuration ./api/phpunit.xml --coverage-clover=./reports/coverage/api/clover.xml
+  - ./api/vendor/bin/phpunit --colors --configuration ./api/phpunit.xml --coverage-clover=./reports/coverage/api/clover.xml
   - ./node_modules/.bin/cucumber.js --tags ~@ignore #skip @ignored features
 
 after_script:
