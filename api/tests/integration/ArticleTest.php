@@ -311,7 +311,7 @@ class ArticleTest extends TestCase
         $entity = $this->getFactory($this->factoryClass)->create();
 
         $this->withAuthorization()->patchJson($this->baseRoute.'/'.$entity->post_id, ['title' => 'foo']);
-        $this->shouldReturnJson();
+        $this->assertResponseHasNoContent();
         $this->assertResponseStatus(204);
         $class = $this->factoryClass;
         $checkEntity = $class::find($entity->post_id);
@@ -333,7 +333,7 @@ class ArticleTest extends TestCase
         $linksCount = $entity->permalinks->count();
 
         $this->withAuthorization()->patchJson($this->baseRoute.'/'.$entity->post_id, $data);
-        $this->shouldReturnJson();
+        $this->assertResponseHasNoContent();
         $this->assertResponseStatus(204);
         $class = $this->factoryClass;
         $checkEntity = $class::find($entity->post_id);
@@ -405,7 +405,7 @@ class ArticleTest extends TestCase
             ->transformed();
 
         $this->withAuthorization()->patchJson($this->baseRoute.'/'.$entity->post_id, $data);
-        $this->shouldReturnJson();
+        $this->assertResponseHasNoContent();
         $this->assertResponseStatus(204);
         $class = $this->factoryClass;
         $checkEntity = $class::find($entity->post_id);

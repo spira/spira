@@ -125,7 +125,7 @@ class ImageTest extends TestCase
         $entity->alt = 'foo';
         $preparedEntity = $this->prepareEntity($entity);
         $this->withAuthorization()->patchJson('/images/'.$id, $preparedEntity);
-        $this->shouldReturnJson();
+        $this->assertResponseHasNoContent();
         $this->assertResponseStatus(204);
         $checkEntity = Image::find($id);
         $this->assertEquals($checkEntity->alt, $entity->alt);

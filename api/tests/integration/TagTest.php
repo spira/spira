@@ -135,7 +135,7 @@ class TagTest extends TestCase
 
         $this->withAuthorization()->patchJson('/tags/'.$tag['tagId'], $tag);
 
-        $this->shouldReturnJson();
+        $this->assertResponseHasNoContent();
         $this->assertResponseStatus(204);
         $checkEntity = Tag::find($tag['tagId']);
         $this->assertEquals($checkEntity->tag, $tag['tag']);
