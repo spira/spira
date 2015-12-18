@@ -11,7 +11,7 @@
 $databaseConfig = [
     'Database.Name' => getenv('FORUM_DB_DATABASE'),
     'Database.Host' => getenv('FORUM_DB_HOST'),
-    'Database.User' => getenv('FORUM_DB_USER'),
+    'Database.User' => getenv('FORUM_DB_USERNAME'),
     'Database.Password' => getenv('FORUM_DB_PASSWORD'),
 ];
 
