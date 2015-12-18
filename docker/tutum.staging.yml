@@ -26,7 +26,7 @@ php:
     - API_PATH=/api
     - 'APP_HOST=http://app.staging.spira.io'
     - COOKIE_DOMAIN=spira.io
-    - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
+    - DB_HOST='<database-host-here>'
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.spira.io
     - HOSTNAME_APP=app.staging.spira.io
@@ -66,7 +66,7 @@ queuerunner:
     - API_PATH=/api
     - 'APP_HOST=http://app.staging.spira.io'
     - COOKIE_DOMAIN=spira.io
-    - DATABASE_PORT_5432_TCP_ADDR='<database-host-here>'
+    - DB_HOST='<database-host-here>'
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.spira.io
     - HOSTNAME_APP=app.staging.spira.io
