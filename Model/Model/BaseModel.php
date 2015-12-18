@@ -49,6 +49,7 @@ abstract class BaseModel extends Model
 
     /**
      * @param null $entityId
+     * @param array $requestEntity
      * @return array
      */
     public static function getValidationRules($entityId = null, array $requestEntity = [])

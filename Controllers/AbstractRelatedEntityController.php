@@ -80,6 +80,7 @@ abstract class AbstractRelatedEntityController extends ApiController
      * Override this method to provide custom pivot validation rules.
      *
      * @param null $entityId
+     * @param array $requestEntity
      * @return array
      */
     protected function getValidationRules($entityId = null, array $requestEntity = [])

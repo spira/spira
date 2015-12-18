@@ -17,6 +17,32 @@ use Spira\Core\Model\Datasets\Countries;
 
 class SpiraValidator extends Validator
 {
+    /**
+     * Rule for validation existance of morphed item
+     * Parameters are: column containing class or class name, column if primary key is not used, where conditions.
+     */
+    public function validateExistsMorphed($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'exists_morphed');
+
+        if (! Uuid::isValid($value)) {
+            return false;
+        }
+
+        $class = Arr::get($this->data, $parameters[0], $parameters[0]);
+        if (empty($class) || ! class_exists($class)) {
+            return false;
+        }
+
+        $column = Arr::get($parameters, 1) ?: call_user_func_array("$class::getPrimaryKey", []);
+        $table = call_user_func_array("$class::getTableName", []);
+
+        $parameters[0] = $table;
+        $parameters[1] = $column;
+
+        return $this->validateExists($attribute, $value, $parameters);
+    }
+
     public function validateDecimal($attribute, $value, $parameters)
     {
         return is_float($value) || is_int($value);

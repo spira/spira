@@ -12,6 +12,8 @@ namespace Spira\Core\tests;
 
 use Illuminate\Validation\Factory;
 use Rhumsaa\Uuid\Uuid;
+use Spira\Core\Model\Test\SecondTestEntity;
+use Spira\Core\Model\Test\TestEntity;
 use Spira\Core\Validation\SpiraValidator;
 
 class ValidatorTest extends TestCase
@@ -33,6 +35,37 @@ class ValidatorTest extends TestCase
         $data = ['decimal' => 'foo'];
         $validation = $this->validator->make($data, ['decimal' => 'decimal']);
         $this->assertInstanceOf(SpiraValidator::class, $validation);
+    }
+
+    /**
+     * @dataProvider dataExistsMorphedValidation
+     */
+    public function testExistsMorphedValidation($rule, $passes = true)
+    {
+        $item = $this->getFactory(TestEntity::class)->customize(['integer' => 123])->create();
+        $validator = $this->validator->make(
+            ['item_id' => $item->entity_id, 'item_type' => TestEntity::class],
+            ['item_id' => $rule]
+        );
+
+        $this->assertEquals($passes, $validator->passes());
+
+        if (! $passes) {
+            $this->assertEquals('The item id must exists in corresponding table', $validator->messages()->get('item_id')[0]);
+        }
+    }
+
+    public function dataExistsMorphedValidation()
+    {
+        return [
+            ['exists_morphed:item_type', true],
+            ['exists_morphed:item_type,entity_id', true],
+            ['exists_morphed:item_type,hash', false],
+            ['exists_morphed:item_type,,integer,123', true],
+            ['exists_morphed:item_type,entity_id,integer,321', false],
+            ['exists_morphed:'.TestEntity::class, true],
+            ['exists_morphed:'.SecondTestEntity::class, false],
+        ];
     }
 
     public function testPassingDecimalValidation()
