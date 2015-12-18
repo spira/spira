@@ -9,10 +9,10 @@
  */
 
 $databaseConfig = [
-    'Database.Name' => getenv('VANILLADATABASE_ENV_MYSQL_DATABASE'),
-    'Database.Host' => getenv('VANILLADATABASE_PORT_3306_TCP_ADDR'),
-    'Database.User' => getenv('VANILLADATABASE_ENV_MYSQL_USER'),
-    'Database.Password' => getenv('VANILLADATABASE_ENV_MYSQL_PASSWORD'),
+    'Database.Name' => getenv('FORUM_DB_DATABASE'),
+    'Database.Host' => getenv('FORUM_DB_HOST'),
+    'Database.User' => getenv('FORUM_DB_USERNAME'),
+    'Database.Password' => getenv('FORUM_DB_PASSWORD'),
 ];
 
 saveToConfig($databaseConfig, null, ['Save' => false]);
