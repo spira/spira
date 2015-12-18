@@ -11,7 +11,6 @@
 namespace Spira\Core\tests;
 
 use Illuminate\Validation\Factory;
-use Mockery\MockInterface;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Core\Model\Test\SecondTestEntity;
 use Spira\Core\Model\Test\TestEntity;
@@ -43,7 +42,7 @@ class ValidatorTest extends TestCase
      */
     public function testExistsMorphedValidation($rule, $passes = true)
     {
-        $item      = $this->getFactory(TestEntity::class)->customize(['integer' => 123])->create();
+        $item = $this->getFactory(TestEntity::class)->customize(['integer' => 123])->create();
         $validator = $this->validator->make(
             ['item_id' => $item->entity_id, 'item_type' => TestEntity::class],
             ['item_id' => $rule]
@@ -51,7 +50,7 @@ class ValidatorTest extends TestCase
 
         $this->assertEquals($passes, $validator->passes());
 
-        if (!$passes) {
+        if (! $passes) {
             $this->assertEquals('The item id must exists in corresponding table', $validator->messages()->get('item_id')[0]);
         }
     }
@@ -64,8 +63,8 @@ class ValidatorTest extends TestCase
             ['exists_morphed:item_type,hash', false],
             ['exists_morphed:item_type,,integer,123', true],
             ['exists_morphed:item_type,entity_id,integer,321', false],
-            ['exists_morphed:' . TestEntity::class, true],
-            ['exists_morphed:' . SecondTestEntity::class, false],
+            ['exists_morphed:'.TestEntity::class, true],
+            ['exists_morphed:'.SecondTestEntity::class, false],
         ];
     }
 
