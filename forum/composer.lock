@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bfd64c8e876d962acc9e8fb35ce04475",
-    "content-hash": "02543c42ae30e61dd36911aecba0c37f",
+    "hash": "7b3ae096aa08a2c5ca771ebc3adc1b6d",
+    "content-hash": "2ca1ce3a575030c06034e5febcf9c84d",
     "packages": [
         {
             "name": "kasperisager/vanilla-api",
@@ -41,10 +41,10 @@
         },
         {
             "name": "vanilla/vanilla",
-            "version": "2.2",
+            "version": "dev-master",
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2.zip",
+                "url": "https://github.com/vanilla/vanilla/archive/master.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -1205,7 +1205,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "vanilla/vanilla": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
