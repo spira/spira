@@ -26,10 +26,11 @@ cache:
 queue:
   image: spira/docker-beanstalkd
 
+#@todo build php-cli only container instead of the devtools container
 queuerunner:
-  image: spira/docker-hhvm
+  image: spira/docker-dev-tools:php-7.0
   working_dir: /data/api
-  entrypoint: ["hhvm", "artisan", "queue:listen", "--tries=3"]
+  entrypoint: ["php", "artisan", "queue:listen", "--tries=3"]
   env_file:
     - .common.env
 
@@ -37,8 +38,7 @@ mailcatcher:
   image: schickling/mailcatcher
 
 php:
-  image: spira/docker-hhvm
-#  image: spira/docker-phpfpm
+  image: spira/docker-phpfpm:php-7.0
   env_file:
     - .common.env
     - .local.env
@@ -56,9 +56,7 @@ web:
   privileged: true
 
 devtools:
-#  image: spira/docker-dev-tools:latest #built version of latest phantomjs (build often fails)
-  image: spira/docker-dev-tools:phantomjs-2.0.0 #static binary of phantomjs 2.0.0
-#  image: spira/docker-dev-tools:phantomjs-1.9.8 #static bindary of phantomjs 1.9.8
+  image: spira/docker-dev-tools:php-7.0
   working_dir: /data
   privileged: true
   env_file:

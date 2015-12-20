@@ -1,7 +1,7 @@
 {
     "type": "project",
     "require": {
-        "vanilla/vanilla": "2.2-b1",
+        "vanilla/vanilla": "dev-master",
         "vanilla/addons": "1.4.5",
         "kasperisager/vanilla-api": "0.4.0"
     },
@@ -14,9 +14,9 @@
             "type": "package",
             "package": {
                 "name": "vanilla/vanilla",
-                "version": "2.2-b1",
+                "version": "dev-master",
                 "dist": {
-                    "url": "https://github.com/vanilla/vanilla/archive/Vanilla_2.2b1.zip",
+                    "url": "https://github.com/vanilla/vanilla/archive/b8b3bc7a64850389bd57ee770a199d5874775686.zip",
                     "type": "zip"
                 }
             }
@@ -84,7 +84,11 @@
     },
     "scripts": {
         "build-forum": "Spira\\Build::buildForum",
-        "post-install-cmd": "Spira\\Build::postInstall",
+        "post-install-cmd": [
+            "Spira\\Build::postInstall",
+            "composer install --working-dir public",
+            "Spira\\Build::buildForum"
+        ],
         "post-update-cmd": ""
     }
 }
