@@ -9,7 +9,7 @@ Lumen + AngularJS project seed with Docker
 
 ## Technologies integrated in this seed project
 * [Lumen](http://lumen.laravel.com/)
-* [HHVM](http://hhvm.com/)
+* [PHP7](http://php.net/)
 * [Xdebug](http://xdebug.org/)
 * [AngularJS](https://angularjs.org/) (1.x)
 * [Docker](https://www.docker.com/)
