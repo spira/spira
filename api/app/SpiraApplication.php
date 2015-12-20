@@ -15,7 +15,6 @@ use Monolog\Handler\SyslogUdpHandler;
 
 class SpiraApplication extends Application
 {
-
     /**
      * Get the Monolog handler for the application.
      *
