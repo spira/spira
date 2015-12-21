@@ -10,6 +10,7 @@
 
 namespace Spira\Core\Model\Model;
 
+use Carbon\Carbon;
 use Elasticquent\ElasticquentTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Spira\Core\Model\Collection\IndexedCollection;
@@ -117,6 +118,14 @@ abstract class IndexedModel extends BaseModel
         }
 
         $attributes = $this->attributesToArray();
+
+        // for some reason laravel converts to string, then back to datetime when doing toArray. This reverts back to
+        // an ISO8601 formatted date for elastic to interpret
+        foreach($this->getDates() as $dateKey){
+            if (isset($attributes[$dateKey]) && $attributes[$dateKey] instanceof Carbon){
+                $attributes[$dateKey] = $attributes[$dateKey]->toIso8601String();
+            }
+        }
 
         return array_merge($attributes, $relations);
     }
