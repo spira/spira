@@ -160,9 +160,10 @@ class ElasticSearch
     }
 
     /**
+     * @param bool $addToIndex
      * @return bool
      */
-    public function reindexAll()
+    public function reindexAll($addToIndex = true)
     {
         if ($this->indexExists()){
             $this->deleteIndex();
@@ -176,7 +177,10 @@ class ElasticSearch
 
             /** @var $className IndexedModel */
             $className::putMapping();
-            $className::addAllToIndex();
+
+            if ($addToIndex){
+                $className::addAllToIndex();
+            }
         }
 
         return true;

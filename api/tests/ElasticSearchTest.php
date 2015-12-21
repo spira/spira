@@ -135,6 +135,21 @@ class ElasticSearchTest extends TestCase
 
     }
 
+    public function testRebuildIndex()
+    {
+        $elasticSearchService = Mockery::mock(ElasticSearch::class)->makePartial();
+
+        $indexedModelMock = Mockery::mock('alias:IndexedModelMock');
+        $indexedModelMock->shouldReceive('putMapping')->once();
+
+        $elasticSearchService->shouldReceive('indexExists')->once()->andReturn(true);
+        $elasticSearchService->shouldReceive('deleteIndex')->once();
+        $elasticSearchService->shouldReceive('createIndex')->once();
+        $elasticSearchService->shouldReceive('getIndexedModelClasses')->andReturn(['IndexedModelMock']);
+
+        $elasticSearchService->reindexAll(false);
+    }
+
     public function testReindexAll()
     {
         $elasticSearchService = Mockery::mock(ElasticSearch::class)->makePartial();
@@ -148,7 +163,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchService->shouldReceive('createIndex')->once();
         $elasticSearchService->shouldReceive('getIndexedModelClasses')->andReturn(['IndexedModelMock']);
 
-        $elasticSearchService->reindexAll();
+        $elasticSearchService->reindexAll(true);
     }
 
 }

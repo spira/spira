@@ -30,7 +30,7 @@ class CreateElasticSearchIndex extends Migration
     public function up()
     {
         if (!$this->elasticSearch->indexExists()) {
-            $this->elasticSearch->createIndex();
+            $this->elasticSearch->reindexAll(false);
         }
     }
 

@@ -14,6 +14,7 @@ use App\Services\ElasticSearch;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Spira\Core\Model\Model\IndexedModel;
+use Symfony\Component\Console\Input\InputOption;
 
 class SearchBuildIndexCommand extends Command
 {
@@ -22,7 +23,7 @@ class SearchBuildIndexCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'search:build-index';
+    protected $signature = 'search:build-index {--a|addtoindex : Reindex the models in the database}';
 
     /**
      * The console command description.
@@ -58,11 +59,13 @@ class SearchBuildIndexCommand extends Command
      */
     public function handle()
     {
+        $addToIndex = $this->option('addtoindex');
 
-        if (!$this->elasticSearch->reindexAll()){
+        if (!$this->elasticSearch->reindexAll($addToIndex)){
             return 1;
         }
 
         return 0;
     }
+
 }

@@ -20,14 +20,26 @@ class SearchBuildIndexCommandTest extends TestCase
 {
     public function testSearchBuildIndexCommand()
     {
-
         $esMock = m::mock(ElasticSearch::class);
-        $esMock->shouldReceive('reindexAll')->once()->andReturn(true);
+        $esMock->shouldReceive('reindexAll')->once()->with(false)->andReturn(true);
 
-        /** @var SearchBuildIndexCommand $cmd */
-        $cmd = $this->app->make(SearchBuildIndexCommand::class, [$esMock]);
+        /** @var SearchBuildIndexCommand $cmdMocked */
+        $cmdMocked = \Mockery::mock(SearchBuildIndexCommand::class.'[option]', [$esMock]);
+        $cmdMocked->shouldReceive('option')->with('addtoindex')->andReturn(false);
 
-        $this->assertEquals(0, $cmd->handle());
+        $this->assertEquals(0, $cmdMocked->handle());
+    }
+
+    public function testSearchBuildIndexCommandReindex()
+    {
+        $esMock = m::mock(ElasticSearch::class);
+        $esMock->shouldReceive('reindexAll')->once()->with(true)->andReturn(true);
+
+        /** @var SearchBuildIndexCommand $cmdMocked */
+        $cmdMocked = \Mockery::mock(SearchBuildIndexCommand::class.'[option]', [$esMock]);
+        $cmdMocked->shouldReceive('option')->with('addtoindex')->andReturn(true);
+
+        $this->assertEquals(0, $cmdMocked->handle());
     }
 
 }
