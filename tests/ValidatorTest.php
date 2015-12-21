@@ -147,13 +147,13 @@ class ValidatorTest extends TestCase
     {
         $testEntity = $this->getFactory(TestEntity::class)->customize([
             'integer' => 123,
-            'text' => 'foobar'
+            'text' => 'foobar',
         ])->create();
 
         $testEntity->entity_id = (string) Uuid::uuid4();
 
         $validation = $this->validator->make($testEntity->toArray(), [
-            'integer' => 'unique_with:' . TestEntity::getTableName() . ',text'
+            'integer' => 'unique_with:'.TestEntity::getTableName().',text',
         ]);
 
         $this->assertFalse($validation->passes());

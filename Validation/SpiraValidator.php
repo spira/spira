@@ -86,7 +86,7 @@ class SpiraValidator extends Validator
             ->where($parameters[1], '=', $this->getData()[$parameters[1]])
             ->count();
 
-        if($count > 0) {
+        if ($count > 0) {
             return false;
         }
 
