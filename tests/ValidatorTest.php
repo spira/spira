@@ -142,4 +142,20 @@ class ValidatorTest extends TestCase
 
         $this->assertContains('spaces', $validation->messages()->get('username')[0]);
     }
+
+    public function testValidateUniqueWith()
+    {
+        $testEntity = $this->getFactory(TestEntity::class)->customize([
+            'integer' => 123,
+            'text' => 'foobar'
+        ])->create();
+
+        $testEntity->entity_id = (string) Uuid::uuid4();
+
+        $validation = $this->validator->make($testEntity->toArray(), [
+            'integer' => 'unique_with:' . TestEntity::getTableName() . ',text'
+        ]);
+
+        $this->assertFalse($validation->passes());
+    }
 }

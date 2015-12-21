@@ -14,6 +14,7 @@ use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Arr;
 use Rhumsaa\Uuid\Uuid;
 use Spira\Core\Model\Datasets\Countries;
+use Illuminate\Support\Facades\DB;
 
 class SpiraValidator extends Validator
 {
@@ -72,6 +73,20 @@ class SpiraValidator extends Validator
         $values = array_slice($parameters, 1);
 
         if (in_array((string) $data, $values)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function validateUniqueWith($attribute, $value, $parameters)
+    {
+        $count = DB::table($parameters[0])
+            ->where($attribute, '=', $value)
+            ->where($parameters[1], '=', $this->getData()[$parameters[1]])
+            ->count();
+
+        if($count > 0) {
             return false;
         }
 
