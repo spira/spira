@@ -34,7 +34,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('create')->with(\Mockery::subset(['index' => config()->get('elasticquent.default_index')]));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->createIndex();
     }
@@ -47,7 +47,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('create')->with(\Mockery::subset(['index' => 'foo']));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->createIndex($this->indexedModelMock);
     }
@@ -60,7 +60,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('delete')->with(\Mockery::subset(['index' => config()->get('elasticquent.default_index')]));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->deleteIndex();
     }
@@ -73,7 +73,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('delete')->with(\Mockery::subset(['index' => 'foo']));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->deleteIndex($this->indexedModelMock);
     }
@@ -86,7 +86,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('exists')->with(\Mockery::subset(['index' => 'foo']));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->indexExists($this->indexedModelMock);
     }
@@ -99,7 +99,7 @@ class ElasticSearchTest extends TestCase
         $elasticSearchMock->shouldReceive('indices')->andReturn($indicesMock);
         $indicesMock->shouldReceive('exists')->with(\Mockery::subset(['index' => 'foo']));
 
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $elasticSearchService->indexExists($this->indexedModelMock);
     }
@@ -107,7 +107,7 @@ class ElasticSearchTest extends TestCase
     public function testGetIndexedModels()
     {
         $elasticSearchMock = Mockery::mock(\Elasticsearch\Client::class);
-        $elasticSearchService = new ElasticSearch($elasticSearchMock);
+        $elasticSearchService = new ElasticSearch($elasticSearchMock, config()->get('elasticquent.default_index'));
 
         $classes = $elasticSearchService->getIndexedModelClasses();
 

@@ -57,13 +57,6 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
-$app->singleton(App\Services\ElasticSearch::class, function ($app) {
-
-    $client = new \Elasticsearch\Client(App\Services\ElasticSearch::getConfig());
-
-    return new App\Services\ElasticSearch($client);
-});
-
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -97,6 +90,7 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\ApplicationProvider::class);
+$app->register(App\Providers\ElasticServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);

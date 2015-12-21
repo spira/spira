@@ -24,7 +24,6 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\ApiaryValidateCommand',
         'App\Console\Commands\GenerateKeysCommand',
         'App\Console\Commands\CreateUserCommand',
-        'App\Console\Commands\SearchBuildIndexCommand',
     ];
 
     /**

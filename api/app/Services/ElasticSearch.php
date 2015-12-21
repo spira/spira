@@ -27,9 +27,15 @@ class ElasticSearch
     /** @var  \Cloudinary */
     protected $elasticClient;
 
-    public function __construct(Client $elasticClient)
+    /**
+     * @var string
+     */
+    protected $defaultIndexName;
+
+    public function __construct(Client $elasticClient, string $defaultIndexName = 'default')
     {
         $this->elasticClient = $elasticClient;
+        $this->defaultIndexName = $defaultIndexName;
     }
 
     /**
@@ -42,26 +48,10 @@ class ElasticSearch
         return $this->elasticClient;
     }
 
-    /**
-     * @return array
-     */
-    public static function getConfig()
+
+    public function getDefaultIndexName()
     {
-        if (config()->has('elasticquent.config')) {
-            return config()->get('elasticquent.config');
-        }
-
-        return [];
-    }
-
-    public static function getDefaultIndexName()
-    {
-        if (config()->has('elasticquent.default_index')) {
-            return config()->get('elasticquent.default_index');
-        }
-
-        // Otherwise we will just go with 'default'
-        return 'default';
+        return $this->defaultIndexName;
     }
 
     /**
@@ -70,7 +60,7 @@ class ElasticSearch
      */
     public function createIndex(IndexedModel $model = null)
     {
-        $indexName = self::getDefaultIndexName();
+        $indexName = $this->getDefaultIndexName();
 
         if ($model) {
             $indexName = $model->getIndexName();
@@ -87,7 +77,7 @@ class ElasticSearch
      */
     public function deleteIndex(IndexedModel $model = null)
     {
-        $indexName = self::getDefaultIndexName();
+        $indexName = $this->getDefaultIndexName();
 
         if ($model) {
             $indexName = $model->getIndexName();
@@ -106,7 +96,7 @@ class ElasticSearch
      */
     public function indexExists(IndexedModel $model = null)
     {
-        $indexName = self::getDefaultIndexName();
+        $indexName = $this->getDefaultIndexName();
 
         if ($model) {
             $indexName = $model->getIndexName();
