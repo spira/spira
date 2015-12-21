@@ -79,6 +79,12 @@ class SpiraValidator extends Validator
         return true;
     }
 
+    /**
+     * Rule used to validate if two columns are unique within a table.
+     * 
+     * Usage: 
+     * 'field1' => 'unique_with:table_name,field2'
+     */
     public function validateUniqueWith($attribute, $value, $parameters)
     {
         $count = DB::table($parameters[0])
