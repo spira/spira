@@ -55,7 +55,7 @@ class ImageSeeder extends BaseSeeder
 
         $remoteImageResponse = $cloudinary->getRemoteImages();
 
-        $images = $remoteImageResponse->storage['resources'];
+        $images = $remoteImageResponse->getArrayCopy()['resources'];
 
         $this->command->comment(count($images).' images retrieved from Cloudinary');
 

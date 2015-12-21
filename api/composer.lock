@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "88421aa916c6be84ac91025b40f21e7b",
-    "content-hash": "8bad8928c172761276325a9742025c3f",
+    "hash": "a81c8b5d2059c0ad9efc5c7576fc3152",
+    "content-hash": "e0c30c113240b04eb4e6877ff75bd450",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -2004,16 +2004,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.15",
+            "version": "1.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "31525caf9e8772683672fefd8a1ca0c0736020f4"
+                "reference": "183e1a610664baf6dcd6fceda415baf43cbdc031"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/31525caf9e8772683672fefd8a1ca0c0736020f4",
-                "reference": "31525caf9e8772683672fefd8a1ca0c0736020f4",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/183e1a610664baf6dcd6fceda415baf43cbdc031",
+                "reference": "183e1a610664baf6dcd6fceda415baf43cbdc031",
                 "shasum": ""
             },
             "require": {
@@ -2027,7 +2027,7 @@
                 "mockery/mockery": "~0.9",
                 "phpspec/phpspec": "^2.2",
                 "phpspec/prophecy-phpunit": "~1.0",
-                "phpunit/phpunit": "~4.1"
+                "phpunit/phpunit": "~4.8"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -2084,7 +2084,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-09-30 22:26:59"
+            "time": "2015-12-19 20:16:43"
         },
         {
             "name": "league/fractal",
@@ -2969,16 +2969,16 @@
         },
         {
             "name": "spira/core",
-            "version": "1.0.1",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "0ec288970980aaa2db0f2ba8ac378cfb095658bd"
+                "reference": "dbb821106bc77869b409f9a88fab4a6ffbe06a85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/0ec288970980aaa2db0f2ba8ac378cfb095658bd",
-                "reference": "0ec288970980aaa2db0f2ba8ac378cfb095658bd",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/dbb821106bc77869b409f9a88fab4a6ffbe06a85",
+                "reference": "dbb821106bc77869b409f9a88fab4a6ffbe06a85",
                 "shasum": ""
             },
             "require": {
@@ -3001,7 +3001,10 @@
             "autoload": {
                 "psr-4": {
                     "Spira\\Core\\": ""
-                }
+                },
+                "classmap": [
+                    "database/"
+                ]
             },
             "scripts": {
                 "post-update-cmd": [
@@ -3018,10 +3021,10 @@
                 "lumen"
             ],
             "support": {
-                "source": "https://github.com/spira/api-core/tree/1.0.1",
+                "source": "https://github.com/spira/api-core/tree/1.1.1",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2015-12-17 11:33:38"
+            "time": "2015-12-21 06:56:43"
         },
         {
             "name": "swiftmailer/swiftmailer",

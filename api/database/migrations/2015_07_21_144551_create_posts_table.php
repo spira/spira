@@ -51,8 +51,6 @@ class CreatePostsTable extends Migration
                 ->references(Image::getPrimaryKey())->on(Image::getTableName())
                 ->onDelete('set null');
         });
-
-        AbstractPost::putMapping();
     }
 
     /**

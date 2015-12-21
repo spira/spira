@@ -90,6 +90,7 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\ApplicationProvider::class);
+$app->register(App\Providers\ElasticServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);

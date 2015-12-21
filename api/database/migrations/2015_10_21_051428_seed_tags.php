@@ -142,7 +142,7 @@ class SeedTags extends Migration
 
         DB::table(CreateTagTagTable::TABLE_NAME)->insert($tagInserts['tag_relationship_inserts']);
 
-        Tag::reindex();
+        Tag::addAllToIndex();
     }
 
     /**
