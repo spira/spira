@@ -152,10 +152,18 @@ class ValidatorTest extends TestCase
 
         $testEntity->entity_id = (string) Uuid::uuid4();
 
-        $validation = $this->validator->make($testEntity->toArray(), [
+        $validationFail = $this->validator->make($testEntity->toArray(), [
             'integer' => 'unique_with:'.TestEntity::getTableName().',text',
         ]);
 
-        $this->assertFalse($validation->passes());
+        $this->assertFalse($validationFail->passes());
+
+        $testEntity->text = 'barfoo';
+
+        $validationPass = $this->validator->make($testEntity->toArray(), [
+            'integer' => 'unique_with:'.TestEntity::getTableName().',text',
+        ]);
+
+        $this->assertTrue($validationPass->passes());
     }
 }
