@@ -32,7 +32,7 @@ class ElasticSearch
      */
     protected $defaultIndexName;
 
-    public function __construct(Client $elasticClient, string $defaultIndexName = 'default')
+    public function __construct(Client $elasticClient, $defaultIndexName = 'default')
     {
         $this->elasticClient = $elasticClient;
         $this->defaultIndexName = $defaultIndexName;
