@@ -29,7 +29,9 @@ class CreateElasticSearchIndex extends Migration
      */
     public function up()
     {
-        $this->elasticSearch->createIndex();
+        if (!$this->elasticSearch->indexExists()) {
+            $this->elasticSearch->createIndex();
+        }
     }
 
     /**
@@ -39,6 +41,8 @@ class CreateElasticSearchIndex extends Migration
      */
     public function down()
     {
-        $this->elasticSearch->deleteIndex();
+        if ($this->elasticSearch->indexExists()){
+            $this->elasticSearch->deleteIndex();
+        }
     }
 }

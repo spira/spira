@@ -92,6 +92,25 @@ class ElasticSearch
     }
 
     /**
+     * @param IndexedModel|null $model
+     * @return array
+     */
+    public function indexExists(IndexedModel $model = null)
+    {
+        $indexName = self::getDefaultIndexName();
+
+        if ($model) {
+            $indexName = $model->getIndexName();
+        }
+
+        $config = [
+            'index' => $indexName,
+        ];
+
+        return $this->getClient()->indices()->exists($config);
+    }
+
+    /**
      * @param $indexName
      * @return array
      */

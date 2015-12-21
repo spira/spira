@@ -58,12 +58,8 @@ $app->singleton(
 );
 
 $app->singleton(App\Services\ElasticSearch::class, function ($app) {
-    $config = [];
-    if (config()->has('elasticquent.config')) {
-        $config = config()->get('elasticquent.config');
-    }
 
-    $client = new \Elasticsearch\Client($config);
+    $client = new \Elasticsearch\Client(App\Services\ElasticSearch::getConfig());
 
     return new App\Services\ElasticSearch($client);
 });
