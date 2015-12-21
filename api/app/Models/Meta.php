@@ -10,6 +10,7 @@
 
 namespace App\Models;
 
+use Guzzle\Http\Message\Request;
 use Spira\Core\Model\Model\BaseModel;
 
 class Meta extends BaseModel
@@ -32,6 +33,7 @@ class Meta extends BaseModel
         'meta_id' => 'uuid',
         'meta_name' => 'required|string',
         'meta_content' => 'string',
+        'metaable_id' => 'unique_with:metas,meta_name',
     ];
 
     public function metaableModel()
