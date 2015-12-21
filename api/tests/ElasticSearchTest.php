@@ -8,12 +8,25 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 use App\Services\ElasticSearch;
+use Spira\Core\Model\Model\IndexedModel;
 
 /**
  * Class ElasticSearchTest.
  */
 class ElasticSearchTest extends TestCase
 {
+
+    private $indexedModelMock;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $indexedModelMock = Mockery::namedMock('NamedIndexedModelMock', IndexedModel::class);
+        $indexedModelMock->shouldReceive('getIndexName')->andReturn('foo');
+
+        $this->indexedModelMock = $indexedModelMock;
+    }
+
     public function testCreateIndex()
     {
         $elasticSearchMock = Mockery::mock(\Elasticsearch\Client::class)->makePartial();
@@ -37,14 +50,7 @@ class ElasticSearchTest extends TestCase
 
         $elasticSearchService = new ElasticSearch($elasticSearchMock);
 
-        $elasticSearchService->createIndex(new class extends \Spira\Core\Model\Model\IndexedModel {
-
-            public function getIndexName()
-            {
-                return 'foo';
-            }
-
-        });
+        $elasticSearchService->createIndex($this->indexedModelMock);
     }
 
     public function testDeleteIndex()
@@ -70,14 +76,7 @@ class ElasticSearchTest extends TestCase
 
         $elasticSearchService = new ElasticSearch($elasticSearchMock);
 
-        $elasticSearchService->deleteIndex(new class extends \Spira\Core\Model\Model\IndexedModel {
-
-            public function getIndexName()
-            {
-                return 'foo';
-            }
-
-        });
+        $elasticSearchService->deleteIndex($this->indexedModelMock);
     }
 
     public function testIndexExists()
@@ -90,14 +89,7 @@ class ElasticSearchTest extends TestCase
 
         $elasticSearchService = new ElasticSearch($elasticSearchMock);
 
-        $elasticSearchService->indexExists(new class extends \Spira\Core\Model\Model\IndexedModel {
-
-            public function getIndexName()
-            {
-                return 'foo';
-            }
-
-        });
+        $elasticSearchService->indexExists($this->indexedModelMock);
     }
 
     public function testIndexExistsForModel()
@@ -110,14 +102,7 @@ class ElasticSearchTest extends TestCase
 
         $elasticSearchService = new ElasticSearch($elasticSearchMock);
 
-        $elasticSearchService->indexExists(new class extends \Spira\Core\Model\Model\IndexedModel {
-
-            public function getIndexName()
-            {
-                return 'foo';
-            }
-
-        });
+        $elasticSearchService->indexExists($this->indexedModelMock);
     }
 
     public function testGetIndexedModels()
@@ -130,7 +115,7 @@ class ElasticSearchTest extends TestCase
         $this->assertInternalType('array', $classes);
 
         foreach($classes as $className){
-            $this->assertInstanceOf(\Spira\Core\Model\Model\IndexedModel::class, new $className);
+            $this->assertInstanceOf(IndexedModel::class, new $className);
         }
 
     }
