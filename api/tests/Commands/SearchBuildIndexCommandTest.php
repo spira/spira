@@ -22,15 +22,7 @@ class SearchBuildIndexCommandTest extends TestCase
     {
 
         $esMock = m::mock(ElasticSearch::class);
-        $esMock->shouldReceive('indexExists')->andReturn(true);
-        $esMock->shouldReceive('createIndex');
-        $esMock->shouldReceive('deleteIndex');
-
-        $indexedModelMock = m::mock('alias:IndexedModelMock');
-        $indexedModelMock->shouldReceive('putMapping')->once();
-        $indexedModelMock->shouldReceive('addAllToIndex')->once();
-
-        $esMock->shouldReceive('getIndexedModelClasses')->andReturn(['IndexedModelMock']);
+        $esMock->shouldReceive('reindexAll')->once()->andReturn(true);
 
         /** @var SearchBuildIndexCommand $cmd */
         $cmd = $this->app->make(SearchBuildIndexCommand::class, [$esMock]);

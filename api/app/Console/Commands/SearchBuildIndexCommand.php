@@ -59,19 +59,8 @@ class SearchBuildIndexCommand extends Command
     public function handle()
     {
 
-        if ($this->elasticSearch->indexExists()){
-            $this->elasticSearch->deleteIndex();
-        }
-
-        $this->elasticSearch->createIndex();
-
-        $indexedModelClasses = $this->elasticSearch->getIndexedModelClasses();
-
-        foreach ($indexedModelClasses as $className){
-
-            /** @var $className IndexedModel */
-            $className::putMapping();
-            $className::addAllToIndex();
+        if (!$this->elasticSearch->reindexAll()){
+            return 1;
         }
 
         return 0;

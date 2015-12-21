@@ -159,4 +159,27 @@ class ElasticSearch
         return self::$indexedModels;
     }
 
+    /**
+     * @return bool
+     */
+    public function reindexAll()
+    {
+        if ($this->indexExists()){
+            $this->deleteIndex();
+        }
+
+        $this->createIndex();
+
+        $indexedModelClasses = $this->getIndexedModelClasses();
+
+        foreach ($indexedModelClasses as $className){
+
+            /** @var $className IndexedModel */
+            $className::putMapping();
+            $className::addAllToIndex();
+        }
+
+        return true;
+    }
+
 }
