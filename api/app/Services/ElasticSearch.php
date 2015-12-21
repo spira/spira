@@ -10,11 +10,20 @@
 
 namespace App\Services;
 
+use App\Models\Tag;
+use App\Models\User;
+use App\Models\Article;
 use Elasticsearch\Client;
 use Spira\Core\Model\Model\IndexedModel;
 
 class ElasticSearch
 {
+    private static $indexedModels = [
+        User::class,
+        Article::class,
+        Tag::class,
+    ];
+
     /** @var  \Cloudinary */
     protected $elasticClient;
 
@@ -143,6 +152,11 @@ class ElasticSearch
             ],
         ];
         return $settings;
+    }
+
+    public function getIndexedModelClasses()
+    {
+        return self::$indexedModels;
     }
 
 }

@@ -141,8 +141,6 @@ class SeedTags extends Migration
         DB::table(Tag::getTableName())->insert($tagInserts['tag_inserts']);
 
         DB::table(CreateTagTagTable::TABLE_NAME)->insert($tagInserts['tag_relationship_inserts']);
-
-        Tag::reindex();
     }
 
     /**

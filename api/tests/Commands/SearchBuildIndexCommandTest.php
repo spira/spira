@@ -9,26 +9,31 @@
  */
 
 use Mockery as m;
+use App\Services\ElasticSearch;
 use App\Console\Commands\SearchBuildIndexCommand;
 
 /**
  * Class SearchBuildIndexCommandTest
  * @group commands
- * @group testing
  */
 class SearchBuildIndexCommandTest extends TestCase
 {
     public function testSearchBuildIndexCommand()
     {
 
-        $esMock = m::mock(\Elasticsearch\Client::class);
-        $esMock->shouldReceive('exists')->andReturn(true)
-            ->shouldReceive('put')->andReturn(true);
+        $esMock = m::mock(ElasticSearch::class);
+        $esMock->shouldReceive('indexExists')->andReturn(true);
+        $esMock->shouldReceive('createIndex');
+        $esMock->shouldReceive('deleteIndex');
 
-        $this->app->instance(\Elasticsearch\Client::class, $esMock);
+        $indexedModelMock = m::mock('alias:IndexedModelMock');
+        $indexedModelMock->shouldReceive('putMapping')->once();
+        $indexedModelMock->shouldReceive('addAllToIndex')->once();
+
+        $esMock->shouldReceive('getIndexedModelClasses')->andReturn(['IndexedModelMock']);
 
         /** @var SearchBuildIndexCommand $cmd */
-        $cmd = $this->app->make(SearchBuildIndexCommand::class);
+        $cmd = $this->app->make(SearchBuildIndexCommand::class, [$esMock]);
 
         $this->assertEquals(0, $cmd->handle());
     }

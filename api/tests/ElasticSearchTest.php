@@ -119,4 +119,19 @@ class ElasticSearchTest extends TestCase
         });
     }
 
+    public function testGetIndexedModels()
+    {
+        $elasticSearchMock = Mockery::mock(\Elasticsearch\Client::class);
+        $elasticSearchService = new \App\Services\ElasticSearch($elasticSearchMock);
+
+        $classes = $elasticSearchService->getIndexedModelClasses();
+
+        $this->assertInternalType('array', $classes);
+
+        foreach($classes as $className){
+            $this->assertInstanceOf(\Spira\Core\Model\Model\IndexedModel::class, new $className);
+        }
+
+    }
+
 }

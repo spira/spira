@@ -10,8 +10,10 @@
 
 namespace App\Console\Commands;
 
+use App\Services\ElasticSearch;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Spira\Core\Model\Model\IndexedModel;
 
 class SearchBuildIndexCommand extends Command
 {
@@ -29,6 +31,26 @@ class SearchBuildIndexCommand extends Command
      */
     protected $description = '(re)Build search index';
 
+
+    /**
+     * ElasticSearch Service.
+     *
+     * @var ElasticSearch
+     */
+    protected $elasticSearch;
+
+    /**
+     * Create a new command instance.
+     *
+     * @param Filesystem $file
+     */
+    public function __construct(ElasticSearch $elasticSearch)
+    {
+        parent::__construct();
+
+        $this->elasticSearch = $elasticSearch;
+    }
+
     /**
      * Execute the console command.
      *
@@ -36,6 +58,21 @@ class SearchBuildIndexCommand extends Command
      */
     public function handle()
     {
+
+        if ($this->elasticSearch->indexExists()){
+            $this->elasticSearch->deleteIndex();
+        }
+
+        $this->elasticSearch->createIndex();
+
+        $indexedModelClasses = $this->elasticSearch->getIndexedModelClasses();
+
+        foreach ($indexedModelClasses as $className){
+
+            /** @var $className IndexedModel */
+            $className::putMapping();
+            $className::addAllToIndex();
+        }
 
         return 0;
     }

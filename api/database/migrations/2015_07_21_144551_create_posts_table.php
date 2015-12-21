@@ -52,7 +52,6 @@ class CreatePostsTable extends Migration
                 ->onDelete('set null');
         });
 
-        AbstractPost::putMapping();
     }
 
     /**
