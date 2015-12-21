@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Mockery as m;
 use App\Models\Role;
 use App\Models\User;
 use App\Console\Commands\CreateUserCommand;
 
 /**
- * Class CreateUserCommandTest
+ * Class CreateUserCommandTest.
  * @group commands
  */
 class CreateUserCommandTest extends TestCase
