@@ -13,7 +13,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateElasticSearchIndex extends Migration
 {
-
     /** @var  ElasticSearch */
     protected $elasticSearch;
 
@@ -29,7 +28,7 @@ class CreateElasticSearchIndex extends Migration
      */
     public function up()
     {
-        if (!$this->elasticSearch->indexExists()) {
+        if (! $this->elasticSearch->indexExists()) {
             $this->elasticSearch->reindexAll(false);
         }
     }
@@ -41,7 +40,7 @@ class CreateElasticSearchIndex extends Migration
      */
     public function down()
     {
-        if ($this->elasticSearch->indexExists()){
+        if ($this->elasticSearch->indexExists()) {
             $this->elasticSearch->deleteIndex();
         }
     }

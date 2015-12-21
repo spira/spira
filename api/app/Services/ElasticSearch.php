@@ -33,7 +33,7 @@ class ElasticSearch
     }
 
     /**
-     * Get ElasticSearch Client
+     * Get ElasticSearch Client.
      *
      * @return Client
      */
@@ -50,6 +50,7 @@ class ElasticSearch
         if (config()->has('elasticquent.config')) {
             return config()->get('elasticquent.config');
         }
+
         return [];
     }
 
@@ -64,12 +65,11 @@ class ElasticSearch
     }
 
     /**
-     * Create index
+     * Create index.
      * @param IndexedModel|null $model
      */
     public function createIndex(IndexedModel $model = null)
     {
-
         $indexName = self::getDefaultIndexName();
 
         if ($model) {
@@ -151,6 +151,7 @@ class ElasticSearch
                 ],
             ],
         ];
+
         return $settings;
     }
 
@@ -165,7 +166,7 @@ class ElasticSearch
      */
     public function reindexAll($addToIndex = true)
     {
-        if ($this->indexExists()){
+        if ($this->indexExists()) {
             $this->deleteIndex();
         }
 
@@ -173,17 +174,16 @@ class ElasticSearch
 
         $indexedModelClasses = $this->getIndexedModelClasses();
 
-        foreach ($indexedModelClasses as $className){
+        foreach ($indexedModelClasses as $className) {
 
-            /** @var $className IndexedModel */
+            /* @var $className IndexedModel */
             $className::putMapping();
 
-            if ($addToIndex){
+            if ($addToIndex) {
                 $className::addAllToIndex();
             }
         }
 
         return true;
     }
-
 }

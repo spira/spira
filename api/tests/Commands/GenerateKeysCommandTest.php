@@ -12,7 +12,7 @@ use Mockery as m;
 use App\Console\Commands\GenerateKeysCommand;
 
 /**
- * Class GenerateKeysCommandTest
+ * Class GenerateKeysCommandTest.
  * @group commands
  */
 class GenerateKeysCommandTest extends TestCase
@@ -43,5 +43,4 @@ class GenerateKeysCommandTest extends TestCase
 
         $this->assertEquals(0, $cmd->handle());
     }
-
 }

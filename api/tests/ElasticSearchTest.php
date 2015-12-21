@@ -15,7 +15,6 @@ use Spira\Core\Model\Model\IndexedModel;
  */
 class ElasticSearchTest extends TestCase
 {
-
     private $indexedModelMock;
 
     public function setUp()
@@ -114,10 +113,9 @@ class ElasticSearchTest extends TestCase
 
         $this->assertInternalType('array', $classes);
 
-        foreach($classes as $className){
+        foreach ($classes as $className) {
             $this->assertInstanceOf(IndexedModel::class, new $className);
         }
-
     }
 
     public function testRebuildIndex()
@@ -150,5 +148,4 @@ class ElasticSearchTest extends TestCase
 
         $elasticSearchService->reindexAll(true);
     }
-
 }
