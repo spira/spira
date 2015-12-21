@@ -13,7 +13,7 @@ use App\Services\ElasticSearch;
 use App\Console\Commands\SearchBuildIndexCommand;
 
 /**
- * Class SearchBuildIndexCommandTest
+ * Class SearchBuildIndexCommandTest.
  * @group commands
  */
 class SearchBuildIndexCommandTest extends TestCase
@@ -41,5 +41,4 @@ class SearchBuildIndexCommandTest extends TestCase
 
         $this->assertEquals(0, $cmdMocked->handle());
     }
-
 }
