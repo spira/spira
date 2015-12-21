@@ -121,8 +121,8 @@ abstract class IndexedModel extends BaseModel
 
         // for some reason laravel converts to string, then back to datetime when doing toArray. This reverts back to
         // an ISO8601 formatted date for elastic to interpret
-        foreach($this->getDates() as $dateKey){
-            if (isset($attributes[$dateKey]) && $attributes[$dateKey] instanceof Carbon){
+        foreach ($this->getDates() as $dateKey) {
+            if (isset($attributes[$dateKey]) && $attributes[$dateKey] instanceof Carbon) {
                 $attributes[$dateKey] = $attributes[$dateKey]->toIso8601String();
             }
         }
