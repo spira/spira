@@ -57,6 +57,17 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->singleton(App\Services\ElasticSearch::class, function ($app) {
+    $config = [];
+    if (config()->has('elasticquent.config')) {
+        $config = config()->get('elasticquent.config');
+    }
+
+    $client = new \Elasticsearch\Client($config);
+
+    return new App\Services\ElasticSearch($client);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware

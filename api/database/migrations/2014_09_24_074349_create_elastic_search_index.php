@@ -8,11 +8,20 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Services\ElasticSearch;
 use Illuminate\Database\Migrations\Migration;
-use Spira\Core\Model\Test\TestEntity;
 
 class CreateElasticSearchIndex extends Migration
 {
+
+    /** @var  ElasticSearch */
+    protected $elasticSearch;
+
+    public function __construct()
+    {
+        $this->elasticSearch = App::make(ElasticSearch::class);
+    }
+
     /**
      * Run the migrations.
      *
@@ -20,38 +29,7 @@ class CreateElasticSearchIndex extends Migration
      */
     public function up()
     {
-        if (! TestEntity::indexExists()) {
-            $testEntity = new TestEntity;
-
-            $settings = [
-                'index' => $testEntity->getIndexName(),
-                'body' => [
-                    'settings' => [
-                        'analysis' => [
-                            'filter' => [
-                                'autocomplete_filter' => [
-                                    'type' => 'edge_ngram',
-                                    'min_gram' => 1,
-                                    'max_gram' => 20,
-                                ],
-                            ],
-                            'analyzer' => [
-                                'autocomplete' => [
-                                    'type' => 'custom',
-                                    'tokenizer' => 'standard',
-                                    'filter' => [
-                                        'lowercase',
-                                        'autocomplete_filter',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ];
-
-            $testEntity->getElasticSearchClient()->indices()->create($settings);
-        }
+        $this->elasticSearch->createIndex();
     }
 
     /**
@@ -61,8 +39,6 @@ class CreateElasticSearchIndex extends Migration
      */
     public function down()
     {
-        if (TestEntity::indexExists()) {
-            TestEntity::deleteIndex();
-        }
+        $this->elasticSearch->deleteIndex();
     }
 }
