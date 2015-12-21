@@ -48,7 +48,6 @@ class ElasticSearch
         return $this->elasticClient;
     }
 
-
     public function getDefaultIndexName()
     {
         return $this->defaultIndexName;
