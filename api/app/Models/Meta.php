@@ -10,7 +10,6 @@
 
 namespace App\Models;
 
-use Guzzle\Http\Message\Request;
 use Spira\Core\Model\Model\BaseModel;
 
 class Meta extends BaseModel
