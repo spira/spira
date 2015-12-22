@@ -16,14 +16,14 @@ class TestCase extends \Spira\Core\tests\TestCase
 
     use HelpersTrait;
 
-    public $envVarOverrides = [
+    public static $envVarOverrides = [
         'APP_ENV' => 'testing',
         'CACHE_DRIVER' => 'redis',
         'SESSION_DRIVER' => 'array',
         'QUEUE_DRIVER' => 'sync',
     ];
 
-    public $envVarOriginals = [];
+    public static $envVarOriginals = [];
 
     /**
      * Creates the application.
@@ -35,17 +35,16 @@ class TestCase extends \Spira\Core\tests\TestCase
         return require __DIR__.'/../bootstrap/app.php';
     }
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        parent::setUp();
-
-        $this->registerEnvironmentOverrides();
+        parent::setUpBeforeClass();
+        self::registerEnvironmentOverrides();
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
-        parent::tearDown();
-        $this->deregisterEnvironmentOverrides();
+        parent::tearDownAfterClass();
+        self::deregisterEnvironmentOverrides();
     }
 
     /**
@@ -69,20 +68,20 @@ class TestCase extends \Spira\Core\tests\TestCase
      * for the runtime are registered on container boot. Instead we register the overrides here and force the override.
      * @link https://phpunit.de/manual/current/en/appendixes.configuration.html#appendixes.configuration.php-ini-constants-variables
      */
-    protected function registerEnvironmentOverrides()
+    protected static function registerEnvironmentOverrides()
     {
-        foreach ($this->envVarOverrides as $var => $value) {
+        foreach (self::$envVarOverrides as $var => $value) {
             if ($original = getenv($var)){
-                $this->envVarOriginals[$var] = $original;
+                self::$envVarOriginals[$var] = $original;
             }
 
             putenv("$var=$value");
         }
     }
 
-    protected function deregisterEnvironmentOverrides()
+    protected static function deregisterEnvironmentOverrides()
     {
-        foreach ($this->envVarOriginals as $var => $value) {
+        foreach (self::$envVarOriginals as $var => $value) {
             putenv("$var=$value");
         }
     }
