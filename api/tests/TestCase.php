@@ -71,7 +71,7 @@ class TestCase extends \Spira\Core\tests\TestCase
     protected static function registerEnvironmentOverrides()
     {
         foreach (self::$envVarOverrides as $var => $value) {
-            if ($original = getenv($var)){
+            if ($original = getenv($var)) {
                 self::$envVarOriginals[$var] = $original;
             }
 
