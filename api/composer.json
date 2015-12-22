@@ -32,7 +32,7 @@
         "laravel/socialite": "^2.0",
         "cloudinary/cloudinary_php": "^1.1",
         "venturecraft/revisionable": "^2.0",
-        "spira/core": "1.1.*",
+        "spira/core": "1.2.*",
         "namshi/jose": "^6.0"
     },
     "require-dev": {

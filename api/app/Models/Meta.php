@@ -28,11 +28,15 @@ class Meta extends BaseModel
         Article::class,
     ];
 
-    protected static $validationRules = [
-        'meta_id' => 'uuid',
-        'meta_name' => 'required|string',
-        'meta_content' => 'string',
-    ];
+    public static function getValidationRules($entityId = null, array $requestEntity = [])
+    {
+        return [
+            'meta_id' => 'uuid',
+            'meta_name' => 'required|string',
+            'meta_content' => 'string',
+            'metaable_id' => 'unique:metas,metaable_id,'.$entityId.',meta_id,meta_name,'.$requestEntity['meta_name'],
+        ];
+    }
 
     public function metaableModel()
     {

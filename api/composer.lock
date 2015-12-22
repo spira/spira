@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a81c8b5d2059c0ad9efc5c7576fc3152",
-    "content-hash": "e0c30c113240b04eb4e6877ff75bd450",
+    "hash": "a315cb7848fe2bf7732fe90bb28ac956",
+    "content-hash": "01342c068caedbc8bb22ee2f4351aaed",
     "packages": [
         {
             "name": "bosnadev/database",
@@ -2969,16 +2969,16 @@
         },
         {
             "name": "spira/core",
-            "version": "1.1.1",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "dbb821106bc77869b409f9a88fab4a6ffbe06a85"
+                "reference": "c9d565835466408791ee96d3a61673b459800613"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/dbb821106bc77869b409f9a88fab4a6ffbe06a85",
-                "reference": "dbb821106bc77869b409f9a88fab4a6ffbe06a85",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/c9d565835466408791ee96d3a61673b459800613",
+                "reference": "c9d565835466408791ee96d3a61673b459800613",
                 "shasum": ""
             },
             "require": {
@@ -3021,10 +3021,10 @@
                 "lumen"
             ],
             "support": {
-                "source": "https://github.com/spira/api-core/tree/1.1.1",
+                "source": "https://github.com/spira/api-core/tree/1.2.1",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2015-12-21 06:56:43"
+            "time": "2015-12-22 00:51:06"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3944,12 +3944,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "5497e7d506229c09823903fe02313e67978b1057"
+                "reference": "d82e8f191fb043a0f8cbf2de64fd3027bfa4f772"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/5497e7d506229c09823903fe02313e67978b1057",
-                "reference": "5497e7d506229c09823903fe02313e67978b1057",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/d82e8f191fb043a0f8cbf2de64fd3027bfa4f772",
+                "reference": "d82e8f191fb043a0f8cbf2de64fd3027bfa4f772",
                 "shasum": ""
             },
             "require": {
@@ -3999,7 +3999,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2015-12-14 13:33:18"
+            "time": "2015-12-21 19:48:06"
         },
         {
             "name": "doctrine/instantiator",

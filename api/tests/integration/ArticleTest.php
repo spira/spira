@@ -503,6 +503,7 @@ class ArticleTest extends TestCase
             [
                 'meta_name' => 'barfoobar',
                 'meta_content' => 'barfoobarfoo',
+                'metaable_id' => $post->post_id,
             ]
         )->transformed();
 
@@ -526,21 +527,22 @@ class ArticleTest extends TestCase
 
     public function testAddDuplicateMetaNames()
     {
-        $this->markTestIncomplete('Duplicate meta validation has not been completed');
         /** @var AbstractPost $post */
         $post = $this->getFactory($this->factoryClass)->create();
-        $factory = $this->getFactory(Meta::class)->customize(
+
+        $meta = $this->getFactory(Meta::class)->customize(
             [
                 'meta_name' => 'foo',
                 'meta_content' => 'bar',
             ]
-        );
-        $meta = $factory->make();
+        )->make();
         $post->metas()->save($meta);
-        $data = $factory->customize(
+
+        $data = $this->getFactory(Meta::class)->customize(
             [
                 'meta_name' => 'foo',
                 'meta_content' => 'foobar',
+                'metaable_id' => $post->post_id,
             ]
         )->transformed();
 
