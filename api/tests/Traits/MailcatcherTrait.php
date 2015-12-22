@@ -9,7 +9,6 @@
  */
 use Guzzle\Http\Client;
 
-
 /**
  * Adds mailcatcher calls.
  */
