@@ -503,7 +503,7 @@ class ArticleTest extends TestCase
             [
                 'meta_name' => 'barfoobar',
                 'meta_content' => 'barfoobarfoo',
-                'metaable_id' => $post->post_id
+                'metaable_id' => $post->post_id,
             ]
         )->transformed();
 

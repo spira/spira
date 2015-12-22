@@ -34,7 +34,7 @@ class Meta extends BaseModel
             'meta_id' => 'uuid',
             'meta_name' => 'required|string',
             'meta_content' => 'string',
-            'metaable_id' => 'unique:metas,metaable_id,'.$entityId.',meta_id,meta_name,'.$requestEntity['meta_name']
+            'metaable_id' => 'unique:metas,metaable_id,'.$entityId.',meta_id,meta_name,'.$requestEntity['meta_name'],
         ];
     }
 
