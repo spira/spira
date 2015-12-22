@@ -16,6 +16,15 @@ class TestCase extends \Spira\Core\tests\TestCase
 
     use HelpersTrait;
 
+    public static $envVarOverrides = [
+        'APP_ENV' => 'testing',
+        'CACHE_DRIVER' => 'redis',
+        'SESSION_DRIVER' => 'array',
+        'QUEUE_DRIVER' => 'sync',
+    ];
+
+    public static $envVarOriginals = [];
+
     /**
      * Creates the application.
      *
@@ -24,6 +33,18 @@ class TestCase extends \Spira\Core\tests\TestCase
     public function createApplication()
     {
         return require __DIR__.'/../bootstrap/app.php';
+    }
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::registerEnvironmentOverrides();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+        self::deregisterEnvironmentOverrides();
     }
 
     /**
@@ -39,5 +60,29 @@ class TestCase extends \Spira\Core\tests\TestCase
         $this->authHeader = $header;
 
         return $this;
+    }
+
+    /**
+     * PHPUnit allows for environment variables to be set by the phpunit.xml file, however this only works
+     * if the variable was not yet defined. This is a problem in dockerised environments where the environment variables
+     * for the runtime are registered on container boot. Instead we register the overrides here and force the override.
+     * @link https://phpunit.de/manual/current/en/appendixes.configuration.html#appendixes.configuration.php-ini-constants-variables
+     */
+    protected static function registerEnvironmentOverrides()
+    {
+        foreach (self::$envVarOverrides as $var => $value) {
+            if ($original = getenv($var)) {
+                self::$envVarOriginals[$var] = $original;
+            }
+
+            putenv("$var=$value");
+        }
+    }
+
+    protected static function deregisterEnvironmentOverrides()
+    {
+        foreach (self::$envVarOriginals as $var => $value) {
+            putenv("$var=$value");
+        }
     }
 }

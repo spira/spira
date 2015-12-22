@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -24,7 +25,7 @@ class EmailTest extends TestCase
     {
         $subject = 'Test Email';
 
-        Mail::send('emails.welcome', [], function ($message) use ($subject) {
+        Mail::send('emails.welcome', [], function (Message $message) use ($subject) {
             $message->to('foo@example.com', 'John Smith')->subject($subject);
         });
 

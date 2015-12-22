@@ -22,8 +22,8 @@ class VanillaTest extends PHPUnit_Framework_TestCase
         $client = new Client([
             'base_url' => sprintf(
                 'http://%s:%s',
-                $this->getEnvWithFallback('VANILLA_SERVER_HOST', 'web'),
-                getenv('VANILLA_SERVER_PORT')
+                $this->getEnvWithFallback('FORUMSERVER_HOST', 'web'),
+                $this->getEnvWithFallback('FORUMSERVER_PORT', '80')
             ),
         ]);
 

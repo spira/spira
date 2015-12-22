@@ -7,8 +7,7 @@
  *
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
-
-use GuzzleHttp\Client;
+use Guzzle\Http\Client;
 
 /**
  * Adds mailcatcher calls.
@@ -16,15 +15,13 @@ use GuzzleHttp\Client;
 trait MailcatcherTrait
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @var Client
      */
     private $mailcatcher;
 
     public function bootMailcatcherTrait()
     {
-        $this->mailcatcher = new Client([
-            'base_url' => 'http://'.getenv('MAIL_HOST').':1080',
-        ]);
+        $this->mailcatcher = new Client('http://'.getenv('MAIL_HOST').':1080');
         // clean emails between tests
         $this->clearMessages();
     }
@@ -34,7 +31,7 @@ trait MailcatcherTrait
      */
     public function clearMessages()
     {
-        $this->mailcatcher->delete('/messages');
+        $this->mailcatcher->delete('/messages')->send();
     }
 
     /**
@@ -62,7 +59,7 @@ trait MailcatcherTrait
      */
     public function getMessages()
     {
-        $jsonResponse = $this->mailcatcher->get('/messages');
+        $jsonResponse = $this->mailcatcher->get('/messages')->send();
 
         return json_decode($jsonResponse->getBody());
     }
@@ -76,7 +73,7 @@ trait MailcatcherTrait
      */
     public function getMessage($id, $type = 'json')
     {
-        $jsonResponse = $this->mailcatcher->get(sprintf('/messages/%s.%s', $id, $type));
+        $jsonResponse = $this->mailcatcher->get(sprintf('/messages/%s.%s', $id, $type))->send();
 
         return json_decode($jsonResponse->getBody());
     }
@@ -89,7 +86,7 @@ trait MailcatcherTrait
      */
     public function getMessageSource($id)
     {
-        $response = $this->mailcatcher->get(sprintf('/messages/%s.html', $id));
+        $response = $this->mailcatcher->get(sprintf('/messages/%s.html', $id))->send();
 
         return (string) $response->getBody();
     }

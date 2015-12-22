@@ -24,10 +24,6 @@
         </blacklist>
     </filter>
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="redis"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
         <ini name="memory_limit" value="4G"/>
     </php>
 </phpunit>
