@@ -32,7 +32,7 @@ trait MailcatcherTrait
      */
     public function clearMessages()
     {
-        $this->mailcatcher->delete('/messages');
+        $this->mailcatcher->delete('/messages')->send();
     }
 
     /**
