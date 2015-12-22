@@ -41,7 +41,6 @@ php:
   image: spira/docker-phpfpm:php-7.0
   env_file:
     - .common.env
-    - .local.env
     - .secret.env
   privileged: true
 

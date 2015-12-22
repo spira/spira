@@ -11,6 +11,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
+use Illuminate\Mail\Message;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,10 +54,12 @@ class SendPasswordResetEmail extends Job implements SelfHandling, ShouldQueue
      */
     public function handle(Mailer $mailer)
     {
+        echo "Resetting password for " . $this->user->email . "\n";
+
         $mailer->send('emails.resetPassword', [
             'user' => $this->user,
             'passwordResetRedirectionUrl' => Config::get('hosts.app').'/profile?loginToken='.$this->loginToken,
-        ], function ($m) {
+        ], function (Message $m) {
             $m->to($this->user->email, $this->user->full_name)
                 ->subject('Password Reset');
         });

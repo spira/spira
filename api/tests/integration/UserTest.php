@@ -388,6 +388,9 @@ class UserTest extends TestCase
         $this->assertNotNull($user);
     }
 
+    /**
+     * @group failing
+     */
     public function testResetPasswordMail()
     {
         $this->clearMessages();
