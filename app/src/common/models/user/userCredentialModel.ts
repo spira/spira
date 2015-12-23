@@ -3,9 +3,9 @@ module common.models {
     @common.decorators.changeAware
     export class UserCredential extends AbstractModel implements global.IUserCredential{
 
-        public userId:string = undefined;
-        public userCredentialId:string = undefined;
-        public password:string = undefined;
+        public userId:string;
+        public userCredentialId:string;
+        public password:string;
 
         constructor(data:any, exists:boolean = false) {
 

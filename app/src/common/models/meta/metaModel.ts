@@ -3,11 +3,11 @@ namespace common.models {
     @common.decorators.changeAware
     export class Meta extends AbstractModel {
 
-        public metaId:string = undefined;
-        public metaableId:string = undefined;
-        public metaableType:string = undefined;
-        public metaName:string = undefined;
-        public metaContent:string = undefined;
+        public metaId:string;
+        public metaableId:string;
+        public metaableType:string;
+        public metaName:string;
+        public metaContent:string;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

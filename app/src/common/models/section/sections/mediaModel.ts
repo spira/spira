@@ -87,8 +87,8 @@ namespace common.models.sections {
         public static mediaTypes:string[] = [Media.mediaTypeImage, Media.mediaTypeVideo];
 
         public media:(IImageContent|IVideoContent)[] = [];
-        public size:string = undefined;
-        public alignment:string = undefined;
+        public size:string;
+        public alignment:string;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

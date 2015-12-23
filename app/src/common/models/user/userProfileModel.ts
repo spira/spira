@@ -11,17 +11,17 @@ module common.models {
             dob: this.castDate,
         };
 
-        public userId:string = undefined;
-        public dob:Date = undefined;
-        public mobile:string = undefined;
-        public phone:string = undefined;
-        public gender:string = undefined;
-        public about:string = undefined;
-        public facebook:string = undefined;
-        public twitter:string = undefined;
-        public pinterest:string = undefined;
-        public instagram:string = undefined;
-        public website:string = undefined;
+        public userId:string;
+        public dob:Date;
+        public mobile:string;
+        public phone:string;
+        public gender:string;
+        public about:string;
+        public facebook:string;
+        public twitter:string;
+        public pinterest:string;
+        public instagram:string;
+        public website:string;
 
         public static genderOptions:IGenderOption[] = [
             {label: 'Male', value: 'M'},

@@ -160,7 +160,7 @@ namespace common.models {
 
             _.forIn(this.__nestedEntityMap, (nestedObject:IModelClass|IHydrateFunction, nestedKey:string) => {
 
-                let nestedData = null;
+                let nestedData = this[nestedKey]; // Default to what the default model is defined in the model
 
                 if(this.isModelClass(nestedObject)) {
                     if(_.has(data, nestedKey) && !_.isNull(data[nestedKey])) {
