@@ -23,8 +23,8 @@ namespace common.models {
         public sectionId:string;
         public content:T;
         public type:string;
-        public createdAt:moment.Moment = undefined;
-        public updatedAt:moment.Moment = undefined;
+        public createdAt:moment.Moment;
+        public updatedAt:moment.Moment;
 
         public _localizations:Localization<Section<T>>[] = [];
 

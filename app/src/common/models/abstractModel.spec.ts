@@ -15,12 +15,12 @@ namespace common.models {
             bar: sinon.stub().returns('bar')
         };
 
-        public foo:string = undefined;
-        public bar:string = undefined;
-        public foobar:string = undefined;
+        public foo:string;
+        public bar:string;
+        public foobar:string;
         public _hasOne:TestChildModel;
-        public _hasMany:TestChildModel[];
-        public _hydrate:TestChildModel[];
+        public _hasMany:TestChildModel[] = [];
+        public _hydrate:TestChildModel[] = [];
 
         private hydrateFunction(data:any, exists:boolean) {
             if(exists) {
@@ -95,9 +95,7 @@ namespace common.models {
             }, false);
 
             expect(model.getAttributes()).to.deep.equal({
-                foo: 'bar',
-                bar: undefined,
-                foobar: undefined
+                foo: 'bar'
             });
 
         });
@@ -111,11 +109,9 @@ namespace common.models {
 
             expect(model.getAttributes(true)).to.deep.equal({
                 foo: 'bar',
-                bar: undefined,
-                foobar: undefined,
                 _hydrate : ['foobar'],
-                _hasOne: null,
-                _hasMany: null,
+                _hasOne : undefined,
+                _hasMany: [],
             });
 
         });

@@ -12,10 +12,10 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
-        public articleCommentId:string = undefined;
-        public body:string = undefined;
-        public createdAt:moment.Moment = undefined;
-        public _author:common.models.User = undefined;
+        public articleCommentId:string;
+        public body:string;
+        public createdAt:moment.Moment;
+        public _author:common.models.User;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

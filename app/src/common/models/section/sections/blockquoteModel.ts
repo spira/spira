@@ -4,8 +4,8 @@ namespace common.models.sections {
 
         public static contentType = 'blockquote';
 
-        public body:string = undefined;
-        public author:string = undefined;
+        public body:string;
+        public author:string;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

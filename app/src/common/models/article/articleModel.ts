@@ -22,27 +22,27 @@ namespace common.models {
 
         protected __primaryKey:string = 'postId';
 
-        public postId:string = undefined;
-        public title:string = undefined;
-        public shortTitle:string = undefined;
-        public permalink:string = undefined;
-        public content:string = undefined;
-        public status:string = undefined;
-        public authorId:string = undefined;
-        public thumbnailImageId:string = undefined;
+        public postId:string;
+        public title:string;
+        public shortTitle:string;
+        public permalink:string;
+        public content:string;
+        public status:string;
+        public authorId:string;
+        public thumbnailImageId:string;
 
-        public authorOverride:string = undefined;
-        public showAuthorPromo:boolean = undefined;
-        public authorWebsite:string = undefined;
+        public authorOverride:string;
+        public showAuthorPromo:boolean;
+        public authorWebsite:string;
 
-        public publicAccess:boolean = undefined;
-        public usersCanComment:boolean = undefined;
+        public publicAccess:boolean;
+        public usersCanComment:boolean;
 
-        public sectionsDisplay:mixins.ISectionsDisplay = undefined;
+        public sectionsDisplay:mixins.ISectionsDisplay;
 
         public _sections:Section<any>[] = [];
         public _metas:Meta[] = [];
-        public _author:User = undefined;
+        public _author:User;
         public _tags:LinkingTag[] = [];
         public _comments:ArticleComment[] = [];
         public _localizations:Localization<Article>[] = [];

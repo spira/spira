@@ -22,11 +22,11 @@ namespace common.models {
             _childTags: CategoryTag,
         };
 
-        public tagId:string = undefined;
-        public tag:string = undefined;
-        public searchable:boolean = undefined;
+        public tagId:string;
+        public tag:string;
+        public searchable:boolean;
 
-        public _childTags:CategoryTag[] = undefined;
+        public _childTags:CategoryTag[] = [];
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
@@ -37,7 +37,7 @@ namespace common.models {
 
     export abstract class PivotableTag<PivotType> extends Tag {
 
-        public _pivot:PivotType = undefined;
+        public _pivot:PivotType;
 
     }
 

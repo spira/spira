@@ -6,9 +6,9 @@ module common.models {
         public static facebookType = 'facebook';
         public static providerTypes:string[] = [UserSocialLogin.googleType, UserSocialLogin.facebookType];
 
-        public userId:string = undefined;
-        public provider:string = undefined;
-        public token:string = undefined;
+        public userId:string;
+        public provider:string;
+        public token:string;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

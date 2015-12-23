@@ -17,23 +17,23 @@ namespace common.models {
 
         protected __primaryKey = 'userId';
 
-        public userId:string = undefined;
-        public email:string = undefined;
-        public username:string = undefined;
-        public firstName:string = undefined;
-        public lastName:string = undefined;
-        public emailConfirmed:string = undefined;
-        public country:string = undefined;
-        public regionCode:string = undefined;
-        public avatarImgUrl:string = undefined;
-        public avatarImgId:string = undefined;
-        public timezoneIdentifier:string = undefined;
-        public _userCredential:UserCredential = undefined;
-        public _userProfile:common.models.UserProfile = undefined;
-        public _socialLogins:common.models.UserSocialLogin[] = undefined;
-        public _roles:common.models.RoleAssignment[] = undefined;
+        public userId:string;
+        public email:string;
+        public username:string;
+        public firstName:string;
+        public lastName:string;
+        public emailConfirmed:string;
+        public country:string;
+        public regionCode:string;
+        public avatarImgUrl:string;
+        public avatarImgId:string;
+        public timezoneIdentifier:string;
+        public _userCredential:UserCredential;
+        public _userProfile:common.models.UserProfile;
+        public _socialLogins:common.models.UserSocialLogin[] = [];
+        public _roles:common.models.RoleAssignment[] = [];
         public roles:string[] = []; //list of role keys, supplied in token
-        public _uploadedAvatar:common.models.Image = undefined;
+        public _uploadedAvatar:common.models.Image;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
