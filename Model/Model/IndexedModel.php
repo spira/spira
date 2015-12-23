@@ -28,6 +28,14 @@ abstract class IndexedModel extends BaseModel
         ],
     ];
 
+    public static function createCustomIndexes()
+    {
+    }
+
+    public static function deleteCustomIndexes()
+    {
+    }
+
     /**
      * Create a new Eloquent Collection instance with ElasticquentCollectionTrait.
      *
