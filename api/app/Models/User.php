@@ -11,7 +11,6 @@
 namespace App\Models;
 
 use Rhumsaa\Uuid\Uuid;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use Spira\Core\Model\Model\IndexedModel;
@@ -22,7 +21,6 @@ use Spira\Auth\User\SocialiteAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 /**
@@ -33,7 +31,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  *
  * * scopes
  * @method static Builder hasRoles(array $roleKeys) modifies query to return only users who has particular role
- *
  */
 class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
@@ -115,36 +112,36 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     protected $mappingProperties = [
         'user_id' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'timezone_identifier' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'avatar_img_url' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'username' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
+            'search_analyzer' => 'standard',
         ],
         'email' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
+            'search_analyzer' => 'standard',
         ],
         'first_name' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
+            'search_analyzer' => 'standard',
         ],
         'last_name' => [
             'type' => 'string',
             'index_analyzer' => 'autocomplete',
-            'search_analyzer' => 'standard'
-        ]
+            'search_analyzer' => 'standard',
+        ],
     ];
 
     /**
@@ -202,14 +199,12 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
      */
     public function getTimeZone()
     {
-        if ($this->timezone_identifier){
+        if ($this->timezone_identifier) {
             return new \DateTimeZone($this->timezone_identifier);
         }
 
-        return null;
+        return;
     }
-
-
 
     /**
      * Get the user's uploaded avatar image if they have one.
@@ -420,7 +415,6 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     }
 
     /**
-     *
      * @param Builder|\Illuminate\Database\Query\Builder $query
      * @param array $roleKeys
      * @return Builder

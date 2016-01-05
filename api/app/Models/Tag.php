@@ -41,7 +41,7 @@ class Tag extends IndexedModel
     protected $mappingProperties = [
         'tag_id' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'tag' => [
             'type' => 'string',
@@ -54,7 +54,6 @@ class Tag extends IndexedModel
     {
         return $this->getBelongsRelation(Article::class, 'post_tag', null, 'post_id');
     }
-
 
     /**
      * @param mixed $id

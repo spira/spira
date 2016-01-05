@@ -11,7 +11,6 @@
 use App\Models\AbstractPost;
 use App\Models\Article;
 use App\Models\Tag;
-use App\Models\User;
 use Faker\Factory as Faker;
 
 /**

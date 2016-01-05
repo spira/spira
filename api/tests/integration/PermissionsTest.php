@@ -9,7 +9,7 @@
  */
 
 /**
- * Class PermissionsTest
+ * Class PermissionsTest.
  * @group integration
  */
 class PermissionsTest extends TestCase

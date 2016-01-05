@@ -16,7 +16,6 @@ use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
-use App\Models\User;
 
 /**
  * Class SectionTest.

@@ -114,7 +114,7 @@ abstract class AbstractPostSeeder extends BaseSeeder
                                 }
                             );
                     } catch (HttpException $e) {
-                        echo 'Caught exception "' . get_class($e) . '": ' . $e->getMessage() . "\n";
+                        echo 'Caught exception "'.get_class($e).'": '.$e->getMessage()."\n";
                     } finally {
                         $discussionsApi->toggleSpamCheck(true);
                     }

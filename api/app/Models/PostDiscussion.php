@@ -11,7 +11,6 @@
 namespace App\Models;
 
 use App;
-use App\Models\Traits\CommentableInterface;
 use App\Services\Api\Vanilla\Client as VanillaClient;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spira\Core\Model\Collection\Collection;

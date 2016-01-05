@@ -102,7 +102,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface, Co
         'status',
         'users_can_comment',
         'public_access',
-        'short_title'
+        'short_title',
     ];
 
     protected $hidden = ['permalinks'];
@@ -204,7 +204,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface, Co
 
         static::saved(function (AbstractPost $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
-                $permalink = call_user_func_array(static::$permalinkModel . '::findOrFail', [$model->permalink]);
+                $permalink = call_user_func_array(static::$permalinkModel.'::findOrFail', [$model->permalink]);
                 $model->permalinks()->save($permalink);
             }
 
@@ -252,7 +252,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface, Co
         } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
             $name = class_basename($this);
 
-            return call_user_func_array(static::$permalinkModel . '::findOrFail', [$id])->{$name};
+            return call_user_func_array(static::$permalinkModel.'::findOrFail', [$id])->{$name};
         }
     }
 

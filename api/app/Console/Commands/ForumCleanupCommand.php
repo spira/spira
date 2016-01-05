@@ -35,8 +35,8 @@ class ForumCleanupCommand extends Command
      */
     public function handle()
     {
-        $dir = realpath(base_path() . '/../forum');
-        exec('composer run-script post-install-cmd --working-dir "' . $dir . '"', $output, $exitCode);
+        $dir = realpath(base_path().'/../forum');
+        exec('composer run-script post-install-cmd --working-dir "'.$dir.'"', $output, $exitCode);
 
         return $exitCode;
     }
