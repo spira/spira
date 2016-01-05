@@ -9,7 +9,7 @@
  */
 
 /**
- * Class RoleTest
+ * Class RoleTest.
  * @group integration
  */
 class RoleTest extends TestCase

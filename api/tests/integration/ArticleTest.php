@@ -775,8 +775,8 @@ class ArticleTest extends TestCase
     protected function countPermalinks($post_id = null)
     {
         return $post_id
-            ? call_user_func_array($this->permalinkClass . '::where', ['post_id', '=', $post_id])->count()
-            : call_user_func_array($this->permalinkClass . '::all', [])->count();
+            ? call_user_func_array($this->permalinkClass.'::where', ['post_id', '=', $post_id])->count()
+            : call_user_func_array($this->permalinkClass.'::all', [])->count();
     }
 
     protected function getGroupTagPivots($tags)
@@ -798,5 +798,4 @@ class ArticleTest extends TestCase
     {
         return parent::withoutAuthorization();
     }
-
 }

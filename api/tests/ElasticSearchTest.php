@@ -117,7 +117,7 @@ class ElasticSearchTest extends TestCase
             $this->assertInstanceOf(IndexedModel::class, new $className);
         }
     }
-    
+
     public function testRebuildIndex()
     {
         $elasticSearchService = Mockery::mock(ElasticSearch::class)->makePartial();

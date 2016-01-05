@@ -80,5 +80,4 @@ class PostComment extends BaseModel
     {
         return;
     }
-
 }

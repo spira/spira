@@ -114,8 +114,7 @@ return [
         'type' => 'permission',
         'description' => 'Put section localization',
     ],
-    
-    
+
     ArticleUserRatingsController::class.'@putOne' => [
         'type' => 'permission',
         'description' => 'Rate article or change rating value',
@@ -142,7 +141,7 @@ return [
             ArticleBookmarksController::class.'@deleteOne',
         ],
     ],
-    
+
     // Roles
 
     Role::ADMIN_ROLE => [
@@ -160,7 +159,7 @@ return [
             ArticleSectionController::class.'@postMany',
             ArticleSectionController::class.'@deleteMany',
             ArticleSectionController::class.'@deleteOne',
-            ArticleSectionController::class.'@putOneChildLocalization'
+            ArticleSectionController::class.'@putOneChildLocalization',
 
         ],
     ],
@@ -176,7 +175,7 @@ return [
             ArticleCommentController::class.'@postOne',
             ArticleTagController::class.'@getAll',
             ArticleSectionController::class.'@getAll',
-            ArticleController::class.'@getAllTagCategories'
+            ArticleController::class.'@getAllTagCategories',
         ],
     ],
 ];
