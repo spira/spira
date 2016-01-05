@@ -14,7 +14,7 @@
                    type="text"
                    localizable-input="ContentController.article._localizations"
                    required>
-            <ng-messages for="articleForm.title.$error">
+            <ng-messages for="ArticleController.entityForm.title.$error">
                 <ng-message when="required">This is required.</ng-message>
             </ng-messages>
 
@@ -45,7 +45,6 @@
     <md-card-content>
 
         <content-sections-input-set
-            id="articleFormContent"
             ng-model="ContentController.article._sections"
             ng-required="true"
             on-section-update="ContentController.sectionUpdated(event, section)"
@@ -72,7 +71,7 @@
                 md-maxlength="140"
                 localizable-input="ContentController.article._localizations"
             ></textarea>
-            <ng-messages for="articleForm.excerpt.$error">
+            <ng-messages for="ArticleController.entityForm.excerpt.$error">
                 <ng-message when="maxlength">Maximum length is 140 chars (Like a tweet!)</ng-message>
             </ng-messages>
         </md-input-container>
@@ -103,7 +102,7 @@
                 name="tags"
                 >
         </grouped-tags>
-        <ng-messages for="articleForm.tags.$error">
+        <ng-messages for="ArticleController.entityForm.tags.$error">
             <ng-message when="groupedtags">One or more tag groups is invalid</ng-message>
         </ng-messages>
 

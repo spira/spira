@@ -10,14 +10,39 @@ namespace app.admin {
 
         public showPreview:boolean = false;
 
+        public entityForm:ng.IFormController;
+
         constructor(
             public entity:M,
             public service:S,
             protected $stateParams:ICommonStateParams,
             protected notificationService:common.services.notification.NotificationService,
             protected $mdDialog:ng.material.IDialogService,
-            protected $state:ng.ui.IStateService
+            protected $state:ng.ui.IStateService,
+            protected $scope:ng.IScope
         ) {
+            // If the user has unsaved changes on the form, ask if they would like to stay on the page.
+
+            let stateChangeOverride:boolean = false;
+
+            $scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
+                if(!_.isEmpty(this.entityForm) && !stateChangeOverride && this.entityForm.$dirty) {
+                    event.preventDefault();
+
+                    let confirm = this.$mdDialog.confirm()
+                        .title("Are you sure you want to navigate away from this page?")
+                        .htmlContent("You have unsaved changes on this form.")
+                        .ariaLabel("Confirm navigate away")
+                        .ok("Leave")
+                        .cancel("Stay");
+
+                    this.$mdDialog.show(confirm)
+                        .then(() => {
+                            stateChangeOverride = true;
+                            $state.go(toState.name, toParams);
+                        })
+                }
+            });
         }
 
         protected abstract getListingState():string;

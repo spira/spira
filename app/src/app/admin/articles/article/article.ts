@@ -105,7 +105,7 @@ namespace app.admin.articles.article {
 
     export class ArticleController extends app.admin.AbstractEntitiesController<common.models.Article, common.services.article.ArticleService> {
 
-        static $inject = ['article', 'articleService', '$stateParams', 'notificationService', '$mdDialog', '$state', 'groupTags'];
+        static $inject = ['article', 'articleService', '$stateParams', 'notificationService', '$mdDialog', '$state', '$scope', 'groupTags'];
 
         protected getListingState():string {
             return app.admin.articles.listing.namespace;
