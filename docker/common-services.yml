@@ -26,11 +26,8 @@ cache:
 queue:
   image: spira/docker-beanstalkd
 
-#@todo build php-cli only container instead of the devtools container
 queuerunner:
-  image: spira/docker-dev-tools:php-7.0
-  working_dir: /data/api
-  entrypoint: ["php", "artisan", "queue:listen", "--tries=3"]
+  image: spira/docker-artisan-queue-runner
   env_file:
     - .common.env
 
@@ -38,7 +35,7 @@ mailcatcher:
   image: schickling/mailcatcher
 
 php:
-  image: spira/docker-phpfpm:php-7.0
+  image: spira/docker-phpfpm
   env_file:
     - .common.env
     - .secret.env
@@ -55,7 +52,7 @@ web:
   privileged: true
 
 devtools:
-  image: spira/docker-dev-tools:php-7.0
+  image: spira/docker-dev-tools
   working_dir: /data
   privileged: true
   env_file:

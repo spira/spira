@@ -1,14 +1,26 @@
+authorizedkeys:
+  image: 'tutum/authorizedkeys:latest'
+  autodestroy: always
+  deployment_strategy: every_node
+  environment:
+    - 'AUTHORIZED_KEYS=ssh-rsa <redacted>'
+  volumes:
+    - '/root:/user'
 cache:
   image: 'redis:3.0.3'
+  tags:
+    - staging
 elasticsearch:
   image: 'elasticsearch:1.7.1'
+  tags:
+    - staging
 lbhaproxy:
   image: 'tutum/haproxy:0.1'
-  command: '/run.sh'
+  command: /run.sh
   deployment_strategy: high_availability
   environment:
-    - 'STATS_AUTH=<username>:<password>'
-    - 'MODE=tcp'
+    - MODE=tcp
+    - 'STATS_AUTH=<redacted>:<redacted>'
   expose:
     - '443'
   links:
@@ -17,96 +29,175 @@ lbhaproxy:
     - '80:80'
     - '1936:1936'
   roles:
-    - global  
+    - global
+  tags:
+    - staging
 php:
-  image: 'spira/docker-hhvm:latest'
+  image: 'spira/docker-phpfpm:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
     - 'API_HOST=http://api.staging.spira.io:8080'
     - API_PATH=/api
+    - APP_FALLBACK_LOCALE=en
     - 'APP_HOST=http://app.staging.spira.io'
+    - APP_LOCALE=en
+    - AUTH_DRIVER=jwt
+    - AUTH_MODEL=App\Models\User
+    - BEANSTALKD_HOST=queue
+    - CACHE_DRIVER=redis
+    - CLOUDINARY_API_KEY=<redacted>
+    - CLOUDINARY_API_SECRET=<redacted>
+    - CLOUDINARY_CLOUD_NAME=spira
     - COOKIE_DOMAIN=spira.io
-    - DB_HOST='<database-host-here>'
     - DATA_ROOT=/data
+    - DB_CONNECTION=pgsql
+    - DB_DATABASE=spira
+    - DB_HOST=<redacted>.rds.amazonaws.com
+    - 'DB_PASSWORD=<redacted>'
+    - DB_PORT=5432
+    - DB_USERNAME=stage_api_admin
+    - ELASTICSEARCH_HOST=elasticsearch
+    - ELASTICSEARCH_PORT_NUMBER=9200
+    - FORUMSERVER_HOST=web
+    - FORUMSERVER_PORT=8008
+    - FORUM_DB_DATABASE=spira
+    - FORUM_DB_HOST=<redacted>.rds.amazonaws.com
+    - 'FORUM_DB_PASSWORD=<redacted>'
+    - FORUM_DB_USERNAME=stage_forum
     - HOSTNAME_API=api.staging.spira.io
     - HOSTNAME_APP=app.staging.spira.io
     - HOSTNAME_BASE=staging.spira.io
     - HOSTNAME_FORUM=forum.staging.spira.io
+    - LOG_UDP_HOST=logs2.papertrailapp.com
+    - LOG_UDP_PORT=<redacted>
+    - MAIL_FROM_ADDRESS=do-not-reply@spira.io
+    - 'MAIL_FROM_NAME=Spira Staging API'
+    - MAIL_HOST=<redacted>.amazonaws.com
+    - MAIL_PASSWORD=<redacted>
+    - MAIL_PORT=587
+    - MAIL_USERNAME=<redacted>
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
     - MYSQL_USER=spira_vanilla
-    - POSTGRES_DB=spira
-    - 'POSTGRES_PASSWORD=<database-password-here>'
-    - POSTGRES_USER=stage_api_admin
-    - PROVIDER_FACEBOOK_CLIENT_ID='<fb-client-id-here>'
-    - PROVIDER_FACEBOOK_CLIENT_SECRET='<fb-client-secred-here>'
-    - PROVIDER_GOOGLE_CLIENT_ID='<google-client-id-here>'
-    - PROVIDER_GOOGLE_CLIENT_SECRET='<google-client-secret-here>'
-    - PROVIDER_TWITTER_CLIENT_ID=false
-    - PROVIDER_TWITTER_CLIENT_SECRET=false
-    - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
-    - VANILLA_JSCONNECT_SECRET=a-secret-phrase-random-string
+    - PROVIDER_FACEBOOK_CLIENT_ID=<redacted>
+    - PROVIDER_FACEBOOK_CLIENT_SECRET=<redacted>
+    - PROVIDER_GOOGLE_CLIENT_ID=<redacted>
+    - PROVIDER_GOOGLE_CLIENT_SECRET=<redacted>
+    - PROVIDER_TWITTER_CLIENT_ID=<redacted>
+    - PROVIDER_TWITTER_CLIENT_SECRET=<redacted>
+    - QUEUE_DRIVER=beanstalkd
+    - REDIS_HOST=cache
+    - REDIS_PORT=6379
+    - VANILLA_API_SECRET=<redacted>
+    - VANILLA_JSCONNECT_CLIENT_ID=<redacted>
+    - VANILLA_JSCONNECT_SECRET=<redacted>
+    - VANILLA_SERVER_HOST=web
     - VANILLA_SERVER_PORT=80
+    - WEBSERVER_HOST=web
+    - WEBSERVER_PORT=8080
     - XDEBUG_ENABLED=false
   links:
     - cache
     - elasticsearch
     - queue
   privileged: true
+  tags:
+    - staging
   volumes_from:
     - spira
 queue:
   image: 'spira/docker-beanstalkd:latest'
+  tags:
+    - staging
+  target_num_containers: 2
 queuerunner:
   image: 'spira/docker-artisan-queue-runner:latest'
   environment:
     - APIB_PATH=/data/api/storage/app/apiary.apib
     - 'API_HOST=http://api.staging.spira.io:8080'
     - API_PATH=/api
+    - APP_FALLBACK_LOCALE=en
     - 'APP_HOST=http://app.staging.spira.io'
+    - APP_LOCALE=en
+    - AUTH_DRIVER=jwt
+    - AUTH_MODEL=App\Models\User
+    - BEANSTALKD_HOST=queue
+    - CACHE_DRIVER=redis
+    - CLOUDINARY_API_KEY=<redacted>
+    - CLOUDINARY_API_SECRET=<redacted>
+    - CLOUDINARY_CLOUD_NAME=spira
     - COOKIE_DOMAIN=spira.io
-    - DB_HOST='<database-host-here>'
     - DATA_ROOT=/data
+    - DB_CONNECTION=pgsql
+    - DB_DATABASE=spira
+    - DB_HOST=<redacted>.rds.amazonaws.com
+    - 'DB_PASSWORD=<redacted>'
+    - DB_PORT=5432
+    - DB_USERNAME=stage_api_admin
+    - ELASTICSEARCH_HOST=elasticsearch
+    - ELASTICSEARCH_PORT_NUMBER=9200
+    - FORUMSERVER_HOST=web
+    - FORUMSERVER_PORT=8008
+    - FORUM_DB_DATABASE=spira
+    - FORUM_DB_HOST=<redacted>.rds.amazonaws.com
+    - 'FORUM_DB_PASSWORD=<redacted>'
+    - FORUM_DB_USERNAME=stage_forum
     - HOSTNAME_API=api.staging.spira.io
     - HOSTNAME_APP=app.staging.spira.io
     - HOSTNAME_BASE=staging.spira.io
     - HOSTNAME_FORUM=forum.staging.spira.io
+    - LOG_UDP_HOST=logs2.papertrailapp.com
+    - LOG_UDP_PORT=<redacted>
+    - MAIL_FROM_ADDRESS=do-not-reply@spira.io
+    - 'MAIL_FROM_NAME=Spira Staging API'
+    - MAIL_HOST=<redacted>.amazonaws.com
+    - MAIL_PASSWORD=<redacted>
+    - MAIL_PORT=587
+    - MAIL_USERNAME=<redacted>
     - MYSQL_DATABASE=spira_vanilla
     - MYSQL_PASSWORD=spira_vanilla
     - MYSQL_ROOT_PASSWORD=root
     - MYSQL_USER=spira_vanilla
-    - POSTGRES_DB=spira
-    - 'POSTGRES_PASSWORD='<database-password-here>'
-    - POSTGRES_USER=stage_api_admin
-    - PROVIDER_FACEBOOK_CLIENT_ID='<fb-client-id-here>'
-    - PROVIDER_FACEBOOK_CLIENT_SECRET='<fb-client-secred-here>'
-    - PROVIDER_GOOGLE_CLIENT_ID='<google-client-id-here>'
-    - PROVIDER_GOOGLE_CLIENT_SECRET='<google-client-secret-here>'
-    - PROVIDER_TWITTER_CLIENT_ID=false
-    - PROVIDER_TWITTER_CLIENT_SECRET=false
-    - VANILLA_JSCONNECT_CLIENT_ID=a-client-id-random-string
-    - VANILLA_JSCONNECT_SECRET=a-secret-phrase-random-string
+    - PROVIDER_FACEBOOK_CLIENT_ID=<redacted>
+    - PROVIDER_FACEBOOK_CLIENT_SECRET=<redacted>
+    - PROVIDER_GOOGLE_CLIENT_ID=<redacted>
+    - PROVIDER_GOOGLE_CLIENT_SECRET=<redacted>
+    - PROVIDER_TWITTER_CLIENT_ID=<redacted>
+    - PROVIDER_TWITTER_CLIENT_SECRET=<redacted>
+    - QUEUE_DRIVER=beanstalkd
+    - REDIS_HOST=cache
+    - REDIS_PORT=6379
+    - VANILLA_API_SECRET=<redacted>
+    - VANILLA_JSCONNECT_CLIENT_ID=<redacted>
+    - VANILLA_JSCONNECT_SECRET=<redacted>
+    - VANILLA_SERVER_HOST=web
     - VANILLA_SERVER_PORT=80
+    - WEBSERVER_HOST=web
+    - WEBSERVER_PORT=8080
     - XDEBUG_ENABLED=false
   links:
     - cache
     - elasticsearch
     - queue
     - web
+  tags:
+    - staging
   volumes_from:
     - spira
 spira:
-  image: 'tutum.co/iqsadmin/spira:production'
+  image: 'tutum.co/<redacted>/spira:production'
   command: 'tail -f /dev/null'
   deployment_strategy: high_availability
   ports:
     - '80'
-  target_num_containers: 5  
+  tags:
+    - staging
   volumes:
     - /data
 web:
   image: 'spira/docker-nginx:latest'
+  deployment_strategy: high_availability
   environment:
     - DATA_ROOT=/data
     - HOSTNAME_API=api.staging.spira.io
@@ -117,8 +208,9 @@ web:
   links:
     - php
   ports:
-    - '80:80'
+    - '80'
   privileged: true
-  target_num_containers: 4
+  tags:
+    - staging
   volumes_from:
     - spira
