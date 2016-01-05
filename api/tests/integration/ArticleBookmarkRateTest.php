@@ -10,10 +10,9 @@
 
 use App\Models\AbstractPost;
 use App\Models\Article;
-use App\Models\User;
 
 /**
- * Class ArticleBookmarkRateTest
+ * Class ArticleBookmarkRateTest.
  * @group integration
  */
 class ArticleBookmarkRateTest extends TestCase
@@ -68,7 +67,6 @@ class ArticleBookmarkRateTest extends TestCase
 
     public function testRemoveRate()
     {
-
         $post = $this->makePost();
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
@@ -184,9 +182,9 @@ class ArticleBookmarkRateTest extends TestCase
     {
         return $this->getFactory($this->factoryClass)->create();
     }
+
     public function withAuthorization($header = null, $post = null, $user = null)
     {
         return parent::withAuthorization($header);
     }
-
 }

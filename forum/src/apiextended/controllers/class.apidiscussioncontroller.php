@@ -11,7 +11,7 @@
 class ApiDiscussionController extends DiscussionController
 {
     /**
-     * Toggle spam check limit for \VanillaModel::checkForSpam()
+     * Toggle spam check limit for \VanillaModel::checkForSpam().
      */
     public function toggleSpamCheck()
     {

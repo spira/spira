@@ -69,7 +69,7 @@ class TestCase extends \Spira\Core\tests\TestCase
      */
     public function withUserAuthorization(User $user)
     {
-        return $this->withAuthorization('Bearer ' . $this->tokenFromUser($user));
+        return $this->withAuthorization('Bearer '.$this->tokenFromUser($user));
     }
 
     /**
@@ -86,6 +86,7 @@ class TestCase extends \Spira\Core\tests\TestCase
     public function withoutAuthorization()
     {
         $this->authHeader = null;
+
         return $this;
     }
 
@@ -104,8 +105,6 @@ class TestCase extends \Spira\Core\tests\TestCase
     {
         return (new App\Models\User())->findByEmail(static::TEST_ADMIN_USER_EMAIL);
     }
-
-
 
     /**
      * PHPUnit allows for environment variables to be set by the phpunit.xml file, however this only works
@@ -130,5 +129,4 @@ class TestCase extends \Spira\Core\tests\TestCase
             putenv("$var=$value");
         }
     }
-
 }

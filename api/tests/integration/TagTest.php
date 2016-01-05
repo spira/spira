@@ -12,7 +12,7 @@ use App\Models\Tag;
 use Spira\Core\Model\Collection\Collection;
 
 /**
- * Class TagTest
+ * Class TagTest.
  * @group integration
  */
 class TagTest extends TestCase
