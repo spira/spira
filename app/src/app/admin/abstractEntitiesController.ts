@@ -23,7 +23,7 @@ namespace app.admin {
         ) {
             // If the user has unsaved changes on the form, ask if they would like to stay on the page.
 
-            let stateChangeOverride:boolean = false;/**/
+            let stateChangeOverride:boolean = false;
 
             $scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
                 if(!_.isEmpty(this.entityForm) && !stateChangeOverride && this.entityForm.$dirty) {
