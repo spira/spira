@@ -41,7 +41,7 @@ class Tag extends IndexedModel
     protected $mappingProperties = [
         'tag_id' => [
             'type' => 'string',
-            'index' => 'no',
+            'index' => 'no'
         ],
         'tag' => [
             'type' => 'string',
@@ -52,8 +52,9 @@ class Tag extends IndexedModel
 
     public function articles()
     {
-        return $this->belongsToMany(Article::class, 'post_tag', 'tag_id', 'post_id', 'articles')->withPivot('tag_group_id', 'tag_group_parent_id');
+        return $this->getBelongsRelation(Article::class, 'post_tag', null, 'post_id');
     }
+
 
     /**
      * @param mixed $id
@@ -79,7 +80,8 @@ class Tag extends IndexedModel
     public static function getGroupedTagPivots(Collection $tags, $parentTagName, array $tagDefinition = null)
     {
         if (! $tagDefinition) {
-            $tagDefinition = SeedTags::$tagHierarchy[$parentTagName];
+            $seededTags = SeedTags::getSeedTags();
+            $tagDefinition = $seededTags[$parentTagName];
         }
 
         array_walk($tagDefinition['children'], function (&$value, $key) {
@@ -130,8 +132,8 @@ class Tag extends IndexedModel
             ]);
     }
 
-    protected function getBelongsRelation($related, $relation)
+    protected function getBelongsRelation($related, $table = null, $foreignKey = null, $otherKey = null)
     {
-        return $this->belongsToMany($related, null, null, null, $relation)->withPivot('tag_group_id', 'tag_group_parent_id');
+        return $this->belongsToMany($related, $table, $foreignKey, $otherKey)->withPivot('tag_group_id', 'tag_group_parent_id');
     }
 }

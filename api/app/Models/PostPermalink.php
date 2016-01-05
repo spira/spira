@@ -30,8 +30,6 @@ class PostPermalink extends BaseModel
 
     protected static $validationRules = [
         'permalink' => 'string|required',
-        'check_entity_id' => 'uuid',
-        'value' => 'required|string',
     ];
 
     public function article()

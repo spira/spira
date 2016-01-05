@@ -16,6 +16,9 @@ use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleSectionController extends AbstractSectionController
 {
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     use LocalizableTrait;
 
     protected $relationName = 'sections';

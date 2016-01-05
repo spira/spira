@@ -20,7 +20,7 @@ class ApplicationProvider extends AppServiceProvider
     {
         parent::boot();
         $spiraMessages = [
-            'rbac_role_exists'     => 'The :attribute must be an existing Rbac role',
+            'rbac_role_exists'                    => 'The :attribute must be an existing Rbac role',
         ];
 
         $this->app->extend('validator', function (Factory $validator) use ($spiraMessages) {

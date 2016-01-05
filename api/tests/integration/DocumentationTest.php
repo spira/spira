@@ -34,7 +34,7 @@ class DocumentationTest extends TestCase
 
         $this->getJson('/documentation.apib');
 
-        $this->assertResponseOk();
+        $this->assertResponseStatus(200);
         $this->see('FORMAT: 1A'); //see apiary format is present
     }
 

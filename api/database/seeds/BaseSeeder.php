@@ -36,4 +36,5 @@ class BaseSeeder extends Seeder
                 return $collection->random($count);
         }
     }
+
 }

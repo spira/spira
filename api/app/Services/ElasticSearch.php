@@ -167,6 +167,9 @@ class ElasticSearch
 
             /* @var $className IndexedModel */
             $className::putMapping();
+            // Delete and create any custom indexes
+            $className::deleteCustomIndexes();
+            $className::createCustomIndexes();
 
             if ($addToIndex) {
                 $className::addAllToIndex();

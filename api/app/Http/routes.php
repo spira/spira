@@ -98,3 +98,5 @@ $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app)
     $app->get('images/{id}', ['as' => \App\Models\Image::class, 'uses' => 'ImageController@getOne']);
 
 });
+
+

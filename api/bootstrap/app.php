@@ -35,6 +35,7 @@ $app->configure('hosts');
 $app->configure('elasticquent');
 $app->configure('regions');
 $app->configure('jwt');
+$app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +71,7 @@ $app->singleton(
 
 $app->middleware([
     \Spira\Core\Middleware\TransformInputDataMiddleware::class,
+    Barryvdh\Cors\HandleCors::class,
 ]);
 
 $app->routeMiddleware([
@@ -97,6 +99,7 @@ $app->register(App\Providers\AccessServiceProvider::class);
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+$app->register(Barryvdh\Cors\LumenServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

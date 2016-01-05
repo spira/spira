@@ -45,6 +45,8 @@ class CreateUsersTable extends Migration
 
             $table->primary('user_id');
         });
+
+        User::putMapping();
     }
 
     /**
@@ -55,5 +57,6 @@ class CreateUsersTable extends Migration
     public function down()
     {
         Schema::drop(User::getTableName());
+        User::deleteMapping();
     }
 }

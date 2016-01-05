@@ -24,4 +24,5 @@ class ArticleSeeder extends AbstractPostSeeder
     {
         return Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
     }
+
 }

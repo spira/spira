@@ -1,19 +1,12 @@
 <?php
 
-/*
- * This file is part of the Spira framework.
- *
- * @link https://github.com/spira/spira
- *
- * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
- */
-
 use App\Models\Tag;
 use Faker\Factory as Faker;
 use Illuminate\Database\Migrations\Migration;
 
 class SeedTags extends Migration
 {
+
     /** @var \Faker\Generator */
     private $faker;
 
@@ -55,6 +48,11 @@ class SeedTags extends Migration
             ],
         ],
     ];
+
+    public static function getSeedTags(){
+
+        return self::$tagHierarchy;
+    }
 
     private function getTagInserts($tagDefinitionGroup, $parentTag = null, $existingInserts = [])
     {
@@ -136,7 +134,7 @@ class SeedTags extends Migration
      */
     public function up()
     {
-        $tagInserts = $this->getTagInserts(self::$tagHierarchy);
+        $tagInserts = $this->getTagInserts(self::getSeedTags());
 
         DB::table(Tag::getTableName())->insert($tagInserts['tag_inserts']);
 
@@ -152,11 +150,11 @@ class SeedTags extends Migration
      */
     public function down()
     {
-        if (! Schema::hasTable(Tag::getTableName())) {
+        if(!Schema::hasTable(Tag::getTableName())){
             return;
         }
 
-        $tagNames = array_keys($this->getTagInserts(self::$tagHierarchy)['tag_inserts']);
+        $tagNames = array_keys($this->getTagInserts(self::getSeedTags())['tag_inserts']);
 
         DB::table(Tag::getTableName())->whereIn('tag', $tagNames)->delete();
         //no need to write rollback migration for the relationship table as it will cascade from the above query

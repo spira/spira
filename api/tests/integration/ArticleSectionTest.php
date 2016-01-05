@@ -16,6 +16,7 @@ use App\Models\Sections\BlockquoteContent;
 use App\Models\Sections\MediaContent;
 use App\Models\Sections\PromoContent;
 use App\Models\Sections\RichTextContent;
+use App\Models\User;
 
 /**
  * Class SectionTest.
@@ -42,14 +43,12 @@ class ArticleSectionTest extends TestCase
 
     public function testGetSections()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $sections = $this->getFactory(Section::class)->count(5)->make();
         $post->sections()->saveMany($sections);
 
-        $this->getJson($this->baseRoute.'/'.$post->post_id.'/sections');
+        $this->withoutAuthorization($post)->getJson($this->baseRoute.'/'.$post->post_id.'/sections');
         $object = json_decode($this->response->getContent());
 
         $this->assertResponseStatus(200);
@@ -64,29 +63,26 @@ class ArticleSectionTest extends TestCase
 
     public function testGetSectionsNestedInPosts()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $sections = $this->getFactory(Section::class)->count(5)->make();
         $post->sections()->saveMany($sections);
 
-        $this->getJson($this->baseRoute.'/'.$post->post_id, ['with-nested' => 'sections']);
+        $this->withoutAuthorization($post)->getJson($this->baseRoute.'/'.$post->post_id, ['with-nested' => 'sections']);
         $object = json_decode($this->response->getContent());
         $this->assertEquals(5, count($object->_sections));
     }
 
     public function testAddSectionsToPosts()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $sections = $this->getFactory(Section::class)->count(5)->make();
         $post->sections()->saveMany($sections);
 
         $newSections = $this->getFactory(Section::class)->count(2)->transformed();
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', $newSections);
+
+        $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', $newSections);
 
         $this->assertResponseStatus(201);
         $class = $this->factoryClass;
@@ -95,9 +91,7 @@ class ArticleSectionTest extends TestCase
 
     public function testDeleteSection()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         /** @var \Illuminate\Database\Eloquent\Collection $sections */
         $sections = $this->getFactory(Section::class)->count(5)->make();
@@ -105,7 +99,7 @@ class ArticleSectionTest extends TestCase
 
         $deleteSection = $sections->first();
 
-        $this->withAuthorization()->deleteJson($this->baseRoute.'/'.$post->post_id.'/sections/'.$deleteSection->section_id);
+        $this->withAdminAuthorization()->deleteJson($this->baseRoute.'/'.$post->post_id.'/sections/'.$deleteSection->section_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -115,39 +109,33 @@ class ArticleSectionTest extends TestCase
 
     public function testAddInvalidSectionContent()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
             ->customize(['content' => 10])
             ->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$section]);
+        $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
 
     public function testAddInvalidSectionType()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $section = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
             ->customize(['type' => 'not_a_type'])
             ->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$section]);
+        $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$section]);
 
         $this->assertResponseStatus(422);
     }
 
     public function testAddInvalidSections()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $richTextSection = $this->getFactory(Section::class, RichTextContent::CONTENT_TYPE)
             ->customize(['content' => [
@@ -171,16 +159,14 @@ class ArticleSectionTest extends TestCase
             ->customize(['content' => []])
             ->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$richTextSection, $blockquoteSection, $mediaSection, $promoSection]);
+        $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$richTextSection, $blockquoteSection, $mediaSection, $promoSection]);
 
         $this->assertResponseStatus(422);
     }
 
     public function testAddSortedSections()
     {
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)
-            ->create();
+        $post = $this->makePost();
 
         $newSections = $this->getFactory(Section::class)->count(5)->transformed();
 
@@ -188,10 +174,10 @@ class ArticleSectionTest extends TestCase
             'sort_order' => array_pluck($newSections, 'sectionId'),
         ])->transformed();
 
-        $this->withAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', $newSections);
+        $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', $newSections);
         $this->assertResponseStatus(201);
 
-        $this->patchJson($this->baseRoute.'/'.$post->post_id, ['sectionsDisplay' => $sectionsDisplay]);
+        $this->withAdminAuthorization()->patchJson($this->baseRoute.'/'.$post->post_id, ['sectionsDisplay' => $sectionsDisplay]);
         $this->assertResponseStatus(204);
         $class = $this->factoryClass;
         $updatedPost = $class::find($post->post_id);
@@ -200,5 +186,16 @@ class ArticleSectionTest extends TestCase
         $this->assertNotNull($updatedPost->sections_display);
         $this->assertNotNull($updatedPost->sections_display['sort_order']);
         $this->assertCount(5, $updatedPost->sections_display['sort_order']);
+    }
+
+    /** @return AbstractPost */
+    protected function makePost()
+    {
+        return $this->getFactory($this->factoryClass)->create();
+    }
+
+    public function withoutAuthorization($post = null, $user = null)
+    {
+        return parent::withoutAuthorization();
     }
 }

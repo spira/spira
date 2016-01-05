@@ -59,10 +59,10 @@ class ApiaryValidateCommand extends Command
 
         exec("$validator $fileLocation", $output, $exitCode);
 
-        if ($exitCode == 0) {
-            $this->info('Apiary Documentation validation passed');
+        if ($exitCode == 0){
+            $this->info("Apiary Documentation validation passed");
         } else {
-            $this->error('Apiary Documentation validation failed');
+            $this->error("Apiary Documentation validation failed");
         }
 
         return $exitCode;
