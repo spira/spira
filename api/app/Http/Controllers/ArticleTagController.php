@@ -15,6 +15,9 @@ use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class ArticleTagController extends AbstractTagController
 {
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);

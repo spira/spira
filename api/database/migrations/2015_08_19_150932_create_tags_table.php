@@ -27,6 +27,8 @@ class CreateTagsTable extends Migration
             $table->string('tag', 30)->unique();
             $table->boolean('searchable')->default(true);
         });
+
+        Tag::putMapping();
     }
 
     /**
@@ -37,5 +39,6 @@ class CreateTagsTable extends Migration
     public function down()
     {
         Schema::drop(Tag::getTableName());
+        Tag::deleteMapping();
     }
 }

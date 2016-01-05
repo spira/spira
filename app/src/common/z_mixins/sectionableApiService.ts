@@ -11,7 +11,7 @@ namespace common.mixins {
 
             let requestObject = this.getNestedCollectionRequestObject(entity, '_sections', true, true, ['sectionId', 'type']);
 
-            if (!requestObject){
+            if (_.isEmpty(requestObject)){
                 return this.$q.when(false);
             }
 
@@ -31,6 +31,15 @@ namespace common.mixins {
                 });
         }
 
+
+        public newSection<S extends common.models.AbstractModel>(sectionType:string, content:S = null):common.models.Section<S> {
+            return new common.models.Section<S>({
+                sectionId: this.ngRestAdapter.uuid(),
+                type: sectionType,
+                content: content,
+            });
+        }
+
         public saveEntitySectionLocalizations(entity:SectionableModel):ng.IPromise<any> {
 
             let sectionLocalizationPromises = _.map(entity._sections, (section:common.models.Section<any>) => {
@@ -41,7 +50,7 @@ namespace common.mixins {
 
                 let localizationRegionPromises = _.chain(section._localizations)
                     .filter((localizationModel:common.models.Localization<any>) => {
-                        return !localizationModel.exists() || _.size((<common.decorators.IChangeAwareDecorator>localizationModel).getChanged()) > 0;
+                        return !localizationModel.exists() || _.size((<common.decorators.changeAware.IChangeAwareDecorator>localizationModel).getChanged()) > 0;
                     })
                     .map((localizationModel:common.models.Localization<any>) => {
 

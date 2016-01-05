@@ -1,6 +1,6 @@
 namespace common.models {
 
-    @common.decorators.changeAware
+    @common.decorators.changeAware.changeAware
     export class Section<T extends AbstractModel> extends AbstractModel {
 
         public __contentTypeMap = {

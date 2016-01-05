@@ -37,6 +37,7 @@ namespace common.directives.contentSectionsInput.set {
         public sections:common.models.Section<any>[];
         private onSectionUpdate:ISectionUpdateCallback;
         private childControllerSettings:ISettingsControllerBindings = null;
+        public parent:any;
 
         static $inject = ['ngRestAdapter', '$mdDialog', '$mdBottomSheet'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
@@ -135,8 +136,9 @@ namespace common.directives.contentSectionsInput.set {
         public scope = {
             sections: '=ngModel',
             onSectionUpdate: '&?',
+            // Optionally pass the parent object (of the sections), this may be required to enable some sections
+            parent: '=?'
         };
-
 
         public controllerAs = 'ContentSectionsInputSetController';
         public controller = ContentSectionsInputSetController;

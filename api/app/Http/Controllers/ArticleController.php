@@ -19,8 +19,11 @@ use Spira\Core\Controllers\LocalizableTrait;
 class ArticleController extends EntityController
 {
     use LocalizableTrait;
-
     use TagCategoryTrait;
+
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     protected $rootCategoryTagName = \SeedTags::articleGroupTagName;
 
     /**

@@ -1,4 +1,4 @@
-namespace common.decorators {
+namespace common.decorators.changeAware {
 
     let seededChance = new Chance(1);
 

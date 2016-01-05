@@ -56,6 +56,11 @@ class SeedTags extends Migration
         ],
     ];
 
+    public static function getSeedTags()
+    {
+        return self::$tagHierarchy;
+    }
+
     private function getTagInserts($tagDefinitionGroup, $parentTag = null, $existingInserts = [])
     {
         $tagInserts = [];
@@ -136,7 +141,7 @@ class SeedTags extends Migration
      */
     public function up()
     {
-        $tagInserts = $this->getTagInserts(self::$tagHierarchy);
+        $tagInserts = $this->getTagInserts(self::getSeedTags());
 
         DB::table(Tag::getTableName())->insert($tagInserts['tag_inserts']);
 
@@ -156,7 +161,7 @@ class SeedTags extends Migration
             return;
         }
 
-        $tagNames = array_keys($this->getTagInserts(self::$tagHierarchy)['tag_inserts']);
+        $tagNames = array_keys($this->getTagInserts(self::getSeedTags())['tag_inserts']);
 
         DB::table(Tag::getTableName())->whereIn('tag', $tagNames)->delete();
         //no need to write rollback migration for the relationship table as it will cascade from the above query

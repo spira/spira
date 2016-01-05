@@ -84,29 +84,6 @@ namespace app.admin.users.listing {
 
         }
 
-        public promptImpersonateDialog($event:MouseEvent, user:common.models.User) {
-
-            var confirm = this.$mdDialog.confirm()
-                .parent("#admin-container")
-                .targetEvent($event)
-                .title("Are you sure you want to impersonate this user?")
-                .htmlContent(`
-                    Any action you take as that user will appear to be done by that user.
-                    <blockquote cite="Uncle Ben">With great power comes great responsibility <br><small>- Uncle Ben</small></blockquote>
-                `)
-                .ariaLabel("Confirm impersonate")
-                .ok(`Impersonate ${user.fullName()}!`)
-                .cancel("Nope! I don't want to do that");
-
-            return this.$mdDialog.show(confirm).then(() => {
-                return this.authService.impersonateUser(user);
-            })
-            .then(() => {
-                this.$state.go('app.guest.home');
-            });
-
-        }
-
     }
 
     angular.module(namespace, [])

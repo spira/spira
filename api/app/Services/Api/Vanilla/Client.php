@@ -298,8 +298,8 @@ class Client
      */
     protected function getForumHost()
     {
-        //try the forumserver first, then default to upstream (used by the runtime)
-        $host = strlen(env('FORUMSERVER_HOST') > 0) ? env('FORUMSERVER_HOST') : 'web';
+        //try the upstream (used by the runtime) first, then default to forumserver defined host
+        $host = env('UPSTREAM_WEB_TCP_ADDR') ?? env('FORUMSERVER_HOST');
 
         return sprintf('http://%s:%s/api/', $host, env('FORUMSERVER_PORT'));
     }

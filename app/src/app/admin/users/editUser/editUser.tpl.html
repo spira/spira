@@ -1,27 +1,67 @@
 
-<div>
-    <h1>{{EditUserController.fullUserInfo.fullName() | uppercase}}</h1>
-    <div layout="row">
-        <div flex>
-            {{EditUserController.fullUserInfo.createdAt.format('dddd, MMMM Do YYYY')}}
+<div id="edit-user">
+    <div class="user-info"
+         layout-gt-md="row"
+         layout-md="column">
+        <div flex-intial>
+            <avatar class="avatar" user="EditUserController.fullUserInfo" ng-model="EditUserController.fullUserInfo.avatarImgId"></avatar>
         </div>
-        <div flex>
-            {{EditUserController.fullUserInfo.createdAt.format('h:mm:ss a')}}
+        <div flex class="details">
+            <div layout="column">
+                <div class="full-name md-display-1">{{EditUserController.fullUserInfo.fullName}}</div>
+                <div class="forum-name md-title">{{EditUserController.fullUserInfo.username}}</div>
+            </div>
+            <div layout-gt-md="row"
+                 layout="column">
+                <div class="date">
+                    <md-icon>event</md-icon>{{EditUserController.fullUserInfo.createdAt.format('dddd, MMMM Do YYYY')}}
+                </div>
+                <div class="time">
+                    <md-icon>access_time</md-icon>{{EditUserController.fullUserInfo.createdAt.format('h:mm:ss a')}}
+                </div>
+            </div>
         </div>
-        <div flex>
-            {{EditUserController.fullUserInfo.createdAt.fromNow()}}
+        <div flex-initial
+             layout-gt-md="column"
+             layout-align-gt-md="end end"
+             layout="row"
+             layout-align="start start">
+            <div>
+                <md-menu md-position-mode-gt-md="target-right target">
+                    <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="More">
+                        <md-icon>more_vert</md-icon>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button aria-label="Impersonate User" ng-click="EditUserController.promptImpersonateDialog($event, EditUserController.fullUserInfo)">
+                                Impersonate
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="Reset Password" ng-click="EditUserController.resetUserPassword($event, EditUserController.fullUserInfo)">Reset Password</md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </div>
+            <div flex></div>
+            <div>
+                <md-switch ng-init="enabled = 'enabled'" ng-model="enabled" ng-change="EditUserController.toggleBan(EditUserController.fullUserInfo)" aria-label="enabled" ng-true-value="'enabled'" ng-false-value="'banned'">
+                    {{enabled}}
+                </md-switch>
+            </div>
         </div>
     </div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Profile">
+            <h2>Profile</h2>
+            <md-content class="md-padding" ui-view="profile"></md-content>
+        </md-tab>
+        <md-tab label="Roles">
+            <md-content class="md-padding" ui-view="roles"></md-content>
+        </md-tab>
+        <md-tab label="Orders">
+            You have an order!
+        </md-tab>
+    </md-tabs>
+
 </div>
-
-<md-tabs md-dynamic-height md-border-bottom>
-
-    <md-tab label="Profile">
-        <h2>Profile</h2>
-        <md-content class="md-padding" ui-view="profile"></md-content>
-    </md-tab>
-    <md-tab label="Roles">
-        <md-content class="md-padding" ui-view="roles"></md-content>
-    </md-tab>
-
-</md-tabs>

@@ -12,6 +12,7 @@ namespace common.directives {
         namespace + '.markdownEditor',
         namespace + '.localizableInput',
         namespace + '.selectMediaImage',
+        namespace + '.authorInfoDisplay',
         namespace + '.contentSectionsInput',
     ])
     ;

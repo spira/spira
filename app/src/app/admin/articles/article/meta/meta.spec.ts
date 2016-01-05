@@ -25,8 +25,14 @@ namespace app.admin.articles.article.meta {
                 MetaController = $controller(app.admin.articles.article.meta.namespace + '.controller', {
                     article: article,
                     notificationService: notificationService,
-                    usersPaginator: usersPaginator
+                    usersPaginator: usersPaginator,
+                    $scope: $scope
                 });
+
+                MetaController.authorForm = <IAuthorForm>global.FormControllerMock.getMock({
+                    authors: global.NgModelControllerMock.getMock()
+                });
+
             });
 
         });
@@ -45,18 +51,38 @@ namespace app.admin.articles.article.meta {
 
         });
 
-        it('should be able to change the author of a post', () => {
+        it('should be able to validate and update the author', () => {
 
             let newAuthor = common.models.UserMock.entity();
 
-            MetaController.changeAuthor(newAuthor);
+            MetaController.authors = [newAuthor];
 
-            expect(MetaController.authors).to.deep.equal([newAuthor]);
+            MetaController.validateAndUpdateAuthor();
 
-            expect(MetaController.entity._author).to.deep.equal(newAuthor);
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('maxlength', true);
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('required', true);
 
             expect(MetaController.entity.authorId).to.equal(newAuthor.userId);
+            expect(MetaController.entity._author).to.deep.equal(newAuthor);
 
+            MetaController.authors.push(common.models.UserMock.entity());
+
+            // Have to manually set this as the mock doesn't do it for us
+            MetaController.authorForm.$valid = false;
+
+            MetaController.validateAndUpdateAuthor();
+
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('maxlength', false);
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('required', true);
+            expect(MetaController.entity.authorId).to.equal(newAuthor.userId);
+            expect(MetaController.entity._author).to.deep.equal(newAuthor);
+
+            MetaController.authors = [];
+
+            MetaController.validateAndUpdateAuthor();
+
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('maxlength', true);
+            expect(MetaController.authorForm.authors.$setValidity).to.be.calledWith('required', false);
         });
 
         it('should null author override and author website when display real author is selected', () => {

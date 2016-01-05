@@ -19,6 +19,7 @@ use Faker\Factory as Faker;
 use App\Models\AbstractPost;
 use App\Models\PostPermalink;
 use App\Models\PostSectionsDisplay;
+use App\Services\Api\Vanilla\Client as VanillaClient;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -54,13 +55,18 @@ abstract class AbstractPostSeeder extends BaseSeeder
         $progressBar = $this->command->getOutput()->createProgressBar(50);
 
         $className = $this->class;
+
+        /** @var $discussionsApi \App\Services\Api\Vanilla\Api\Discussion */
+        $discussionsApi = App::make(VanillaClient::class)->api('discussions');
+
         factory($className, 50)
             ->create()
-            ->each(function (AbstractPost $post) use ($progressBar, $images, $users, $tags, $groupedTagPivots, $faker, $supportedRegions) {
+            ->each(function (AbstractPost $post) use ($progressBar, $images, $users, $tags, $groupedTagPivots, $faker, $supportedRegions, $className, $discussionsApi) {
 
                 //add sections
                 /** @var \Illuminate\Database\Eloquent\Collection $sections */
                 $sections = factory(Section::class, rand(2, 8))->make();
+
                 $post->sections()->saveMany($sections);
 
                 $post->sections_display = factory(PostSectionsDisplay::class)
@@ -98,18 +104,20 @@ abstract class AbstractPostSeeder extends BaseSeeder
 
                 if ($this->addComments) {
                     //add comments
-                    $this->randomElements(factory(PostComment::class, 5)->make())
-                        ->each(function (PostComment $comment) use ($post, $users) {
+                    try {
+                        $discussionsApi->toggleSpamCheck(false);
 
-                            try {
-                                $post->comments()->save($comment->toArray(), $users->random());
-                            } catch (HttpException $e) {
-                                echo 'Caught exception'.get_class($e).' : '.$e->getMessage()."\n\n"; //@todo resolve why this occurs
-                                // Likely not to do with the content of the comment as it still occurs in a random fashion when the same 5 comments are added to all posts
-                                // Likely not to do with rate limiting as I placed a usleep(1000000); in the try block above and it still threw bad request errors
-                                echo 'Comment: '.json_encode($comment->toArray())."\n\n";
-                            }
-                        });
+                        $this->randomElements(factory(PostComment::class, 5)->make())
+                            ->each(
+                                function (PostComment $comment) use ($post, $users) {
+                                    $post->comments()->save($comment->toArray(), $users->random());
+                                }
+                            );
+                    } catch (HttpException $e) {
+                        echo 'Caught exception "'.get_class($e).'": '.$e->getMessage()."\n";
+                    } finally {
+                        $discussionsApi->toggleSpamCheck(true);
+                    }
                 }
 
                 $userCount = rand(2, $users->count());

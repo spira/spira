@@ -58,10 +58,10 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     public function createDiscussion()
     {
         $this->getClient()->api('discussions')->create(
-            $this->post->title,
-            $this->post->excerpt,
+            $this->post->getTitle(),
+            $this->post->getExcerpt(),
             1,
-            ['ForeignID' => $this->post->post_id]
+            ['ForeignID' => $this->post->getKey()]
         );
     }
 
@@ -73,7 +73,7 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     public function deleteDiscussion()
     {
         $this->getClient()->api('discussions')->removeByForeignId(
-            $this->post->post_id
+            $this->post->getKey()
         );
     }
 
@@ -85,7 +85,7 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     protected function getDiscussionId()
     {
         $discussion = $this->getClient()->api('discussions')->findByForeignId(
-            $this->post->post_id
+            $this->post->getKey()
         );
 
         return $discussion['Discussion']['DiscussionID'];
@@ -151,11 +151,11 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     public function getResults()
     {
         // First a minimal call to the discussion for the total comment count
-        $discussion = $this->getDiscussion($this->post->post_id, 1);
+        $discussion = $this->getDiscussion($this->post->getKey(), 1);
         $count = $discussion['Discussion']['CountComments'];
 
         // Now get the entire batch of comments
-        $discussion = $this->getDiscussion($this->post->post_id, $count);
+        $discussion = $this->getDiscussion($this->post->getKey(), $count);
 
         // And turn them into a collection of models
         $comments = $this->prepareCommentsForHydrate($discussion['Comments']);
@@ -321,11 +321,11 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     /**
      * Sets the post the discussion belongs to.
      *
-     * @param  AbstractPost $post
+     * @param $post
      *
      * @return $this
      */
-    public function setPost(AbstractPost $post)
+    public function setPost($post)
     {
         $this->post = $post;
 

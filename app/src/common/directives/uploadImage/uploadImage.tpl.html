@@ -2,7 +2,7 @@
     <ng-form name="UploadImageController.imageUploadForm" novalidate>
         <div layout layout-sm="column">
 
-            <md-input-container>
+            <md-input-container class="md-block">
                 <label>Alt</label>
                 <input name="alt" ng-model="UploadImageController.queuedImage.alt" required/>
                 <ng-messages ng-hide="UploadImageController.imageUploadForm.alt.$pristine" for="UploadImageController.imageUploadForm.alt.$error">
@@ -10,14 +10,15 @@
                 </ng-messages>
             </md-input-container>
 
-            <md-input-container>
+            <md-input-container class="md-block">
                 <label>Title</label>
                 <input name="title" ng-model="UploadImageController.queuedImage.title" />
             </md-input-container>
 
-            <md-input-container>
-
-                <input type="file"
+            <md-input-container class="md-block">
+                <md-button
+                        class="md-raised md-primary"
+                       type="file"
                        aria-label="Select Image"
                        ng-model="UploadImageController.queuedImage.file"
                        name="file"
@@ -30,7 +31,7 @@
                        ngf-max-size="{{UploadImageController.imageConstraints.maxSize}}"
                        ngf-min-size="{{UploadImageController.imageConstraints.minSize}}"
                        required
-                        >
+                        >Select Image</md-button>
 
                 <img width="200" ng-show="UploadImageController.imageUploadForm.file.$valid" ngf-src="UploadImageController.queuedImage.file">
 

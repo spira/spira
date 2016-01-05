@@ -10,6 +10,8 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CommentableInterface;
+use App\Models\Traits\CommentableTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Rhumsaa\Uuid\Uuid;
 use Illuminate\Support\Str;
@@ -51,9 +53,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @property Rating[]|Collection $userRatings
  * @property Bookmark[]|Collection $bookmarks
  */
-class AbstractPost extends IndexedModel implements LocalizableModelInterface
+class AbstractPost extends IndexedModel implements LocalizableModelInterface, CommentableInterface
 {
-    use RevisionableTrait, LocalizableModelTrait, TagTrait, RateableTrait, BookmarkableTrait;
+    use RevisionableTrait, LocalizableModelTrait, TagTrait, RateableTrait, BookmarkableTrait, CommentableTrait;
 
     const defaultExcerptWordCount = 30;
 
@@ -100,6 +102,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         'status',
         'users_can_comment',
         'public_access',
+        'short_title',
     ];
 
     protected $hidden = ['permalinks'];
@@ -112,6 +115,8 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         self::UPDATED_AT => 'datetime',
         'sections_display' => 'json',
     ];
+
+    protected static $permalinkModel = PostPermalink::class;
 
     protected $indexRelations = ['tags', 'permalinks', 'author', 'metas'];
 
@@ -190,7 +195,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         static::bootScope();
         static::saving(function (AbstractPost $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
-                $permalink = new PostPermalink(['permalink' => $model->permalink]);
+                $permalink = new static::$permalinkModel(['permalink' => $model->permalink]);
                 $permalink->save();
             }
 
@@ -199,7 +204,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
 
         static::saved(function (AbstractPost $model) {
             if ($model->getOriginal('permalink') !== $model->permalink && ! is_null($model->permalink)) {
-                $permalink = PostPermalink::findOrFail($model->permalink);
+                $permalink = call_user_func_array(static::$permalinkModel.'::findOrFail', [$model->permalink]);
                 $model->permalinks()->save($permalink);
             }
 
@@ -247,7 +252,7 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
         } catch (ModelNotFoundException $e) { //id or permalink not found, try permalink history
             $name = class_basename($this);
 
-            return PostPermalink::findOrFail($id)->{$name};
+            return call_user_func_array(static::$permalinkModel.'::findOrFail', [$id])->{$name};
         }
     }
 
@@ -276,22 +281,12 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
 
     public function permalinks()
     {
-        return $this->hasMany(PostPermalink::class, 'post_id', 'post_id');
+        return $this->hasMany(static::$permalinkModel, 'post_id', 'post_id');
     }
 
     public function metas()
     {
         return $this->morphMany(Meta::class, 'metaable');
-    }
-
-    /**
-     * Get comment relationship.
-     *
-     * @return PostDiscussion
-     */
-    public function comments()
-    {
-        return (new PostDiscussion())->setPost($this);
     }
 
     public function thumbnailImage()
@@ -315,5 +310,15 @@ class AbstractPost extends IndexedModel implements LocalizableModelInterface
     public function setPostTypeAttribute()
     {
         throw new \InvalidArgumentException('No direct attribute assignment');
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function getExcerpt()
+    {
+        return $this->excerpt;
     }
 }

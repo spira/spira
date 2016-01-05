@@ -11,6 +11,10 @@
 use App\Models\AbstractPost;
 use App\Models\Article;
 
+/**
+ * Class ArticleBookmarkRateTest.
+ * @group integration
+ */
 class ArticleBookmarkRateTest extends TestCase
 {
     protected $baseRoute = '/articles';
@@ -21,12 +25,12 @@ class ArticleBookmarkRateTest extends TestCase
 
     public function testSimpleRate()
     {
-        $user = $this->createUser();
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $rateData = $this->getFactory(App\Models\Rating::class)->transformed();
 
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rateData['ratingId'], $rateData);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rateData['ratingId'], $rateData);
 
         $this->assertResponseStatus(201);
 
@@ -37,24 +41,24 @@ class ArticleBookmarkRateTest extends TestCase
 
     public function testInvalidRate()
     {
-        $user = $this->createUser();
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $rateData = $this->getFactory(App\Models\Rating::class)->customize(['rating_value' => 6])->transformed();
 
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rateData['ratingId'], $rateData);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rateData['ratingId'], $rateData);
 
         $this->assertException('There was an issue with the validation of provided entity', 422, 'ValidationException');
     }
 
     public function testSimpleBookmark()
     {
-        $user = $this->createUser();
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $bookmarkData = $this->getFactory(App\Models\Bookmark::class)->transformed();
 
+        $user = $this->createUser();
         $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmarkData['bookmarkId'], $bookmarkData);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->putJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmarkData['bookmarkId'], $bookmarkData);
 
         $this->assertResponseStatus(201);
 
@@ -63,14 +67,14 @@ class ArticleBookmarkRateTest extends TestCase
 
     public function testRemoveRate()
     {
+        $post = $this->makePost();
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $token = $this->tokenFromUser($user);
+
         $rating = $this->getFactory(App\Models\Rating::class)->make(['user_id' => $user->user_id]);
         $post->userRatings()->save($rating);
 
-        $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->deleteJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->deleteJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id);
 
         $this->assertResponseStatus(204);
         $this->assertEquals(0, $user->{$this->ratedName}->count());
@@ -79,13 +83,13 @@ class ArticleBookmarkRateTest extends TestCase
     public function testRemoveBookmark()
     {
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $token = $this->tokenFromUser($user);
+
+        $post = $this->makePost();
         $bookmark = $this->getFactory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]);
         $post->bookmarks()->save($bookmark);
 
-        $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->deleteJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmark->bookmark_id);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->deleteJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmark->bookmark_id);
 
         $this->assertResponseStatus(204);
         $this->assertEquals(0, $user->{$this->bookmarkedName}->count());
@@ -94,8 +98,9 @@ class ArticleBookmarkRateTest extends TestCase
     public function testUpdateRate()
     {
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $token = $this->tokenFromUser($user);
+
+        $post = $this->makePost();
         $rating = $this->getFactory(App\Models\Rating::class)->make(
             [
                 'user_id' => $user->user_id,
@@ -107,8 +112,7 @@ class ArticleBookmarkRateTest extends TestCase
         $this->assertEquals(5, $post->userRatings->first()->rating_value);
         $this->assertEquals(1, $post->userRatings->count());
 
-        $token = $this->tokenFromUser($user);
-        $this->withAuthorization('Bearer '.$token)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id, [
+        $this->withAuthorization('Bearer '.$token, $post, $user)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id, [
                 'ratingId' => $rating->rating_id,
                 'ratingValue' => 2,
         ]);
@@ -123,14 +127,13 @@ class ArticleBookmarkRateTest extends TestCase
     public function testRemoveRateSpoof()
     {
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $rating = $this->getFactory(App\Models\Rating::class)->make(['user_id' => $user->user_id]);
         $post->userRatings()->save($rating);
 
         $spoofer = $this->createUser();
         $token = $this->tokenFromUser($spoofer);
-        $this->withAuthorization('Bearer '.$token)->deleteJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->deleteJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -138,14 +141,13 @@ class ArticleBookmarkRateTest extends TestCase
     public function testRemoveBookmarkSpoof()
     {
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $bookmark = $this->getFactory(App\Models\Bookmark::class)->make(['user_id' => $user->user_id]);
         $post->bookmarks()->save($bookmark);
 
         $spoofer = $this->createUser();
         $token = $this->tokenFromUser($spoofer);
-        $this->withAuthorization('Bearer '.$token)->deleteJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmark->bookmark_id);
+        $this->withAuthorization('Bearer '.$token, $post, $user)->deleteJson($this->baseRoute.'/'.$post->post_id.'/bookmarks/'.$bookmark->bookmark_id);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
     }
@@ -153,8 +155,7 @@ class ArticleBookmarkRateTest extends TestCase
     public function testUpdateRateSpoof()
     {
         $user = $this->createUser();
-        /** @var AbstractPost $post */
-        $post = $this->getFactory($this->factoryClass)->create();
+        $post = $this->makePost();
         $rating = $this->getFactory(App\Models\Rating::class)->make(
             [
                 'user_id' => $user->user_id,
@@ -168,11 +169,22 @@ class ArticleBookmarkRateTest extends TestCase
 
         $spoofer = $this->createUser();
         $token = $this->tokenFromUser($spoofer);
-        $this->withAuthorization('Bearer '.$token)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id, [
+        $this->withAuthorization('Bearer '.$token, $post, $user)->putJson($this->baseRoute.'/'.$post->post_id.'/ratings/'.$rating->rating_id, [
             'ratingId' => $rating->rating_id,
             'ratingValue' => 2,
         ]);
 
         $this->assertException('Denied', 403, 'ForbiddenException');
+    }
+
+    /** @return AbstractPost */
+    protected function makePost()
+    {
+        return $this->getFactory($this->factoryClass)->create();
+    }
+
+    public function withAuthorization($header = null, $post = null, $user = null)
+    {
+        return parent::withAuthorization($header);
     }
 }

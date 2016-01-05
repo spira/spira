@@ -11,6 +11,16 @@
 class ApiDiscussionController extends DiscussionController
 {
     /**
+     * Toggle spam check limit for \VanillaModel::checkForSpam().
+     */
+    public function toggleSpamCheck()
+    {
+        $enable = Gdn::request()->getValue('Enable');
+
+        saveToConfig('Vanilla.Comment.SpamCount', $enable ? 5 : 9999);
+    }
+
+    /**
      * Get a single discussion.
      *
      * @param  string $foreignId

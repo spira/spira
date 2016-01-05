@@ -18,6 +18,9 @@ class ArticleMetaController extends ChildEntityController
 {
     protected $relationName = 'metas';
 
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     public function __construct(Article $parentModel, EloquentModelTransformer $transformer)
     {
         parent::__construct($parentModel, $transformer);

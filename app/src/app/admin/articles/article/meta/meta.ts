@@ -6,7 +6,7 @@ namespace app.admin.articles.article.meta {
 
         public authors:common.models.User[];
 
-        static $inject = ['article', 'notificationService', 'usersPaginator'];
+        static $inject = ['article', 'notificationService', 'usersPaginator', '$scope'];
 
     }
 

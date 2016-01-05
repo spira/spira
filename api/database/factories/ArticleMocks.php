@@ -25,6 +25,7 @@ $postAttributes = function (\Faker\Generator $faker) {
     return [
         'post_id' => $faker->uuid,
         'title' => $faker->sentence,
+        'short_title' => $faker->boolean(50) ? $faker->word : null,
         'status' => $faker->randomElement(App\Models\AbstractPost::$statuses),
         'excerpt' => Str::words($faker->realText(100), 30, ''),
         'thumbnail_image_id' => null,

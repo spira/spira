@@ -1,8 +1,8 @@
-<div layout-padding id="article-listing" class="listing">
+<div id="article-listing" class="listing">
 
     <md-toolbar class="search">
         <div class="md-toolbar-tools">
-            <md-input-container md-no-float flex class="md-subhead">
+            <md-input-container md-no-float flex class="md-subhead md-block">
                 <input ng-change="ArticlesListingController.search()"
                        ng-model="ArticlesListingController.queryString"
                        ng-model-options="{ debounce:500 }"
@@ -59,7 +59,7 @@
                 <div class="md-contact-suggestion">
                     <img ng-src="{{ item.avatarImgUrl }}"
                         alt="{{ item.firstName }}" />
-                    {{ item.fullName() }}
+                    {{ item.fullName }}
                     <span class="md-contact-email" >{{ item.email }}</span>
                 </div>
             </md-autocomplete>
@@ -79,27 +79,27 @@
     <div ng-if="ArticlesListingController.entities.length < 1"><h3>No articles found!</h3></div>
 
     <md-grid-list
-            md-cols-lt-lg="1"
-            md-cols-lg="3"
-            md-cols-gt-lg="5"
-            md-row-height="1:1.05"
+            md-cols="2"
+            md-cols-lt-sm="1"
+            md-cols-sm="2"
+            md-cols-md="3"
+            md-cols-gt-md="5"
+            md-row-height="1:1.1"
             md-gutter="20px">
 
         <md-grid-tile
             ng-repeat="article in ArticlesListingController.entities"
             ui-sref="app.admin.articles.article({id: article.getIdentifier()})"
-            md-ink-ripple
-            layout="column">
-            <md-card flex layout-fill layout="column">
-                <div class="card-image">
-                    <div class="image-wrapper">
-                        <cl-image public-id="{{article._thumbnailImage.imageId}}" format="{{article._thumbnailImage.format}}">
-                            <cl-transformation height="300" width="600" crop="fill" gravity="center"/>
-                        </cl-image>
-                    </div>
+            md-ink-ripple>
+            <md-card layout-fill layout="column">
+                <div>
+                    <cl-image public-id="{{article._thumbnailImage.imageId}}" format="{{article._thumbnailImage.format}}" class="md-card-image">
+                        <cl-transformation height="300" width="600" crop="fill" gravity="center"/>
+                    </cl-image>
                     <span class="status {{article.status}} md-caption">{{article.status | uppercase}}</span>
                 </div>
-                <md-card-content class="md-body-1 " flex>
+                <md-divider></md-divider>
+                <md-card-content class="md-body-1" flex>
                     <!-- @TODO Create an overflow ellipsis filter -->
                     {{article.title | limitTo: 30}}
                 </md-card-content>
@@ -107,7 +107,7 @@
                 <md-card-footer>
                     <md-list>
                         <md-list-item>
-                            <img ng-src="{{article._author.avatarImgUrl}}" alt="{{article._author.fullName()}}" class="md-avatar">
+                            <img ng-src="{{article._author.avatarImgUrl}}" alt="{{article._author.fullName}}" class="md-avatar">
                             <div class="md-list-item-text md-caption">
                                 {{article._author.firstName}}
                             </div>
@@ -129,13 +129,12 @@
                     </md-tab>
                 </md-tabs>
             </div>
-            <div flex="none" layout-align="center right">
-                <md-button aria-label="Add Article" ui-sref="app.admin.articles.article()" class="md-fab add-article">
-                    <md-icon>add</md-icon>
-                    <md-tooltip>Add article</md-tooltip>
-                </md-button>
-            </div>
         </div>
     </md-toolbar>
+
+    <md-button aria-label="Add Article" id="add-button" ui-sref="app.admin.articles.article()" class="md-fab">
+        <md-icon>add</md-icon>
+        <md-tooltip>Add article</md-tooltip>
+    </md-button>
 </div>
 

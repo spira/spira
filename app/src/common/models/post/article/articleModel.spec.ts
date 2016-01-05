@@ -160,7 +160,7 @@ namespace common.models {
             expect(article._sections).to.have.length(2);
             expect(article.sectionsDisplay.sortOrder).to.have.length(2);
             expect(article.sectionsDisplay.sortOrder).to.deep.equal(_.pluck(article._sections, 'sectionId'));
-            expect((<common.decorators.IChangeAwareDecorator>article).getChanged()).to.haveOwnProperty('sectionsDisplay');
+            expect((<common.decorators.changeAware.IChangeAwareDecorator>article).getChanged()).to.haveOwnProperty('sectionsDisplay');
 
         });
 
@@ -176,7 +176,7 @@ namespace common.models {
 
             expect(article._sections).to.be.empty;
             expect(article.sectionsDisplay.sortOrder).to.be.empty;
-            expect((<common.decorators.IChangeAwareDecorator>article).getChanged()).to.be.empty;
+            expect((<common.decorators.changeAware.IChangeAwareDecorator>article).getChanged()).to.be.empty;
 
         });
 

@@ -1,7 +1,7 @@
 <div class="grouped-tags">
 
     <ng-form name="group.form" ng-repeat="group in GroupedTagsController.entityTagGroups track by $index">
-        <md-input-container>
+        <md-input-container class="md-block">
             <label>{{group.groupTag.tag}}<span ng-if="group.groupTag._pivot.linkedTagsLimit"> (Max Count: {{group.groupTag._pivot.linkedTagsLimit}})</span></label>
             <md-chips ng-model="group.tags"
                       name="tags"
@@ -13,8 +13,7 @@
                       md-autocomplete-snap
                       md-require-match="true"
                       ng-required="group.groupTag._pivot.required"
-                      readonly="group.groupTag._pivot.readOnly"
-                    >
+                      readonly="group.groupTag._pivot.readOnly">
 
                 <md-autocomplete
                     ng-hide="!!group.groupTag._pivot.linkedTagsLimit && group.tags.length >= group.groupTag._pivot.linkedTagsLimit"

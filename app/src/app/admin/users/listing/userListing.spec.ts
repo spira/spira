@@ -67,33 +67,6 @@ namespace app.admin.users.listing {
             expect(usersPaginator.getPages).to.have.been.called;
         });
 
-        it('should be able to prompt an impersonation dialog, then navigate to the root state on confirm', () => {
-
-            let impersonateUser = common.models.UserMock.entity();
-            let event = global.MouseEventMock.getMock();
-
-            let dialogShowStub = sinon.stub($mdDialog, 'show');
-            dialogShowStub.returns($q.when(true));
-
-            let authImpersonateStub = sinon.stub(authService, 'impersonateUser');
-            authImpersonateStub.returns($q.when(true));
-
-            let stateLoadStub = sinon.stub($state, 'go');
-
-            UsersListingController.promptImpersonateDialog(event, impersonateUser);
-
-            $rootScope.$apply();
-
-            expect(dialogShowStub).to.have.been.called;
-            expect(authImpersonateStub).to.have.been.calledWith(impersonateUser);
-            expect(stateLoadStub).to.have.been.calledWith('app.guest.home');
-
-            dialogShowStub.restore();
-            authImpersonateStub.restore();
-            stateLoadStub.restore();
-
-        });
-
     });
 
 }

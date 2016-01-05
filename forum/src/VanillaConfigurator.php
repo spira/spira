@@ -80,6 +80,9 @@ class VanillaConfigurator
         error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR);
         ini_set('display_errors', 0);
 
+        // Used in attached files to drop all tables before seeding
+        $Drop = true;
+
         // Create the database tables
         require_once 'public/applications/dashboard/settings/structure.php';
         require_once 'public/applications/vanilla/settings/structure.php';

@@ -124,6 +124,8 @@ class ElasticSearchTest extends TestCase
 
         $indexedModelMock = Mockery::mock('alias:IndexedModelMock');
         $indexedModelMock->shouldReceive('putMapping')->once();
+        $indexedModelMock->shouldReceive('deleteCustomIndexes')->once();
+        $indexedModelMock->shouldReceive('createCustomIndexes')->once();
 
         $elasticSearchService->shouldReceive('indexExists')->once()->andReturn(true);
         $elasticSearchService->shouldReceive('deleteIndex')->once();
@@ -140,6 +142,8 @@ class ElasticSearchTest extends TestCase
         $indexedModelMock = Mockery::mock('alias:IndexedModelMock');
         $indexedModelMock->shouldReceive('putMapping')->once();
         $indexedModelMock->shouldReceive('addAllToIndex')->once();
+        $indexedModelMock->shouldReceive('deleteCustomIndexes')->once();
+        $indexedModelMock->shouldReceive('createCustomIndexes')->once();
 
         $elasticSearchService->shouldReceive('indexExists')->once()->andReturn(true);
         $elasticSearchService->shouldReceive('deleteIndex')->once();

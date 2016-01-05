@@ -85,15 +85,15 @@ class ArticleTagTest extends TestCase
 
     public function testGetTags()
     {
-        $entity = $this->getFactory($this->factoryClass)->create();
+        $entity = $this->makePost();
         $this->addTagsToPosts([$entity]);
         $class = $this->factoryClass;
         $count = $class::find($entity->post_id)->tags->count();
-        $this->getJson($this->baseRoute.'/'.$entity->post_id.'/tags');
-        $object = json_decode($this->response->getContent());
+
+        $this->withoutAuthorization($entity)->getJson($this->baseRoute.'/'.$entity->post_id.'/tags');
 
         $this->assertResponseOk();
-        $this->shouldReturnJson();
+        $object = $this->getJsonResponseAsObject();
 
         $this->assertEquals(count($object), $count);
     }
@@ -108,7 +108,7 @@ class ArticleTagTest extends TestCase
      */
     public function testPutTags()
     {
-        $entity = $this->getFactory($this->factoryClass)->create();
+        $entity = $this->makePost();
         $this->addTagsToPosts([$entity]);
 
         $class = $this->factoryClass;
@@ -133,7 +133,7 @@ class ArticleTagTest extends TestCase
 
         array_push($newTags, $existingTagWillStay);
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$entity->post_id.'/tags', $newTags);
+        $this->withAdminAuthorization()->putJson($this->baseRoute.'/'.$entity->post_id.'/tags', $newTags);
 
         $this->assertResponseStatus(201);
         $class = $this->factoryClass;
@@ -161,9 +161,8 @@ class ArticleTagTest extends TestCase
 
     public function testPutTagsToDifferentEntities()
     {
-        $class = $this->factoryClass;
-        $entity = $this->getFactory($class)->create();
-        $entity2 = $this->getFactory($class)->create();
+        $entity = $this->makePost();
+        $entity2 = $this->makePost();
 
         $tags = $this->getFactory(Tag::class)
             ->count(4)
@@ -175,11 +174,11 @@ class ArticleTagTest extends TestCase
             $newTag['_pivot']['tagGroupParentId'] = $this->groupTagId;
         }
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$entity->post_id.'/tags', $tags);
+        $this->withAdminAuthorization()->putJson($this->baseRoute.'/'.$entity->post_id.'/tags', $tags);
 
         $this->assertResponseStatus(201);
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$entity2->post_id.'/tags', $tags);
+        $this->withAdminAuthorization()->putJson($this->baseRoute.'/'.$entity2->post_id.'/tags', $tags);
 
         $this->assertResponseStatus(201);
     }
@@ -187,9 +186,7 @@ class ArticleTagTest extends TestCase
     public function testGetOneWithPosts()
     {
         $class = $this->factoryClass;
-        $posts = $this->getFactory($class)
-            ->count(5)
-            ->create();
+        $posts = $this->makePosts();
 
         $this->addTagsToPosts($posts, true);
 
@@ -197,22 +194,26 @@ class ArticleTagTest extends TestCase
         $this->assertEquals(5, $entity->tags->count());
         $tag = $entity->tags->first();
 
-        $nested = strtolower(class_basename($class).'s');
+        $nested = camel_case(class_basename($class).'s');
+
         $this->getJson('/tags/'.$tag->tag_id, ['with-nested' => $nested]);
-        $object = json_decode($this->response->getContent());
+        $this->assertResponseStatus(200);
+
+        $object = $this->getJsonResponseAsObject();
+
         $this->assertEquals(5, count($object->{'_'.$nested}));
     }
 
     public function testDeleteTagGlobal()
     {
         $class = $this->factoryClass;
-        $entity = $this->getFactory($class)->create();
+        $entity = $this->makePost();
         $this->addTagsToPosts([$entity]);
 
         $this->assertEquals(5, $class::find($entity->post_id)->tags->count());
         $tag = $class::find($entity->post_id)->tags->first();
 
-        $this->withAuthorization()->deleteJson('/tags/'.$tag->tag_id);
+        $this->withAdminAuthorization()->withAuthorization()->deleteJson('/tags/'.$tag->tag_id);
 
         $this->assertResponseStatus(204);
         $this->assertResponseHasNoContent();
@@ -222,7 +223,7 @@ class ArticleTagTest extends TestCase
     public function testShouldLogPutTags()
     {
         $class = $this->factoryClass;
-        $post = factory($class)->create();
+        $post = $this->makePost();
 
         $tags = $this->getFactory(Tag::class)
             ->count(4)
@@ -234,7 +235,7 @@ class ArticleTagTest extends TestCase
             ])
             ->transformed();
 
-        $this->withAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/tags', $tags);
+        $this->withAdminAuthorization()->putJson($this->baseRoute.'/'.$post->post_id.'/tags', $tags);
         $this->assertResponseStatus(201);
 
         $post = $class::find($post->post_id);
@@ -256,8 +257,27 @@ class ArticleTagTest extends TestCase
         $this->cleanupDiscussions([$post]);
     }
 
+    /** @return AbstractPost */
+    protected function makePost()
+    {
+        return $this->getFactory($this->factoryClass)->create();
+    }
+
+    protected function makePosts($num = 5)
+    {
+        return $this->getFactory($this->factoryClass)->count($num)->create();
+    }
+
     protected function getGroupTagPivots($tags)
     {
         return Tag::getGroupedTagPivots($tags, SeedTags::articleGroupTagName);
+    }
+
+    public function testGetTagCategories()
+    {
+        $this->getJson('/articles/tag-categories');
+
+        $this->assertResponseStatus(200);
+        $this->shouldReturnJson();
     }
 }

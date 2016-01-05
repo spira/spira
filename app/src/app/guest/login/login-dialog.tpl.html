@@ -24,7 +24,7 @@
 
         <form novalidate name="loginForm" ui-keypress="{13:'loginForm.$valid && LoginController.login(user.email, user.password)'}">
 
-            <md-input-container class="md-icon-float" >
+            <md-input-container class="md-icon-float md-block">
                 <label for="loginForm.email">Email</label>
                 <md-icon>face</md-icon>
                 <input id="loginForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
@@ -34,7 +34,7 @@
                 </ng-messages>
             </md-input-container>
 
-            <md-input-container class="md-icon-float" >
+            <md-input-container class="md-icon-float md-block">
                 <label for="loginForm.password">Password</label>
                 <md-icon>face</md-icon>
                 <input id="loginForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
@@ -47,8 +47,8 @@
 
     </md-dialog-content>
 
-    <div class="md-dialog-actions">
+    <md-dialog-actions>
         <md-button ng-disabled="loginForm.$invalid" ng-click="LoginController.login(user.email, user.password)" class="md-primary">Login</md-button>
         <md-button ng-click="LoginController.cancelLoginDialog()" class="md-warn">Cancel</md-button>
-    </div>
+    </md-dialog-actions>
 </md-dialog>

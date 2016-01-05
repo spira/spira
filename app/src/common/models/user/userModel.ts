@@ -1,6 +1,6 @@
 namespace common.models {
 
-    @common.decorators.changeAware
+    @common.decorators.changeAware.changeAware
     export class User extends AbstractModel implements global.IUserData {
 
         protected __nestedEntityMap:INestedEntityMap = {
@@ -41,11 +41,11 @@ namespace common.models {
         }
 
         /**
-         * Get the user's full name
+         * Getter for the user's full name
          * @returns {string}
          */
-        public fullName():string {
-            return this.firstName + ' ' + this.lastName;
+        get fullName():string {
+            return _.filter([this.firstName, this.lastName], _.identity).join(' ');
         }
 
         /**

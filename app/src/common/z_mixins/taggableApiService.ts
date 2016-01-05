@@ -5,11 +5,11 @@ namespace common.mixins {
 
         public saveEntityTags(entity:TaggableModel):ng.IPromise<common.models.LinkingTag[]|boolean> {
 
-            let requestObject = this.getNestedCollectionRequestObject(entity, '_tags', false, false);
-
-            if (!requestObject){
+            if(!_.has((<common.decorators.changeAware.IChangeAwareDecorator>entity).getChanged(true), '_tags')) {
                 return this.$q.when(false);
             }
+
+            let requestObject = this.getNestedCollectionRequestObject(entity, '_tags', false, false);
 
             return this.ngRestAdapter.put(this.apiEndpoint(entity) + '/tags', requestObject)
                 .then(() => {

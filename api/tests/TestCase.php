@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
+use App\Models\User;
+
 class TestCase extends \Spira\Core\tests\TestCase
 {
     const TEST_ADMIN_USER_EMAIL = 'john.smith@example.com';
@@ -49,17 +51,59 @@ class TestCase extends \Spira\Core\tests\TestCase
 
     /**
      * @param null $header
-     * @return $this
+     * @return TestCase
      */
     public function withAuthorization($header = null)
     {
         if (is_null($header)) {
-            $user = (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
-            $header = 'Bearer '.$this->tokenFromUser($user);
+            return $this->withUserAuthorization($this->getTestUser());
         }
+
         $this->authHeader = $header;
 
         return $this;
+    }
+
+    /**
+     * @return TestCase
+     */
+    public function withUserAuthorization(User $user)
+    {
+        return $this->withAuthorization('Bearer '.$this->tokenFromUser($user));
+    }
+
+    /**
+     * @return TestCase
+     */
+    public function withAdminAuthorization()
+    {
+        return $this->withUserAuthorization($this->getAdminUser());
+    }
+
+    /**
+     * @return TestCase
+     */
+    public function withoutAuthorization()
+    {
+        $this->authHeader = null;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getTestUser()
+    {
+        return (new App\Models\User())->findByEmail(static::TEST_USER_EMAIL);
+    }
+
+    /**
+     * @return User
+     */
+    public function getAdminUser()
+    {
+        return (new App\Models\User())->findByEmail(static::TEST_ADMIN_USER_EMAIL);
     }
 
     /**

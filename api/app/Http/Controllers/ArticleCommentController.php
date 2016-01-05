@@ -15,6 +15,9 @@ use Spira\Core\Responder\Transformers\EloquentModelTransformer;
 
 class  ArticleCommentController extends PostCommentController
 {
+    protected $permissionsEnabled = true;
+    protected $defaultRole = false;
+
     /**
      * Set dependencies.
      *

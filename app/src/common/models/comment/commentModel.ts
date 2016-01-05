@@ -1,7 +1,7 @@
 namespace common.models {
 
-    @common.decorators.changeAware
-    export class ArticleComment extends AbstractModel {
+    @common.decorators.changeAware.changeAware
+    export class Comment extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
             _author: User,
@@ -12,7 +12,7 @@ namespace common.models {
             updatedAt: this.castMoment,
         };
 
-        public articleCommentId:string;
+        public commentId:string;
         public body:string;
         public createdAt:moment.Moment;
         public _author:common.models.User;

@@ -11,7 +11,7 @@ md-autocomplete {
   md-autocomplete button md-icon path {
     fill: @background-600; }
   md-autocomplete button:after {
-    background: fade(@background-600,0.3); }
+    background: fade(@background-600,30); }
 
 .md-autocomplete-suggestions-container {
   background: @background-50; }
@@ -29,9 +29,9 @@ md-autocomplete {
  * v0.11.4
  */
 md-backdrop {
-  background-color: fade(@background-900,0.0); }
+  background-color: fade(@background-900,0); }
   md-backdrop.md-opaque {
-    background-color: fade(@background-900,1.0); }
+    background-color: fade(@background-900,100); }
 
 /*!
  * Angular Material Design
@@ -56,9 +56,9 @@ md-bottom-sheet {
  * v0.11.4
  */
 a.md-button:not([disabled]):hover, .md-button:not([disabled]):hover {
-  background-color: fade(@background-500,0.2); }
+  background-color: fade(@background-500,20); }
 a.md-button:not([disabled]).md-focused, .md-button:not([disabled]).md-focused {
-  background-color: fade(@background-500,0.2); }
+  background-color: fade(@background-500,20); }
 a.md-button:not([disabled]).md-icon-button:hover, .md-button:not([disabled]).md-icon-button:hover {
   background-color: transparent; }
 a.md-button.md-fab, .md-button.md-fab {
@@ -155,6 +155,65 @@ md-card {
  * @license MIT
  * v0.11.4
  */
+md-checkbox .md-ripple {
+  color: @accent-600; }
+md-checkbox.md-checked .md-ripple {
+  color: @background-600; }
+md-checkbox.md-checked.md-focused .md-container:before {
+  background-color: fade(@accent-color,26); }
+md-checkbox .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox.md-checked .md-ink-ripple {
+  color: fade(@accent-color,87); }
+md-checkbox .md-icon {
+  border-color: @foreground-2; }
+md-checkbox.md-checked .md-icon {
+  background-color: fade(@accent-color,87); }
+md-checkbox.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox:not([disabled]).md-primary .md-ripple {
+  color: @primary-600; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-ripple {
+  color: @background-600; }
+md-checkbox:not([disabled]).md-primary .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-ink-ripple {
+  color: fade(@primary-color,87); }
+md-checkbox:not([disabled]).md-primary .md-icon {
+  border-color: @foreground-2; }
+md-checkbox:not([disabled]).md-primary.md-checked .md-icon {
+  background-color: fade(@primary-color,87); }
+md-checkbox:not([disabled]).md-primary.md-checked.md-focused .md-container:before {
+  background-color: fade(@primary-color,26); }
+md-checkbox:not([disabled]).md-primary.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox:not([disabled]).md-warn .md-ripple {
+  color: @warn-600; }
+md-checkbox:not([disabled]).md-warn .md-ink-ripple {
+  color: @foreground-2; }
+md-checkbox:not([disabled]).md-warn.md-checked .md-ink-ripple {
+  color: fade(@warn-color,87); }
+md-checkbox:not([disabled]).md-warn .md-icon {
+  border-color: @foreground-2; }
+md-checkbox:not([disabled]).md-warn.md-checked .md-icon {
+  background-color: fade(@warn-color,87); }
+md-checkbox:not([disabled]).md-warn.md-checked.md-focused:not([disabled]) .md-container:before {
+  background-color: fade(@warn-color,26); }
+md-checkbox:not([disabled]).md-warn.md-checked .md-icon:after {
+  border-color: @background-200; }
+md-checkbox[disabled] .md-icon {
+  border-color: @foreground-3; }
+md-checkbox[disabled].md-checked .md-icon {
+  background-color: @foreground-3; }
+md-checkbox[disabled] .md-label {
+  color: @foreground-3; }
+
+/*!
+ * Angular Material Design
+ * https://github.com/angular/material
+ * @license MIT
+ * v0.11.4
+ */
 md-chips .md-chips {
   box-shadow: 0 1px @background-300; }
   md-chips .md-chips.md-focused {
@@ -172,65 +231,6 @@ md-chips md-chip-remove .md-button md-icon path {
 
 .md-contact-suggestion span.md-contact-email {
   color: @background-400; }
-
-/*!
- * Angular Material Design
- * https://github.com/angular/material
- * @license MIT
- * v0.11.4
- */
-md-checkbox .md-ripple {
-  color: @accent-600; }
-md-checkbox.md-checked .md-ripple {
-  color: @background-600; }
-md-checkbox.md-checked.md-focused .md-container:before {
-  background-color: fade(@accent-color,0.26); }
-md-checkbox .md-ink-ripple {
-  color: @foreground-2; }
-md-checkbox.md-checked .md-ink-ripple {
-  color: fade(@accent-color,0.87); }
-md-checkbox .md-icon {
-  border-color: @foreground-2; }
-md-checkbox.md-checked .md-icon {
-  background-color: fade(@accent-color,0.87); }
-md-checkbox.md-checked .md-icon:after {
-  border-color: @background-200; }
-md-checkbox:not([disabled]).md-primary .md-ripple {
-  color: @primary-600; }
-md-checkbox:not([disabled]).md-primary.md-checked .md-ripple {
-  color: @background-600; }
-md-checkbox:not([disabled]).md-primary .md-ink-ripple {
-  color: @foreground-2; }
-md-checkbox:not([disabled]).md-primary.md-checked .md-ink-ripple {
-  color: fade(@primary-color,0.87); }
-md-checkbox:not([disabled]).md-primary .md-icon {
-  border-color: @foreground-2; }
-md-checkbox:not([disabled]).md-primary.md-checked .md-icon {
-  background-color: fade(@primary-color,0.87); }
-md-checkbox:not([disabled]).md-primary.md-checked.md-focused .md-container:before {
-  background-color: fade(@primary-color,0.26); }
-md-checkbox:not([disabled]).md-primary.md-checked .md-icon:after {
-  border-color: @background-200; }
-md-checkbox:not([disabled]).md-warn .md-ripple {
-  color: @warn-600; }
-md-checkbox:not([disabled]).md-warn .md-ink-ripple {
-  color: @foreground-2; }
-md-checkbox:not([disabled]).md-warn.md-checked .md-ink-ripple {
-  color: fade(@warn-color,0.87); }
-md-checkbox:not([disabled]).md-warn .md-icon {
-  border-color: @foreground-2; }
-md-checkbox:not([disabled]).md-warn.md-checked .md-icon {
-  background-color: fade(@warn-color,0.87); }
-md-checkbox:not([disabled]).md-warn.md-checked.md-focused:not([disabled]) .md-container:before {
-  background-color: fade(@warn-color,0.26); }
-md-checkbox:not([disabled]).md-warn.md-checked .md-icon:after {
-  border-color: @background-200; }
-md-checkbox[disabled] .md-icon {
-  border-color: @foreground-3; }
-md-checkbox[disabled].md-checked .md-icon {
-  background-color: @foreground-3; }
-md-checkbox[disabled] .md-label {
-  color: @foreground-3; }
 
 /*!
  * Angular Material Design
@@ -406,14 +406,14 @@ md-menu-bar md-menu.md-open > button, md-menu-bar md-menu > button:focus {
   outline: none;
   background: @background-200; }
 md-menu-bar.md-open:not(.md-keyboard-mode) md-menu:hover > button {
-  background-color: fade(@background-500,0.2); }
+  background-color: fade(@background-500,20); }
 md-menu-bar:not(.md-keyboard-mode):not(.md-open) md-menu button:hover, md-menu-bar:not(.md-keyboard-mode):not(.md-open) md-menu button:focus {
   background: transparent; }
 
 md-menu-content .md-menu > .md-button:after {
   color: @foreground-2; }
 md-menu-content .md-menu.md-open > .md-button {
-  background-color: fade(@background-500,0.2); }
+  background-color: fade(@background-500,20); }
 
 md-toolbar.md-menu-toolbar {
   background-color: @background-color;
@@ -496,28 +496,28 @@ md-progress-linear[md-mode=buffer].md-accent .md-dashed:before {
 md-radio-button .md-off {
   border-color: @foreground-2; }
 md-radio-button .md-on {
-  background-color: fade(@accent-color,0.87); }
+  background-color: fade(@accent-color,87); }
 md-radio-button.md-checked .md-off {
-  border-color: fade(@accent-color,0.87); }
+  border-color: fade(@accent-color,87); }
 md-radio-button.md-checked .md-ink-ripple {
-  color: fade(@accent-color,0.87); }
+  color: fade(@accent-color,87); }
 md-radio-button .md-container .md-ripple {
   color: @accent-600; }
 
 md-radio-group:not([disabled]) .md-primary .md-on, md-radio-group:not([disabled]).md-primary .md-on, md-radio-button:not([disabled]) .md-primary .md-on, md-radio-button:not([disabled]).md-primary .md-on {
-  background-color: fade(@primary-color,0.87); }
+  background-color: fade(@primary-color,87); }
 md-radio-group:not([disabled]) .md-primary .md-checked .md-off, md-radio-group:not([disabled]) .md-primary.md-checked .md-off, md-radio-group:not([disabled]).md-primary .md-checked .md-off, md-radio-group:not([disabled]).md-primary.md-checked .md-off, md-radio-button:not([disabled]) .md-primary .md-checked .md-off, md-radio-button:not([disabled]) .md-primary.md-checked .md-off, md-radio-button:not([disabled]).md-primary .md-checked .md-off, md-radio-button:not([disabled]).md-primary.md-checked .md-off {
-  border-color: fade(@primary-color,0.87); }
+  border-color: fade(@primary-color,87); }
 md-radio-group:not([disabled]) .md-primary .md-checked .md-ink-ripple, md-radio-group:not([disabled]) .md-primary.md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-primary .md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-primary.md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-primary .md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-primary.md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-primary .md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-primary.md-checked .md-ink-ripple {
-  color: fade(@primary-color,0.87); }
+  color: fade(@primary-color,87); }
 md-radio-group:not([disabled]) .md-primary .md-container .md-ripple, md-radio-group:not([disabled]).md-primary .md-container .md-ripple, md-radio-button:not([disabled]) .md-primary .md-container .md-ripple, md-radio-button:not([disabled]).md-primary .md-container .md-ripple {
   color: @primary-600; }
 md-radio-group:not([disabled]) .md-warn .md-on, md-radio-group:not([disabled]).md-warn .md-on, md-radio-button:not([disabled]) .md-warn .md-on, md-radio-button:not([disabled]).md-warn .md-on {
-  background-color: fade(@warn-color,0.87); }
+  background-color: fade(@warn-color,87); }
 md-radio-group:not([disabled]) .md-warn .md-checked .md-off, md-radio-group:not([disabled]) .md-warn.md-checked .md-off, md-radio-group:not([disabled]).md-warn .md-checked .md-off, md-radio-group:not([disabled]).md-warn.md-checked .md-off, md-radio-button:not([disabled]) .md-warn .md-checked .md-off, md-radio-button:not([disabled]) .md-warn.md-checked .md-off, md-radio-button:not([disabled]).md-warn .md-checked .md-off, md-radio-button:not([disabled]).md-warn.md-checked .md-off {
-  border-color: fade(@warn-color,0.87); }
+  border-color: fade(@warn-color,87); }
 md-radio-group:not([disabled]) .md-warn .md-checked .md-ink-ripple, md-radio-group:not([disabled]) .md-warn.md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-warn .md-checked .md-ink-ripple, md-radio-group:not([disabled]).md-warn.md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-warn .md-checked .md-ink-ripple, md-radio-button:not([disabled]) .md-warn.md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-warn .md-checked .md-ink-ripple, md-radio-button:not([disabled]).md-warn.md-checked .md-ink-ripple {
-  color: fade(@warn-color,0.87); }
+  color: fade(@warn-color,87); }
 md-radio-group:not([disabled]) .md-warn .md-container .md-ripple, md-radio-group:not([disabled]).md-warn .md-container .md-ripple, md-radio-button:not([disabled]) .md-warn .md-container .md-ripple, md-radio-button:not([disabled]).md-warn .md-container .md-ripple {
   color: @warn-600; }
 md-radio-group[disabled], md-radio-button[disabled] {
@@ -528,18 +528,18 @@ md-radio-group[disabled], md-radio-button[disabled] {
     border-color: @foreground-3; }
 
 md-radio-group .md-checked .md-ink-ripple {
-  color: fade(@accent-color,0.26); }
+  color: fade(@accent-color,26); }
 md-radio-group.md-primary .md-checked:not([disabled]) .md-ink-ripple, md-radio-group .md-checked:not([disabled]).md-primary .md-ink-ripple {
-  color: fade(@primary-color,0.26); }
+  color: fade(@primary-color,26); }
 md-radio-group .md-checked.md-primary .md-ink-ripple {
-  color: fade(@warn-color,0.26); }
+  color: fade(@warn-color,26); }
 
 md-radio-group.md-focused:not(:empty) .md-checked .md-container:before {
-  background-color: fade(@accent-color,0.26); }
+  background-color: fade(@accent-color,26); }
 md-radio-group.md-focused:not(:empty) .md-checked:not([disabled]).md-primary .md-container:before {
-  background-color: fade(@primary-color,0.26); }
+  background-color: fade(@primary-color,26); }
 md-radio-group.md-focused:not(:empty) .md-checked.md-primary .md-container:before {
-  background-color: fade(@warn-color,0.26); }
+  background-color: fade(@warn-color,26); }
 
 /*!
  * Angular Material Design
@@ -664,7 +664,7 @@ md-slider[disabled]:not(.md-min) .md-thumb:after {
  * v0.11.4
  */
 .md-subheader {
-  color: fade(@foreground-2,0.23);
+  color: fade(@foreground-2,23);
   background-color: @background-color; }
   .md-subheader.md-primary {
     color: @primary-color; }
@@ -690,25 +690,25 @@ md-switch.md-checked .md-ink-ripple {
 md-switch.md-checked .md-thumb {
   background-color: @accent-color; }
 md-switch.md-checked .md-bar {
-  background-color: fade(@accent-color,0.5); }
+  background-color: fade(@accent-color,50); }
 md-switch.md-checked.md-focused .md-thumb:before {
-  background-color: fade(@accent-color,0.26); }
+  background-color: fade(@accent-color,26); }
 md-switch.md-checked.md-primary .md-ink-ripple {
   color: @primary-color; }
 md-switch.md-checked.md-primary .md-thumb {
   background-color: @primary-color; }
 md-switch.md-checked.md-primary .md-bar {
-  background-color: fade(@primary-color,0.5); }
+  background-color: fade(@primary-color,50); }
 md-switch.md-checked.md-primary.md-focused .md-thumb:before {
-  background-color: fade(@primary-color,0.26); }
+  background-color: fade(@primary-color,26); }
 md-switch.md-checked.md-warn .md-ink-ripple {
   color: @warn-color; }
 md-switch.md-checked.md-warn .md-thumb {
   background-color: @warn-color; }
 md-switch.md-checked.md-warn .md-bar {
-  background-color: fade(@warn-color,0.5); }
+  background-color: fade(@warn-color,50); }
 md-switch.md-checked.md-warn.md-focused .md-thumb:before {
-  background-color: fade(@warn-color,0.26); }
+  background-color: fade(@warn-color,26); }
 md-switch[disabled] .md-thumb {
   background-color: @background-400; }
 md-switch[disabled] .md-bar {
@@ -735,7 +735,7 @@ md-tabs .md-tab {
   md-tabs .md-tab.md-active, md-tabs .md-tab.md-active md-icon, md-tabs .md-tab.md-focused, md-tabs .md-tab.md-focused md-icon {
     color: @primary-color; }
   md-tabs .md-tab.md-focused {
-    background: fade(@primary-color,0.1); }
+    background: fade(@primary-color,10); }
   md-tabs .md-tab .md-ripple-container {
     color: @accent-100; }
 md-tabs.md-accent > md-tabs-wrapper {
@@ -745,10 +745,10 @@ md-tabs.md-accent > md-tabs-wrapper {
     md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @accent-contrast; }
     md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@accent-contrast,0.1); }
+      background: fade(@accent-contrast,10); }
   md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {
-    color: fade(@primary-600,1);
-    background: fade(@primary-600,1); }
+    color: fade(@primary-600,100);
+    background: fade(@primary-600,100); }
 md-tabs.md-primary > md-tabs-wrapper {
   background-color: @primary-color; }
   md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
@@ -756,7 +756,7 @@ md-tabs.md-primary > md-tabs-wrapper {
     md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @primary-contrast; }
     md-tabs.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@primary-contrast,0.1); }
+      background: fade(@primary-contrast,10); }
 md-tabs.md-warn > md-tabs-wrapper {
   background-color: @warn-color; }
   md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
@@ -764,7 +764,7 @@ md-tabs.md-warn > md-tabs-wrapper {
     md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @warn-contrast; }
     md-tabs.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@warn-contrast,0.1); }
+      background: fade(@warn-contrast,10); }
 
 md-toolbar > md-tabs > md-tabs-wrapper {
   background-color: @primary-color; }
@@ -773,7 +773,7 @@ md-toolbar > md-tabs > md-tabs-wrapper {
     md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @primary-contrast; }
     md-toolbar > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@primary-contrast,0.1); }
+      background: fade(@primary-contrast,10); }
 
 md-toolbar.md-accent > md-tabs > md-tabs-wrapper {
   background-color: @accent-color; }
@@ -782,10 +782,10 @@ md-toolbar.md-accent > md-tabs > md-tabs-wrapper {
     md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @accent-contrast; }
     md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@accent-contrast,0.1); }
+      background: fade(@accent-contrast,10); }
   md-toolbar.md-accent > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {
-    color: fade(@primary-600,1);
-    background: fade(@primary-600,1); }
+    color: fade(@primary-600,100);
+    background: fade(@primary-600,100); }
 
 md-toolbar.md-warn > md-tabs > md-tabs-wrapper {
   background-color: @warn-color; }
@@ -794,7 +794,7 @@ md-toolbar.md-warn > md-tabs > md-tabs-wrapper {
     md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
       color: @warn-contrast; }
     md-toolbar.md-warn > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
-      background: fade(@warn-contrast,0.1); }
+      background: fade(@warn-contrast,10); }
 
 /*!
  * Angular Material Design

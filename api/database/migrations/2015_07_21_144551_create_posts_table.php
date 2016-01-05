@@ -27,6 +27,7 @@ class CreatePostsTable extends Migration
         Schema::create(AbstractPost::getTableName(), function (Blueprint $table) {
             $table->uuid('post_id')->primary();
             $table->string('title', 255);
+            $table->string('short_title', 255)->nullable();
             $table->enum('status', AbstractPost::$statuses)->default(AbstractPost::STATUS_DRAFT);
             $table->text('excerpt')->nullable();
             $table->uuid('thumbnail_image_id')->nullable();
@@ -61,5 +62,6 @@ class CreatePostsTable extends Migration
     public function down()
     {
         Schema::drop(AbstractPost::getTableName());
+        AbstractPost::deleteMapping();
     }
 }

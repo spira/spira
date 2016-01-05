@@ -19,7 +19,9 @@ namespace app.admin.articles.article {
             loggedInUser:common.models.User = common.models.UserMock.entity(),
             userService:common.services.user.UserService,
             groupTags:common.models.Tag[] = common.models.TagMock.collection(2),
-            tagService:common.services.tag.TagService;
+            tagService:common.services.tag.TagService,
+            $mdDialog:ng.material.IDialogService,
+            $state:ng.ui.IStateService;
 
         article._metas = [common.models.MetaMock.entity({
             metaableId: article.postId
@@ -33,7 +35,7 @@ namespace app.admin.articles.article {
 
             module('app');
 
-            inject(($controller, _$rootScope_, _notificationService_, _$q_, _articleService_, _userService_, _tagService_) => {
+            inject(($controller, _$rootScope_, _notificationService_, _$q_, _articleService_, _userService_, _tagService_, _$mdDialog_, _$state_) => {
                 $rootScope = _$rootScope_;
                 $scope = $rootScope.$new();
                 notificationService = _notificationService_;
@@ -41,10 +43,12 @@ namespace app.admin.articles.article {
                 articleService = _articleService_;
                 userService = _userService_;
                 tagService = _tagService_;
+                $mdDialog = _$mdDialog_;
+                $state = _$state_;
 
                 articleService.save = sinon.stub().returns($q.when(true));
                 articleService.getModel = sinon.stub().returns($q.when(article));
-                articleService.newArticle = sinon.stub().returns(newArticle);
+                articleService.newEntity = sinon.stub().returns(newArticle);
 
                 userService.getAuthUser = sinon.stub().returns(loggedInUser);
                 userService.getUsersPaginator = sinon.stub().returns({
@@ -58,7 +62,9 @@ namespace app.admin.articles.article {
                     notificationService: notificationService,
                     article: article,
                     articleService: articleService,
-                    groupTags: groupTags
+                    groupTags: groupTags,
+                    $mdDialog: $mdDialog,
+                    $state: $state
                 });
             });
 
@@ -90,7 +96,7 @@ namespace app.admin.articles.article {
 
             let retrievedArticle = (<any>ArticleConfig.state.resolve).article(articleService, $stateParams, userService);
 
-            expect(articleService.newArticle).to.have.been.calledWith(loggedInUser);
+            expect(articleService.newEntity).to.have.been.calledWith(loggedInUser);
 
             expect(retrievedArticle).to.be.an.instanceOf(common.models.Article);
 
@@ -146,6 +152,29 @@ namespace app.admin.articles.article {
 
             expect(ArticleController.showPreview).to.be.false;
 
+        });
+
+        it('should be able to remove an article', () => {
+
+            $mdDialog.show = sinon.stub().returns($q.when(true));
+            $mdDialog.hide = sinon.stub();
+            articleService.removeModel = sinon.stub().returns($q.when(true));
+            $state.go = sinon.stub();
+
+            ArticleController.remove();
+
+            expect($mdDialog.show).to.be.called;
+
+            $scope.$apply();
+
+            expect($mdDialog.hide).to.be.called;
+
+            expect(articleService.removeModel).to.be.calledWith(article);
+
+            $scope.$apply();
+
+            expect(notificationService.toast).to.be.calledWith('Deleted');
+            expect($state.go).to.be.calledWith((<any>ArticleController).getListingState());
         });
 
     });

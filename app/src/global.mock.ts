@@ -1,6 +1,6 @@
 namespace global {
 
-    export class FormControllerMock{
+    export class FormControllerMock {
 
         public static getMock(overrides:Object = {}):ng.IFormController {
 
@@ -23,6 +23,46 @@ namespace global {
             };
 
             return <ng.IFormController>_.merge(defaults, overrides);
+
+        }
+
+    }
+
+    export class NgModelControllerMock {
+
+        public static getMock(overrides:Object = {}):ng.INgModelController {
+
+            let defaults = {
+                $render: sinon.stub(),
+                $setValidity: sinon.stub(),
+                $setViewValue: sinon.stub(),
+                $setPristine: sinon.stub(),
+                $setDirty: sinon.stub(),
+                $validate: sinon.stub(),
+                $setTouched: sinon.stub(),
+                $setUntouched: sinon.stub(),
+                $rollbackViewValue: sinon.stub(),
+                $commitViewValue: sinon.stub(),
+                $isEmpty: sinon.stub(),
+                $viewValue: {},
+                $modelValue: {},
+                $parsers: [],
+                $formatters: [],
+                $viewChangeListeners: [],
+                $error: {},
+                $name: '',
+                $touched: false,
+                $untouched: true,
+                $validators: {},
+                $asyncValidators: {},
+                $pending: {},
+                $pristine: false,
+                $dirty: true,
+                $valid: true,
+                $invalid: false,
+            };
+
+            return <ng.INgModelController>_.merge(defaults, overrides);
 
         }
 

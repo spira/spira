@@ -10,8 +10,8 @@ namespace app.guest.articles.article.comments {
             $scope:ng.IScope,
             CommentsController:CommentsController,
             $q:ng.IQService,
-            commentToAddSuccess = common.models.ArticleCommentMock.entity(),
-            commentToAddFailure = common.models.ArticleCommentMock.entity({body:'foobar'});
+            commentToAddSuccess = common.models.CommentMock.entity(),
+            commentToAddFailure = common.models.CommentMock.entity({body:'foobar'});
 
         beforeEach(() => {
 

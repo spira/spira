@@ -8,7 +8,7 @@ namespace app.guest.home {
         constructor(private stateHelperServiceProvider){
 
             let state:global.IState = {
-                url: '/',
+                url: '',
                 views: {
                     "main@app.guest": {
                         controller: namespace+'.controller',

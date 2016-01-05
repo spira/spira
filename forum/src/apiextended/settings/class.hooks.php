@@ -31,6 +31,11 @@ class ApiExtendedHooks implements Gdn_IPlugin
             'controller' => 'ApiDiscussion',
             'method' => 'deletebyforeignid',
         ]);
+
+        $sender::put('/spamcheck', [
+            'controller' => 'ApiDiscussion',
+            'method' => 'togglespamcheck',
+        ]);
     }
 
     /**

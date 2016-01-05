@@ -13,6 +13,16 @@ namespace App\Services\Api\Vanilla\Api;
 class Discussion extends ApiAbstract
 {
     /**
+     * Toggle spam check for comments.
+     *
+     * @param $enable
+     */
+    public function toggleSpamCheck($enable)
+    {
+        return $this->put('discussions/spamcheck', ['Enable' => (int) $enable]);
+    }
+
+    /**
      * List all discussions.
      *
      * @link   https://github.com/kasperisager/vanilla-api/wiki/Endpoints#find-all-discussions

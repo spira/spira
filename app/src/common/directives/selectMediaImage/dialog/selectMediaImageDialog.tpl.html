@@ -32,9 +32,11 @@
             <md-tab label="Select From Library">
 
                 <md-grid-list
-                        md-cols-sm="1"
-                        md-cols-md="2"
-                        md-cols-gt-md="4"
+                        md-cols="2"
+                        md-cols-lt-sm="1"
+                        md-cols-sm="2"
+                        md-cols-md="3"
+                        md-cols-gt-md="5"
                         md-row-height="1:1"
                         md-gutter="12px"
                         md-gutter-gt-sm="8px">
@@ -77,8 +79,8 @@
 
     </md-dialog-content>
 
-    <div class="md-dialog-actions">
+    <md-dialog-actions>
         <md-button ng-disabled="!SelectMediaImageDialogController.selectedImage" ng-click="SelectMediaImageDialogController.selectImage()" class="md-primary">Select Image</md-button>
         <md-button ng-click="SelectMediaImageDialogController.cancelDialog()" class="md-warn">Cancel</md-button>
-    </div>
+    </md-dialog-actions>
 </md-dialog>

@@ -3,8 +3,7 @@
             ng-click="toggle()"
             aria-controls="docs-menu-{{navigationState.name}}"
             aria-expanded="{{isOpen()}}"
-            ui-sref-active="child-selected"
-            ui-sref="{{navigationState.name}}"
+            ng-class="{'child-selected':isChildSelected(navigationState.name)}"
             >
 
         <md-icon>{{navigationState.data.icon}}</md-icon>

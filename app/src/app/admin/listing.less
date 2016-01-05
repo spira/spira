@@ -1,0 +1,133 @@
+@import (reference) "../../styles/theme/reference/admin-variables";
+
+
+@listing-color: @primary-400;
+@listing-active-color: @clr-light-blue-500;
+@listing-background: transparent;
+
+@listing-status-color: @primary-100;
+@listing-status-published-background: @clr-green-500;
+@listing-status-draft-background: @clr-blue-grey-900;
+@listing-status-scheduled-background: @clr-blue-500;
+
+@listing-button-add-background: @clr-deep-orange-600;
+@listing-button-add-color: @primary-A100;
+@listing-button-add-background-hover: @clr-deep-orange-400;
+
+.listing {
+
+    > md-toolbar:not(.md-menu-toolbar) {
+        background-color: @listing-background;
+        color: @listing-color;
+
+        .md-toolbar-tools {
+            padding: 0;
+
+            //Refer to this, for hiding the errors spacer https://github.com/angular/material/issues/6214
+            .md-errors-spacer {
+                min-height: 0;
+            }
+        }
+    }
+
+    > .search {
+        padding: 0;
+
+        md-input-container {
+            padding: 0;
+
+            md-input {
+                line-height: 40px;
+            }
+        }
+
+        md-icon:not(.md-menu-toolbar) {
+            color: @listing-color;
+        }
+    }
+
+    > .filter {
+        background-color: @listing-background;
+        color: @listing-color;
+        padding: 5px 0 20px;
+
+        .md-chips {
+            box-shadow: 0 1px @listing-color;
+
+            .md-chip-input-container {
+                padding-left: 0;
+            }
+        }
+
+    }
+
+    md-grid-tile {
+        cursor: pointer;
+
+        .status {
+            position: absolute;
+            top: 15px;
+            margin: 0;
+            padding: 5px;
+            min-width: 80px;
+            text-align: center;
+            color: @listing-status-color;
+            font-weight: normal;
+
+            &.published {
+                background-color : @listing-status-published-background;
+            }
+
+            &.draft {
+                background-color  : @listing-status-draft-background;
+            }
+
+            &.scheduled {
+                background-color  :  @listing-status-scheduled-background;
+            }
+        }
+
+        md-card-content {
+            overflow: hidden;
+        }
+
+        md-card-footer {
+            padding: 0 16px;
+
+            md-list {
+                padding: 0;
+
+                md-list-item {
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    > .pagination {
+        margin: 20px 0 0;
+
+        md-tabs {
+            .md-active {
+                color: @listing-active-color;
+            }
+
+            md-ink-bar {
+                background-color: @listing-background;
+            }
+        }
+    }
+
+    a#add-button.md-fab:not([disabled]) {
+        background-color: @listing-button-add-background;
+        position: fixed; bottom: 20px; right: 20px;
+
+        &:hover {
+            background-color: @listing-button-add-background-hover
+        }
+
+        md-icon:not(.md-menu-toolbar) {
+            color: @listing-button-add-color;
+        }
+    }
+}

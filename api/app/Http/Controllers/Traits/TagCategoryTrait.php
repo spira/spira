@@ -39,7 +39,7 @@ trait TagCategoryTrait
     {
         $collection = $this->getTagsFromRoot($this->getRootTagName());
         $collection = $this->getWithNested($collection, $request);
-        $this->checkPermission(static::class.'@getAllTags', ['model' => $collection]);
+        $this->checkPermission(static::class.'@getAllTagCategories', ['model' => $collection]);
 
         return $this->getResponse()
             ->transformer($this->getTransformer())

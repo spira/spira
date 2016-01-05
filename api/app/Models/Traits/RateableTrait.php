@@ -11,7 +11,7 @@
 namespace App\Models\Traits;
 
 use App\Models\Rating;
-use Spira\Model\Model\BaseModel;
+use Spira\Core\Model\Model\BaseModel;
 
 trait RateableTrait
 {

@@ -136,9 +136,6 @@ $factory->define(Section::class, function (Generator $faker) use ($factory) {
     $type = $faker->randomElement(Section::getContentTypes());
 
     switch ($type) {
-        case RichTextContent::CONTENT_TYPE:
-            return $factory->rawOf(Section::class, RichTextContent::CONTENT_TYPE);
-            break;
         case BlockquoteContent::CONTENT_TYPE:
             return $factory->rawOf(Section::class, BlockquoteContent::CONTENT_TYPE);
             break;
@@ -148,6 +145,10 @@ $factory->define(Section::class, function (Generator $faker) use ($factory) {
         case PromoContent::CONTENT_TYPE:
             return $factory->rawOf(Section::class, PromoContent::CONTENT_TYPE);
             break;
+        default:
+            return $factory->rawOf(Section::class, RichTextContent::CONTENT_TYPE);
+            break;
+
     }
 
 });

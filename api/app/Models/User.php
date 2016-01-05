@@ -10,22 +10,27 @@
 
 namespace App\Models;
 
-use App\Models\Relations\UserRoleRelation;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Cache;
 use Rhumsaa\Uuid\Uuid;
-use Spira\Auth\User\SocialiteAuthenticatable;
-use Spira\Core\Model\Collection\Collection;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Cache;
 use Spira\Core\Model\Model\IndexedModel;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Relations\UserRoleRelation;
+use Spira\Core\Model\Collection\Collection;
+use Spira\Auth\User\SocialiteAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 /**
  * Class User.
  *
+ * * lazy load
  * @property Role[]|Collection $roles
+ *
+ * * scopes
+ * @method static Builder hasRoles(array $roleKeys) modifies query to return only users who has particular role
  */
 class User extends IndexedModel implements AuthenticatableContract, SocialiteAuthenticatable
 {
@@ -109,23 +114,11 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
             'type' => 'string',
             'index' => 'no',
         ],
-        'email_confirmed' => [
-            'type' => 'string',
-            'index' => 'no',
-        ],
         'timezone_identifier' => [
             'type' => 'string',
             'index' => 'no',
         ],
         'avatar_img_url' => [
-            'type' => 'string',
-            'index' => 'no',
-        ],
-        'created_at' => [
-            'type' => 'string',
-            'index' => 'no',
-        ],
-        'updated_at' => [
             'type' => 'string',
             'index' => 'no',
         ],
@@ -199,6 +192,18 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function ratedArticles()
     {
         return $this->morphedByMany(Article::class, 'rateable', 'ratings')->withPivot(['rating_value']);
+    }
+
+    /**
+     * @return \DateTimeZone|null
+     */
+    public function getTimeZone()
+    {
+        if ($this->timezone_identifier) {
+            return new \DateTimeZone($this->timezone_identifier);
+        }
+
+        return;
     }
 
     /**
@@ -407,5 +412,16 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
     public function getCurrentAuthMethod()
     {
         return $this->authMethod;
+    }
+
+    /**
+     * @param Builder|\Illuminate\Database\Query\Builder $query
+     * @param array $roleKeys
+     * @return Builder
+     */
+    public function scopeHasRoles(Builder $query, array $roleKeys = [])
+    {
+        return $query->leftJoin('roles', 'roles.user_id', '=', 'users.user_id')
+            ->whereIn('roles.role_key', $roleKeys);
     }
 }

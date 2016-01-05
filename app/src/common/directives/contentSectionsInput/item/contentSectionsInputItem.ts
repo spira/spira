@@ -15,6 +15,7 @@ namespace common.directives.contentSectionsInput.item {
         private childControllerSettings:ISettingsControllerBindings = null;
         public $element:ng.IAugmentedJQuery|JQuery;
         public parentSetController:set.ContentSectionsInputSetController;
+        public parent:any;
 
         static $inject = ['ngRestAdapter', '$mdBottomSheet', '$q'];
         constructor(private ngRestAdapter:NgRestAdapter.NgRestAdapterService,
@@ -106,6 +107,7 @@ namespace common.directives.contentSectionsInput.item {
         public replace = false;
         public scope = {
             section: '=',
+            parent: '=?'
         };
 
         public controllerAs = 'ContentSectionsInputItemController';

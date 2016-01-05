@@ -172,7 +172,7 @@ namespace common.services.user {
          */
         public saveUser(user:common.models.User):ng.IPromise<common.models.User|boolean> {
 
-            let changes:any = (<common.decorators.IChangeAwareDecorator>user).getChanged();
+            let changes:any = (<common.decorators.changeAware.IChangeAwareDecorator>user).getChanged();
 
             if (_.isEmpty(changes)){
                 return this.$q.when(false);
@@ -197,7 +197,7 @@ namespace common.services.user {
             return this.saveUser(user)
                 .then(() => this.saveRelatedEntities(user))
                 .then(() => {
-                    (<common.decorators.IChangeAwareDecorator>user).resetChanged(); //reset so next save only saves the changed items
+                    (<common.decorators.changeAware.IChangeAwareDecorator>user).resetChanged(); //reset so next save only saves the changed items
                     return user;
                 });
 
@@ -229,7 +229,7 @@ namespace common.services.user {
 
             if (user._userProfile.exists()){
                 method = 'patch';
-                data = (<common.decorators.IChangeAwareDecorator>user._userProfile).getChanged();
+                data = (<common.decorators.changeAware.IChangeAwareDecorator>user._userProfile).getChanged();
                 if (_.isEmpty(data)){
                     return this.$q.when(false);
                 }
@@ -259,7 +259,7 @@ namespace common.services.user {
 
             if (user._userCredential.exists()){
                 method = 'patch';
-                data = (<common.decorators.IChangeAwareDecorator>user._userCredential).getChanged();
+                data = (<common.decorators.changeAware.IChangeAwareDecorator>user._userCredential).getChanged();
                 if (_.isEmpty(data)){
                     return this.$q.when(false);
                 }

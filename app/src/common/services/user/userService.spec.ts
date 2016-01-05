@@ -277,7 +277,7 @@ namespace common.services.user {
 
                 user.firstName = 'Joe';
                 user._userProfile = common.models.UserProfileMock.entity();
-                user._userProfile.dob = moment('1995-01-01').toDate();
+                user._userProfile.dob = moment('1995-01-01');
                 user._userProfile.about = 'Ipsum';
 
                 $httpBackend.expectPATCH('/api/users/' + user.userId, (jsonData:string) => {

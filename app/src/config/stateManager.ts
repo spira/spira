@@ -32,7 +32,7 @@ namespace config.stateManager {
         }
 
         private static configureRouter($locationProvider, $urlRouterProvider) {
-            $locationProvider.html5Mode(true);
+            $locationProvider.html5Mode(!global.Environment.isBrowserStack());
 
             $urlRouterProvider.otherwise(function ($injector, $location) {
                 var errorService:common.services.error.ErrorService = $injector.get('errorService');

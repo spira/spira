@@ -4,6 +4,19 @@
     @import (reference) "reference/admin-variables";
     @import "reference/angular-material-theme";
 
+    md-input-container {
+
+        // Temporary fix for https://github.com/angular/material/issues/6214
+        .md-errors-spacer {
+            min-height: 0 !important;
+        }
+    }
+
+
+    md-dialog {
+        padding: 15px;
+    }
+
     md-tabs md-ink-bar {
         color: @accent-500;
         background: @accent-500;
@@ -15,8 +28,11 @@
         background: @accent-contrast;
     }
 
+    md-checkbox.md-checked .md-icon:after {
+        border-color: @background-color;
+    }
 
-    //chips hack until https://github.com/angular/material/issues/4450 is resolved @todo
+    //chips hack until https://github.co/angular/material/issues/4450 is resolved @todo
     .md-chips .md-chip-input-container md-autocomplete input {
         width: 400px;
     }

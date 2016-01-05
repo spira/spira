@@ -1,30 +1,26 @@
-<div layout-padding>
-    <div layout="row" style="background-color: grey">
-        <avatar user="ProfileController.fullUserInfo" ng-model="ProfileController.fullUserInfo.avatarImgId"></avatar>
-    </div>
-
+<md-dialog-actions layout-padding>
     <form novalidate name="editProfileForm" ng-submit="ProfileController.updateUser()">
         <md-content layout-padding>
             <h3>About You</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>First Name</label>
                     <input ng-model="ProfileController.fullUserInfo.firstName" name="firstName" type="text" md-maxlength="45">
                 </md-input-container>
 
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Last Name</label>
                     <input ng-model="ProfileController.fullUserInfo.lastName" name="lastName" type="text" md-maxlength="45">
                 </md-input-container>
 
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Country</label>
                     <md-select ng-model="ProfileController.fullUserInfo.country" aria-label="Country" placeholder="Select a country">
                         <md-option ng-value="country.countryCode" ng-repeat="country in ProfileController.countries">{{ country.countryName }}</md-option>
                     </md-select>
                 </md-input-container>
 
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Preferred region</label>
                     <md-select ng-model="ProfileController.fullUserInfo.regionCode" aria-label="Region" placeholder="Select a region preference">
                         <md-option ng-value="region.code" ng-repeat="region in ProfileController.regions" ng-bind-html="region.name + ' ' + region.icon"></md-option>
@@ -50,7 +46,7 @@
         <md-content layout-padding>
             <h3>Email</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-                <md-input-container layout>
+                <md-input-container class="md-block" layout>
                     <label>Email</label>
                     <input id="editProfileFormEmail" ng-model="ProfileController.fullUserInfo.email" name="email" type="email" ng-required="true" aria-label="Email" md-maxlength="100">
                     <ng-messages for="editProfileFormEmail.$error">
@@ -65,29 +61,29 @@
         <md-content layout-padding>
             <h3>Profile</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Bio</label>
                     <textarea columns="1" ng-model="ProfileController.fullUserInfo._userProfile.about" name="about" md-maxlength="120"></textarea>
                 </md-input-container>
 
                 <label>Social Channels</label>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Facebook</label>
                     <input id="editProfileFormFacebook" ng-model="ProfileController.fullUserInfo._userProfile.facebook" name="facebook" type="text" aria-label="Facebook" md-maxlength="100" placeholder="https://www.facebook.com/your.profile">
                 </md-input-container>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Twitter</label>
                     <input id="editProfileFormTwitter" ng-model="ProfileController.fullUserInfo._userProfile.twitter" name="twitter" type="text" aria-label="Twitter" md-maxlength="45" placeholder="@yourUsername">
                 </md-input-container>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Pinterest</label>
                     <input id="editProfileFormPinterest" ng-model="ProfileController.fullUserInfo._userProfile.pinterest" name="pinterest" type="text" aria-label="Pinterest" md-maxlength="100" placeholder="https://www.pinterest.com/yourusername">
                 </md-input-container>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Instagram</label>
                     <input id="editProfileFormInstagram" ng-model="ProfileController.fullUserInfo._userProfile.instagram" name="instagram" type="text" aria-label="Instagram" md-maxlength="100" placeholder="https://www.instagram.com/yourusername">
                 </md-input-container>
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Website</label>
                     <input id="editProfileFormWebsite" ng-model="ProfileController.fullUserInfo._userProfile.website" name="website" type="text" aria-label="Your Website" md-maxlength="100" placeholder="https://www.yourwebsite.com">
                 </md-input-container>
@@ -98,7 +94,7 @@
             <h3>Preferences</h3>
             <md-whiteframe class="md-whiteframe-z1" layout="column" layout-padding>
 
-                <md-input-container>
+                <md-input-container class="md-block">
                     <label>Timezone</label>
                     <md-select ng-model="ProfileController.fullUserInfo.timezoneIdentifier" aria-label="Timezone">
                         <md-option ng-value="timezone.timezoneIdentifier" ng-repeat="timezone in ProfileController.timezones">{{ timezone.timezoneIdentifier }}</md-option>
@@ -137,14 +133,14 @@
                     </md-list-item>
                 </md-list>
                 <div ng-if="ProfileController.showEditPassword">
-                    <md-input-container layout>
+                    <md-input-container class="md-block" layout>
                         <label for="editProfileFormPassword">Password</label>
                         <input id="editProfileFormPassword" ng-model="ProfileController.fullUserInfo._userCredential.password" name="password" type="password" md-maxlength="50" ng-minlength="6">
                         <ng-messages for="editProfileFormPassword.$error">
                             <ng-message when="minlength">Your password must be at least 6 characters long.</ng-message>
                         </ng-messages>
                     </md-input-container>
-                    <md-input-container layout>
+                    <md-input-container class="md-block" layout>
                         <label for="editProfileFormPasswordRepeat">Repeat Password</label>
                         <input id="editProfileFormPasswordRepeat"
                                ng-model="ProfileController.fullUserInfo._userCredential.passwordRepeat"
@@ -164,9 +160,9 @@
             </md-whiteframe>
         </md-content>
 
-        <div class="md-dialog-actions">
+        <md-dialog-actions>
             <md-button class="md-primary md-raised" ng-disabled="editProfileForm.$invalid" type="submit">Save</md-button>
             <md-button class="md-raised" type="button">Cancel</md-button>
-        </div>
+        </md-dialog-actions>
     </form>
 </div>

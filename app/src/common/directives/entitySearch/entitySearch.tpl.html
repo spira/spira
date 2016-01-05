@@ -2,7 +2,7 @@
 
     <ng-form name="entitySearchForm">
 
-        <md-input-container>
+        <md-input-container class="md-block">
             <label>Search for a {{EntitySearchController.modelType}}</label>
             <md-chips
                     class="md-contact-chips"
@@ -25,7 +25,7 @@
                         >
                     <md-item-template>
                         <div layout="row">
-                            <cl-image ng-if="EntitySearchController.thumbnail" width="100%" public-id="{{entity._thumbnailImage.imageId}}"
+                            <cl-image ng-if="EntitySearchController.thumbnail" public-id="{{entity._thumbnailImage.imageId}}"
                                       format="{{entity._thumbnailImage.format}}">
                                 <cl-transformation height="50" width="50" crop="fill" gravity="north"/>
                             </cl-image>
@@ -47,7 +47,7 @@
 
                 <md-chip-template>
                     <div ng-if="EntitySearchController.thumbnail" class="md-contact-avatar">
-                        <cl-image width="100%" public-id="{{$chip._thumbnailImage.imageId}}">
+                        <cl-image public-id="{{$chip._thumbnailImage.imageId}}">
                             <cl-transformation height="50" width="50" crop="fill" gravity="north"/>
                         </cl-image>
                     </div>

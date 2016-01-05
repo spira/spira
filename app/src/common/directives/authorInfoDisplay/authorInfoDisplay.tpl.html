@@ -1,0 +1,19 @@
+<div layout-padding layout="row" layout-align="center center" class="author-info-display-directive">
+    <img ng-src="{{ AuthorInfoDisplayController.author.avatarImgUrl }}"
+         alt="{{ AuthorInfoDisplayController.author.firstName }}"
+         width="200" />
+    <div layout="column">
+        <div layout="row" layout-align="start center">
+            <h3>{{ AuthorInfoDisplayController.author.fullName }}</h3>
+            <a ng-if="AuthorInfoDisplayController.author._userProfile.facebook" href="{{ AuthorInfoDisplayController.author._userProfile.facebook }}">Facebook</a>
+            <a ng-if="AuthorInfoDisplayController.author._userProfile.instagram" href="{{ AuthorInfoDisplayController.author._userProfile.instagram }}">Instagram</a>
+            <a ng-if="AuthorInfoDisplayController.author._userProfile.pinterest" href="{{ AuthorInfoDisplayController.author._userProfile.pinterest }}">Pinterest</a>
+            <a ng-if="AuthorInfoDisplayController.author._userProfile.twitter" href="{{ AuthorInfoDisplayController.author._userProfile.twitter }}">Twitter</a>
+            <a ng-if="AuthorInfoDisplayController.author._userProfile.website" href="{{ AuthorInfoDisplayController.author._userProfile.website }}">Website</a>
+        </div>
+        <p>{{ AuthorInfoDisplayController.author._userProfile.about }}</p>
+        <h4>Recent Articles</h4>
+        <p>Section to be complete when cross entity search/search permissions has been implemented.</p>
+    </div>
+
+</div>

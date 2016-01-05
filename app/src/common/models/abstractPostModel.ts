@@ -1,16 +1,13 @@
 namespace common.models {
 
-    @common.decorators.changeAware
-    export class Article extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel, mixins.LocalizableModel, IMetaableModel, IPermalinkableModel {
-
-        static __shortcode:string = 'article';
+    export abstract class Post extends AbstractModel implements mixins.SectionableModel, mixins.TaggableModel, mixins.LocalizableModel, IMetaableModel, IPermalinkableModel {
 
         protected __nestedEntityMap:INestedEntityMap = {
             _sections: this.hydrateSections,
             _metas: this.hydrateMetaCollectionFromTemplate,
             _author: User,
             _tags: Tag,
-            _comments: ArticleComment,
+            _comments: Comment,
             _localizations: Localization,
             _thumbnailImage: Image,
         };
@@ -44,18 +41,10 @@ namespace common.models {
         public _metas:Meta[] = [];
         public _author:User;
         public _tags:LinkingTag[] = [];
-        public _comments:ArticleComment[] = [];
+        public _comments:Comment[] = [];
         public _localizations:Localization<Article>[] = [];
 
-        private static articleMetaTemplate:string[] = [
-            'name', 'description', 'keyword', 'canonical'
-        ];
-
-        public static tagGroups:string[] = [
-            'Category', 'Topic'
-        ];
-
-        //SectionableModel
+        // SectionableModel
         public updateSectionsDisplay: () => void;
         public hydrateSections: (data:any, exists:boolean) => common.models.Section<any>[];
 
@@ -63,7 +52,7 @@ namespace common.models {
             super(data, exists);
             this.hydrate(data, exists);
         }
-
+    
         /**
          * Get the article identifier
          * @returns {string}
@@ -74,15 +63,9 @@ namespace common.models {
 
         }
 
-        /**
-         * Get the tag groups
-         * @returns {string[]}
-         */
-        public getTagGroups():string[] {
-
-            return Article.tagGroups;
-
-        }
+        protected metaTemplate:string[] = [
+            'name', 'description', 'keyword', 'canonical'
+        ];
 
         /**
          * Hydrates a meta template with meta which already exists.
@@ -92,16 +75,16 @@ namespace common.models {
          */
         private hydrateMetaCollectionFromTemplate(data:any, exists:boolean):Meta[] {
 
-            return (<any>_).chain(common.models.Article.articleMetaTemplate)
+            return (<any>_).chain(this.metaTemplate)
                 .map((metaTagName) => {
 
-                    let existingTagData = _.find((<common.models.Article>data)._metas, {metaName:metaTagName});
+                    let existingTagData = _.find((<Post>data)._metas, {metaName:metaTagName});
                     if(_.isEmpty(existingTagData)) {
                         return new common.models.Meta({
                             metaName:metaTagName,
                             metaContent:'',
-                            metaableId:(<common.models.Article>data).postId,
-                            metaId:common.models.Article.generateUUID()
+                            metaableId:(<Post>data).postId,
+                            metaId:Post.generateUUID()
                         });
                     }
 
@@ -109,7 +92,7 @@ namespace common.models {
                 })
                 .thru((templateMeta) => {
 
-                    let leftovers = _.reduce((<common.models.Article>data)._metas, (metaTags:common.models.Meta[], metaTagData) => {
+                    let leftovers = _.reduce((<Post>data)._metas, (metaTags:common.models.Meta[], metaTagData) => {
                         if(!_.find(templateMeta, {metaName:metaTagData.metaName})) {
                             metaTags.push(new common.models.Meta(metaTagData));
                         }

@@ -32,9 +32,11 @@ namespace common.services.notification {
                 template: `
                     <md-toast class="md-toast-fixed" ng-class="{\'md-capsule\': toast.capsule}">
                         <span flex>{{toast.content}}</span>
-                        <md-button class="md-action" ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">
+                        <md-dialog-actions ng-if="toast.action">
+                            <md-button ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">
                             {{ toast.action }}
                         </md-button>
+                        </md-dialog-actions>
                     </md-toast>
                 `,
             };

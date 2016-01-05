@@ -116,6 +116,8 @@ namespace common.directives.entitySearch {
 
                     if($ngModelController.$modelValue) {
                         directiveController.selectedEntities[0] = $ngModelController.$modelValue;
+                    }else{
+                        directiveController.selectedEntities = [];
                     }
 
                 };
