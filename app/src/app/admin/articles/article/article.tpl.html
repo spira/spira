@@ -1,6 +1,6 @@
 <section layout="row" id="post-section" layout-align="space-around start">
 
-    <md-card ng-form flex novalidate name="articleForm" id="article-form" class="md-whiteframe-z2">
+    <md-card ng-form="ArticleController.entityForm" flex novalidate id="article-form" class="md-whiteframe-z2">
         <div id="scheduling">
             <h1>{{ArticleController.entity.status | uppercase}}</h1>
             <md-toolbar>
@@ -54,7 +54,7 @@
                         <md-tooltip md-direction="top">Delete</md-tooltip>
                     </md-button>
 
-                    <md-button class="md-accent md-raised md-fab" ng-disabled="articleForm.$invalid" ng-click="ArticleController.save()">
+                    <md-button class="md-accent md-raised md-fab" ng-disabled="ArticleController.entityForm.$invalid" ng-click="ArticleController.save()">
                         <md-icon>check</md-icon>
                         <md-tooltip md-direction="top">Save</md-tooltip>
                     </md-button>

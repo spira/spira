@@ -57,6 +57,8 @@ namespace app.admin.articles.article {
 
                 tagService.getTagCategories = sinon.stub().returns(common.models.TagMock.collection(5));
 
+                $state.go = sinon.stub();
+
                 ArticleController = $controller(app.admin.articles.article.namespace + '.controller', {
                     $stateParams: $stateParams,
                     notificationService: notificationService,
@@ -64,7 +66,8 @@ namespace app.admin.articles.article {
                     articleService: articleService,
                     groupTags: groupTags,
                     $mdDialog: $mdDialog,
-                    $state: $state
+                    $state: $state,
+                    $scope: $scope
                 });
             });
 
@@ -159,7 +162,6 @@ namespace app.admin.articles.article {
             $mdDialog.show = sinon.stub().returns($q.when(true));
             $mdDialog.hide = sinon.stub();
             articleService.removeModel = sinon.stub().returns($q.when(true));
-            $state.go = sinon.stub();
 
             ArticleController.remove();
 
@@ -175,6 +177,64 @@ namespace app.admin.articles.article {
 
             expect(notificationService.toast).to.be.calledWith('Deleted');
             expect($state.go).to.be.calledWith((<any>ArticleController).getListingState());
+        });
+
+        describe('Dirty form navigation prompt', () => {
+
+            let toState = {
+                name:'foobar'
+            };
+
+            let toParams = {
+                option:'foobar'
+            };
+
+            it('should prompt when attempting to navigate away with a dirty form and navigate on confirm', () => {
+
+                ArticleController.entityForm = global.FormControllerMock.getMock(); // $dirty is true
+
+                $mdDialog.show = sinon.stub().returns($q.when(true));
+
+                $scope.$broadcast('$stateChangeStart', toState, toParams);
+
+                expect($mdDialog.show).to.be.called;
+
+                $scope.$apply();
+
+                expect($state.go).to.be.calledWith(toState.name, toParams);
+
+            });
+
+            it('should not navigate away with cancel', () => {
+
+                ArticleController.entityForm = global.FormControllerMock.getMock();
+
+                $mdDialog.show = sinon.stub().returns($q.reject());
+
+                $scope.$broadcast('$stateChangeStart', toState, toParams);
+
+                expect($mdDialog.show).to.be.called;
+
+                $scope.$apply();
+
+                expect($state.go).to.not.be.called;
+
+            });
+
+            it('should not show the prompt if the form is not dirty', () => {
+
+                ArticleController.entityForm = global.FormControllerMock.getMock({
+                    $dirty:false
+                });
+
+                $mdDialog.show = sinon.stub().returns($q.when(true));
+
+                $scope.$broadcast('$stateChangeStart', toState, toParams);
+
+                expect($mdDialog.show).to.not.be.called;
+
+            });
+
         });
 
     });
