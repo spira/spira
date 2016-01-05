@@ -1,6 +1,6 @@
 <ng-form class="section-input-blockquote" layout-padding name="SectionInputBlockquoteController.blockquoteForm" >
 
-    <md-input-container flex>
+    <md-input-container class="md-block">
         <label>Quote</label>
 
         <textarea ng-model="SectionInputBlockquoteController.section.content.body" name="body" columns="1" md-maxlength="140" required></textarea>
@@ -9,7 +9,7 @@
         </ng-messages>
     </md-input-container>
 
-    <md-input-container flex>
+    <md-input-container class="md-block">
         <label>Attribution</label>
 
         <input placeholder="Attribute the quote (optional)" ng-model="SectionInputBlockquoteController.section.content.author" name="author" type="text" md-maxlength="140">

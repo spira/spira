@@ -19,7 +19,7 @@ Register with:
 
     <fieldset ng-disabled="RegistrationController.submitting">
 
-        <md-input-container class="md-icon-float">
+        <md-input-container class="md-icon-float md-block">
             <label for="registrationForm.email">Email</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.email" ng-model="user.email" name="email" type="email" ng-required="true">
@@ -29,7 +29,7 @@ Register with:
             </ng-messages>
         </md-input-container>
 
-        <md-input-container class="md-icon-float">
+        <md-input-container class="md-icon-float md-block">
             <label for="registrationForm.username">Username</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.username" name="username" ng-model="user.username" type="text" ng-required="true">
@@ -38,7 +38,7 @@ Register with:
             </ng-messages>
         </md-input-container>
 
-        <md-input-container class="md-icon-float">
+        <md-input-container class="md-icon-float md-block">
             <label for="registrationForm.password">Password</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.password" name="password" ng-model="user.password" type="password" ng-required="true">
@@ -47,13 +47,13 @@ Register with:
             </ng-messages>
         </md-input-container>
 
-        <md-input-container class="md-icon-float">
+        <md-input-container class="md-icon-float md-block">
             <label for="registrationForm.firstName">First Name</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.firstName" name="firstName" ng-model="user.firstName" type="text" ng-required="false">
         </md-input-container>
 
-        <md-input-container class="md-icon-float">
+        <md-input-container class="md-icon-float md-block">
             <label for="registrationForm.lastName">Last Name</label>
             <md-icon>face</md-icon>
             <input id="registrationForm.lastName" name="lastName" ng-model="user.lastName" type="text" ng-required="false">

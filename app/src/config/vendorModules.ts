@@ -16,6 +16,19 @@ namespace config.vendorModules {
         }
     }
 
+    class RestAdapterConfig {
+
+        static $inject = ['ngRestAdapterProvider'];
+
+        constructor(ngRestAdapterProvider:NgRestAdapter.NgRestAdapterServiceProvider) {
+
+            ngRestAdapterProvider.configure({
+                baseUrl: global.Environment.getApiUrl()
+            });
+
+        }
+    }
+
     class AuthConfig {
 
         static $inject = ['ngJwtAuthServiceProvider'];
@@ -27,7 +40,7 @@ namespace config.vendorModules {
                 checkExpiryEverySeconds: 60, //1 min
                 storageKeyName: 'jwtAuthToken',
                 apiEndpoints: {
-                    base: '/api/auth/jwt',
+                    base: global.Environment.getApiUrl() + '/auth/jwt',
                     login: '/login',
                     tokenExchange: '/token',
                     refresh: '/refresh',
@@ -38,6 +51,10 @@ namespace config.vendorModules {
                     topLevelDomain: true,
                 }
             };
+
+            if (global.Environment.isLocalhost()){
+                config.cookie.topLevelDomain = false;
+            }
 
             ngJwtAuthServiceProvider.configure(config);
 
@@ -56,16 +73,13 @@ namespace config.vendorModules {
 
                     let $state:ng.ui.IStateService;
 
-                    let shortcodeMatcher = /(recipe|article):(.*)/;
+                    let shortcodeMatcher = /(article):(.*)/;
                     let matches = href.match(shortcodeMatcher);
                     if (matches){
                         let state = '.';
                         switch(matches[1]){
                             case 'article':
                                 state = 'app.guest.articles.article';
-                            break;
-                            case 'recipe':
-                                state = 'app.guest.recipes.article';
                             break;
                         }
 
@@ -113,7 +127,7 @@ namespace config.vendorModules {
     ])
     .config(AuthConfig)
     .config(CloudinaryConfig)
-    //.config(MarkedConfig)
+    .config(RestAdapterConfig)
     .run(MarkedInit)
 
 }

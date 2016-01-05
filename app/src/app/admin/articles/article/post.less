@@ -2,13 +2,42 @@
 
 #post-section {
 
+    #article-form {
+        max-width: 1200px;
+        position: relative;
+    }
+
     #scheduling {
+
+        > h1 {
+            padding: 0 16px;
+        }
+
+        .date, .time {
+            md-icon {
+                margin: 0 10px 0 0;
+            }
+        }
 
         background-color: @background-600;
         color: white;
 
         md-toolbar {
             background-color: inherit;
+        }
+    }
+
+    #commands {
+
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 200px;
+        z-index: 5;
+
+        .command-fix {
+            position: fixed;
+            bottom: 10px
         }
 
     }

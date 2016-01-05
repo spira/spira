@@ -1,4 +1,4 @@
-namespace common.decorators {
+namespace common.decorators.changeAware {
 
     export interface IChangeAwareDecorator{
         resetChanged?():void;

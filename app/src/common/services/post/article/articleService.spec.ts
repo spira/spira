@@ -100,7 +100,7 @@ namespace common.services.article {
 
                 let author = common.models.UserMock.entity();
 
-                let article = articleService.newArticle(author);
+                let article = articleService.newEntity(author);
 
                 expect(article.postId).to.be.ok;
 
@@ -118,7 +118,7 @@ namespace common.services.article {
 
                 let article = common.models.ArticleMock.entity();
 
-                let comment = common.models.ArticleCommentMock.entity();
+                let comment = common.models.CommentMock.entity();
 
                 $httpBackend.expectPOST('/api/articles/' + article.postId + '/comments').respond(201);
 
@@ -127,6 +127,24 @@ namespace common.services.article {
                 expect(savePromise).eventually.to.be.fulfilled;
 
                 expect(savePromise).eventually.to.deep.equal(comment);
+
+                $httpBackend.flush();
+
+            });
+
+        });
+
+        describe('Remove Article', () => {
+
+            it('should be able to remove an article', () => {
+
+                let article = common.models.ArticleMock.entity();
+
+                $httpBackend.expectDELETE('/api/articles/' + article.postId).respond(201);
+
+                let savePromise = articleService.removeModel(article);
+
+                expect(savePromise).eventually.to.be.fulfilled;
 
                 $httpBackend.flush();
 
@@ -214,7 +232,7 @@ namespace common.services.article {
 
                 article._tags = [common.models.LinkingTagMock.entity()];
 
-                $httpBackend.expectPATCH('/api/articles/'+article.postId, (<common.decorators.IChangeAwareDecorator>article).getChanged()).respond(201);
+                $httpBackend.expectPATCH('/api/articles/'+article.postId, (<common.decorators.changeAware.IChangeAwareDecorator>article).getChanged()).respond(201);
                 $httpBackend.expectPUT('/api/articles/'+article.postId+'/tags', _.clone(article._tags, true)).respond(201);
 
                 let savePromise = articleService.save(article);

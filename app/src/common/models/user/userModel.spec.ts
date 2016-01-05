@@ -37,7 +37,17 @@ namespace common.models {
 
             let user = new User(_.clone(userData, true));
 
-            expect(user.fullName()).to.equal(userData.firstName + ' ' + userData.lastName);
+            expect(user.fullName).to.equal(userData.firstName + ' ' + userData.lastName);
+
+        });
+
+        it('should part of the user\'s full name if they don\'t have a part of their name', () => {
+
+            let user = new User(_.clone(userData, true));
+
+            user.lastName = undefined;
+
+            expect(user.fullName).to.equal(userData.firstName);
 
         });
 

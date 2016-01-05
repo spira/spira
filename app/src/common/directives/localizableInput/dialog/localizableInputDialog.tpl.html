@@ -14,7 +14,7 @@
         <md-tabs md-selected="LocalizableInputDialogController.selectedIndex" md-dynamic-height md-border-bottom md-autoselect>
             <md-tab label="{{region.name}}" ng-repeat="region in LocalizableInputDialogController.regionService.supportedRegions">
 
-                <md-input-container flex ng-switch="LocalizableInputDialogController.inputNodeName">
+                <md-input-container class="md-block" ng-switch="LocalizableInputDialogController.inputNodeName">
                     <textarea aria-label="Add localisation for {{region.name}}" ng-switch-when="textarea" ng-model="LocalizableInputDialogController.localizationMap[region.code]"></textarea>
                     <input aria-label="Add localisation for {{region.name}}" ng-switch-when="input" ng-model="LocalizableInputDialogController.localizationMap[region.code]">
                     <markdown-editor aria-label="Add localisation for {{region.name}}" ng-switch-when="markdown-editor" ng-model="LocalizableInputDialogController.localizationMap[region.code]"></markdown-editor>
@@ -30,8 +30,8 @@
 
     </md-dialog-content>
 
-    <div class="md-dialog-actions">
+    <md-dialog-actions>
         <md-button ng-click="LocalizableInputDialogController.saveLocalizations()" class="md-primary">Save</md-button>
         <md-button ng-click="LocalizableInputDialogController.cancelDialog()" class="md-warn">Cancel</md-button>
-    </div>
+    </md-dialog-actions>
 </md-dialog>

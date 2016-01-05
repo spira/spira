@@ -110,7 +110,7 @@ namespace common.models {
             expect(model.getAttributes(true)).to.deep.equal({
                 foo: 'bar',
                 _hydrate : ['foobar'],
-                _hasOne : undefined,
+                _hasOne: undefined,
                 _hasMany: [],
             });
 

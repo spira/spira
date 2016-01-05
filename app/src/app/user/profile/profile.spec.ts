@@ -2,7 +2,6 @@ namespace app.user.profile {
 
     describe('Profile', () => {
 
-        let seededChance = new Chance();
         let ProfileController:ProfileController,
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,
@@ -17,30 +16,10 @@ namespace app.user.profile {
                 userCredentialId:'007a61cb-3143-3f40-8436-dfab437c1871',
                 password:'Password'
             },
-            userProfile:common.models.UserProfile = <common.models.UserProfile>{
-                dob: seededChance.date(),
-                mobile:'04123123',
-                phone:'',
-                gender:'M',
-                about:'Lorem',
-                facebook:'',
-                twitter:'',
-                pinterest:'',
-                instagram:'',
-                website:''
-            },
-            fullUserInfo:common.models.User = <common.models.User>{
-                userId:'007a61cb-3143-3f40-8436-dfab437c1871',
-                email:'john.doe@example.com',
-                firstName:'John',
-                lastName:'Doe',
-                emailConfirmed:'2015-02-02 03:01:06',
-                country:'Australia',
-                avatarImgUrl:'http://somepicture.com/image',
-                timezoneIdentifier:'America/Guyana',
+            fullUserInfo:common.models.User = common.models.UserMock.entity({
                 _userCredential:userCredential,
-                _userProfile:userProfile,
-            },
+                _userProfile:common.models.UserProfileMock.entity(),
+            }),
             userService = {
                 saveUserWithRelated: (user:common.models.User) => {
                     if (user.email == 'invalid@email.com') {
@@ -51,7 +30,7 @@ namespace app.user.profile {
                     }
                 },
                 getAuthUser: () => {
-                    return user;
+                    return fullUserInfo;
                 }
             },
             authService = {

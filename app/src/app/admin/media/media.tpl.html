@@ -1,64 +1,72 @@
-<form name="MediaController.imageUploadForm" novalidate>
-    <div layout layout-sm="column">
+<div layout-padding id="media" class="listing">
 
-        <md-input-container>
-            <label>Add Image</label>
-            <upload-image
-                ng-model="MediaController.uploadedImage"
-                name="image"
-                ng-change="MediaController.imageUploaded(MediaController.uploadedImage)"
-            >
-            </upload-image>
-        </md-input-container>
+    <form name="MediaController.imageUploadForm" novalidate>
+        <div layout layout-sm="column">
 
-    </div>
+            <md-input-container class="md-block">
+                <label>Add Image</label>
+                <upload-image
+                        ng-model="MediaController.uploadedImage"
+                        name="image"
+                        ng-change="MediaController.imageUploaded(MediaController.uploadedImage)"
+                        >
+                </upload-image>
+            </md-input-container>
 
-</form>
+        </div>
 
-
-<div layout-padding id="media">
-
-    <h2>Images</h2>
+    </form>
 
     <md-grid-list
-            md-cols-sm="1"
-            md-cols-md="2"
-            md-cols-gt-md="4"
-            md-row-height="1:1"
-            md-gutter="12px"
-            md-gutter-gt-sm="8px">
+            md-cols="2"
+            md-cols-lt-sm="1"
+            md-cols-sm="2"
+            md-cols-md="3"
+            md-cols-gt-md="5"
+            md-row-height="1:1.1"
+            md-gutter="20px">
 
         <md-grid-tile
                 ng-repeat="image in MediaController.images"
                 ui-sref="app.admin.media.image({permalink: image.imageId})"
-                md-ink-ripple style="cursor:pointer">
+                md-ink-ripple>
 
-            <md-grid-tile-header>
-                <h3>{{image.alt | uppercase}}</h3>
-            </md-grid-tile-header>
-
-            <cl-image width="100%" public-id="{{image.imageId}}" format="{{image.format}}">
-                <cl-transformation height="300" width="300" crop="fill" gravity="north"/>
-            </cl-image>
-
-            <md-grid-tile-footer ng-if="!!image.title">
-                <h3>{{image.title}}</h3>
-            </md-grid-tile-footer>
+            <md-card layout-fill layout="column">
+                <div>
+                    <cl-image public-id="{{image.imageId}}" format="{{image.format}}" md-card-image>
+                        <cl-transformation height="300" width="600" crop="fill" gravity="center"/>
+                    </cl-image>
+                </div>
+                <md-divider></md-divider>
+                <md-card-content class="md-body-1" flex>
+                    <!-- @TODO Create an overflow ellipsis filter -->
+                    {{image.alt | limitTo: 30}}
+                </md-card-content>
+                <md-divider></md-divider>
+                <md-card-footer>
+                    <md-list>
+                        <md-list-item>
+                            <div class="md-list-item-text md-caption">
+                                {{image.title}}
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-card-footer>
+            </md-card>
         </md-grid-tile>
-
     </md-grid-list>
 
+    <md-toolbar class="pagination">
+        <div class="md-toolbar-tools" layout="row">
+            <div flex>
+                <md-tabs md-selected="MediaController.currentPageIndex">
+                    <md-tab ng-repeat="pageNumber in MediaController.pages" ui-sref="app.admin.media({page:pageNumber})">
+                        <md-tab-label>
+                            <span>{{pageNumber}}</span>
+                        </md-tab-label>
+                    </md-tab>
+                </md-tabs>
+            </div>
+        </div>
+    </md-toolbar>
 </div>
-
-
-<md-toolbar>
-    <md-tabs md-selected="MediaController.currentPageIndex">
-
-        <md-tab ng-repeat="pageNumber in MediaController.pages" ui-sref="app.admin.media({page:pageNumber})">
-            <md-tab-label>
-                <span>{{pageNumber}}</span>
-            </md-tab-label>
-        </md-tab>
-
-    </md-tabs>
-</md-toolbar>

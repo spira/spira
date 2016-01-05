@@ -20,4 +20,40 @@ namespace global {
         }
     }
 
+    export interface IBrowserStackApiMap{
+        [port:number]:string;
+    }
+
+    export class Environment {
+
+        public static browserStackApiMap:IBrowserStackApiMap = {
+            3000 : 'http://local.spira.io/api',
+        };
+
+        public static isLocalhost():boolean {
+
+            return /^localhost(:\d+)?$/.test(window.location.host);
+        }
+
+        public static isBrowserStack():boolean {
+
+            let browserStackPortMatcher = _.keys(Environment.browserStackApiMap).join('|');
+
+            return new RegExp(`^.*:${browserStackPortMatcher}+$`).test(window.location.host);
+        }
+
+        public static getApiUrl():string {
+
+            if (Environment.isBrowserStack()){
+                return Environment.getBrowserStackUrl();
+            }
+
+            return '/api';
+        }
+
+        private static getBrowserStackUrl():string {
+            return Environment.browserStackApiMap[window.location.port];
+        }
+    }
+
 }

@@ -6,7 +6,7 @@ namespace app.guest.articles.article.comments {
 
         static $inject = ['article', 'user', 'articleService', 'notificationService'];
 
-        public newComment:common.models.ArticleComment;
+        public newComment:common.models.Comment;
 
         public newCommentForm:ng.IFormController;
 
@@ -16,7 +16,7 @@ namespace app.guest.articles.article.comments {
             private articleService:common.services.article.ArticleService,
             private notificationService:common.services.notification.NotificationService
         ) {
-            this.newComment = new common.models.ArticleComment({_author:this.user});
+            this.newComment = new common.models.Comment({_author:this.user});
         }
 
         /**
@@ -28,7 +28,7 @@ namespace app.guest.articles.article.comments {
             this.articleService.saveComment(this.article, this.newComment)
                 .then((comment) => {
                     this.article._comments.push(comment);
-                    this.newComment = new common.models.ArticleComment({_author:this.user});
+                    this.newComment = new common.models.Comment({_author:this.user});
                     this.newCommentForm.$setPristine();
                     this.newCommentForm.$setUntouched();
                     this.notificationService.toast('Comment successfully added').pop();

@@ -66,7 +66,7 @@ namespace app.admin.articles.article {
                     article: (articleService:common.services.article.ArticleService, $stateParams:app.admin.ICommonStateParams, userService:common.services.user.UserService):common.models.Article | ng.IPromise<common.models.Article> => {
 
                         if (!$stateParams.id || $stateParams.id == 'new'){
-                            let newArticle = articleService.newArticle(userService.getAuthUser());
+                            let newArticle = articleService.newEntity(userService.getAuthUser());
                             $stateParams.id = 'new';
                             $stateParams.newEntity = true;
                             return newArticle;
@@ -105,14 +105,10 @@ namespace app.admin.articles.article {
 
     export class ArticleController extends app.admin.AbstractEntitiesController<common.models.Article, common.services.article.ArticleService> {
 
-        static $inject = ['article', 'articleService', '$stateParams', 'notificationService', 'groupTags'];
+        static $inject = ['article', 'articleService', '$stateParams', 'notificationService', '$mdDialog', '$state', 'groupTags'];
 
-
-        public showPreview:boolean = false;
-
-
-        public togglePreview(){
-            this.showPreview = !this.showPreview;
+        protected getListingState():string {
+            return app.admin.articles.listing.namespace;
         }
 
     }

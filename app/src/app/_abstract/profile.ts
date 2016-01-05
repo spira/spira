@@ -21,7 +21,7 @@ namespace app.abstract.profile {
         constructor(
             private userService:common.services.user.UserService,
             private notificationService:common.services.notification.NotificationService,
-            private authService:common.services.auth.AuthService,
+            protected authService:common.services.auth.AuthService,
             public countries:common.services.countries.ICountryDefinition,
             public timezones:common.services.timezones.ITimezoneDefinition,
             public genderOptions:common.models.IGenderOption[],

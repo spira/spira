@@ -18,18 +18,18 @@ namespace app.admin {
         private usersPaginator:common.services.pagination.Paginator;
 
         constructor(
-            private entitiesPaginator:common.services.pagination.Paginator,
+            protected entitiesPaginator:common.services.pagination.Paginator,
             entities,
-            private tagService:common.services.tag.TagService,
-            private userService:common.services.user.UserService,
+            protected tagService:common.services.tag.TagService,
+            protected userService:common.services.user.UserService,
             public $stateParams:ICommonListingStateParams,
-            private $scope:ng.IScope
+            protected $scope:ng.IScope
         ) {
             this.entities = entities;
 
-            this.tagsPaginator = tagService.getPaginator().setCount(10);
+            this.tagsPaginator = tagService.getPaginator().setCount(10).noResultsResolve();
 
-            this.usersPaginator = userService.getPaginator().setCount(10);
+            this.usersPaginator = userService.getPaginator().setCount(10).noResultsResolve();
 
             this.pages = entitiesPaginator.getPages();
 

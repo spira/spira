@@ -1,5 +1,9 @@
 namespace app.admin {
 
+    export interface IAuthorForm extends ng.IFormController {
+        authors: ng.INgModelController;
+    }
+
     export abstract class AbstractMetaController<M extends common.models.IAuthoredModel> {
 
         public authors:common.models.User[];
@@ -12,14 +16,24 @@ namespace app.admin {
 
         public overrideAuthor:boolean = false;
 
+        public authorForm:IAuthorForm;
+
         constructor(public entity:M,
                     protected notificationService:common.services.notification.NotificationService,
-                    protected usersPaginator:common.services.pagination.Paginator) {
+                    protected usersPaginator:common.services.pagination.Paginator,
+                    protected $scope:ng.IScope) {
             // Initialize the authors array which is used as a model for author contact chip input.
             this.authors = [entity._author];
             if(!_.isEmpty(entity.authorOverride)) {
                 this.overrideAuthor = true;
             }
+
+            // ng-change does not work with contact-chips: https://github.com/angular/material/issues/3857
+            $scope.$watchCollection(() => this.authors, (newValue, oldValue) => {
+                if (!_.isEqual(newValue, oldValue)) {
+                    this.validateAndUpdateAuthor();
+                }
+            });
         }
 
         /**
@@ -42,13 +56,19 @@ namespace app.admin {
         }
 
         /**
-         * Function called when a user is added to the author contact chip input. As we are only allowed
-         * to have one author per article, we should replace the author.
+         * Function called when the author contact chip input is updated. As we are only allowed
+         * to have one author per article, validate and update if valid.
          */
-        public changeAuthor(newAuthor:common.models.User):void {
-            this.authors = [newAuthor];
-            this.entity._author = newAuthor;
-            this.entity.authorId = newAuthor.userId;
+        public validateAndUpdateAuthor():void {
+
+            this.authorForm.authors.$setValidity('maxlength', this.authors.length < 2);
+            this.authorForm.authors.$setValidity('required', this.authors.length > 0);
+
+            if(this.authorForm.$valid) {
+                this.entity._author = this.authors[0];
+                this.entity.authorId = this.authors[0].userId;
+            }
+
         }
 
     }

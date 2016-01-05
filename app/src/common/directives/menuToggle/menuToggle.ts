@@ -8,6 +8,7 @@ namespace common.directives.menuToggle {
         gotoState(stateName:string, stateParams:any):void;
         navigationState: ng.ui.IState;
         collapsed?: boolean;
+        isChildSelected(navigationStateName:string):boolean;
     }
 
     class MenuToggleDirective implements ng.IDirective {
@@ -61,6 +62,10 @@ namespace common.directives.menuToggle {
                 }, 0, false);
 
             });
+
+            $scope.isChildSelected = (navigationStateName:string):boolean => {
+                return this.$state.current.name.indexOf(navigationStateName) > -1 ;
+            }
 
         };
 

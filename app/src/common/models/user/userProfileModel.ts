@@ -4,15 +4,15 @@ module common.models {
         value:string;
     }
 
-    @common.decorators.changeAware
+    @common.decorators.changeAware.changeAware
     export class UserProfile extends AbstractModel {
 
         protected __attributeCastMap:IAttributeCastMap = {
-            dob: this.castDate,
+            dob: this.castMoment,
         };
 
         public userId:string;
-        public dob:Date;
+        public dob:moment.Moment;
         public mobile:string;
         public phone:string;
         public gender:string;

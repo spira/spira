@@ -1,6 +1,6 @@
 namespace common.services {
 
-    export interface IExtendedApiService {
+    export interface IExtendedApiService extends AbstractApiService {
         save?(entity):ng.IPromise<any>;
         getPublicUrl?(entity):string;
     }
@@ -13,6 +13,8 @@ namespace common.services {
 
         protected queuedSaveProcessFunctions:IQueuedSaveProcess[] = [];
         protected cachedPaginator:common.services.pagination.Paginator;
+
+        public cachedCategoryTagPromise:ng.IPromise<common.models.CategoryTag[]>;
 
         private interceptingNgRestAdapter:NgRestAdapter.INgRestAdapterService = null;
 
@@ -30,13 +32,14 @@ namespace common.services {
         /**
          * Get the paginator
          * @param nestedEntities string[]
+         * @param endpoint
          * @returns {Paginator}
          */
-        public getPaginator(nestedEntities:string[] = null):common.services.pagination.Paginator {
+        public getPaginator(nestedEntities:string[] = null, endpoint:string = this.apiEndpoint()):common.services.pagination.Paginator {
 
             if (!this.cachedPaginator) {
                 this.cachedPaginator = this.paginationService
-                    .getPaginatorInstance(this.apiEndpoint())
+                    .getPaginatorInstance(endpoint)
                     .setModelFactory(this.modelFactory)
                     .setNested(nestedEntities);
             }
@@ -125,7 +128,7 @@ namespace common.services {
             let saveData = entity.getAttributes();
 
             if (entity.exists()) {
-                saveData = (<common.decorators.IChangeAwareDecorator>entity).getChanged();
+                saveData = (<common.decorators.changeAware.IChangeAwareDecorator>entity).getChanged();
             }
 
             if (_.size(saveData) == 0) { // If there is nothing to save, don't make an API call
@@ -137,29 +140,40 @@ namespace common.services {
 
         }
 
-    /**
-     * Get the nested attributes ready for save. Returns null if there is nothing to save
-     * @param entity
-     * @param nestedKey
-     * @param getPartial
-     * @returns {any}
-     * @param filterExisting
-     * @param alwayIncludeProperties
-     */
+        /**
+         * Remove a model given the entity
+         * @param entity
+         * @returns {ng.IHttpPromise<any>}
+         */
+        public removeModel<T extends common.models.AbstractModel>(entity:T):ng.IPromise<T|boolean> {
+
+            return this.ngRestAdapter.remove(this.apiEndpoint(entity));
+
+        }
+
+        /**
+         * Get the nested attributes ready for save. Returns null if there is nothing to save
+         * @param entity
+         * @param nestedKey
+         * @param getPartial
+         * @returns {any}
+         * @param filterExisting
+         * @param alwayIncludeProperties
+         */
         public getNestedCollectionRequestObject(entity:common.models.AbstractModel, nestedKey:string, getPartial:boolean = true, filterExisting:boolean = true, alwayIncludeProperties:string[] = null):Object[]{
 
             let nestedCollection:common.models.AbstractModel[] = _.get(entity, nestedKey, null);
 
             //if there is no nested attributes or it is an empty array, return
             if (!nestedCollection || _.isEmpty(nestedCollection)){
-                return null;
+                return [];
             }
 
             if(entity.exists()){
-                let changes:any = (<common.decorators.IChangeAwareDecorator>entity).getChanged(true);
+                let changes:any = (<common.decorators.changeAware.IChangeAwareDecorator>entity).getChanged(true);
                 //if the entity does not have any changes registered for the attribute, exit
                 if (!_.has(changes, nestedKey)) {
-                    return null;
+                    return [];
                 }
             }
 
@@ -169,12 +183,12 @@ namespace common.services {
                         return true;
                     }
                     //filter out the existing models with no changes
-                    return !(nestedModel.exists() && _.size((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true)) === 0);
+                    return !(nestedModel.exists() && _.size((<common.decorators.changeAware.IChangeAwareDecorator>nestedModel).getChanged(true)) === 0);
                 })
                 .map((nestedModel:common.models.AbstractModel) => {
                     if (getPartial && nestedModel.exists()){
                         //return the partial changes
-                        return _.merge((<common.decorators.IChangeAwareDecorator>nestedModel).getChanged(true), _.pick(nestedModel, alwayIncludeProperties));
+                        return _.merge((<common.decorators.changeAware.IChangeAwareDecorator>nestedModel).getChanged(true), _.pick(nestedModel, alwayIncludeProperties));
                     }
                     //return all the attributes
                     return nestedModel.getAttributes(true);
@@ -183,7 +197,7 @@ namespace common.services {
 
             //if after filtering there is no changes, exit.
             if (_.isEmpty(nestedResponseObjects)){
-                return null;
+                return [];
             }
             return nestedResponseObjects;
 

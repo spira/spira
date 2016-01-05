@@ -2,7 +2,7 @@
 
 <form name="CommentsController.newCommentForm" ng-submit="CommentsController.save()" novalidate>
     <img ng-src="{{ CommentsController.user.avatarImgUrl }}" class="md-avatar" alt="{{ CommentsController.user.username }}" />
-    <md-input-container>
+    <md-input-container class="md-block">
         <label>Join the discussion</label>
         <input name="comment" type="text" ng-model="CommentsController.newComment.body" required>
         <ng-messages ng-hide="CommentsController.newCommentForm.comment.$pristine" for="CommentsController.newCommentForm.comment.$error">

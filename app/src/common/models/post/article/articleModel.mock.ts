@@ -12,13 +12,15 @@ namespace common.models {
 
             let authorOverride = seededChance.bool();
 
+            let author = common.models.UserMock.entity();
+
             return {
                 postId: seededChance.guid(),
                 title: seededChance.string(),
                 shortTitle: seededChance.word(),
                 permalink: chance.word({syllables: 3}),
                 status: seededChance.pick(['draft', 'published', 'ready']),
-                authorId: seededChance.guid(),
+                authorId: author.userId,
                 thumbnailImageId: seededChance.guid(),
                 authorOverride: authorOverride ? seededChance.name() : null,
                 authorWebsite: authorOverride ? seededChance.url() : null,
@@ -28,6 +30,7 @@ namespace common.models {
                 _comments: [],
                 _sections: [],
                 _localizations: [],
+                _author: author
             };
 
         }

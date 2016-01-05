@@ -3,13 +3,15 @@ namespace common.services.image {
     export const namespace = 'common.services.image';
 
     export interface IImageUploadOptions {
-        file: File;
+        file?: File;
+        imageUrl?:string;
         alt:string;
         title?:string;
+        imageId?:string;
     }
 
     export interface ICloudinaryUploadRequest {
-        file: File;
+        file: File|string;
         api_key: string;
         timestamp: number;
         signature: string;
@@ -40,6 +42,12 @@ namespace common.services.image {
     export interface ICloudinaryFileUploadConfig extends ng.angularFileUpload.IFileUploadConfig {
         fields: ICloudinaryUploadRequest;
         sendFieldsAs: string;
+    }
+
+    export interface ICloudinaryUrlUploadConfig {
+        file:string;
+        fields: ICloudinaryUploadRequest;
+        url:string;
     }
 
     export interface IImageNotification {
@@ -125,29 +133,37 @@ namespace common.services.image {
          */
         private uploadToCloudinary(signedCloudinaryOptions:ICloudinaryUploadRequest, deferredUploadProgress:IImageDeferred<common.models.Image>):ng.angularFileUpload.IUploadPromise<ng.IHttpPromiseCallbackArg<any>> {
 
-            let uploadOptions = this.getNgUploadConfig(signedCloudinaryOptions);
 
             let restoreAuthFunction = this.unsetAuthorizationHeader();
 
-            let uploadPromise = this.ngFileUpload.upload(uploadOptions)
-                .progress(function (evt:any) {
-                    var progressPercentage = (<any>_).round(100.0 * evt.loaded / evt.total);
+            let uploadPromise;
 
-                    deferredUploadProgress.notify({
-                        event: 'cloudinary_upload',
-                        message: "Uploading to cloudinary",
-                        progressName: 'Upload progress',
-                        progressValue: progressPercentage,
+            if (!_.isString(signedCloudinaryOptions.file)){
+
+                let uploadOptions = this.getFileUploadConfig(signedCloudinaryOptions);
+
+                uploadPromise = this.ngFileUpload.upload(uploadOptions)
+                    .progress(function (evt:any) {
+                        var progressPercentage = (<any>_).round(100.0 * evt.loaded / evt.total);
+
+                        deferredUploadProgress.notify({
+                            event: 'cloudinary_upload',
+                            message: "Uploading to cloudinary",
+                            progressName: 'Upload progress',
+                            progressValue: progressPercentage,
+                        });
+
                     });
-
-                });
+            }else{
+                let uploadOptions = this.getUrlUploadConfig(signedCloudinaryOptions);
+                uploadPromise = this.ngRestAdapter.api(uploadOptions.url).post('', uploadOptions.fields);
+            }
 
             uploadPromise.finally(() => {
                 restoreAuthFunction();
             });
 
             return uploadPromise;
-
         }
 
         /**
@@ -173,12 +189,19 @@ namespace common.services.image {
          */
         private getCloudinaryUploadConfig(inputOptions:IImageUploadOptions):ICloudinaryUploadRequest {
 
+            let file;
+            if (!!inputOptions.file){
+                file = inputOptions.file;
+            }else if (!inputOptions.file && !!inputOptions.imageUrl){
+                file = inputOptions.imageUrl;
+            }
+
             return {
-                file: inputOptions.file,
+                file: file,
                 api_key: undefined,
                 signature: undefined,
                 timestamp: moment().unix(),
-                public_id: this.ngRestAdapter.uuid(),
+                public_id: inputOptions.imageId || this.ngRestAdapter.uuid(),
                 resource_type: 'image', // 'image', 'raw', 'auto'
                 type: 'upload', //'upload', 'private', 'authenticated'.
                 _inputOptions: inputOptions, //include the raw object for other consumers
@@ -191,17 +214,34 @@ namespace common.services.image {
          * @param cloudinaryOptions
          * @returns {{file: File, url: string, method: string, fields: Omitted}}
          */
-        private getNgUploadConfig(cloudinaryOptions:ICloudinaryUploadRequest):ICloudinaryFileUploadConfig {
+        private getFileUploadConfig(cloudinaryOptions:ICloudinaryUploadRequest):ICloudinaryFileUploadConfig {
 
-            let cloudinaryFields = <ICloudinaryUploadRequest>_.omit(cloudinaryOptions, ['file']);
+            let cloudinaryFields = _.clone(<ICloudinaryUploadRequest>_.omit(cloudinaryOptions, ['file']));
             delete cloudinaryFields._inputOptions;
 
             return {
-                file: cloudinaryOptions.file,
+                file: <File>cloudinaryOptions.file,
                 url: 'https://api.cloudinary.com/v1_1/spira/image/upload',
                 method: 'POST',
                 fields: cloudinaryFields,
                 sendFieldsAs: 'json',
+            };
+
+        }
+
+        /**
+         * Get the configuration object for the plain url upload to cloudinary
+         * @param cloudinaryOptions
+         */
+        private getUrlUploadConfig(cloudinaryOptions:ICloudinaryUploadRequest):ICloudinaryUrlUploadConfig {
+
+            let cloudinaryFields = _.clone(cloudinaryOptions);
+            delete cloudinaryFields._inputOptions;
+
+            return {
+                file: <string>cloudinaryOptions.file,
+                url: 'https://api.cloudinary.com/v1_1/spira/image/upload',
+                fields: cloudinaryFields,
             };
 
         }

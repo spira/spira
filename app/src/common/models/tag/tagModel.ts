@@ -1,5 +1,13 @@
 namespace common.models {
 
+    export interface ICategorizedTags {
+        (category:string):CategoryTagWithChildren;
+    }
+
+    export interface CategoryTagWithChildren extends CategoryTag {
+        _tagsInCategory:LinkingTag[];
+    }
+
     export interface LinkTagPivot {
         tagGroupId: string;
         tagGroupParentId: string;
@@ -15,7 +23,7 @@ namespace common.models {
         readOnly: boolean;
     }
 
-    @common.decorators.changeAware
+    @common.decorators.changeAware.changeAware
     export class Tag extends AbstractModel {
 
         protected __nestedEntityMap:INestedEntityMap = {

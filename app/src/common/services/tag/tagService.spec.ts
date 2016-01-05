@@ -2,20 +2,36 @@ namespace common.services.tag {
 
     describe('Tag Service', () => {
 
-        let tagService:TagService;
-        let $httpBackend:ng.IHttpBackendService;
-        let ngRestAdapter:NgRestAdapter.NgRestAdapterService;
+        let tagService:TagService,
+            $httpBackend:ng.IHttpBackendService,
+            ngRestAdapter:NgRestAdapter.NgRestAdapterService,
+            articleService:common.services.article.ArticleService,
+            $q:ng.IQService,
+            tagCategories:common.models.CategoryTag[] = [],
+            categoryOneTag = common.models.CategoryTagMock.entity({
+                tag:'CategoryOne'
+            }),
+            categoryTwoTag = common.models.CategoryTagMock.entity({
+                tag:'Category Two'
+            }),
+            categoryThreeTag = common.models.CategoryTagMock.entity({
+                tag:'Category Three'
+            });
+
+        tagCategories.push(categoryOneTag, categoryTwoTag, categoryThreeTag);
 
         beforeEach(()=> {
 
             module('app');
 
-            inject((_$httpBackend_, _tagService_, _ngRestAdapter_) => {
+            inject((_$httpBackend_, _tagService_, _ngRestAdapter_, _articleService_, _$q_) => {
 
                 if (!tagService) { //dont rebind, so each test gets the singleton
                     $httpBackend = _$httpBackend_;
                     tagService = _tagService_;
                     ngRestAdapter = _ngRestAdapter_;
+                    articleService = _articleService_;
+                    $q = _$q_;
                 }
             });
 
@@ -82,6 +98,14 @@ namespace common.services.tag {
 
                 $httpBackend.flush();
 
+                // Should have cached the promise
+
+                let groupTagsCached = tagService.getTagCategories(<any>mockApiService);
+
+                expect(groupTagsCached).eventually.to.be.fulfilled;
+
+                expect(groupTagsCached).eventually.to.deep.equal(tags);
+
                 (<any>ngRestAdapter.get).restore();
 
             });
@@ -111,6 +135,59 @@ namespace common.services.tag {
 
             });
 
+
+        });
+
+        describe('Utility', () => {
+
+            it('should be able to categorize tags', () => {
+
+                sinon.stub(tagService, 'getTagCategories').returns($q.when(tagCategories));
+
+                let article = common.models.ArticleMock.entity(),
+                    tagOne = common.models.LinkingTagMock.entity({
+                        _pivot:{
+                            tagGroupId:categoryOneTag.tagId
+                        }
+                    }),
+                    tagTwo = common.models.LinkingTagMock.entity({
+                        _pivot:{
+                            tagGroupId:categoryThreeTag.tagId
+                        }
+                    }),
+                    tagThree = common.models.LinkingTagMock.entity({
+                        _pivot:{
+                            tagGroupId:categoryThreeTag.tagId
+                        }
+                    }),
+                    tagFour = common.models.LinkingTagMock.entity({
+                        _pivot:{
+                            tagGroupId:categoryThreeTag.tagId
+                        }
+                    });
+
+                article._tags.push(tagOne, tagTwo, tagThree, tagFour);
+
+                let categorizedTagsPromise = tagService.categorizeTags(article, articleService);
+
+                let categoryOneWithChildren:common.models.CategoryTagWithChildren = (<common.models.CategoryTagWithChildren>categoryOneTag);
+                categoryOneWithChildren._tagsInCategory = [tagOne];
+
+                let categoryTwoWithChildren:common.models.CategoryTagWithChildren = (<common.models.CategoryTagWithChildren>categoryTwoTag);
+                categoryTwoWithChildren._tagsInCategory = [];
+
+                let categoryThreeWithChildren:common.models.CategoryTagWithChildren = (<common.models.CategoryTagWithChildren>categoryThreeTag);
+                categoryThreeWithChildren._tagsInCategory = [tagTwo, tagThree, tagFour];
+
+                expect(categorizedTagsPromise).eventually.to.deep.equal({
+                    CategoryOne:categoryOneWithChildren,
+                    CategoryTwo:categoryTwoWithChildren,
+                    CategoryThree:categoryThreeWithChildren
+                });
+
+                (<Sinon.SinonStub>tagService.getTagCategories).restore();
+
+            });
 
         });
 

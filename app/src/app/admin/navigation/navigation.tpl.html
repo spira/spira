@@ -4,7 +4,7 @@
         <md-list-item aria-label="Go to your profile" class="navigation-user md-2-line" ng-click="AppController.goToUserProfile($event)">
             <avatar class="md-avatar" user="AdminNavigationController.ngJwtAuthService.user" width="40" height="40"></avatar>
             <div class="md-list-item-text" ng-if="!AdminNavigationController.collapsed">
-                <h3>{{ AdminNavigationController.ngJwtAuthService.user.fullName() }}</h3>
+                <h3>{{ AdminNavigationController.ngJwtAuthService.user.fullName }}</h3>
                 <p>{{ AdminNavigationController.ngJwtAuthService.user.rolesDisplay() }}</p>
             </div>
             <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">Profile</md-tooltip>

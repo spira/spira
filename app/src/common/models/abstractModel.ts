@@ -31,14 +31,6 @@ namespace common.models {
         [key:string] : IAttributeCastFunction;
     }
 
-    export interface IExtendedAbstractModel extends ITagGroupsModel, AbstractModel {
-
-    }
-
-    export interface ITagGroupsModel {
-        getTagGroups?():string[];
-    }
-
     export interface IMetaableModel extends AbstractModel {
         _metas:common.models.Meta[];
     }
@@ -103,15 +95,6 @@ namespace common.models {
         }
 
         /**
-         * Converts a date time
-         * @param value
-         * @returns {Date}
-         */
-        protected castDate(value:string):Date {
-            return moment(value).toDate();
-        }
-
-        /**
          * Converts a moment object
          * @param value
          * @returns {Moment}
@@ -172,7 +155,7 @@ namespace common.models {
                     }
                 }
                 else if (_.isFunction(nestedObject)) {
-                    nestedData = (<IHydrateFunction>nestedObject)(data, exists);
+                    nestedData = (<IHydrateFunction>nestedObject).call(this, data, exists);
                 }else{
                     console.log('data', data);
                 }
@@ -201,7 +184,7 @@ namespace common.models {
          */
         public getAttributes(includeUnderscoredKeys:boolean = false):Object{
 
-            let allAttributes = _.clone(this);
+            let allAttributes = angular.extend({}, this);
 
             let publicAttributes = _.omit(allAttributes, (value, key) => {
                 return _.startsWith(key, '__');

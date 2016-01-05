@@ -1,6 +1,6 @@
 module common.models {
 
-    @common.decorators.changeAware
+    @common.decorators.changeAware.changeAware
     export class UserCredential extends AbstractModel implements global.IUserCredential{
 
         public userId:string;

@@ -1,14 +1,16 @@
 namespace app {
 
     export const namespace = 'app';
+    const DATEPICKER_FORMAT = 'DD/MM/YYYY';
 
     class AppConfig {
 
-        static $inject = ['ngHttpProgressProvider', '$mdIconProvider', '$provide'];
+        static $inject = ['ngHttpProgressProvider', '$mdIconProvider', '$provide', '$mdDateLocaleProvider'];
 
         constructor(ngHttpProgressProvider:NgHttpProgress.IngHttpProgressServiceProvider,
                     $mdIconProvider:ng.material.IIconProvider,
-                    $provide:ng.auto.IProvideService
+                    $provide:ng.auto.IProvideService,
+                    $mdDateLocaleProvider
                     ) {
 
             let httpProgressConfig:NgHttpProgress.INgHttpProgressServiceConfig = {
@@ -21,6 +23,26 @@ namespace app {
             $provide.constant('$MD_THEME_CSS', '/**/'); //disable all angular material style injections
 
             //(<any>$mdIconProvider).fontSet('fa', 'fontawesome');
+
+            // Configure MD-Datepicker to work with moment objects
+            // Refer to moment.ts for further moment hacks to get this working
+            // Refer to datePickerDecorator.ts for overridden functions in the date picker source
+            $mdDateLocaleProvider.parseDate = (date:string):moment.Moment => {
+                return moment(date, DATEPICKER_FORMAT);
+            };
+
+            $mdDateLocaleProvider.formatDate = (date:Object):string => {
+                // Unhelpful, but date is always of type Object. It comes in 2 forms:
+                // 1. A moment instance - This occurs when the date picker is set up
+                // 2. A date time string - This occurs when a date is picked from the picker window
+                try {
+                    return (<moment.Moment>date).format(DATEPICKER_FORMAT);
+                }
+                catch(e) {
+                    return moment(date).format(DATEPICKER_FORMAT);
+                }
+            };
+
         }
 
     }

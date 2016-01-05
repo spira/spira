@@ -6,7 +6,7 @@
     </md-toolbar>
     <md-card-content>
 
-        <md-input-container>
+        <md-input-container class="md-block">
             <label>Title</label>
 
             <input ng-model="ContentController.article.title"
@@ -20,13 +20,13 @@
 
         </md-input-container>
 
-        <md-input-container>
+        <md-input-container class="md-block">
             <label>Short Title</label>
 
             <input ng-model="ContentController.article.shortTitle" name="shortTitle" type="text">
         </md-input-container>
 
-        <md-input-container>
+        <md-input-container class="md-block">
             <label>Permalink</label>
 
             <input ng-model="ContentController.article.permalink" name="permalink" type="text" ng-change="ContentController.updatePublicUrl()">
@@ -62,7 +62,7 @@
     </md-toolbar>
     <md-card-content>
 
-        <md-input-container flex>
+        <md-input-container class="md-block">
             <label>Short Description for listings and search engines</label>
 
             <textarea
@@ -77,7 +77,7 @@
             </ng-messages>
         </md-input-container>
 
-        <md-input-container flex>
+        <md-input-container class="md-block">
             <label>Thumbnail</label>
             <select-media-image
                     ng-model="ContentController.article._thumbnailImage"

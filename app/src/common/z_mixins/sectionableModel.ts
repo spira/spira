@@ -32,7 +32,7 @@ namespace common.mixins {
          * @param exists
          * @returns {any}
          */
-        public hydrateSections(data:any, exists:boolean) : common.models.Section<any>[]{
+        public hydrateSections(data:any, exists:boolean) : common.models.Section<any>[] {
 
             if (!_.has(data, '_sections')){
                 return;

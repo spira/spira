@@ -47,6 +47,21 @@ namespace common.services.utility {
                 return expect(promiseResult).eventually.to.equal(6);
             });
 
+            it('should be able to run a series of promises in sequence with extra arguments', () => {
+
+                let promiseFactories = [
+                    (value, extra) => $q.when(value + 1 + extra),
+                    (value, extra) => $q.when(value + 2 + extra),
+                    (value, extra) => $q.when(value + 3 + extra),
+                ];
+
+                let promiseResult = utilityService.serialPromise(promiseFactories, 0, null, 2);
+
+                $rootScope.$apply();
+
+                return expect(promiseResult).eventually.to.equal(12);
+            });
+
         });
 
     });

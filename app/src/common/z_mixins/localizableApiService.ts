@@ -11,9 +11,6 @@ namespace common.mixins {
 
             let localizationRequestCollection = this.getNestedCollectionRequestObject(entity, '_localizations', false, true);
 
-            if (!localizationRequestCollection){
-                return this.$q.when(false);
-            }
 
             let localizationRegionPromises = _.map(localizationRequestCollection, (localizationModel:common.models.Localization<any>) => {
                 return this.ngRestAdapter.put(`${this.apiEndpoint(entity)}/localizations/${localizationModel.regionCode}`, localizationModel.localizations);

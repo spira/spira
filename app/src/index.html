@@ -24,6 +24,7 @@
         <% }); %>
 
         <!-- remote stylesheets -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <meta ng-repeat="meta in RootController.$state.current.data.meta" name="{{ meta.metaName }}" content="{{ meta.metaContent }}">
@@ -31,15 +32,15 @@
     </head>
 
     <body layout="column">
-        <md-toolbar class="md-warn" ng-if="!!RootController.authService.impersonation">
+        <md-toolbar class="md-warn" ng-if="!!RootController.authService.impersonation" ng-cloak>
             <div class="md-toolbar-tools">
                 <md-icon>supervisor_account</md-icon>
                 <h2>
-                    <span> You are current impersonating <strong>{{RootController.authService.impersonation.impersonatedUser.fullName()}}</strong></span>
+                    <span> You are current impersonating <strong>{{RootController.authService.impersonation.impersonatedUser.fullName}}</strong></span>
                 </h2>
                 <span flex></span>
                 <md-button class="md-raised" aria-label="Restore" ng-click="RootController.authService.restoreFromImpersonation()">
-                    Restore your login ({{RootController.authService.impersonation.originalUser.fullName()}}) <md-icon>history</md-icon>
+                    Restore your login ({{RootController.authService.impersonation.originalUser.fullName}}) <md-icon>history</md-icon>
                 </md-button>
             </div>
         </md-toolbar>

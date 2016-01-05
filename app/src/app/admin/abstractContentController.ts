@@ -1,6 +1,6 @@
 namespace app.admin {
 
-    export abstract class AbstractContentController<M extends common.models.IExtendedAbstractModel, S extends common.services.IExtendedApiService> {
+    export abstract class AbstractContentController<M extends common.models.AbstractModel, S extends common.services.IExtendedApiService> {
 
         public publicUrl:string;
         protected tagsPaginator:common.services.pagination.Paginator;
@@ -13,7 +13,7 @@ namespace app.admin {
         ) {
             this.publicUrl = this.modelService.getPublicUrl(this.entity);
 
-            this.tagsPaginator = tagService.getPaginator().setCount(10);
+            this.tagsPaginator = tagService.getPaginator().setCount(10).noResultsResolve();
         }
 
         /**

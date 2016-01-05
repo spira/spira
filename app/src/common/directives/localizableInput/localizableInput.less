@@ -1,12 +1,21 @@
 @import (reference) "../../../styles/global.less";
 
-md-input-container.localizable .md-input {
-    margin-right: 36px;
+md-input-container.localizable {
 
-    &+ button.localizable-input {
-        top: 10px;
-        right: 2px;
-        margin-right: 0;
+    &.md-has-icon {
+        padding: 0;
+
+        > label {
+            left: 0;
+        }
+    }
+
+    // Refer to https://github.com/angular/material/issues/6214 for md-errors-spacer class
+    .md-input + .md-errors-spacer + button.localizable-input,
+    .md-input + button.localizable-input {
         position: absolute;
+        top: -10px;
+        right: 0px;
+        margin-right: 0;
     }
 }
