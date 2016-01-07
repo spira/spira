@@ -12,6 +12,7 @@ services:
 
 env:
   global:
+    - CXX="g++-4.8" CC="gcc-4.8"
     - FORUM_DB_DATABASE=vanilla
     - FORUM_DB_HOST=127.0.0.1
     - FORUM_DB_USERNAME=travis
