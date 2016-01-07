@@ -27,7 +27,7 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libnotify-bin beanstalkd
-  - nvm install 0.12 && nvm use 0.12
+  - nvm install 5.4.0 && nvm use 5.4.0
   - mysql -e 'create database vanilla;'
 
 install:
