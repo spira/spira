@@ -104,6 +104,15 @@ namespace common.models {
         }
 
         /**
+         * Converts a momentDate object
+         * @param value
+         * @returns {MomentDate}
+         */
+        protected castMomentDate(value:string):moment.MomentDate {
+            return momentDate(value);
+        }
+
+        /**
          * Converts a time string to a moment duration object
          * @param value
          * @returns {moment.Duration}
