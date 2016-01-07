@@ -14,5 +14,13 @@ function momentDate(...args) {
 momentDate.prototype.__proto__ = (<any>moment).prototype;
 
 momentDate.prototype.toString = function () {
+    return this.format('ddd MMM DD YYYY');
+};
+
+momentDate.prototype.toISOString = function () {
+    return this.format('YYYY-MM-DD');
+};
+
+momentDate.prototype.toJSON = function () {
     return this.format('YYYY-MM-DD');
 };

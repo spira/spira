@@ -25,7 +25,6 @@ declare module moment {
 // This allows moment object to be used with date pickers.
 // See: DateLocaleProvider.prototype.$get:defaultFormatDate() in Angular Material source.
 // Refer to app.ts for further datepicker configuration.
-// Refer to datePickerDecorator.ts for overridden functions in the date picker source.
 
 // These functions are required when the datepicker is opened
 (<any>moment).fn.getFullYear = (<any>moment).fn.year;

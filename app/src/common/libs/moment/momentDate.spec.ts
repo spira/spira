@@ -65,8 +65,8 @@ describe('Moment', () => {
             let mDate = momentDate('1988-05-14');
             let m = moment('1988-05-14');
 
-            expect(mDate.toISOString()).to.equal(m.toISOString());
             expect(mDate.hours()).to.equal(m.hours());
+            expect(mDate.isBefore('2010-10-21')).to.equal(m.isBefore('2010-10-21'));
 
         });
 
@@ -75,12 +75,14 @@ describe('Moment', () => {
             let mDate = momentDate('1988-05-14');
             let m = moment('1988-05-14');
 
-            expect(mDate.toString()).to.not.equal(m.toString());
-            expect(mDate.toString()).to.equal('1988-05-14');
+            expect(mDate.toISOString()).to.not.equal(m.toISOString());
+            expect(mDate.toISOString()).to.equal('1988-05-14');
+            expect(JSON.stringify(mDate)).to.equal('"1988-05-14"');
+            expect(mDate.toJSON()).to.equal('1988-05-14');
 
             // Timezone is included in this output
+            expect(mDate.toString()).to.equal('Sat May 14 1988');
             expect(m.toString()).to.have.string('Sat May 14 1988 00:00:00');
-
         });
 
 
