@@ -57,7 +57,7 @@ class ApiaryValidateCommand extends Command
 
         $validator = base_path().'/node_modules/.bin/api-blueprint-validator';
 
-        exec("$validator $fileLocation", $output, $exitCode);
+        exec("$validator $fileLocation --fail-on-warning", $output, $exitCode);
 
         if ($exitCode == 0) {
             $this->info('Apiary Documentation validation passed');

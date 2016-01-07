@@ -63,7 +63,7 @@ class Markdown extends \Faker\Provider\Base
      * @param null $right
      * @return string
      */
-    private function wrapText($text, $probability = 0.1, $left, $right = null)
+    private function wrapText($text, $probability = 0.1, $left = null, $right = null)
     {
         if (! $right) {
             $right = $left;
