@@ -37,7 +37,8 @@
     ],
     "minimum-stability": "dev",
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "discard-changes": true
     },
     "autoload": {
         "psr-0": {
