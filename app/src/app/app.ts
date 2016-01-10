@@ -26,9 +26,8 @@ namespace app {
 
             // Configure MD-Datepicker to work with moment objects
             // Refer to moment.ts for further moment hacks to get this working
-            // Refer to datePickerDecorator.ts for overridden functions in the date picker source
-            $mdDateLocaleProvider.parseDate = (date:string):moment.Moment => {
-                return moment(date, DATEPICKER_FORMAT);
+            $mdDateLocaleProvider.parseDate = (date:string):moment.MomentDate => {
+                return momentDate(date, DATEPICKER_FORMAT);
             };
 
             $mdDateLocaleProvider.formatDate = (date:Object):string => {
@@ -36,10 +35,10 @@ namespace app {
                 // 1. A moment instance - This occurs when the date picker is set up
                 // 2. A date time string - This occurs when a date is picked from the picker window
                 try {
-                    return (<moment.Moment>date).format(DATEPICKER_FORMAT);
+                    return (<moment.MomentDate>date).format(DATEPICKER_FORMAT);
                 }
                 catch(e) {
-                    return moment(date).format(DATEPICKER_FORMAT);
+                    return momentDate(date).format(DATEPICKER_FORMAT);
                 }
             };
 

@@ -2,19 +2,7 @@ namespace app.abstract.profile {
 
     export const namespace = 'app.abstract.profile';
 
-    export class AbstractProfileController {
-
-        static $inject = [
-            'userService',
-            'notificationService',
-            'authService',
-            'countries',
-            'timezones',
-            'genderOptions',
-            'regions',
-            'providerTypes',
-            'fullUserInfo',
-        ];
+    export abstract class AbstractProfileController {
 
         protected showEditPassword:boolean = false;
 

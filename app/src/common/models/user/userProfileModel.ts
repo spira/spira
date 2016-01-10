@@ -8,11 +8,11 @@ module common.models {
     export class UserProfile extends AbstractModel {
 
         protected __attributeCastMap:IAttributeCastMap = {
-            dob: this.castMoment,
+            dob: this.castMomentDate,
         };
 
         public userId:string;
-        public dob:moment.Moment;
+        public dob:moment.MomentDate;
         public mobile:string;
         public phone:string;
         public gender:string;
