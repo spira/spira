@@ -113,6 +113,14 @@ class Build
     protected function setupVanilla()
     {
         copy('config.php', 'public/conf/config.php'); //also overwrites the config file for a repeated migration (for qa)
+        file_put_contents(
+            'public/index.php',
+            str_replace(
+                "'display_errors', 0",
+                "'display_errors', 1",
+                file_get_contents('public/index.php')
+            )
+        );
 
         (new VanillaConfigurator)->start();
     }

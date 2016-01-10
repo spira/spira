@@ -56,7 +56,8 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "discard-changes": true
     },
     "scripts": {
         "post-install-cmd": [
