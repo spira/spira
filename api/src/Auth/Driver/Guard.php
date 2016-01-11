@@ -142,7 +142,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setUser(Authenticatable $user)
     {
@@ -150,7 +150,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function id()
     {
