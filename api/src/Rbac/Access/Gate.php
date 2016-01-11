@@ -52,7 +52,7 @@ class Gate implements GateContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function before(callable $callback)
     {
@@ -60,7 +60,7 @@ class Gate implements GateContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function allows($ability, $arguments = [])
     {
@@ -68,11 +68,11 @@ class Gate implements GateContract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function denies($ability, $arguments = [])
     {
-        return !$this->allows($ability, $arguments);
+        return ! $this->allows($ability, $arguments);
     }
 
     /**
