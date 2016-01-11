@@ -371,7 +371,7 @@ gulp.task('build', 'runs build sequence for frontend', function (cb) {
     plugins.runSequence('clean',
         //'bower:install',
         ['scripts:app', 'templates', 'styles', 'assets', 'bower:build'],
-        'index',
+        ['index','build:write-log'],
         cb);
 });
 
@@ -475,6 +475,31 @@ gulp.task('coveralls', 'generates code coverage for the frontend', [], function 
         .pipe(plugins.coveralls());
 });
 
+gulp.task('build:write-log', 'writes git log to file for system information display', function(){
+    plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\'{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%f"%n}\''}, function (err, stdout) {
+        if (err) throw err;
+
+        var latestCommit = JSON.parse(stdout);
+
+        var systemInfo = {
+            latestCommit: latestCommit,
+            appBuildDate: new Date().toISOString(),
+            ciBuild: {
+                id: '%ciBuild.id%',
+                url: '%ciBuild.url%',
+                date: '%ciBuild.date%'
+            },
+            ciDeployment: {
+                id: '%ciDeployment.deploymentId%',
+                url: '%ciDeployment.url%',
+                date: '%ciDeployment.date%'
+            }
+        };
+
+        require('fs').writeFileSync('app/build/build-info.json', JSON.stringify(systemInfo, null, 4));
+
+    });
+});
 
 function testNotification(status, pluginName, override) {
     var options = {
