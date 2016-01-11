@@ -96,6 +96,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\ElasticServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);
 $app->register(App\Providers\AuthDriverServiceProvider::class);
+$app->register(\Illuminate\Redis\RedisServiceProvider::class);
 
 $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 
