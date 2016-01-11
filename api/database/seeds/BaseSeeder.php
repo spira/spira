@@ -11,7 +11,7 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 
-class BaseSeeder extends Seeder
+abstract class BaseSeeder extends Seeder
 {
     /**
      * Get random elements from collection, always returning a collection.

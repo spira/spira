@@ -142,6 +142,22 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
     }
 
     /**
+     * @inheritdoc
+     */
+    public function setUser(Authenticatable $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function id()
+    {
+        return $this->user->getAuthIdentifier();
+    }
+
+    /**
      * Get the token of currently authenticated user.
      *
      * @return string|null

@@ -52,6 +52,30 @@ class Gate implements GateContract
     }
 
     /**
+     * @inheritdoc
+     */
+    public function before(callable $callback)
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function allows($ability, $arguments = [])
+    {
+        return $this->check($ability, $arguments);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function denies($ability, $arguments = [])
+    {
+        return !$this->allows($ability, $arguments);
+    }
+
+    /**
      * Determine if a given ability has been defined.
      *
      * @param  string $ability
@@ -116,7 +140,7 @@ class Gate implements GateContract
      * @param Authenticatable $user
      * @return static
      */
-    public function forUser(Authenticatable $user)
+    public function forUser($user)
     {
         return new static($this->getStorage(), function () use ($user) {return $user; }, $this->defaultRoles);
     }

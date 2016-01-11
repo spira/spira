@@ -183,7 +183,7 @@ class VanillaSingleSignOn extends SingleSignOnAbstract implements SingleSignOnCo
      */
     protected function getGate()
     {
-        return \App::make(GateContract::class);
+        return app(GateContract::class);
     }
 
     /**

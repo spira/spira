@@ -51,7 +51,7 @@ class ImageSeeder extends BaseSeeder
     private function seedFromCloudinary()
     {
         /** @var Cloudinary $cloudinary */
-        $cloudinary = App::make(Cloudinary::class);
+        $cloudinary = app(Cloudinary::class);
 
         $remoteImageResponse = $cloudinary->getRemoteImages();
 

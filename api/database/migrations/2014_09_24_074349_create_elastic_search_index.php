@@ -18,7 +18,7 @@ class CreateElasticSearchIndex extends Migration
 
     public function __construct()
     {
-        $this->elasticSearch = App::make(ElasticSearch::class);
+        $this->elasticSearch = app(ElasticSearch::class);
     }
 
     /**
