@@ -474,7 +474,7 @@ gulp.task('coveralls', 'generates code coverage for the frontend', [], function 
 
 gulp.task('build:write-log', 'writes git log to file for system information display', function(){
 
-    var prettyFormat = '{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%f",%n  "refs": "%d"%n}';
+    var prettyFormat = '{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%s",%n  "refs": "%d"%n}';
 
     plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\''+prettyFormat+'\' HEAD'}, function (err, lastCommit) {
         if (err) throw err;
