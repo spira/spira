@@ -15,6 +15,7 @@ namespace common.services {
         namespace+'.timezones',
         namespace+'.pagination',
         namespace+'.notification',
+        namespace+'.systemInformation',
     ]);
 
 }

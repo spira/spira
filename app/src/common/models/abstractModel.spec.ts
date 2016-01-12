@@ -12,12 +12,14 @@ namespace common.models {
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
-            bar: sinon.stub().returns('bar')
+            bar: sinon.stub().returns('bar'),
+            'deep.casting': sinon.stub().returns('deep-casting')
         };
 
         public foo:string;
         public bar:string;
         public foobar:string;
+        public deep:{casting:string};
         public _hasOne:TestChildModel;
         public _hasMany:TestChildModel[] = [];
         public _hydrate:TestChildModel[] = [];
@@ -154,6 +156,25 @@ namespace common.models {
 
             expect(model.foobar).to.equal('foobar');
 
+        });
+
+        it('should run deep functions in the attribute cast map', () => {
+
+            let model = new TestModel({
+                deep: {
+                    casting: 'foo',
+                }
+            });
+
+            expect(model.deep.casting).to.equal('deep-casting');
+
+        });
+
+        it('should not create a value for an undefined value', () => {
+
+            let model = new TestModel({});
+
+            expect(model.bar).to.be.undefined;
         });
 
     });

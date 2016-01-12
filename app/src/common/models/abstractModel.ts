@@ -77,15 +77,11 @@ namespace common.models {
 
             if (_.isObject(data)) {
 
-                _.transform(data, (model, value, key) => {
+                _.assign(this, data);
 
-                    if(_.has(this.__attributeCastMap, key)) {
-                        model[key] = this.__attributeCastMap[key](value);
-                    } else {
-                        model[key] = value;
-                    }
-
-                }, this);
+                _.forIn(this.__attributeCastMap, (caster:IAttributeCastFunction, accessor:string) => {
+                    _.has(this, accessor) && (<any>_).set(this, accessor, caster.call(this, _.get(data, accessor)));
+                });
 
                 if (!_.isEmpty(this.__nestedEntityMap)) {
                     this.hydrateNested(data, exists);
@@ -101,6 +97,15 @@ namespace common.models {
          */
         protected castMoment(value:string):moment.Moment {
             return moment(value);
+        }
+
+        /**
+         * Converts a momentDate object
+         * @param value
+         * @returns {MomentDate}
+         */
+        protected castMomentDate(value:string):moment.MomentDate {
+            return momentDate(value);
         }
 
         /**
