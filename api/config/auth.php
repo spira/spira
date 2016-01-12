@@ -17,6 +17,9 @@ return [
         'guard' => env('AUTH_GUARD', 'api'),
     ],
 
+    /* Removed config value from 5.1 */
+    'model' => env('AUTH_MODEL', 'App\User'),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards

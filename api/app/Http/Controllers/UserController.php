@@ -29,8 +29,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends EntityController
 {
-    use DispatchesJobs;
-
     /**
      * @var SpiraGuard
      */
