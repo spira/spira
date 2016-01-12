@@ -479,24 +479,41 @@ gulp.task('build:write-log', 'writes git log to file for system information disp
     plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\'{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%f"%n}\''}, function (err, stdout) {
         if (err) throw err;
 
-        var latestCommit = JSON.parse(stdout);
+        plugins.git.exec({args:'describe --abbrev=0 --tags --all && git rev-list -n 1 $(git describe --abbrev=0 --tags --all)'}, function (err, output) {
+            if (err) throw err;
 
-        var systemInfo = {
-            latestCommit: latestCommit,
-            appBuildDate: new Date().toISOString(),
-            ciBuild: {
-                id: '%ciBuild.id%',
-                url: '%ciBuild.url%',
-                date: '%ciBuild.date%'
-            },
-            ciDeployment: {
-                id: '%ciDeployment.deploymentId%',
-                url: '%ciDeployment.url%',
-                date: '%ciDeployment.date%'
-            }
-        };
+            var latestCommit = JSON.parse(stdout);
+            var refs = output.split('\n');
 
-        require('fs').writeFileSync('app/build/build-info.json', JSON.stringify(systemInfo, null, 4));
+            var systemInfo = {
+                latestCommit: latestCommit,
+                refs: {
+                    latestTagOrHead: refs[0],
+                    commitRef: refs[1]
+                },
+                appBuildDate: new Date().toISOString(),
+                ciBuild: {
+                    id: '%ciBuild.id%',
+                    url: '%ciBuild.url%',
+                    date: '%ciBuild.date%'
+                },
+                ciDeployment: {
+                    id: '%ciDeployment.deploymentId%',
+                    url: '%ciDeployment.url%',
+                    date: '%ciDeployment.date%'
+                }
+            };
+
+            var jsonDocument = JSON.stringify(systemInfo, null, 4);
+            var fs = require('fs');
+
+            // we write the same file twice, to both app and api so we can verify the versions independently as they are
+            // potentially deployed to separate docker nodes
+            fs.writeFileSync('app/build/build-info.json', jsonDocument);
+            fs.writeFileSync('api/storage/app/build-info.json', jsonDocument);
+
+        });
+
 
     });
 });

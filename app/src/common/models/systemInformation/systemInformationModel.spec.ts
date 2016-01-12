@@ -6,10 +6,14 @@ namespace common.models {
 
         let systemInfoData = {
             "latestCommit": {
-                "commit": seededChance.hash,
+                "commit": seededChance.hash(),
                 "author": "John Doe <john.doe@example.com>",
                 "date": seededChance.date().toISOString(),
                 "message": seededChance.sentence()
+            },
+            "refs": {
+                "latestTagOrHead": "/heads/feature/" + seededChance.word,
+                "commitRef": seededChance.hash(),
             },
             "appBuildDate": seededChance.date().toISOString(),
             "ciBuild": {
