@@ -3,7 +3,7 @@ namespace common.models {
     export class UserMock extends AbstractMock implements IMock{
 
         public getModelClass():IModelClass {
-            return common.models.User;
+            return User;
         }
 
         public getMockData():Object {

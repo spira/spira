@@ -61,6 +61,8 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'requireAuth
     $app->patch('images/{id}', 'ImageController@patchOne');
     $app->delete('images/{id}', 'ImageController@deleteOne');
 
+    $app->get('utility/system-information', 'UtilityController@getSystemInformation');
+
 });
 
 $app->group(['namespace' => 'App\Http\Controllers'], function (Application $app) {

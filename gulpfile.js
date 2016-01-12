@@ -31,9 +31,6 @@ var gulpCore = require('gulp'),
 
 console.timeEnd("Core plugins loaded");
 
-console.log('browserSync', _.functions(browserSync));
-
-
 var paths = {
     src: {
         tsd: 'app/typings/**/*.d.ts',
@@ -371,7 +368,7 @@ gulp.task('build', 'runs build sequence for frontend', function (cb) {
     plugins.runSequence('clean',
         //'bower:install',
         ['scripts:app', 'templates', 'styles', 'assets', 'bower:build'],
-        'index',
+        ['index','build:write-log'],
         cb);
 });
 
@@ -475,6 +472,48 @@ gulp.task('coveralls', 'generates code coverage for the frontend', [], function 
         .pipe(plugins.coveralls());
 });
 
+gulp.task('build:write-log', 'writes git log to file for system information display', function(){
+
+    var prettyFormat = '{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%s",%n  "refs": "%d"%n}';
+
+    plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\''+prettyFormat+'\' HEAD'}, function (err, lastCommit) {
+        if (err) throw err;
+
+        plugins.git.exec({args:'--no-pager log -n 1 --pretty=format:\''+prettyFormat+'\' $(git describe --abbrev=0 --tags --always)'}, function (err, tagCommit) {
+            if (err) throw err;
+
+            var latestCommit = JSON.parse(lastCommit),
+                tagCommit = JSON.parse(tagCommit);
+
+            var systemInfo = {
+                latestCommit: latestCommit,
+                tagCommit: tagCommit,
+                appBuildDate: new Date().toISOString(),
+                ciBuild: {
+                    id: '%ciBuild.id%',
+                    url: '%ciBuild.url%',
+                    date: '%ciBuild.date%'
+                },
+                ciDeployment: {
+                    id: '%ciDeployment.deploymentId%',
+                    url: '%ciDeployment.url%',
+                    date: '%ciDeployment.date%'
+                }
+            };
+
+            var jsonDocument = JSON.stringify(systemInfo, null, 4);
+            var fs = require('fs');
+
+            // we write the same file twice, to both app and api so we can verify the versions independently as they are
+            // potentially deployed to separate docker nodes
+            fs.writeFileSync('app/build/system-information.json', jsonDocument);
+            fs.writeFileSync('api/storage/app/system-information.json', jsonDocument);
+
+        });
+
+
+    });
+});
 
 function testNotification(status, pluginName, override) {
     var options = {
