@@ -37,12 +37,16 @@ namespace app.admin.utilities.systemInformation {
 
     export class SystemInformationController {
 
+        public appMatchesApi:boolean;
+
         static $inject = [
             'systemInformation',
         ];
         constructor(
             public systemInformation:common.services.systemInformation.ISystemInformationSources
         ) {
+
+            this.appMatchesApi = systemInformation.app.latestCommit.commit === systemInformation.api.latestCommit.commit;
         }
 
     }

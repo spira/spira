@@ -16,6 +16,12 @@ namespace common.models {
 
     export class SystemInformation extends AbstractModel {
 
+        protected __attributeCastMap:IAttributeCastMap = {
+            appBuildDate: this.castMoment,
+            'latestCommit.date': this.castMoment,
+            'tagCommit.date': this.castMoment,
+        };
+
         public latestCommit: ICommitInfo;
         public tagCommit: ICommitInfo;
         public appBuildDate:moment.Moment;

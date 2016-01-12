@@ -9,9 +9,83 @@
         </md-toolbar>
 
 
-        <div layout="row">
+        <div ng-repeat="(source, commitDetails) in SystemInformationController.systemInformation" ng-if="!SystemInformationController.appMatchesApi || source == 'app'">
 
-            <pre highlight="">{{SystemInformationController.systemInformation|json}}</pre>
+
+            <h2>
+                <span ng-if="SystemInformationController.appMatchesApi">Commit Details (APP and API match)</span>
+                <span ng-if="!SystemInformationController.appMatchesApi">{{source | uppercase}} Commit Details</span>
+            </h2>
+
+            <div ng-if="source == 'app'">
+                <h3>Last App Build</h3>
+                <h4>{{commitDetails.appBuildDate}} ({{commitDetails.appBuildDate | fromNow}})</h4>
+            </div>
+
+            <h3>Latest Commit</h3>
+            <div layout="row">
+                <strong flex>Commit Hash</strong>
+                <span flex>{{commitDetails.latestCommit.commit}}</span>
+            </div>
+            <div layout="row">
+                <strong flex>Author</strong>
+                <span flex>{{commitDetails.latestCommit.author}}</span>
+            </div>
+            <div layout="row">
+                <strong flex>Message</strong>
+                <span flex>{{commitDetails.latestCommit.message}}</span>
+            </div>
+            <div layout="row">
+                <strong flex>Date</strong>
+                <span flex>{{commitDetails.latestCommit.date}}</span>
+            </div>
+            <div layout="row">
+                <strong flex>Refs</strong>
+                <span flex>{{commitDetails.latestCommit.refs}}</span>
+            </div>
+
+            <div ng-if="commitDetails.latestCommit.commit !== commitDetails.tagCommit.commit">
+                <h3>Latest Tag (not the head commit)</h3>
+                <div layout="row">
+                    <strong flex>Commit Hash</strong>
+                    <span flex>{{commitDetails.tagCommit.commit}}</span>
+                </div>
+                <div layout="row">
+                    <strong flex>Author</strong>
+                    <span flex>{{commitDetails.tagCommit.author}}</span>
+                </div>
+                <div layout="row">
+                    <strong flex>Message</strong>
+                    <span flex>{{commitDetails.tagCommit.message}}</span>
+                </div>
+                <div layout="row">
+                    <strong flex>Date</strong>
+                    <span flex>{{commitDetails.tagCommit.date}} ({{commitDetails.tagCommit.date | fromNow}})</span>
+                </div>
+                <div layout="row">
+                    <strong flex>Refs</strong>
+                    <span flex>{{commitDetails.tagCommit.refs}}</span>
+                </div>
+                
+            </div>
+
+            <h3>Continuous Integration</h3>
+            <div layout="row">
+                <strong flex>Build ID</strong>
+                <span flex><a target="_blank" href="{{commitDetails.ciBuild.url}}">{{commitDetails.ciBuild.id}}</a></span>
+            </div>
+            <div layout="row">
+                <strong flex>Build Date</strong>
+                <span flex>{{commitDetails.ciBuild.date}} ({{commitDetails.ciBuild.date | fromNow}})</span>
+            </div>
+            <div layout="row">
+                <strong flex>Deployment ID</strong>
+                <span flex><a target="_blank" href="{{commitDetails.ciDeployment.url}}">{{commitDetails.ciDeployment.id}}</a></span>
+            </div>
+            <div layout="row">
+                <strong flex>Build Date</strong>
+                <span flex>{{commitDetails.ciDeployment.date}} ({{commitDetails.ciDeployment.date | fromNow}})</span>
+            </div>
 
         </div>
 
