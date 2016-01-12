@@ -38,6 +38,7 @@ namespace app.admin {
         namespace + '.media',
         namespace + '.users',
         namespace + '.articles',
+        namespace + '.utilities',
         namespace + '.dashboard',
         namespace + '.navigation',
     ])

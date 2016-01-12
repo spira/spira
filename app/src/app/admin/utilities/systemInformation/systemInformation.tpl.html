@@ -1,0 +1,19 @@
+<section layout="row" id="shopping-list-builder" layout-align="space-around start">
+
+    <md-card ng-form="shoppingListBuilderForm" flex novalidate class="md-whiteframe-z2" layout-padding>
+
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>System Information</h2>
+            </div>
+        </md-toolbar>
+
+
+        <div layout="row">
+
+            <pre highlight="">{{SystemInformationController.appSystemInformation|json}}</pre>
+
+        </div>
+
+    </md-card>
+</section>
