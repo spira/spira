@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +25,7 @@ class UtilityController extends ApiController
     {
         $file = 'system-information.json';
 
-        if (!Storage::disk('local')->has($file)) {
+        if (! Storage::disk('local')->has($file)) {
             throw new NotFoundHttpException("file $file not found");
         }
 
@@ -27,5 +35,4 @@ class UtilityController extends ApiController
         return $this->getResponse()
             ->item($data);
     }
-
 }
