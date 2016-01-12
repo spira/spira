@@ -17,8 +17,8 @@ namespace app.admin.utilities.systemInformation {
                     }
                 },
                 resolve: /*@ngInject*/{
-                    appSystemInformation: (ngRestAdapter:NgRestAdapter.NgRestAdapterService) => {
-                        return ngRestAdapter.api('/').get('build-info.json').then((res) => new common.models.SystemInformation(res.data));
+                    systemInformation: (systemInformationService:common.services.systemInformation.SystemInformationService):ng.IPromise<common.services.systemInformation.ISystemInformationSources> => {
+                        return systemInformationService.getSystemInformation();
                     },
                 },
                 data: {
@@ -38,10 +38,10 @@ namespace app.admin.utilities.systemInformation {
     export class SystemInformationController {
 
         static $inject = [
-            'appSystemInformation',
+            'systemInformation',
         ];
         constructor(
-            public appSystemInformation:common.models.SystemInformation
+            public systemInformation:common.services.systemInformation.ISystemInformationSources
         ) {
         }
 

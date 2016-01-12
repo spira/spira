@@ -31,9 +31,6 @@ var gulpCore = require('gulp'),
 
 console.timeEnd("Core plugins loaded");
 
-console.log('browserSync', _.functions(browserSync));
-
-
 var paths = {
     src: {
         tsd: 'app/typings/**/*.d.ts',
@@ -509,8 +506,8 @@ gulp.task('build:write-log', 'writes git log to file for system information disp
 
             // we write the same file twice, to both app and api so we can verify the versions independently as they are
             // potentially deployed to separate docker nodes
-            fs.writeFileSync('app/build/build-info.json', jsonDocument);
-            fs.writeFileSync('api/storage/app/build-info.json', jsonDocument);
+            fs.writeFileSync('app/build/system-information.json', jsonDocument);
+            fs.writeFileSync('api/storage/app/system-information.json', jsonDocument);
 
         });
 

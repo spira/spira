@@ -1,0 +1,162 @@
+2016-01-06 23:22:13,403 CRIT Supervisor running as root (no user in config file)
+2016-01-06 23:22:13,432 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2016-01-06 23:22:13,442 INFO supervisord started with pid 14
+2016-01-06 23:22:14,445 INFO spawned: 'stdout' with pid 17
+2016-01-06 23:22:14,447 INFO spawned: 'artisan_03' with pid 18
+2016-01-06 23:22:14,466 INFO spawned: 'artisan_02' with pid 19
+2016-01-06 23:22:14,504 INFO spawned: 'artisan_01' with pid 20
+2016-01-06 23:22:14,513 INFO spawned: 'artisan_00' with pid 21
+2016-01-06 23:22:14,543 INFO spawned: 'artisan_07' with pid 22
+2016-01-06 23:22:14,631 INFO spawned: 'artisan_06' with pid 23
+2016-01-06 23:22:14,694 INFO spawned: 'artisan_05' with pid 24
+2016-01-06 23:22:14,769 INFO spawned: 'artisan_04' with pid 25
+2016-01-06 23:22:15,833 INFO success: stdout entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,834 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,836 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,841 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,874 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,881 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,885 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,907 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-06 23:22:15,908 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:09,270 INFO exited: artisan_01 (exit status 1; not expected)
+2016-01-10 22:54:09,334 INFO spawned: 'artisan_01' with pid 53
+2016-01-10 22:54:09,351 INFO exited: artisan_00 (exit status 1; not expected)
+2016-01-10 22:54:09,468 INFO spawned: 'artisan_00' with pid 57
+2016-01-10 22:54:09,533 INFO exited: artisan_06 (exit status 1; not expected)
+2016-01-10 22:54:09,555 INFO spawned: 'artisan_06' with pid 76
+2016-01-10 22:54:09,566 INFO exited: artisan_03 (exit status 1; not expected)
+2016-01-10 22:54:09,566 INFO exited: artisan_02 (exit status 1; not expected)
+2016-01-10 22:54:09,570 INFO exited: artisan_07 (exit status 1; not expected)
+2016-01-10 22:54:09,570 INFO exited: artisan_05 (exit status 1; not expected)
+2016-01-10 22:54:09,570 INFO exited: artisan_04 (exit status 1; not expected)
+2016-01-10 22:54:09,572 INFO spawned: 'artisan_03' with pid 77
+2016-01-10 22:54:09,579 INFO spawned: 'artisan_02' with pid 78
+2016-01-10 22:54:09,599 INFO spawned: 'artisan_07' with pid 79
+2016-01-10 22:54:09,622 INFO spawned: 'artisan_05' with pid 80
+2016-01-10 22:54:09,636 INFO spawned: 'artisan_04' with pid 81
+2016-01-10 22:54:10,658 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:10,658 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:15,466 INFO exited: artisan_01 (exit status 1; not expected)
+2016-01-10 22:54:15,624 INFO spawned: 'artisan_01' with pid 109
+2016-01-10 22:54:15,729 INFO exited: artisan_07 (exit status 1; not expected)
+2016-01-10 22:54:15,738 INFO exited: artisan_00 (exit status 1; not expected)
+2016-01-10 22:54:15,742 INFO exited: artisan_03 (exit status 1; not expected)
+2016-01-10 22:54:15,752 INFO spawned: 'artisan_03' with pid 131
+2016-01-10 22:54:15,755 INFO spawned: 'artisan_00' with pid 132
+2016-01-10 22:54:15,773 INFO spawned: 'artisan_07' with pid 133
+2016-01-10 22:54:15,774 INFO exited: artisan_06 (exit status 1; not expected)
+2016-01-10 22:54:15,774 INFO exited: artisan_02 (exit status 1; not expected)
+2016-01-10 22:54:15,774 INFO exited: artisan_05 (exit status 1; not expected)
+2016-01-10 22:54:15,775 INFO exited: artisan_04 (exit status 1; not expected)
+2016-01-10 22:54:15,779 INFO spawned: 'artisan_02' with pid 134
+2016-01-10 22:54:15,790 INFO spawned: 'artisan_06' with pid 135
+2016-01-10 22:54:15,803 INFO spawned: 'artisan_05' with pid 136
+2016-01-10 22:54:15,824 INFO spawned: 'artisan_04' with pid 137
+2016-01-10 22:54:16,837 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,837 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,837 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,838 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,838 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,838 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,838 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:16,838 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:21,759 INFO exited: artisan_01 (exit status 1; not expected)
+2016-01-10 22:54:21,815 INFO spawned: 'artisan_01' with pid 165
+2016-01-10 22:54:21,833 INFO exited: artisan_03 (exit status 1; not expected)
+2016-01-10 22:54:21,849 INFO spawned: 'artisan_03' with pid 169
+2016-01-10 22:54:21,902 INFO exited: artisan_00 (exit status 1; not expected)
+2016-01-10 22:54:21,908 INFO spawned: 'artisan_00' with pid 182
+2016-01-10 22:54:21,916 INFO exited: artisan_07 (exit status 1; not expected)
+2016-01-10 22:54:21,944 INFO spawned: 'artisan_07' with pid 189
+2016-01-10 22:54:21,951 INFO exited: artisan_02 (exit status 1; not expected)
+2016-01-10 22:54:21,954 INFO exited: artisan_06 (exit status 1; not expected)
+2016-01-10 22:54:21,956 INFO exited: artisan_05 (exit status 1; not expected)
+2016-01-10 22:54:21,957 INFO exited: artisan_04 (exit status 1; not expected)
+2016-01-10 22:54:21,966 INFO spawned: 'artisan_02' with pid 190
+2016-01-10 22:54:21,985 INFO spawned: 'artisan_06' with pid 191
+2016-01-10 22:54:21,988 INFO spawned: 'artisan_05' with pid 192
+2016-01-10 22:54:22,011 INFO spawned: 'artisan_04' with pid 193
+2016-01-10 22:54:23,039 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,039 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:23,040 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:27,882 INFO exited: artisan_01 (exit status 1; not expected)
+2016-01-10 22:54:27,963 INFO spawned: 'artisan_01' with pid 221
+2016-01-10 22:54:27,983 INFO exited: artisan_03 (exit status 1; not expected)
+2016-01-10 22:54:28,006 INFO spawned: 'artisan_03' with pid 226
+2016-01-10 22:54:28,044 INFO exited: artisan_00 (exit status 1; not expected)
+2016-01-10 22:54:28,048 INFO spawned: 'artisan_00' with pid 230
+2016-01-10 22:54:28,086 INFO exited: artisan_04 (exit status 1; not expected)
+2016-01-10 22:54:28,100 INFO exited: artisan_05 (exit status 1; not expected)
+2016-01-10 22:54:28,110 INFO spawned: 'artisan_05' with pid 245
+2016-01-10 22:54:28,128 INFO spawned: 'artisan_04' with pid 246
+2016-01-10 22:54:28,138 INFO exited: artisan_07 (exit status 1; not expected)
+2016-01-10 22:54:28,141 INFO exited: artisan_02 (exit status 1; not expected)
+2016-01-10 22:54:28,148 INFO exited: artisan_06 (exit status 1; not expected)
+2016-01-10 22:54:28,163 INFO spawned: 'artisan_02' with pid 247
+2016-01-10 22:54:28,176 INFO spawned: 'artisan_07' with pid 248
+2016-01-10 22:54:28,198 INFO spawned: 'artisan_06' with pid 249
+2016-01-10 22:54:29,213 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,216 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,217 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,219 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,220 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,220 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,220 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:29,221 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:34,000 INFO exited: artisan_01 (exit status 1; not expected)
+2016-01-10 22:54:34,501 INFO spawned: 'artisan_01' with pid 277
+2016-01-10 22:54:34,754 INFO exited: artisan_00 (exit status 1; not expected)
+2016-01-10 22:54:34,788 INFO spawned: 'artisan_00' with pid 299
+2016-01-10 22:54:34,845 INFO exited: artisan_03 (exit status 1; not expected)
+2016-01-10 22:54:34,850 INFO exited: artisan_02 (exit status 1; not expected)
+2016-01-10 22:54:34,870 INFO exited: artisan_06 (exit status 1; not expected)
+2016-01-10 22:54:34,882 INFO exited: artisan_05 (exit status 1; not expected)
+2016-01-10 22:54:34,893 INFO spawned: 'artisan_03' with pid 300
+2016-01-10 22:54:34,899 INFO spawned: 'artisan_02' with pid 301
+2016-01-10 22:54:34,951 INFO spawned: 'artisan_06' with pid 302
+2016-01-10 22:54:34,990 INFO spawned: 'artisan_05' with pid 303
+2016-01-10 22:54:35,011 INFO exited: artisan_04 (exit status 1; not expected)
+2016-01-10 22:54:35,013 INFO exited: artisan_07 (exit status 1; not expected)
+2016-01-10 22:54:35,037 INFO spawned: 'artisan_07' with pid 304
+2016-01-10 22:54:35,070 INFO spawned: 'artisan_04' with pid 305
+2016-01-10 22:54:36,174 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,174 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,174 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,175 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,175 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,175 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,175 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:36,175 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:43,748 CRIT Supervisor running as root (no user in config file)
+2016-01-10 22:54:43,762 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2016-01-10 22:54:43,764 INFO supervisord started with pid 14
+2016-01-10 22:54:44,767 INFO spawned: 'stdout' with pid 17
+2016-01-10 22:54:44,773 INFO spawned: 'artisan_03' with pid 18
+2016-01-10 22:54:44,791 INFO spawned: 'artisan_02' with pid 19
+2016-01-10 22:54:44,813 INFO spawned: 'artisan_01' with pid 20
+2016-01-10 22:54:44,831 INFO spawned: 'artisan_00' with pid 21
+2016-01-10 22:54:44,865 INFO spawned: 'artisan_07' with pid 22
+2016-01-10 22:54:44,875 INFO spawned: 'artisan_06' with pid 23
+2016-01-10 22:54:44,918 INFO spawned: 'artisan_05' with pid 24
+2016-01-10 22:54:44,946 INFO spawned: 'artisan_04' with pid 25
+2016-01-10 22:54:46,643 INFO success: stdout entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,643 INFO success: artisan_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2016-01-10 22:54:46,644 INFO success: artisan_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)

@@ -14,7 +14,7 @@ namespace common.models {
         refs: string;
     }
 
-    export class SystemInformation extends AbstractModel{
+    export class SystemInformation extends AbstractModel {
 
         public latestCommit: ICommitInfo;
         public tagCommit: ICommitInfo;
