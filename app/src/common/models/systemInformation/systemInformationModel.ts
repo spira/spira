@@ -11,17 +11,13 @@ namespace common.models {
         author: string;
         date: moment.Moment;
         message: string;
-    }
-
-    export interface ICommitRefs {
-        latestTagOrHead: string;
-        commitRef: string;
+        refs: string;
     }
 
     export class SystemInformation extends AbstractModel{
 
         public latestCommit: ICommitInfo;
-        public refs: ICommitRefs;
+        public tagCommit: ICommitInfo;
         public appBuildDate:moment.Moment;
         public ciBuild:ICIInfo;
         public ciDeployment:ICIInfo;

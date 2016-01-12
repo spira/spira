@@ -476,21 +476,21 @@ gulp.task('coveralls', 'generates code coverage for the frontend', [], function 
 });
 
 gulp.task('build:write-log', 'writes git log to file for system information display', function(){
-    plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\'{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%f"%n}\''}, function (err, stdout) {
+
+    var prettyFormat = '{%n  "commit": "%H",%n  "author": "%an <%aE>",%n  "date": "%aI",%n  "message": "%f",%n  "refs": "%d"%n}';
+
+    plugins.git.exec({args : '--no-pager log -n 1 --pretty=format:\''+prettyFormat+'\' HEAD'}, function (err, lastCommit) {
         if (err) throw err;
 
-        plugins.git.exec({args:'describe --abbrev=0 --tags --all && git rev-list -n 1 $(git describe --abbrev=0 --tags --all)'}, function (err, output) {
+        plugins.git.exec({args:'--no-pager log -n 1 --pretty=format:\''+prettyFormat+'\' $(git describe --abbrev=0 --tags --always)'}, function (err, tagCommit) {
             if (err) throw err;
 
-            var latestCommit = JSON.parse(stdout);
-            var refs = output.split('\n');
+            var latestCommit = JSON.parse(lastCommit),
+                tagCommit = JSON.parse(tagCommit);
 
             var systemInfo = {
                 latestCommit: latestCommit,
-                refs: {
-                    latestTagOrHead: refs[0],
-                    commitRef: refs[1]
-                },
+                tagCommit: tagCommit,
                 appBuildDate: new Date().toISOString(),
                 ciBuild: {
                     id: '%ciBuild.id%',
