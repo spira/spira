@@ -23,7 +23,7 @@
     "url": "https://github.com/spira/spira/issues"
   },
   "homepage": "https://github.com/spira/spira",
-  "devDependencies": {
+  "dependencies": {
     "bluebird": "^2.2.2",
     "bower": "^1.3.12",
     "browser-sync": "^2.7.10",
