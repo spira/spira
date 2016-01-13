@@ -53,6 +53,8 @@ class SpiraAuthTest extends TestCase
 
     public function testRequestFacadeUserResolver()
     {
+        $this->markTestSkipped('Request facade is deprecated');
+
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
