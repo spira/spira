@@ -26,7 +26,6 @@ namespace common.models {
         public tagCommit: ICommitInfo;
         public appBuildDate:moment.Moment;
         public ciBuild:ICIInfo;
-        public ciDeployment:ICIInfo;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);

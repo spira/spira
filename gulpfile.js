@@ -493,11 +493,6 @@ gulp.task('build:write-log', 'writes git log to file for system information disp
                     id: '%ciBuild.id%',
                     url: '%ciBuild.url%',
                     date: '%ciBuild.date%'
-                },
-                ciDeployment: {
-                    id: '%ciDeployment.deploymentId%',
-                    url: '%ciDeployment.url%',
-                    date: '%ciDeployment.date%'
                 }
             };
 
