@@ -15,8 +15,8 @@
   ],
   "author": "Zak Henry",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "api-blueprint-validator": "xiphiaz/api-blueprint-validator",
-    "protagonist": "^1.2.3"
+    "protagonist": "1.2.3"
   }
 }
