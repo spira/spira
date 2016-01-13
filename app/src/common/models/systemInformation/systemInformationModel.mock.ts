@@ -29,11 +29,6 @@ namespace common.models {
                     url: "%ciBuild.url%",
                     date: seededChance.date().toISOString()
                 },
-                ciDeployment: {
-                    id: "%ciDeployment.deploymentId%",
-                    url: "%ciDeployment.url%",
-                    date: seededChance.date().toISOString()
-                }
             };
 
         }

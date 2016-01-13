@@ -78,14 +78,6 @@
                 <strong flex>Build Date</strong>
                 <span flex>{{commitDetails.ciBuild.date}} ({{commitDetails.ciBuild.date | fromNow}})</span>
             </div>
-            <div layout="row">
-                <strong flex>Deployment ID</strong>
-                <span flex><a target="_blank" href="{{commitDetails.ciDeployment.url}}">{{commitDetails.ciDeployment.id}}</a></span>
-            </div>
-            <div layout="row">
-                <strong flex>Build Date</strong>
-                <span flex>{{commitDetails.ciDeployment.date}} ({{commitDetails.ciDeployment.date | fromNow}})</span>
-            </div>
 
         </div>
 
