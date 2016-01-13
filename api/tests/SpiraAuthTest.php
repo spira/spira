@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 use Spira\Auth\Driver\Guard;
 
 class SpiraAuthTest extends TestCase
@@ -53,13 +53,10 @@ class SpiraAuthTest extends TestCase
 
     public function testRequestFacadeUserResolver()
     {
-        $this->markTestSkipped('Request facade is deprecated');
-
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);
 
-        /** @var Request $request */
-        $request = \Request::getFacadeRoot();
+        $request = Illuminate\Support\Facades\Request::getFacadeRoot();
         $request->headers->set('Authorization', 'Bearer '.$token);
         $this->assertEquals($user->user_id, $request->user()->user_id);
     }
