@@ -437,8 +437,6 @@ class UserTest extends TestCase
 
     public function testChangeEmail()
     {
-        $this->markTestIncomplete('Fix mailer issues');
-
         $this->clearMessages();
         $user = $this->createUser();
         // Ensure that the current email is considered confirmed.
