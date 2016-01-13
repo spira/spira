@@ -342,7 +342,7 @@ class AuthTest extends TestCase
 
     public function testProviderRedirectReturnUrlOAuthOne()
     {
-        $this->markTestIncomplete('Something strange here');
+        $this->markTestSkipped('redirect is not working(): https://github.com/laravel/lumen-framework/issues/315');
 
         $returnUrl = 'http://www.foo.bar/';
 
