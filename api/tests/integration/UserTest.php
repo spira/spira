@@ -390,8 +390,6 @@ class UserTest extends TestCase
 
     public function testResetPasswordMail()
     {
-        $this->markTestIncomplete('Fix mailer issues');
-
         $this->clearMessages();
         $user = $this->createUser();
         $token = $this->tokenFromUser($user);

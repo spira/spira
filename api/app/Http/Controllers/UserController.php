@@ -18,7 +18,6 @@ use Illuminate\Support\MessageBag;
 use App\Jobs\SendPasswordResetEmail;
 use Illuminate\Contracts\Auth\Guard;
 use App\Jobs\SendEmailConfirmationEmail;
-use Laravel\Lumen\Routing\DispatchesJobs;
 use Spira\Auth\Driver\Guard as SpiraGuard;
 use Spira\Core\Controllers\EntityController;
 use Spira\Core\Responder\Response\ApiResponse;
