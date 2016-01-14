@@ -6,7 +6,9 @@ namespace app.admin.users.editUser.roles {
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,
             $q:ng.IQService,
-            fullUserInfo:common.models.User = common.models.UserMock.entity({});
+            fullUserInfo:common.models.User = common.models.UserMock.entity({}),
+            roles:common.models.Role[] = common.models.RoleMock.collection()
+        ;
 
         beforeEach(() => {
 
@@ -21,6 +23,7 @@ namespace app.admin.users.editUser.roles {
                     $scope: $scope,
                     fullUserInfo: fullUserInfo,
                     regions: _regionService_.supportedRegions,
+                    roles: roles,
                 });
             });
 

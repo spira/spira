@@ -54,7 +54,7 @@ namespace common.models {
         it('should be able to check if the user is an administrator', () => {
 
             let adminUser = UserMock.entity({
-                roles: [RoleAssignment.adminRoleKey],
+                roles: [Role.adminRoleKey],
             });
 
             expect(adminUser.isAdmin()).to.be.true;

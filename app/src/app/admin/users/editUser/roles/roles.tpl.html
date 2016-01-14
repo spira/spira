@@ -2,11 +2,32 @@
 
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2>Roles</h2>
+            <h2>Roles &amp; Permissions</h2>
         </div>
     </md-toolbar>
 
-    <pre highlight="">{{RolesController.roles|json}}</pre>
+    <h3>Available Roles</h3>
 
+    <md-list>
+        <md-list-item class="md-2-line" ng-repeat="role in RolesController.roles">
+            <div class="md-list-item-text">
+                <h3>{{ role.key | fromCamel }}</h3>
+                <p>{{ role.description }}</p>
+            </div>
+        </md-list-item>
+    </md-list>
+
+    <h3>Display Role</h3>
+    <md-select ng-model="RolesController.userDisplayRole">
+        <md-option ng-repeat="role in RolesController.user._roles" value="{{role}}">
+            {{role.key | fromCamel}}
+        </md-option>
+    </md-select>
+
+    <h3>Permissions</h3>
+
+    <ul>
+        <li ng-repeat="permission in RolesController.usersPermissions">{{permission.description}}</li>
+    </ul>
 
 </md-card>

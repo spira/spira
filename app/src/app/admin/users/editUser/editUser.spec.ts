@@ -19,7 +19,8 @@ namespace app.admin.users.editUser {
             timezones:common.services.timezones.ITimezoneDefinition,
             fullUserInfo:common.models.User = common.models.UserMock.entity(),
             genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions,
-            providerTypes:string[] = common.models.UserSocialLogin.providerTypes
+            providerTypes:string[] = common.models.UserSocialLogin.providerTypes,
+            roles:common.models.Role[] = common.models.RoleMock.collection()
         ;
 
         beforeEach(() => {
@@ -49,7 +50,8 @@ namespace app.admin.users.editUser {
                     providerTypes: providerTypes,
                     regions: _regionService_.supportedRegions,
                     $location: _$location_,
-                    $stateParams: $stateParams
+                    $stateParams: $stateParams,
+                    roles: roles,
                 });
 
             });

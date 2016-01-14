@@ -7,7 +7,7 @@ namespace common.models {
             _userProfile: UserProfile,
             _socialLogins: UserSocialLogin,
             _userCredential: UserCredential,
-            _roles: RoleAssignment,
+            _roles: Role,
         };
 
         protected __attributeCastMap:IAttributeCastMap = {
@@ -31,7 +31,7 @@ namespace common.models {
         public _userCredential:UserCredential;
         public _userProfile:common.models.UserProfile;
         public _socialLogins:common.models.UserSocialLogin[] = [];
-        public _roles:common.models.RoleAssignment[] = [];
+        public _roles:common.models.Role[] = [];
         public roles:string[] = []; //list of role keys, supplied in token
         public _uploadedAvatar:common.models.Image;
 
@@ -54,7 +54,7 @@ namespace common.models {
          */
         public isAdmin():boolean {
 
-            return _.contains(this.roles, common.models.RoleAssignment.adminRoleKey);
+            return _.contains(this.roles, common.models.Role.adminRoleKey);
         }
 
         /**
