@@ -238,7 +238,7 @@ namespace common.services.user {
                     (jsonData:string) => {
                         let data:{emailConfirmed:string} = JSON.parse(jsonData);
                         // TSD only has definitions for moment 2.8.0 which does not contain function isBetween
-                        return data.emailConfirmed && (<any>moment)(data.emailConfirmed).isBetween(moment().subtract(1, 'second'), moment());
+                        return data.emailConfirmed && (<any>moment)(data.emailConfirmed).isBetween(moment().subtract(10, 'seconds'), moment());
                     },
                     (headers) => {
                         return headers['email-confirm-token'] == emailToken;
