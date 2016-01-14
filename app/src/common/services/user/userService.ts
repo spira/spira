@@ -42,7 +42,7 @@ namespace common.services.user {
          */
         public apiEndpoint(user?:common.models.User):string {
             if(user){
-                return '/users/' + user.userId;
+                return '/users/' + user.getKey();
             }
             return '/users';
         }

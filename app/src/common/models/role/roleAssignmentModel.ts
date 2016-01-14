@@ -16,6 +16,3 @@ namespace common.models {
     }
 
 }
-
-
-

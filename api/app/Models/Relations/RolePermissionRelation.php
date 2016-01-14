@@ -10,10 +10,11 @@
 
 namespace App\Models\Relations;
 
-use App\Models\Permission;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spira\Core\Model\Collection\Collection;
+use App\Models\Role;
 use Spira\Rbac\Item\Item;
+use App\Models\Permission;
+use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RolePermissionRelation extends HasMany
 {
@@ -31,15 +32,13 @@ class RolePermissionRelation extends HasMany
     public function __construct($roleKey)
     {
         $this->roleKey = $roleKey;
+        $this->related = new Role;
+        $this->localKey = $this->getPlainForeignKey();
     }
 
     public function getResults()
     {
-        $storage = $this->getGate()->getStorage();
-
-        $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($this->roleKey));
-
-        return new Collection($this->hydratePermissions($permissions));
+        return $this->get();
     }
 
     /**
@@ -58,4 +57,22 @@ class RolePermissionRelation extends HasMany
 
         return $permissionModels;
     }
+
+    public function addEagerConstraints(array $models)
+    {
+    }
+
+    public function get(){
+
+        $storage = $this->getGate()->getStorage();
+
+        $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($this->roleKey));
+        return new Collection($this->hydratePermissions($permissions));
+    }
+
+    public function getPlainForeignKey()
+    {
+        return 'name';
+    }
+
 }

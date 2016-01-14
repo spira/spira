@@ -26,77 +26,73 @@ return [
     ],
     ArticleController::class.'@getOne' => [
         'type' => 'permission',
-        'description' => 'Get one',
+        'description' => 'Get one article',
     ],
     ArticleController::class.'@getAllLocalizations' => [
         'type' => 'permission',
-        'description' => 'Get localizations',
+        'description' => 'Get all localizations for article',
     ],
     ArticleController::class.'@getOneLocalization' => [
         'type' => 'permission',
-        'description' => 'Get localization',
+        'description' => 'Get localization for article',
     ],
     ArticleController::class.'@postOne' => [
         'type' => 'permission',
-        'description' => 'Post',
+        'description' => 'Create new article',
     ],
     ArticleController::class.'@putOne' => [
         'type' => 'permission',
-        'description' => 'Put',
+        'description' => 'Create new article',
     ],
     ArticleController::class.'@patchOne' => [
         'type' => 'permission',
-        'description' => 'Patch',
+        'description' => 'Update article',
     ],
     ArticleController::class.'@deleteOne' => [
         'type' => 'permission',
-        'description' => 'Delete',
+        'description' => 'Delete article',
     ],
     ArticleController::class.'@putOneLocalization' => [
         'type' => 'permission',
-        'description' => 'Put localization',
-    ],
-    ArticleController::class.'@syncMany' => [
-        'type' => 'permission',
-        'description' => 'Sync',
+        'description' => 'Add localization to article',
     ],
     ArticlePermalinkController::class.'@getAll' => [
         'type' => 'permission',
-        'description' => 'Get permalinks',
+        'description' => 'Get all article permalinks',
     ],
     ArticleMetaController::class.'@getAll' => [
         'type' => 'permission',
-        'description' => 'Get all meta',
+        'description' => 'Get all article meta',
     ],
     ArticleMetaController::class.'@putMany' => [
         'type' => 'permission',
-        'description' => 'Add meta',
+        'description' => 'Add article meta',
     ],
     ArticleMetaController::class.'@deleteOne' => [
         'type' => 'permission',
-        'description' => 'Delete meta',
+        'description' => 'Delete article meta',
     ],
     ArticleCommentController::class.'@getAll' => [
         'type' => 'permission',
-        'description' => 'Get all comments',
+        'description' => 'Get all article comments',
     ],
     ArticleCommentController::class.'@postOne' => [
         'type' => 'permission',
-        'description' => 'Post comment',
+        'description' => 'Post article comment',
     ],
 
     ArticleTagController::class.'@getAll' => [
         'type' => 'permission',
-        'description' => 'Get all tags',
+        'description' => 'Get all article tags',
     ],
     ArticleTagController::class.'@putMany' => [
         'type' => 'permission',
-        'description' => 'Add tags',
+        'description' => 'Add article tags',
     ],
 
     ArticleSectionController::class.'@getAll' => [
         'type' => 'permission',
-        'description' => 'Get all sections',
+        'description' => 'Get all article sections',
     ],
     ArticleSectionController::class.'@postMany' => [
         'type' => 'permission',
@@ -104,15 +100,15 @@ return [
     ],
     ArticleSectionController::class.'@deleteMany' => [
         'type' => 'permission',
-        'description' => 'Delete many',
+        'description' => 'Delete many article sections',
     ],
     ArticleSectionController::class.'@deleteOne' => [
         'type' => 'permission',
-        'description' => 'Delete one',
+        'description' => 'Delete one article section',
     ],
     ArticleSectionController::class.'@putOneChildLocalization' => [
         'type' => 'permission',
-        'description' => 'Put section localization',
+        'description' => 'Add section localization to article',
     ],
 
     ArticleUserRatingsController::class.'@putOne' => [
@@ -121,7 +117,7 @@ return [
     ],
     ArticleBookmarksController::class.'@putOne' => [
         'type' => 'permission',
-        'description' => 'Add to bookmarks',
+        'description' => 'Add article to bookmarks',
     ],
     ArticleUserRatingsController::class.'@deleteOne' => [
         'type' => 'permission',
@@ -129,7 +125,7 @@ return [
     ],
     ArticleBookmarksController::class.'@deleteOne' => [
         'type' => 'permission',
-        'description' => 'Remove from bookmarks',
+        'description' => 'Remove article from bookmarks',
     ],
 
     //special permissions (hierarchy or rules)
