@@ -335,7 +335,7 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
     protected function registerBlackListDriver()
     {
         // @todo consider of moving this somewhere else
-        $this->app->bind(Repository::class, function($app) {
+        $this->app->bind(Repository::class, function ($app) {
             return $this->app['cache']->driver();
         });
 
