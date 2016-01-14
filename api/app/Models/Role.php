@@ -49,7 +49,7 @@ class Role extends BaseModel
 
     public function permissions()
     {
-        return new RolePermissionRelation($this->key);
+        return new RolePermissionRelation($this);
     }
 
     public static function findOrNew($id, $columns = ['*'])

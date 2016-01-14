@@ -21,19 +21,21 @@ class RolePermissionRelation extends HasMany
     use GateTrait;
 
     /**
-     * @var string
+     * @var Collection
      */
-    private $roleKey;
+    private $roleKeys = [];
 
     /**
      * RolePermissionRelation constructor.
-     * @param string $roleKey
+     * @param Role $parent
      */
-    public function __construct($roleKey)
+    public function __construct(Role $parent)
     {
-        $this->roleKey = $roleKey;
-        $this->related = new Role;
-        $this->localKey = $this->getPlainForeignKey();
+        $this->related = $parent;
+        $this->parent = $parent;
+
+        $this->localKey = 'key';
+        $this->foreignKey = $parent->getKey();
     }
 
     public function getResults()
@@ -45,34 +47,48 @@ class RolePermissionRelation extends HasMany
      * @param Item[] $permissions
      * @return array
      */
-    protected function hydratePermissions($permissions)
+    protected function hydratePermissions($permissions, $roleKey)
     {
         $permissionModels = [];
         foreach ($permissions as $permission) {
             $permissionModels[] = new Permission([
                 'key' => $permission->name,
                 'description' => $permission->description,
+                'parent_role_key' => $roleKey,
             ]);
         }
 
         return $permissionModels;
     }
 
+    /**
+     * @param array $models
+     */
     public function addEagerConstraints(array $models)
     {
+        $this->roleKeys = (new Collection($models))->pluck('key');
     }
 
+    /**
+     * @return Collection
+     */
     public function get(){
-
         $storage = $this->getGate()->getStorage();
+        $allPermissions = new Collection;
 
-        $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($this->roleKey));
-        return new Collection($this->hydratePermissions($permissions));
+        $this->roleKeys->each(function($roleKey) use ($storage, $allPermissions) {
+            $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($roleKey));
+            foreach($this->hydratePermissions($permissions, $roleKey) as $permission){
+                $allPermissions->push($permission);
+            }
+        });
+
+        return $allPermissions;
     }
 
     public function getPlainForeignKey()
     {
-        return 'name';
+        return 'parent_role_key';
     }
 
 }

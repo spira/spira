@@ -5,7 +5,7 @@ namespace common.models.role {
         uri:string;
     }
 
-    export class Permission extends AbstractModel{
+    export class Permission extends AbstractModel {
 
         protected __primaryKey = 'key';
 
@@ -14,9 +14,16 @@ namespace common.models.role {
         public type:string;
         public matchingRoutes:IMatchingRoutePermission[];
 
+        public __grantedBy:Role[];
+        public __grantedByRoleNames:string;
+
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
             this.hydrate(data, exists);
+        }
+
+        public getGrantedByRoleNames():string {
+            return _.pluck(this.__grantedBy, 'key').join(', ');
         }
 
     }

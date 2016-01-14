@@ -18,14 +18,15 @@ namespace app.admin.users.editUser.roles {
         ) {
 
             this.usersPermissions = this.listUsersPermissions(user);
+
         }
 
 
         private listUsersPermissions(user:common.models.User):common.models.role.Permission[] {
 
-            let userPerms = _.pluck(user._roles, 'key');
+            let userPerms:string[] = _.pluck(user._roles, 'key');
 
-            return _.reduce(userPerms, (currentPermissions:common.models.role.Permission[], roleKey:string):common.models.role.Permission[] => {
+            let allPermissions = _.reduce(userPerms, (currentPermissions:common.models.role.Permission[], roleKey:string):common.models.role.Permission[] => {
                 let matchingRole:common.models.Role = _.find(this.roles, {key:roleKey});
 
                 if (!matchingRole){
@@ -34,6 +35,19 @@ namespace app.admin.users.editUser.roles {
 
                 return currentPermissions.concat(matchingRole._permissions);
 
+            }, []);
+
+            return _.reduce(allPermissions, (currentPermissions:common.models.role.Permission[], permission:common.models.role.Permission) => {
+                let match = _.find(currentPermissions, {key: permission.key});
+
+                if (!match){
+                    currentPermissions.push(permission);
+                    return currentPermissions;
+                }
+
+                match.__grantedBy = match.__grantedBy.concat(permission.__grantedBy);
+
+                return currentPermissions;
             }, []);
 
         }

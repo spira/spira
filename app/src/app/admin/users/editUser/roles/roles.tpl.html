@@ -24,10 +24,18 @@
         </md-option>
     </md-select>
 
-    <h3>Permissions</h3>
+    <h3>Permissions granted to {{RolesController.user.fullname}}</h3>
 
-    <ul>
-        <li ng-repeat="permission in RolesController.usersPermissions">{{permission.description}}</li>
-    </ul>
+    <md-list>
+        <md-list-item class="md-2-line" ng-repeat="permission in RolesController.usersPermissions">
+            <div class="md-list-item-text">
+                <h3>{{ permission.description}}</h3>
+                <p>Granted by ({{ permission.getGrantedByRoleNames() }})</p>
+            </div>
+            <ul>
+                <li ng-repeat="matchingRoute in permission.matchingRoutes">{{matchingRoute.method}} {{matchingRoute.uri}}</li>
+            </ul>
+        </md-list-item>
+    </md-list>
 
 </md-card>
