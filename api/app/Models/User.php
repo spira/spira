@@ -62,6 +62,7 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         'username',
         'first_name',
         'last_name',
+        'country',
         'email_confirmed',
         'timezone_identifier',
         'avatar_img_url',
