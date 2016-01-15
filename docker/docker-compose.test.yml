@@ -110,7 +110,7 @@ devtools:
 
 logviewer:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: logviewer
   volumes_from:
     - data
