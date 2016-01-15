@@ -8,7 +8,7 @@
 
     <h3>Available Roles</h3>
 
-    <md-list>
+    <md-list id="user-role-selection">
         <md-divider ng-repeat-start="role in RolesController.roles" ng-if="$first"></md-divider>
         <md-list-item class="md-2-line" ng-class="{'user-has-role':RolesController.userHasRole(role)}" ng-click="RolesController.toggleRole(role)">
             <md-icon class="md-avatar-icon">{{RolesController.userHasRole(role) ? 'lock_open':'lock_outline'}}</md-icon>
@@ -29,22 +29,24 @@
 
     <h3>Permissions granted to {{RolesController.user.fullName}} ({{RolesController.usersPermissions.length}})</h3>
 
-    <md-list>
+    <md-content flex layout-padding id="granted-roles">
+        <md-list>
 
-        <md-divider ng-repeat-start="permission in RolesController.usersPermissions" ng-if="$first"></md-divider>
+            <md-divider ng-repeat-start="permission in RolesController.usersPermissions" ng-if="$first"></md-divider>
 
-        <md-list-item class="md-2-line">
-            <div class="md-list-item-text">
-                <h3>{{ permission.description}}</h3>
-                <p>Granted by ({{ permission.getGrantedByRoleNames() }})</p>
-            </div>
-            <ul>
-                <li ng-repeat="matchingRoute in permission.matchingRoutes">{{matchingRoute.method}} {{matchingRoute.uri}}</li>
-            </ul>
-        </md-list-item>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text">
+                    <h3>{{ permission.description}}</h3>
+                    <p>Granted by ({{ permission.getGrantedByRoleNames() }})</p>
+                </div>
+                <ul>
+                    <li ng-repeat="matchingRoute in permission.matchingRoutes">{{matchingRoute.method}} {{matchingRoute.uri}}</li>
+                </ul>
+            </md-list-item>
 
-        <md-divider ng-repeat-end ng-if="!$last"></md-divider>
+            <md-divider ng-repeat-end ng-if="!$last"></md-divider>
 
-    </md-list>
+        </md-list>
+    </md-content>
 
 </md-card>
