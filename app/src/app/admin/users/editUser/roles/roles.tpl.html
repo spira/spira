@@ -6,24 +6,6 @@
         </div>
     </md-toolbar>
 
-    <md-chips ng-model="RolesController.user._roles" md-autocomplete-snap
-              md-require-match="true">
-        <md-autocomplete
-                md-selected-item="RolesController.selectedRole"
-                md-search-text="RolesController.searchText"
-                md-items="role in RolesController.roleSearch(RolesController.searchText)"
-                md-item-text="role.key"
-                md-autoselect="true"
-                placeholder="+ Search for a role">
-            <md-item-template>
-                <span md-highlight-text="RolesController.searchText" md-highlight-flags="i">{{role.key | fromCamel }}</span> - {{role.description}}
-            </md-item-template>
-        </md-autocomplete>
-        <md-chip-template>
-            <strong>{{$chip.key | fromCamel }}</strong>
-        </md-chip-template>
-    </md-chips>
-
     <h3>Available Roles</h3>
 
     <md-list>

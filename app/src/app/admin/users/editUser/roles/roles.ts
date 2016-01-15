@@ -67,18 +67,6 @@ namespace app.admin.users.editUser.roles {
 
         }
 
-        public roleSearch(query:string):common.models.Role[]{
-
-            if (!query){
-                return [];
-            }
-
-            return _.filter(this.roles, (role:common.models.Role) => {
-                return _.contains(role.key.toLowerCase(), query.toLowerCase());
-            });
-
-        }
-
         public userHasRole(role:common.models.Role):boolean{
             return _.contains(this.user._roles, role);
         }
