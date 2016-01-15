@@ -98,7 +98,6 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
-    - apimock:apimock
   volumes_from:
     - spira
   env_file:
@@ -116,15 +115,6 @@ devtools:
     - cache:cache
     - queue:queue
     - elasticsearch:elasticsearch
-  volumes_from:
-    - spira
-  env_file:
-    - .qa.env
-
-apimock:
-  extends:
-    file: common-services.yml
-    service: apimock
   volumes_from:
     - spira
   env_file:

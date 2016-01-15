@@ -107,3 +107,12 @@ devtools:
     - spira
   env_file:
     - .qa.env
+
+logviewer:
+  extends:
+    file: ./docker/common-services.yml
+    service: logviewer
+  volumes_from:
+    - data
+  env_file:
+    - .qa.env

@@ -108,7 +108,6 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
-    - apimock:apimock
   volumes_from:
     - data
   env_file: ./docker/.local.env
@@ -130,11 +129,3 @@ devtools:
   env_file:
     - ./docker/.local.env
 
-apimock:
-  extends:
-    file: ./docker/common-services.yml
-    service: apimock
-  volumes_from:
-    - data
-  env_file:
-    - ./docker/.local.env
