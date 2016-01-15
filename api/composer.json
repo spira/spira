@@ -33,7 +33,6 @@
         "illuminate/redis": "5.2.*",
         "league/flysystem": "^1.0",
         "laravel/socialite": "^2.0",
-        "laravel/lumen-framework": "5.2.x-dev#17a1bc771d1d2bd80bb139659d659d8b296e3f5e",
         "cloudinary/cloudinary_php": "^1.1",
         "venturecraft/revisionable": "^2.0",
         "spira/core": "dev-feature/lumen-5.2-upgrade",
