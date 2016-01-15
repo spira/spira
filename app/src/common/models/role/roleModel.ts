@@ -35,10 +35,7 @@ namespace common.models {
 
                 let permission:role.Permission = <any>this.hydrateModel(entityData, role.Permission, exists);
 
-                if (!_.isArray(permission.__grantedBy)){
-                    permission.__grantedBy = [];
-                }
-                permission.__grantedBy.push(this);
+                permission.__grantedByRole = this;
                 return permission;
 
             });

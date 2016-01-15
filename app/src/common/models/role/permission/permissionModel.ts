@@ -14,7 +14,8 @@ namespace common.models.role {
         public type:string;
         public matchingRoutes:IMatchingRoutePermission[];
 
-        public __grantedBy:Role[];
+        public __grantedByRole:Role;
+        public __grantedByAll:Role[];
         public __grantedByRoleNames:string;
 
         constructor(data:any, exists:boolean = false) {
@@ -23,7 +24,7 @@ namespace common.models.role {
         }
 
         public getGrantedByRoleNames():string {
-            return _.pluck(this.__grantedBy, 'key').join(', ');
+            return _.pluck(this.__grantedByAll, 'key').join(', ');
         }
 
     }
