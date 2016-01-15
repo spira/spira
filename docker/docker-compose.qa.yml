@@ -1,62 +1,58 @@
-# Build configuration. This file is identical to the dev `docker-compose.yml` definition, except it exposes no ports to
-# allow multiple concurrent builds without concern of port collision
+# QA configuration - this is similar to the dev container except it uses the spira/spira container that was created
+# by the build script.
 
-data:
-  extends:
-    file: ./docker/common-services.yml
-    service: datavolume
+spira:
+  image: spira/spira:%spira_container_tag%
   volumes:
-    - %build_directory%:/data
-  env_file:
-    - ./docker/.local.env
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
 
 logviewer:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: logviewer
   volumes_from:
-    - data
+    - spira
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 database:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: database
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 vanilladatabase:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: vanilladatabase
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 cache:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: cache
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 elasticsearch:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: elasticsearch
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 queue:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: queue
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 queuerunner:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: queuerunner
   links:
     - mailcatcher:mailcatcher
@@ -65,20 +61,20 @@ queuerunner:
     - database:database
     - web:web
   volumes_from:
-    - data
+    - spira
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 mailcatcher:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: mailcatcher
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 php:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: php
   links:
     - database:database
@@ -88,26 +84,29 @@ php:
     - mailcatcher:mailcatcher
     - elasticsearch:elasticsearch
   volumes_from:
-    - data
+    - spira
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 web:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: web
+  ports:
+    - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
   links:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
     - apimock:apimock
   volumes_from:
-    - data
-  env_file: ./docker/.local.env
+    - spira
+  env_file:
+    - .qa.env
 
 devtools:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: devtools
   links:
     - web:web
@@ -118,15 +117,15 @@ devtools:
     - queue:queue
     - elasticsearch:elasticsearch
   volumes_from:
-    - data
+    - spira
   env_file:
-    - ./docker/.local.env
+    - .qa.env
 
 apimock:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: apimock
   volumes_from:
-    - data
+    - spira
   env_file:
-    - ./docker/.local.env
+    - .qa.env
