@@ -113,6 +113,6 @@ logviewer:
     file: common-services.yml
     service: logviewer
   volumes_from:
-    - data
+    - spira
   env_file:
     - .qa.env
