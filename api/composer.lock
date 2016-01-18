@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "27c6356e8a6c0845f7160b695a7ac653",
-    "content-hash": "2e147ecada52fc5dfdd81ae966a63c6f",
+    "hash": "0c663e299eb464ccbdba1d0546f65e83",
+    "content-hash": "c02ef34548643917968841a76f7095cf",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -283,20 +283,20 @@
         },
         {
             "name": "elasticquent/elasticquent",
-            "version": "1.1.0",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/spira/Elasticquent.git",
-                "reference": "9e156f686188549310027ae6c179176676da93f3"
+                "url": "https://github.com/elasticquent/Elasticquent.git",
+                "reference": "2d45d605ec3748df3f80598cd44648d172342206"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/Elasticquent/zipball/9e156f686188549310027ae6c179176676da93f3",
-                "reference": "9e156f686188549310027ae6c179176676da93f3",
+                "url": "https://api.github.com/repos/elasticquent/Elasticquent/zipball/2d45d605ec3748df3f80598cd44648d172342206",
+                "reference": "2d45d605ec3748df3f80598cd44648d172342206",
                 "shasum": ""
             },
             "require": {
-                "elasticsearch/elasticsearch": "~1.0",
+                "elasticsearch/elasticsearch": ">1.0 <2.1",
                 "illuminate/database": "~4.2|~5.0",
                 "illuminate/support": "~4.2|~5.0",
                 "nesbot/carbon": "~1.0",
@@ -316,6 +316,7 @@
                     "Elasticquent\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -326,49 +327,45 @@
                     "homepage": "http://adamfairholm.com"
                 }
             ],
-            "description": "Map Laravel Eloquent models to Elasticsearch types.",
+            "description": "Maps Laravel Eloquent models to Elasticsearch types.",
             "homepage": "https://github.com/elasticquent/Elasticquent",
             "keywords": [
                 "elasticsearch",
                 "eloquent",
                 "laravel"
             ],
-            "support": {
-                "source": "https://github.com/spira/Elasticquent/tree/1.1.0"
-            },
-            "time": "2015-08-20 07:05:11"
+            "time": "2016-01-11 22:20:00"
         },
         {
             "name": "elasticsearch/elasticsearch",
-            "version": "v1.4.1",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elastic/elasticsearch-php.git",
-                "reference": "3a5573cf3223d5646a76a5f8ce938048ca340680"
+                "reference": "9ce5bd7606f6c185d434de4f80863f998f74e179"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/3a5573cf3223d5646a76a5f8ce938048ca340680",
-                "reference": "3a5573cf3223d5646a76a5f8ce938048ca340680",
+                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/9ce5bd7606f6c185d434de4f80863f998f74e179",
+                "reference": "9ce5bd7606f6c185d434de4f80863f998f74e179",
                 "shasum": ""
             },
             "require": {
-                "ext-curl": "*",
-                "guzzle/guzzle": "~3.0",
-                "monolog/monolog": "~1.11",
-                "php": ">=5.3.9",
-                "pimple/pimple": "~3.0",
+                "guzzlehttp/ringphp": "~1.0",
+                "php": ">=5.4",
                 "psr/log": "~1.0"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1",
                 "cpliakas/git-wrapper": "~1.0",
-                "mikey179/vfsstream": "~1.2",
-                "mockery/mockery": "0.9.4",
+                "mockery/mockery": "dev-master@dev",
                 "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
                 "symfony/yaml": "2.4.3 as 2.4.2",
                 "twig/twig": "1.*"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "monolog/monolog": "Allows for client-level logging and tracing"
             },
             "type": "library",
             "autoload": {
@@ -391,7 +388,7 @@
                 "elasticsearch",
                 "search"
             ],
-            "time": "2015-09-17 22:01:44"
+            "time": "2015-11-05 15:29:21"
         },
         {
             "name": "guzzle/guzzle",
@@ -655,6 +652,107 @@
                 "uri"
             ],
             "time": "2015-11-03 01:34:55"
+        },
+        {
+            "name": "guzzlehttp/ringphp",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/RingPHP.git",
+                "reference": "dbbb91d7f6c191e5e405e900e3102ac7f261bc0b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/dbbb91d7f6c191e5e405e900e3102ac7f261bc0b",
+                "reference": "dbbb91d7f6c191e5e405e900e3102ac7f261bc0b",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/streams": "~3.0",
+                "php": ">=5.4.0",
+                "react/promise": "~2.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Ring\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+            "time": "2015-05-20 03:37:09"
+        },
+        {
+            "name": "guzzlehttp/streams",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/streams.git",
+                "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/streams/zipball/47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5",
+                "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple abstraction over streams of data",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "stream"
+            ],
+            "time": "2014-10-12 19:18:40"
         },
         {
             "name": "illuminate/auth",
@@ -2767,52 +2865,6 @@
             "time": "2015-08-04 04:48:03"
         },
         {
-            "name": "pimple/pimple",
-            "version": "v3.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/a30f7d6e57565a2e1a316e1baf2a483f788b258a",
-                "reference": "a30f7d6e57565a2e1a316e1baf2a483f788b258a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Pimple": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Pimple, a simple Dependency Injection Container",
-            "homepage": "http://pimple.sensiolabs.org",
-            "keywords": [
-                "container",
-                "dependency injection"
-            ],
-            "time": "2015-09-11 15:10:35"
-        },
-        {
             "name": "predis/predis",
             "version": "v1.0.3",
             "source": {
@@ -3016,23 +3068,67 @@
             "time": "2015-12-17 16:54:24"
         },
         {
+            "name": "react/promise",
+            "version": "v2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/promise.git",
+                "reference": "3b6fca09c7d56321057fa8867c8dbe1abf648627"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/3b6fca09c7d56321057fa8867c8dbe1abf648627",
+                "reference": "3b6fca09c7d56321057fa8867c8dbe1abf648627",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "React\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "A lightweight implementation of CommonJS Promises/A for PHP",
+            "time": "2015-07-03 13:48:55"
+        },
+        {
             "name": "spira/core",
             "version": "dev-feature/lumen-5.2-upgrade",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "3d8063247046e189e831601f22b5fff496ad56c9"
+                "reference": "f4f5d6b8c3be434324bd9ae249216232792af036"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/3d8063247046e189e831601f22b5fff496ad56c9",
-                "reference": "3d8063247046e189e831601f22b5fff496ad56c9",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/f4f5d6b8c3be434324bd9ae249216232792af036",
+                "reference": "f4f5d6b8c3be434324bd9ae249216232792af036",
                 "shasum": ""
             },
             "require": {
                 "barryvdh/laravel-cors": "0.7.x",
                 "bosnadev/database": "0.13.0",
-                "elasticquent/elasticquent": "1.1.*",
+                "elasticquent/elasticquent": "1.0.*",
                 "guzzlehttp/guzzle": "6.1.*",
                 "illuminate/mail": "^5.0",
                 "laravel/lumen-framework": "5.2.*",
@@ -3071,7 +3167,7 @@
                 "source": "https://github.com/spira/api-core/tree/feature/lumen-5.2-upgrade",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2016-01-15 06:57:57"
+            "time": "2016-01-18 07:01:27"
         },
         {
             "name": "swiftmailer/swiftmailer",
