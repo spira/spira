@@ -86,6 +86,7 @@ web:
   links:
     - php:php
     - mailcatcher:mailcatcher
+    - logviewer:logviewer
   volumes_from:
     - spira
   env_file:
