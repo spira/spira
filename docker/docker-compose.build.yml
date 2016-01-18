@@ -7,6 +7,7 @@ devtools:
   volumes:
 #    - /data:/data
     - %build_directory%:/data
+    - %cache_directory%:/cache
   env_file:
     - .common.env
     - .secret.env
