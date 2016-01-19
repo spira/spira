@@ -20,6 +20,7 @@ namespace common.models {
             appBuildDate: this.castMoment,
             'latestCommit.date': this.castMoment,
             'tagCommit.date': this.castMoment,
+            'ciBuild.date': this.castMoment,
         };
 
         public latestCommit: ICommitInfo;

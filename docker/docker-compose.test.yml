@@ -1,0 +1,119 @@
+# Test configuration - this is similar to the local config except it uses the spira/spira container that was created
+# by the build script.
+
+spira:
+  image: spira/spira:%spira_container_tag%
+  volumes:
+    - /data #note we are not mounting to host. otherwise it would be /qa/data
+
+database:
+  extends:
+    file: common-services.yml
+    service: database
+  env_file:
+    - .qa.env
+
+vanilladatabase:
+  extends:
+    file: common-services.yml
+    service: vanilladatabase
+  env_file:
+    - .qa.env
+
+cache:
+  extends:
+    file: common-services.yml
+    service: cache
+  env_file:
+    - .qa.env
+
+elasticsearch:
+  extends:
+    file: common-services.yml
+    service: elasticsearch
+  env_file:
+    - .qa.env
+
+queue:
+  extends:
+    file: common-services.yml
+    service: queue
+  env_file:
+    - .qa.env
+
+queuerunner:
+  extends:
+    file: common-services.yml
+    service: queuerunner
+  links:
+    - mailcatcher:mailcatcher
+    - queue:queue
+    - cache:cache
+    - database:database
+    - web:web
+  volumes_from:
+    - spira
+  env_file:
+    - .qa.env
+
+mailcatcher:
+  extends:
+    file: common-services.yml
+    service: mailcatcher
+  env_file:
+    - .qa.env
+
+php:
+  extends:
+    file: common-services.yml
+    service: php
+  links:
+    - database:database
+    - vanilladatabase:vanilladatabase
+    - cache:cache
+    - queue:queue
+    - mailcatcher:mailcatcher
+    - elasticsearch:elasticsearch
+  volumes_from:
+    - spira
+  env_file:
+    - .qa.env
+
+web:
+  extends:
+    file: common-services.yml
+    service: web
+  links:
+    - php:php
+    - mailcatcher:mailcatcher
+    - logviewer:logviewer
+  volumes_from:
+    - spira
+  env_file:
+    - .qa.env
+
+devtools:
+  extends:
+    file: common-services.yml
+    service: devtools
+  links:
+    - web:web
+    - mailcatcher:mailcatcher
+    - database:database
+    - vanilladatabase:vanilladatabase
+    - cache:cache
+    - queue:queue
+    - elasticsearch:elasticsearch
+  volumes_from:
+    - spira
+  env_file:
+    - .qa.env
+
+logviewer:
+  extends:
+    file: common-services.yml
+    service: logviewer
+  volumes_from:
+    - spira
+  env_file:
+    - .qa.env

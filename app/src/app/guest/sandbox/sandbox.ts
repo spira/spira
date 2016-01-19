@@ -61,7 +61,6 @@ namespace app.guest.sandbox {
         public callApi(apiEndpoint):void {
 
             this.ngRestAdapter
-                //.api('/api-mock')
                 .get(apiEndpoint)
                 .then((result) => {
                     this.$scope.apiResult = result;

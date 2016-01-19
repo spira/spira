@@ -23,7 +23,6 @@ Lumen + AngularJS project seed with Docker
 * [Typescript](http://www.typescriptlang.org/)
 * [API Blueprint](https://apiblueprint.org/)
   * [Apiary](https://apiary.io/)
-  * [Drakov](https://github.com/Aconex/drakov)
   * [Snowcrash](https://github.com/apiaryio/snowcrash)
 * [Clarity](https://github.com/tobi/clarity)
 * [Mailcatcher](http://mailcatcher.me/)
