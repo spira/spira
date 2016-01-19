@@ -126,6 +126,8 @@ devtools:
     - elasticsearch:elasticsearch
   volumes_from:
     - data
+  volumes:
+    - /cache:/cache
   env_file:
     - ./docker/.local.env
 
