@@ -342,8 +342,6 @@ class AuthTest extends TestCase
 
     public function testProviderRedirectReturnUrlOAuthOne()
     {
-        $this->markTestSkipped('redirect is not working(): https://github.com/laravel/lumen-framework/issues/315');
-
         $returnUrl = 'http://www.foo.bar/';
 
         // If we have no valid twitter credentials, we'll mock the redirect
@@ -357,7 +355,7 @@ class AuthTest extends TestCase
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
             $mock->shouldReceive('with->redirect')
                 ->once()
-                ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
+                ->andReturn(app(App\Services\Redirector::class)->to('http://foo.bar?oauth_token=foobar'));
         }
 
         $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl));
