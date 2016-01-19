@@ -3023,12 +3023,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "2822cb48929cbf5ce9ca07ed4477d57fffd77fa5"
+                "reference": "4f2c78fb53fdcb82950f6f622928b3a8054963dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/2822cb48929cbf5ce9ca07ed4477d57fffd77fa5",
-                "reference": "2822cb48929cbf5ce9ca07ed4477d57fffd77fa5",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/4f2c78fb53fdcb82950f6f622928b3a8054963dc",
+                "reference": "4f2c78fb53fdcb82950f6f622928b3a8054963dc",
                 "shasum": ""
             },
             "require": {
@@ -3074,7 +3074,7 @@
                 "source": "https://github.com/spira/api-core/tree/feature/lumen-5.2-upgrade",
                 "issues": "https://github.com/spira/api-core/issues"
             },
-            "time": "2016-01-18 20:52:53"
+            "time": "2016-01-19 17:19:56"
         },
         {
             "name": "swiftmailer/swiftmailer",
