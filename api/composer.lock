@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0c663e299eb464ccbdba1d0546f65e83",
-    "content-hash": "c02ef34548643917968841a76f7095cf",
+    "hash": "fd643a0224cd1d60e663057aa9a22d4e",
+    "content-hash": "31067b8cacabe16833828ad06d2c3348",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3019,16 +3019,16 @@
         },
         {
             "name": "spira/core",
-            "version": "dev-feature/lumen-5.2-upgrade",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spira/api-core.git",
-                "reference": "4f2c78fb53fdcb82950f6f622928b3a8054963dc"
+                "reference": "715789f69d6d441b0ba5fbf9f408a15e035aebf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spira/api-core/zipball/4f2c78fb53fdcb82950f6f622928b3a8054963dc",
-                "reference": "4f2c78fb53fdcb82950f6f622928b3a8054963dc",
+                "url": "https://api.github.com/repos/spira/api-core/zipball/715789f69d6d441b0ba5fbf9f408a15e035aebf9",
+                "reference": "715789f69d6d441b0ba5fbf9f408a15e035aebf9",
                 "shasum": ""
             },
             "require": {
@@ -3058,9 +3058,7 @@
                     "database/"
                 ]
             },
-            "scripts": {
-                "post-update-cmd": []
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3070,11 +3068,7 @@
                 "laravel",
                 "lumen"
             ],
-            "support": {
-                "source": "https://github.com/spira/api-core/tree/feature/lumen-5.2-upgrade",
-                "issues": "https://github.com/spira/api-core/issues"
-            },
-            "time": "2016-01-19 17:19:56"
+            "time": "2016-01-20 03:14:02"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -5249,9 +5243,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "spira/core": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
