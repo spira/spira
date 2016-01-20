@@ -23,7 +23,7 @@
 
         <md-divider ng-repeat-start="state in navigationState.children track by $index" ng-if="$first && isOpen()"></md-divider>
 
-        <md-list-item ng-if="!state.data.navigationItems" ng-click="gotoState(state.name)" ui-sref-active="selected" ui-sref="{{state.name}}">
+        <md-list-item ng-if="!state.data.navigationItems" ui-sref-active="selected" ui-sref="{{state.name}}">
 
             <md-icon>{{state.data.icon}}</md-icon>
             <p ng-if="!collapsed" class="md-body-2">{{state.data.title}}</p>
@@ -33,7 +33,7 @@
         <md-list-item
                 ng-if="!!state.data.navigationItems && state.data.navigationItems.length > 0"
                 ng-repeat="navigationItem in state.data.navigationItems"
-                ng-click="gotoState(state.name, navigationItem.params)" ui-sref-active="selected" ui-sref="{{state.name}}({{navigationItem.params}})">
+                ui-sref-active="selected" ui-sref="{{state.name}}({{navigationItem.params}})">
 
             <md-icon>{{navigationItem.icon}}</md-icon>
             <p ng-if="!collapsed">{{navigationItem.title | uppercase}}</p>
