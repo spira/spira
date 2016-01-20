@@ -36,6 +36,7 @@ $app->configure('elasticquent');
 $app->configure('regions');
 $app->configure('jwt');
 $app->configure('cors');
+$app->configure('mail');
 
 /*
 |--------------------------------------------------------------------------
@@ -92,13 +93,16 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\ApplicationProvider::class);
-$app->register(App\Providers\ElasticServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-$app->register(App\Providers\AuthDriverServiceProvider::class);
+$app->register(App\Providers\ElasticServiceProvider::class);
 $app->register(App\Providers\AccessServiceProvider::class);
-$app->register(Bosnadev\Database\DatabaseServiceProvider::class);
+$app->register(App\Providers\AuthDriverServiceProvider::class);
+$app->register(\Illuminate\Mail\MailServiceProvider::class);
+$app->register(\Illuminate\Redis\RedisServiceProvider::class);
+
 $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
-$app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+
+$app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->register(Barryvdh\Cors\LumenServiceProvider::class);
 
 /*

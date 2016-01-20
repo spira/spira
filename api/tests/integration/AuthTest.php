@@ -195,15 +195,16 @@ class AuthTest extends TestCase
 
         $options = ['headers' => ['authorization' => 'Bearer '.$token]];
         $client = new Client([
-            'base_url' => sprintf(
+            'base_uri' => sprintf(
                 'http://%s:%s',
                 getenv('WEBSERVER_HOST'),
                 getenv('WEBSERVER_PORT')
             ),
         ]);
+        /** @var GuzzleHttp\Psr7\Response $res */
         $res = $client->get('/auth/jwt/refresh', $options);
 
-        $array = $res->json();
+        $array = json_decode($res->getBody(), true);
         $this->assertEquals(200, $res->getStatusCode());
         $this->assertNotEquals($token, $array['token']);
         $payload = $this->app->make('auth')->getTokenizer()->decode($array['token']);
@@ -354,7 +355,7 @@ class AuthTest extends TestCase
             $this->app->instance('Laravel\Socialite\Contracts\Factory', $mock);
             $mock->shouldReceive('with->redirect')
                 ->once()
-                ->andReturn(redirect('http://foo.bar?oauth_token=foobar'));
+                ->andReturn(app(App\Services\Redirector::class)->to('http://foo.bar?oauth_token=foobar'));
         }
 
         $this->getJson('/auth/social/twitter?returnUrl='.urlencode($returnUrl));

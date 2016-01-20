@@ -583,7 +583,7 @@ class ArticleTest extends TestCase
         $post = $this->makePost();
 
         // Get the discussion
-        $client = App::make(VanillaClient::class);
+        $client = app(VanillaClient::class);
         $discussion = $client->api('discussions')->findByForeignId($post->post_id);
 
         $this->assertEquals($post->title, $discussion['Discussion']['Name']);
@@ -598,7 +598,7 @@ class ArticleTest extends TestCase
      */
     public function testShouldDeleteDiscussionWhenPostDeleted()
     {
-        $client = App::make(VanillaClient::class);
+        $client = app(VanillaClient::class);
 
         $post = $this->makePost();
         $discussion = $client->api('discussions')->findByForeignId($post->post_id);
@@ -614,7 +614,7 @@ class ArticleTest extends TestCase
         $body = 'A comment';
 
         // Get the discussion
-        $client = App::make(VanillaClient::class);
+        $client = app(VanillaClient::class);
         $discussion = $client->api('discussions')->findByForeignId($post->post_id);
         $discussionId = $discussion['Discussion']['DiscussionID'];
 
@@ -638,7 +638,7 @@ class ArticleTest extends TestCase
         $body = 'A comment';
 
         // Get the discussion
-        $client = App::make(VanillaClient::class);
+        $client = app(VanillaClient::class);
         $discussion = $client->api('discussions')->findByForeignId($post->post_id);
         $discussionId = $discussion['Discussion']['DiscussionID'];
 
@@ -670,7 +670,7 @@ class ArticleTest extends TestCase
         $this->assertEquals($body, $array['body']);
 
         // Clean up Vanilla by removing the discussion and user created
-        $client = App::make(VanillaClient::class);
+        $client = app(VanillaClient::class);
         $client->api('discussions')->removeByForeignId($post->post_id);
         $user = $client->api('users')->sso($array['_author']['userId'], '', '');
         $client->api('users')->remove($user['User']['UserID']);

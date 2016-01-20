@@ -33,7 +33,7 @@ class SocialiteServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bindShared('Laravel\Socialite\Contracts\Factory', function ($app) {
+        $this->app->singleton('Laravel\Socialite\Contracts\Factory', function ($app) {
             return new SocialiteManager($app);
         });
     }

@@ -10,12 +10,11 @@
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Bus\SelfHandling;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-abstract class Job implements SelfHandling, ShouldBeQueued
+abstract class Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 }

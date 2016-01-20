@@ -340,7 +340,7 @@ class PostDiscussion extends BaseModel implements VirtualRelationInterface
     protected function getClient()
     {
         if (! $this->client) {
-            $this->client = App::make(VanillaClient::class);
+            $this->client = app(VanillaClient::class);
         }
 
         return $this->client;

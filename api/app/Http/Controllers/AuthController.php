@@ -35,13 +35,6 @@ use Spira\Core\Responder\Response\ApiResponse;
 class AuthController extends ApiController
 {
     /**
-     * The application instance.
-     *
-     * @var Application
-     */
-    protected $app;
-
-    /**
      * @var SpiraGuard
      */
     protected $auth;
@@ -59,13 +52,10 @@ class AuthController extends ApiController
      * @param AuthTokenTransformer $transformer
      * @param Application $app
      */
-    public function __construct(
-        Guard $auth,
-        AuthTokenTransformer $transformer,
-        Application $app)
+    public function __construct(Guard $auth, AuthTokenTransformer $transformer)
     {
         $this->auth = $auth;
-        $this->app = $app;
+
         parent::__construct($transformer);
     }
 
@@ -255,7 +245,7 @@ class AuthController extends ApiController
      */
     protected function validateProvider($provider)
     {
-        if (! in_array($provider, array_keys($this->app['config']['services']))) {
+        if (! in_array($provider, array_keys(app()['config']['services']))) {
             throw new NotImplementedException('Provider '.$provider.' is not supported.');
         }
     }

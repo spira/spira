@@ -143,7 +143,7 @@ experience.
             {!!
                 json_encode(App\Services\SingleSignOn\SingleSignOnFactory::create(
                   'vanilla',
-                  Request::instance(),
+                  app(Illuminate\Http\Request::class),
                   $factory->get(\App\Models\User::class)->modified())->formatUser()
                 );
             !!}

@@ -24,7 +24,7 @@ class VanillaIntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = App::make(Client::class);
+        $this->client = app(Client::class);
     }
 
     // Exceptions
@@ -93,7 +93,7 @@ class VanillaIntegrationTest extends TestCase
         $env = getenv($port);
         putenv($port.'=8888');
 
-        $client = App::make(Client::class);
+        $client = app(Client::class);
 
         // Restore the env variable
         putenv($port.'='.$env);
