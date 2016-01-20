@@ -40,10 +40,6 @@ namespace common.directives.menuToggle {
                 open = !open;
             };
 
-            $scope.gotoState = (stateName:string, stateParams:any) => {
-                this.$state.go(stateName, stateParams);
-            };
-
             let getTargetHeight = (element:ng.IRootElementService) => {
                 element.addClass('no-transition');
                 element.css('height', '');
