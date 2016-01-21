@@ -7,7 +7,7 @@ namespace app.admin {
 
     export interface IQuery
     {
-        _all:[string];
+        _all?:[string];
         authorId?:[string];
         _tags?:Object;
     }
@@ -61,9 +61,11 @@ namespace app.admin {
          */
         public search():ng.IPromise<any> {
 
-            let query:IQuery = {
-                _all: [this.queryString]
-            };
+            let query:IQuery = {};
+
+            if(this.queryString) {
+                query._all = [this.queryString];
+            }
 
             if(this.usersToFilter.length > 0) {
                 query.authorId = (<[string]>_.pluck(this.usersToFilter, 'userId'));
@@ -73,7 +75,16 @@ namespace app.admin {
                 query._tags = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
             }
 
-            return this.entitiesPaginator.complexQuery(query)
+            let responsePromise:ng.IPromise<any[]>;
+
+            if(_.isEmpty(query)) {
+                responsePromise = this.entitiesPaginator.reset().getPage(1);
+            }
+            else {
+                responsePromise = this.entitiesPaginator.complexQuery(query);
+            }
+
+            return responsePromise
                 .then((entities) => {
                     this.entities = entities;
                 })
@@ -83,6 +94,7 @@ namespace app.admin {
                 .finally(() => {
                     this.pages = this.entitiesPaginator.getPages();
                 });
+
         }
 
         /**
