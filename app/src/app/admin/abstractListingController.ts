@@ -53,11 +53,22 @@ namespace app.admin {
          * @returns {ng.IPromise<any[]>}
          */
         public search():ng.IPromise<any> {
-            return this.entitiesPaginator.complexQuery({
-                _all: [this.queryString],
-                authorId: _.pluck(this.usersToFilter, 'userId'),
-                _tags: {tagId:_.pluck(this.tagsToFilter, 'tagId')}
-            })
+
+            let query = {};
+
+            if(this.queryString) {
+                query['_all'] = [this.queryString];
+            }
+
+            if(this.usersToFilter.length > 0) {
+                query['authorId'] = _.pluck(this.usersToFilter, 'userId');
+            }
+
+            if(this.tagsToFilter.length > 0) {
+                query['_tags'] = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
+            }
+
+            return this.entitiesPaginator.complexQuery(query)
                 .then((entities) => {
                     this.entities = entities;
                 })
