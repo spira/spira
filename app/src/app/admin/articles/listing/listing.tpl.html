@@ -27,14 +27,13 @@
                   md-autocomplete-snap>
 
             <md-autocomplete
-                md-search-text="tagSearchText"
-                md-selected-item="selectedTag"
-                md-items="tag in ArticlesListingController.searchTags(tagSearchText)"
+                md-search-text="ArticlesListingController.tagSearchText"
+                md-selected-item="ArticlesListingController.selectedTag"
+                md-items="tag in ArticlesListingController.searchTags(ArticlesListingController.tagSearchText)"
                 md-item-text="tag.tag"
                 md-no-cache="true"
-                md-autoselect="true"
-                md-selected-item-change="tagSearchText = ''">
-                <span md-highlight-text="tagSearchText">
+                md-autoselect>
+                <span md-highlight-text="ArticlesListingController.tagSearchText">
                     {{ tag.tag }}
                 </span>
             </md-autocomplete>
@@ -138,3 +137,4 @@
         <md-tooltip>Add article</md-tooltip>
     </md-button>
 </div>
+
