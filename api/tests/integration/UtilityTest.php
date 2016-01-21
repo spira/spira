@@ -1,13 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Spira framework.
+ *
+ * @link https://github.com/spira/spira
+ *
+ * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 /**
- * Class UtilityTest
+ * Class UtilityTest.
  * @group integration
  * @group testing
  */
 class UtilityTest extends TestCase
 {
-
     public function testGetSystemInformationData()
     {
         $this->withAdminAuthorization()->getJson('/utility/system-information');
@@ -22,5 +29,4 @@ class UtilityTest extends TestCase
         $this->withAuthorization()->getJson('/utility/system-information');
         $this->assertResponseStatus(403);
     }
-
 }
