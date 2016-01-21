@@ -24,8 +24,4 @@ class RichTextContent extends VirtualModel
     protected $fillable = [
         'body',
     ];
-
-    protected static $validationRules = [
-        'body' => 'required|string',
-    ];
 }

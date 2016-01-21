@@ -46,8 +46,4 @@ class MediaContent extends VirtualModel
     protected $fillable = [
         'media',
     ];
-
-    protected static $validationRules = [
-        'media' => 'required|array',
-    ];
 }

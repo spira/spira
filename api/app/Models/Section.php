@@ -43,12 +43,6 @@ class Section extends BaseModel implements LocalizableModelInterface
         Article::class,
     ];
 
-    protected static $validationRules = [
-        'section_id' => 'required|uuid',
-        'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,
-        'type' => 'required|section_type',
-    ];
-
     protected $casts = [
         self::CREATED_AT => 'datetime',
         self::UPDATED_AT => 'datetime',
@@ -66,8 +60,11 @@ class Section extends BaseModel implements LocalizableModelInterface
     {
         return [
             'section_id' => 'required|uuid',
-            'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE,
+            'content' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.','.MediaContent::CONTENT_TYPE.'|array',
             'type' => 'required|in:'.implode(',', static::getContentTypes()),
+            'content.body' => 'required_if:type,'.RichTextContent::CONTENT_TYPE.','.BlockquoteContent::CONTENT_TYPE.'|string',
+            'content.author' => 'required_if:type,'.BlockquoteContent::CONTENT_TYPE.'|string',
+            'content.media' => 'required_if:type,'.MediaContent::CONTENT_TYPE.'|array',
         ];
     }
 

@@ -24,6 +24,4 @@ class PromoContent extends VirtualModel
     protected $fillable = [
     ];
 
-    protected static $validationRules = [
-    ];
 }
