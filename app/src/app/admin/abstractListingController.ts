@@ -75,15 +75,16 @@ namespace app.admin {
                 query._tags = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
             }
 
+            let responsePromise:ng.IPromise<any[]>;
+
             if(_.isEmpty(query)) {
-                return this.entitiesPaginator.reset().getPage(1)
-                    .then((entities) => {
-                        this.entities = entities;
-                        this.pages = this.entitiesPaginator.getPages();
-                    })
+                responsePromise = this.entitiesPaginator.reset().getPage(1);
+            }
+            else {
+                responsePromise = this.entitiesPaginator.complexQuery(query);
             }
 
-            return this.entitiesPaginator.complexQuery(query)
+            return responsePromise
                 .then((entities) => {
                     this.entities = entities;
                 })
@@ -93,6 +94,7 @@ namespace app.admin {
                 .finally(() => {
                     this.pages = this.entitiesPaginator.getPages();
                 });
+
         }
 
         /**
