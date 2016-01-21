@@ -7,7 +7,7 @@ namespace app.admin {
 
     export interface IQuery
     {
-        _all:[string];
+        _all?:[string];
         authorId?:[string];
         _tags?:Object;
     }
@@ -61,9 +61,11 @@ namespace app.admin {
          */
         public search():ng.IPromise<any> {
 
-            let query:IQuery = {
-                _all: [this.queryString]
-            };
+            let query:IQuery = {};
+
+            if(this.queryString) {
+                query._all = [this.queryString];
+            }
 
             if(this.usersToFilter.length > 0) {
                 query.authorId = (<[string]>_.pluck(this.usersToFilter, 'userId'));
@@ -71,6 +73,14 @@ namespace app.admin {
 
             if(this.tagsToFilter.length > 0) {
                 query._tags = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
+            }
+
+            if(_.isEmpty(query)) {
+                return this.entitiesPaginator.reset().getPage(1)
+                    .then((entities) => {
+                        this.entities = entities;
+                        this.pages = this.entitiesPaginator.getPages();
+                    })
             }
 
             return this.entitiesPaginator.complexQuery(query)
