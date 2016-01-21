@@ -54,11 +54,9 @@ namespace app.admin {
          */
         public search():ng.IPromise<any> {
 
-            let query = {};
-
-            if(this.queryString) {
-                query['_all'] = [this.queryString];
-            }
+            let query = {
+                _all: [this.queryString]
+            };
 
             if(this.usersToFilter.length > 0) {
                 query['authorId'] = _.pluck(this.usersToFilter, 'userId');
