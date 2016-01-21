@@ -8,7 +8,7 @@ namespace app.admin {
     export interface IQuery
     {
         _all:[string];
-        authorId?:string;
+        authorId?:[string];
         _tags?:Object;
     }
 
@@ -66,7 +66,7 @@ namespace app.admin {
             };
 
             if(this.usersToFilter.length > 0) {
-                query.authorId = _.pluck(this.usersToFilter, 'userId');
+                query.authorId = (<[string]>_.pluck(this.usersToFilter, 'userId'));
             }
 
             if(this.tagsToFilter.length > 0) {
