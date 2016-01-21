@@ -28,15 +28,15 @@ $app = new \App\SpiraApplication(
 );
 
 $app->withFacades();
-
 $app->withEloquent();
 
-$app->configure('hosts');
-$app->configure('elasticquent');
-$app->configure('regions');
 $app->configure('jwt');
 $app->configure('cors');
 $app->configure('mail');
+$app->configure('hosts');
+$app->configure('regions');
+$app->configure('filesystems');
+$app->configure('elasticquent');
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +104,8 @@ $app->register(App\Extensions\Socialite\SocialiteServiceProvider::class);
 
 $app->register(Bosnadev\Database\DatabaseServiceProvider::class);
 $app->register(Barryvdh\Cors\LumenServiceProvider::class);
+
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
