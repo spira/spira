@@ -5,6 +5,13 @@ namespace app.admin {
         page:number;
     }
 
+    export interface IQuery
+    {
+        _all:[string];
+        authorId?:string;
+        _tags?:Object;
+    }
+
     export abstract class AbstractListingController<M extends common.models.AbstractModel> {
 
         public entities:M[] = [];
@@ -54,16 +61,16 @@ namespace app.admin {
          */
         public search():ng.IPromise<any> {
 
-            let query = {
+            let query:IQuery = {
                 _all: [this.queryString]
             };
 
             if(this.usersToFilter.length > 0) {
-                query['authorId'] = _.pluck(this.usersToFilter, 'userId');
+                query.authorId = _.pluck(this.usersToFilter, 'userId');
             }
 
             if(this.tagsToFilter.length > 0) {
-                query['_tags'] = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
+                query._tags = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
             }
 
             return this.entitiesPaginator.complexQuery(query)
