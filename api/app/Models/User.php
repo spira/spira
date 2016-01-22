@@ -124,23 +124,23 @@ class User extends IndexedModel implements AuthenticatableContract, SocialiteAut
         ],
         'country' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'created_at' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'avatar_img_id' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'email_confirmed' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'updated_at' => [
             'type' => 'string',
-            'index' => 'no'
+            'index' => 'no',
         ],
         'username' => [
             'type' => 'string',
