@@ -5,6 +5,13 @@ namespace app.admin {
         page:number;
     }
 
+    export interface IQuery
+    {
+        _all?:[string];
+        authorId?:[string];
+        _tags?:Object;
+    }
+
     export abstract class AbstractListingController<M extends common.models.AbstractModel> {
 
         public entities:M[] = [];
@@ -53,11 +60,31 @@ namespace app.admin {
          * @returns {ng.IPromise<any[]>}
          */
         public search():ng.IPromise<any> {
-            return this.entitiesPaginator.complexQuery({
-                _all: [this.queryString],
-                authorId: _.pluck(this.usersToFilter, 'userId'),
-                _tags: {tagId:_.pluck(this.tagsToFilter, 'tagId')}
-            })
+
+            let query:IQuery = {};
+
+            if(this.queryString) {
+                query._all = [this.queryString];
+            }
+
+            if(this.usersToFilter.length > 0) {
+                query.authorId = (<[string]>_.pluck(this.usersToFilter, 'userId'));
+            }
+
+            if(this.tagsToFilter.length > 0) {
+                query._tags = {tagId:_.pluck(this.tagsToFilter, 'tagId')};
+            }
+
+            let responsePromise:ng.IPromise<any[]>;
+
+            if(_.isEmpty(query)) {
+                responsePromise = this.entitiesPaginator.reset().getPage(1);
+            }
+            else {
+                responsePromise = this.entitiesPaginator.complexQuery(query);
+            }
+
+            return responsePromise
                 .then((entities) => {
                     this.entities = entities;
                 })
@@ -67,6 +94,7 @@ namespace app.admin {
                 .finally(() => {
                     this.pages = this.entitiesPaginator.getPages();
                 });
+
         }
 
         /**

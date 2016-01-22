@@ -23,6 +23,8 @@ class UtilityController extends ApiController
 
     public function getSystemInformation()
     {
+        $this->checkPermission(static::class.'@getSystemInformation');
+
         $file = 'system-information.json';
 
         if (! Storage::disk('local')->has($file)) {

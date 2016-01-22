@@ -1,22 +1,17 @@
-# run `docker build -t spira/spira:latest .` to build this container
+# run docker build -t spira/spira:latest -f ./docker/Dockerfile .
 
-FROM spira/docker-base
+FROM busybox:1.24.1
 
 MAINTAINER "Zak Henry" <zak.henry@gmail.com>
 
+# create data dir
 RUN mkdir -p /data
 
-# only add the required data code
-COPY api /data/api/
-COPY app/build /data/app/build
-COPY forum /data/forum
+# copy all files to data dir
+COPY . /data
 
-# add vhosts for the nginx container
-COPY vhosts /data/vhosts/
-
-# make sure the logs directory exists
-RUN mkdir -p /data/logs
-
+# allow data dir to be mounted as volue
 VOLUME /data
 
+# set the cwd
 WORKDIR /data

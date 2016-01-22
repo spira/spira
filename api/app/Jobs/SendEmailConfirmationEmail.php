@@ -11,12 +11,12 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use Illuminate\Contracts\Mail\Mailer;
-use Illuminate\Contracts\Bus\SelfHandling;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueue
+class SendEmailConfirmationEmail extends Job implements ShouldQueue
 {
     /**
      * User to email.
@@ -49,10 +49,10 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     /**
      * Create a new job instance.
      *
-     * @param  User    $user
-     * @param  string  $email
-     * @param  string  $token
-     * @return void
+     * @param  User $user
+     * @param  string $email
+     * @param $emailConfirmToken
+     * @param $loginToken
      */
     public function __construct(User $user, $email, $emailConfirmToken, $loginToken)
     {
@@ -65,16 +65,15 @@ class SendEmailConfirmationEmail extends Job implements SelfHandling, ShouldQueu
     /**
      * Execute the job.
      *
-     * @param  Mailer  $mailer
      * @return void
      */
-    public function handle(Mailer $mailer)
+    public function handle()
     {
-        $mailer->send('emails.emailConfirmation', [
+        Mail::send('emails.emailConfirmation', [
             'user' => $this->user,
             'email' => $this->email,
             'emailConfirmationRedirectionUrl' => Config::get('hosts.app').'/profile?emailConfirmationToken='.$this->emailConfirmToken.'&loginToken='.$this->loginToken,
-        ], function ($m) {
+        ], function (Message $m) {
 
             $m->to($this->email, $this->user->full_name)
                 ->subject('Confirm Your Email');

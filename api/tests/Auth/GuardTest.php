@@ -8,17 +8,18 @@
  * For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
  */
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Mockery\Mock;
-use Spira\Auth\Blacklist\Blacklist;
-use Spira\Auth\Driver\Guard;
-use Spira\Auth\Payload\PayloadFactory;
-use Spira\Auth\Payload\PayloadValidationFactory;
-use Spira\Auth\Token\JWTInterface;
-use Spira\Auth\Token\RequestParser;
-use Spira\Auth\Token\TokenIsMissingException;
-use Spira\Auth\User\UserProvider;
 use Mockery as m;
+use Illuminate\Http\Request;
+use Spira\Auth\Driver\Guard;
+use Spira\Auth\User\UserProvider;
+use Spira\Auth\Token\JWTInterface;
+use Spira\Auth\Blacklist\Blacklist;
+use Spira\Auth\Token\RequestParser;
+use Spira\Auth\Payload\PayloadFactory;
+use Spira\Auth\Token\TokenIsMissingException;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Spira\Auth\Payload\PayloadValidationFactory;
 use Spira\Core\Contract\Exception\NotImplementedException;
 
 class GuardTest extends TestCase
@@ -238,11 +239,12 @@ class GuardTest extends TestCase
             new FakePayloadValidationFactory(),
             new FakeUserProvider(),
             new FakeRequestParser(),
-            new FakeBlacklist()
+            new FakeBlacklist(),
+            new Request()
         );
 
         //request and provider are set inside lumen
-        $gate->setRequest(new \Illuminate\Http\Request());
+        $gate->setRequest(new Request());
         $gate->setProvider(new FakeUserProvider());
 
         // no user at first
@@ -316,7 +318,7 @@ class FakeUserProvider extends UserProvider
 
 class FakeRequestParser extends RequestParser
 {
-    public function getToken(\Illuminate\Http\Request $request)
+    public function getToken(Request $request)
     {
         return 'token';
     }

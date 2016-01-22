@@ -82,7 +82,8 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         PayloadValidationFactory $validationFactory,
         UserProvider $provider,
         RequestParser $requestParser,
-        Blacklist $blacklist
+        Blacklist $blacklist,
+        Request $request
     ) {
         $this->payloadFactory = $payloadFactory;
         $this->provider = $provider;
@@ -90,6 +91,7 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         $this->validationFactory = $validationFactory;
         $this->requestParser = $requestParser;
         $this->blacklist = $blacklist;
+        $this->request = $request;
     }
 
     /**
@@ -139,6 +141,22 @@ class Guard implements \Illuminate\Contracts\Auth\Guard
         }
 
         return $user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUser(Authenticatable $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function id()
+    {
+        return $this->user->getAuthIdentifier();
     }
 
     /**

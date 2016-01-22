@@ -8,51 +8,51 @@ spira:
 
 logviewer:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: logviewer
   volumes_from:
     - spira
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 database:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: database
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 vanilladatabase:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: vanilladatabase
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 cache:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: cache
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 elasticsearch:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: elasticsearch
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 queue:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: queue
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 queuerunner:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: queuerunner
   links:
     - mailcatcher:mailcatcher
@@ -63,18 +63,18 @@ queuerunner:
   volumes_from:
     - spira
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 mailcatcher:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: mailcatcher
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 php:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: php
   links:
     - database:database
@@ -86,11 +86,11 @@ php:
   volumes_from:
     - spira
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 web:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: web
   ports:
     - "%expose_port%:80" # for QA we only expose port 80 as the web container (nginx) handles port mapping itself with proxies
@@ -98,15 +98,14 @@ web:
     - php:php
     - logviewer:logviewer
     - mailcatcher:mailcatcher
-    - apimock:apimock
   volumes_from:
     - spira
   env_file:
-    - ./docker/.qa.env
+    - .qa.env
 
 devtools:
   extends:
-    file: ./docker/common-services.yml
+    file: common-services.yml
     service: devtools
   links:
     - web:web
@@ -119,13 +118,4 @@ devtools:
   volumes_from:
     - spira
   env_file:
-    - ./docker/.qa.env
-
-apimock:
-  extends:
-    file: ./docker/common-services.yml
-    service: apimock
-  volumes_from:
-    - spira
-  env_file:
-    - ./docker/.qa.env
+    - .qa.env

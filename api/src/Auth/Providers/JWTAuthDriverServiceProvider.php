@@ -23,6 +23,7 @@ use Spira\Auth\Token\RequestParser;
 use Spira\Auth\Blacklist\CacheDriver;
 use Spira\Auth\Payload\PayloadFactory;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Cache\Repository;
 use Spira\Auth\Blacklist\StorageInterface;
 use Spira\Auth\Token\TokenExpiredException;
 use Spira\Auth\Token\TokenInvalidException;
@@ -333,6 +334,11 @@ abstract class JWTAuthDriverServiceProvider extends ServiceProvider
      */
     protected function registerBlackListDriver()
     {
+        // @todo consider of moving this somewhere else
+        $this->app->bind(Repository::class, function ($app) {
+            return $this->app['cache']->driver();
+        });
+
         $this->app->bind(StorageInterface::class, function ($app) {
             return $this->app[CacheDriver::class];
         });

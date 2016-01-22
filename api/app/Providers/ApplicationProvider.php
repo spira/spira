@@ -23,6 +23,8 @@ class ApplicationProvider extends AppServiceProvider
             'rbac_role_exists'                    => 'The :attribute must be an existing Rbac role',
         ];
 
+        $this->app->bind('url', \Laravel\Lumen\Routing\UrlGenerator::class);
+
         $this->app->extend('validator', function (Factory $validator) use ($spiraMessages) {
             $validator->resolver(function ($translator, $data, $rules, $messages, $customAttributes) use ($spiraMessages) {
                 return new Validator($translator, $data, $rules, array_merge($messages, $spiraMessages), $customAttributes);

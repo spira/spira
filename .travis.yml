@@ -63,7 +63,7 @@ before_script:
   - psql -c 'create database spira;' -U postgres
   - gulp build
   - php ./api/artisan migrate --seed
-  - php ./api/artisan serve --port 8000 --host 127.0.0.1 --quiet 2>&1 >/dev/null & # start api server
+  - php -S 127.0.0.1:8000 ./api/server.php 2>&1 >/dev/null & # start api server
   - http-server ./app/build/ -p 8001 2>&1 >/dev/null & # start webserver
   - mailcatcher # start mailcatcher server
   - beanstalkd -d -l 127.0.0.1 -p 11300 # start queue listener

@@ -57,7 +57,7 @@ abstract class AbstractPostSeeder extends BaseSeeder
         $className = $this->class;
 
         /** @var $discussionsApi \App\Services\Api\Vanilla\Api\Discussion */
-        $discussionsApi = App::make(VanillaClient::class)->api('discussions');
+        $discussionsApi = app(VanillaClient::class)->api('discussions');
 
         factory($className, 50)
             ->create()

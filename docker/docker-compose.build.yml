@@ -1,0 +1,14 @@
+# Build configuration. This file is identical to the dev `docker-compose.yml` definition, except it exposes no ports to
+# allow multiple concurrent builds without concern of port collision
+devtools:
+  image: spira/docker-dev-tools
+  working_dir: /data
+  privileged: true
+  volumes:
+#    - /data:/data
+    - %build_directory%:/data
+    - %cache_directory%:/cache
+  env_file:
+    - .common.env
+    - .secret.env
+    - .qa.env

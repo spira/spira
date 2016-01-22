@@ -10,6 +10,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Hash;
 use Spira\Core\Model\Model\BaseModel;
 
 class UserCredential extends BaseModel
@@ -59,6 +60,6 @@ class UserCredential extends BaseModel
      */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = \Hash::make($value);
+        $this->attributes['password'] = Hash::make($value);
     }
 }

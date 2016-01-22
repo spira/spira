@@ -9,7 +9,7 @@
         "satooshi/php-coveralls": "dev-master"
     },
 	"config": {
-                "preferred-install": "dist",
-                "discard-changes": true
+		"preferred-install": "dist",
+		"discard-changes": true
 	}
 }

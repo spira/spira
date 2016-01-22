@@ -23,7 +23,7 @@
             </p>
         </md-list-item>
 
-        <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ng-click="AdminNavigationController.$state.go(state.name)" ui-sref="{{state.name}}" ui-sref-active="selected">
+        <md-list-item ng-repeat-start="state in stateGroup.states" ng-if="!state.abstract" ui-sref="{{state.name}}" ui-sref-active="selected">
             <md-icon>{{state.data.icon}}</md-icon>
             <p class="md-subhead" ng-if="!AdminNavigationController.collapsed">{{state.data.title}}</p>
             <md-tooltip md-direction="right" ng-if="AdminNavigationController.collapsed">{{state.data.title}}</md-tooltip>

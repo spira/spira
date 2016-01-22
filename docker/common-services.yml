@@ -59,12 +59,6 @@ devtools:
     - .common.env
     - .secret.env
 
-apimock:
-  image: spira/docker-drakov
-  env_file:
-    - .common.env
-
-
 elasticsearch:
   image: elasticsearch:1.7.1
   env_file:

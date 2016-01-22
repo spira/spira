@@ -32,7 +32,7 @@ class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
         });
 
         $this->app->singleton('auth.driver', function ($app) {
-            return $app['auth']->driver();
+            return $app['auth']->guard();
         });
     }
 
