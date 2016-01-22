@@ -12,6 +12,9 @@ namespace app.admin {
 
         public entityForm:ng.IFormController;
 
+        private previousState:ng.ui.IState;
+        private previousStateParams:ng.ui.IStateParamsService;
+
         constructor(
             public entity:M,
             public service:S,
@@ -42,6 +45,12 @@ namespace app.admin {
                             $state.go(toState.name, toParams);
                         })
                 }
+            });
+
+            $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
+                // Save which state we came from so we can return to it later
+                this.previousState = fromState;
+                this.previousStateParams = fromParams;
             });
         }
 
@@ -84,6 +93,20 @@ namespace app.admin {
                     });
 
             });
+        }
+
+        /**
+         * Returns the user to the previous state.
+         */
+        public cancel():void {
+
+            if(this.previousState.abstract) {
+                this.$state.go('app.admin.dashboard');
+            }
+            else {
+                this.$state.go(this.previousState.name, this.previousStateParams);
+            }
+
         }
 
         public togglePreview(){
