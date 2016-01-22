@@ -21,7 +21,7 @@ class RolePermissionRelation extends HasMany
     use GateTrait;
 
     /**
-     * @var Collection
+     * @var array
      */
     private $roleKeys = [];
 
@@ -66,17 +66,22 @@ class RolePermissionRelation extends HasMany
      */
     public function addEagerConstraints(array $models)
     {
-        $this->roleKeys = (new Collection($models))->pluck('key');
+        $this->roleKeys = collect($models)->pluck('key');
     }
 
     /**
      * @return Collection
      */
     public function get(){
+
         $storage = $this->getGate()->getStorage();
         $allPermissions = new Collection;
 
-        $this->roleKeys->each(function($roleKey) use ($storage, $allPermissions) {
+        if (empty($this->roleKeys)){
+            $this->roleKeys = [$this->foreignKey];
+        }
+
+        collect($this->roleKeys)->each(function($roleKey) use ($storage, $allPermissions) {
             $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($roleKey));
             foreach($this->hydratePermissions($permissions, $roleKey) as $permission){
                 $allPermissions->push($permission);

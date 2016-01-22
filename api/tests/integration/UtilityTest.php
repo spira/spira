@@ -11,7 +11,6 @@
 /**
  * Class UtilityTest.
  * @group integration
- * @group testing
  */
 class UtilityTest extends TestCase
 {
