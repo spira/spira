@@ -45,6 +45,7 @@ class RolePermissionRelation extends HasMany
 
     /**
      * @param Item[] $permissions
+     * @param $roleKey
      * @return array
      */
     protected function hydratePermissions($permissions, $roleKey)
