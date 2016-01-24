@@ -161,6 +161,8 @@ class ArticleSectionTest extends TestCase
         $this->withAdminAuthorization()->postJson($this->baseRoute.'/'.$post->post_id.'/sections', [$richTextSection, $blockquoteSection, $mediaSection, $promoSection]);
 
         $this->assertResponseStatus(422);
+
+        echo $this->response->getContent();
     }
 
     public function testAddSortedSections()
