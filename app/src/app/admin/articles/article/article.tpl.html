@@ -45,27 +45,17 @@
             </md-tab>
         </md-tabs>
 
-        <div id="commands">
-            <div class="command-wrap">
-                <div class="command-fix">
+        <command-widget
+            save-action="ArticleController.save()"
+            save-disabled="ArticleController.entityForm.$invalid"
+            delete-action="ArticleController.remove()"
+            delete-disabled="!ArticleController.entity.exists()"
+            cancel-action=""
+            cancel-disabled=""
+            form-reference="ArticleController.entityForm"
+        >
 
-                    <md-button class="md-warn md-raised md-fab" ng-disabled="!ArticleController.entity.exists()" ng-click="ArticleController.remove()">
-                        <md-icon>delete</md-icon>
-                        <md-tooltip md-direction="top">Delete</md-tooltip>
-                    </md-button>
-
-                    <md-button class="md-accent md-raised md-fab" ng-disabled="ArticleController.entityForm.$invalid" ng-click="ArticleController.save()">
-                        <md-icon>check</md-icon>
-                        <md-tooltip md-direction="top">Save</md-tooltip>
-                    </md-button>
-
-                    <md-button class="md-primary md-raised md-fab">
-                        <md-icon>close</md-icon>
-                        <md-tooltip md-direction="top">Cancel</md-tooltip>
-                    </md-button>
-                </div>
-            </div>
-        </div>
+        </command-widget>
 
     </md-card>
 

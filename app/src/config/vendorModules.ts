@@ -124,6 +124,7 @@ namespace config.vendorModules {
         'hc.marked', //markdown parser - https://github.com/Hypercubed/angular-marked
         'angular-carousel', //content carousel - https://github.com/revolunet/angular-carousel
         'md.data.table', //https://github.com/daniel-nagy/md-data-table
+        'drop-ng', //popovers - https://github.com/stevenh77/drop-ng
     ])
     .config(AuthConfig)
     .config(CloudinaryConfig)
