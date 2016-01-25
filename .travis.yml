@@ -10,6 +10,7 @@ addons:
     packages:
     - gcc-4.8
     - g++-4.8
+    - beanstalkd
 
 services:
   - redis-server
@@ -33,7 +34,7 @@ env:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libnotify-bin beanstalkd
+  - sudo apt-get install -y libnotify-bin
   - nvm install 5.4.0 && nvm use 5.4.0 && npm install -g npm
   - mysql -e 'create database vanilla;'
 
