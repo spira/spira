@@ -56,17 +56,23 @@ namespace common.directives.commandWidget {
          */
         public scrollToControl(control:IInvalidControl) {
 
-            //try to find a parent tab frame that is not selected
-            let parentInactiveTab = $(control.element).closest('md-tab-content:not(.md-active)');
 
-            if (parentInactiveTab){
+            //try to find any parent tab frame(s) that are not selected
+            let parentInactiveTabs = $(control.element).parents('md-tab-content:not(.md-active)');
+
+            if (parentInactiveTabs.length > 0){
                 //if found, defer navigation until digest cycle is completed
                 this.$timeout(() => {
-                    //find the index offset
-                    let index:number = parentInactiveTab.index();
-                    //find and initiate click event on the target tab
-                    let targetTab = parentInactiveTab.closest('md-tabs').find('md-tab-item').eq(index);
-                    targetTab.click();
+
+                    //iterate over all inactive parent tabs
+                    _.each(parentInactiveTabs, (parentInactiveTab) => {
+                        //find the index offset
+                        let index:number = $(parentInactiveTab).index();
+                        //find and initiate click event on the target tab
+                        let targetTab = $(parentInactiveTab).closest('md-tabs').find('md-tab-item').eq(index);
+                        targetTab.click();
+                    });
+
                 });
             }
 
