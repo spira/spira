@@ -71,6 +71,8 @@ namespace app.admin.users.editUser {
 
     export class EditUserController extends app.abstract.profile.AbstractProfileController {
 
+        public editUserForm:ng.IFormController;
+
         static $inject = [
             //from abstract
             'userService',
@@ -148,6 +150,19 @@ namespace app.admin.users.editUser {
 
         public toggleBan(user:common.models.User) {
             //@todo
+        }
+
+        /**
+         * Edit profile form submit function
+         * @returns {ng.IPromise<any>}
+         */
+        public updateUser():ng.IPromise<any> {
+
+            return super.updateUser().then((user:common.models.User) => {
+
+                return this.userService.saveUserRoles(user);
+            });
+
         }
 
     }

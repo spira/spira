@@ -111,6 +111,17 @@ namespace common.models {
 
         });
 
+        it('should fill the user role key array when hydrated', () => {
+
+            let roles = RoleMock.collection(2);
+
+            let user = UserMock.entity({
+                _roles: roles,
+            });
+
+            expect(user.roles).to.deep.equal(_.pluck(roles, 'key'));
+        });
+
     });
 
 }

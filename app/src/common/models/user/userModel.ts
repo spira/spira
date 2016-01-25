@@ -38,6 +38,10 @@ namespace common.models {
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
             this.hydrate(data, exists);
+
+            if (this._roles && this._roles.length > 0){
+                this.roles = _.pluck(this._roles, 'key');
+            }
         }
 
         /**

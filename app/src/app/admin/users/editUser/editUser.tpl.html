@@ -1,5 +1,5 @@
 
-<div id="edit-user">
+<div id="edit-user" ng-form="EditUserController.editUserForm">
     <div class="user-info"
          layout="column"
          layout-gt-sm="row">
@@ -60,5 +60,15 @@
             <md-content class="md-padding" ui-view="roles"></md-content>
         </md-tab>
     </md-tabs>
+
+    <command-widget
+            save-action="EditUserController.updateUser()"
+            save-disabled="EditUserController.editUserForm.$invalid"
+            delete-action="EditUserController.remove()"
+            delete-disabled="!EditUserController.fullUserInfo.exists()"
+            cancel-action="EditUserController.cancel()"
+            form-reference="EditUserController.editUserForm"
+    >
+    </command-widget>
 
 </div>

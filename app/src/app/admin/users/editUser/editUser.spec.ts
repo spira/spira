@@ -85,6 +85,29 @@ namespace app.admin.users.editUser {
 
         });
 
+        it('should be able to save user, and their roles', () => {
+
+            //setup stubs
+            let updateUserStub = sinon.stub(userService, 'saveUserWithRelated');
+            updateUserStub.returns($q.when(EditUserController.fullUserInfo));
+            let saveUserRoleStub = sinon.stub(userService, 'saveUserRoles');
+            saveUserRoleStub.returns($q.when(true));
+
+            //run method
+            EditUserController.fullUserInfo.email = 'valid@email.com';
+
+            EditUserController.updateUser();
+
+            $scope.$apply();
+
+            expect(updateUserStub).to.have.been.calledWith(EditUserController.fullUserInfo);
+            expect(saveUserRoleStub).to.have.been.calledWith(EditUserController.fullUserInfo);
+
+            updateUserStub.restore();
+            saveUserRoleStub.restore();
+
+        });
+
     });
 
 }

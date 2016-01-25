@@ -265,12 +265,38 @@ namespace common.services.user {
                 }
             }
 
-            return this.ngRestAdapter[method](`${this.apiEndpoint()}/${user.userId}/credentials`, data)
+            return this.ngRestAdapter[method](`${this.apiEndpoint(user)}/credentials`, data)
                 .then(() => {
                     user._userCredential.setExists(true);
                     return user._userCredential;
                 });
 
+        }
+
+        /**
+         * Save roles for user
+         * @param user
+         * @returns {IPromise<common.models.User>}
+         */
+        public saveUserRoles(user:common.models.User):ng.IPromise<common.models.User> {
+
+            let roleData = _.map(user._roles, (role:common.models.Role) => {
+                return _.pick(role, 'key');
+            });
+
+            let flattenedRoles = _.pluck(roleData, 'key');
+
+            if (_.xor(flattenedRoles, user.roles).length === 0){
+                return this.$q.when(user);
+            }
+
+            console.log('user.roles, flattened roles', user.roles, flattenedRoles);
+
+            return this.ngRestAdapter.put(`${this.apiEndpoint(user)}/roles`, roleData).then(() => {
+                user.roles = flattenedRoles;
+                (<common.decorators.changeAware.IChangeAwareDecorator>user).resetChanged();
+                return user;
+            });
         }
 
         /**
