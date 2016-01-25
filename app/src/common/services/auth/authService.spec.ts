@@ -60,10 +60,16 @@ namespace common.services.auth {
 
             it('should be able to log in using a social network', () => {
 
+                let encodedSlash = encodeURIComponent('/');
+
+                if (!(<any>$location).$$html5) {
+                    encodedSlash = encodeURIComponent('#') + encodedSlash;
+                }
+
                 let provider = common.models.UserSocialLogin.facebookType,
                     state = 'app.user.profile',
                     params = null,
-                    url = '/auth/social/facebook?returnUrl=%2Fprofile';
+                    url = '/auth/social/facebook?returnUrl='+encodedSlash+'profile';
 
                 authService.socialLogin(provider, state, params);
 
