@@ -92,13 +92,12 @@ namespace common.directives.commandWidget {
             formReference: '=?',
         };
 
+        constructor(private $timeout: ng.ITimeoutService) {
+        }
+
         public controllerAs = 'CommandWidgetController';
         public controller = CommandWidgetController;
         public bindToController = true;
-
-        public link = ($scope: any, $element: ng.IAugmentedJQuery, $attrs: ng.IAttributes, $controllers: [CommandWidgetController]) => {
-
-        };
 
         static factory(): ng.IDirectiveFactory {
             let directive = ($timeout) => new CommandWidgetDirective($timeout);

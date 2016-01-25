@@ -1,18 +1,16 @@
-namespace common.directives.authorInfoDisplay {
+namespace common.directives.commandWidget {
 
     interface TestScope extends ng.IRootScopeService {
-        AuthorInfoDisplayController:AuthorInfoDisplayController;
-        testAuthor:common.models.User;
+        CommandWidgetController:CommandWidgetController;
     }
 
-    describe('Author Info Display Directive', () => {
+    describe('Command widget Directive', () => {
 
         let $compile:ng.ICompileService,
             $rootScope:ng.IRootScopeService,
             directiveScope:TestScope,
             compiledElement: ng.IAugmentedJQuery,
-            directiveController: AuthorInfoDisplayController,
-            author = common.models.UserMock.entity();
+            directiveController: CommandWidgetController;
 
         beforeEach(()=> {
 
@@ -28,18 +26,16 @@ namespace common.directives.authorInfoDisplay {
 
                 directiveScope = <TestScope>$rootScope.$new();
 
-                directiveScope.testAuthor = author;
-
                 let element = angular.element(`
-                    <author-info-display author="testAuthor">
-                    </author-info-display>
+                    <command-widget>
+                    </command-widget>
                 `);
 
                 compiledElement = $compile(element)(directiveScope);
 
                 $rootScope.$digest();
 
-                directiveController = (<TestScope>compiledElement.isolateScope()).AuthorInfoDisplayController;
+                directiveController = (<TestScope>compiledElement.isolateScope()).CommandWidgetController;
             }
 
         });
@@ -48,9 +44,7 @@ namespace common.directives.authorInfoDisplay {
 
             it('should initialise the directive', () => {
 
-                expect($(compiledElement).hasClass('author-info-display-directive')).to.be.true;
-
-                expect(directiveController.author).to.deep.equal(author);
+                expect($(compiledElement).find('.command-wrap')).to.have.length(1);
 
             });
 
