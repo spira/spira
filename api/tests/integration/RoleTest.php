@@ -26,7 +26,6 @@ class RoleTest extends TestCase
 
     public function testGetAllWithNestedPermissions()
     {
-
         $this->withAuthorization()->getJson('/roles', ['with-nested' => 'permissions']);
 
         $this->assertResponseOk();
@@ -38,5 +37,4 @@ class RoleTest extends TestCase
 
         $this->assertArrayHasKey('_permissions', $result[0]);
     }
-
 }

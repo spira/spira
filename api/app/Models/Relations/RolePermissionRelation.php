@@ -13,7 +13,7 @@ namespace App\Models\Relations;
 use App\Models\Role;
 use Spira\Rbac\Item\Item;
 use App\Models\Permission;
-use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RolePermissionRelation extends HasMany
@@ -73,18 +73,18 @@ class RolePermissionRelation extends HasMany
     /**
      * @return Collection
      */
-    public function get(){
-
+    public function get()
+    {
         $storage = $this->getGate()->getStorage();
         $allPermissions = new Collection;
 
-        if (empty($this->roleKeys)){
+        if (empty($this->roleKeys)) {
             $this->roleKeys = [$this->foreignKey];
         }
 
-        collect($this->roleKeys)->each(function($roleKey) use ($storage, $allPermissions) {
+        collect($this->roleKeys)->each(function ($roleKey) use ($storage, $allPermissions) {
             $permissions = $this->getItemsRecursively(Item::TYPE_PERMISSION, $storage->getChildren($roleKey));
-            foreach($this->hydratePermissions($permissions, $roleKey) as $permission){
+            foreach ($this->hydratePermissions($permissions, $roleKey) as $permission) {
                 $allPermissions->push($permission);
             }
         });
@@ -96,5 +96,4 @@ class RolePermissionRelation extends HasMany
     {
         return 'parent_role_key';
     }
-
 }
