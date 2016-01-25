@@ -50,11 +50,9 @@
             save-disabled="ArticleController.entityForm.$invalid"
             delete-action="ArticleController.remove()"
             delete-disabled="!ArticleController.entity.exists()"
-            cancel-action=""
-            cancel-disabled=""
+            cancel-action="ArticleController.cancel()"
             form-reference="ArticleController.entityForm"
         >
-
         </command-widget>
 
     </md-card>

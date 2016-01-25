@@ -45,36 +45,18 @@
         </md-chips>
 
         <label>Author</label>
-        <md-chips
-            ng-model="ArticlesListingController.usersToFilter"
-            ng-model-options="{ debounce: 500 }"
-            md-autocomplete-snap>
-
-            <md-autocomplete md-menu-class="md-contact-chips-suggestions"
-                md-search-text="ArticlesListingController.userSearchText"
-                md-selected-item="ArticlesListingController.selectedUser"
-                md-items="user in ArticlesListingController.searchUsers(ArticlesListingController.userSearchText)"
-                md-item-text="user.firstName"
-                md-no-cache="true"
-                md-autoselect>
-                <div class="md-contact-suggestion">
-                    <img ng-src="{{ item.avatarImgUrl }}"
-                        alt="{{ item.firstName }}" />
-                    {{ item.fullName }}
-                    <span class="md-contact-email" >{{ item.email }}</span>
-                </div>
-            </md-autocomplete>
-
-            <md-chip-template>
-                <div class="md-contact-avatar">
-                    <img ng-src="{{ $chip.avatarImgUrl }}"
-                        alt="{{ $chip.firstName }}" />
-                </div>
-                <div class="md-contact-name">
-                    {{ $chip.firstName }}
-                </div>
-            </md-chip-template>
-        </md-chips>
+        <md-contact-chips
+                ng-model="ArticlesListingController.usersToFilter"
+                md-contacts="ArticlesListingController.searchUsers($query)"
+                md-contact-name="fullName"
+                md-contact-image="avatarImgUrl"
+                md-contact-email="email"
+                md-require-match="true"
+                md-highlight-flags="i"
+                filter-selected="true"
+                placeholder="Author"
+                name="authors">
+        </md-contact-chips>
     </md-content>
 
     <div ng-if="ArticlesListingController.entities.length < 1"><h3>No articles found!</h3></div>
