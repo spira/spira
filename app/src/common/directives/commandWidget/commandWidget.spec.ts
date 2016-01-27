@@ -44,7 +44,7 @@ namespace common.directives.commandWidget {
 
             it('should initialise the directive', () => {
 
-                expect($(compiledElement).find('.command-wrap')).to.have.length(1);
+                expect($(compiledElement).find('.command-fix')).to.have.length(1);
 
             });
 
