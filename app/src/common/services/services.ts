@@ -6,6 +6,7 @@ namespace common.services {
         namespace+'.tag',
         namespace+'.auth',
         namespace+'.user',
+        namespace+'.role',
         namespace+'.error',
         namespace+'.image',
         namespace+'.region',

@@ -63,6 +63,8 @@ return [
             UserController::class.'@patchOne',
             UserController::class.'@deleteOne',
             UserProfileController::class.'@getOne',
+            UserProfileController::class.'@patchOne',
+            UserProfileController::class.'@putOne',
         ],
     ],
 ];

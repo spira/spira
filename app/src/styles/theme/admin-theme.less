@@ -41,4 +41,15 @@
         display: none; //@todo decide whether a footer is wanted
     }
 
+    //add .disabled rules for buttons when there are still actions like tooltips on the buttons that need to show
+    a.md-button.disabled, a.md-button.md-raised.disabled, a.md-button.md-fab.disabled, a.md-button.md-accent.disabled, a.md-button.md-warn.disabled, .md-button.disabled, .md-button.md-raised.disabled, .md-button.md-fab.disabled, .md-button.md-accent.disabled, .md-button.md-warn.disabled {
+        color: @foreground-3;
+        cursor: not-allowed; }
+    a.md-button.disabled md-icon, a.md-button.md-raised.disabled md-icon, a.md-button.md-fab.disabled md-icon, a.md-button.md-accent.disabled md-icon, a.md-button.md-warn.disabled md-icon, .md-button.disabled md-icon, .md-button.md-raised.disabled md-icon, .md-button.md-fab.disabled md-icon, .md-button.md-accent.disabled md-icon, .md-button.md-warn.disabled md-icon {
+        color: @foreground-3; }
+    a.md-button.md-raised.disabled, a.md-button.md-fab.disabled, .md-button.md-raised.disabled, .md-button.md-fab.disabled {
+        background-color: @foreground-4; }
+    a.md-button.disabled, .md-button.disabled {
+        background-color: transparent; }
+
 }

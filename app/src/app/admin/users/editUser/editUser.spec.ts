@@ -19,7 +19,8 @@ namespace app.admin.users.editUser {
             timezones:common.services.timezones.ITimezoneDefinition,
             fullUserInfo:common.models.User = common.models.UserMock.entity(),
             genderOptions:common.models.IGenderOption[] = common.models.UserProfile.genderOptions,
-            providerTypes:string[] = common.models.UserSocialLogin.providerTypes
+            providerTypes:string[] = common.models.UserSocialLogin.providerTypes,
+            roles:common.models.Role[] = common.models.RoleMock.collection()
         ;
 
         beforeEach(() => {
@@ -49,7 +50,8 @@ namespace app.admin.users.editUser {
                     providerTypes: providerTypes,
                     regions: _regionService_.supportedRegions,
                     $location: _$location_,
-                    $stateParams: $stateParams
+                    $stateParams: $stateParams,
+                    roles: roles,
                 });
 
             });
@@ -80,6 +82,29 @@ namespace app.admin.users.editUser {
             dialogShowStub.restore();
             authImpersonateStub.restore();
             stateLoadStub.restore();
+
+        });
+
+        it('should be able to save user, and their roles', () => {
+
+            //setup stubs
+            let updateUserStub = sinon.stub(userService, 'saveUserWithRelated');
+            updateUserStub.returns($q.when(EditUserController.fullUserInfo));
+            let saveUserRoleStub = sinon.stub(userService, 'saveUserRoles');
+            saveUserRoleStub.returns($q.when(true));
+
+            //run method
+            EditUserController.fullUserInfo.email = 'valid@email.com';
+
+            EditUserController.updateUser();
+
+            $scope.$apply();
+
+            expect(updateUserStub).to.have.been.calledWith(EditUserController.fullUserInfo);
+            expect(saveUserRoleStub).to.have.been.calledWith(EditUserController.fullUserInfo);
+
+            updateUserStub.restore();
+            saveUserRoleStub.restore();
 
         });
 
