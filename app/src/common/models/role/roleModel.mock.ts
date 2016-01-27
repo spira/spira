@@ -3,7 +3,7 @@ namespace common.models {
     export class RoleMock extends AbstractMock{
 
         public getModelClass():IModelClass {
-            return common.models.Role;
+            return Role;
         }
 
         public getMockData():Object {

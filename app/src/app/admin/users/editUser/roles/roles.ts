@@ -36,9 +36,9 @@ namespace app.admin.users.editUser.roles {
 
         private listUsersPermissions(user:common.models.User):common.models.role.Permission[] {
 
-            let userPerms:string[] = _.pluck(user._roles, 'key');
+            let userRoles:string[] = _.pluck(user._roles, 'key');
 
-            let allPermissions = _.reduce(userPerms, (currentPermissions:common.models.role.Permission[], roleKey:string):common.models.role.Permission[] => {
+            let allPermissions = _.reduce(userRoles, (currentPermissions:common.models.role.Permission[], roleKey:string):common.models.role.Permission[] => {
                 let matchingRole:common.models.Role = _.find(this.roles, {key:roleKey});
 
                 if (!matchingRole){

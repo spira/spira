@@ -6,9 +6,18 @@ namespace app.admin.users.editUser.roles {
             $scope:ng.IScope,
             $rootScope:ng.IRootScopeService,
             $q:ng.IQService,
-            fullUserInfo:common.models.User = common.models.UserMock.entity({}),
-            roles:common.models.Role[] = common.models.RoleMock.collection()
+            roles:common.models.Role[] = common.models.RoleMock.collection(10),
+            permissions:common.models.role.Permission[] = common.models.role.PermissionMock.collection(5),
+            fullUserInfo:common.models.User = common.models.UserMock.entity({
+                _roles: _.take(roles, 3)
+            })
         ;
+
+        //nest permissions
+        roles = _.map(roles, (role:common.models.Role) => {
+            role._permissions = _.sample(permissions, 2);
+            return new common.models.Role(role); //re-hydrate so the permissions are hydrated with the circular reference
+        });
 
         beforeEach(() => {
 
@@ -31,8 +40,43 @@ namespace app.admin.users.editUser.roles {
 
         describe('User Roles admin', () => {
 
+            it('should initialise the roles set with nested permissions and their associated roles that grant the permission', () => {
 
-            it('should do something', () => {
+                let firstRole = _.first(RolesController.roles);
+
+                expect(firstRole).to.have.property('_permissions');
+
+                let firstPermission = _.first(firstRole._permissions);
+
+                expect(firstPermission).to.have.property('__grantedByAll');
+                expect(firstPermission).to.have.property('__grantedByRole');
+
+                expect(firstPermission.__grantedByRole).to.contain(firstRole);
+
+            });
+
+            it('should be able to test if the current user has a given role', () => {
+
+                let expectedRole = _.first(fullUserInfo._roles);
+
+                let testResult = RolesController.userHasRole(expectedRole);
+
+                expect(testResult).to.be.true;
+
+            });
+
+            it('should be able to toggle the ownership of a role for a user', () => {
+
+                let toggleRole = _.first(fullUserInfo._roles);
+
+                RolesController.toggleRole(toggleRole);
+
+                expect(RolesController.userHasRole(toggleRole)).to.be.false;
+
+                RolesController.toggleRole(toggleRole);
+
+                expect(RolesController.userHasRole(toggleRole)).to.be.true;
+
 
             });
 

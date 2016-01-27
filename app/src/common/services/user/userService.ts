@@ -290,8 +290,6 @@ namespace common.services.user {
                 return this.$q.when(user);
             }
 
-            console.log('user.roles, flattened roles', user.roles, flattenedRoles);
-
             return this.ngRestAdapter.put(`${this.apiEndpoint(user)}/roles`, roleData).then(() => {
                 user.roles = flattenedRoles;
                 (<common.decorators.changeAware.IChangeAwareDecorator>user).resetChanged();

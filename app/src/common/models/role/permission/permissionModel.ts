@@ -16,7 +16,6 @@ namespace common.models.role {
 
         public __grantedByRole:Role;
         public __grantedByAll:Role[];
-        public __grantedByRoleNames:string;
 
         constructor(data:any, exists:boolean = false) {
             super(data, exists);
