@@ -16,6 +16,13 @@ namespace common.mixins {
                 return;
             }
 
+            //if the sections display attribute is null, define it
+            if (!this.sectionsDisplay){
+                this.sectionsDisplay = {
+                    sortOrder: [],
+                }
+            }
+
             let sectionOrder:string[] = _.map(this._sections, (section:common.models.Section<any>) => {
                 return section.sectionId;
             });

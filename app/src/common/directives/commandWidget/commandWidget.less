@@ -1,14 +1,19 @@
+@import (reference) "../../../styles/theme/reference/admin-variables";
+
 #commands {
 
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 200px;
+    right: 220px;
     z-index: 25;
 
     .command-fix {
         position: fixed;
         bottom: 10px;
-        right: 10px;
+    }
+}
+
+.validation-popover .drop-content {
+    h3 {
+        color: @warn-500;
     }
 }
