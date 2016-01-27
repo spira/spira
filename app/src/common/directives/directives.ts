@@ -9,6 +9,7 @@ namespace common.directives {
         namespace + '.uploadImage',
         namespace + '.groupedTags',
         namespace + '.entitySearch',
+        namespace + '.commandWidget',
         namespace + '.markdownEditor',
         namespace + '.localizableInput',
         namespace + '.selectMediaImage',

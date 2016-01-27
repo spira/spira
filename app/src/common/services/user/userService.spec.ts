@@ -1,5 +1,6 @@
 namespace common.services.user {
 
+    import RoleMock = common.models.RoleMock;
     describe('UserService', () => {
 
         let userService:UserService;
@@ -332,6 +333,39 @@ namespace common.services.user {
 
                 expect(savePromise).eventually.to.equal(user);
 
+            });
+
+            it('should save roles for a user', () => {
+
+                let roles = RoleMock.collection(2);
+
+                let user = common.models.UserMock.entity({}, true);
+
+                user._roles = roles;
+
+                let roleData = _.map(roles, (role) => _.pick(role, 'key'));
+
+                $httpBackend.expectPUT('/api/users/' + user.userId + '/roles', roleData).respond(204);
+
+                let savePromise = userService.saveUserRoles(user);
+
+                $httpBackend.flush();
+
+                expect(savePromise).eventually.to.equal(user);
+            });
+
+            it('should not save roles when they are unchanged', () => {
+
+                let roles = RoleMock.collection(2);
+
+                let user = common.models.UserMock.entity({
+                    _roles: roles,
+                    roles: _.pluck(roles, 'key')
+                }, true);
+
+                let savePromise = userService.saveUserRoles(user);
+
+                expect(savePromise).eventually.to.equal(user);
             });
 
         });

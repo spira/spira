@@ -21,6 +21,11 @@ namespace app.admin.users.editUser {
                         controller: namespace+'.controller',
                         controllerAs: 'ProfileController',
                         templateUrl: 'templates/app/user/profile/profile.tpl.html',
+                    },
+                    ['roles@'+namespace]: {
+                        controller: namespace+'.roles.controller',
+                        controllerAs: 'RolesController',
+                        templateUrl: 'templates/app/admin/users/editUser/roles/roles.tpl.html',
                     }
                 },
                 resolve: /*@ngInject*/{
@@ -31,7 +36,7 @@ namespace app.admin.users.editUser {
                         return timezonesService.getAllTimezones();
                     },
                     fullUserInfo:(userService:common.services.user.UserService, $stateParams:IEditUserStateParams) => {
-                        return userService.getModel($stateParams.userId, ['userCredential', 'userProfile', 'socialLogins', 'uploadedAvatar']);
+                        return userService.getModel($stateParams.userId, ['userCredential', 'userProfile', 'socialLogins', 'uploadedAvatar', 'roles']);
                     },
                     genderOptions:() => {
                         return common.models.UserProfile.genderOptions;
@@ -41,6 +46,9 @@ namespace app.admin.users.editUser {
                     },
                     regions:(regionService:common.services.region.RegionService) => {
                         return regionService.supportedRegions;
+                    },
+                    roles:(roleService:common.services.role.RoleService):ng.IPromise<common.models.Role[]> => {
+                        return roleService.getAllModels<common.models.Role>(['permissions']);
                     }
                 },
                 data: {
@@ -63,6 +71,8 @@ namespace app.admin.users.editUser {
 
     export class EditUserController extends app.abstract.profile.AbstractProfileController {
 
+        public editUserForm:ng.IFormController;
+
         static $inject = [
             //from abstract
             'userService',
@@ -74,6 +84,7 @@ namespace app.admin.users.editUser {
             'regions',
             'providerTypes',
             'fullUserInfo',
+            'roles',
 
             //EditUserController
             '$mdDialog',
@@ -91,6 +102,7 @@ namespace app.admin.users.editUser {
             providerTypes:string[],
             fullUserInfo:common.models.User,
 
+            public roles:any[],
             private $mdDialog:ng.material.IDialogService,
             private $state:ng.ui.IStateService
         ) {
@@ -140,9 +152,24 @@ namespace app.admin.users.editUser {
             //@todo
         }
 
+        /**
+         * Edit profile form submit function
+         * @returns {ng.IPromise<any>}
+         */
+        public updateUser():ng.IPromise<any> {
+
+            return super.updateUser().then((user:common.models.User) => {
+
+                return this.userService.saveUserRoles(user);
+            });
+
+        }
+
     }
 
-    angular.module(namespace, [])
+    angular.module(namespace, [
+        namespace + '.roles',
+    ])
         .config(EditUserConfig)
         .controller(namespace+'.controller', EditUserController);
 }

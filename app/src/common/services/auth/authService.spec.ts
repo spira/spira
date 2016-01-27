@@ -60,14 +60,17 @@ namespace common.services.auth {
 
             it('should be able to log in using a social network', () => {
 
+                let encodedSlash = encodeURIComponent('/'),
+                    encodedHash = encodeURIComponent('#');
+
                 let provider = common.models.UserSocialLogin.facebookType,
                     state = 'app.user.profile',
                     params = null,
-                    url = '/auth/social/facebook?returnUrl=%2Fprofile';
+                    urlmatcher = new RegExp('^' + _.escapeRegExp('/auth/social/facebook?returnUrl=')+`(${encodedHash})?${encodedSlash}profile` + '$');
 
                 authService.socialLogin(provider, state, params);
 
-                expect($window.location.href).to.equal(url);
+                expect($window.location.href).to.match(urlmatcher);
 
             });
 

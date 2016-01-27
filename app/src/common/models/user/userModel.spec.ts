@@ -54,7 +54,7 @@ namespace common.models {
         it('should be able to check if the user is an administrator', () => {
 
             let adminUser = UserMock.entity({
-                roles: [RoleAssignment.adminRoleKey],
+                roles: [Role.adminRoleKey],
             });
 
             expect(adminUser.isAdmin()).to.be.true;
@@ -109,6 +109,17 @@ namespace common.models {
 
             expect(user.rolesDisplay()).to.equal("Role Name 1, Role Name 2");
 
+        });
+
+        it('should fill the user role key array when hydrated', () => {
+
+            let roles = RoleMock.collection(2);
+
+            let user = UserMock.entity({
+                _roles: roles,
+            });
+
+            expect(user.roles).to.deep.equal(_.pluck(roles, 'key'));
         });
 
     });
