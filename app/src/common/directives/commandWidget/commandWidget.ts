@@ -10,17 +10,14 @@ namespace common.directives.commandWidget {
     export class CommandWidgetController {
 
 
+        private formReference:ng.IFormController;
         public invalidControls:IInvalidControl[] = [];
 
         static $inject = ['$timeout'];
 
         constructor(
             private $timeout:ng.ITimeoutService
-        ) {
-
-
-
-        }
+        ) {}
 
         public onSavePopover(){
             this.updateInvalidControls();
@@ -76,8 +73,36 @@ namespace common.directives.commandWidget {
                 });
             }
 
+            this.touchFormInvalid(this.formReference);
+
             //scroll to the problematic control element
-            $('html,body').animate({scrollTop: $(control.element).offset().top }, "slow");
+            $('html,body').animate({scrollTop: $(control.element).offset().top - 20 }, "slow");
+            this.$timeout(() => {
+                $(control.element).focus();
+            }, 100);
+        }
+
+        /**
+         * Touch all the invalid controls in a form. If the control is a sub-form recurse down into that touching
+         * all invalid controls
+         * @param form
+         */
+        private touchFormInvalid (form:ng.IFormController) {
+
+            _.forIn(form.$error, (formControls:(ng.INgModelController|ng.IFormController)[],  errorKey:string) => {
+
+                _.forEach(formControls, (formControl:ng.INgModelController|ng.IFormController) => {
+
+                    if (_.has(formControl, '$modelValue')) {
+                        (<ng.INgModelController>formControl).$setTouched();
+                    }else{
+                        this.touchFormInvalid(<ng.IFormController>formControl);
+                    }
+
+                });
+
+            });
+
         }
 
     }
