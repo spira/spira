@@ -1,0 +1,47 @@
+<div id="commands">
+    <div class="command-fix">
+
+        <md-button class="md-warn md-raised md-fab" ng-class="{disabled:CommandWidgetController.deleteDisabled}"
+                   ng-click="!CommandWidgetController.deleteDisabled && CommandWidgetController.deleteAction($event)">
+            <md-icon>delete</md-icon>
+            <md-tooltip md-direction="top">Delete</md-tooltip>
+        </md-button>
+        <md-button class="md-accent md-raised md-fab" ng-class="{disabled:CommandWidgetController.saveDisabled}"
+                   ng-click="!CommandWidgetController.saveDisabled && CommandWidgetController.saveAction($event)">
+            <md-icon>check</md-icon>
+
+            <md-tooltip md-direction="top">Save</md-tooltip>
+
+            <drop
+                ng-if="CommandWidgetController.saveDisabled"
+                classes="'drop-theme-arrows-bounce validation-popover'"
+                constrain-to-scroll-parent='false'
+                constrain-to-window='true'
+                open-on="'hover'"
+                position="'top right'"
+                callback-on-open="CommandWidgetController.updateInvalidControls()">
+
+                <div>
+                    <h3>Fix these issues before you save</h3>
+                    <ul>
+                        <li ng-repeat="invalidControl in CommandWidgetController.invalidControls">
+                            <span>{{invalidControl.label}}</span>
+                            <md-button ng-click="CommandWidgetController.scrollToControl(invalidControl)">
+                                <md-icon>link</md-icon>
+                            </md-button>
+                        </li>
+                    </ul>
+                </div>
+
+            </drop>
+
+
+        </md-button>
+
+        <md-button class="md-primary md-raised md-fab" ng-class="{disabled:CommandWidgetController.cancelDisabled}"
+                   ng-click="!CommandWidgetController.cancelDisabled && CommandWidgetController.cancelAction($event)">
+            <md-icon>close</md-icon>
+            <md-tooltip md-direction="top">Cancel</md-tooltip>
+        </md-button>
+    </div>
+</div>

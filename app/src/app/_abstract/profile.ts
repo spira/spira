@@ -7,7 +7,7 @@ namespace app.abstract.profile {
         protected showEditPassword:boolean = false;
 
         constructor(
-            private userService:common.services.user.UserService,
+            protected userService:common.services.user.UserService,
             private notificationService:common.services.notification.NotificationService,
             protected authService:common.services.auth.AuthService,
             public countries:common.services.countries.ICountryDefinition,
@@ -42,12 +42,13 @@ namespace app.abstract.profile {
          * Edit profile form submit function
          * @returns {ng.IPromise<any>}
          */
-        public updateUser():ng.IPromise<any> {
+        public updateUser():ng.IPromise<common.models.User> {
 
             return this.userService.saveUserWithRelated(this.fullUserInfo)
                 .then(() => {
                     this.notificationService.toast('Profile update was successful').pop();
                     this.showEditPassword = false;
+                    return this.fullUserInfo;
                 },
                 (err) => {
                     this.notificationService.toast('Profile update was unsuccessful, please try again').pop();

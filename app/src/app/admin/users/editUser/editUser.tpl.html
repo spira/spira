@@ -1,8 +1,8 @@
 
-<div id="edit-user">
+<div id="edit-user" ng-form="EditUserController.editUserForm">
     <div class="user-info"
-         layout-gt-md="row"
-         layout-md="column">
+         layout="column"
+         layout-gt-sm="row">
         <div flex-intial>
             <avatar class="avatar" user="EditUserController.fullUserInfo" ng-model="EditUserController.fullUserInfo.avatarImgId"></avatar>
         </div>
@@ -11,7 +11,7 @@
                 <div class="full-name md-display-1">{{EditUserController.fullUserInfo.fullName}}</div>
                 <div class="forum-name md-title">{{EditUserController.fullUserInfo.username}}</div>
             </div>
-            <div layout-gt-md="row"
+            <div layout-gt-sm="row"
                  layout="column">
                 <div class="date">
                     <md-icon>event</md-icon>{{EditUserController.fullUserInfo.createdAt.format('dddd, MMMM Do YYYY')}}
@@ -22,12 +22,12 @@
             </div>
         </div>
         <div flex-initial
-             layout-gt-md="column"
-             layout-align-gt-md="end end"
+             layout-gt-sm="column"
+             layout-align-gt-sm="end end"
              layout="row"
              layout-align="start start">
             <div>
-                <md-menu md-position-mode-gt-md="target-right target">
+                <md-menu md-position-mode-gt-sm="target-right target">
                     <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="More">
                         <md-icon>more_vert</md-icon>
                     </md-button>
@@ -59,9 +59,16 @@
         <md-tab label="Roles">
             <md-content class="md-padding" ui-view="roles"></md-content>
         </md-tab>
-        <md-tab label="Orders">
-            You have an order!
-        </md-tab>
     </md-tabs>
+
+    <command-widget
+            save-action="EditUserController.updateUser()"
+            save-disabled="EditUserController.editUserForm.$invalid"
+            delete-action="EditUserController.remove()"
+            delete-disabled="!EditUserController.fullUserInfo.exists()"
+            cancel-action="EditUserController.cancel()"
+            form-reference="EditUserController.editUserForm"
+    >
+    </command-widget>
 
 </div>

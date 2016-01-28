@@ -22,7 +22,7 @@ module.exports = function(config) {
         client: {
             captureConsole: true,
             mocha: {
-                bail: true
+                //bail: true
             }
         },
 

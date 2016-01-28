@@ -34,7 +34,7 @@ namespace app.admin.users.listing {
                     }
                 },
                 data: {
-                    title: "Find Users",
+                    title: "List Users",
                     icon: 'group',
                     navigation: true,
                 }
