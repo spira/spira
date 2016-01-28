@@ -162,7 +162,14 @@ class ArticleSectionTest extends TestCase
 
         $this->assertResponseStatus(422);
 
-        echo $this->response->getContent();
+        $object =  json_decode($this->response->getContent());
+        $this->assertObjectHasAttribute('invalid', $object);
+        $this->assertIsArray($object->invalid);
+        $this->objectHasAttribute($object->invalid[1],'content');
+        $this->objectHasAttribute($object->invalid[1]->content,'body');
+        $this->objectHasAttribute($object->invalid[1]->content->body,'message');
+        $this->objectHasAttribute($object->invalid[1]->content,'author');
+        $this->objectHasAttribute($object->invalid[1]->content->author,'message');
     }
 
     public function testAddSortedSections()
