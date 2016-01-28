@@ -23,5 +23,4 @@ class PromoContent extends VirtualModel
      */
     protected $fillable = [
     ];
-
 }
