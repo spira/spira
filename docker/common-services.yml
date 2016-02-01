@@ -1,14 +1,23 @@
 # This common-services.yml definition holds all the image definitions and environment linking for the images.
 # It is intended to use the docker-compose extends functionality to use these definitions to build a docker-compose file
 
+lbhaproxy:
+  image: 'tutum/haproxy:0.2.4.1'
+  environment:
+    - MODE=tcp
+    - 'STATS_AUTH=spira:'
+  ports:
+    - '80:80'
+    - '1936:1936'
+
 datavolume:
   image: spira/docker-data
   volumes:
     - /data:/data
   privileged: true
 
-logviewer:
-  image: spira/docker-clarity
+#logviewer:
+#  image: spira/docker-clarity
 
 database:
   image: postgres:9.4
@@ -41,14 +50,23 @@ php:
     - .secret.env
   privileged: true
 
-web:
-  image: spira/docker-nginx
-  expose:
-   - "80"
-   - "8080"
-   - "8008"
+#web:
+#  image: spira/docker-nginx
+#  expose:
+#   - "80"
+#   - "8080"
+#   - "8008"
+#  env_file:
+#    - .common.env
+#  privileged: true
+
+api:
+  image: spira/docker-nginx-php
   env_file:
     - .common.env
+    - .secret.env
+  volumes:
+    - ../api:/data
   privileged: true
 
 devtools:

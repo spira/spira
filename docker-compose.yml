@@ -1,19 +1,29 @@
 
-data:
+lbhaproxy:
   extends:
     file: ./docker/common-services.yml
-    service: datavolume
+    service: lbhaproxy
+  links:
+    - api
+    - mailcatcher
   env_file:
     - ./docker/.local.env
 
-logviewer:
-  extends:
-    file: ./docker/common-services.yml
-    service: logviewer
-  volumes_from:
-    - data
-  env_file:
-    - ./docker/.local.env
+#data:
+#  extends:
+#    file: ./docker/common-services.yml
+#    service: datavolume
+#  env_file:
+#    - ./docker/.local.env
+
+#logviewer:
+#  extends:
+#    file: ./docker/common-services.yml
+#    service: logviewer
+#  volumes_from:
+#    - data
+#  env_file:
+#    - ./docker/.local.env
 
 database:
   extends:
@@ -34,21 +44,21 @@ vanilladatabase:
     - ./docker/.local.env
 
 cache:
-  ports:
-    - "6379:6379"
   extends:
     file: ./docker/common-services.yml
     service: cache
+  ports:
+    - "6379:6379"
   env_file:
     - ./docker/.local.env
 
 elasticsearch:
-  ports:
-    - "9200:9200"
-    - "9300:9300"
   extends:
     file: ./docker/common-services.yml
     service: elasticsearch
+  ports:
+    - "9200:9200"
+    - "9300:9300"
   env_file:
     - ./docker/.local.env
 
@@ -59,18 +69,30 @@ queue:
   env_file:
     - ./docker/.local.env
 
+api:
+  extends:
+    file: ./docker/common-services.yml
+    service: api
+  links:
+    - mailcatcher
+    - queue
+    - cache
+    - database
+  environment:
+    - VIRTUAL_HOST=local.api.spira.io
+    - NGINX_VHOSTS=/data/docker/config/vhosts/dev/*.conf
+
 queuerunner:
   extends:
     file: ./docker/common-services.yml
     service: queuerunner
   links:
-    - mailcatcher:mailcatcher
-    - queue:queue
-    - cache:cache
-    - database:database
-    - web:web
+    - mailcatcher
+    - queue
+    - cache
+    - database
   volumes_from:
-    - data
+    - api
   env_file:
     - ./docker/.local.env
 
@@ -80,44 +102,15 @@ mailcatcher:
     service: mailcatcher
   env_file:
     - ./docker/.local.env
-
-php:
-  extends:
-    file: ./docker/common-services.yml
-    service: php
-  links:
-    - database:database
-    - vanilladatabase:vanilladatabase
-    - cache:cache
-    - queue:queue
-    - mailcatcher:mailcatcher
-    - elasticsearch:elasticsearch
-  volumes_from:
-    - data
-  env_file:
-    - ./docker/.local.env
-
-web:
-  extends:
-    file: ./docker/common-services.yml
-    service: web
-  ports:
-    - "80:80"
-    - "8080:8080"
-  links:
-    - php:php
-    - logviewer:logviewer
-    - mailcatcher:mailcatcher
-  volumes_from:
-    - data
-  env_file: ./docker/.local.env
+  environment:
+    - VIRTUAL_HOST=local.mailcatcher.spira.io
+    - EXCLUDE_PORTS=1025
 
 devtools:
   extends:
     file: ./docker/common-services.yml
     service: devtools
   links:
-    - web:web
     - mailcatcher:mailcatcher
     - database:database
     - vanilladatabase:vanilladatabase
@@ -125,7 +118,7 @@ devtools:
     - queue:queue
     - elasticsearch:elasticsearch
   volumes_from:
-    - data
+    - api
   volumes:
     - /cache:/cache
   env_file:
