@@ -74,7 +74,7 @@ api:
   privileged: true
 
 app:
-  image: spira/docker-nginx-php
+  image: spira/docker-nginx:simplified
   env_file:
     - .common.env
     - .secret.env
@@ -84,6 +84,17 @@ app:
     - "8081"
   ports:
     - "8081:8081"
+  privileged: true
+
+forum:
+  image: spira/docker-nginx-php
+  env_file:
+    - .common.env
+    - .secret.env
+  volumes:
+    - ../forum:/data
+  expose:
+    - "8008"
   privileged: true
 
 devtools:

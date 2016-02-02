@@ -7,6 +7,7 @@ lbhaproxy:
     - api
     - app
     - mailcatcher
+    - forum
   env_file:
     - ./docker/.local.env
 
@@ -87,6 +88,17 @@ app:
     - ./docker/.local.env
   environment:
     - VIRTUAL_HOST=local.spira.io
+    - NGINX_VHOSTS=/data/docker/config/vhosts/*.conf
+    - EXCLUDE_PORTS=9000
+
+forum:
+  extends:
+    file: ./docker/common-services.yml
+    service: forum
+  env_file:
+    - ./docker/.local.env
+  environment:
+    - VIRTUAL_HOST=local.forum.spira.io
     - NGINX_VHOSTS=/data/docker/config/vhosts/*.conf
     - EXCLUDE_PORTS=9000
 

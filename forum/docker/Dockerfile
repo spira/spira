@@ -1,4 +1,4 @@
-FROM spira/docker-nginx:latest
+FROM spira/docker-nginx-php:latest
 
 MAINTAINER "Zak Henry" <zak.henry@gmail.com>
 
