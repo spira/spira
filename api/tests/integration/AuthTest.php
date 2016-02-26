@@ -197,8 +197,8 @@ class AuthTest extends TestCase
         $client = new Client([
             'base_uri' => sprintf(
                 'http://%s:%s',
-                getenv('WEBSERVER_HOST'),
-                getenv('WEBSERVER_PORT')
+                getenv('APISERVER_HOST'),
+                getenv('APISERVER_PORT')
             ),
         ]);
         /** @var GuzzleHttp\Psr7\Response $res */

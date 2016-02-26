@@ -1,23 +1,15 @@
 # This common-services.yml definition holds all the image definitions and environment linking for the images.
 # It is intended to use the docker-compose extends functionality to use these definitions to build a docker-compose file
 
-lbhaproxy:
-  image: 'tutum/haproxy:0.2.4.1'
-  environment:
-    - MODE=tcp
-    - 'STATS_AUTH=spira:'
+lbnginx:
+  image: spira/docker-nginx
+  env_file:
+    - .common.env
+    - .secret.env
+  volumes:
+    - ../docker/lbnginx:/data
   ports:
     - '80:80'
-    - '1936:1936'
-
-datavolume:
-  image: spira/docker-data
-  volumes:
-    - /data:/data
-  privileged: true
-
-#logviewer:
-#  image: spira/docker-clarity
 
 database:
   image: postgres:9.4
@@ -43,23 +35,6 @@ queuerunner:
 mailcatcher:
   image: schickling/mailcatcher
 
-php:
-  image: spira/docker-phpfpm
-  env_file:
-    - .common.env
-    - .secret.env
-  privileged: true
-
-#web:
-#  image: spira/docker-nginx
-#  expose:
-#   - "80"
-#   - "8080"
-#   - "8008"
-#  env_file:
-#    - .common.env
-#  privileged: true
-
 api:
   image: spira/docker-nginx-php
   env_file:
@@ -69,12 +44,10 @@ api:
     - ../api:/data
   expose:
     - "8080"
-  ports:
-    - "8080:8080"
   privileged: true
 
 app:
-  image: spira/docker-nginx:simplified
+  image: spira/docker-nginx
   env_file:
     - .common.env
     - .secret.env
@@ -82,8 +55,6 @@ app:
     - ../app:/data
   expose:
     - "8081"
-  ports:
-    - "8081:8081"
   privileged: true
 
 forum:
@@ -94,7 +65,7 @@ forum:
   volumes:
     - ../forum:/data
   expose:
-    - "8008"
+    - "80"
   privileged: true
 
 devtools:

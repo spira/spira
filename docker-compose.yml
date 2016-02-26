@@ -1,8 +1,7 @@
-
-lbhaproxy:
+lbnginx:
   extends:
     file: ./docker/common-services.yml
-    service: lbhaproxy
+    service: lbnginx
   links:
     - api
     - app
@@ -10,15 +9,8 @@ lbhaproxy:
     - forum
   env_file:
     - ./docker/.local.env
-
-#logviewer:
-#  extends:
-#    file: ./docker/common-services.yml
-#    service: logviewer
-#  volumes_from:
-#    - data
-#  env_file:
-#    - ./docker/.local.env
+  environment:
+    - NGINX_VHOSTS=/data/vhosts/*.conf
 
 database:
   extends:
@@ -76,9 +68,7 @@ api:
   env_file:
     - ./docker/.local.env
   environment:
-    - VIRTUAL_HOST=local.api.spira.io, local.spira.io/api/*
     - NGINX_VHOSTS=/data/docker/config/vhosts/*.conf
-    - EXCLUDE_PORTS=9000
 
 app:
   extends:
@@ -87,9 +77,7 @@ app:
   env_file:
     - ./docker/.local.env
   environment:
-    - VIRTUAL_HOST=local.spira.io
     - NGINX_VHOSTS=/data/docker/config/vhosts/*.conf
-    - EXCLUDE_PORTS=9000
 
 forum:
   extends:
@@ -98,9 +86,7 @@ forum:
   env_file:
     - ./docker/.local.env
   environment:
-    - VIRTUAL_HOST=local.forum.spira.io
     - NGINX_VHOSTS=/data/docker/config/vhosts/*.conf
-    - EXCLUDE_PORTS=9000
 
 queuerunner:
   extends:
@@ -124,7 +110,6 @@ mailcatcher:
     - ./docker/.local.env
   environment:
     - VIRTUAL_HOST=local.mailcatcher.spira.io
-    - EXCLUDE_PORTS=1025
 
 devtools:
   extends:
@@ -137,6 +122,9 @@ devtools:
     - cache:cache
     - queue:queue
     - elasticsearch:elasticsearch
+    - forum:forum
+    - api:api
+    - app:app
   volumes:
     - /cache:/cache
   env_file:
