@@ -1,14 +1,15 @@
 # This common-services.yml definition holds all the image definitions and environment linking for the images.
 # It is intended to use the docker-compose extends functionality to use these definitions to build a docker-compose file
 
-datavolume:
-  image: spira/docker-data
+lbnginx:
+  image: spira/docker-nginx
+  env_file:
+    - .common.env
+    - .secret.env
   volumes:
-    - /data:/data
-  privileged: true
-
-logviewer:
-  image: spira/docker-clarity
+    - ../docker/lbnginx:/data
+  ports:
+    - '80:80'
 
 database:
   image: postgres:9.4
@@ -34,27 +35,45 @@ queuerunner:
 mailcatcher:
   image: schickling/mailcatcher
 
-php:
-  image: spira/docker-phpfpm
+api:
+  image: spira/docker-nginx-php
   env_file:
     - .common.env
     - .secret.env
+  volumes:
+    - ../api:/data
+  expose:
+    - "8080"
   privileged: true
 
-web:
+app:
   image: spira/docker-nginx
-  expose:
-   - "80"
-   - "8080"
-   - "8008"
   env_file:
     - .common.env
+    - .secret.env
+  volumes:
+    - ../app:/data
+  expose:
+    - "8081"
+  privileged: true
+
+forum:
+  image: spira/docker-nginx-php
+  env_file:
+    - .common.env
+    - .secret.env
+  volumes:
+    - ../forum:/data
+  expose:
+    - "80"
   privileged: true
 
 devtools:
   image: spira/docker-dev-tools
   working_dir: /data
   privileged: true
+  volumes:
+    - ../:/data
   env_file:
     - .common.env
     - .secret.env
